@@ -32,6 +32,8 @@ export const ToolbarButton: FC<IToolbarButtonProps> = props => {
       onSuccessRedirectUrl: convertedProps?.onSuccessRedirectUrl,
       destroyOnClose: true,
       width: props?.modalWidth,
+      initialValues: evaluateKeyValuesToObject(convertedProps?.additionalProperties, formData),
+      parentFormValues: formData,
     };
 
     return props?.refreshTableOnSuccess ? (
@@ -124,13 +126,10 @@ interface IToolbarButtonTableDialogProps extends Omit<IModalProps, 'formId' | 'i
  */
 const ToolbarButtonTableDialog: FC<IToolbarButtonTableDialogProps> = props => {
   const { refreshTable } = useDataTableStore();
-  const { formData } = useForm();
 
   const modalProps: IModalProps = {
     ...props?.modalProps,
     formId: props?.modalFormId,
-    initialValues: evaluateKeyValuesToObject(props?.additionalProperties, formData),
-    parentFormValues: formData,
     onSubmitted: () => {
       // todo: implement custom actions support
       refreshTable();
@@ -140,8 +139,6 @@ const ToolbarButtonTableDialog: FC<IToolbarButtonTableDialogProps> = props => {
   const dynamicModal = useModal(modalProps);
 
   const onButtonClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    console.log('<<LOG>> ToolbarButtonTableDialog modalProps: ', modalProps);
-
     event.stopPropagation(); // Don't collapse the CollapsiblePanel when clicked
 
     if (props.modalFormId) {

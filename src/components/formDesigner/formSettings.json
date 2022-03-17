@@ -135,7 +135,7 @@
       "showCount": false,
       "allowClear": false,
       "validate": {},
-      "description": "Write a code that allows you to return an object whose values will be merged with the form state before submit. The value 'data', which represents the form data is exposed by this function"
+      "description": "Write a code that allows you to return an object whose values will be merged with the form state before submit. The value 'data', 'parentFormValues' and 'initialValues' are exposed by this function"
     }
   ],
   "formSettings": { "layout": "horizontal", "colon": true, "labelCol": { "span": 5 }, "wrapperCol": { "span": 19 } }

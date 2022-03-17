@@ -16,15 +16,15 @@ export interface IReadOnlyDisplayFormItemProps {
   value?: any;
   render?: () => ReactNode | ReactNode;
   type?:
-  | 'string'
-  | 'number'
-  | 'dropdown'
-  | 'dropdownMultiple'
-  | 'time'
-  | 'datetime'
-  | 'checkbox'
-  | 'switch'
-  | 'radiogroup';
+    | 'string'
+    | 'number'
+    | 'dropdown'
+    | 'dropdownMultiple'
+    | 'time'
+    | 'datetime'
+    | 'checkbox'
+    | 'switch'
+    | 'radiogroup';
   dropdownDisplayMode?: 'raw' | 'tags';
   dateFormat?: string;
   timeFormat?: string;
@@ -54,10 +54,6 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
   quickviewGetEntityUrl,
   quickviewWidth,
 }) => {
-  if (type === 'string') {
-    console.log('ReadOnlyDisplayFormItem type, disabled: ', type, disabled);
-  }
-
   const { formSettings, setFormMode, formMode } = useForm();
 
   const setFormModeToEdit = () => setFormMode('edit');
@@ -82,7 +78,8 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
                 formPath={quickviewFormPath}
                 getEntityUrl={quickviewGetEntityUrl}
                 displayProperty={quickviewDisplayPropertyName}
-                width={quickviewWidth} />
+                width={quickviewWidth}
+              />
             );
           } else {
             return displayLabel;
@@ -134,7 +131,6 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
 
   return (
     <span className="read-only-display-form-item">
-
       {renderValue()}
 
       <Show when={formSettings?.showModeToggler && formMode === 'readonly'}>

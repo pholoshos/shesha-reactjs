@@ -66,17 +66,6 @@ const ComponentsContainer: FC<IProps> = ({
           // add new component
           const toolboxComponent = newState[newComponentIndex];
 
-          console.log(
-            '"toolboxComponent.id.toString(), containerId" :>> ',
-            // toolboxComponent.id.toString(),
-            toolboxComponent.id.toString(),
-            containerId
-          );
-
-          // if (isViewTemplateComponent && containerId === 'root') {
-          //   return;
-          // }
-
           addComponent({
             containerId,
             componentType: toolboxComponent.id.toString(),

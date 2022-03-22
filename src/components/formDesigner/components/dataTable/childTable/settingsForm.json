@@ -91,6 +91,19 @@
       "label": "Default Mappings",
       "description": "Enter the JSON object that should match the structure of the default one provided",
       "validate": {}
+    },
+    {
+      "id": "6cb29c17-5b6a-40c1-b5a4-373c7a2c9e8f",
+      "type": "codeEditor",
+      "name": "customVisibility",
+      "label": "Custom Visibility",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": []
     }
   ],
   "formSettings": {

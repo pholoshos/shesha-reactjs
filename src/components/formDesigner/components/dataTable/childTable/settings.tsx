@@ -8,6 +8,7 @@ import { QueryBuilderProvider, useForm, useMetadata } from '../../../../../provi
 import { ITableColumn } from '../../../../../interfaces';
 import { TableDataSourceType } from '../../../../../providers/dataTable/interfaces';
 import { IProperty } from '../../../../../providers/queryBuilder/models';
+import CodeEditor from '../../codeEditor/codeEditor';
 
 export interface IChildDataTableSettingsProps {
   model: IChildTableSettingsProps;
@@ -37,6 +38,7 @@ function ChildDataTableSettingsInner({ onSave, model, onValuesChange }: IChildDa
     toolbarItems: model?.toolbarItems,
     filters: model?.filters,
     defaultSelectedFilterId: model?.defaultSelectedFilterId,
+    customVisibility: model?.customVisibility,
   };
 
   return (
@@ -95,6 +97,21 @@ function ChildDataTableSettingsInner({ onSave, model, onValuesChange }: IChildDa
             </Select.Option>
           ))}
         </Select>
+      </Form.Item>
+
+      <Form.Item
+        label="Custom Visibility"
+        name="customVisibility"
+        tooltip="Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key."
+      >
+        <CodeEditor
+          mode="dialog"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="customVisibility"
+          type={''}
+          id={''}
+          description="Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key."
+        />
       </Form.Item>
     </Form>
   );

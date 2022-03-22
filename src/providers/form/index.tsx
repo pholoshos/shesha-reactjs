@@ -20,14 +20,7 @@ import {
   ISetEnabledComponentsPayload,
   IComponentAddFromTemplatePayload,
 } from './contexts';
-import {
-  IFormProps,
-  IFormActions,
-  FormMarkup,
-  FormMarkupWithSettings,
-  IFormSections,
-  FormMode,
-} from './models';
+import { IFormProps, IFormActions, FormMarkup, FormMarkupWithSettings, IFormSections, FormMode } from './models';
 import { getFlagSetters } from '../utils/flagsSetters';
 import {
   componentAddAction,

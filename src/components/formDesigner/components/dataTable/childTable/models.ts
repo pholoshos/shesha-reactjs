@@ -8,4 +8,5 @@ export interface IChildTableSettingsProps {
   toolbarItems?: ToolbarItemProps[];
   filters?: ITableViewProps[];
   defaultSelectedFilterId: string;
+  customVisibility?: string;
 }

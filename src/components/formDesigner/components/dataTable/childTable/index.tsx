@@ -23,7 +23,7 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
   name: 'Child Table',
   icon: <TableOutlined />,
   factory: (model: IChildTableComponentProps, componentRef: MutableRefObject<any>) => {
-    const { formData, formMode } = useForm();
+    const { formData, formMode, isComponentHidden } = useForm();
     const { columns, getDataSourceType, setPredefinedFilters, refreshTable } = useDataTable();
 
     const { defaultSelectedFilterId, filters } = model;
@@ -83,6 +83,8 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
       }
     }, [model?.filters, formData]);
 
+    const isVisible = !isComponentHidden(model);
+
     return (
       <Fragment>
         <Show when={formMode === 'designer'}>
@@ -105,27 +107,29 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
           </Show>
         </Show>
 
-        <CollapsiblePanel
-          key={undefined}
-          header={evaluateString(model?.title, formData)}
-          extra={
-            <div onClick={e => e?.stopPropagation()}>
-              <Space size="middle">
-                <Show when={model?.allowQuickSearch}>
-                  <GlobalTableFilter />
-                </Show>
+        <Show when={isVisible}>
+          <CollapsiblePanel
+            key={undefined}
+            header={evaluateString(model?.title, formData)}
+            extra={
+              <div onClick={e => e?.stopPropagation()}>
+                <Space size="middle">
+                  <Show when={model?.allowQuickSearch}>
+                    <GlobalTableFilter />
+                  </Show>
 
-                <TablePager />
+                  <TablePager />
 
-                <ToolbarWithProvider items={model?.toolbarItems || []} name={''} type={''} id={model.id} />
-              </Space>
-            </div>
-          }
-          noContentPadding
-          className="sha-form-designer-child-table"
-        >
-          <ComponentsContainer containerId={model.id} />
-        </CollapsiblePanel>
+                  <ToolbarWithProvider items={model?.toolbarItems || []} name={''} type={''} id={model.id} />
+                </Space>
+              </div>
+            }
+            noContentPadding
+            className="sha-form-designer-child-table"
+          >
+            <ComponentsContainer containerId={model.id} />
+          </CollapsiblePanel>
+        </Show>
       </Fragment>
     );
   },

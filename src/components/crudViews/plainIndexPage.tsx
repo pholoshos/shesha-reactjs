@@ -88,9 +88,9 @@ const TableWithControls: FC<IGenericIndexPageProps> = props => {
           { icon: <SearchOutlined />, onClick: props.detailsUrl },
           { icon: <EditOutlined />, onClick: props.editUrl },
         ]}
-        toolbarItems={[...toolbarItems, ...(props?.tableProps?.toolbarItems || [])]}
         tableRef={props?.tableProps?.tableRef}
         {...extraTableProps}
+        toolbarItems={[...toolbarItems, ...(props?.tableProps?.toolbarItems || [])]}
       />
 
       <Show when={!!props.createModalProps}>

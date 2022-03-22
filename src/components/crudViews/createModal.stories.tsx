@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { GenericCreateModal, GlobalStateProvider, IGenericCreateModalProps } from '../..';
+import React from 'react';
+import { GenericCreateModal, IGenericCreateModalProps } from '../..';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
-import { ShaApplicationProvider } from '../../providers';
-import AuthContainer from '../authedContainer';
 import { useAreaCreate } from '../../apis/area';
+import StoryApp from '../storyBookApp';
 
 // #region Storybook Metadata & Configuration
 
@@ -13,23 +12,15 @@ export default {
   component: GenericCreateModal,
 } as Meta;
 
-const backendUrl = process.env.STORYBOOK_BASE_URL;
-
 // #endregion
 
 // #region Base Mapping Template and Props
 
 const BaseTemplate: Story<IGenericCreateModalProps> = props => {
   return (
-    <GlobalStateProvider>
-      <ShaApplicationProvider backendUrl={backendUrl}>
-        <AuthContainer layout>
-          <>
-            <GenericCreateModal title={props.title} formPath={props.formPath} updater={props.updater} />
-          </>
-        </AuthContainer>
-      </ShaApplicationProvider>
-    </GlobalStateProvider>
+    <StoryApp>
+      <GenericCreateModal title={props.title} formPath={props.formPath} updater={props.updater} />
+    </StoryApp>
   );
 };
 

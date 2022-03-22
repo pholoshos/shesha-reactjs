@@ -3,17 +3,14 @@ import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
 import GlobalStateProvider, { useGlobalState } from '.';
 import { Button, notification, Space } from 'antd';
-import { ShaApplicationProvider } from '../../providers';
 import { IConfigurableFormProps } from '../../components';
-import AuthContainer from '../../components/authedContainer';
 import { addStory } from '../../stories/utils';
+import StoryApp from '../../components/storyBookApp';
 
 export default {
   title: 'Providers/GlobalState',
   component: GlobalStateProvider,
 } as Meta;
-
-const backendUrl = process.env.STORYBOOK_BASE_URL; // Just for configuring Storybook
 
 const KEY_ONE = 'KEY_ONE';
 const KEY_TWO = 'KEY_TWO';
@@ -69,13 +66,9 @@ const BasicTemplateInner = () => {
 
 const BasicTemplate: Story<IConfigurableFormProps> = () => {
   return (
-    <GlobalStateProvider>
-      <ShaApplicationProvider backendUrl={backendUrl}>
-        <AuthContainer>
-          <BasicTemplateInner />
-        </AuthContainer>
-      </ShaApplicationProvider>
-    </GlobalStateProvider>
+    <StoryApp>
+      <BasicTemplateInner />
+    </StoryApp>
   );
 };
 

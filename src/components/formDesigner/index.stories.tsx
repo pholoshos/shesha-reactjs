@@ -2,14 +2,7 @@ import React, { FC, useState } from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
 import FormDesigner from './formDesigner';
-import {
-  /*MetadataProvider,*/ FormProvider,
-  ShaApplicationProvider,
-  useSheshaApplication,
-  MetadataDispatcherProvider,
-  GlobalStateProvider,
-} from '../../providers';
-import AuthContainer from '../authedContainer';
+import { /*MetadataProvider,*/ FormProvider, useSheshaApplication, MetadataDispatcherProvider } from '../../providers';
 import { Button, Select } from 'antd';
 // @ts-ignore
 import { formGetByPath, formTestDelayGet, formTestDelayPost, formUpdateMarkup } from '../../apis/form';
@@ -17,6 +10,7 @@ import allFormsJson from './allForms.json';
 import { LabeledValue } from 'antd/lib/select';
 import { addStory } from '../../stories/utils';
 import { FormMode } from '../../providers/form/models';
+import StoryApp from '../storyBookApp';
 
 export default {
   title: 'Components/Temp/FormDesigner',
@@ -29,21 +23,15 @@ export interface IFormDesignerStoryProps {
   mode?: FormMode;
 }
 
-const defaultBackendUrl = process.env.STORYBOOK_BASE_URL; // TODO: Make this configurable
-
 // Create a master template for mapping args to render the Button component
 const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formPath, formId, mode = 'designer' }) => (
-  <GlobalStateProvider>
-    <ShaApplicationProvider backendUrl={defaultBackendUrl}>
-      <AuthContainer layout={true}>
-        <MetadataDispatcherProvider>
-          <FormProvider path={formPath} id={formId} mode={mode}>
-            <FormDesigner />
-          </FormProvider>
-        </MetadataDispatcherProvider>
-      </AuthContainer>
-    </ShaApplicationProvider>
-  </GlobalStateProvider>
+  <StoryApp>
+    <MetadataDispatcherProvider>
+      <FormProvider path={formPath} id={formId} mode={mode}>
+        <FormDesigner />
+      </FormProvider>
+    </MetadataDispatcherProvider>
+  </StoryApp>
 );
 
 //#region TableContextProps
@@ -66,13 +54,9 @@ export interface IActionsTemplateProps {
 }
 const ActionsTemplate: Story<IActionsTemplateProps> = props => {
   return (
-    <GlobalStateProvider>
-      <ShaApplicationProvider backendUrl={defaultBackendUrl}>
-        <AuthContainer layout={true}>
-          <ActionsTemplateContent {...props} />
-        </AuthContainer>
-      </ShaApplicationProvider>
-    </GlobalStateProvider>
+    <StoryApp>
+      <ActionsTemplateContent {...props} />
+    </StoryApp>
   );
 };
 
@@ -254,13 +238,9 @@ export const FormsEditor: FC = () => {
 };
 
 const BrowserTemplate: Story = () => (
-  <GlobalStateProvider>
-    <ShaApplicationProvider backendUrl={defaultBackendUrl}>
-      <AuthContainer layout={true}>
-        <FormsEditor />
-      </AuthContainer>
-    </ShaApplicationProvider>
-  </GlobalStateProvider>
+  <StoryApp>
+    <FormsEditor />
+  </StoryApp>
 );
 
 export const Browser = addStory(BrowserTemplate, null);

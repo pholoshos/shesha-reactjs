@@ -9,6 +9,7 @@ import ShaIcon, { IconType } from '../../../../../shaIcon';
 import classNames from 'classnames';
 import moment from 'moment';
 import { IKeyValue } from '../../../../../../interfaces/keyValue';
+import axios from 'axios';
 
 export interface IToolbarButtonProps extends IToolbarButton {
   formComponentId: string;
@@ -54,9 +55,9 @@ export const ToolbarButton: FC<IToolbarButtonProps> = props => {
       }
 
       // tslint:disable-next-line:function-constructor
-      const func = new Function('data', 'moment', 'form', 'formMode', expression);
+      const func = new Function('data', 'moment', 'form', 'formMode', 'axios', expression);
 
-      return func(formData, moment, form, formMode);
+      return func(formData, moment, form, formMode, axios);
     };
 
     switch (props.buttonAction) {

@@ -68,3 +68,6 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
 };
 
 export default EntityPickerComponent;
+// { "id": "8400a8ec-577d-4468-9347-5601f952b44c", "label": "Button", "value": "button" },
+//         { "id": "cc268f50-47ca-4e4e-966f-7f2abfec902f", "label": "Separator", "value": "separator" },
+//         { "id": "b4117249-8c2f-4991-a96c-9ea434293120", "label": "Line", "value": "line" }

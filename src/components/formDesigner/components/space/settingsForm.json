@@ -54,6 +54,7 @@
       "name": "size",
       "parentId": "root",
       "label": "The space size",
+      "allowClear": true,
       "values": [
         {
           "label": "Small",
@@ -71,8 +72,7 @@
           "id": "f01e54aa-a1a4-4bd6-ba73-c395e48af8ce"
         }
       ],
-      "dataSourceType": "values",
-      "defaultValue": ["small"]
+      "dataSourceType": "values"
     },
     {
       "id": "5c813b1a-04c5-4658-ac0f-cbcbae6b3bd4",

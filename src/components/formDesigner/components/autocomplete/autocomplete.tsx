@@ -7,6 +7,7 @@ import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/fo
 import { evaluateValue, replaceTags, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import Autocomplete, { AutocompleteDataSourceType, ISelectOption } from '../../../autocomplete';
 import ConfigurableFormItem from '../formItem';
+import { customDropDownEventHandler } from '../utils';
 import settingsFormJson from './settingsForm.json';
 
 interface IQueryParamProp {
@@ -45,7 +46,7 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
   name: 'Autocomplete',
   icon: <FileSearchOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.entityReference,
-  factory: (model: IAutocompleteProps) => {
+  factory: (model: IAutocompleteProps, _c, form) => {
     const { queryParams } = model;
     const { formData, formMode, isComponentDisabled } = useForm();
     const dataSourceUrl = model.dataSourceUrl
@@ -82,9 +83,9 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       useRawValues
         ? item[value]
         : {
-          id: item[value],
-          displayText: item[displayText],
-        };
+            id: item[value],
+            displayText: item[displayText],
+          };
 
     const getOptionFromFetchedItem = (item: object): ISelectOption => {
       const { dataSourceType, keyPropName, useRawValues, valuePropName } = model;
@@ -126,13 +127,11 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
     // todo: implement other types of datasources!
     return (
       <ConfigurableFormItem model={model}>
-        {
-          model.useRawValues ? (
-            <Autocomplete.Raw {...autocompleteProps} />
-          ) : (
-            <Autocomplete.EntityDto {...autocompleteProps} />
-          )
-        }
+        {model.useRawValues ? (
+          <Autocomplete.Raw {...autocompleteProps} {...customDropDownEventHandler(model, form)} />
+        ) : (
+          <Autocomplete.EntityDto {...autocompleteProps} {...customDropDownEventHandler(model, form)} />
+        )}
       </ConfigurableFormItem>
     );
   },

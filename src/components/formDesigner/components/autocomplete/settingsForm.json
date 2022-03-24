@@ -211,6 +211,26 @@
       "ignorePrefixesOnNewItems": true
     },
     {
+      "id": "02fbe834-8bef-4d59-accf-edc5d76e10ba",
+      "type": "sectionSeparator",
+      "name": "sectionEvent",
+      "parentId": "root",
+      "label": "Events"
+    },
+    {
+      "id": "ba7ce49e-3067-4285-a1cb-104d4a8ee570",
+      "type": "codeEditor",
+      "name": "onChangeCustom",
+      "label": "On Change",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Enter custom even handler on changing of event. (form, value, option) are exposed",
+      "validate": {},
+      "settingsValidationErrors": []
+    },
+    {
       "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",
       "type": "sectionSeparator",
       "name": "separator2",

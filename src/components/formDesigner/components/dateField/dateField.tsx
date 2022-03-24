@@ -12,6 +12,7 @@ import { useForm } from '../../../../providers';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { getMoment } from '../../../../utils/date';
+import { customDateEventHandler } from '../utils';
 
 const DATE_TIME_FORMATS = {
   time: 'HH:mm',
@@ -63,11 +64,11 @@ const DateField: IToolboxComponent<IDateFieldProps> = {
   name: 'Date field',
   icon: <CalendarOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.date || dataType === DataTypes.dateTime,
-  factory: (model: IDateFieldProps) => {
+  factory: (model: IDateFieldProps, _c, form) => {
     return (
       <Fragment>
         <ConfigurableFormItem model={model}>
-          <DatePickerWrapper {...model} />
+          <DatePickerWrapper {...model} {...customDateEventHandler(model, form)} />
         </ConfigurableFormItem>
 
         {model?.range && (

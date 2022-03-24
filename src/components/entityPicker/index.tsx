@@ -40,6 +40,7 @@ export interface IEntityPickerState {
   selectedRowIndex?: number;
   selectedValue?: string;
   selectedRow?: IAnyObject;
+  globalStateKey?: string;
 }
 
 const INITIAL_STATE: IEntityPickerState = {
@@ -72,7 +73,9 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     ...INITIAL_STATE,
   });
 
-  const { registerConfigurableColumns } = useDataTable();
+  const { registerConfigurableColumns, selectedRow } = useDataTable();
+
+  const [globalSelectedState] = useState();
 
   useEffect(() => {
     // This is important for form designer configured picker

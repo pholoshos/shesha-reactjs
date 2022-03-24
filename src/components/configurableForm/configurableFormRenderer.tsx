@@ -16,6 +16,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   httpVerb = 'POST',
   parentFormValues,
   initialValues,
+  beforeSubmit,
   ...props
 }) => {
   const { setFormData, formData, allComponents, formMode, isDragging, formSettings, setValidationErrors } = useForm();
@@ -115,15 +116,31 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
     if (submitUrl) {
       setValidationErrors(null);
-      doSubmit(postData)
-        .then(response => {
-          // note: we pass merged values
-          if (props.onFinish) props.onFinish(postData, response?.result);
-        })
-        .catch(e => {
-          setValidationErrors(e?.data?.error || e);
-          console.log('ConfigurableFormRenderer onFinish e: ', e);
-        }); // todo: test and show server-side validation
+
+      const doPost = () =>
+        doSubmit(postData)
+          .then(response => {
+            // note: we pass merged values
+            if (props.onFinish) props.onFinish(postData, response?.result);
+          })
+          .catch(e => {
+            setValidationErrors(e?.data?.error || e);
+            console.log('ConfigurableFormRenderer onFinish e: ', e);
+          }); // todo: test and show server-side validation
+
+      if (typeof beforeSubmit === 'function') {
+        beforeSubmit(postData)
+          .then(() => {
+            console.log('beforeSubmit then');
+
+            doPost();
+          })
+          .catch(() => {
+            console.log('beforeSubmit catch');
+          });
+      } else {
+        doPost();
+      }
     } // note: we pass merged values
     else if (props.onFinish) props.onFinish(postData);
   };

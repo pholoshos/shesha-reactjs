@@ -1,6 +1,9 @@
+import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ButtonType } from 'antd/lib/button';
 
 type ToolbarItemType = 'item' | 'group';
+
+type ButtonGroupType = 'inline' | 'dropdown';
 
 export type ToolbarItemProps = IToolbarButton | IButtonGroup;
 
@@ -22,6 +25,7 @@ export interface IToolbarItemBase {
   sortOrder: number;
   danger?: boolean;
   itemType: ToolbarItemType;
+  groupType: ButtonGroupType;
   icon?: string;
   buttonType?: ButtonType;
   customVisibility?: string;
@@ -34,11 +38,19 @@ export interface IToolbarButton extends IToolbarItemBase {
   buttonAction?: ButtonActionType;
   refreshTableOnSuccess?: boolean;
   targetUrl?: string;
+  formAction?: string;
+  actionScript?: string;
+  size?: SizeType;
   modalFormId?: string;
   modalTitle?: string;
   modalWidth?: number;
-  formAction?: string;
-  actionScript?: string;
+  modalActionOnSuccess?: 'keepOpen' | 'navigateToUrl' | 'close' | undefined;
+  showConfirmDialogBeforeSubmit?: boolean;
+  modalConfirmDialogMessage?: string;
+
+  onSuccessScript?: string;
+
+  onErrorScript?: string;
 }
 
 export interface IButtonGroup extends IToolbarItemBase {

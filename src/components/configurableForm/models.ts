@@ -29,6 +29,12 @@ export interface IConfigurableFormRendererProps<Values = any, FieldData = any> e
    */
   onFinish?: (values: Values, response?: any) => void;
   onFinishFailed?: (errorInfo: ValidateErrorEntity<Values>) => void;
+
+  /**
+   * If specified, the form will only be submitted if this function return true
+   */
+  beforeSubmit?: (values: Values) => Promise<boolean>;
+
   form?: FormInstance<any>;
   actions?: IFormActions;
   sections?: IFormSections;

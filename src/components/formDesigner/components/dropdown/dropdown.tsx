@@ -11,6 +11,7 @@ import RefListDropDown from '../../../refListDropDown';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { useForm } from '../../../..';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
+import { customDropDownEventHandler } from '../utils';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -19,10 +20,10 @@ const DropdownComponent: IToolboxComponent<IDropdownProps> = {
   name: 'Dropdown',
   icon: <DownSquareOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.referenceListItem,
-  factory: (model: IDropdownProps) => {
+  factory: (model: IDropdownProps, _c, form) => {
     return (
       <ConfigurableFormItem model={model}>
-        <Dropdown {...model} />
+        <Dropdown {...model} {...customDropDownEventHandler(model, form)} />
       </ConfigurableFormItem>
     );
   },

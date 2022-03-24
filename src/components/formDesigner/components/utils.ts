@@ -1,7 +1,7 @@
 import { FormInstance } from 'antd';
 import { DOMAttributes } from 'react';
 import { IConfigurableFormComponent } from '../../..';
-import { RangePickerSharedProps } from 'rc-picker/lib/RangePicker';
+import { CustomLabeledValue } from '../../autocomplete';
 
 export const onCustomEventsHandler = <FormCustomEvent = any>(
   event: FormCustomEvent,
@@ -23,12 +23,16 @@ export const customEventHandler = <T = any>(
   onFocus: event => onCustomEventsHandler(event, model?.onFocusCustom, form),
 });
 
-export const customDateEventHandler = <T = any>(
-  model: IConfigurableFormComponent,
-  form: FormInstance
-): RangePickerSharedProps<T> => ({
-  onChange: (value, dateString) => {
+export const customDateEventHandler = (model: IConfigurableFormComponent, form: FormInstance) => ({
+  onChange: (value: any | null, dateString: string | [string, string]) => {
     const eventFunc = new Function('value', 'dateString', 'form', model?.onChangeCustom);
     return eventFunc(value, dateString, form);
+  },
+});
+
+export const customDropDownEventHandler = <T = any>(model: IConfigurableFormComponent, form: FormInstance) => ({
+  onChange: (value: CustomLabeledValue<T>, option: any) => {
+    const eventFunc = new Function('value', 'option', 'form', model?.onChangeCustom);
+    return eventFunc(value, option, form);
   },
 });

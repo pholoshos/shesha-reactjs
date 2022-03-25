@@ -1,4 +1,3 @@
-import { SortingRule } from 'react-table';
 import { createAction } from 'redux-actions';
 import { DataTableColumnDto, DataTableConfigDto } from '../../apis/dataTable';
 import { IConfigurableColumnsBase } from '../datatableColumnsConfigurator/models';

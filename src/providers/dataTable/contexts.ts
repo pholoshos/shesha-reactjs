@@ -170,6 +170,8 @@ export interface IDataTableActionsContext
    */
   setFormData?: (formData: any) => void;
 
+  onSort?: (sorting: IColumnSorting[]) => void;
+
   changeSelectedIds?: (selectedIds: string[]) => void;
   updateLocalTableData?: () => void;
   deleteRowItem?: (idOfItemToDeleteOrUpdate: string) => void;

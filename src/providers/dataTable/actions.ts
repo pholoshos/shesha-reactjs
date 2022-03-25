@@ -1,3 +1,4 @@
+import { SortingRule } from 'react-table';
 import { createAction } from 'redux-actions';
 import { DataTableColumnDto, DataTableConfigDto } from '../../apis/dataTable';
 import { IConfigurableColumnsBase } from '../datatableColumnsConfigurator/models';
@@ -10,6 +11,7 @@ import {
   IGetDataPayload,
   IEditableRowState,
   ITableCrudConfig,
+  IColumnSorting,
 } from './interfaces';
 
 export enum DataTableActionEnums {
@@ -46,6 +48,7 @@ export enum DataTableActionEnums {
   DeleteRowItem = 'DELETE_ROW_ITEM',
   RegisterConfigurableColumns = 'REGISTER_CONFIGURABLE_COLUMNS',
   OnSelectRow = 'ON_SELECT_ROW',
+  OnSort = 'ON_SORT',
 
   SetCrudConfig = 'SET_CRUD_Config',
 
@@ -170,6 +173,8 @@ export const registerConfigurableColumnsAction = createAction<
   IRegisterConfigurableColumnsPayload,
   IRegisterConfigurableColumnsPayload
 >(DataTableActionEnums.RegisterConfigurableColumns, p => p);
+
+export const onSortAction = createAction<IColumnSorting[], IColumnSorting[]>(DataTableActionEnums.OnSort, p => p);
 
 /* NEW_ACTION_GOES_HERE */
 

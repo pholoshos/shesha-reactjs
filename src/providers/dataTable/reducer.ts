@@ -1,3 +1,4 @@
+import { SortingRule } from 'react-table';
 import { DATA_TABLE_CONTEXT_INITIAL_STATE, DEFAULT_PAGE_SIZE_OPTIONS, IDataTableStateContext } from './contexts';
 import {
   DataTableActionEnums,
@@ -9,6 +10,7 @@ import {
 } from './actions';
 import flagsReducer from '../utils/flagsReducer';
 import {
+  IColumnSorting,
   IEditableRowState,
   IGetDataPayload,
   IndexColumnDataType,
@@ -490,6 +492,15 @@ const reducer = handleActions<IDataTableStateContext, any>(
       return {
         ...state,
         configurableColumns: [...payload.columns],
+      };
+    },
+
+    [DataTableActionEnums.OnSort]: (state: IDataTableStateContext, action: ReduxActions.Action<IColumnSorting[]>) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        tableSorting: [...payload],
       };
     },
 

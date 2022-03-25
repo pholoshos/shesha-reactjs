@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { ButtonGroupItem } from './buttonGroupItem';
 import { ButtonGroupItemsGroup } from './buttonGrouptemsGroup';
-import { useButtonGroupConfigurator } from '../../../../providers/buttonGroupConfigurator';
+import { useButtonGroupConfigurator } from '../../../../../providers/buttonGroupConfigurator';
 import {
   IButtonGroup,
   IButtonGroupButton,
   ButtonGroupItemProps,
-} from '../../../../providers/buttonGroupConfigurator/models';
+} from '../../../../../providers/buttonGroupConfigurator/models';
 import { ReactSortable, ItemInterface } from 'react-sortablejs';
 
 export interface IButtonGroupItemsSortableProps {

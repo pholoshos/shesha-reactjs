@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { IToolboxComponent } from '../../../../interfaces';
+import { IToolboxComponent } from '../../../../../interfaces';
 import { GroupOutlined } from '@ant-design/icons';
 import ToolbarSettings from './settings';
 import { IButtonGroupProps } from './models';
@@ -8,14 +8,14 @@ import {
   IButtonGroup,
   IButtonGroupButton,
   ButtonGroupItemProps,
-} from '../../../../providers/buttonGroupConfigurator/models';
-import { useForm, isInDesignerMode } from '../../../../providers/form';
-import { getVisibilityFunc2 } from '../../../../providers/form/utils';
-import { DataTableSelectionProvider, useDataTableSelection } from '../../../../providers/dataTableSelection';
+} from '../../../../../providers/buttonGroupConfigurator/models';
+import { useForm, isInDesignerMode } from '../../../../../providers/form';
+import { getVisibilityFunc2 } from '../../../../../providers/form/utils';
+import { DataTableSelectionProvider, useDataTableSelection } from '../../../../../providers/dataTableSelection';
 import { ButtonGroupButton } from './button';
-import { ShaIcon } from '../../..';
-import { IconType } from '../../../shaIcon';
-import { useAuth } from '../../../../providers';
+import { ShaIcon } from '../../../..';
+import { IconType } from '../../../../shaIcon';
+import { useAuth } from '../../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
 
 const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {

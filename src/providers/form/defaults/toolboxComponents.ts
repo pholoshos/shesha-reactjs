@@ -52,7 +52,7 @@ import StatusTag from '../../../components/formDesigner/components/statusTag';
 import DynamicView from '../../../components/formDesigner/components/dynamicView';
 import ChildTable from '../../../components/formDesigner/components/dataTable/childTable';
 import ColumnsEditor from '../../../components/formDesigner/components/dataTable/table/columnsEditor/columnsEditorComponent';
-import ButtonGroup from '../../../components/formDesigner/components/buttonGroup/buttonGroupComponent';
+import ButtonGroup from '../../../components/formDesigner/components/button/buttonGroup/buttonGroupComponent';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {

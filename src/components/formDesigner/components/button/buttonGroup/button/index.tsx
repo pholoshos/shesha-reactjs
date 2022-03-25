@@ -1,15 +1,15 @@
 import React, { FC } from 'react';
 import { Button, message, Modal } from 'antd';
-import { useShaRouting, useDataTableStore, useForm, useModal } from '../../../../../providers';
-import { ISelectionProps } from '../../../../../providers/dataTableSelection/models';
-import { IModalProps } from '../../../../../providers/dynamicModal/models';
-import { evaluateKeyValuesToObject, evaluateString } from '../../../../../providers/form/utils';
-import ShaIcon, { IconType } from '../../../../shaIcon';
+import { useShaRouting, useDataTableStore, useForm, useModal } from '../../../../../../providers';
+import { ISelectionProps } from '../../../../../../providers/dataTableSelection/models';
+import { IModalProps } from '../../../../../../providers/dynamicModal/models';
+import { evaluateKeyValuesToObject, evaluateString } from '../../../../../../providers/form/utils';
+import ShaIcon, { IconType } from '../../../../../shaIcon';
 import classNames from 'classnames';
 import moment from 'moment';
-import { IKeyValue } from '../../../../../interfaces/keyValue';
-import { axiosHttp } from '../../../../../apis/axios';
-import { IButtonGroupButton } from '../../../../../providers/buttonGroupConfigurator/models';
+import { IKeyValue } from '../../../../../../interfaces/keyValue';
+import { axiosHttp } from '../../../../../../apis/axios';
+import { IButtonGroupButton } from '../../../../../../providers/buttonGroupConfigurator/models';
 
 export interface IButtonGroupButtonProps extends IButtonGroupButton {
   formComponentId: string;

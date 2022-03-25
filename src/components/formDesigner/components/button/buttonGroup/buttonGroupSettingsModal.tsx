@@ -3,9 +3,9 @@ import { Modal } from 'antd';
 import {
   ButtonGroupConfiguratorProvider,
   useButtonGroupConfigurator,
-} from '../../../../providers/buttonGroupConfigurator';
+} from '../../../../../providers/buttonGroupConfigurator';
 import { ButtonGroupConfigurator } from './configurator';
-import { ButtonGroupItemProps } from '../../../../providers/buttonGroupConfigurator/models';
+import { ButtonGroupItemProps } from '../../../../../providers/buttonGroupConfigurator/models';
 
 export interface IToolbarSettingsModal {
   visible: boolean;

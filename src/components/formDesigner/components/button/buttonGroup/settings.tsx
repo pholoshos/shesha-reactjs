@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { Form, Button, Select } from 'antd';
 import { IButtonGroupProps } from './models';
 import { ButtonGroupSettingsModal } from './buttonGroupSettingsModal';
-import SectionSeparator from '../../../sectionSeparator';
+import SectionSeparator from '../../../../sectionSeparator';
 
 const { Option } = Select;
 

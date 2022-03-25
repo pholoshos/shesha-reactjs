@@ -1,9 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 import { Alert, Button } from 'antd';
-import { SidebarContainer } from '../../..';
+import { SidebarContainer } from '../../../..';
 import { ButtonGroupProperties } from './properties';
 import ButtonGroupItemsContainer from './buttonGrouptemsContainer';
-import { useButtonGroupConfigurator } from '../../../../providers/buttonGroupConfigurator';
+import { useButtonGroupConfigurator } from '../../../../../providers/buttonGroupConfigurator';
 import './styles/index.less';
 
 export interface IButtonGroupConfiguratorProps {

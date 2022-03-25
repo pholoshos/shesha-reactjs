@@ -2,7 +2,7 @@ import React from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { BorderOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import { ButtonType } from 'antd/lib/button';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
@@ -19,6 +19,16 @@ import { IModalProperties } from '../../../../providers/dynamicModal/models';
 
 type ButtonActionType = 'submit' | 'reset' | 'close' | 'custom' | 'dialog' | 'executeScript';
 
+// type ButtonActionType =
+//   | 'navigate'
+//   | 'dialogue'
+//   | 'executeScript'
+//   | 'executeFormAction'
+//   | 'submit'
+//   | 'reset'
+//   | 'startFormEdit'
+//   | 'cancelFormEdit';
+
 export type IActionParameters = [{ key: string; value: string }];
 
 export interface IButtonProps extends IConfigurableFormComponent, IModalProperties {
@@ -29,6 +39,8 @@ export interface IButtonProps extends IConfigurableFormComponent, IModalProperti
   icon?: string;
   buttonType?: ButtonType;
   danger?: boolean;
+  showConfirmDialogBeforeSubmit?: boolean;
+  modalConfirmDialogMessage?: string;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -79,7 +91,17 @@ const ButtonField: IToolboxComponent<IButtonProps> = {
             console.warn('Form not found');
             return;
           }
-          form.submit();
+
+          const { showConfirmDialogBeforeSubmit, modalConfirmDialogMessage } = model;
+          if (showConfirmDialogBeforeSubmit) {
+            Modal.confirm({
+              content: modalConfirmDialogMessage,
+              onOk: () => form?.submit(),
+            });
+          } else {
+            form?.submit();
+          }
+
           break;
         case 'reset':
           if (!Boolean(form)) {

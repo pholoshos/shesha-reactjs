@@ -35,7 +35,7 @@
       "id": "5d4d56fb-d7f8-4835-a529-c4fa93f3596d",
       "type": "textField",
       "name": "name",
-      "label": "Title",
+      "label": "Name",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
@@ -43,6 +43,13 @@
       "validate": {
         "required": true
       }
+    },
+    {
+      "id": "d498779d-012a-4c6a-82a9-77231245ae28",
+      "type": "textField",
+      "name": "label",
+      "parentId": "root",
+      "label": "Label"
     },
     {
       "id": "345c2181-fb9f-48ed-9631-864ac357807b",
@@ -139,6 +146,20 @@
           "validate": {}
         },
         {
+          "id": "cfd7d45e-c7e3-4a27-987b-dc525c412448",
+          "type": "checkbox",
+          "name": "hidden",
+          "parentId": "root",
+          "label": "Hidden"
+        },
+        {
+          "id": "24a8be15-98eb-40f7-99ea-ebb602693e9c",
+          "type": "checkbox",
+          "name": "disabled",
+          "parentId": "root",
+          "label": "Disabled"
+        },
+        {
           "id": "c6cd5508-c7fe-4e40-9c41-cf8ee0408793",
           "type": "checkbox",
           "name": "showConfirmDialogBeforeSubmit",
@@ -159,7 +180,7 @@
           "id": "21d90871-5ca7-44c6-a4a8-cc646be05101",
           "type": "dropdown",
           "name": "buttonAction",
-          "label": "Button Action",
+          "label": "Action",
           "labelAlign": "right",
           "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
           "hidden": false,

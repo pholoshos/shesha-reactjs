@@ -25,7 +25,7 @@ export const ButtonGroupItem: FC<IButtonGroupItemProps> = props => {
       <div className="sha-toolbar-item-header">
         <DragHandle id={props.id} />
         {props.icon && <ShaIcon iconName={props.icon as IconType} />}
-        <span className="sha-toolbar-item-name">{props.name}</span>
+        <span className="sha-toolbar-item-name">{props.label || props.name}</span>
         {props.tooltip && (
           <Tooltip title={props.tooltip}>
             <QuestionCircleOutlined className="sha-help-icon" />

@@ -86,7 +86,7 @@ export const ButtonGroupInner: FC<IButtonGroupProps> = ({ items, id, size, space
                     danger={childItem.danger}
                     icon={childItem.icon ? <ShaIcon iconName={childItem.icon as IconType} /> : undefined}
                   >
-                    {childItem.name}
+                    {childItem.label}
                   </Menu.Item>
                 ))}
               </Menu>
@@ -99,7 +99,7 @@ export const ButtonGroupInner: FC<IButtonGroupProps> = ({ items, id, size, space
                 icon={item.icon ? <ShaIcon iconName={item.icon as IconType} /> : undefined}
                 size={size}
               >
-                {item.name}
+                {item.label}
               </Dropdown.Button>
             );
           }

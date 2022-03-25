@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Button, message } from 'antd';
+import { Button, message, Modal } from 'antd';
 import { useShaRouting, useDataTableStore, useForm, useModal } from '../../../../../providers';
 import { ISelectionProps } from '../../../../../providers/dataTableSelection/models';
 import { IModalProps } from '../../../../../providers/dynamicModal/models';
@@ -94,7 +94,15 @@ export const ButtonGroupButton: FC<IButtonGroupButtonProps> = props => {
         }
         break;
       case 'submit':
-        form?.submit();
+        const { showConfirmDialogBeforeSubmit, modalConfirmDialogMessage } = props;
+        if (showConfirmDialogBeforeSubmit) {
+          Modal.confirm({
+            content: modalConfirmDialogMessage,
+            onOk: () => form?.submit(),
+          });
+        } else {
+          form?.submit();
+        }
         break;
       case 'startFormEdit':
         setFormMode('edit');
@@ -106,6 +114,7 @@ export const ButtonGroupButton: FC<IButtonGroupButtonProps> = props => {
         form?.resetFields();
         break;
       case 'executeFormAction':
+      case 'customAction':
         if (props.formAction) {
           const actionBody = getAction(props.formComponentId, props.formAction);
           if (actionBody) actionBody();
@@ -128,7 +137,7 @@ export const ButtonGroupButton: FC<IButtonGroupButtonProps> = props => {
       className={classNames('sha-toolbar-btn sha-toolbar-btn-configurable')}
       size={props?.size}
     >
-      {props.name}
+      {props.label}
     </Button>
   );
 };
@@ -175,7 +184,7 @@ const ToolbarButtonTableDialog: FC<IToolbarButtonTableDialogProps> = props => {
       className={classNames('sha-toolbar-btn sha-toolbar-btn-configurable')}
       size={props?.size}
     >
-      {props.name}
+      {props.label}
     </Button>
   );
 };
@@ -201,7 +210,7 @@ const ToolbarButtonPlainDialog: FC<IToolbarButtonTableDialogProps> = props => {
       className={classNames('sha-toolbar-btn sha-toolbar-btn-configurable')}
       size={props?.size}
     >
-      {props.name}
+      {props.label}
     </Button>
   );
 };

@@ -26,7 +26,7 @@ export const ButtonGroupItemsGroup: FC<IProps> = props => {
       <div className="sha-toolbar-group-header">
         <DragHandle id={props.id} />
         {props.icon && <ShaIcon iconName={props.icon as IconType} />}
-        <span className="sha-toolbar-item-name">{props.name}</span>
+        <span className="sha-toolbar-item-name">{props.label || props.name}</span>
         <div className="sha-toolbar-item-controls">
           <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
         </div>

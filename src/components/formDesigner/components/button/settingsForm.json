@@ -25,11 +25,18 @@
       "label": "Label"
     },
     {
-      "id": "2d32fe70-99a0-4825-ae6c-8b933004e119",
+      "id": "9b671866-072e-4688-8b48-ddf5e12d70d4",
       "type": "textArea",
-      "name": "description",
-      "parentId": "root",
-      "label": "Description"
+      "name": "tooltip",
+      "label": "Tooltip",
+      "labelAlign": "right",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "hidden": false,
+      "customVisibility": "",
+      "autoSize": false,
+      "showCount": false,
+      "allowClear": false,
+      "validate": {}
     },
     {
       "id": "6699f82d-8f74-42a9-a192-5d4c8d14266e",
@@ -41,20 +48,6 @@
       "hidden": false,
       "customVisibility": null,
       "settingsValidationErrors": []
-    },
-    {
-      "id": "cfd7d45e-c7e3-4a27-987b-dc525c412448",
-      "type": "checkbox",
-      "name": "hidden",
-      "parentId": "root",
-      "label": "Hidden"
-    },
-    {
-      "id": "24a8be15-98eb-40f7-99ea-ebb602693e9c",
-      "type": "checkbox",
-      "name": "disabled",
-      "parentId": "root",
-      "label": "Disabled"
     },
     {
       "id": "be15598e-5c23-40bc-8245-6b5385bb7963",
@@ -114,6 +107,37 @@
       "validate": {}
     },
     {
+      "id": "cfd7d45e-c7e3-4a27-987b-dc525c412448",
+      "type": "checkbox",
+      "name": "hidden",
+      "parentId": "root",
+      "label": "Hidden"
+    },
+    {
+      "id": "24a8be15-98eb-40f7-99ea-ebb602693e9c",
+      "type": "checkbox",
+      "name": "disabled",
+      "parentId": "root",
+      "label": "Disabled"
+    },
+    {
+      "id": "c6cd5508-c7fe-4e40-9c41-cf8ee0408793",
+      "type": "checkbox",
+      "name": "showConfirmDialogBeforeSubmit",
+      "parentId": "0a16b4f5-f2ca-4d9c-806f-f619da2e45cd",
+      "label": "Show Confirm Dialog Before Submit",
+      "defaultChecked": false,
+      "description": "Whether there should be a confirm dialog before submitting"
+    },
+    {
+      "id": "18f1873d-9832-4559-b851-617cf8c27e02",
+      "type": "textArea",
+      "name": "modalConfirmDialogMessage",
+      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+      "label": "Modal Confirm Dialog Message",
+      "customVisibility": "return data.showConfirmDialogBeforeSubmit"
+    },
+    {
       "id": "ba7ab3f7-39d5-45e5-bb68-9471d71aa9b4",
       "type": "dropdown",
       "name": "actionType",
@@ -133,6 +157,16 @@
           "id": "95c50007-f453-49e7-98f7-b7ce4614c54b",
           "label": "Reset",
           "value": "reset"
+        },
+        {
+          "id": "b2c59c38-6537-4d39-9612-c4c5ae26ef7a",
+          "label": "Start Edit",
+          "value": "startFormEdit"
+        },
+        {
+          "id": "b2c59c38-6537-4d39-9612-c4c5ae26ef7a",
+          "label": "Cancel Edit",
+          "value": "cancelFormEdit"
         },
         {
           "id": "6e38d699-80c5-4bcb-957f-3b6c7e454a02",

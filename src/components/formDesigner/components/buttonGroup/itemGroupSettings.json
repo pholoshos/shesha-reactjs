@@ -14,6 +14,13 @@
       }
     },
     {
+      "id": "9b976b38-5c09-41c9-9e5a-70e6734ef38f",
+      "type": "textField",
+      "name": "label",
+      "parentId": "root",
+      "label": "Label"
+    },
+    {
       "id": "2ab34541-6fa0-4be2-bb1e-eb65ec63b353",
       "type": "dropdown",
       "name": "groupType",

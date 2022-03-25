@@ -1,8 +1,11 @@
 import React, { FC, ReactNode } from 'react';
 import { Modal } from 'antd';
-import { ToolbarConfiguratorProvider, useToolbarConfigurator } from '../../../../providers/toolbarConfigurator';
+import {
+  ButtonGroupConfiguratorProvider,
+  useButtonGroupConfigurator,
+} from '../../../../providers/buttonGroupConfigurator';
 import { ButtonGroupConfigurator } from './configurator';
-import { ToolbarItemProps } from '../../../../providers/toolbarConfigurator/models';
+import { ButtonGroupItemProps } from '../../../../providers/buttonGroupConfigurator/models';
 
 export interface IToolbarSettingsModal {
   visible: boolean;
@@ -24,7 +27,7 @@ export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
   title = 'Configure Toolbar',
   heading,
 }) => {
-  const { items } = useToolbarConfigurator();
+  const { items } = useButtonGroupConfigurator();
 
   const onOkClick = () => {
     if (typeof onChange === 'function') onChange(items);
@@ -40,9 +43,9 @@ export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
 
 export const ButtonGroupSettingsModal: FC<IToolbarSettingsModal> = props => {
   return (
-    <ToolbarConfiguratorProvider items={(props.value as ToolbarItemProps[]) || []}>
+    <ButtonGroupConfiguratorProvider items={(props.value as ButtonGroupItemProps[]) || []}>
       <ButtonGroupSettingsModalInner {...props} />
-    </ToolbarConfiguratorProvider>
+    </ButtonGroupConfiguratorProvider>
   );
 };
 

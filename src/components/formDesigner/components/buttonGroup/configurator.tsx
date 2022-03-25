@@ -3,7 +3,7 @@ import { Alert, Button } from 'antd';
 import { SidebarContainer } from '../../..';
 import { ButtonGroupProperties } from './properties';
 import ButtonGroupItemsContainer from './buttonGrouptemsContainer';
-import { useToolbarConfigurator } from '../../../../providers/toolbarConfigurator';
+import { useButtonGroupConfigurator } from '../../../../providers/buttonGroupConfigurator';
 import './styles/index.less';
 
 export interface IButtonGroupConfiguratorProps {
@@ -17,7 +17,7 @@ export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
   render,
   heading,
 }) => {
-  const { items, addButton, addGroup } = useToolbarConfigurator();
+  const { items, addButton, addGroup } = useButtonGroupConfigurator();
 
   const content = () => {
     if (Boolean(render)) {
@@ -44,7 +44,7 @@ export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
   };
 
   return (
-    <div className="sha-toolbar-configurator">
+    <div className="sha-button-group-configurator">
       <Alert message={<h4>Here you can configure the button group by adjusting their settings and ordering.</h4>} />
 
       <div className="sha-action-buttons">

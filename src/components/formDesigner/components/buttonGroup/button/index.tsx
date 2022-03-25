@@ -4,14 +4,14 @@ import { useShaRouting, useDataTableStore, useForm, useModal } from '../../../..
 import { ISelectionProps } from '../../../../../providers/dataTableSelection/models';
 import { IModalProps } from '../../../../../providers/dynamicModal/models';
 import { evaluateKeyValuesToObject, evaluateString } from '../../../../../providers/form/utils';
-import { IToolbarButton } from '../../../../../providers/toolbarConfigurator/models';
 import ShaIcon, { IconType } from '../../../../shaIcon';
 import classNames from 'classnames';
 import moment from 'moment';
 import { IKeyValue } from '../../../../../interfaces/keyValue';
 import { axiosHttp } from '../../../../../apis/axios';
+import { IButtonGroupButton } from '../../../../../providers/buttonGroupConfigurator/models';
 
-export interface IButtonGroupButtonProps extends IToolbarButton {
+export interface IButtonGroupButtonProps extends IButtonGroupButton {
   formComponentId: string;
   selectedRow: ISelectionProps;
 }

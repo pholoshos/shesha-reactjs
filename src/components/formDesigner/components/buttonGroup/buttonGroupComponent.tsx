@@ -4,7 +4,11 @@ import { GroupOutlined } from '@ant-design/icons';
 import ToolbarSettings from './settings';
 import { IButtonGroupProps } from './models';
 import { Alert, Menu, Dropdown, Space } from 'antd';
-import { IButtonGroup, IToolbarButton, ToolbarItemProps } from '../../../../providers/toolbarConfigurator/models';
+import {
+  IButtonGroup,
+  IButtonGroupButton,
+  ButtonGroupItemProps,
+} from '../../../../providers/buttonGroupConfigurator/models';
 import { useForm, isInDesignerMode } from '../../../../providers/form';
 import { getVisibilityFunc2 } from '../../../../providers/form/utils';
 import { DataTableSelectionProvider, useDataTableSelection } from '../../../../providers/dataTableSelection';
@@ -38,7 +42,7 @@ export const ButtonGroupInner: FC<IButtonGroupProps> = ({ items, id, size, space
   const { selectedRow } = useDataTableSelection();
   const isDesignMode = formMode === 'designer';
 
-  const renderItem = (item: ToolbarItemProps, uuid: string) => {
+  const renderItem = (item: ButtonGroupItemProps, uuid: string) => {
     if (!isInDesignerMode()) {
       const visibilityFunc = getVisibilityFunc2(item.customVisibility, item.name);
 
@@ -48,7 +52,7 @@ export const ButtonGroupInner: FC<IButtonGroupProps> = ({ items, id, size, space
 
     switch (item.itemType) {
       case 'item':
-        const itemProps = item as IToolbarButton;
+        const itemProps = item as IButtonGroupButton;
 
         switch (itemProps.itemSubType) {
           case 'button':

@@ -1,23 +1,27 @@
 import React, { FC } from 'react';
 import { ButtonGroupItem } from './buttonGroupItem';
 import { ButtonGroupItemsGroup } from './buttonGrouptemsGroup';
-import { useToolbarConfigurator } from '../../../../providers/toolbarConfigurator';
-import { IButtonGroup, IToolbarButton, ToolbarItemProps } from '../../../../providers/toolbarConfigurator/models';
+import { useButtonGroupConfigurator } from '../../../../providers/buttonGroupConfigurator';
+import {
+  IButtonGroup,
+  IButtonGroupButton,
+  ButtonGroupItemProps,
+} from '../../../../providers/buttonGroupConfigurator/models';
 import { ReactSortable, ItemInterface } from 'react-sortablejs';
 
-export interface IToolbarItemsSortableProps {
+export interface IButtonGroupItemsSortableProps {
   index?: number[];
   id?: string;
-  items: ToolbarItemProps[];
+  items: ButtonGroupItemProps[];
 }
 
-export const ButtonGroupItemsContainer: FC<IToolbarItemsSortableProps> = props => {
-  const { updateChildItems } = useToolbarConfigurator();
+export const ButtonGroupItemsContainer: FC<IButtonGroupItemsSortableProps> = props => {
+  const { updateChildItems } = useButtonGroupConfigurator();
 
-  const renderItem = (item: ToolbarItemProps, index: number) => {
+  const renderItem = (item: ButtonGroupItemProps, index: number) => {
     switch (item.itemType) {
       case 'item':
-        const itemProps = item as IToolbarButton;
+        const itemProps = item as IButtonGroupButton;
         return <ButtonGroupItem key={index} index={[...props.index, index]} {...itemProps} />;
 
       case 'group':
@@ -30,9 +34,9 @@ export const ButtonGroupItemsContainer: FC<IToolbarItemsSortableProps> = props =
     const listChanged = !newState.some(item => item.chosen !== null && item.chosen !== undefined);
 
     if (listChanged) {
-      const newChilds = newState.map<ToolbarItemProps>(item => item as ToolbarItemProps);
+      const newChildren = newState.map<ButtonGroupItemProps>(item => item as ButtonGroupItemProps);
 
-      updateChildItems({ index: props.index, id: props.id, childs: newChilds });
+      updateChildItems({ index: props.index, id: props.id, children: newChildren });
     }
 
     return;
@@ -40,21 +44,19 @@ export const ButtonGroupItemsContainer: FC<IToolbarItemsSortableProps> = props =
 
   return (
     <ReactSortable
-      // onStart={onDragStart}
-      // onEnd={onDragEnd}
       list={props.items}
       setList={onSetList}
       fallbackOnBody={true}
       swapThreshold={0.5}
       group={{
-        name: 'toolbarItems',
+        name: 'buttonGroupItems',
       }}
       sort={true}
-      draggable=".sha-toolbar-item"
+      draggable=".sha-button-group-item"
       animation={75}
-      ghostClass="sha-toolbar-item-ghost"
+      ghostClass="sha-button-group-item-ghost"
       emptyInsertThreshold={20}
-      handle=".sha-toolbar-item-drag-handle"
+      handle=".sha-button-group-item-drag-handle"
       scroll={true}
       bubbleScroll={true}
     >

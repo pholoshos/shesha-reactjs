@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
-import { useToolbarConfigurator } from '../../../../providers/toolbarConfigurator';
+import { useButtonGroupConfigurator } from '../../../../providers/buttonGroupConfigurator';
 import { Empty, Form } from 'antd';
 import { ConfigurableForm } from '../../..';
 import itemSettingsJson from './itemSettings.json';
@@ -11,7 +11,7 @@ import { ConfigurableFormInstance } from '../../../../providers/form/contexts';
 export interface IButtonGroupPropertiesProps {}
 
 export const ButtonGroupProperties: FC<IButtonGroupPropertiesProps> = () => {
-  const { selectedItemId, getItem, updateItem } = useToolbarConfigurator();
+  const { selectedItemId, getItem, updateItem } = useButtonGroupConfigurator();
   // note: we have to memoize the editor to prevent unneeded re-rendering and loosing of the focus
   const [editor, setEditor] = useState<ReactNode>(<></>);
   const [form] = Form.useForm();

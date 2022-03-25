@@ -1,9 +1,9 @@
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
-import { ToolbarItemProps } from '../../../../providers/toolbarConfigurator/models';
+import { ButtonGroupItemProps } from '../../../../providers/buttonGroupConfigurator/models';
 
 export interface IButtonGroupProps extends IConfigurableFormComponent {
-  items: ToolbarItemProps[];
+  items: ButtonGroupItemProps[];
   size?: SizeType;
   spaceSize?: SizeType;
 }

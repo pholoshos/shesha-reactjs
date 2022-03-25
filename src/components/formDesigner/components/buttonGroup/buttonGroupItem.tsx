@@ -1,37 +1,37 @@
 import React, { FC } from 'react';
-import { IToolbarButton } from '../../../../providers/toolbarConfigurator/models';
+import { IButtonGroupButton } from '../../../../providers/buttonGroupConfigurator/models';
 import { Button, Tooltip } from 'antd';
 import { DeleteFilled, QuestionCircleOutlined } from '@ant-design/icons';
-import { useToolbarConfigurator } from '../../../../providers/toolbarConfigurator';
+import { useButtonGroupConfigurator } from '../../../../providers/buttonGroupConfigurator';
 import DragHandle from './dragHandle';
 import ShaIcon, { IconType } from '../../../shaIcon';
 
-export interface IButtonGroupItemProps extends IToolbarButton {
+export interface IButtonGroupItemProps extends IButtonGroupButton {
   index: number[];
 }
 
 export const ButtonGroupItem: FC<IButtonGroupItemProps> = props => {
-  const { deleteButton, selectedItemId } = useToolbarConfigurator();
+  const { deleteButton, selectedItemId } = useButtonGroupConfigurator();
 
   const onDeleteClick = () => {
     deleteButton(props.id);
   };
 
-  const classes = ['sha-toolbar-item'];
+  const classes = ['sha-button-group-item'];
   if (selectedItemId === props.id) classes.push('selected');
 
   return (
     <div className={classes.reduce((a, c) => a + ' ' + c)}>
-      <div className="sha-toolbar-item-header">
+      <div className="sha-button-group-item-header">
         <DragHandle id={props.id} />
         {props.icon && <ShaIcon iconName={props.icon as IconType} />}
-        <span className="sha-toolbar-item-name">{props.label || props.name}</span>
+        <span className="sha-button-group-item-name">{props.label || props.name}</span>
         {props.tooltip && (
           <Tooltip title={props.tooltip}>
             <QuestionCircleOutlined className="sha-help-icon" />
           </Tooltip>
         )}
-        <div className="sha-toolbar-item-controls">
+        <div className="sha-button-group-item-controls">
           <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
         </div>
       </div>

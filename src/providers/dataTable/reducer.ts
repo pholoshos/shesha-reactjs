@@ -1,4 +1,3 @@
-import { SortingRule } from 'react-table';
 import { DATA_TABLE_CONTEXT_INITIAL_STATE, DEFAULT_PAGE_SIZE_OPTIONS, IDataTableStateContext } from './contexts';
 import {
   DataTableActionEnums,

@@ -258,6 +258,26 @@
       "settingsValidationErrors": []
     },
     {
+      "id": "6e85c4b3-ac68-49da-acd6-2928ed4f82b6",
+      "type": "sectionSeparator",
+      "name": "sectionEvent",
+      "parentId": "root",
+      "label": "Events"
+    },
+    {
+      "id": "b9269416-3b78-42c4-934e-3e0dac8c7f01",
+      "type": "codeEditor",
+      "name": "onChangeCustom",
+      "label": "On Change",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Enter custom even handler on changing of event. (form, value, option) are exposed",
+      "validate": {},
+      "settingsValidationErrors": []
+    },
+    {
       "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",
       "type": "sectionSeparator",
       "name": "separator2",

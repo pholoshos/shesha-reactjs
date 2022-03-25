@@ -42,6 +42,7 @@ import {
   registerConfigurableColumnsAction,
   fetchColumnsSuccessSuccessAction,
   setCrudConfigAction,
+  onSortAction,
 } from './actions';
 import {
   ITableDataResponse,
@@ -54,6 +55,7 @@ import {
   IStoredFilter,
   ITableFilter,
   ITableCrudConfig,
+  IColumnSorting,
 } from './interfaces';
 import { useMutate, useGet } from 'restful-react';
 import _ from 'lodash';
@@ -231,6 +233,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     state.tableConfigLoaded,
     state.entityType,
     state.columns,
+    state.tableSorting,
   ]);
 
   const refreshTable = () => {
@@ -572,6 +575,10 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(setCrudConfigAction(config));
   };
 
+  const onSort = (sorting: IColumnSorting[]) => {
+    dispatch(onSortAction(sorting));
+  };
+
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   return (
@@ -579,6 +586,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       <DataTableActionsContext.Provider
         value={{
           ...getFlagSetters(dispatch),
+          onSort,
           fetchTableConfig,
           fetchTableData,
           setCurrentPage,

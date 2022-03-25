@@ -17,6 +17,7 @@ import { Empty, Spin } from 'antd';
 import _ from 'lodash';
 import { IReactTableProps } from './interfaces';
 import { nanoid } from 'nanoid/non-secure';
+import { usePrevious } from 'react-use';
 // const headerProps = (props, { column }) => getStyles(props, column.align);
 
 const cellProps: CellPropGetter<object> = (props, { cell }) => getStyles(props, cell.column.align);
@@ -64,6 +65,7 @@ const ReactTable: FC<IReactTableProps> = ({
   onRowDoubleClick,
   onResizedChange,
   onSelectedIdsChanged,
+  onSort,
   scrollBodyHorizontally = false,
   height = 250,
 }) => {
@@ -143,7 +145,15 @@ const ReactTable: FC<IReactTableProps> = ({
     }
   );
 
-  const { pageIndex, pageSize, selectedRowIds } = state;
+  const { pageIndex, pageSize, selectedRowIds, sortBy } = state;
+
+  const previousSortBy = usePrevious(sortBy);
+
+  useEffect(() => {
+    if (onSort && !_.isEqual(_.sortBy(previousSortBy), _.sortBy(sortBy))) {
+      onSort(sortBy);
+    }
+  }, [sortBy]);
 
   useEffect(() => {
     if (selectedRowIds && typeof onSelectedIdsChanged === 'function') {

@@ -1,17 +1,9 @@
-import {
-  PlusOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import React, { useRef, useState } from 'react';
 import { useEntityConfigCreate } from '../../../apis/entityConfig';
-import {
-  GenericCreateModal,
-  SimpleIndexPageDefault,
-} from '../../../components';
+import { GenericCreateModal, SimpleIndexPageDefault } from '../../../components';
 import { IShaDataTableProps, IToolbarItem, PageWithLayout } from '../../../interfaces';
 import createEntityConfigMarkup from './createEntityConfigMarkup.json';
-
-
 
 export interface IReportingReportProps {
   /**
@@ -49,7 +41,7 @@ const EntityConfigurationsIndexPage: PageWithLayout<IReportingReportProps> = ({
 
   const tableRef = useRef<any>();
 
-  const toggleCreateModalVisibility = () => setShowCreateModal((visible) => !visible);
+  const toggleCreateModalVisibility = () => setShowCreateModal(visible => !visible);
 
   const onSuccess = () => {
     tableRef?.current?.refreshTable();
@@ -62,7 +54,7 @@ const EntityConfigurationsIndexPage: PageWithLayout<IReportingReportProps> = ({
     actionColumns: [
       {
         icon: <SearchOutlined />,
-        onClick: (id: string) => `${entityConfigDetailsPageUrl}?id=${id}`,        
+        onClick: (id: string) => `${entityConfigDetailsPageUrl}?id=${id}`,
       },
       // {
       //   icon: <EditOutlined />,
@@ -94,16 +86,17 @@ const EntityConfigurationsIndexPage: PageWithLayout<IReportingReportProps> = ({
         {...tableProps}
       />
 
-{false &&
-      <GenericCreateModal
-        title="Create New Entity"
-        visible={showCreateModal}
-        formMarkup={useFormPath ? undefined : (createEntityConfigMarkup as any)}
-        formPath={useFormPath ? '/settings/entity-configs/create' : ''}
-        updater={useEntityConfigCreate}
-        onCancel={toggleCreateModalVisibility}
-        onSuccess={onSuccess}
-      />}
+      {false && (
+        <GenericCreateModal
+          title="Create New Entity"
+          visible={showCreateModal}
+          formMarkup={useFormPath ? undefined : (createEntityConfigMarkup as any)}
+          formPath={useFormPath ? '/settings/entity-configs/create' : ''}
+          updater={useEntityConfigCreate}
+          onCancel={toggleCreateModalVisibility}
+          onSuccess={onSuccess}
+        />
+      )}
     </>
   );
 };

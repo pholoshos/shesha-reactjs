@@ -9,6 +9,7 @@ import {
 } from './actions';
 import flagsReducer from '../utils/flagsReducer';
 import {
+  IColumnSorting,
   IEditableRowState,
   IGetDataPayload,
   IndexColumnDataType,
@@ -490,6 +491,15 @@ const reducer = handleActions<IDataTableStateContext, any>(
       return {
         ...state,
         configurableColumns: [...payload.columns],
+      };
+    },
+
+    [DataTableActionEnums.OnSort]: (state: IDataTableStateContext, action: ReduxActions.Action<IColumnSorting[]>) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        tableSorting: [...payload],
       };
     },
 

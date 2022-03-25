@@ -148,7 +148,7 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "description": "Enter custom even handler.",
+      "description": "Enter custom even handler on changing of event. (form, event) are exposed",
       "validate": {},
       "settingsValidationErrors": []
     },
@@ -161,7 +161,7 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "description": "Enter custom even handler.",
+      "description": "Enter custom even handler on focus of event. (form, event) are exposed",
       "validate": {},
       "settingsValidationErrors": []
     },
@@ -174,7 +174,7 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "description": "Enter custom even handler.",
+      "description": "Enter custom even handler on blur of event. (form, event) are exposed",
       "validate": {},
       "settingsValidationErrors": []
     },

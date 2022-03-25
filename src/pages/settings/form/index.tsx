@@ -17,7 +17,7 @@ import { DataTableFullInstance } from '../../../providers/dataTable/contexts';
 
 import { useCreateForm } from './defaults/utils';
 
-interface IFormsIndexPageProps {
+export interface IFormsIndexPageProps {
   tableProps?: Omit<IIndexTableFullProps, 'id'>;
 }
 
@@ -171,8 +171,6 @@ const FormsIndexPage: FC<IFormsIndexPageProps> = ({ tableProps }) => {
           formPath: `/settings/forms/create`,
           OnSuccessAction: OnSuccessActionType.GoToUrl,
           onSuccessUrl: data => {
-            console.log('returnUrlOnSuccess data :>> ', data);
-
             return `/settings/forms/designer?id=${data?.result?.id}`;
           },
         }}

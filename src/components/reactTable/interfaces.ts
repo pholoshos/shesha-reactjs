@@ -157,4 +157,6 @@ export interface IReactTableProps {
    * The table height. Required if scrollBodyHorizontally is true. Default value is 250px
    */
   height?: number;
+
+  onSort?: (sorting: SortingRule<any>[]) => void;
 }

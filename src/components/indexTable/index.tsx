@@ -85,6 +85,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
     quickSearch,
     crudConfig,
     refreshTable,
+    onSort,
     newOrEditableRowData,
     setCrudRowData,
     cancelCreateOrEditRowData,
@@ -534,6 +535,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
     onSelectRow,
     onRowDoubleClick: dblClickHandler,
     onSelectedIdsChanged: changeSelectedIds,
+    onSort, // Update it so that you can pass it as param. Quick fix for now
     columns: preparedColumns?.map(column => {
       const cleanedColumn = removeUndefinedProperties(column);
 

@@ -58,7 +58,7 @@
       "parentId": "root",
       "label": "Display Entity Key",
       "validate": {
-        "required": true
+        "required": false
       }
     },
     {

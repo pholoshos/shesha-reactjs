@@ -72,7 +72,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     ...INITIAL_STATE,
   });
 
-  const { registerConfigurableColumns } = useDataTable();
+  const { registerConfigurableColumns, tableData } = useDataTable();
 
   useEffect(() => {
     // This is important for form designer configured picker
@@ -140,6 +140,14 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     }
   };
 
+  const getValueRow = () => {
+    if (!state.selectedValue && Array.isArray(tableData) && tableData.length && tableData[0]?.[displayEntityKey]) {
+      return tableData.find(i => (i as any)?.Id === value)?.[displayEntityKey];
+    }
+
+    return state?.selectedValue || value;
+  };
+
   const setSelectedRow = (selectedRow: IAnyObject, selectedRowIndex?: number) => {
     let selectedValue = value;
 
@@ -181,7 +189,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
             <Input
               allowClear
               className="picker-input-group-input"
-              value={state?.selectedValue || value}
+              value={getValueRow()}
               onChange={clearAll}
               disabled={disabled}
               name={name}

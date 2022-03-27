@@ -33,8 +33,8 @@ interface ISubscription<T> {
  *
  * @returns {object} instance of subscription
  */
-export const usePubSub = <T,>(): ISubscription<T> => {
-  const subscribe = (token: string, eventHandler: (data: T) => void) => {
+export const usePubSub = (): ISubscription<IPubSubPayload> => {
+  const subscribe = (token: string, eventHandler: (data: IPubSubPayload) => void) => {
     const handleEvent = (event: CustomEvent | Event) => {
       const data = (event as CustomEvent).detail;
       eventHandler(data);
@@ -45,7 +45,7 @@ export const usePubSub = <T,>(): ISubscription<T> => {
 
   const unsubscribe = (token: string) => removeEventListener(token, () => {}, false);
 
-  const publish = (token: string, data?: T) => dispatchEvent(new CustomEvent(token, { detail: data }));
+  const publish = (token: string, data?: IPubSubPayload) => dispatchEvent(new CustomEvent(token, { detail: data }));
 
   const clearAllEventListeners = () => {
     // events.forEach(localEvent => {

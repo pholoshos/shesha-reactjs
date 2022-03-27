@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Button, message, Modal } from 'antd';
-import { useShaRouting, useDataTableStore, useForm, useModal, useGlobalState } from '../../../../../../providers';
+import { useShaRouting, useForm, useModal } from '../../../../../../providers';
 import { ISelectionProps } from '../../../../../../providers/dataTableSelection/models';
 import { IModalProps } from '../../../../../../providers/dynamicModal/models';
 import { evaluateKeyValuesToObject, evaluateString } from '../../../../../../providers/form/utils';
@@ -11,7 +11,6 @@ import { IKeyValue } from '../../../../../../interfaces/keyValue';
 import { axiosHttp } from '../../../../../../apis/axios';
 import { IButtonGroupButton } from '../../../../../../providers/buttonGroupConfigurator/models';
 import { usePubSub } from '../../../../../../hooks';
-import { IPubSubPayload } from '../../../../../../interfaces/pubsub';
 import { DataTablePubsubConstants } from '../../../../../../providers/dataTable/pupsub';
 
 export interface IButtonGroupButtonProps extends IButtonGroupButton {
@@ -23,7 +22,7 @@ export const ButtonGroupButton: FC<IButtonGroupButtonProps> = props => {
   const { getAction, form, setFormMode, formData, formMode } = useForm();
   const { router } = useShaRouting();
   // const { pubSub, globalStateId } = useGlobalState();
-  const { publish } = usePubSub<IPubSubPayload>();
+  const { publish } = usePubSub();
 
   const executeExpression = (expression: string, result?: any) => {
     if (!expression) {
@@ -68,15 +67,17 @@ export const ButtonGroupButton: FC<IButtonGroupButtonProps> = props => {
       initialValues: evaluateKeyValuesToObject(convertedProps?.additionalProperties, formData),
       parentFormValues: formData,
       modalConfirmDialogMessage: convertedProps?.modalConfirmDialogMessage,
-      onSubmitted: onSuccessScriptExecutor,
+      onSubmitted: values => {
+        onSuccessScriptExecutor(values);
+
+        if (props?.refreshTableOnSuccess) {
+          publish(DataTablePubsubConstants.refreshTable, { stateId: props?.uniqueStateId });
+        }
+      },
       onFailed: onErrorScriptExecutor,
     };
 
-    return props?.refreshTableOnSuccess ? (
-      <ToolbarButtonTableDialog {...props} modalProps={modalProps} />
-    ) : (
-      <ToolbarButtonPlainDialog {...props} modalProps={modalProps} />
-    );
+    return <ToolbarButtonPlainDialog {...props} modalProps={modalProps} />;
   }
 
   const onButtonClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -158,50 +159,18 @@ interface IToolbarButtonTableDialogProps extends Omit<IModalProps, 'formId' | 'i
   additionalProperties?: IKeyValue[];
 }
 
-/**
- * This button should be rendered on the toolbar within a DataTableContext as it references the table store
- * @param props
- * @returns
- */
-const ToolbarButtonTableDialog: FC<IToolbarButtonTableDialogProps> = props => {
-  const { refreshTable } = useDataTableStore();
+const ToolbarButtonPlainDialog: FC<IToolbarButtonTableDialogProps> = props => {
+  const { publish } = usePubSub();
 
-  const modalProps: IModalProps = {
+  const dynamicModal = useModal({
     ...props?.modalProps,
     formId: props?.modalFormId,
     onSubmitted: () => {
-      // todo: implement custom actions support
-      refreshTable();
+      if (props?.refreshTableOnSuccess) {
+        publish(DataTablePubsubConstants.refreshTable, { stateId: props?.uniqueStateId });
+      }
     },
-  };
-
-  const dynamicModal = useModal(modalProps);
-
-  const onButtonClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    event.stopPropagation(); // Don't collapse the CollapsiblePanel when clicked
-
-    if (props.modalFormId) {
-      dynamicModal.open();
-    } else console.warn('Modal Form is not specified');
-  };
-
-  return (
-    <Button
-      title={props.tooltip}
-      onClick={onButtonClick}
-      type={props.buttonType}
-      danger={props.danger}
-      icon={props.icon ? <ShaIcon iconName={props.icon as IconType} /> : undefined}
-      className={classNames('sha-toolbar-btn sha-toolbar-btn-configurable')}
-      size={props?.size}
-    >
-      {props.label}
-    </Button>
-  );
-};
-
-const ToolbarButtonPlainDialog: FC<IToolbarButtonTableDialogProps> = props => {
-  const dynamicModal = useModal({ ...props?.modalProps, formId: props?.modalFormId });
+  });
 
   const onButtonClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.stopPropagation(); // Don't collapse the CollapsiblePanel when clicked

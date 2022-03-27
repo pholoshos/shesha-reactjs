@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useContext, useState } from 'react';
+import React, { FC, useEffect, useRef, useContext, useState, Fragment } from 'react';
 import {
   DragDropContext,
   DropResult,
@@ -10,9 +10,11 @@ import {
   DroppableStateSnapshot,
 } from 'react-beautiful-dnd';
 import { ILabelValueEditorPropsBase, IItemProps } from './models';
-import { Table, Popconfirm, Button, Form, Input } from 'antd';
+import { Table, Popconfirm, Button, Form, Input, Modal, Alert } from 'antd';
 import { DeleteOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import { nanoid } from 'nanoid/non-secure';
+import ConditionalWrap from '../../../conditionalWrapper';
+import Show from '../../../show';
 
 export interface ILabelValueEditorProps extends ILabelValueEditorPropsBase {
   /**
@@ -29,10 +31,15 @@ export interface ILabelValueEditorProps extends ILabelValueEditorPropsBase {
    * If true, when a new row has been added, both the name of the key and value will not be prefixed with 'new '
    */
   ignorePrefixesOnNewItems?: boolean;
+
+  mode?: 'dialog' | 'inline';
+
+  description?: string;
 }
 
 const EditableContext = React.createContext(null);
 const DragHandleContext = React.createContext(null);
+
 const EditableCell = ({ title, editable, children, dataIndex, record, handleSave, ...restProps }) => {
   const [editing, setEditing] = useState(false);
   const inputRef = useRef(null);
@@ -107,9 +114,11 @@ const DraggableBodyRowInner = ({ items, className, style, ...restProps }) => {
 
   // function findIndex base on Table rowKey props and should always be a right array index
   const rowKey = restProps['data-row-key'];
+
   if (!rowKey) return null;
 
   const index = items.findIndex(x => x.id === restProps['data-row-key']);
+
   return (
     <Draggable key={rowKey} draggableId={rowKey} index={index}>
       {(providedDraggable: DraggableProvided, snapshotDraggable: DraggableStateSnapshot) => (
@@ -139,13 +148,18 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
   valueTitle,
   valueName,
   ignorePrefixesOnNewItems = false,
+  description,
+  mode = 'inline',
 }) => {
+  const [showModal, setShowModal] = useState(false);
+
   const items = (value as IItemProps[]) || [];
 
   const DragHandle = props => <MenuOutlined style={{ color: '#999' }} {...props} />;
 
   const handleDeleteRow = (id: string) => {
     const newRows = items.filter(row => row.id !== id);
+
     onChange(newRows);
   };
 
@@ -172,7 +186,7 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
     {
       title: '',
       dataIndex: 'sort',
-      width: '30px',
+      width: '30',
       render: (_text, _record, _index) => {
         const dragHandleProps = useContext(DragHandleContext);
         return <DragHandle {...dragHandleProps} />;
@@ -182,18 +196,18 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
       title: labelTitle,
       dataIndex: labelName,
       editable: true,
-      width: '30%',
+      // width: '30%',
     },
     {
       title: valueTitle,
       dataIndex: valueName,
-      width: '30%',
+      // width: '30%',
       editable: true,
     },
     {
       title: '',
       dataIndex: 'operations',
-      width: '30px',
+      width: '30',
       render: (_, record) =>
         items.length >= 1 ? (
           <Popconfirm title="Are you sure want to delete this item?" onConfirm={() => handleDeleteRow(record.id)}>
@@ -202,6 +216,7 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
         ) : null,
     },
   ];
+
   const columns = cols.map(col => {
     if (!col.editable) {
       return col;
@@ -218,6 +233,8 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
       }),
     };
   });
+
+  const toggleModal = () => setShowModal(currentVisible => !currentVisible);
 
   const getListStyle = (_isDraggingOver: boolean) => ({
     //background: isDraggingOver ? "lightgrey" : "inherit",
@@ -249,38 +266,64 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
   };
 
   return (
-    <div className="sha-labelvalueeditor">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId={'keyValueItems'}>
-          {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
-            <div ref={provided.innerRef} {...provided.droppableProps} style={getListStyle(snapshot.isDraggingOver)}>
-              <Table
-                scroll={{ x: 'mex-content' }}
-                bordered
-                pagination={false}
-                dataSource={items}
-                columns={columns}
-                rowKey={r => r.id}
-                components={{
-                  body: {
-                    row: ({ className, style, ...restProps }) => (
-                      <DraggableBodyRowInner items={items} className={className} style={style} {...restProps} />
-                    ),
-                    cell: EditableCell,
-                  },
-                }}
-              />
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-      <div className="sha-labelvalueeditor-buttons">
-        <Button type="default" onClick={handleAddRow} icon={<PlusOutlined />}>
-          Add Item
-        </Button>
+    <ConditionalWrap
+      condition={mode === 'dialog'}
+      wrap={children => (
+        <Fragment>
+          <Button onClick={toggleModal} size="small">
+            Click to Add
+          </Button>
+
+          <Modal title="Add Items" visible={showModal} onCancel={toggleModal} onOk={toggleModal} width={650}>
+            <Show when={!!description}>
+              <Alert type="info" message={description} />
+              <br />
+            </Show>
+            {children}
+          </Modal>
+        </Fragment>
+      )}
+    >
+      <div className="sha-labelvalueeditor">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId={'keyValueItems'}>
+            {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
+              <div ref={provided.innerRef} {...provided.droppableProps} style={getListStyle(snapshot.isDraggingOver)}>
+                <Table
+                  scroll={{ x: 'mex-content' }}
+                  bordered
+                  pagination={false}
+                  dataSource={items}
+                  columns={columns}
+                  rowKey={r => r.id}
+                  components={{
+                    body: {
+                      row: ({ className, style, ...restProps }) => (
+                        <DraggableBodyRowInner
+                          items={items}
+                          mode={mode}
+                          className={className}
+                          style={style}
+                          {...restProps}
+                        />
+                      ),
+                      cell: EditableCell,
+                    },
+                  }}
+                />
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+
+        <div className="sha-labelvalueeditor-buttons">
+          <Button type="default" onClick={handleAddRow} icon={<PlusOutlined />}>
+            Add Item
+          </Button>
+        </div>
       </div>
-    </div>
+    </ConditionalWrap>
   );
 };
 

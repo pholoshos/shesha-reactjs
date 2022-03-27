@@ -41,10 +41,17 @@ export interface IButtonGroupButton extends IButtonGroupItemBase {
   buttonAction?: ButtonActionType;
   refreshTableOnSuccess?: boolean;
   targetUrl?: string;
+
   /**
-   * @deprecated - use customAction. It is named that way to be consistent with the button
+   * Predefined form action that gets executed via events
    */
   formAction?: string;
+
+  /**
+   * Custom form events that can be passed with parameters
+   */
+  customFormAction?: string;
+  uniqueStateId?: string;
   customAction?: string;
   customActionParameters?: string;
   actionScript?: string;

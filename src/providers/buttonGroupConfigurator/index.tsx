@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, PropsWithChildren } from 'react';
+import React, { FC, useReducer, useContext, PropsWithChildren, useEffect } from 'react';
 import buttonGroupReducer from './reducer';
 import {
   IUpdateChildItemsPayload,
@@ -19,6 +19,7 @@ import {
 } from './actions';
 import { ButtonGroupItemProps } from './models';
 import { getItemById } from './utils';
+import { IPubSubPayload } from '../../interfaces/pubsub';
 
 export interface IButtonGroupConfiguratorProviderPropsBase {
   baseUrl?: string;
@@ -108,6 +109,12 @@ const ButtonGroupConfiguratorProvider: FC<PropsWithChildren<IButtonGroupConfigur
       </ButtonGroupConfiguratorActionsContext.Provider>
     </ButtonGroupConfiguratorStateContext.Provider>
   );
+};
+
+const usePubSub = (listener: string, data: IPubSubPayload) => {
+  useEffect(() => {
+    return () => removeEventListener(listener, () => {});
+  }, []);
 };
 
 function useButtonGroupConfiguratorState() {

@@ -500,6 +500,7 @@
               "labelName": "key",
               "valueTitle": "Value",
               "valueName": "value",
+              "mode": "dialog",
               "description": "Additional properties you want to be passed when the form gets submitted like parentId in the case where the modal is used in a childTable. Also note you can use Mustache expression like {{id}} for value property"
             },
             {
@@ -537,13 +538,80 @@
         },
         {
           "id": "8786d976-3822-4f8b-a532-ccac0b0130e3",
-          "type": "textField",
+          "type": "dropdown",
           "name": "formAction",
           "label": "Form Action",
           "labelAlign": "right",
           "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
           "hidden": false,
           "customVisibility": "return data.buttonAction === 'executeFormAction'",
+          "validate": {},
+          "values": [
+            {
+              "label": "refreshTable",
+              "value": "REFRESH_TABLE",
+              "id": "f3281767-b747-424e-a588-f65434752524"
+            },
+            {
+              "label": "toggleColumnsSelector",
+              "value": "TOGGLE_COLUMNS_SELECTOR",
+              "id": "1e998444-b326-499e-ad0e-e847c2dad31d"
+            },
+            {
+              "label": "toggleAdvancedFilter",
+              "value": "TOGGLE_ADVANCED_FILTER",
+              "id": "acee8995-d0e8-4e88-be67-2b24265aa133"
+            },
+            {
+              "label": "exportToExcel",
+              "value": "EXPORT_TO_EXCEL",
+              "id": "3306c34d-8d5d-4f2b-a154-b87cab5fba98"
+            },
+            {
+              "label": "deleteRow",
+              "value": "DELETE_ROW",
+              "id": "13b1562c-3f5e-4e2a-9533-11b89c7ace52"
+            },
+            {
+              "label": "setToEditMode",
+              "value": "SET_TO_EDIT_MODE",
+              "id": "4417761c-5277-4b39-a8e9-e5493fc4488c"
+            },
+            {
+              "label": "stateChanged",
+              "value": "STATE_CHANGED",
+              "id": "4179a3a6-0380-452f-83da-f3d7f5ea1d23"
+            },
+            {
+              "label": "(enter custom action)",
+              "value": "CUSTOM_ACTION",
+              "id": "b4224f35-1b69-43f5-99e8-8119be85a940"
+            }
+          ],
+          "dataSourceType": "values"
+        },
+        {
+          "id": "adaab7e3-c5c8-4701-aef2-96fe80bc5d5a",
+          "type": "textField",
+          "name": "customFormAction",
+          "label": "Custom Form Action",
+          "labelAlign": "right",
+          "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+          "hidden": false,
+          "customVisibility": "return data.formAction === 'CUSTOM_ACTION'",
+          "description": "",
+          "validate": {}
+        },
+        {
+          "id": "880f31ea-2a86-40a5-83ef-ccbe88aa0140",
+          "type": "textField",
+          "name": "uniqueStateId",
+          "label": "Unique State ID",
+          "labelAlign": "right",
+          "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+          "hidden": false,
+          "customVisibility": null,
+          "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
           "validate": {}
         },
         {

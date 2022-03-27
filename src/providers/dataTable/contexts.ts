@@ -105,7 +105,8 @@ export interface IDataTableStateContext
   selectedStoredFilterIds?: string[];
 
   /** index of selected row */
-  selectedRow?: number;
+  selectedRow?: any;
+
   /** List of Ids of selected rows */
   selectedIds?: string[];
 
@@ -136,6 +137,10 @@ export interface IPublicDataTableActions {
   exportToExcel?: () => void;
   setCrudRowData: (newOrEditableRowData?: IEditableRowState) => void;
   cancelCreateOrEditRowData: () => void;
+  deleteRow?: () => void;
+  toggleColumnsSelector?: () => void;
+  toggleAdvancedFilter?: () => void;
+  setToEditMode?: () => void;
 }
 
 export interface IDataTableActionsContext

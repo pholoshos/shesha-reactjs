@@ -1,4 +1,4 @@
-import React, { useReducer, useContext, PropsWithChildren } from 'react';
+import React, { useReducer, useContext, PropsWithChildren, useEffect } from 'react';
 import reducer from './reducer';
 import {
   GlobalStateActionsContext,
@@ -6,8 +6,10 @@ import {
   GLOBAL_STATE_CONTEXT_INITIAL_STATE,
   ISetStatePayload,
 } from './contexts';
+import PubSub from 'pubsub-js';
 
-import { setStateAction, clearStateAction } from './actions';
+import { setStateAction, clearStateAction, setPubsubAction } from './actions';
+import { nanoid } from 'nanoid/non-secure';
 
 export interface IGlobalStateProvider {}
 
@@ -19,6 +21,10 @@ function GlobalStateProvider({ children }: PropsWithChildren<IGlobalStateProvide
   const clearState = (stateKey: string) => dispatch(clearStateAction(stateKey));
 
   const getStateByKey = (key: string) => (state?.globalState || {})[key];
+
+  useEffect(() => {
+    dispatch(setPubsubAction({ pubSub: PubSub, globalStateId: nanoid() }));
+  }, []);
 
   return (
     <GlobalStateStateContext.Provider value={state}>

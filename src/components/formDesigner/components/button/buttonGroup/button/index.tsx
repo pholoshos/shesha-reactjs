@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Button, message, Modal } from 'antd';
-import { useShaRouting, useDataTableStore, useForm, useModal } from '../../../../../../providers';
+import { useShaRouting, useDataTableStore, useForm, useModal, useGlobalState } from '../../../../../../providers';
 import { ISelectionProps } from '../../../../../../providers/dataTableSelection/models';
 import { IModalProps } from '../../../../../../providers/dynamicModal/models';
 import { evaluateKeyValuesToObject, evaluateString } from '../../../../../../providers/form/utils';
@@ -10,6 +10,9 @@ import moment from 'moment';
 import { IKeyValue } from '../../../../../../interfaces/keyValue';
 import { axiosHttp } from '../../../../../../apis/axios';
 import { IButtonGroupButton } from '../../../../../../providers/buttonGroupConfigurator/models';
+import { usePubSub } from '../../../../../../hooks';
+import { IPubSubPayload } from '../../../../../../interfaces/pubsub';
+import { DataTablePubsubConstants } from '../../../../../../providers/dataTable/pupsub';
 
 export interface IButtonGroupButtonProps extends IButtonGroupButton {
   formComponentId: string;
@@ -19,6 +22,8 @@ export interface IButtonGroupButtonProps extends IButtonGroupButton {
 export const ButtonGroupButton: FC<IButtonGroupButtonProps> = props => {
   const { getAction, form, setFormMode, formData, formMode } = useForm();
   const { router } = useShaRouting();
+  // const { pubSub, globalStateId } = useGlobalState();
+  const { publish } = usePubSub<IPubSubPayload>();
 
   const executeExpression = (expression: string, result?: any) => {
     if (!expression) {
@@ -115,11 +120,17 @@ export const ButtonGroupButton: FC<IButtonGroupButtonProps> = props => {
         break;
       case 'executeFormAction':
       case 'customAction':
-        if (props.formAction) {
-          const actionBody = getAction(props.formComponentId, props.formAction);
-          if (actionBody) actionBody();
-          else console.warn(`action ${props.formAction} not found on the form`);
-        } else console.warn('formAction is not specified');
+        if (props?.uniqueStateId && props?.formAction) {
+          publish(props?.formAction, { stateId: props?.uniqueStateId });
+        } else {
+          if (props.customFormAction) {
+            const actionBody = getAction(props.formComponentId, props.customFormAction);
+
+            if (actionBody) actionBody();
+            else console.warn(`action ${props.customFormAction} not found on the form`);
+          } else console.warn('customFormAction is not specified');
+        }
+
         break;
 
       default:

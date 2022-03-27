@@ -9,7 +9,9 @@ import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
 
-export interface ILabelValueEditorProps extends IConfigurableFormComponent, ILabelValueEditorPropsBase {}
+export interface ILabelValueEditorProps extends IConfigurableFormComponent, ILabelValueEditorPropsBase {
+  mode?: 'dialog' | 'inline';
+}
 
 const settingsForm = settingsFormJson as FormMarkup;
 

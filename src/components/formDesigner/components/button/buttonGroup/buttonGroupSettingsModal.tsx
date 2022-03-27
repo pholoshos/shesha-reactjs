@@ -24,7 +24,7 @@ export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
   hideModal,
   allowAddGroups,
   render,
-  title = 'Configure Toolbar',
+  title = 'Configure Buttons',
   heading,
 }) => {
   const { items } = useButtonGroupConfigurator();

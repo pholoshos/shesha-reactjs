@@ -55,7 +55,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
       } else {
         console.error('Expected expression to be defined but it was found to be empty.');
 
-        return;
+        return false;
       }
     }
 

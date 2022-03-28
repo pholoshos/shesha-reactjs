@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
-import { DownOutlined, DashOutlined } from '@ant-design/icons';
+import { DashOutlined } from '@ant-design/icons';
 import ToolbarSettings from './toolbarSettingsPanel';
 import { IToolbarProps } from './models';
-import { Alert, Menu, Dropdown, Button } from 'antd';
+import { Alert, Menu, Dropdown } from 'antd';
 import { IButtonGroup, IToolbarButton, ToolbarItemProps } from '../../../../../providers/toolbarConfigurator/models';
 import { useForm, isInDesignerMode } from '../../../../../providers/form';
 import { getVisibilityFunc2 } from '../../../../../providers/form/utils';

@@ -3,7 +3,6 @@ import {
   IGlobalStateStateContext,
   ISetPubSubPayload,
   ISetStatePayload,
-  PubSubType,
 } from './contexts';
 import { GlobalStateActionEnums } from './actions';
 import { handleActions } from 'redux-actions';

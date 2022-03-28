@@ -30,9 +30,11 @@ const SpaceComponent: IToolboxComponent<ISpaceProps> = {
     };
 
     return (
-      <Space {...props}>
-        <ComponentsContainer containerId={model.id} />
-      </Space>
+      <ComponentsContainer
+        containerId={model.id}
+        direction={model?.direction}
+        render={components => <Space {...props}>{components}</Space>}
+      />
     );
   },
   settingsFormMarkup: settingsForm,

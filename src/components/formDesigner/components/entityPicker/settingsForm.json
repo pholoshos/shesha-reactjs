@@ -62,6 +62,18 @@
       }
     },
     {
+      "id": "840aee56-42d2-40ed-a2c6-57abb255fb95",
+      "type": "dropdown",
+      "name": "displayEntityKeys",
+      "label": "Item Type",
+      "labelAlign": "right",
+      "parentId": "root",
+      "customVisibility": null,
+      "dataSourceType": "values",
+      "values": [],
+      "validate": { "required": true }
+    },
+    {
       "id": "8f8a9da8-1727-495a-b9eb-ff8627d97444",
       "type": "autocomplete",
       "name": "tableId",

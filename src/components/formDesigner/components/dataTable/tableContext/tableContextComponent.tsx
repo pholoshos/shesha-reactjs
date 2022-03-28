@@ -14,6 +14,7 @@ import { FormMarkup, IConfigurableFormComponent } from '../../../../../providers
 export interface ITableContextComponentProps extends IConfigurableFormComponent {
   tableConfigId?: string;
   entityType?: string;
+  uniqueStateId?: string;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -54,7 +55,7 @@ export const TableContext: FC<ITableContextComponentProps> = props => {
 };
 
 export const TableContextInner: FC<ITableContextComponentProps> = props => {
-  const { tableConfigId, entityType, label } = props;
+  const { tableConfigId, entityType, label, uniqueStateId } = props;
   const { formMode } = useForm();
   const [selectedRow, setSelectedRow] = useState(-1);
   const isDesignMode = formMode === 'designer';
@@ -93,6 +94,7 @@ export const TableContextInner: FC<ITableContextComponentProps> = props => {
         title={label}
         selectedRow={selectedRow}
         onSelectRow={onSelectRow}
+        uniqueStateId={uniqueStateId}
       >
         <TableContextAccessor {...props} />
       </DataTableProvider>

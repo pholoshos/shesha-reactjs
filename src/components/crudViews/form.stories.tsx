@@ -1,10 +1,9 @@
 import React from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
-import { ShaApplicationProvider } from '../../providers';
-import AuthContainer from '../authedContainer';
-import { ConfigurableForm, GenericDetailsPage, GlobalStateProvider } from '../..';
+import { ConfigurableForm, GenericDetailsPage } from '../..';
 import { IGenericDetailsPageProps } from './detailsPage';
+import StoryApp from '../storyBookApp';
 
 export default {
   title: 'Components/CrudViews/ConfigurableForm',
@@ -16,31 +15,25 @@ const configurableFormProps = {
   id,
 };
 
-const backendUrl = process.env.STORYBOOK_BASE_URL; // Just for configuring Storybook
-
 // Create a master template for mapping args to render the Button component
 const Template: Story<IGenericDetailsPageProps> = () => {
   // const { formItemLayout } = useUi();
 
   return (
-    <GlobalStateProvider>
-      <ShaApplicationProvider backendUrl={backendUrl}>
-        <AuthContainer layout>
-          <ConfigurableForm
-            mode="edit"
-            // {...formItemLayout}
-            path={'test/form-designer-components'}
-            onValuesChange={data => {
-              console.log('data: ', data);
-            }}
-            initialValues={{
-              ownerId: 'some-owner-id',
-              checklistId: '1698feac-56c7-436a-9bf5-117d22bfca0f',
-            }}
-          />
-        </AuthContainer>
-      </ShaApplicationProvider>
-    </GlobalStateProvider>
+    <StoryApp>
+      <ConfigurableForm
+        mode="edit"
+        // {...formItemLayout}
+        path={'test/form-designer-components'}
+        onValuesChange={data => {
+          console.log('data: ', data);
+        }}
+        initialValues={{
+          ownerId: 'some-owner-id',
+          checklistId: '1698feac-56c7-436a-9bf5-117d22bfca0f',
+        }}
+      />
+    </StoryApp>
   );
 };
 

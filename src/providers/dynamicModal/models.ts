@@ -1,3 +1,4 @@
+import { ValidateErrorEntity } from '../../interfaces';
 import { IKeyValue } from '../../interfaces/keyValue';
 
 /**
@@ -45,7 +46,9 @@ export interface IModalProps {
   /**
    * A callback to execute when the form has been submitted
    */
-  onSubmitted?: () => void;
+  onSubmitted?: (values?: any) => void;
+
+  onFailed?: (errorInfo: ValidateErrorEntity<any>) => void;
 
   /**
    * If passed, the user will be redirected to this url on success
@@ -62,6 +65,8 @@ export interface IModalProps {
   destroyOnClose?: boolean;
 
   width?: number;
+
+  modalConfirmDialogMessage?: string;
 }
 
 /**

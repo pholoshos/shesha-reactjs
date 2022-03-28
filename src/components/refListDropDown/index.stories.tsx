@@ -6,6 +6,7 @@ import RefListDropDown, { IRefListDropDownProps } from './';
 import { addStory } from '../../stories/utils';
 import { GlobalStateProvider, ShaApplicationProvider } from '../../providers';
 import AuthContainer from '../authedContainer';
+import StoryApp from '../storyBookApp';
 
 export default {
   title: 'Components/RefListDropDown',
@@ -58,60 +59,56 @@ const BaseTemplate: FC<ITemplateProps> = props => {
   };
 
   return (
-    <GlobalStateProvider>
-      <ShaApplicationProvider backendUrl={backendUrl}>
-        <AuthContainer>
-          <div style={{ width: 500 }}>
-            <Form
-              {...{
-                labelCol: {
-                  xs: { span: 24 },
-                  md: { span: 8 },
-                  sm: { span: 8 },
-                },
-                wrapperCol: {
-                  xs: { span: 24 },
-                  md: { span: 16 },
-                  sm: { span: 16 },
-                },
-              }}
-              onFinish={onFinish}
-              form={form}
+    <StoryApp>
+      <div style={{ width: 500 }}>
+        <Form
+          {...{
+            labelCol: {
+              xs: { span: 24 },
+              md: { span: 8 },
+              sm: { span: 8 },
+            },
+            wrapperCol: {
+              xs: { span: 24 },
+              md: { span: 16 },
+              sm: { span: 16 },
+            },
+          }}
+          onFinish={onFinish}
+          form={form}
+        >
+          <Form.Item label={label} name={name} initialValue={props.initialValue}>
+            {children}
+          </Form.Item>
+
+          {Boolean(testValue) && (
+            <Button
+              onClick={() =>
+                form?.setFieldsValue({
+                  [name]: testValue,
+                })
+              }
             >
-              <Form.Item label={label} name={name} initialValue={props.initialValue}>
-                {children}
-              </Form.Item>
-
-              {Boolean(testValue) && (
-                <Button
-                  onClick={() =>
-                    form?.setFieldsValue({
-                      [name]: testValue,
-                    })
-                  }
-                >
-                  Set Test Value
-                </Button>
-              )}
-
-              <Button onClick={() => form?.resetFields()} style={{ margin: '0 12px' }}>
-                Reset
-              </Button>
-
-              <Button onClick={() => form?.submit()} type="primary">
-                Submit
-              </Button>
-            </Form>
-          </div>
-
-          {Boolean(state) && (
-            <div>
-              <pre>{JSON.stringify(state, null, 2)}</pre>
-            </div>
+              Set Test Value
+            </Button>
           )}
-        </AuthContainer>
-      </ShaApplicationProvider>
-    </GlobalStateProvider>
+
+          <Button onClick={() => form?.resetFields()} style={{ margin: '0 12px' }}>
+            Reset
+          </Button>
+
+          <Button onClick={() => form?.submit()} type="primary">
+            Submit
+          </Button>
+        </Form>
+      </div>
+
+      {Boolean(state) && (
+        <div>
+          <pre>{JSON.stringify(state, null, 2)}</pre>
+        </div>
+      )}
+    </StoryApp>
   );
 };
 

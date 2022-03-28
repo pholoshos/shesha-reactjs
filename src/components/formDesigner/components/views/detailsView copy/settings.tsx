@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Form, Input } from 'antd';
-import { SectionSeparator } from '../../../..';
+import { Button, Form } from 'antd';
 import { IDetailsViewProps } from './models';
-import { CodeEditor } from '../../codeEditor/codeEditor';
 import { ToolbarSettingsModal } from '../../dataTable/toolbar/toolbarSettingsModal';
 
 export interface IDetailsPageSettingsProps {

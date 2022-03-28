@@ -55,8 +55,6 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
   useEffect(() => {
     const evaluatedFilters = evaluateDynamicFilters(filters, formData);
 
-    console.log('evaluatedFilters: ', evaluatedFilters);
-
     setPredefinedFilters(evaluatedFilters);
     // setPredefinedFilters(filters);
   }, [filters]);

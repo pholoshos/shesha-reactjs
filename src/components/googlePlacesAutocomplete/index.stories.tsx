@@ -10,11 +10,7 @@ export default {
   component: Autocomplete,
 } as Meta;
 
-const autocompleteProps: IGooglePlacesAutocompleteProps = {
-
-};
-
-const backendUrl = process.env.STORYBOOK_BASE_URL; // TODO: Make this configurable
+const autocompleteProps: IGooglePlacesAutocompleteProps = {};
 
 // Create a master template for mapping args to render the Button component
 const Template: Story<IGooglePlacesAutocompleteProps> = args => {
@@ -22,11 +18,12 @@ const Template: Story<IGooglePlacesAutocompleteProps> = args => {
 
   const onFinish = (data: any) => {
     console.log('GooglePlacesAutocomplete data: ', data);
-  }
+  };
 
   return (
     <div style={{ width: 500 }}>
       <Form
+        form={form}
         {...{
           labelCol: {
             xs: { span: 24 },
@@ -49,17 +46,21 @@ const Template: Story<IGooglePlacesAutocompleteProps> = args => {
           <GooglePlacesAutocomplete />
         </Form.Item>
 
-        <div style={{
-          marginTop: 16,
-          display: 'flex',
-          justifyContent: 'flex-end'
-        }}>
-          <Button type="primary" htmlType="submit">Submit</Button>
+        <div
+          style={{
+            marginTop: 16,
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
         </div>
       </Form>
     </div>
   );
-}
+};
 
 export const Basic = Template.bind({});
 Basic.args = { ...autocompleteProps };

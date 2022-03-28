@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
-import { ShaApplicationProvider } from '../../providers';
-import AuthContainer from '../authedContainer';
-import { GenericDetailsPage, GenericIndexPage, GlobalStateProvider, SimpleIndexPage } from '../..';
+import { GenericDetailsPage, GenericIndexPage, SimpleIndexPage } from '../..';
 import { IGenericIndexPageProps } from './indexPage';
 import { useAreaCreate } from '../../apis/area';
 import { PlusOutlined } from '@ant-design/icons';
 import { OnSuccessActionType } from './createModal';
+import StoryApp from '../storyBookApp';
 
 export default {
   title: 'Components/CrudViews/IndexView',
@@ -20,29 +19,23 @@ const configurableFormProps = {
   id,
 };
 
-const backendUrl = process.env.STORYBOOK_BASE_URL; // Just for configuring Storybook
-
 // Create a master template for mapping args to render the Button component
 const Template: Story<IGenericIndexPageProps> = () => {
   return (
-    <ShaApplicationProvider backendUrl={backendUrl}>
-      <AuthContainer layout>
-        <>
-          <GenericIndexPage
-            title="All Areas"
-            tableConfigId="Areas_Index"
-            createModalProps={{
-              title: 'Add new area',
-              formPath: '/areas/create',
-              updater: useAreaCreate,
-              OnSuccessAction: OnSuccessActionType.GoToUrl,
-              onSuccessUrl: '/settings',
-              submitButtonLabel: 'Submit',
-            }}
-          />
-        </>
-      </AuthContainer>
-    </ShaApplicationProvider>
+    <StoryApp>
+      <GenericIndexPage
+        title="All Areas"
+        tableConfigId="Areas_Index"
+        createModalProps={{
+          title: 'Add new area',
+          formPath: '/areas/create',
+          updater: useAreaCreate,
+          OnSuccessAction: OnSuccessActionType.GoToUrl,
+          onSuccessUrl: '/settings',
+          submitButtonLabel: 'Submit',
+        }}
+      />
+    </StoryApp>
   );
 };
 
@@ -66,25 +59,21 @@ const RowSelectionsTemplate: Story<IGenericIndexPageProps> = () => {
   // console.log('rowSelectionState: ', rowSelectionState);
 
   return (
-    <GlobalStateProvider>
-      <ShaApplicationProvider backendUrl={backendUrl}>
-        <AuthContainer layout>
-          <SimpleIndexPage
-            title="All Payments"
-            tableConfigId="Invoice_Index"
-            toolbarItems={[
-              {
-                title: 'Create Payment Pack',
-                icon: <PlusOutlined />,
-                disabled: !rowSelectionState?.enableCreatePaymentPack,
-              },
-            ]}
-            onSelectRow={onSelectRow}
-            selectedRowIndex={rowSelectionState.selectedRowIndex}
-          />
-        </AuthContainer>
-      </ShaApplicationProvider>
-    </GlobalStateProvider>
+    <StoryApp>
+      <SimpleIndexPage
+        title="All Payments"
+        tableConfigId="Invoice_Index"
+        toolbarItems={[
+          {
+            title: 'Create Payment Pack',
+            icon: <PlusOutlined />,
+            disabled: !rowSelectionState?.enableCreatePaymentPack,
+          },
+        ]}
+        onSelectRow={onSelectRow}
+        selectedRowIndex={rowSelectionState.selectedRowIndex}
+      />
+    </StoryApp>
   );
 };
 
@@ -93,7 +82,6 @@ Basic.args = { ...configurableFormProps };
 
 export const IndexPage = Template.bind({});
 IndexPage.args = {
-  backendUrl,
   formPath: '/indexTable',
 };
 

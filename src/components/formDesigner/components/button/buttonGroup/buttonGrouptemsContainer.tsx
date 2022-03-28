@@ -31,7 +31,8 @@ export const ButtonGroupItemsContainer: FC<IButtonGroupItemsSortableProps> = pro
   };
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
-    const listChanged = !newState.some(item => item.chosen !== null && item.chosen !== undefined);
+    // temporary commented out, the behavoiur of the sortablejs differs sometimes
+    const listChanged = true; //!newState.some(item => item.chosen !== null && item.chosen !== undefined);
 
     if (listChanged) {
       const newChildren = newState.map<ButtonGroupItemProps>(item => item as ButtonGroupItemProps);

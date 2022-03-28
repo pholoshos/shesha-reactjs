@@ -18,7 +18,8 @@ const toolbarReducer = handleActions<IToolbarConfiguratorStateContext, any>(
         id: nanoid(),
         itemType: 'item',
         sortOrder: state.items.length,
-        name: `Button ${buttonsCount + 1}`,
+        name: `Button${buttonsCount + 1}`,
+        label: `Button ${buttonsCount + 1}`,
         itemSubType: 'button',
       };
 
@@ -56,7 +57,8 @@ const toolbarReducer = handleActions<IToolbarConfiguratorStateContext, any>(
         id: nanoid(),
         itemType: 'group',
         sortOrder: state.items.length,
-        name: `Group ${groupsCount + 1}`,
+        name: `Group${groupsCount + 1}`,
+        label: `Group ${groupsCount + 1}`,
         childItems: [],
       };
       return {
@@ -131,7 +133,6 @@ const toolbarReducer = handleActions<IToolbarConfiguratorStateContext, any>(
           ...state,
           items: newItems,
         };
-
       } else {
         return {
           ...state,

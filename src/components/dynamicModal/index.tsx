@@ -30,6 +30,8 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     destroyOnClose,
     parentFormValues,
     width = 800,
+    modalConfirmDialogMessage,
+    onFailed,
   } = props;
 
   // const { formData } = useForm();
@@ -44,6 +46,16 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     } else {
       hideForm();
     }
+  };
+
+  const beforeSubmit = () => {
+    return new Promise<boolean>((resolve, reject) => {
+      if (modalConfirmDialogMessage) {
+        Modal.confirm({ content: modalConfirmDialogMessage, onOk: () => resolve(true), onCancel: () => reject(false) });
+      } else {
+        resolve(true);
+      }
+    });
   };
 
   const onSubmitted = (_: any, response: any) => {
@@ -92,6 +104,8 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
           close: onCancel,
         }}
         onFinish={onSubmitted}
+        onFinishFailed={onFailed}
+        beforeSubmit={beforeSubmit}
         httpVerb={submitHttpVerb}
         initialValues={initialValues}
         parentFormValues={parentFormValues}

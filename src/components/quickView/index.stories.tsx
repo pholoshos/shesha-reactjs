@@ -1,10 +1,9 @@
 import React from 'react';
-import { QuickView, IQuickViewProps, GlobalStateProvider } from '../..';
+import { QuickView, IQuickViewProps } from '../..';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
-import { ShaApplicationProvider } from '../../providers';
-import AuthContainer from '../authedContainer';
 import { Button } from 'antd';
+import StoryApp from '../storyBookApp';
 
 // #region Storybook Metadata & Configuration
 
@@ -13,23 +12,17 @@ export default {
   component: QuickView,
 } as Meta;
 
-const backendUrl = process.env.STORYBOOK_BASE_URL;
-
 // #endregion
 
 // #region Base Mapping Template and Props
 
 const BaseTemplate: Story<IQuickViewProps> = props => {
   return (
-    <GlobalStateProvider>
-      <ShaApplicationProvider backendUrl={backendUrl}>
-        <AuthContainer layout>
-          <QuickView {...props}>
-            <Button type="link">Hello</Button>
-          </QuickView>
-        </AuthContainer>
-      </ShaApplicationProvider>
-    </GlobalStateProvider>
+    <StoryApp>
+      <QuickView {...props}>
+        <Button type="link">Hello</Button>
+      </QuickView>
+    </StoryApp>
   );
 };
 

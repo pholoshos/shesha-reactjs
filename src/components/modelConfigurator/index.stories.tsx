@@ -1,29 +1,23 @@
 import React from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
-import { GlobalStateProvider, MetadataDispatcherProvider, ShaApplicationProvider } from '../../providers';
-import AuthContainer from '../authedContainer';
+import { MetadataDispatcherProvider } from '../../providers';
 import { ModelConfigurator, IModelConfiguratorProps } from './';
 import { addStory } from '../../stories/utils';
+import StoryApp from '../storyBookApp';
 
 export default {
   title: 'Components/ModelConfigurator',
   component: ModelConfigurator,
 } as Meta;
 
-const backendUrl = process.env.STORYBOOK_BASE_URL; // TODO: Make this configurable
-
 // Create a master template for mapping args to render the Button component
 const Template: Story<IModelConfiguratorProps> = args => (
-  <GlobalStateProvider>
-    <ShaApplicationProvider backendUrl={backendUrl}>
-      <AuthContainer layout={true}>
-        <MetadataDispatcherProvider>
-          <ModelConfigurator {...args} />
-        </MetadataDispatcherProvider>
-      </AuthContainer>
-    </ShaApplicationProvider>
-  </GlobalStateProvider>
+  <StoryApp>
+    <MetadataDispatcherProvider>
+      <ModelConfigurator {...args} />
+    </MetadataDispatcherProvider>
+  </StoryApp>
 );
 
 export const NewModel = addStory(Template, {});

@@ -185,8 +185,6 @@ export const getCustomVisibilityFunc = ({ customVisibility, name }: IConfigurabl
 export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormComponent) => {
   if (customEnabled) {
     try {
-      /* tslint:disable:function-constructor */
-
       const customEnabledExecutor = customEnabled ? new Function('value, data', customEnabled) : null;
 
       const getIsEnabled = (data = {}) => {

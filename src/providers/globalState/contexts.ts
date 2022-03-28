@@ -1,13 +1,23 @@
 import { IAnyObject } from './../../interfaces/anyObject';
 import { createContext } from 'react';
+import { IPubSubPayload } from '../../interfaces/pubsub';
+
+export type PubSubType = PubSubJS.Base<IPubSubPayload, PubSubJS.Message>;
 
 export interface ISetStatePayload {
   data?: any;
   key?: string;
 }
 
+export interface ISetPubSubPayload {
+  pubSub?: PubSubType;
+  globalStateId?: string;
+}
+
 export interface IGlobalStateStateContext {
   globalState?: IAnyObject;
+  pubSub?: PubSubType;
+  globalStateId?: string;
 }
 
 export interface IGlobalStateActionsContext {

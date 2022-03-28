@@ -141,7 +141,7 @@ export const changeFilterAction = createAction<IChangeFilterAction, IChangeFilte
 
 export const applyFilterAction = createAction<ITableFilter[], ITableFilter[]>(DataTableActionEnums.ApplyFilter, p => p);
 
-export const changeSelectedRowAction = createAction<number, number>(DataTableActionEnums.ChangeSelectedRow, p => p);
+export const changeSelectedRowAction = createAction<any, any>(DataTableActionEnums.ChangeSelectedRow, p => p);
 
 export const changeSelectedStoredFilterIdsAction = createAction<string[], string[]>(
   DataTableActionEnums.ChangeSelectedStoredFilterIds,

@@ -4,8 +4,8 @@ import { Story } from '@storybook/react';
 import ChildDataTable, { IndexTableFull } from './';
 import DataTableProvider from '../../providers/dataTable';
 import { SearchOutlined } from '@ant-design/icons';
-import { GlobalStateProvider, IShaDataTableProps, ShaApplicationProvider } from '../..';
-import AuthContainer from '../authedContainer';
+import { IShaDataTableProps } from '../..';
+import StoryApp from '../storyBookApp';
 
 export default {
   title: 'Components/IndexTableFull',
@@ -36,31 +36,25 @@ const tableProps: IShaDataTableProps = {
   },
 };
 
-const backendUrl = process.env.STORYBOOK_BASE_URL; // TODO: Make this configurable
-
 // Create a master template for mapping args to render the Button component
 const Template: Story<IShaDataTableProps> = args => {
   const tableRef = useRef();
 
   return (
-    <GlobalStateProvider>
-      <ShaApplicationProvider backendUrl={backendUrl}>
-        <AuthContainer layout>
-          <DataTableProvider tableId={args.id} title="Users" {...args}>
-            {/* <TableHack></TableHack> */}
-            <IndexTableFull
-              {...tableProps}
-              {...args}
-              tableRef={tableRef}
-              useMultiselect
-              onSelectedIdsChanged={ids => {
-                console.log('onSelectedIdsChanged ids :>> ', ids);
-              }}
-            />
-          </DataTableProvider>
-        </AuthContainer>
-      </ShaApplicationProvider>
-    </GlobalStateProvider>
+    <StoryApp>
+      <DataTableProvider tableId={args.id} title="Users" {...args}>
+        {/* <TableHack></TableHack> */}
+        <IndexTableFull
+          {...tableProps}
+          {...args}
+          tableRef={tableRef}
+          useMultiselect
+          onSelectedIdsChanged={ids => {
+            console.log('onSelectedIdsChanged ids :>> ', ids);
+          }}
+        />
+      </DataTableProvider>
+    </StoryApp>
   );
 };
 

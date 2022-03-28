@@ -40,6 +40,7 @@ export interface IEntityPickerState {
   selectedRowIndex?: number;
   selectedValue?: string;
   selectedRow?: IAnyObject;
+  globalStateKey?: string;
 }
 
 const INITIAL_STATE: IEntityPickerState = {

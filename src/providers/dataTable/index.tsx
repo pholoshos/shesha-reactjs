@@ -146,7 +146,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     parentEntityId,
   });
   const { setState: setGlobalState } = useGlobalState();
-  const { publish, unsubscribe } = usePubSub();
+  const { publish } = usePubSub();
 
   const { backendUrl } = useSheshaApplication();
   const tableIsReady = useRef(false);

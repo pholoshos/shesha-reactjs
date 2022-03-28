@@ -535,6 +535,11 @@
           "id": "4417761c-5277-4b39-a8e9-e5493fc4488c"
         },
         {
+          "label": "exitEditMode",
+          "value": "EXIT_EDIT_MODE",
+          "id": "948f9eea-5d22-42c3-9d3b-d1769a1e9719"
+        },
+        {
           "label": "stateChanged",
           "value": "STATE_CHANGED",
           "id": "4179a3a6-0380-452f-83da-f3d7f5ea1d23"

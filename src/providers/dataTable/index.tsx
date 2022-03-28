@@ -71,7 +71,7 @@ import {
   IDataColumnsProps,
 } from '../datatableColumnsConfigurator/models';
 import { useSheshaApplication } from '../sheshaApplication';
-import { DataTablePubsubConstants } from './pupsub';
+import { DataTablePubsubConstants } from './pubSub';
 import { useGlobalState } from '../globalState';
 
 interface IDataTableProviderProps extends ICrudProps {
@@ -627,12 +627,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   useSubscribe(DataTablePubsubConstants.refreshTable, data => {
     if (data.stateId === uniqueStateId) {
       refreshTable();
-    }
-  });
-
-  useSubscribe(DataTablePubsubConstants.setToEditMode, data => {
-    if (data.stateId === uniqueStateId) {
-      setToEditMode();
     }
   });
 

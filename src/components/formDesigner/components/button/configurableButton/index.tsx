@@ -11,7 +11,7 @@ import { IKeyValue } from '../../../../../interfaces/keyValue';
 import { axiosHttp } from '../../../../../apis/axios';
 import { IButtonGroupButton } from '../../../../../providers/buttonGroupConfigurator/models';
 import { usePubSub } from '../../../../../hooks';
-import { DataTablePubsubConstants } from '../../../../../providers/dataTable/pupsub';
+import { DataTablePubsubConstants } from '../../../../../providers/dataTable/pubSub';
 
 export interface IConfigurableButtonProps extends IButtonGroupButton {
   formComponentId: string;

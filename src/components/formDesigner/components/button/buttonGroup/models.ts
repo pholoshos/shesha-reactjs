@@ -5,5 +5,6 @@ import { ButtonGroupItemProps } from '../../../../../providers/buttonGroupConfig
 export interface IButtonGroupProps extends IConfigurableFormComponent {
   items: ButtonGroupItemProps[];
   size?: SizeType;
+  permissions?: string[];
   spaceSize?: SizeType;
 }

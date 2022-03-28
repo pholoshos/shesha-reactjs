@@ -23,10 +23,13 @@ export type ButtonActionType =
 export interface IButtonGroupItemBase {
   id: string;
   name: string;
-  label: string;
+  label?: string;
   tooltip?: string;
   sortOrder: number;
   danger?: boolean;
+  hidden?: boolean;
+  disabled?: boolean;
+  isDynamic?: boolean;
   itemType: ButtonGroupItemType;
   groupType?: ButtonGroupType;
   icon?: string;

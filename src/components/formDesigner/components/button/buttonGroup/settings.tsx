@@ -3,6 +3,8 @@ import { Form, Button, Select } from 'antd';
 import { IButtonGroupProps } from './models';
 import { ButtonGroupSettingsModal } from './buttonGroupSettingsModal';
 import SectionSeparator from '../../../../sectionSeparator';
+import { CodeEditor } from '../../codeEditor/codeEditor';
+import EditableTagGroup from '../../../../editableTagGroup';
 
 const { Option } = Select;
 
@@ -23,6 +25,7 @@ const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
 
   return (
     <Form form={form} onFinish={props.onSave} onValuesChange={onValuesChange} labelCol={{ span: 24 }}>
+      <SectionSeparator sectionName="UX" />
       <Form.Item
         name="size"
         initialValue={props.model.size}
@@ -60,6 +63,33 @@ const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
             setModalVisible(false);
           }}
         />
+      </Form.Item>
+
+      <SectionSeparator sectionName="Security" />
+
+      <Form.Item
+        label="Custom Visibility"
+        name="customVisibility"
+        tooltip="Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key."
+      >
+        <CodeEditor
+          mode="dialog"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="customVisibility"
+          type={''}
+          id={''}
+          label="Custom Visibility"
+          description="Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key."
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Permissions"
+        name="permissions"
+        initialValue={props.model.permissions}
+        tooltip="Enter a list of permissions that should be associated with this component"
+      >
+        <EditableTagGroup />
       </Form.Item>
     </Form>
   );

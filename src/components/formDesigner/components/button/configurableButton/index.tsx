@@ -1,24 +1,26 @@
 import React, { FC } from 'react';
 import { Button, message, Modal } from 'antd';
-import { useShaRouting, useForm, useModal } from '../../../../../../providers';
-import { ISelectionProps } from '../../../../../../providers/dataTableSelection/models';
-import { IModalProps } from '../../../../../../providers/dynamicModal/models';
-import { evaluateKeyValuesToObject, evaluateString } from '../../../../../../providers/form/utils';
-import ShaIcon, { IconType } from '../../../../../shaIcon';
+import { useShaRouting, useForm, useModal } from '../../../../../providers';
+import { ISelectionProps } from '../../../../../providers/dataTableSelection/models';
+import { IModalProps } from '../../../../../providers/dynamicModal/models';
+import { evaluateKeyValuesToObject, evaluateString } from '../../../../../providers/form/utils';
+import ShaIcon, { IconType } from '../../../../shaIcon';
 import classNames from 'classnames';
 import moment from 'moment';
-import { IKeyValue } from '../../../../../../interfaces/keyValue';
-import { axiosHttp } from '../../../../../../apis/axios';
-import { IButtonGroupButton } from '../../../../../../providers/buttonGroupConfigurator/models';
-import { usePubSub } from '../../../../../../hooks';
-import { DataTablePubsubConstants } from '../../../../../../providers/dataTable/pupsub';
+import { IKeyValue } from '../../../../../interfaces/keyValue';
+import { axiosHttp } from '../../../../../apis/axios';
+import { IButtonGroupButton } from '../../../../../providers/buttonGroupConfigurator/models';
+import { usePubSub } from '../../../../../hooks';
+import { DataTablePubsubConstants } from '../../../../../providers/dataTable/pupsub';
 
-export interface IButtonGroupButtonProps extends IButtonGroupButton {
+export interface IConfigurableButtonProps extends IButtonGroupButton {
   formComponentId: string;
-  selectedRow: ISelectionProps;
+  selectedRow?: ISelectionProps;
+  disabled?: boolean;
+  hidden?: boolean;
 }
 
-export const ButtonGroupButton: FC<IButtonGroupButtonProps> = props => {
+export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
   const { getAction, form, setFormMode, formData, formMode } = useForm();
   const { router } = useShaRouting();
   // const { pubSub, globalStateId } = useGlobalState();
@@ -148,13 +150,14 @@ export const ButtonGroupButton: FC<IButtonGroupButtonProps> = props => {
       icon={props.icon ? <ShaIcon iconName={props.icon as IconType} /> : undefined}
       className={classNames('sha-toolbar-btn sha-toolbar-btn-configurable')}
       size={props?.size}
+      disabled={props?.disabled}
     >
       {props.label}
     </Button>
   );
 };
 
-interface IToolbarButtonTableDialogProps extends Omit<IModalProps, 'formId' | 'isVisible'>, IButtonGroupButtonProps {
+interface IToolbarButtonTableDialogProps extends Omit<IModalProps, 'formId' | 'isVisible'>, IConfigurableButtonProps {
   modalProps?: IModalProps;
   additionalProperties?: IKeyValue[];
 }
@@ -189,10 +192,11 @@ const ToolbarButtonPlainDialog: FC<IToolbarButtonTableDialogProps> = props => {
       icon={props.icon ? <ShaIcon iconName={props.icon as IconType} /> : undefined}
       className={classNames('sha-toolbar-btn sha-toolbar-btn-configurable')}
       size={props?.size}
+      disabled={props?.disabled}
     >
       {props.label}
     </Button>
   );
 };
 
-export default ButtonGroupButton;
+export default ConfigurableButton;

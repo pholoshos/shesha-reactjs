@@ -18,7 +18,7 @@ const buttonGroupReducer = handleActions<IButtonGroupConfiguratorStateContext, a
         id: nanoid(),
         itemType: 'item',
         sortOrder: state.items.length,
-        name: `Button${buttonsCount + 1}`,
+        name: `button${buttonsCount + 1}`,
         label: `Button ${buttonsCount + 1}`,
         itemSubType: 'button',
       };
@@ -57,7 +57,7 @@ const buttonGroupReducer = handleActions<IButtonGroupConfiguratorStateContext, a
         id: nanoid(),
         itemType: 'group',
         sortOrder: state.items.length,
-        name: `Group${groupsCount + 1}`,
+        name: `group${groupsCount + 1}`,
         label: `Group ${groupsCount + 1}`,
         childItems: [],
       };

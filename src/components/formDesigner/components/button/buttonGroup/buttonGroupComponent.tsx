@@ -59,6 +59,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
       }
     }
 
+    /* tslint:disable:function-constructor */
     const evaluated = new Function('data, formMode', expression)(formData, formMode);
 
     // tslint:disable-next-line:function-constructor
@@ -110,7 +111,9 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
         switch (item?.groupType) {
           case 'inline':
             return (
-              <Space size={0}>{group?.childItems?.filter(getIsVisible).map(item => renderItem(item, nanoid()))}</Space>
+              <Space size={0}>
+                {group?.childItems?.filter(getIsVisible).map(localItem => renderItem(localItem, nanoid()))}
+              </Space>
             );
 
           default: {
@@ -119,7 +122,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
             const menu = (
               <Menu>
                 {group.childItems?.filter(getIsVisible).map(childItem => {
-                  const isEnabledByCondition = executeExpression(childItem.customEnabled, true);
+                  const localIsEnabledByCondition = executeExpression(childItem.customEnabled, true);
 
                   return (
                     <Menu.Item
@@ -127,7 +130,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
                       title={childItem.tooltip}
                       danger={childItem.danger}
                       icon={childItem.icon ? <ShaIcon iconName={childItem.icon as IconType} /> : undefined}
-                      disabled={!isEnabledByCondition || childItem?.disabled}
+                      disabled={!localIsEnabledByCondition || childItem?.disabled}
                     >
                       {childItem.label}
                     </Menu.Item>
@@ -162,7 +165,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
 
   return (
     <div style={{ minHeight: '30px' }}>
-      <Space size={spaceSize}>{items?.filter(getIsVisible).map(item => renderItem(item, nanoid()))}</Space>
+      <Space size={spaceSize}>{items?.filter(getIsVisible).map(localItem => renderItem(localItem, nanoid()))}</Space>
     </div>
   );
 };

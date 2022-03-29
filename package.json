@@ -177,6 +177,7 @@
     "camelcase-keys": "^2.1.0",
     "invert-color": "^2.0.0",
     "js-encoding-utils": "^0.6.2",
+    "js-to-json-logic": "^0.1.3",
     "less-combiner": "^0.1.2",
     "less-compiler": "^0.2.4",
     "mustache": "^4.2.0",

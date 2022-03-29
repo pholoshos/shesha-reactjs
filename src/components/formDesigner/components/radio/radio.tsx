@@ -1,7 +1,7 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { Radio } from 'antd';
+import { Radio, Space, SpaceProps } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
@@ -21,6 +21,7 @@ export type DataSourceType = 'values' | 'reflist';
 export interface IRadioProps extends IConfigurableFormComponent {
   items?: ICheckItem[];
   dataSourceType: DataSourceType;
+  direction?: SpaceProps['direction'];
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -41,11 +42,13 @@ const TextField: IToolboxComponent<IRadioProps> = {
 
     const renderCheckGroup = () => (
       <Radio.Group disabled={disabled}>
-        {items.map((checkItem, index) => (
-          <Radio key={index} value={checkItem.value}>
-            {checkItem.name}
-          </Radio>
-        ))}
+        <Space direction={model?.direction}>
+          {items.map((checkItem, index) => (
+            <Radio key={index} value={checkItem.value}>
+              {checkItem.name}
+            </Radio>
+          ))}
+        </Space>
       </Radio.Group>
     );
 

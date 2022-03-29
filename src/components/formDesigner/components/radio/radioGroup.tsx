@@ -1,13 +1,43 @@
 import { Radio, Space } from 'antd';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
+import { ReferenceListItemDto, useReferenceListGetItems } from '../../../../apis/referenceList';
 import { useForm } from '../../../../providers/form';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
-import { IRadioProps } from './utils';
+import { getCachedItems, saveListItems } from '../../../refListDropDown/utils';
+import { getDataSourceList, IRadioProps } from './utils';
 
 const RadioGroup: FC<IRadioProps> = model => {
-  const { items = [] } = model;
+  const { referenceListName, referenceListNamespace, items = [] } = model;
 
   const { formMode, isComponentDisabled } = useForm();
+
+  const { refetch: fetchItems, data: listItemsResult } = useReferenceListGetItems({
+    lazy: true,
+  });
+
+  const [cachedListItems, setCachedListItems] = useState<ReferenceListItemDto[]>([]);
+
+  useEffect(() => {
+    if (referenceListName && referenceListNamespace) {
+      const cachedItems = getCachedItems(referenceListName, referenceListNamespace);
+
+      if (cachedItems?.length) {
+        setCachedListItems(cachedItems);
+      } else {
+        fetchItems({ queryParams: { name: referenceListName, namespace: referenceListNamespace } });
+      }
+    }
+  }, [referenceListName, referenceListNamespace]);
+
+  useEffect(() => {
+    if (listItemsResult?.result) {
+      saveListItems(referenceListName, referenceListNamespace, listItemsResult?.result);
+    }
+  }, [listItemsResult]);
+
+  const listItems = cachedListItems?.length ? cachedListItems : listItemsResult?.result;
+
+  const options = getDataSourceList(model?.dataSourceType, items, listItems);
 
   const isReadOnly = model?.readOnly || formMode === 'readonly';
 
@@ -16,9 +46,9 @@ const RadioGroup: FC<IRadioProps> = model => {
   const renderCheckGroup = () => (
     <Radio.Group disabled={disabled}>
       <Space direction={model?.direction}>
-        {items.map((checkItem, index) => (
+        {options.map((checkItem, index) => (
           <Radio key={index} value={checkItem.value}>
-            {checkItem.name}
+            {checkItem.label}
           </Radio>
         ))}
       </Space>

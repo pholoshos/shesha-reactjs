@@ -7,7 +7,7 @@ import { getCachedItems, saveListItems } from '../../../refListDropDown/utils';
 import { getDataSourceList, IRadioProps } from './utils';
 
 const RadioGroup: FC<IRadioProps> = model => {
-  const { referenceListName, referenceListNamespace, items = [] } = model;
+  const { referenceListName, referenceListNamespace, items = [], value, onChange } = model;
 
   const { formMode, isComponentDisabled } = useForm();
 
@@ -44,7 +44,7 @@ const RadioGroup: FC<IRadioProps> = model => {
   const disabled = isComponentDisabled(model);
 
   const renderCheckGroup = () => (
-    <Radio.Group disabled={disabled}>
+    <Radio.Group disabled={disabled} value={value} onChange={onChange}>
       <Space direction={model?.direction}>
         {options.map((checkItem, index) => (
           <Radio key={index} value={checkItem.value}>

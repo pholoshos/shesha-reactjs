@@ -1,4 +1,4 @@
-import { SpaceProps } from 'antd';
+import { RadioChangeEvent, SpaceProps } from 'antd';
 import { ReferenceListItemDto } from '../../../../apis/referenceList';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 import { DataSourceType, ILabelValue } from '../dropdown/models';
@@ -9,6 +9,8 @@ export interface IRadioProps extends IConfigurableFormComponent {
   referenceListName?: string;
   dataSourceType: DataSourceType;
   direction?: SpaceProps['direction'];
+  value?: any;
+  onChange?: (e: RadioChangeEvent) => void;
 }
 
 export const getDataSourceList = (

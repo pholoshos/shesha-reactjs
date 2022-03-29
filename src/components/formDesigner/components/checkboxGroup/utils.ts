@@ -15,6 +15,6 @@ export interface ICheckboxGoupProps extends IConfigurableFormComponent {
   referenceListNamespace?: string;
   referenceListName?: string;
   dataSourceType: DataSourceType;
-  orientation?: SpaceProps['direction'];
+  direction?: SpaceProps['direction'];
   values?: ICheckItem[];
 }

@@ -11,12 +11,12 @@ export const RefListCheckboxGroup: FC<ICheckboxGoupProps> = ({
   mode,
   items,
   values,
-  orientation,
+  direction,
 }) => {
   const { refetch: fetchItems, data: listItemsResult } = useReferenceListGetItems({ lazy: true });
   const [cachedListItems, setCachedListItems] = useState<ReferenceListItemDto[]>([]);
 
-  const checkBoxSpan = orientation === 'vertical' ? 24 : 6;
+  const checkBoxSpan = direction === 'vertical' ? 24 : 6;
 
   useEffect(() => {
     if (referenceListName && referenceListNamespace) {
@@ -61,7 +61,7 @@ export const RefListCheckboxGroup: FC<ICheckboxGoupProps> = ({
       </Checkbox.Group>
     ) : (
       <Radio.Group>
-        <Space direction={orientation}>
+        <Space direction={direction}>
           {options?.map(({ id, item, itemValue }) => (
             <Radio key={id} value={itemValue}>
               {item}
@@ -83,7 +83,7 @@ export const RefListCheckboxGroup: FC<ICheckboxGoupProps> = ({
       </Checkbox.Group>
     ) : (
       <Radio.Group>
-        <Space direction={orientation}>
+        <Space direction={direction}>
           {items?.map(({ id, name, value }) => (
             <Radio key={id} value={value} name={name}>
               {value}

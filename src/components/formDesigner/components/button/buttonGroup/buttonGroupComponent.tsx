@@ -13,8 +13,9 @@ import { useForm } from '../../../../../providers/form';
 import { ConfigurableButton } from '../configurableButton';
 import { ShaIcon } from '../../../..';
 import { IconType } from '../../../../shaIcon';
-import { useAuth } from '../../../../../providers';
+import { useAuth, useGlobalState } from '../../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
+import moment from 'moment';
 
 const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
   type: 'buttonGroup',
@@ -45,6 +46,7 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
 export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize }) => {
   const { formMode, formData } = useForm();
   const { anyOfPermissionsGranted } = useAuth();
+  const { globalState } = useGlobalState();
 
   const isDesignMode = formMode === 'designer';
 
@@ -60,7 +62,12 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
     }
 
     /* tslint:disable:function-constructor */
-    const evaluated = new Function('data, formMode', expression)(formData, formMode);
+    const evaluated = new Function('data, formMode, globalState, moment', expression)(
+      formData,
+      formMode,
+      globalState,
+      moment
+    );
 
     // tslint:disable-next-line:function-constructor
     return typeof evaluated === 'boolean' ? evaluated : true;

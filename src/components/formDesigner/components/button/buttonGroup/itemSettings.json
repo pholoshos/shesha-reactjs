@@ -660,7 +660,8 @@
         { "name": "data", "description": "The form data", "type": "object" },
         { "name": "moment", "description": "The moment.js object", "type": "object" },
         { "name": "form", "description": "Form instance", "type": "FormInstance" },
-        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" }
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
       ]
     },
     {
@@ -677,7 +678,9 @@
       "settingsValidationErrors": [],
       "exposedVariables": [
         { "name": "data", "description": "The form data", "type": "object" },
-        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" }
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
       ]
     },
     {

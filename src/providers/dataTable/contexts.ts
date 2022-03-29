@@ -57,6 +57,11 @@ export interface IDataTableStateContext
   extends IFlagsState<IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags> {
   title?: string;
 
+  /**
+   * Useful for entity picker as the column that has to be used to display when the entity has been selected
+   */
+  displayColumnName?: string;
+
   formData?: any;
   /** Id of the table configuration */
   tableId?: string; // todo: move all table-specific properties to a separate sub-store
@@ -189,6 +194,8 @@ export interface IDataTableActionsContext
   registerConfigurableColumns: (ownerId: string, columns: IConfigurableColumnsBase[]) => void;
 
   setCrudConfig?: (config: ITableCrudConfig) => void;
+
+  changeDisplayColumn: (displayColumnName: string) => void;
   /* NEW_ACTION_ACTION_DECLARATIO_GOES_HERE */
 }
 

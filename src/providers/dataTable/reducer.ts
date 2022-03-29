@@ -54,6 +54,17 @@ const reducer = handleActions<IDataTableStateContext, any>(
       };
     },
 
+    [DataTableActionEnums.ChangeDisplayColumn]: (
+      state: IDataTableStateContext,
+      action: ReduxActions.Action<string>
+    ) => {
+      const { payload } = action;
+      return {
+        ...state,
+        displayColumnName: payload,
+      };
+    },
+
     [DataTableActionEnums.ChangeSelectedStoredFilterIds]: (
       state: IDataTableStateContext,
       action: ReduxActions.Action<string[]>

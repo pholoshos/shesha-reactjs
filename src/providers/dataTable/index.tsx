@@ -43,6 +43,7 @@ import {
   fetchColumnsSuccessSuccessAction,
   setCrudConfigAction,
   onSortAction,
+  changeDisplayColumnAction,
 } from './actions';
 import {
   ITableDataResponse,
@@ -73,6 +74,7 @@ import {
 import { useSheshaApplication } from '../sheshaApplication';
 import { DataTablePubsubConstants } from './pubSub';
 import { useGlobalState } from '../globalState';
+import camelCaseKeys from 'camelcase-keys';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Table configuration Id */
@@ -436,7 +438,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   };
 
   const changeSelectedRow = (val: number) => {
-    dispatch(changeSelectedRowAction(val));
+    dispatch(changeSelectedRowAction(camelCaseKeys(val, { deep: true })));
   };
 
   const changeSelectedStoredFilterIds = (selectedStoredFilterIds: string[]) => {
@@ -605,7 +607,9 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     flagSetters?.setIsInProgressFlag({ isFiltering: true, isSelectingColumns: false });
   };
 
-  const setToEditMode = () => {};
+  const changeDisplayColumn = (displayColumnName: string) => {
+    dispatch(changeDisplayColumnAction(displayColumnName));
+  };
   //#endregion
 
   //#region Subscriptions
@@ -654,10 +658,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     }
   });
 
-  useSubscribe(DataTablePubsubConstants.stateChanged, data => {
-    console.log('DataTablePubsubConstants.stateChanged state: ', data?.state);
-  });
-
   //#endregion
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
@@ -669,6 +669,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           onSort,
           ...flagSetters,
           fetchTableConfig,
+          changeDisplayColumn,
           fetchTableData,
           setCurrentPage,
           changePageSize,

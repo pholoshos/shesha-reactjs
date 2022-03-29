@@ -162,8 +162,8 @@
       "name": "items",
       "parentId": "root",
       "label": "Items",
-      "labelTitle": "Name",
-      "labelName": "name",
+      "labelTitle": "Label",
+      "labelName": "label",
       "valueTitle": "Value",
       "valueName": "value",
       "customVisibility": "return data.dataSourceType === 'values'"

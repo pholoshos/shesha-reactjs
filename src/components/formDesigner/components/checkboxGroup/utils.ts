@@ -1,20 +1,13 @@
 import { SpaceProps } from 'antd';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
-
-export interface ICheckItem {
-  id: string;
-  name: string;
-  value: string;
-}
-
-export type DataSourceType = 'values' | 'referenceList';
+import { DataSourceType, ILabelValue } from '../dropdown/models';
 
 export interface ICheckboxGoupProps extends IConfigurableFormComponent {
-  items?: ICheckItem[];
+  items?: ILabelValue[];
   mode?: 'single' | 'multiple';
   referenceListNamespace?: string;
   referenceListName?: string;
   dataSourceType: DataSourceType;
   direction?: SpaceProps['direction'];
-  values?: ICheckItem[];
+  values?: ILabelValue[];
 }

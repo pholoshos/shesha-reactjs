@@ -28,6 +28,7 @@ const Radio: IToolboxComponent<IRadioProps> = {
     const customModel: IRadioProps = {
       ...model,
       dataSourceType: 'values',
+      direction: 'horizontal',
     };
     return customModel;
   },

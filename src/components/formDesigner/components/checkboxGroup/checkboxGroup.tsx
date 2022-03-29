@@ -29,6 +29,8 @@ const CheckboxGroupComponent: IToolboxComponent<ICheckboxGoupProps> = {
     const customProps: ICheckboxGoupProps = {
       ...model,
       dataSourceType: 'values',
+      direction: 'horizontal',
+      mode: 'single',
     };
     return customProps;
   },
@@ -38,7 +40,6 @@ const CheckboxGroupComponent: IToolboxComponent<ICheckboxGoupProps> = {
       dataSourceType: metadata.dataType === DataTypes.referenceListItem ? 'referenceList' : 'values',
       referenceListNamespace: metadata.referenceListNamespace,
       referenceListName: metadata.referenceListName,
-      mode: 'single',
     };
   },
 };

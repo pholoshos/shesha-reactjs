@@ -14,7 +14,7 @@ export interface IDynamicModalProps extends Omit<IModalProps, 'fetchUrl'> {
   // todo: move to a separate object
   formId: string;
   mode: FormMode;
-  onSubmitted?: () => void;
+  onSubmitted?: (response: any) => void;
 }
 
 export const DynamicModal: FC<IDynamicModalProps> = props => {
@@ -68,7 +68,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     }
 
     hideForm();
-    if (props.onSubmitted) props.onSubmitted();
+    if (props.onSubmitted) props.onSubmitted(response);
   };
 
   const onCancel = () => {

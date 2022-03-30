@@ -31,6 +31,7 @@ const CodeEditorComponent: IToolboxComponent<ICodeEditorComponentProps> = {
       <>
         <ConfigurableFormItem model={model}>
           <CodeEditor
+            language="typescript"
             {...editorProps}
             mode="dialog"
             setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}

@@ -35,7 +35,7 @@ const getDirtyFilter = (state: IDataTableStateContext): ITableFilter[] => {
 
 const reducer = handleActions<IDataTableStateContext, any>(
   {
-    [DataTableActionEnums.ChangeSelectedRow]: (state: IDataTableStateContext, action: ReduxActions.Action<number>) => {
+    [DataTableActionEnums.ChangeSelectedRow]: (state: IDataTableStateContext, action: ReduxActions.Action<any>) => {
       const { payload } = action;
       return {
         ...state,

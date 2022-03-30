@@ -168,7 +168,7 @@ export interface IDataTableActionsContext
   /** change quick search and refresh table data */
   performQuickSearch?: (val: string) => void;
   toggleSaveFilterModal?: (visible: boolean) => void;
-  changeSelectedRow?: (index: number) => void;
+  changeSelectedRow?: (index: any) => void;
 
   changeSelectedStoredFilterIds?: (selectedStoredFilterIds: string[]) => void;
   setPredefinedFilters: (filters: IStoredFilter[]) => void;

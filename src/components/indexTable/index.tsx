@@ -100,10 +100,12 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
 
   const onSelectRowLocal = (index: number, row: any) => {
     onSelectRow(index, row);
+
     changeSelectedRow(row);
   };
 
   const previousIds = usePrevious(selectedIds);
+
   useEffect(() => {
     if (!(previousIds?.length === 0 && selectedIds?.length === 0) && typeof onSelectedIdsChanged === 'function') {
       onSelectedIdsChanged(selectedIds);

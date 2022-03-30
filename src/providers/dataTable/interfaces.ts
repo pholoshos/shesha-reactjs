@@ -128,14 +128,21 @@ export type FilterExpressionType = 'jsonLogic' | 'hql';
 export type FilterType = 'predefined' | 'user-defined' | 'quick';
 export interface IStoredFilter {
   id: string;
+
   name: string;
+
   tooltip?: string;
   // Exclusive filters cannot be applied on top of other filters. Only one can be selected
+
   isExclusive?: boolean;
   // Private filters are managed within the data table control
   isPrivate?: boolean;
+
   expressionType?: FilterExpressionType | string;
+
   expression?: string | object;
+
+  filterType?: string;
 
   // use
   useExpression?: boolean;

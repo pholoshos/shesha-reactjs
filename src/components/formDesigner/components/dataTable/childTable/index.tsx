@@ -79,7 +79,7 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
           setPredefinedFilters(parsedFilters);
         }
 
-        refreshTable();
+        // refreshTable();
       }
     }, [model?.filters, formData]);
 

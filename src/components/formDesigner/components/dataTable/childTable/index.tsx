@@ -79,7 +79,9 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
           setPredefinedFilters(parsedFilters);
         }
 
-        refreshTable();
+        // Do not refresh the table when the data changes.
+        // TODO: Compare filters to see if they have not changed, in which case you should refresh
+        // refreshTable();
       }
     }, [model?.filters, formData]);
 

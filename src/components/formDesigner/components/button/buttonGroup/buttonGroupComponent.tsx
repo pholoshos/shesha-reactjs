@@ -44,7 +44,7 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
 };
 
 export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize }) => {
-  const { formMode, formData } = useForm();
+  const { formMode, formData, form } = useForm();
   const { anyOfPermissionsGranted } = useAuth();
   const { globalState } = useGlobalState();
 
@@ -62,8 +62,9 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
     }
 
     /* tslint:disable:function-constructor */
-    const evaluated = new Function('data, formMode, globalState, moment', expression)(
+    const evaluated = new Function('data, form, formMode, globalState, moment', expression)(
       formData,
+      form,
       formMode,
       globalState,
       moment

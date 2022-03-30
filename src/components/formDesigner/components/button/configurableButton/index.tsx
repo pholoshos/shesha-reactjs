@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Button, message, Modal } from 'antd';
-import { useShaRouting, useForm, useModal } from '../../../../../providers';
+import { useShaRouting, useForm, useModal, useGlobalState } from '../../../../../providers';
 import { ISelectionProps } from '../../../../../providers/dataTableSelection/models';
 import { IModalProps } from '../../../../../providers/dynamicModal/models';
 import { evaluateKeyValuesToObject, evaluateString } from '../../../../../providers/form/utils';
@@ -23,6 +23,7 @@ export interface IConfigurableButtonProps extends IButtonGroupButton {
 export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
   const { getAction, form, setFormMode, formData, formMode } = useForm();
   const { router } = useShaRouting();
+  const { globalState } = useGlobalState();
   // const { pubSub, globalStateId } = useGlobalState();
   const { publish } = usePubSub();
 
@@ -34,14 +35,15 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
     }
 
     // tslint:disable-next-line:function-constructor
-    return new Function('data, moment, form, formMode, http, result, message', expression)(
+    return new Function('data, moment, form, formMode, http, result, message, globalState', expression)(
       formData,
       moment,
       form,
       formMode,
       axiosHttp,
       result,
-      message
+      message,
+      globalState
     );
   };
 
@@ -85,6 +87,8 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
   const onButtonClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.stopPropagation(); // Don't collapse the CollapsiblePanel when clicked
 
+    const { showConfirmDialogBeforeSubmit, modalConfirmDialogMessage } = props;
+
     switch (props.buttonAction) {
       case 'navigate':
         if (props.targetUrl) {
@@ -94,15 +98,22 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
               : props.targetUrl;
 
           router?.push(preparedUrl);
-        } else console.warn('tagret Url is not specified');
+        } else console.warn('target Url is not specified');
         break;
       case 'executeScript':
         if (props?.actionScript) {
-          executeExpression(props?.actionScript);
+          if (showConfirmDialogBeforeSubmit) {
+            Modal.confirm({
+              content: modalConfirmDialogMessage,
+              onOk: () => executeExpression(props?.actionScript),
+            });
+          } else {
+            executeExpression(props?.actionScript);
+          }
         }
+
         break;
       case 'submit':
-        const { showConfirmDialogBeforeSubmit, modalConfirmDialogMessage } = props;
         if (showConfirmDialogBeforeSubmit) {
           Modal.confirm({
             content: modalConfirmDialogMessage,

@@ -27,6 +27,7 @@ import {
   IDataColumnsProps,
 } from '../datatableColumnsConfigurator/models';
 import { getFilterOptions } from '../../components/columnItemFilter';
+import { cleanPropertyName } from './utils';
 
 /** get dirty filter if exists and fallback to current filter state */
 const getDirtyFilter = (state: IDataTableStateContext): ITableFilter[] => {
@@ -287,7 +288,9 @@ const reducer = handleActions<IDataTableStateContext, any>(
           switch (colProps.columnType) {
             case 'data': {
               const dataProps = column as IDataColumnsProps;
-              const srvColumn = dataProps.propertyName ? columns.find(c => c.name === dataProps.propertyName) : {};
+              const srvColumn = dataProps.propertyName
+                ? columns.find(c => cleanPropertyName(c.name) === cleanPropertyName(dataProps.propertyName))
+                : {};
 
               return {
                 id: dataProps?.propertyName,

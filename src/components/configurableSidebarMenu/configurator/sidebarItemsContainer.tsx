@@ -22,7 +22,8 @@ export const SidebarItemsContainer: FC<IToolbarItemsSortableProps> = props => {
   };
 
   const onSetList = (newState: ItemInterface[]) => {
-    const listChanged = !newState.some(item => item.chosen !== null && item.chosen !== undefined);
+    // temporary commented out, the behavoiur of the sortablejs differs sometimes
+    const listChanged = true; //!newState.some(item => item.chosen !== null && item.chosen !== undefined);
 
     if (listChanged && newState?.length) {
       const newChilds = newState.map<ISidebarMenuItem>(item => item as any);

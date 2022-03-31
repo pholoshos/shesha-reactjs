@@ -25,6 +25,7 @@ import { StateWithHistory } from 'redux-undo';
 import { FormLayout } from 'antd/lib/form/Form';
 import { IDataSource } from '../formDesigner/models';
 import { IPropertyMetadata } from '../../interfaces/metadata';
+import { IKeyValue } from '../../interfaces/keyValue';
 
 export type IFlagProgressFlags =
   | 'addComponent'
@@ -65,6 +66,7 @@ export interface IFormSettings {
   wrapperCol: ILayoutProps;
   showModeToggler?: boolean;
   preparedValues?: string;
+  initialValues?: IKeyValue[];
 }
 
 export interface IFormDesignerStateContext extends StateWithHistory<IFormStateContext> {}

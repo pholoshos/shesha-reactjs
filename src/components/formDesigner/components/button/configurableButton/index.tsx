@@ -12,6 +12,7 @@ import { axiosHttp } from '../../../../../apis/axios';
 import { IButtonGroupButton } from '../../../../../providers/buttonGroupConfigurator/models';
 import { usePubSub } from '../../../../../hooks';
 import { DataTablePubsubConstants } from '../../../../../providers/dataTable/pubSub';
+import { DynamicFormPubSubConstants } from '../../../../../pages/dynamic/pubSub';
 
 export interface IConfigurableButtonProps extends IButtonGroupButton {
   formComponentId: string;
@@ -127,7 +128,7 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
         setFormMode('edit');
         break;
       case 'cancelFormEdit':
-        setFormMode('readonly');
+        publish(DynamicFormPubSubConstants.CancelFormEdit, { stateId: 'NO_PROVIDED' });
         break;
       case 'reset':
         form?.resetFields();

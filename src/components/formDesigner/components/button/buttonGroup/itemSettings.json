@@ -204,7 +204,7 @@
             },
             {
               "id": "b2c59c38-6537-4d39-9612-c4c5ae26ef7a",
-              "label": "Cancel Edit",
+              "label": "Cancel Form Edit",
               "value": "cancelFormEdit"
             },
             {
@@ -576,11 +576,6 @@
               "label": "setToEditMode",
               "value": "SET_TO_EDIT_MODE",
               "id": "4417761c-5277-4b39-a8e9-e5493fc4488c"
-            },
-            {
-              "label": "cancelFormEdit",
-              "value": "CANCEL_FORM_EDIT",
-              "id": "4179a3a6-0380-452f-83da-f3d7f5ea1d23"
             },
             {
               "label": "(enter custom action)",

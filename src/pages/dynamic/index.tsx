@@ -11,7 +11,7 @@ import { PageWithLayout } from '../../interfaces';
 import { ConfigurableFormInstance } from '../../providers/form/contexts';
 import { FormMarkupWithSettings } from '../../providers/form/models';
 import { removeZeroWidthCharsFromString } from '../../providers/form/utils';
-import { DynamicFormPubSubConsants as DynamicFormPubSubConstants } from './pubSub';
+import { DynamicFormPubSubConstants } from './pubSub';
 
 type FormMode = 'designer' | 'edit' | 'readonly';
 

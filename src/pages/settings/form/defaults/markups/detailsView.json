@@ -120,8 +120,7 @@
                   "label": "Cancel Form Edit",
                   "itemSubType": "button",
                   "chosen": false,
-                  "buttonAction": "executeFormAction",
-                  "formAction": "CANCEL_FORM_EDIT",
+                  "buttonAction": "cancelFormEdit",
                   "icon": "CloseOutlined",
                   "selected": false,
                   "buttonType": "link",
@@ -138,7 +137,7 @@
                   "selected": false,
                   "icon": "EditOutlined",
                   "buttonType": "link",
-                  "customVisibility": "return formMode === 'readonly' || formMode === 'designer';",
+                  "customVisibility": "return formMode === 'readonly' || formMode === 'designer'; ",
                   "buttonAction": "startFormEdit"
                 },
                 {

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Button, message, Modal } from 'antd';
-import { useShaRouting, useForm, useModal, useGlobalState } from '../../../../../providers';
+import { useShaRouting, useForm, useModal, useGlobalState, useSheshaApplication } from '../../../../../providers';
 import { ISelectionProps } from '../../../../../providers/dataTableSelection/models';
 import { IModalProps } from '../../../../../providers/dynamicModal/models';
 import { evaluateKeyValuesToObject, evaluateString } from '../../../../../providers/form/utils';
@@ -21,6 +21,7 @@ export interface IConfigurableButtonProps extends IButtonGroupButton {
 }
 
 export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
+  const { backendUrl } = useSheshaApplication();
   const { getAction, form, setFormMode, formData, formMode } = useForm();
   const { router } = useShaRouting();
   const { globalState } = useGlobalState();
@@ -40,7 +41,7 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       moment,
       form,
       formMode,
-      axiosHttp,
+      axiosHttp(backendUrl),
       result,
       message,
       globalState

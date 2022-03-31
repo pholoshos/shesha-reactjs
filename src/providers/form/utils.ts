@@ -745,3 +745,37 @@ export const evaluateKeyValuesToObject = (arr: IKeyValue[], data: any): IAnyObje
 
   return {};
 };
+
+interface IMatchData {
+  match: string;
+  data: any;
+}
+
+export const evaluateKeyValuesToObjectMatchedData = (arr: IKeyValue[], matches: IMatchData[]): IAnyObject => {
+  const queryParamObj: IAnyObject = {};
+
+  if (arr?.length) {
+    arr?.forEach(({ key, value }) => {
+      if (key?.length && value.length) {
+        let matchedKey = '';
+
+        let data =
+          matches?.find(({ match }) => {
+            const isMatch = value?.includes(match);
+
+            if (isMatch) {
+              matchedKey = match;
+            }
+
+            return isMatch;
+          })?.data || {};
+
+        queryParamObj[key] = evaluateString(value, matchedKey ? { [matchedKey]: data } : data);
+      }
+    });
+
+    return queryParamObj;
+  }
+
+  return {};
+};

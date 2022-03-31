@@ -1,13 +1,7 @@
 import { IAceOptions } from 'react-ace';
 import { IConfigurableFormComponent } from '../../../../interfaces';
+import { ICodeExposedVariable } from '../../../codeVariablesTable';
 import { EditorModes } from './types';
-
-export interface ICodeExposedVariable {
-  id: string;
-  name: string;
-  description: string;
-  type: 'object' | 'function';
-}
 
 export interface ICodeEditorProps extends IConfigurableFormComponent {
   placeholder?: string;

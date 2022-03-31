@@ -7,7 +7,8 @@ import settingsFormJson from './settingsForm.json';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { CodeEditor } from './codeEditor';
 import { DataTypes, StringFormats } from '../../../../interfaces/dataTypes';
-import { ICodeEditorProps, ICodeExposedVariable } from './models';
+import { ICodeEditorProps } from './models';
+import { ICodeExposedVariable } from '../../../codeVariablesTable';
 
 const settingsForm = settingsFormJson as FormMarkup;
 

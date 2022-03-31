@@ -6,7 +6,7 @@ import { IPropertyMetadata } from '../../../../interfaces/metadata';
 import { Alert, Button, Modal, Tabs } from 'antd';
 import { CodeOutlined } from '@ant-design/icons';
 import { ICodeEditorProps } from './models';
-import { CodeVariablesTables } from './codeVariablesTables';
+import { CodeVariablesTables } from '../../../codeVariablesTable';
 
 const { TabPane } = Tabs;
 

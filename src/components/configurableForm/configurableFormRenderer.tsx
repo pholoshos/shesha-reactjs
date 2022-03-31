@@ -24,6 +24,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   ...props
 }) => {
   const { setFormData, formData, allComponents, formMode, isDragging, formSettings, setValidationErrors } = useForm();
+  const { excludeFormFieldsInPayload } = formSettings;
   const { globalState } = useGlobalState();
 
   const onFieldsChange = (changedFields: any[], allFields: any[]) => {
@@ -136,15 +137,18 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const onFinish = () => {
     const initialValuesFromFormSettings = getInitialValuesFromFormSettings();
 
-    const postData = addFormFieldsList(
-      { ...formData, ...getDynamicPreparedValues(), ...getInitialValuesFromFormSettings() },
-      form
-    );
+    const preparedPostData = { ...formData, ...getDynamicPreparedValues(), ...getInitialValuesFromFormSettings() };
 
-    if (initialValuesFromFormSettings) {
-      postData._formFields = Array.from(
-        new Set<string>([...postData._formFields, ...Object.keys(initialValuesFromFormSettings)])
-      );
+    const postData = excludeFormFieldsInPayload ? preparedPostData : addFormFieldsList(preparedPostData, form);
+
+    if (excludeFormFieldsInPayload) {
+      postData._formFields = [];
+    } else {
+      if (initialValuesFromFormSettings) {
+        postData._formFields = Array.from(
+          new Set<string>([...postData._formFields, ...Object.keys(initialValuesFromFormSettings)])
+        );
+      }
     }
 
     if (skipPostOnFinish) {

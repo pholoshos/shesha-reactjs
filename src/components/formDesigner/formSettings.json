@@ -123,6 +123,18 @@
       "validate": {}
     },
     {
+      "id": "0e3231f1-e158-427a-b32b-00ff9da941bb",
+      "type": "checkbox",
+      "name": "excludeFormFieldsInPayload",
+      "label": "Exclude '_formFields' in the payload?",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Whether or not _formFields should be included in the payload. By default it is included.",
+      "validate": {}
+    },
+    {
       "id": "58f715b9-624b-4189-812c-6144cafb7405",
       "type": "labelValueEditor",
       "name": "initialValues",

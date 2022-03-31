@@ -66,6 +66,7 @@ export interface IFormSettings {
   wrapperCol: ILayoutProps;
   showModeToggler?: boolean;
   preparedValues?: string;
+  excludeFormFieldsInPayload?: string;
   initialValues?: IKeyValue[];
 }
 

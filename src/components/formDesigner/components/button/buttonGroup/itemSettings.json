@@ -578,8 +578,8 @@
               "id": "4417761c-5277-4b39-a8e9-e5493fc4488c"
             },
             {
-              "label": "stateChanged",
-              "value": "STATE_CHANGED",
+              "label": "cancelFormEdit",
+              "value": "CANCEL_FORM_EDIT",
               "id": "4179a3a6-0380-452f-83da-f3d7f5ea1d23"
             },
             {

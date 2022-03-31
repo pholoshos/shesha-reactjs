@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { Form, Button, Select } from 'antd';
+import { Form, Button, Select, Input } from 'antd';
 import { IButtonGroupProps } from './models';
 import { ButtonGroupSettingsModal } from './buttonGroupSettingsModal';
 import SectionSeparator from '../../../../sectionSeparator';
@@ -26,6 +26,10 @@ const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
   return (
     <Form form={form} onFinish={props.onSave} onValuesChange={onValuesChange} labelCol={{ span: 24 }}>
       <SectionSeparator sectionName="UX" />
+      <Form.Item name="name" initialValue={props.model.name} label="Name" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+
       <Form.Item
         name="size"
         initialValue={props.model.size}

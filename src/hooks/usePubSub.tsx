@@ -45,7 +45,8 @@ export const usePubSub = (): ISubscription<IPubSubPayload> => {
 
   const unsubscribe = (token: string) => removeEventListener(token, () => {}, false);
 
-  const publish = (token: string, data?: IPubSubPayload) => dispatchEvent(new CustomEvent(token, { detail: data }));
+  const publish = (token: string, data?: IPubSubPayload) =>
+    dispatchEvent(new CustomEvent(token, { detail: data || {} }));
 
   const clearAllEventListeners = () => {
     // events.forEach(localEvent => {
@@ -59,15 +60,24 @@ export const usePubSub = (): ISubscription<IPubSubPayload> => {
 
 export function useSubscribe(eventName: string, eventHandler: (data: IPubSubPayload) => void): void {
   useEffect(() => {
-    const handleEvent = (event: CustomEvent | Event) => {
-      const data = (event as CustomEvent).detail;
-      eventHandler(data);
-    };
-
-    addEventListener(eventName, handleEvent, false);
+    addEventListener(eventName, e =>
+      eventHandler({ stateId: (e as any).detail.stateId, state: (e as any).detail.state })
+    );
 
     return () => {
-      removeEventListener(eventName, handleEvent, false);
+      removeEventListener(eventName, () => {}, false);
     };
   });
 }
+
+export const eventBus = {
+  on(event, callback) {
+    document.addEventListener(event, e => callback(e.detail));
+  },
+  dispatch(event, data) {
+    document.dispatchEvent(new CustomEvent(event, { detail: data }));
+  },
+  remove(event, callback) {
+    document.removeEventListener(event, callback);
+  },
+};

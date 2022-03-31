@@ -134,8 +134,10 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
         break;
       case 'executeFormAction':
       case 'customAction':
-        if (props?.uniqueStateId && props?.formAction) {
-          publish(props?.formAction, { stateId: props?.uniqueStateId });
+        if (props?.formAction) {
+          console.log('props?.formAction ', props?.formAction);
+
+          publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
         } else {
           if (props.customFormAction) {
             const actionBody = getAction(props.formComponentId, props.customFormAction);

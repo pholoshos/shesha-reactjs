@@ -122,13 +122,13 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     ]);
 
     return cleanDeep(values, {
-      cleanKeys: [], // Don't Remove specific keys, ie: ['foo', 'bar', ' ']
-      cleanValues: [], // Don't Remove specific values, ie: ['foo', 'bar', ' ']
-      emptyArrays: false, // Don't Remove empty arrays, ie: []
-      emptyObjects: false, // Don't Remove empty objects, ie: {}
-      emptyStrings: false, // Don't Remove empty strings, ie: ''
-      NaNValues: true, // Remove NaN values, ie: NaN
-      nullValues: true, // Remove null values, ie: null
+      // cleanKeys: [], // Don't Remove specific keys, ie: ['foo', 'bar', ' ']
+      // cleanValues: [], // Don't Remove specific values, ie: ['foo', 'bar', ' ']
+      // emptyArrays: false, // Don't Remove empty arrays, ie: []
+      // emptyObjects: false, // Don't Remove empty objects, ie: {}
+      // emptyStrings: false, // Don't Remove empty strings, ie: ''
+      // NaNValues: true, // Remove NaN values, ie: NaN
+      // nullValues: true, // Remove null values, ie: null
       undefinedValues: true, // Remove undefined values, ie: undefined
     });
   };
@@ -136,7 +136,10 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const onFinish = () => {
     const initialValuesFromFormSettings = getInitialValuesFromFormSettings();
 
-    const postData = addFormFieldsList({ ...formData, ...getDynamicPreparedValues() }, form);
+    const postData = addFormFieldsList(
+      { ...formData, ...getDynamicPreparedValues(), ...getInitialValuesFromFormSettings() },
+      form
+    );
 
     if (initialValuesFromFormSettings) {
       postData._formFields = Array.from(

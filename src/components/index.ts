@@ -138,6 +138,7 @@ export { default as DefaultLayout, getDefaultLayout } from './defaultLayout';
 export { default as EditableTagGroup, IEditableTagGroupProps } from './editableTagGroup';
 
 export { default as QuickView, IQuickViewProps } from './quickView';
+export { default as CurrencyConverter, ICurrencyConverterProps } from './currencyConverter';
 
 export { default as ToolbarSettingsModal } from './formDesigner/components/dataTable/toolbar/toolbarSettingsModal';
 export { default as CodeEditorModal } from './formDesigner/components/codeEditor/codeEditor';

@@ -7,8 +7,6 @@ import './index.less';
 import { ValidationErrors } from '../validationErrors';
 import { IErrorInfo } from '../../interfaces/errorInfo';
 
-export const ACCESS_TOKEN_NAME = 'xDFcxiooPQxazdndDsdRSerWQPlincytLDCarcxVxv';
-
 const { Item } = Form;
 
 interface ILoginForm {
@@ -25,7 +23,7 @@ const AuthContainer: FC<IAuthContainerProps> = ({ children, layout = false }) =>
   const [isSignInModalVisible, setSignInModalVisibility] = useState(false);
 
   const { loginUser, logoutUser, isInProgress, loginInfo, error } = useAuth();
-  
+
   const isLoggedIn = Boolean(loginInfo?.userName);
 
   const [loginForm] = Form.useForm();

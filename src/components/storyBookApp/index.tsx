@@ -1,5 +1,5 @@
 import React, { FC, PropsWithChildren } from 'react';
-import { ShaApplicationProvider, SidebarMenuDefaultsProvider } from '../../providers';
+import { GlobalStateProvider, ShaApplicationProvider, SidebarMenuDefaultsProvider } from '../../providers';
 import AuthContainer from '../authedContainer';
 
 const DEFAULT_ROUTER = {
@@ -13,7 +13,7 @@ const DEFAULT_ROUTER = {
   clc: null,
   pageLoader: undefined,
   push(url: string) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (url) {
         resolve(true);
       }
@@ -21,8 +21,7 @@ const DEFAULT_ROUTER = {
   },
 };
 
-export const StoryApp: FC<PropsWithChildren<any>> = ({ children }) => {
-
+export const StoryApp: FC<PropsWithChildren<{ layout?: boolean }>> = ({ children, layout = true }) => {
   const renderChildren = () => {
     try {
       const getLayout = (children as Array<any>)[0]?.type?.getLayout;
@@ -34,11 +33,13 @@ export const StoryApp: FC<PropsWithChildren<any>> = ({ children }) => {
   };
 
   return (
-    <ShaApplicationProvider backendUrl={process.env.STORYBOOK_BASE_URL || ''} router={DEFAULT_ROUTER as any}>
-      <AuthContainer layout>
-        <SidebarMenuDefaultsProvider items={[]}>{renderChildren()}</SidebarMenuDefaultsProvider>
-      </AuthContainer>
-    </ShaApplicationProvider>
+    <GlobalStateProvider>
+      <ShaApplicationProvider backendUrl={process.env.STORYBOOK_BASE_URL || ''} router={DEFAULT_ROUTER as any}>
+        <AuthContainer layout={layout}>
+          <SidebarMenuDefaultsProvider items={[]}>{renderChildren()}</SidebarMenuDefaultsProvider>
+        </AuthContainer>
+      </ShaApplicationProvider>
+    </GlobalStateProvider>
   );
 };
 

@@ -51,6 +51,8 @@ export enum DataTableActionEnums {
 
   SetCrudConfig = 'SET_CRUD_Config',
 
+  ChangeDisplayColumn = 'CHANGE_DISPLAY_COLUMN',
+
   /* NEW_ACTION_TYPE_GOES_HERE */
 }
 
@@ -134,6 +136,7 @@ export interface IChangeFilterAction {
   filterColumnId: string;
   filterValue: any;
 }
+
 export const changeFilterAction = createAction<IChangeFilterAction, IChangeFilterAction>(
   DataTableActionEnums.ChangeFilter,
   p => p
@@ -141,7 +144,7 @@ export const changeFilterAction = createAction<IChangeFilterAction, IChangeFilte
 
 export const applyFilterAction = createAction<ITableFilter[], ITableFilter[]>(DataTableActionEnums.ApplyFilter, p => p);
 
-export const changeSelectedRowAction = createAction<number, number>(DataTableActionEnums.ChangeSelectedRow, p => p);
+export const changeSelectedRowAction = createAction<any, any>(DataTableActionEnums.ChangeSelectedRow, p => p);
 
 export const changeSelectedStoredFilterIdsAction = createAction<string[], string[]>(
   DataTableActionEnums.ChangeSelectedStoredFilterIds,
@@ -181,3 +184,5 @@ export const setCrudConfigAction = createAction<ITableCrudConfig, ITableCrudConf
   DataTableActionEnums.SetCrudConfig,
   p => p
 );
+
+export const changeDisplayColumnAction = createAction<string, string>(DataTableActionEnums.ChangeDisplayColumn, p => p);

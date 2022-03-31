@@ -14,7 +14,7 @@ export interface IDynamicModalProps extends Omit<IModalProps, 'fetchUrl'> {
   // todo: move to a separate object
   formId: string;
   mode: FormMode;
-  onSubmitted?: () => void;
+  onSubmitted?: (response: any) => void;
 }
 
 export const DynamicModal: FC<IDynamicModalProps> = props => {
@@ -30,6 +30,8 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     destroyOnClose,
     parentFormValues,
     width = 800,
+    modalConfirmDialogMessage,
+    onFailed,
   } = props;
 
   // const { formData } = useForm();
@@ -46,6 +48,16 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     }
   };
 
+  const beforeSubmit = () => {
+    return new Promise<boolean>((resolve, reject) => {
+      if (modalConfirmDialogMessage) {
+        Modal.confirm({ content: modalConfirmDialogMessage, onOk: () => resolve(true), onCancel: () => reject(false) });
+      } else {
+        resolve(true);
+      }
+    });
+  };
+
   const onSubmitted = (_: any, response: any) => {
     form.resetFields();
 
@@ -56,7 +68,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     }
 
     hideForm();
-    if (props.onSubmitted) props.onSubmitted();
+    if (props.onSubmitted) props.onSubmitted(response);
   };
 
   const onCancel = () => {
@@ -92,6 +104,8 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
           close: onCancel,
         }}
         onFinish={onSubmitted}
+        onFinishFailed={onFailed}
+        beforeSubmit={beforeSubmit}
         httpVerb={submitHttpVerb}
         initialValues={initialValues}
         parentFormValues={parentFormValues}

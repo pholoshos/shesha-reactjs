@@ -1,24 +1,22 @@
 import React, { FC, Fragment, useMemo, useState } from 'react';
-import { IConfigurableFormComponent } from '../../../../interfaces';
 import { useMetadata } from '../../../../providers';
 import { CodeEditor as BaseCodeEditor, Show } from '../../../..';
 import { ICodeTreeLevel } from '../../../codeEditor/codeCompleter';
 import { IPropertyMetadata } from '../../../../interfaces/metadata';
-import { Alert, Button, Modal } from 'antd';
+import { Alert, Button, Modal, Tabs } from 'antd';
 import { CodeOutlined } from '@ant-design/icons';
-import { IAceOptions } from 'react-ace';
-import { EditorModes } from './types';
+import { ICodeEditorProps } from './models';
+import { CodeVariablesTables } from '../../../codeVariablesTable';
 
-export interface ICodeEditorProps extends IConfigurableFormComponent {
-  placeholder?: string;
-  value?: string;
-  onChange?: (value: string) => void;
-  mode?: 'inline' | 'dialog';
-  setOptions?: IAceOptions;
-  language?: EditorModes;
-}
+const { TabPane } = Tabs;
 
-export const CodeEditor: FC<ICodeEditorProps> = ({ mode = 'inline', value, language = 'javascript', ...props }) => {
+export const CodeEditor: FC<ICodeEditorProps> = ({
+  mode = 'inline',
+  value,
+  language = 'javascript',
+  exposedVariables,
+  ...props
+}) => {
   const [showDialog, setShowDialog] = useState(false);
 
   const onChange = _value => {
@@ -107,7 +105,14 @@ export const CodeEditor: FC<ICodeEditorProps> = ({ mode = 'inline', value, langu
           <br />
         </Show>
 
-        {renderCodeEditor()}
+        <Tabs>
+          <TabPane tab="Code" key="code">
+            {renderCodeEditor()}
+          </TabPane>
+          <TabPane tab="Variables" key="variable">
+            <CodeVariablesTables data={exposedVariables} />
+          </TabPane>
+        </Tabs>
       </Modal>
     </Fragment>
   );

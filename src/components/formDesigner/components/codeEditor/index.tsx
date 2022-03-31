@@ -5,13 +5,16 @@ import { CodeSandboxOutlined } from '@ant-design/icons';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { ICodeEditorProps, CodeEditor } from './codeEditor';
+import { CodeEditor } from './codeEditor';
 import { DataTypes, StringFormats } from '../../../../interfaces/dataTypes';
+import { ICodeEditorProps } from './models';
+import { ICodeExposedVariable } from '../../../codeVariablesTable';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
 export interface ICodeEditorComponentProps extends IConfigurableFormComponent {
   mode: 'dialog' | 'inline';
+  exposedVariables?: ICodeExposedVariable[];
 }
 
 const CodeEditorComponent: IToolboxComponent<ICodeEditorComponentProps> = {
@@ -29,6 +32,7 @@ const CodeEditorComponent: IToolboxComponent<ICodeEditorComponentProps> = {
       <>
         <ConfigurableFormItem model={model}>
           <CodeEditor
+            language="typescript"
             {...editorProps}
             mode="dialog"
             setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}

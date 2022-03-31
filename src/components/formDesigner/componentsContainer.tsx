@@ -1,4 +1,4 @@
-import React, { CSSProperties, FC } from 'react';
+import React, { CSSProperties, FC, ReactNode } from 'react';
 import ConfigurableFormComponent from './configurableFormComponent';
 import { useForm } from '../../providers/form';
 import { TOOLBOX_COMPONENT_DROPPABLE_KEY, TOOLBOX_DATA_ITEM_DROPPABLE_KEY } from '../../providers/form/models';
@@ -13,6 +13,7 @@ export interface IProps {
   alignItems?: string;
   justifyItems?: string;
   className?: string;
+  render?: (components: JSX.Element[]) => ReactNode;
 }
 const ComponentsContainer: FC<IProps> = ({
   containerId,
@@ -22,6 +23,7 @@ const ComponentsContainer: FC<IProps> = ({
   alignItems,
   justifyItems,
   className,
+  render,
 }) => {
   const {
     getChildComponents,
@@ -90,7 +92,11 @@ const ComponentsContainer: FC<IProps> = ({
   };
 
   const renderComponents = () => {
-    return components.map((c, index) => <ConfigurableFormComponent id={c.id} index={index} key={c.id} />);
+    const renderedComponents = components.map((c, index) => (
+      <ConfigurableFormComponent id={c.id} index={index} key={c.id} />
+    ));
+
+    return typeof render === 'function' ? render(renderedComponents) : renderedComponents;
   };
 
   const style: CSSProperties = {};

@@ -92,12 +92,20 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
     updateLocalTableData,
     deleteRowItem,
     changeSelectedIds,
+    changeSelectedRow,
     // succeeded,
     succeeded: { exportToExcel: exportToExcelSuccess },
     error: { exportToExcel: exportToExcelError },
   } = store;
 
+  const onSelectRowLocal = (index: number, row: any) => {
+    onSelectRow(index, row);
+
+    changeSelectedRow(row);
+  };
+
   const previousIds = usePrevious(selectedIds);
+
   useEffect(() => {
     if (!(previousIds?.length === 0 && selectedIds?.length === 0) && typeof onSelectedIdsChanged === 'function') {
       onSelectedIdsChanged(selectedIds);
@@ -532,7 +540,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
     disableSortBy: Boolean(newOrEditableRowData?.id), // Disable sorting if we're creating or editing so that
     useMultiSelect,
     // disableSortBy: false, // Do not disable sorting
-    onSelectRow,
+    onSelectRow: onSelectRowLocal,
     onRowDoubleClick: dblClickHandler,
     onSelectedIdsChanged: changeSelectedIds,
     onSort, // Update it so that you can pass it as param. Quick fix for now

@@ -74,6 +74,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
               mode="edit"
               formId={instance.props.formId}
               onSubmitted={instance.props.onSubmitted}
+              onFailed={instance.props.onFailed}
               showModalFooter={instance?.props?.showModalFooter}
               submitHttpVerb={instance?.props?.submitHttpVerb}
               onSuccessRedirectUrl={instance?.props?.onSuccessRedirectUrl}
@@ -81,6 +82,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
               parentFormValues={instance?.props?.parentFormValues}
               destroyOnClose={instance?.props?.destroyOnClose}
               width={instance?.props?.width}
+              modalConfirmDialogMessage={instance?.props?.modalConfirmDialogMessage}
             />
           </DynamicModalInstanceContext.Provider>
         );

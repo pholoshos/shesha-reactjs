@@ -43,6 +43,7 @@ import {
   fetchColumnsSuccessSuccessAction,
   setCrudConfigAction,
   onSortAction,
+  changeDisplayColumnAction,
 } from './actions';
 import {
   ITableDataResponse,
@@ -61,7 +62,7 @@ import { useMutate, useGet } from 'restful-react';
 import _ from 'lodash';
 import { GetColumnsInput, DataTableColumnDtoListAjaxResponse } from '../../apis/dataTable';
 import { IResult } from '../../interfaces/result';
-import { useLocalStorage } from '../../hooks';
+import { useLocalStorage, usePubSub, useSubscribe } from '../../hooks';
 import { useAuth } from '../auth';
 import { nanoid } from 'nanoid/non-secure';
 import { useDebouncedCallback } from 'use-debounce';
@@ -71,6 +72,9 @@ import {
   IDataColumnsProps,
 } from '../datatableColumnsConfigurator/models';
 import { useSheshaApplication } from '../sheshaApplication';
+import { DataTablePubsubConstants } from './pubSub';
+import { useGlobalState } from '../globalState';
+import camelCaseKeys from 'camelcase-keys';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Table configuration Id */
@@ -81,6 +85,12 @@ interface IDataTableProviderProps extends ICrudProps {
 
   /** Id of the user config, is used for saving of the user settings (sorting, paging etc) to the local storage. `tableId` is used if missing  */
   userConfigId?: string;
+
+  /**
+   * Used for storing the data table state in the global store and publishing and listening to events
+   * If not provided, the state will not be saved globally and the user cannot listen to and publish events
+   */
+  uniqueStateId?: string;
 
   /** Table title */
   title?: string;
@@ -127,6 +137,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   getExportToExcelPath,
   defaultFilter,
   entityType,
+  uniqueStateId,
   onFetchDataSuccess,
 }) => {
   const [state, dispatch] = useThunkReducer(dataTableReducer, {
@@ -136,6 +147,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     title,
     parentEntityId,
   });
+  const { setState: setGlobalState } = useGlobalState();
+  const { publish } = usePubSub();
 
   const { backendUrl } = useSheshaApplication();
   const tableIsReady = useRef(false);
@@ -424,8 +437,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(applyFilterAction([]));
   };
 
-  const changeSelectedRow = (val: number) => {
-    dispatch(changeSelectedRowAction(val));
+  const changeSelectedRow = (val: any) => {
+    dispatch(changeSelectedRowAction(camelCaseKeys(val || {}, { deep: true })));
   };
 
   const changeSelectedStoredFilterIds = (selectedStoredFilterIds: string[]) => {
@@ -579,15 +592,84 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(onSortAction(sorting));
   };
 
+  const flagSetters = getFlagSetters(dispatch);
+
+  //#region public
+  const deleteRow = () => {
+    console.log(`deleteRow ${state?.selectedRow}`);
+  };
+
+  const toggleColumnsSelector = () => {
+    flagSetters?.setIsInProgressFlag({ isSelectingColumns: true, isFiltering: false });
+  };
+
+  const toggleAdvancedFilter = () => {
+    flagSetters?.setIsInProgressFlag({ isFiltering: true, isSelectingColumns: false });
+  };
+
+  const changeDisplayColumn = (displayColumnName: string) => {
+    dispatch(changeDisplayColumnAction(displayColumnName));
+  };
+  //#endregion
+
+  //#region Subscriptions
+  useEffect(() => {
+    if (uniqueStateId) {
+      // First off, notify that the state has changed
+      publish(DataTablePubsubConstants.stateChanged, {
+        stateId: uniqueStateId,
+        state,
+      });
+
+      setGlobalState({
+        key: uniqueStateId,
+        data: state,
+      });
+    }
+  }, [state, uniqueStateId]);
+
+  useSubscribe(DataTablePubsubConstants.refreshTable, data => {
+    if (data.stateId === uniqueStateId) {
+      refreshTable();
+    }
+  });
+
+  useSubscribe(DataTablePubsubConstants.deleteRow, data => {
+    if (data.stateId === uniqueStateId) {
+      deleteRow();
+    }
+  });
+
+  useSubscribe(DataTablePubsubConstants.exportToExcel, data => {
+    if (data.stateId === uniqueStateId) {
+      exportToExcel();
+    }
+  });
+
+  useSubscribe(DataTablePubsubConstants.toggleAdvancedFilter, data => {
+    if (data.stateId === uniqueStateId) {
+      toggleAdvancedFilter();
+    }
+  });
+
+  useSubscribe(DataTablePubsubConstants.toggleColumnsSelector, data => {
+    if (data.stateId === uniqueStateId) {
+      toggleColumnsSelector();
+    }
+  });
+
+  //#endregion
+
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   return (
     <DataTableStateContext.Provider value={{ ...state, onDblClick, onSelectRow, selectedRow }}>
       <DataTableActionsContext.Provider
         value={{
-          ...getFlagSetters(dispatch),
           onSort,
+          ...flagSetters,
           fetchTableConfig,
+          changeDisplayColumn,
           fetchTableData,
           setCurrentPage,
           changePageSize,

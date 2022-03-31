@@ -8,6 +8,10 @@ import { useMutate } from 'restful-react';
 import { ValidateErrorEntity } from '../../interfaces';
 import { addFormFieldsList } from '../../utils/form';
 import { removeZeroWidthCharsFromString } from '../..';
+import { useGlobalState } from '../../providers';
+import moment from 'moment';
+import { evaluateKeyValuesToObjectMatchedData } from '../../providers/form/utils';
+import cleanDeep from 'clean-deep';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   children,
@@ -16,9 +20,11 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   httpVerb = 'POST',
   parentFormValues,
   initialValues,
+  beforeSubmit,
   ...props
 }) => {
   const { setFormData, formData, allComponents, formMode, isDragging, formSettings, setValidationErrors } = useForm();
+  const { globalState } = useGlobalState();
 
   const onFieldsChange = (changedFields: any[], allFields: any[]) => {
     if (props.onFieldsChange) props.onFieldsChange(changedFields, allFields);
@@ -74,15 +80,19 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     path: submitUrl,
   });
 
-  const getExpressionExecutor = (expression: string) => {
+  const getExpressionExecutor = (expression: string, includeInitialValues = true, includeMoment = true) => {
     if (!expression) {
       return null;
     }
 
     // tslint:disable-next-line:function-constructor
-    const func = new Function('data', 'parentFormValues', 'initialValues', expression);
-
-    return func(formData, parentFormValues, initialValues);
+    return new Function('data, parentFormValues, initialValues, globalState, moment', expression)(
+      formData,
+      parentFormValues,
+      includeInitialValues ? initialValues : undefined,
+      globalState,
+      includeMoment ? moment : undefined
+    );
   };
 
   const getDynamicPreparedValues = () => {
@@ -102,8 +112,37 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     return {};
   };
 
+  const getInitialValuesFromFormSettings = () => {
+    const initialValuesFromFormSettings = formSettings?.initialValues;
+
+    const values = evaluateKeyValuesToObjectMatchedData(initialValuesFromFormSettings, [
+      { match: 'data', data: formData },
+      { match: 'parentFormValues', data: parentFormValues },
+      { match: 'globalState', data: globalState },
+    ]);
+
+    return cleanDeep(values, {
+      cleanKeys: [], // Don't Remove specific keys, ie: ['foo', 'bar', ' ']
+      cleanValues: [], // Don't Remove specific values, ie: ['foo', 'bar', ' ']
+      emptyArrays: false, // Don't Remove empty arrays, ie: []
+      emptyObjects: false, // Don't Remove empty objects, ie: {}
+      emptyStrings: false, // Don't Remove empty strings, ie: ''
+      NaNValues: true, // Remove NaN values, ie: NaN
+      nullValues: true, // Remove null values, ie: null
+      undefinedValues: true, // Remove undefined values, ie: undefined
+    });
+  };
+
   const onFinish = () => {
+    const initialValuesFromFormSettings = getInitialValuesFromFormSettings();
+
     const postData = addFormFieldsList({ ...formData, ...getDynamicPreparedValues() }, form);
+
+    if (initialValuesFromFormSettings) {
+      postData._formFields = Array.from(
+        new Set<string>([...postData._formFields, ...Object.keys(initialValuesFromFormSettings)])
+      );
+    }
 
     if (skipPostOnFinish) {
       if (props?.onFinish) {
@@ -115,15 +154,31 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
     if (submitUrl) {
       setValidationErrors(null);
-      doSubmit(postData)
-        .then(response => {
-          // note: we pass merged values
-          if (props.onFinish) props.onFinish(postData, response?.result);
-        })
-        .catch(e => {
-          setValidationErrors(e?.data?.error || e);
-          console.log('ConfigurableFormRenderer onFinish e: ', e);
-        }); // todo: test and show server-side validation
+
+      const doPost = () =>
+        doSubmit(postData)
+          .then(response => {
+            // note: we pass merged values
+            if (props.onFinish) props.onFinish(postData, response?.result);
+          })
+          .catch(e => {
+            setValidationErrors(e?.data?.error || e);
+            console.log('ConfigurableFormRenderer onFinish e: ', e);
+          }); // todo: test and show server-side validation
+
+      if (typeof beforeSubmit === 'function') {
+        beforeSubmit(postData)
+          .then(() => {
+            console.log('beforeSubmit then');
+
+            doPost();
+          })
+          .catch(() => {
+            console.log('beforeSubmit catch');
+          });
+      } else {
+        doPost();
+      }
     } // note: we pass merged values
     else if (props.onFinish) props.onFinish(postData);
   };

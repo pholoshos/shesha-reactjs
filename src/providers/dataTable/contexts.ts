@@ -57,6 +57,11 @@ export interface IDataTableStateContext
   extends IFlagsState<IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags> {
   title?: string;
 
+  /**
+   * Useful for entity picker as the column that has to be used to display when the entity has been selected
+   */
+  displayColumnName?: string;
+
   formData?: any;
   /** Id of the table configuration */
   tableId?: string; // todo: move all table-specific properties to a separate sub-store
@@ -105,7 +110,8 @@ export interface IDataTableStateContext
   selectedStoredFilterIds?: string[];
 
   /** index of selected row */
-  selectedRow?: number;
+  selectedRow?: any;
+
   /** List of Ids of selected rows */
   selectedIds?: string[];
 
@@ -136,6 +142,10 @@ export interface IPublicDataTableActions {
   exportToExcel?: () => void;
   setCrudRowData: (newOrEditableRowData?: IEditableRowState) => void;
   cancelCreateOrEditRowData: () => void;
+  deleteRow?: () => void;
+  toggleColumnsSelector?: () => void;
+  toggleAdvancedFilter?: () => void;
+  setToEditMode?: () => void;
 }
 
 export interface IDataTableActionsContext
@@ -158,7 +168,7 @@ export interface IDataTableActionsContext
   /** change quick search and refresh table data */
   performQuickSearch?: (val: string) => void;
   toggleSaveFilterModal?: (visible: boolean) => void;
-  changeSelectedRow?: (index: number) => void;
+  changeSelectedRow?: (index: any) => void;
 
   changeSelectedStoredFilterIds?: (selectedStoredFilterIds: string[]) => void;
   setPredefinedFilters: (filters: IStoredFilter[]) => void;
@@ -184,6 +194,8 @@ export interface IDataTableActionsContext
   registerConfigurableColumns: (ownerId: string, columns: IConfigurableColumnsBase[]) => void;
 
   setCrudConfig?: (config: ITableCrudConfig) => void;
+
+  changeDisplayColumn: (displayColumnName: string) => void;
   /* NEW_ACTION_ACTION_DECLARATIO_GOES_HERE */
 }
 

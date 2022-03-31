@@ -185,8 +185,6 @@ export const getCustomVisibilityFunc = ({ customVisibility, name }: IConfigurabl
 export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormComponent) => {
   if (customEnabled) {
     try {
-      /* tslint:disable:function-constructor */
-
       const customEnabledExecutor = customEnabled ? new Function('value, data', customEnabled) : null;
 
       const getIsEnabled = (data = {}) => {
@@ -739,6 +737,40 @@ export const evaluateKeyValuesToObject = (arr: IKeyValue[], data: any): IAnyObje
     arr?.forEach(({ key, value }) => {
       if (key?.length && value.length) {
         queryParamObj[key] = evaluateString(value, data);
+      }
+    });
+
+    return queryParamObj;
+  }
+
+  return {};
+};
+
+interface IMatchData {
+  match: string;
+  data: any;
+}
+
+export const evaluateKeyValuesToObjectMatchedData = (arr: IKeyValue[], matches: IMatchData[]): IAnyObject => {
+  const queryParamObj: IAnyObject = {};
+
+  if (arr?.length) {
+    arr?.forEach(({ key, value }) => {
+      if (key?.length && value.length) {
+        let matchedKey = '';
+
+        const data =
+          matches?.find(({ match }) => {
+            const isMatch = value?.includes(match);
+
+            if (isMatch) {
+              matchedKey = match;
+            }
+
+            return isMatch;
+          })?.data || {};
+
+        queryParamObj[key] = evaluateString(value, matchedKey ? { [matchedKey]: data } : data);
       }
     });
 

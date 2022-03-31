@@ -32,9 +32,7 @@ const DividerComponent: IToolboxComponent<IDividerProps> = {
     };
 
     return model?.container ? (
-      <Divider {...props}>
-        <ComponentsContainer containerId={model.id} />
-      </Divider>
+      <ComponentsContainer containerId={model.id} render={components => <Divider {...props}>{components}</Divider>} />
     ) : (
       <Divider {...props} />
     );

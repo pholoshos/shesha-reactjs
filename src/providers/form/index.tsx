@@ -77,10 +77,13 @@ import {
 } from '../../interfaces';
 import { IDataSource } from '../formDesigner/models';
 import { useMetadataDispatcher } from '../../providers';
+import { FormPubsubConstants } from './pubSub';
+import { useSubscribe } from '../../hooks';
 
 export interface IFormProviderProps {
   id?: string;
   path?: string;
+  uniqueStateId?: string;
   markup?: FormMarkup;
   mode: FormMode;
   form?: FormInstance<any>;
@@ -102,6 +105,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   sections,
   context,
   formRef,
+  uniqueStateId,
 }) => {
   const { toolboxComponentGroups } = sheshaApplication();
   const formProps = getComponentsAndSettings(markup);
@@ -494,6 +498,20 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
       ? state.present.dataSources.find(ds => ds.id === state.present.activeDataSourceId)
       : null;
   };
+  //#endregion
+
+  //#region PubSub
+  useSubscribe(FormPubsubConstants.setToEditMode, data => {
+    if (data.stateId === uniqueStateId) {
+      setFormMode('edit');
+    }
+  });
+
+  useSubscribe(FormPubsubConstants.exitEditMode, data => {
+    if (data.stateId === uniqueStateId) {
+      setFormMode('readonly');
+    }
+  });
   //#endregion
 
   const configurableFormActions: IFormActionsContext = {

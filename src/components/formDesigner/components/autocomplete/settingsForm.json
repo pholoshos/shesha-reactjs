@@ -211,6 +211,33 @@
       "ignorePrefixesOnNewItems": true
     },
     {
+      "id": "f80e9eec-ce8d-4c76-87b2-fc485ac09a1b",
+      "type": "queryBuilder",
+      "name": "expression",
+      "label": "Expression",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "",
+      "hideLabel": true,
+      "validate": {},
+      "dataSourceType": "values",
+      "values": [
+        {
+          "id": "b0045543-74eb-45b8-aa75-cf688ab57d37",
+          "label": "Json Logic",
+          "value": "jsonLogic"
+        },
+        {
+          "id": "b5b69b98-3eb2-4cf1-a955-399fab735404",
+          "label": "HQL",
+          "value": "hql"
+        }
+      ],
+      "jsonExpanded": true,
+      "settingsValidationErrors": []
+    },
+    {
       "id": "02fbe834-8bef-4d59-accf-edc5d76e10ba",
       "type": "sectionSeparator",
       "name": "sectionEvent",

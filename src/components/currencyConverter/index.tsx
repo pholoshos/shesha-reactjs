@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Input, Select, Space, Cascader } from 'antd';
+import React, { FC } from 'react';
+import { Input } from 'antd';
 
 export interface ICurrencyConverterProps {
     /**

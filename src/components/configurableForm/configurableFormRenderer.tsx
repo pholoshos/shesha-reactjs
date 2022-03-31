@@ -136,7 +136,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const onFinish = () => {
     const initialValuesFromFormSettings = getInitialValuesFromFormSettings();
 
-    let postData = addFormFieldsList({ ...formData, ...getDynamicPreparedValues() }, form);
+    const postData = addFormFieldsList({ ...formData, ...getDynamicPreparedValues() }, form);
 
     if (initialValuesFromFormSettings) {
       postData._formFields = Array.from(

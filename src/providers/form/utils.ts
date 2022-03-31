@@ -759,7 +759,7 @@ export const evaluateKeyValuesToObjectMatchedData = (arr: IKeyValue[], matches: 
       if (key?.length && value.length) {
         let matchedKey = '';
 
-        let data =
+        const data =
           matches?.find(({ match }) => {
             const isMatch = value?.includes(match);
 

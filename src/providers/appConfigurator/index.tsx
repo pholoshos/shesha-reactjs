@@ -47,47 +47,46 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
     dispatch(toggleCloseEditModeConfirmationAction(visible));
   };
 
-  const normalizeId = (id: string) => id.toLowerCase();
+  const normalizeId = (id: string) => id?.toLowerCase();
 
   const getSettings = (id: string) => {
     const loadedSettings = settingsDictionary.current[normalizeId(id)];
     return loadedSettings;
-  }
+  };
 
   const fetchSettings = (id: string) => {
     const loadedSettings = getSettings(id);
-    if (loadedSettings)
-      return Promise.resolve(loadedSettings);
-    
+    if (loadedSettings) return Promise.resolve(loadedSettings);
+
     const result = new Promise<IComponentSettings>((resolve, reject) => {
       configurableComponentGet({ id, base: backendUrl, headers: httpHeaders })
-      .then((response) => {
-        if (!response.success) {
-          reject(response.error);
-        }
-        
-        const settings: IComponentSettings = {
-          id: response.result.id,
-          name: response.result.name,
-          description: response.result.description,
-          settings: response.result.settings ? JSON.parse(response.result.settings) : null,
-        };
+        .then(response => {
+          if (!response.success) {
+            reject(response.error);
+          }
 
-        settingsDictionary.current[normalizeId(id)] = settings;
-        resolve(settings);
-      })
-      .catch(error => {
-        reject(error);
-      });
+          const settings: IComponentSettings = {
+            id: response.result.id,
+            name: response.result.name,
+            description: response.result.description,
+            settings: response.result.settings ? JSON.parse(response.result.settings) : null,
+          };
+
+          settingsDictionary.current[normalizeId(id)] = settings;
+          resolve(settings);
+        })
+        .catch(error => {
+          reject(error);
+        });
     });
 
     return result;
-  }
+  };
 
   const invalidateSettings = (id: string) => {
     const normalizedId = normalizeId(id);
     delete settingsDictionary.current[normalizedId];
-  }
+  };
 
   return (
     <AppConfiguratorStateContext.Provider value={state}>

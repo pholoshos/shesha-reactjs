@@ -278,7 +278,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
       state.present.visibleComponentIds &&
       !state.present.visibleComponentIds.includes(model.id);
 
-    return state.present.formMode !== 'designer' && (model.hidden || hiddenByCondition);
+    return state.present.formMode !== 'designer' && hiddenByCondition;
   };
 
   const updateComponent = (payload: IComponentUpdatePayload) => {

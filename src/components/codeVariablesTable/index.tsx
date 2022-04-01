@@ -1,6 +1,5 @@
 import { Table, Tag } from 'antd';
 import React, { FC } from 'react';
-import { ICodeExposedVariable } from './models';
 
 const columns = [
   {
@@ -20,6 +19,13 @@ const columns = [
     render: tag => <Tag key={tag}>{tag?.toUpperCase()}</Tag>,
   },
 ];
+
+export interface ICodeExposedVariable {
+  id: string;
+  name: string;
+  description: string;
+  type: 'object' | 'function';
+}
 
 export interface ICodeVariablesTableProps {
   data?: ICodeExposedVariable[];

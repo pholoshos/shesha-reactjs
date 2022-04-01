@@ -10,11 +10,12 @@ import {
   DroppableStateSnapshot,
 } from 'react-beautiful-dnd';
 import { ILabelValueEditorPropsBase, IItemProps } from './models';
-import { Table, Popconfirm, Button, Form, Input, Modal, Alert } from 'antd';
-import { DeleteOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
+import { Table, Popconfirm, Button, Form, Input, Modal, Alert, Tabs } from 'antd';
+import { BorderlessTableOutlined, DeleteOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import { nanoid } from 'nanoid/non-secure';
 import ConditionalWrap from '../../../conditionalWrapper';
 import Show from '../../../show';
+import { CodeVariablesTables, ICodeExposedVariable } from '../../../codeVariablesTable';
 
 export interface ILabelValueEditorProps extends ILabelValueEditorPropsBase {
   /**
@@ -33,6 +34,8 @@ export interface ILabelValueEditorProps extends ILabelValueEditorPropsBase {
   ignorePrefixesOnNewItems?: boolean;
 
   mode?: 'dialog' | 'inline';
+
+  exposedVariables?: ICodeExposedVariable[];
 
   description?: string;
 }
@@ -149,7 +152,8 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
   valueName,
   ignorePrefixesOnNewItems = false,
   description,
-  mode = 'inline',
+  mode = 'dialog',
+  exposedVariables,
 }) => {
   const [showModal, setShowModal] = useState(false);
 
@@ -270,8 +274,8 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
       condition={mode === 'dialog'}
       wrap={children => (
         <Fragment>
-          <Button onClick={toggleModal} size="small">
-            Click to Add
+          <Button onClick={toggleModal} size="small" icon={<BorderlessTableOutlined />}>
+            Click to Add Items
           </Button>
 
           <Modal title="Add Items" visible={showModal} onCancel={toggleModal} onOk={toggleModal} width={650}>
@@ -279,7 +283,15 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
               <Alert type="info" message={description} />
               <br />
             </Show>
-            {children}
+
+            <Tabs>
+              <Tabs.TabPane tab="Key/Value pairs" key="keyValuePairs">
+                {children}
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="Variables" key="variable">
+                <CodeVariablesTables data={exposedVariables} />
+              </Tabs.TabPane>
+            </Tabs>
           </Modal>
         </Fragment>
       )}

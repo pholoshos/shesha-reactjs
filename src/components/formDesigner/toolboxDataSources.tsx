@@ -1,4 +1,3 @@
-
 import React, { FC, useMemo } from 'react';
 import { Collapse, Empty } from 'antd';
 import { useLocalStorage } from '../../hooks';
@@ -19,23 +18,25 @@ interface FilteredDataSource {
 
 const getVisibleProperties = (items: IPropertyMetadata[], searchText: string): IPropertyMetadata[] => {
   const result: IPropertyMetadata[] = [];
-  if (!items)
-    return result;
-    
+  if (!items) return result;
+
   items.forEach(item => {
     if (!item.isFrameworkRelated && item.isVisible) {
       const childItems = getVisibleProperties(item.properties, searchText);
-      const matched = (searchText ?? '') === '' || item.path.toLowerCase().includes(searchText) || item.label?.toLowerCase().includes(searchText);
-      
+      const matched =
+        (searchText ?? '') === '' ||
+        item.path?.toLowerCase().includes(searchText) ||
+        item.label?.toLowerCase().includes(searchText);
+
       if (matched || childItems.length > 0) {
         const filteredItem: IPropertyMetadata = { ...item, properties: childItems };
-        result.push(filteredItem)
+        result.push(filteredItem);
       }
     }
   });
 
   return result;
-}
+};
 
 export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
   const [openedKeys, setOpenedKeys] = useLocalStorage('shaDesigner.toolbox.datasources.openedKeys', ['']);
@@ -61,35 +62,30 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
   }, [formDs, currentDataSource]);
 
   const datasourcesWithVisible = useMemo<FilteredDataSource[]>(() => {
-    const dataSources = allDataSources.map<FilteredDataSource>((ds) => (
-      {
-        datasource: ds,
-        visibleItems: getVisibleProperties(ds.items, searchText),
-      }
-    ));
-    return dataSources;    
+    const dataSources = allDataSources.map<FilteredDataSource>(ds => ({
+      datasource: ds,
+      visibleItems: getVisibleProperties(ds.items, searchText),
+    }));
+    return dataSources;
   }, [allDataSources, searchText]);
 
   const itemContainsText = (item: IPropertyMetadata, loweredSearchText: string): boolean => {
-    if (item.path.toLowerCase().includes(loweredSearchText) || item.label?.toLowerCase().includes(loweredSearchText))
+    if (item.path?.toLowerCase()?.includes(loweredSearchText) || item.label?.toLowerCase()?.includes(loweredSearchText))
       return true;
 
-    return (item.properties ?? []).some(child => itemContainsText(child, loweredSearchText))
-  }
+    return (item.properties ?? []).some(child => itemContainsText(child, loweredSearchText));
+  };
 
-  if (allDataSources.length === 0)
-    return null;
+  if (allDataSources.length === 0) return null;
 
   const onCollapseChange = (key: string | string[]) => {
     setOpenedKeys(Array.isArray(key) ? key : [key]);
   };
   return (
     <>
-      <div className='sidebar-subheader'>
-        Data
-      </div>
-      <SearchBox value={searchText} onChange={setSearchText} placeholder='Search data properties' />
-      
+      <div className="sidebar-subheader">Data</div>
+      <SearchBox value={searchText} onChange={setSearchText} placeholder="Search data properties" />
+
       {datasourcesWithVisible.length > 0 && (
         <Collapse activeKey={openedKeys} onChange={onCollapseChange}>
           {datasourcesWithVisible.map((ds, dsIndex) => {
@@ -97,10 +93,18 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
 
             const classes = ['sha-toolbox-panel'];
             if (ds.datasource.id === activeDataSourceId) classes.push('active');
-            
+
             return visibleItems.length === 0 ? null : (
-              <Panel header={ds.datasource.name} key={dsIndex.toString()} className={classes.reduce((a, c) => a + ' ' + c)}>
-                <DataSourceTree items={visibleItems} searchText={searchText} defaultExpandAll={(searchText ?? '') !== ''} />
+              <Panel
+                header={ds.datasource.name}
+                key={dsIndex.toString()}
+                className={classes.reduce((a, c) => a + ' ' + c)}
+              >
+                <DataSourceTree
+                  items={visibleItems}
+                  searchText={searchText}
+                  defaultExpandAll={(searchText ?? '') !== ''}
+                />
               </Panel>
             );
           })}

@@ -13,7 +13,8 @@ export const ToolbarItemsContainer: FC<IToolbarItemsSortableProps> = props => {
   const { updateChildItems } = useTableViewSelectorConfigurator();
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
-    const listChanged = !newState.some(item => item.chosen !== null && item.chosen !== undefined);
+    // temporary commented out, the behavoiur of the sortablejs differs sometimes
+    const listChanged = true; //!newState.some(item => item.chosen !== null && item.chosen !== undefined);
 
     if (listChanged) {
       const newChilds = newState.map<ITableViewProps>(item => item as ITableViewProps);

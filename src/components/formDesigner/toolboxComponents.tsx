@@ -24,7 +24,9 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
     const result: IToolboxComponentGroup[] = [];
 
     toolboxComponentGroups.forEach(group => {
-      const filteredComponents = group.components.filter(c => c.name.toLowerCase().includes(searchText.toLowerCase()));
+      const filteredComponents = group.components.filter(c =>
+        c.name?.toLowerCase().includes(searchText?.toLowerCase())
+      );
       if (filteredComponents.length > 0) result.push({ ...group, components: filteredComponents });
     });
     return result;
@@ -55,7 +57,9 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
               <Panel header={group.name} key={groupIndex.toString()}>
                 <ReactSortable
                   list={sortableItems}
-                  setList={() => { /* nop */}}
+                  setList={() => {
+                    /* nop */
+                  }}
                   group={{
                     name: 'shared',
                     pull: 'clone',

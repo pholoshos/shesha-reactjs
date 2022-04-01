@@ -1,13 +1,19 @@
-import { FormInstance } from "antd";
+import { FormInstance } from 'antd';
 
-export function addFormFieldsList<TData = any>(data: TData, form: FormInstance) {
-    const formFields = [];
+interface IDataWithFields {
+  _formFields: string[];
+  [key: string]: any;
+}
 
-    // call getFieldsValue to get a fileds list
-    form.getFieldsValue(true, (meta) => {
-      formFields.push(meta.name.join('.'));
-      return false;
-    });
+export function addFormFieldsList<TData = any>(data: TData, form: FormInstance): IDataWithFields {
+  const formFields = [];
 
-    return { ...data, _formFields: formFields };
+  // call getFieldsValue to get a fileds list
+  form.getFieldsValue(true, meta => {
+    formFields.push(meta.name.join('.'));
+
+    return false;
+  });
+
+  return { _formFields: formFields, ...data };
 }

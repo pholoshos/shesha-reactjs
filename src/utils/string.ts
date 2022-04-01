@@ -9,14 +9,14 @@ const handlePreserveConsecutiveUppercase = (decamelized: string, separator: stri
   // `data_For_USACounties` → `data_for_USACounties`
   const result = decamelized.replace(
     /((?<![\p{Uppercase_Letter}\d])[\p{Uppercase_Letter}\d](?![\p{Uppercase_Letter}\d]))/gu,
-    $0 => $0.toLowerCase()
+    $0 => $0?.toLowerCase()
   );
 
   // Remaining uppercase sequences will be separated from lowercase sequences.
   // `data_For_USACounties` → `data_for_USA_counties`
   return result.replace(
     /(\p{Uppercase_Letter}+)(\p{Uppercase_Letter}\p{Lowercase_Letter}+)/gu,
-    (_, $1, $2) => $1 + separator + $2.toLowerCase()
+    (_, $1, $2) => $1 + separator + $2?.toLowerCase()
   );
 };
 
@@ -27,7 +27,7 @@ export function decamelize(text, { separator = '_', preserveConsecutiveUppercase
 
   // Checking the second character is done later on. Therefore process shorter strings here.
   if (text.length < 2) {
-    return preserveConsecutiveUppercase ? text : text.toLowerCase();
+    return preserveConsecutiveUppercase ? text : text?.toLowerCase();
   }
 
   const replacement = `$1${separator}$2`;
@@ -44,8 +44,8 @@ export function decamelize(text, { separator = '_', preserveConsecutiveUppercase
   // Split multiple uppercase characters followed by one or more lowercase characters.
   // `my_URLstring` → `my_ur_lstring`
   return decamelized
-    .replace(/(\p{Uppercase_Letter})(\p{Uppercase_Letter}\p{Lowercase_Letter}+)/gu, replacement)
-    .toLowerCase();
+    ?.replace(/(\p{Uppercase_Letter})(\p{Uppercase_Letter}\p{Lowercase_Letter}+)/gu, replacement)
+    ?.toLowerCase();
 }
 
 export function humanizeString(value: string) {
@@ -57,10 +57,10 @@ export function humanizeString(value: string) {
 
   localValue = decamelize(localValue);
   localValue = localValue
-    .toLowerCase()
-    .replace(/[_-]+/g, ' ')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
+    ?.toLowerCase()
+    ?.replace(/[_-]+/g, ' ')
+    ?.replace(/\s{2,}/g, ' ')
+    ?.trim();
   localValue = localValue.charAt(0).toUpperCase() + localValue.slice(1);
 
   return localValue;

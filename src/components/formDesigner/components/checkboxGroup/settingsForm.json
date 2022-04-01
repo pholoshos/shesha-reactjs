@@ -102,9 +102,9 @@
     {
       "id": "b62d9f2e-a2f8-4cab-b63b-1b0185ad2939",
       "type": "dropdown",
-      "name": "orientation",
+      "name": "direction",
       "parentId": "root",
-      "label": "Orientation",
+      "label": "Direction",
       "dataSourceType": "values",
       "values": [
         {
@@ -114,8 +114,8 @@
         },
         {
           "id": "dfe60d27-12a1-4ad6-b30b-791c9cbfe61e",
-          "label": "Inline",
-          "value": "inline"
+          "label": "Horizontal",
+          "value": "horizontal"
         }
       ]
     },
@@ -162,8 +162,8 @@
       "name": "items",
       "parentId": "root",
       "label": "Items",
-      "labelTitle": "Name",
-      "labelName": "name",
+      "labelTitle": "Label",
+      "labelName": "label",
       "valueTitle": "Value",
       "valueName": "value",
       "customVisibility": "return data.dataSourceType === 'values'"

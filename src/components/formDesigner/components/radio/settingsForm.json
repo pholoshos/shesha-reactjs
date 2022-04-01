@@ -121,11 +121,31 @@
       "name": "items",
       "parentId": "root",
       "label": "Items",
-      "labelTitle": "Name",
-      "labelName": "name",
+      "labelTitle": "Label",
+      "labelName": "label",
       "valueTitle": "Value",
       "valueName": "value",
       "customVisibility": "return data.dataSourceType === 'values'"
+    },
+    {
+      "id": "341473be-c60a-4cb4-8b9a-d2700c425d4a",
+      "type": "dropdown",
+      "name": "direction",
+      "parentId": "root",
+      "label": "Direction",
+      "dataSourceType": "values",
+      "values": [
+        {
+          "id": "f4617474-bcc6-40bc-b8b8-2332dbd05e16",
+          "label": "Vertical",
+          "value": "vertical"
+        },
+        {
+          "id": "c625678e-ef11-4e68-95c0-4826e217a0f3",
+          "label": "Horizontal",
+          "value": "horizontal"
+        }
+      ]
     },
     {
       "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",

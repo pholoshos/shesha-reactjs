@@ -123,6 +123,40 @@
       "validate": {}
     },
     {
+      "id": "0e3231f1-e158-427a-b32b-00ff9da941bb",
+      "type": "checkbox",
+      "name": "excludeFormFieldsInPayload",
+      "label": "Exclude '_formFields' in the payload?",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Whether or not _formFields should be included in the payload. By default it is included.",
+      "validate": {}
+    },
+    {
+      "id": "58f715b9-624b-4189-812c-6144cafb7405",
+      "type": "labelValueEditor",
+      "name": "initialValues",
+      "parentId": "root",
+      "label": "Initial Values",
+      "labelTitle": "Key",
+      "labelName": "key",
+      "valueTitle": "Value",
+      "valueName": "value",
+      "ignorePrefixesOnNewItems": true,
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        {
+          "name": "parentFormValues",
+          "description": "Parent form values. The values of the form rendering the dialog.",
+          "type": "object"
+        },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ],
+      "description": "Enter values that you would like passed to the server as payload. Note that you can also use Mustache expression as in {{parent.id}}. You have variables 'data', 'parentFormValues' and 'globalState' at your disposal"
+    },
+    {
       "id": "fcfccb85-8fc3-436b-9f87-17e189bc3cdc",
       "type": "codeEditor",
       "name": "preparedValues",
@@ -135,7 +169,18 @@
       "showCount": false,
       "allowClear": false,
       "validate": {},
-      "description": "Write a code that allows you to return an object whose values will be merged with the form state before submit. The value 'data', 'parentFormValues' and 'initialValues' are exposed by this function"
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        {
+          "name": "parentFormValues",
+          "description": "Parent form values. The values of the form rendering the dialog.",
+          "type": "object"
+        },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "initialValues", "description": "Initial values", "type": "object" }
+      ],
+      "description": "Write a code that allows you to return an object whose values will be merged with the form state before submit. Check the variables tab for exposed variables"
     }
   ],
   "formSettings": { "layout": "horizontal", "colon": true, "labelCol": { "span": 5 }, "wrapperCol": { "span": 19 } }

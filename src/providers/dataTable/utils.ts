@@ -25,3 +25,5 @@ export const hasDynamicFilter = (filters: IStoredFilter[]) => {
 
   return Boolean(found);
 };
+
+export const cleanPropertyName = (keyValue: string) => keyValue?.replace('.', '_');

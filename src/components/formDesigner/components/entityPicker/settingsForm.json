@@ -228,6 +228,33 @@
           "parentId": "2a5acbcf-cd52-487e-9cd7-09594a04793a",
           "label": "Success Redirect URL",
           "customVisibility": "return data.showModalFooter === true"
+        },
+        {
+          "id": "52269671-7fda-4bad-8365-3dd9ab7aee59",
+          "type": "queryBuilder",
+          "name": "expression",
+          "label": "Expression",
+          "labelAlign": "right",
+          "parentId": "root",
+          "hidden": false,
+          "customVisibility": "",
+          "hideLabel": true,
+          "validate": {},
+          "dataSourceType": "values",
+          "values": [
+            {
+              "id": "b0045543-74eb-45b8-aa75-cf688ab57d37",
+              "label": "Json Logic",
+              "value": "jsonLogic"
+            },
+            {
+              "id": "b5b69b98-3eb2-4cf1-a955-399fab735404",
+              "label": "HQL",
+              "value": "hql"
+            }
+          ],
+          "jsonExpanded": true,
+          "settingsValidationErrors": []
         }
       ],
       "dataSourceType": "values",

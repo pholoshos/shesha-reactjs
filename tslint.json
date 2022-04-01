@@ -12,14 +12,8 @@
     "radix": false,
     "ordered-imports": false,
     "variable-name": false,
-    "indent": [
-      true,
-      "spaces"
-    ],
-    "interface-name": [
-      false,
-      "always-prefix"
-    ],
+    "indent": [true, "spaces"],
+    "interface-name": [false, "always-prefix"],
     "jsx-self-close": true,
     "prefer-const": true,
     "no-duplicate-imports": true,

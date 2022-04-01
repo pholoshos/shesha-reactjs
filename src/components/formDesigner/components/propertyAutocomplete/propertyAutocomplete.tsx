@@ -62,7 +62,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = props => {
     properties.forEach(p => {
       if (p.path === data) exactMatch = true;
 
-      if (p.path.toLowerCase().startsWith(data.toLowerCase()))
+      if (p.path?.toLowerCase()?.startsWith(data?.toLowerCase()))
         filteredProperties.push({ value: p.path, label: p.path });
     });
 

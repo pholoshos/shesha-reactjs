@@ -6,14 +6,16 @@ import { GetDataError, useGet, useMutate } from 'restful-react';
 import { FormDto, useFormGet, useFormGetByPath } from '../../apis/form';
 import { AjaxResponseBase } from '../../apis/user';
 import { ConfigurableForm, ValidationErrors } from '../../components';
+import { useSubscribe } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
 import { ConfigurableFormInstance } from '../../providers/form/contexts';
 import { FormMarkupWithSettings } from '../../providers/form/models';
 import { removeZeroWidthCharsFromString } from '../../providers/form/utils';
+import { DynamicFormPubSubConstants } from './pubSub';
 
 type FormMode = 'designer' | 'edit' | 'readonly';
 
-interface IDynamicPageProps {
+export interface IDynamicPageProps {
   /**
    * Form path. You can pass either this or `formId`. This is required if `formId` is not provided
    */
@@ -64,12 +66,6 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const formRef = useRef<ConfigurableFormInstance>();
 
   const { id, path, formId, mode } = state;
-
-  useEffect(() => {
-    return () => {
-      setState(null); // Reset the state on unmount
-    };
-  }, []);
 
   const {
     refetch: fetchEntity,
@@ -192,6 +188,14 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
       description: <ValidationErrors error={error} renderMode="raw" />,
     });
   };
+
+  useSubscribe(DynamicFormPubSubConstants.CancelFormEdit, () => {
+    form?.setFieldsValue(state?.fetchedEntity);
+
+    formRef?.current?.setFormData({ values: state?.fetchedEntity, mergeValues: true });
+
+    formRef?.current?.setFormMode('readonly');
+  });
 
   useEffect(() => {
     if (state && !state?.formResponse?.markup && state?.path) {

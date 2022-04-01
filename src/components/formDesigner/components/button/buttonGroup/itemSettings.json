@@ -204,7 +204,7 @@
             },
             {
               "id": "b2c59c38-6537-4d39-9612-c4c5ae26ef7a",
-              "label": "Cancel Edit",
+              "label": "Cancel Form Edit",
               "value": "cancelFormEdit"
             },
             {
@@ -578,11 +578,6 @@
               "id": "4417761c-5277-4b39-a8e9-e5493fc4488c"
             },
             {
-              "label": "stateChanged",
-              "value": "STATE_CHANGED",
-              "id": "4179a3a6-0380-452f-83da-f3d7f5ea1d23"
-            },
-            {
               "label": "(enter custom action)",
               "value": "CUSTOM_ACTION",
               "id": "b4224f35-1b69-43f5-99e8-8119be85a940"
@@ -640,7 +635,17 @@
           "customVisibility": "return data.buttonAction === 'executeScript'",
           "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
           "validate": {},
-          "settingsValidationErrors": []
+          "settingsValidationErrors": [],
+          "exposedVariables": [
+            { "name": "data", "description": "The form data", "type": "object" },
+            { "name": "moment", "description": "The moment.js object", "type": "object" },
+            { "name": "form", "description": "Form instance", "type": "FormInstance" },
+            { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+            { "name": "http", "description": "TThe axios instance for making http requests", "type": "object" },
+            { "name": "result", "description": "only available after a successful http post", "type": "object" },
+            { "name": "message", "description": "A notification object by Ant", "type": "object" },
+            { "name": "globalState", "description": "The global state of the application", "type": "object" }
+          ]
         }
       ]
     },
@@ -679,6 +684,7 @@
       "exposedVariables": [
         { "name": "data", "description": "The form data", "type": "object" },
         { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
         { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
         { "name": "globalState", "description": "The global state of the application", "type": "object" }
       ]

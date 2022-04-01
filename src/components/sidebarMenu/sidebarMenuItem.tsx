@@ -9,7 +9,7 @@ const { SubMenu } = Menu;
 
 export const getMenuItemKey = (title: string): string => {
   return title
-    ?.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => (index === 0 ? word.toLowerCase() : word.toUpperCase()))
+    ?.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => (index === 0 ? word?.toLowerCase() : word?.toUpperCase()))
     .replace(/\s+/g, '');
 };
 
@@ -24,13 +24,13 @@ export const renderSidebarMenuItem = (props: IProps) => {
 
   if (!props.isItemVisible(props)) return null;
 
-  const renderedIcon = icon 
-    ? typeof(icon) === 'string'
-      ? <ShaIcon iconName={icon as IconType}/>
-      : React.isValidElement(icon)
-        ? icon
-        : null
-    : null;
+  const renderedIcon = icon ? (
+    typeof icon === 'string' ? (
+      <ShaIcon iconName={icon as IconType} />
+    ) : React.isValidElement(icon) ? (
+      icon
+    ) : null
+  ) : null;
 
   if (childItems && childItems.length > 0)
     return (

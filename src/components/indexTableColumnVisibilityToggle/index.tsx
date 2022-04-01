@@ -15,7 +15,7 @@ export const IndexTableColumnVisibilityToggle: FC<IIndexTableColumnVisibilityTog
   const [columnFilter, setColumnFilter] = useState('');
 
   const onColumnSearch = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-    setColumnFilter(value ? value.toLowerCase() : '');
+    setColumnFilter(value ? value?.toLowerCase() : '');
   };
 
   return (
@@ -26,8 +26,8 @@ export const IndexTableColumnVisibilityToggle: FC<IIndexTableColumnVisibilityTog
         {(columnFilter
           ? visibleColumns.filter(({ header }) =>
               getSafelyTrimmedString(header)
-                .toLowerCase()
-                .includes(getSafelyTrimmedString(columnFilter).toLowerCase())
+                ?.toLowerCase()
+                ?.includes(getSafelyTrimmedString(columnFilter)?.toLowerCase())
             )
           : visibleColumns
         ).map(({ header, show, id }) => {

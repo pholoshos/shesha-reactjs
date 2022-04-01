@@ -7,7 +7,8 @@ import settingsFormJson from './settingsForm.json';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { CodeEditor } from './codeEditor';
 import { DataTypes, StringFormats } from '../../../../interfaces/dataTypes';
-import { ICodeEditorProps, ICodeExposedVariable } from './models';
+import { ICodeEditorProps } from './models';
+import { ICodeExposedVariable } from '../../../codeVariablesTable';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -31,6 +32,7 @@ const CodeEditorComponent: IToolboxComponent<ICodeEditorComponentProps> = {
       <>
         <ConfigurableFormItem model={model}>
           <CodeEditor
+            language="typescript"
             {...editorProps}
             mode="dialog"
             setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}

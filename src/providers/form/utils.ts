@@ -365,7 +365,7 @@ export const getValidationRules = (component: IConfigurableFormComponent) => {
 export const camelize = str => {
   return str
     .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
-      return index === 0 ? word.toLowerCase() : word.toUpperCase();
+      return index === 0 ? word?.toLowerCase() : word?.toUpperCase();
     })
     .replace(/\s+/g, '');
 };
@@ -737,6 +737,40 @@ export const evaluateKeyValuesToObject = (arr: IKeyValue[], data: any): IAnyObje
     arr?.forEach(({ key, value }) => {
       if (key?.length && value.length) {
         queryParamObj[key] = evaluateString(value, data);
+      }
+    });
+
+    return queryParamObj;
+  }
+
+  return {};
+};
+
+interface IMatchData {
+  match: string;
+  data: any;
+}
+
+export const evaluateKeyValuesToObjectMatchedData = (arr: IKeyValue[], matches: IMatchData[]): IAnyObject => {
+  const queryParamObj: IAnyObject = {};
+
+  if (arr?.length) {
+    arr?.forEach(({ key, value }) => {
+      if (key?.length && value.length) {
+        let matchedKey = '';
+
+        const data =
+          matches?.find(({ match }) => {
+            const isMatch = value?.includes(match);
+
+            if (isMatch) {
+              matchedKey = match;
+            }
+
+            return isMatch;
+          })?.data || {};
+
+        queryParamObj[key] = evaluateString(value, matchedKey ? { [matchedKey]: data } : data);
       }
     });
 

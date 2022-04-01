@@ -99,9 +99,13 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
   } = store;
 
   const onSelectRowLocal = (index: number, row: any) => {
-    onSelectRow(index, row);
+    if (onSelectRow) {
+      onSelectRow(index, row);
+    }
 
-    changeSelectedRow(row);
+    if (changeSelectedRow) {
+      changeSelectedRow(row);
+    }
   };
 
   const previousIds = usePrevious(selectedIds);

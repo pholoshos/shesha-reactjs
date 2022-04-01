@@ -134,7 +134,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
       filterOption={(input, option) => {
         if (typeof option?.children === 'string' && typeof input === 'string') {
           // @ts-ignore
-          return option?.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+          return option?.children?.toLowerCase().indexOf(input?.toLowerCase()) >= 0;
         }
 
         return false;

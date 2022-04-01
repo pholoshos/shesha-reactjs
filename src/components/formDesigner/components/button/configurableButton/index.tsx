@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Button, message, Modal } from 'antd';
-import { useShaRouting, useForm, useModal } from '../../../../../providers';
+import { useShaRouting, useForm, useModal, useGlobalState, useSheshaApplication } from '../../../../../providers';
 import { ISelectionProps } from '../../../../../providers/dataTableSelection/models';
 import { IModalProps } from '../../../../../providers/dynamicModal/models';
 import { evaluateKeyValuesToObject, evaluateString } from '../../../../../providers/form/utils';
@@ -12,6 +12,7 @@ import { axiosHttp } from '../../../../../apis/axios';
 import { IButtonGroupButton } from '../../../../../providers/buttonGroupConfigurator/models';
 import { usePubSub } from '../../../../../hooks';
 import { DataTablePubsubConstants } from '../../../../../providers/dataTable/pubSub';
+import { DynamicFormPubSubConstants } from '../../../../../pages/dynamic/pubSub';
 
 export interface IConfigurableButtonProps extends IButtonGroupButton {
   formComponentId: string;
@@ -21,8 +22,10 @@ export interface IConfigurableButtonProps extends IButtonGroupButton {
 }
 
 export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
+  const { backendUrl } = useSheshaApplication();
   const { getAction, form, setFormMode, formData, formMode } = useForm();
   const { router } = useShaRouting();
+  const { globalState } = useGlobalState();
   // const { pubSub, globalStateId } = useGlobalState();
   const { publish } = usePubSub();
 
@@ -34,14 +37,15 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
     }
 
     // tslint:disable-next-line:function-constructor
-    return new Function('data, moment, form, formMode, http, result, message', expression)(
+    return new Function('data, moment, form, formMode, http, result, message, globalState', expression)(
       formData,
       moment,
       form,
       formMode,
-      axiosHttp,
+      axiosHttp(backendUrl),
       result,
-      message
+      message,
+      globalState
     );
   };
 
@@ -85,6 +89,8 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
   const onButtonClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.stopPropagation(); // Don't collapse the CollapsiblePanel when clicked
 
+    const { showConfirmDialogBeforeSubmit, modalConfirmDialogMessage } = props;
+
     switch (props.buttonAction) {
       case 'navigate':
         if (props.targetUrl) {
@@ -94,15 +100,22 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
               : props.targetUrl;
 
           router?.push(preparedUrl);
-        } else console.warn('tagret Url is not specified');
+        } else console.warn('target Url is not specified');
         break;
       case 'executeScript':
         if (props?.actionScript) {
-          executeExpression(props?.actionScript);
+          if (showConfirmDialogBeforeSubmit) {
+            Modal.confirm({
+              content: modalConfirmDialogMessage,
+              onOk: () => executeExpression(props?.actionScript),
+            });
+          } else {
+            executeExpression(props?.actionScript);
+          }
         }
+
         break;
       case 'submit':
-        const { showConfirmDialogBeforeSubmit, modalConfirmDialogMessage } = props;
         if (showConfirmDialogBeforeSubmit) {
           Modal.confirm({
             content: modalConfirmDialogMessage,
@@ -116,15 +129,17 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
         setFormMode('edit');
         break;
       case 'cancelFormEdit':
-        setFormMode('readonly');
+        publish(DynamicFormPubSubConstants.CancelFormEdit, { stateId: 'NO_PROVIDED' });
         break;
       case 'reset':
         form?.resetFields();
         break;
       case 'executeFormAction':
       case 'customAction':
-        if (props?.uniqueStateId && props?.formAction) {
-          publish(props?.formAction, { stateId: props?.uniqueStateId });
+        if (props?.formAction) {
+          console.log('props?.formAction ', props?.formAction);
+
+          publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
         } else {
           if (props.customFormAction) {
             const actionBody = getAction(props.formComponentId, props.customFormAction);

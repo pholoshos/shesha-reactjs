@@ -36,6 +36,8 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
 
   const isHidden = isComponentHidden(model);
 
+  const style = model?.hidden ? { display: 'none' } : {};
+
   return (
     <Form.Item
       className={classNames(className, { 'form-item-hidden': model.hideLabel })}
@@ -48,6 +50,7 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
       rules={isHidden ? [] : getValidationRules(model)}
       labelCol={labelCol}
       wrapperCol={wrapperCol}
+      style={style}
     >
       {children}
     </Form.Item>

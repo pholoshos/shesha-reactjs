@@ -120,6 +120,7 @@ export interface IDataTableStateContext
 
   /** CRUD configuration */
   crudConfig?: ITableCrudConfig;
+
   /** Row data, is used for CRUD operations */
   newOrEditableRowData?: IEditableRowState;
 
@@ -132,6 +133,8 @@ export interface IDataTableStateContext
   isFetchingTableData?: boolean;
   hasFetchTableDataError?: boolean;
   tableConfigLoaded?: boolean;
+
+  properties?: string[];
 
   saveFilterModalVisible?: boolean;
   //#endregion

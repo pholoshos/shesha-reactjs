@@ -1,4 +1,4 @@
-import React, { FC, useContext, PropsWithChildren, useEffect, useRef } from 'react';
+import React, { FC, useContext, PropsWithChildren, useEffect, useRef, useMemo } from 'react';
 import useThunkReducer from 'react-hook-thunk-reducer';
 import { dataTableReducer } from './reducer';
 import axios from 'axios';
@@ -530,6 +530,17 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     return properties;
   };
 
+  const properties = useMemo(() => {
+    const dataFields = state?.configurableColumns?.filter(
+      c =>
+        c.itemType === 'item' &&
+        (c as IConfigurableColumnsProps).columnType === 'data' &&
+        Boolean((c as IDataColumnsProps).propertyName)
+    ) as IDataColumnsProps[];
+
+    return dataFields.map(f => f.propertyName);
+  }, [state?.configurableColumns]);
+
   useEffect(() => {
     const { configurableColumns } = state;
     if (!entityType) return;
@@ -663,7 +674,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   return (
-    <DataTableStateContext.Provider value={{ ...state, onDblClick, onSelectRow, selectedRow }}>
+    <DataTableStateContext.Provider value={{ ...state, onDblClick, onSelectRow, selectedRow, properties }}>
       <DataTableActionsContext.Provider
         value={{
           onSort,

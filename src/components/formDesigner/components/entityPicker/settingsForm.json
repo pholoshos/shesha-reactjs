@@ -63,7 +63,7 @@
     },
     {
       "id": "840aee56-42d2-40ed-a2c6-57abb255fb95",
-      "type": "dropdown",
+      "type": "columnsSelector",
       "name": "displayEntityKeys",
       "label": "Item Type",
       "labelAlign": "right",

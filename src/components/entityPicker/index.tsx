@@ -1,5 +1,5 @@
 import React, { FC, Fragment, ReactNode, useEffect, useState } from 'react';
-import { Modal, Input, Button, ButtonProps } from 'antd';
+import { Modal, Input, Button, ButtonProps, Select } from 'antd';
 import IndexTable from '../indexTable';
 import { IAnyObject } from '../../interfaces';
 import DataTableProvider, { useDataTable } from '../../providers/dataTable';
@@ -9,10 +9,11 @@ import _ from 'lodash';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { IConfigurableColumnsBase } from '../../providers/datatableColumnsConfigurator/models';
-import { IStoredFilter } from '../../providers/dataTable/interfaces';
-import transformJS from 'js-to-json-logic';
 import { IModalProps } from '../../providers/dynamicModal/models';
 import { useModal } from '../../providers';
+import { useSelectedTableRow } from './useSelectedTableRow';
+import { usePublish } from '../../hooks';
+import Show from '../show';
 
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
 
@@ -65,6 +66,8 @@ const INITIAL_STATE: IEntityPickerState = {
   // selectedRow: null,
 };
 
+export const COLUMNS_CHANGED_EVENT_NAME = 'EntityPickerColumnsConfigChanged';
+
 export const EntityPickerInner: FC<IEntityPickerProps> = ({
   tableId,
   entityType,
@@ -95,7 +98,14 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     setPredefinedFilters,
     changeSelectedStoredFilterIds,
     selectedStoredFilterIds,
+    columns,
   } = useDataTable();
+
+  usePublish(COLUMNS_CHANGED_EVENT_NAME, () => ({ stateId: 'NOT_PROVIDED', state: columns }), [columns]);
+
+  // useEffect(() => {
+  //   dispatchEvent(new CustomEvent(COLUMNS_CHANGED_EVENT_NAME, { detail: { stateId: 'NOT_PROVIDED', state: columns } }));
+  // }, [columns]);
 
   const showPickerDialog = () => setState(prev => ({ ...prev, showModal: true }));
 
@@ -118,26 +128,9 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
 
   const dynamicModal = useModal(modalProps);
 
-  useEffect(() => {
-    if (value) {
-      const foundRow = (tableData as any)?.find(d => d?.Id === value);
+  const { data, loading: isFetchingExtraRow } = useSelectedTableRow(value);
 
-      if (!foundRow) {
-        const storedFilter: IStoredFilter = {
-          expression: transformJS(`Id === "${value}"`),
-          name: 'EntityPickerInner filter',
-          id: UNIQUE_ID,
-        };
-
-        console.log('useEffect value changed', value, storedFilter);
-
-        setPredefinedFilters([storedFilter]);
-        changeSelectedStoredFilterIds([UNIQUE_ID]);
-      } else {
-        // setPredefinedFilters([]);
-      }
-    }
-  }, [value]);
+  console.log('EntityPickerInner data, isFetchingExtraRow: ', data, isFetchingExtraRow);
 
   useEffect(() => {
     const { showModal } = state;
@@ -205,14 +198,9 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   };
 
   const getValueRow = () => {
-    // if (!state.selectedValue && Array.isArray(tableData) && tableData.length && tableData[0]?.[displayEntityKey]) {
-    //   return tableData.find(i => (i as any)?.Id === value)?.[displayEntityKey];
-    // }
     if (value && Array.isArray(tableData) && tableData.length && tableData[0]?.[displayEntityKey]) {
       return tableData.find(i => (i as any)?.Id === value)?.[displayEntityKey];
     }
-
-    console.log('getValueRow value, tableData', value, tableData);
 
     return value;
   };
@@ -258,15 +246,27 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
           </Button>
         ) : (
           <Input.Group compact className="picker-input-group">
-            <Input
-              allowClear
-              className="picker-input-group-input"
-              value={getValueRow()}
-              disabled={disabled}
-              name={name}
-              size={size}
-              defaultValue={defaultValue}
-            />
+            <Show when={Boolean(value) && !getValueRow()}>
+              <Input
+                allowClear
+                className="picker-input-group-input"
+                value={getValueRow()}
+                disabled={disabled}
+                name={name}
+                size={size}
+                defaultValue={defaultValue}
+              />
+            </Show>
+
+            <Show when={!Boolean(value)}>
+              <Select style={{ width: 200 }}>
+                {columns?.map(({ caption, id }) => (
+                  <Select.Option key={id} value={id}>
+                    {caption}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Show>
 
             <Button
               onClick={showPickerDialog}
@@ -299,7 +299,12 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
             <TablePager />
           </div>
 
-          <IndexTable onSelectRow={onSelectRow} onDblClick={onDblClick} selectedRowIndex={state?.selectedRowIndex} />
+          <IndexTable
+            onSelectRow={onSelectRow}
+            onDblClick={onDblClick}
+            selectedRowIndex={state?.selectedRowIndex}
+            // extraRows={data ? [data] : null}
+          />
         </>
       </Modal>
     </div>

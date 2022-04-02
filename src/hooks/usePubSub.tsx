@@ -1,24 +1,56 @@
-// import React from 'react';
+import { useEffect, useState } from 'react';
 
-import { useEffect } from 'react';
-import { IPubSubPayload } from '../interfaces/pubsub';
+/**
+ * Pub sub state
+ */
+export interface IPubSubState {
+  /**
+   * Unique state id
+   */
+  readonly id: string;
 
+  /**
+   * The state to be published
+   */
+  readonly state?: any;
+}
+
+/**
+ *
+ */
+export interface IPubSubPayload<T = any> {
+  /**
+   * Unique state id
+   */
+  readonly stateId: string;
+
+  /**
+   * Subscribed data
+   */
+  readonly state?: T;
+}
+
+/**
+ * PubSub object
+ */
 interface ISubscription<T> {
   /**
+   * Subscribes to an event
    *
+   * @param token - event name
+   * @param eventHandler - event handler
    */
-  subscribe?: (token: string, eventHandler: (data: T) => void) => void;
+  subscribe(token: string, eventHandler: (data: T) => void): void;
 
   /**
    * A function for unsubscribing to events to events
    */
-
-  unsubscribe?: (token: string) => void;
+  unsubscribe: (token: string) => void;
 
   /**
    * A function for publishing events
-   * @param token -
-   * @param data
+   * @param token - event name
+   * @param data - data to publish
    */
   publish(token: string, data?: T): void;
 
@@ -40,7 +72,7 @@ export const usePubSub = (): ISubscription<IPubSubPayload> => {
       eventHandler(data);
     };
 
-    addEventListener(token, handleEvent, false);
+    window.addEventListener(token, handleEvent, false);
   };
 
   const unsubscribe = (token: string) => removeEventListener(token, () => {}, false);
@@ -58,26 +90,65 @@ export const usePubSub = (): ISubscription<IPubSubPayload> => {
   return { subscribe, unsubscribe, publish, clearAllEventListeners };
 };
 
-export function useSubscribe(eventName: string, eventHandler: (data: IPubSubPayload) => void): void {
+/**
+ * Subscribes to an event
+ *
+ * @param eventName event name
+ * @param eventHandler handler for the event
+ */
+export function useSubscribe<T extends IPubSubPayload>(eventName: string, eventHandler: (data: T) => void): void {
   useEffect(() => {
-    addEventListener(eventName, e =>
-      eventHandler({ stateId: (e as any).detail.stateId, state: (e as any).detail.state })
-    );
+    window.addEventListener(eventName, e => eventHandler((e as any).detail));
 
     return () => {
-      removeEventListener(eventName, () => {}, false);
+      window.removeEventListener(eventName, () => {}, false);
     };
   });
 }
 
-export const eventBus = {
-  on(event, callback) {
-    document.addEventListener(event, e => callback(e.detail));
-  },
-  dispatch(event, data) {
-    document.dispatchEvent(new CustomEvent(event, { detail: data }));
-  },
-  remove(event, callback) {
-    document.removeEventListener(event, callback);
-  },
-};
+/**
+ * Subscribes to an event and return the value
+ *
+ * @param eventName event name
+ * @param deps if present, effect will only activate if the values in the list change.
+ * @returns a value you're subscribed
+ */
+export function useSubscribedValue<T extends IPubSubPayload>(
+  eventName: string,
+  deps?: ReadonlyArray<any>
+): T | undefined {
+  const [state, setState] = useState<T>();
+
+  useEffect(() => {
+    window.addEventListener(eventName, (e: any) => {
+      const newState = (e as unknown) as any;
+
+      setState(newState?.detail as T);
+    });
+
+    return () => {
+      window.removeEventListener(eventName, () => {}, false);
+    };
+  }, [eventName, deps]);
+
+  return state;
+}
+
+/**
+ * Used to publish an event attached to the window
+ *
+ * @param eventName event name
+ * @param computer a function that that returns the value to pe published
+ * @param deps if present, effect will only activate if the values in the list change.
+ */
+export function usePublish<T extends IPubSubPayload>(
+  eventName: string,
+  computer: () => T,
+  deps?: ReadonlyArray<any>
+): void {
+  useEffect(() => {
+    dispatchEvent(
+      new CustomEvent<T>(eventName, { detail: computer() })
+    );
+  }, deps);
+}

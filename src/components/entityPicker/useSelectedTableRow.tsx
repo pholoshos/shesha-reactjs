@@ -38,8 +38,8 @@ export const useSelectedTableRow = (selectedTableId: string) => {
         },
       ],
     })
-      .then(data => {
-        const { rows } = data?.result;
+      .then(response => {
+        const { rows } = response?.result;
 
         setData(rows?.length ? rows[0] : null); // length === 1
       })

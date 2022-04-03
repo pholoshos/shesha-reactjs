@@ -34,7 +34,7 @@ const CRUD_MODAL_WIDTH = 700;
 
 export interface IIndexTableProps extends IShaDataTableProps, ICrudProps, TableProps {
   tableRef?: MutableRefObject<Partial<DataTableFullInstance> | null>;
-  extraRows?: object[];
+  records?: object[];
 }
 
 export interface IExtendedModalProps extends ModalProps {
@@ -60,7 +60,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
   onFetchDataSuccess,
   onSelectedIdsChanged,
   crudParentEntityKey = 'parentEntity',
-  extraRows,
+  records,
 }) => {
   const store = useDataTableStore();
   const { headers } = useAuthState();
@@ -70,7 +70,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
   const { router } = useShaRouting();
 
   const {
-    tableData,
+    tableData: recordsFromProvider,
     isFetchingTableData,
     totalPages,
     columns,
@@ -99,6 +99,10 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
     succeeded: { exportToExcel: exportToExcelSuccess },
     error: { exportToExcel: exportToExcelError },
   } = store;
+
+  const tableData = useMemo(() => {
+    return records?.length ? records : recordsFromProvider;
+  }, [records, recordsFromProvider]);
 
   const onSelectRowLocal = (index: number, row: any) => {
     if (onSelectRow) {
@@ -540,7 +544,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
 
   const tableProps: IReactTableProps = {
     // ref: reactTableRef,
-    data: Array.isArray(extraRows) ? [...(data || []), ...extraRows] : data,
+    data,
     // Disable sorting if we're in create mode so that the new row is always the first
     defaultSorting: newOrEditableRowData?.mode === 'create' ? null : defaultSorting,
     disableSortBy: Boolean(newOrEditableRowData?.id), // Disable sorting if we're creating or editing so that

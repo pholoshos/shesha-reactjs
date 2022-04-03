@@ -16,7 +16,7 @@ export const useSelectedTableRow = (selectedTableId: string) => {
   useEffect(() => {
     if (!selectedTableId) return;
 
-    if (tableData?.find(data => (data as any)?.Id === selectedTableId)) {
+    if (tableData?.find(item => (item as any)?.Id === selectedTableId)) {
       return;
     }
 

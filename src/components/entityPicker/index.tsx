@@ -107,9 +107,9 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     showModalFooter: addNewRecordsProps?.showModalFooter,
     submitHttpVerb: addNewRecordsProps?.submitHttpVerb,
     onSuccessRedirectUrl: addNewRecordsProps?.onSuccessRedirectUrl,
-    onSubmitted: (value: any) => {
+    onSubmitted: (localValue: any) => {
       if (onDblClick) {
-        onDblClick(value);
+        onDblClick(localValue);
       }
     },
   };
@@ -162,7 +162,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     hidePickerDialog();
   };
 
-  const onSelectRow = (_: number, row: IAnyObject) => {
+  const onSelectRow = (_index: number, row: IAnyObject) => {
     handleOnChange(row);
   };
 

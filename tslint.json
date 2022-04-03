@@ -38,6 +38,7 @@
     "trailing-comma": false,
     "no-empty-interface": false,
     "no-parameter-reassignment": true,
+    "no-shadowed-variable": true,
     "no-string-literal": false,
     "typedef-whitespace": [
       false,

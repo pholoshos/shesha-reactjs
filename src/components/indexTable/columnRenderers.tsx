@@ -123,8 +123,10 @@ export const renderers: ITableCustomTypesRender[] = [
         return data?.cell?.row?.original;
       };
 
-      const handleDeleteRowClick = (id: string) => {
+      const handleDeleteRowClick = () => {
         const deletingLoader = message.loading('Action in progress..', 0);
+
+        const id: string = props?.cell?.row?.original?.Id;
 
         deleteRowHttp('', { queryParams: { id } })
           .then(() => {

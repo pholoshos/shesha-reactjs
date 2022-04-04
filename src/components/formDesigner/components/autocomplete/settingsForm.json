@@ -124,6 +124,15 @@
       "label": "Data"
     },
     {
+      "id": "748aca71-77d6-4890-a498-aace4849e109",
+      "type": "numberField",
+      "name": "defaultValue",
+      "parentId": "root",
+      "label": "Default Value",
+      "validate": {},
+      "settingsValidationErrors": []
+    },
+    {
       "id": "028b4eaf-8830-4dcd-b54f-422c72b25418",
       "type": "dropdown",
       "name": "dataSourceType",

@@ -146,7 +146,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     } else {
       if (initialValuesFromFormSettings) {
         postData._formFields = Array.from(
-          new Set<string>([...postData._formFields, ...Object.keys(initialValuesFromFormSettings)])
+          new Set<string>([...(postData._formFields || []), ...Object.keys(initialValuesFromFormSettings)])
         );
       }
     }

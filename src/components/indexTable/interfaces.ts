@@ -55,7 +55,7 @@ export interface IShaDataTableProps extends ICrudProps {
   selectedRowIndex?: number;
   onSelectRow?: (index: number, row: any) => void;
   onSelectedIdsChanged?: (selectedRowIds: string[]) => void;
-  onDblClick?: (data: any) => void;
+  onDblClick?: (data: any, index?: number) => void;
   customTypeRenders?: ITableCustomTypesRender[];
   customTypeEditors?: ITableCustomTypeEditor[];
   onRowsChanged?: (rows: object[]) => void;

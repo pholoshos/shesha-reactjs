@@ -53,6 +53,7 @@ import DynamicView from '../../../components/formDesigner/components/dynamicView
 import ChildTable from '../../../components/formDesigner/components/dataTable/childTable';
 import ColumnsEditor from '../../../components/formDesigner/components/dataTable/table/columnsEditor/columnsEditorComponent';
 import ButtonGroup from '../../../components/formDesigner/components/button/buttonGroup/buttonGroupComponent';
+import ColumnsSelector from '../../../components/formDesigner/components/entityPicker/columnsSelector';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -121,6 +122,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       Toolbar,
       ChildTable,
       ColumnsEditor, // Hidden
+      ColumnsSelector, // Hidden
     ],
   },
   {

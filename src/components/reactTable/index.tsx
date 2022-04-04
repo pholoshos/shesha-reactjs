@@ -18,7 +18,6 @@ import _ from 'lodash';
 import { IReactTableProps } from './interfaces';
 import { nanoid } from 'nanoid/non-secure';
 import { usePrevious } from 'react-use';
-// const headerProps = (props, { column }) => getStyles(props, column.align);
 
 const cellProps: CellPropGetter<object> = (props, { cell }) => getStyles(props, cell.column.align);
 
@@ -194,9 +193,9 @@ const ReactTable: FC<IReactTableProps> = ({
     }
   }, [state?.columnResizing]);
 
-  const handleDoubleClickRow = (row: Row<object>) => {
+  const handleDoubleClickRow = (row: Row<object>, index: number) => {
     if (onRowDoubleClick) {
-      onRowDoubleClick(row?.original);
+      onRowDoubleClick(row?.original, index);
     }
   };
 
@@ -268,7 +267,7 @@ const ReactTable: FC<IReactTableProps> = ({
                 <span
                   key={nanoid()}
                   onClick={() => handleSelectRow(row)}
-                  onDoubleClick={() => handleDoubleClickRow(row)}
+                  onDoubleClick={() => handleDoubleClickRow(row, rowIndex)}
                   {...row.getRowProps()}
                   className={classNames(
                     'tr tr-body',

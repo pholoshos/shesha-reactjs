@@ -9,7 +9,6 @@ import { EntityPicker } from '../../..';
 import { Alert } from 'antd';
 import { useForm } from '../../../../providers';
 import { DataTypes } from '../../../../interfaces/dataTypes';
-import EntityFooter from './entityFooter';
 
 export interface IEntityPickerComponentProps extends IConfigurableFormComponent {
   placeholder?: string;
@@ -57,7 +56,17 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
           tableId={model?.tableId}
           displayEntityKey={model?.displayEntityKey}
           entityType={model?.entityType}
-          entityFooter={<EntityFooter {...model} />}
+          addNewRecordsProps={
+            model?.allowNewRecord
+              ? {
+                  modalFormId: model?.modalFormId,
+                  modalTitle: model?.modalTitle,
+                  showModalFooter: model?.showModalFooter,
+                  submitHttpVerb: model?.submitHttpVerb,
+                  onSuccessRedirectUrl: model?.onSuccessRedirectUrl,
+                }
+              : undefined
+          }
           configurableColumns={model?.items}
         />
       </ConfigurableFormItem>
@@ -68,6 +77,3 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
 };
 
 export default EntityPickerComponent;
-// { "id": "8400a8ec-577d-4468-9347-5601f952b44c", "label": "Button", "value": "button" },
-//         { "id": "cc268f50-47ca-4e4e-966f-7f2abfec902f", "label": "Separator", "value": "separator" },
-//         { "id": "b4117249-8c2f-4991-a96c-9ea434293120", "label": "Line", "value": "line" }

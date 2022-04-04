@@ -117,7 +117,7 @@ export interface IReactTableProps {
   /**
    * A callback for double-clicking the rows
    */
-  onRowDoubleClick?: (rowData: any) => void;
+  onRowDoubleClick?: (rowData: any, index?: number) => void;
 
   /**
    * A callback for when ids are selected. Required if useMultiSelect is true

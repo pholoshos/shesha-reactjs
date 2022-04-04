@@ -1,4 +1,4 @@
-import React, { FC, useContext, PropsWithChildren, useEffect, useRef } from 'react';
+import React, { FC, useContext, PropsWithChildren, useEffect, useRef, useMemo } from 'react';
 import useThunkReducer from 'react-hook-thunk-reducer';
 import { dataTableReducer } from './reducer';
 import axios from 'axios';
@@ -331,12 +331,12 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     // Add default filter to table filter
     const filter = localState?.tableFilter || [];
 
-    const properties = getDataProperties(localState.configurableColumns);
+    const localProperties = getDataProperties(localState.configurableColumns);
 
     const payload: IGetDataPayload = {
       id: tableId,
       entityType,
-      properties,
+      properties: localProperties,
       pageSize: localState.selectedPageSize,
       currentPage: localState.currentPage,
       sorting: localState.tableSorting,
@@ -525,17 +525,26 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
         Boolean((c as IDataColumnsProps).propertyName)
     ) as IDataColumnsProps[];
 
-    const properties = dataFields.map(f => f.propertyName);
-
-    return properties;
+    return dataFields.map(f => f.propertyName);
   };
+
+  const properties = useMemo(() => {
+    const dataFields = state?.configurableColumns?.filter(
+      c =>
+        c.itemType === 'item' &&
+        (c as IConfigurableColumnsProps).columnType === 'data' &&
+        Boolean((c as IDataColumnsProps).propertyName)
+    ) as IDataColumnsProps[];
+
+    return dataFields.map(f => f.propertyName);
+  }, [state?.configurableColumns]);
 
   useEffect(() => {
     const { configurableColumns } = state;
     if (!entityType) return;
 
-    const properties = getDataProperties(configurableColumns);
-    if (properties.length === 0) {
+    const localProperties = getDataProperties(configurableColumns);
+    if (localProperties.length === 0) {
       // don't fetch data from server when properties is empty
       dispatch(fetchColumnsSuccessSuccessAction({ columns: [], configurableColumns, userConfig: userDTSettings }));
       return;
@@ -544,7 +553,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     // fetch columns config from server
     const getColumnsPayload: GetColumnsInput = {
       entityType,
-      properties,
+      properties: localProperties,
     };
 
     axios({
@@ -663,7 +672,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   return (
-    <DataTableStateContext.Provider value={{ ...state, onDblClick, onSelectRow, selectedRow }}>
+    <DataTableStateContext.Provider value={{ ...state, onDblClick, onSelectRow, selectedRow, properties }}>
       <DataTableActionsContext.Provider
         value={{
           onSort,

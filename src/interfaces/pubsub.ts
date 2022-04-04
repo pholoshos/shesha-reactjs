@@ -10,11 +10,11 @@ export interface IPubSubState {
   readonly state?: any;
 }
 
-export interface IPubSubPayload {
+export interface IPubSubPayload<T = any> {
   /**
    * Unique state id
    */
   readonly stateId: string;
 
-  readonly state?: any;
+  readonly state?: T;
 }

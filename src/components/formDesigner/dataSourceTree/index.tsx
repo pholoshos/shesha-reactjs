@@ -62,9 +62,9 @@ const DataSourceTree: FC<IProps> = ({ items, defaultExpandAll, searchText }) => 
     const index = label?.toLowerCase()?.indexOf(searchText);
     if (index === -1) return <span>{label}</span>;
 
-    const beforeStr = label.substring(0, index);
-    const str = label.substring(index, index + searchText.length);
-    const afterStr = label.substring(index + searchText.length, label.length);
+    const beforeStr = label?.substring(0, index);
+    const str = label?.substring(index, index + searchText.length);
+    const afterStr = label?.substring(index + searchText.length, label.length);
     return (
       <span>
         {beforeStr}

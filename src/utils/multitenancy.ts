@@ -1,4 +1,4 @@
-import { getLocalStorage, getSessionStorage } from './storage';
+import { getLocalStorage } from './storage';
 
 const TENANT_KEY = 'TENANT';
 const CUSTOM_HEADERS_KEY = 'f5b34b63-d808-40d5-8b3b-01a16520ac9e';
@@ -29,7 +29,7 @@ export const getTenantId = () => {
 };
 
 export const getCustomHeaders = () => {
-  const value = getSessionStorage()?.getItem(CUSTOM_HEADERS_KEY);
+  const value = getLocalStorage()?.getItem(CUSTOM_HEADERS_KEY);
 
   if (value) {
     const result = isJsonParseable(value) ? JSON.parse(value) : value;

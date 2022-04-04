@@ -9,7 +9,9 @@ build
 dist
 next-example/.out-storybook/*
 .out-storybook/*
+.next
 next-examplec/.next
+next-env.d.ts
 .rpt2_cache
 package-lock.json
 

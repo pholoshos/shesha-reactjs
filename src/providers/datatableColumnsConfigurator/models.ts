@@ -71,6 +71,9 @@ export interface IConfigurableActionColumnsProps extends IConfigurableColumnsPro
   /** Form action */
   formAction?: string;
 
+  /** Form action */
+  actionScript?: string;
+
   /**
    * The warning message to display before deleting an item
    */

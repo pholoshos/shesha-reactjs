@@ -152,6 +152,38 @@
           "settingsValidationErrors": []
         },
         {
+          "id": "fcfccb85-8fc3-436b-9f87-17e189bc3cdc",
+          "type": "codeEditor",
+          "name": "actionScript",
+          "label": "Action Script",
+          "labelAlign": "right",
+          "parentId": "root",
+          "hidden": false,
+          "autoSize": false,
+          "showCount": false,
+          "allowClear": false,
+          "validate": {},
+          "exposedVariables": [
+            { "name": "data", "description": "The form data", "type": "object" },
+            { "name": "moment", "description": "The moment.js object", "type": "object" },
+            {
+              "name": "formMode",
+              "description": "The form mode - 'edit' | 'readonly' | 'designer'",
+              "type": "string"
+            },
+            { "name": "http", "description": "Axios instance", "type": "object" },
+            {
+              "name": "message",
+              "description": "Ant design message object for displaying toast messages",
+              "type": "object"
+            },
+            { "name": "globalState", "description": "The global state of the application", "type": "object" },
+            { "name": "selectedRow", "description": "The selected row", "type": "object" }
+          ],
+          "customVisibility": "return data.action === 'executeScript'",
+          "description": "Write a code that allows you to return an object whose values will be merged with the form state before submit. Check the variables tab for exposed variables"
+        },
+        {
           "id": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
           "type": "collapsiblePanel",
           "name": "pnlModalSettings",

@@ -4,12 +4,13 @@ import { ITableCustomTypesRender } from './interfaces';
 import { IConfigurableActionColumnsProps } from '../../providers/datatableColumnsConfigurator/models';
 import ShaIcon, { IconType } from '../shaIcon';
 import { evaluateString } from '../../providers/form/utils';
-import { useDataTable, useModal, useShaRouting } from '../../providers';
+import { useDataTable, useForm, useGlobalState, useModal, useShaRouting, useSheshaApplication } from '../../providers';
 import camelCaseKeys from 'camelcase-keys';
 import { message, Modal, notification } from 'antd';
 import { useGet, useMutate } from 'restful-react';
 import { IModalProps } from '../../providers/dynamicModal/models';
 import ValidationErrors from '../validationErrors';
+import { axiosHttp } from '../../apis/axios';
 
 export const renderers: ITableCustomTypesRender[] = [
   {
@@ -66,6 +67,9 @@ export const renderers: ITableCustomTypesRender[] = [
     render: props => {
       const { router } = useShaRouting();
       const { crudConfig, refreshTable } = useDataTable();
+      const { backendUrl } = useSheshaApplication();
+      const { formData, form, formMode } = useForm();
+      const { globalState } = useGlobalState();
 
       const { mutate: deleteRowHttp } = useMutate({
         verb: 'DELETE',
@@ -138,6 +142,23 @@ export const renderers: ITableCustomTypesRender[] = [
           .finally(deletingLoader);
       };
 
+      const getExpressionExecutor = (expression: string) => {
+        if (!expression) {
+          return null;
+        }
+
+        // tslint:disable-next-line:function-constructor
+        return new Function('data, moment, formMode, http, message, globalState, selectedRow', expression)(
+          formData,
+          moment,
+          formMode,
+          axiosHttp(backendUrl),
+          message,
+          globalState,
+          camelCaseKeys(props?.cell?.row?.original || {}, { deep: true })
+        );
+      };
+
       const clickHandler = (event, data) => {
         event.stopPropagation();
 
@@ -203,6 +224,11 @@ export const renderers: ITableCustomTypesRender[] = [
               },
               onOk: handleDeleteRowClick,
             });
+
+            break;
+          }
+          case 'executeScript': {
+            getExpressionExecutor(actionProps?.actionScript);
 
             break;
           }

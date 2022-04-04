@@ -115,6 +115,7 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       mode: model?.mode,
       queryParams: getQueryParams(),
       readOnly: model?.readOnly || formMode === 'readonly',
+      defaultValue: model?.defaultValue,
       getOptionFromFetchedItem,
 
       quickviewEnabled: model?.quickviewEnabled,

@@ -28,6 +28,7 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
   children,
   model,
   valuePropName,
+  initialValue,
   className,
   labelCol,
   wrapperCol,
@@ -46,6 +47,7 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
       labelAlign={model.labelAlign}
       hidden={isHidden}
       valuePropName={valuePropName}
+      initialValue={initialValue}
       tooltip={model.description}
       rules={isHidden ? [] : getValidationRules(model)}
       labelCol={labelCol}

@@ -119,6 +119,15 @@
       "label": "Data"
     },
     {
+      "id": "fbdb6bb1-5994-4205-86b4-236ca61ae53e",
+      "type": "numberField",
+      "name": "defaultValue",
+      "parentId": "root",
+      "label": "Default Value",
+      "validate": {},
+      "settingsValidationErrors": []
+    },
+    {
       "id": "d2648d0e-4664-4fee-ab4a-b14e556d957b",
       "type": "dropdown",
       "name": "mode",
@@ -247,15 +256,6 @@
       "valueTitle": "Value",
       "valueName": "value",
       "customVisibility": "return data.dataSourceType === 'values'"
-    },
-    {
-      "id": "fbdb6bb1-5994-4205-86b4-236ca61ae53e",
-      "type": "numberField",
-      "name": "defaultValue",
-      "parentId": "root",
-      "label": "Default Value",
-      "validate": {},
-      "settingsValidationErrors": []
     },
     {
       "id": "6e85c4b3-ac68-49da-acd6-2928ed4f82b6",

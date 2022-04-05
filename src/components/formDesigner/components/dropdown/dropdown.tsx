@@ -66,6 +66,7 @@ export const Dropdown: FC<IDropdownProps> = ({
   useRawValues,
   readOnly,
   isDynamic,
+  size,
 }) => {
   const { formMode, isComponentDisabled } = useForm();
   const getOptions = (): ILabelValue[] => {
@@ -93,6 +94,7 @@ export const Dropdown: FC<IDropdownProps> = ({
         includeFilters={false}
         placeholder={placeholder}
         readOnly={isReadOnly}
+        size={size}
       />
     ) : (
       <RefListDropDown.Dto
@@ -108,6 +110,7 @@ export const Dropdown: FC<IDropdownProps> = ({
         includeFilters={false}
         placeholder={placeholder}
         readOnly={isReadOnly}
+        size={size}
       />
     );
   }
@@ -135,6 +138,7 @@ export const Dropdown: FC<IDropdownProps> = ({
       mode={selectedMode}
       placeholder={placeholder}
       showSearch
+      size={size}
     >
       {options.map((option, index) => (
         <Select.Option key={index} value={option.value}>

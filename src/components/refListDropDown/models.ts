@@ -1,3 +1,4 @@
+import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { IReadOnly } from './../../interfaces/readOnly';
 import { LabeledValue, SelectProps } from 'antd/lib/select';
 import { Key } from 'react';
@@ -33,6 +34,7 @@ export interface IRefListDropDownProps<TValue = any> extends Omit<SelectProps<an
   base?: string;
   value?: TValue | TValue[];
   ignoredValues?: number[];
+  size?: SizeType;
   onChange?: (value: TValue | TValue[]) => void;
 }
 

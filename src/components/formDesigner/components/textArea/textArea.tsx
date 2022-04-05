@@ -40,6 +40,7 @@ const TextField: IToolboxComponent<ITextAreaProps> = {
       maxLength: model.maxLength,
       allowClear: model.allowClear,
       bordered: !model.hideBorder,
+      size: model?.size,
     };
 
     const { formMode, isComponentDisabled } = useForm();

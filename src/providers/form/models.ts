@@ -1,3 +1,4 @@
+import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ReactNode } from 'react';
 import { IAsyncValidationError } from '../../interfaces';
 import { IFormSettings } from './contexts';
@@ -107,7 +108,11 @@ export interface IConfigurableFormComponent extends IFormComponentContainer {
   onFocusCustom?: string;
   //#endregion
 
+  /** Whether the component is read-only */
   readOnly?: boolean;
+
+  /** Control size */
+  size?: SizeType;
 
   /** If true, indicates that component is rendered dynamically and some of rules (e.g. visibility) shouldn't be applied to this component */
   isDynamic?: boolean;
@@ -117,7 +122,6 @@ export interface IConfigurableFormComponent extends IFormComponentContainer {
    * The quickview is only displayed in readonly mode
    */
   enableQuickview?: boolean;
-
 }
 
 export interface IComponentsContainer {

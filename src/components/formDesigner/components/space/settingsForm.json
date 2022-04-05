@@ -8,7 +8,7 @@
       "label": "Display"
     },
     {
-      "id": "5c813b1a-04c5-4658-ac0f-cbcbae6b3bd4",
+      "id": "5da0ce15-0170-447d-8ca6-b34415a2d05a",
       "type": "textField",
       "name": "name",
       "parentId": "root",
@@ -80,6 +80,20 @@
       "name": "sizeNumber",
       "parentId": "root",
       "label": "Size Number"
+    },
+    {
+      "id": "320d036b-c715-4676-a6cd-8b990950ddb9",
+      "type": "numberField",
+      "name": "marginLeft",
+      "parentId": "root",
+      "label": "Margin Left"
+    },
+    {
+      "id": "b2fcd9e5-e0a0-4b01-a7f1-ab85ff92d8c7",
+      "type": "numberField",
+      "name": "marginRight",
+      "parentId": "root",
+      "label": "Margin Right"
     },
     {
       "id": "57a40a33-7e08-4ce4-9f08-a34d24a83338",

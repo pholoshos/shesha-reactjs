@@ -11,8 +11,10 @@ export interface ISpaceProps extends IConfigurableFormComponent {
   align?: 'start' | 'end' | 'center' | 'baseline';
   direction?: 'vertical' | 'horizontal';
   size?: 'small' | 'middle' | 'large'; // number
-  sizeNumber?: number;
   wrap?: boolean;
+  sizeNumber?: number;
+  marginLeft?: number;
+  marginRight?: number;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -21,7 +23,7 @@ const SpaceComponent: IToolboxComponent<ISpaceProps> = {
   type: 'space',
   name: 'Space',
   icon: <ArrowsAltOutlined />,
-  factory: (model: ISpaceProps) => {
+  factory: ({ marginLeft, marginRight, ...model }: ISpaceProps) => {
     const props: SpaceProps = {
       align: model?.align,
       direction: model?.direction,
@@ -33,7 +35,11 @@ const SpaceComponent: IToolboxComponent<ISpaceProps> = {
       <ComponentsContainer
         containerId={model.id}
         direction={model?.direction}
-        render={components => <Space {...props}>{components}</Space>}
+        render={components => (
+          <Space {...props} style={{ marginLeft, marginRight }}>
+            {components}
+          </Space>
+        )}
       />
     );
   },

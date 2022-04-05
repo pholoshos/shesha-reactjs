@@ -26,6 +26,7 @@ import { FormLayout } from 'antd/lib/form/Form';
 import { IDataSource } from '../formDesigner/models';
 import { IPropertyMetadata } from '../../interfaces/metadata';
 import { IKeyValue } from '../../interfaces/keyValue';
+import { SizeType } from 'antd/lib/config-provider/SizeContext';
 
 export type IFlagProgressFlags =
   | 'addComponent'
@@ -66,6 +67,7 @@ export interface IFormSettings {
   wrapperCol: ILayoutProps;
   showModeToggler?: boolean;
   preparedValues?: string;
+  size?: SizeType;
   excludeFormFieldsInPayload?: string;
   initialValues?: IKeyValue[];
 }

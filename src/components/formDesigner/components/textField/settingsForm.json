@@ -23,7 +23,7 @@
       "name": "label",
       "parentId": "root",
       "label": "Label"
-    },    
+    },
     {
       "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
       "type": "dropdown",
@@ -248,6 +248,56 @@
       "name": "sectionVisibility",
       "parentId": "root",
       "label": "Visibility"
+    },
+    {
+      "id": "d690a0b7-a9d3-4ab2-8843-9dcfbac08adc",
+      "type": "textField",
+      "name": "quickviewWidth",
+      "parentId": "root",
+      "label": "Width",
+      "customVisibility": "return data.quickviewEnabled === true"
+    },
+    {
+      "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
+      "type": "sectionSeparator",
+      "name": "sectionStyle",
+      "parentId": "root",
+      "label": "Style"
+    },
+    {
+      "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
+      "type": "dropdown",
+      "name": "size",
+      "parentId": "root",
+      "label": "Size",
+      "allowClear": true,
+      "values": [
+        {
+          "label": "Small",
+          "value": "small",
+          "id": "4f11403c-95fd-4e49-bb60-cb8c25f0f3c3"
+        },
+        {
+          "label": "Middle",
+          "value": "middle",
+          "id": "8f85c476-e632-4fa7-89ad-2be6cfb7f1f1"
+        },
+        {
+          "label": "Large",
+          "value": "large",
+          "id": "f01e54aa-a1a4-4bd6-ba73-c395e48af8ce"
+        }
+      ],
+      "dataSourceType": "values"
+    },
+    {
+      "id": "128a7e5d-6ad1-4101-8c3f-41fd4e3cee6d",
+      "type": "numberField",
+      "name": "width",
+      "parentId": "root",
+      "label": "Width",
+      "validate": {},
+      "settingsValidationErrors": []
     },
     {
       "id": "aec2d8de-6e86-4e4e-a9da-62c11e538363",

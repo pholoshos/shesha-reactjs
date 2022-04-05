@@ -59,6 +59,7 @@ const TextField: IToolboxComponent<ITextFieldProps> = {
       suffix: model.suffix,
       bordered: !model.hideBorder,
       maxLength: model.maxLength,
+      size: model?.size,
       disabled,
       readOnly,
     };

@@ -131,6 +131,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
       notFoundContent={null}
       allowClear={true}
       loading={loading}
+      disabled={disabled}
       filterOption={(input, option) => {
         if (typeof option?.children === 'string' && typeof input === 'string') {
           // @ts-ignore

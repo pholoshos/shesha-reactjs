@@ -68,7 +68,7 @@ export const renderers: ITableCustomTypesRender[] = [
       const { router } = useShaRouting();
       const { crudConfig, refreshTable } = useDataTable();
       const { backendUrl } = useSheshaApplication();
-      const { formData, form, formMode } = useForm();
+      const { formData, formMode } = useForm();
       const { globalState } = useGlobalState();
 
       const { mutate: deleteRowHttp } = useMutate({

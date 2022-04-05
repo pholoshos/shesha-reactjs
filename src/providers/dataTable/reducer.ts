@@ -295,7 +295,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
               return {
                 id: dataProps?.propertyName,
                 columnId: column.id,
-                accessor: dataProps?.propertyName,
+                accessor: cleanPropertyName(dataProps?.propertyName),
                 propertyName: dataProps?.propertyName,
                 minWidth: column.minWidth,
                 maxWidth: column.minWidth,

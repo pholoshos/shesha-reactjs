@@ -131,8 +131,12 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
           // user may be null in some cases
           clearAccessToken();
 
-          dispatch(fetchUserDataActionErrorAction({ message: 'Not authorized' }));
-          redirectToUnauthorized();
+          if (router?.pathname !== URL_LOGIN_PAGE) {
+            dispatch(fetchUserDataActionErrorAction({ message: 'Not authorized' }));
+            redirectToUnauthorized();
+          } else {
+            dispatch(fetchUserDataActionSuccessAction(null));
+          }
         }
       })
       .catch(e => {

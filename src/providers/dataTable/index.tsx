@@ -238,15 +238,15 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       refreshTable();
     }
   }, [
-    state.tableFilter,
+    state.tableFilter?.length,
     state.currentPage,
-    state.selectedStoredFilterIds,
+    state.selectedStoredFilterIds?.length,
     state.selectedPageSize,
     isFetchingTableConfig,
     state.tableConfigLoaded,
     state.entityType,
-    state.columns,
-    state.tableSorting,
+    state.columns?.length,
+    state.tableSorting?.length,
   ]);
 
   const refreshTable = () => {

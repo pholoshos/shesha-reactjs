@@ -67,7 +67,7 @@ const DateField: IToolboxComponent<IDateFieldProps> = {
   factory: (model: IDateFieldProps, _c, form) => {
     return (
       <Fragment>
-        <ConfigurableFormItem model={model} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+        <ConfigurableFormItem model={model}>
           <DatePickerWrapper {...model} {...customDateEventHandler(model, form)} />
         </ConfigurableFormItem>
 

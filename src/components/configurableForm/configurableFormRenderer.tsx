@@ -142,7 +142,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     const postData = excludeFormFieldsInPayload ? preparedPostData : addFormFieldsList(preparedPostData, form);
 
     if (excludeFormFieldsInPayload) {
-      postData._formFields = [];
+      delete postData._formFields;
     } else {
       if (initialValuesFromFormSettings) {
         postData._formFields = Array.from(

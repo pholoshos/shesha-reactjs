@@ -55,6 +55,7 @@ import ColumnsEditor from '../../../components/formDesigner/components/dataTable
 import ButtonGroup from '../../../components/formDesigner/components/button/buttonGroup/buttonGroupComponent';
 import ColumnsSelector from '../../../components/formDesigner/components/entityPicker/columnsSelector';
 import QueryBuilderColumns from '../../../components/formDesigner/components/dataTable/tableViewSelector/queryBuilderColumns';
+import Filter from '../../../components/formDesigner/components/dataTable/filter/filterComponent';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -106,6 +107,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       EditableTagGroup,
       StatusTag,
       DynamicView,
+      Filter,
     ],
   },
   {
@@ -124,7 +126,6 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       ChildTable,
       ColumnsEditor, // Hidden
       ColumnsSelector, // Hidden
-      QueryBuilderColumns, // Hidden
     ],
   },
   {

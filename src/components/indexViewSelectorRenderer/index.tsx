@@ -51,13 +51,12 @@ export const IndexViewSelectorRenderer: FC<IIndexViewSelectorRendererProps> = ({
         <h2 className="title">
           {selectedFilter ? (
             <>
-              {selectedFilter.name}{' '}
-              {selectedFilter.tooltip && <TooltipIcon tooltip={selectedFilter.tooltip} />}
+              {selectedFilter.name} {selectedFilter.tooltip && <TooltipIcon tooltip={selectedFilter.tooltip} />}
             </>
           ) : (
             header
           )}
-          { filters.length > 0 && <DownOutlined style={{ marginLeft: '5px' }} /> }
+          {filters.length > 0 && <DownOutlined style={{ marginLeft: '5px' }} />}
         </h2>
       </Dropdown>
     </div>

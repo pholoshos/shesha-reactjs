@@ -9,22 +9,26 @@ import { IProperty } from './models';
 
 export interface IQueryBuilderProviderProps {
   fields?: IProperty[];
+  id?: string; // Just for testing
 }
 
-const QueryBuilderProvider: FC<PropsWithChildren<IQueryBuilderProviderProps>> = ({ children, fields }) => {
+const QueryBuilderProvider: FC<PropsWithChildren<IQueryBuilderProviderProps>> = ({ children, fields, id }) => {
   const [state, dispatch] = useReducer(QueryBuilderReducer, {
     ...QUERY_BUILDER_CONTEXT_INITIAL_STATE,
     fields: fields || [],
+    id,
   });
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
+
+  console.log('QueryBuilderProvider state', state, fields, id);
 
   const setFields = (newFields: IProperty[]) => {
     dispatch(setFieldsAction(newFields));
   };
 
   return (
-    <QueryBuilderStateContext.Provider value={state}>
+    <QueryBuilderStateContext.Provider value={{ fields, id }}>
       <QueryBuilderActionsContext.Provider
         value={{
           setFields,

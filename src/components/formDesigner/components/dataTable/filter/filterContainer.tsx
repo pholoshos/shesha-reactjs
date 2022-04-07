@@ -1,15 +1,15 @@
 import React, { FC } from 'react';
-import { TableView } from './tableView';
+import { FilterItem } from './filterItem';
 import { useTableViewSelectorConfigurator } from '../../../../../providers/tableViewSelectorConfigurator';
 import { ITableViewProps } from '../../../../../providers/tableViewSelectorConfigurator/models';
 import { ReactSortable, ItemInterface } from 'react-sortablejs';
 
-export interface ITableViewSortableProps {
+export interface IFilterContainerProps {
   index?: number[];
   items: ITableViewProps[];
 }
 
-export const TableViewContainer: FC<ITableViewSortableProps> = props => {
+export const FilterContainer: FC<IFilterContainerProps> = props => {
   const { updateChildItems } = useTableViewSelectorConfigurator();
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
@@ -42,9 +42,9 @@ export const TableViewContainer: FC<ITableViewSortableProps> = props => {
       bubbleScroll={true}
     >
       {props.items.map((item, index) => (
-        <TableView index={[index]} key={index} {...item} />
+        <FilterItem index={[index]} key={index} {...item} />
       ))}
     </ReactSortable>
   );
 };
-export default TableViewContainer;
+export default FilterContainer;

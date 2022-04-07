@@ -1,9 +1,9 @@
 import React, { FC, MutableRefObject, useEffect } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { SelectOutlined } from '@ant-design/icons';
-import TableViewSelectorSettings from './tableViewSelectorSettingsPanel';
+import TableViewSelectorSettings from './tableViewSelectorSettings';
 import { ITableViewSelectorProps } from './models';
-import { IndexViewSelectorRenderer, useForm } from '../../../../../';
+import { IndexViewSelectorRenderer, useForm } from '../../../../..';
 import { useDataTableStore } from '../../../../../providers';
 import { evaluateDynamicFilters } from '../../../../../providers/dataTable/utils';
 

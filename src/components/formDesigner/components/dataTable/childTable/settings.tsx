@@ -9,6 +9,8 @@ import { ITableColumn } from '../../../../../interfaces';
 import { TableDataSourceType } from '../../../../../providers/dataTable/interfaces';
 import { IProperty } from '../../../../../providers/queryBuilder/models';
 import CodeEditor from '../../codeEditor/codeEditor';
+import FilterSettingsModal from '../filter/filterSettingsModal';
+import { CustomFilter } from '../filter/filterComponent';
 
 export interface IChildDataTableSettingsProps {
   model: IChildTableSettingsProps;
@@ -23,13 +25,11 @@ interface IChildDataTableSettingsState {
   data?: IChildTableSettingsProps;
 }
 
-function ChildDataTableSettingsInner({ onSave, model, onValuesChange }: IChildDataTableSettingsProps) {
+export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ onSave, model, onValuesChange }) => {
   const [state, setState] = useState<IChildDataTableSettingsState>({ data: model });
   const [form] = Form.useForm();
 
   const toggleToolbarModal = () => setState(prev => ({ ...prev, toolbarModalVisible: !prev?.toolbarModalVisible }));
-
-  const toggleFiltersModal = () => setState(prev => ({ ...prev, filtersModalVisible: !prev?.filtersModalVisible }));
 
   const initialValues = {
     title: model?.title,
@@ -83,10 +83,8 @@ function ChildDataTableSettingsInner({ onSave, model, onValuesChange }: IChildDa
 
       <SectionSeparator sectionName="Filter" />
 
-      <Button onClick={toggleFiltersModal}>Customise Filters</Button>
-
       <Form.Item name="filters" initialValue={model.filters}>
-        <TableViewSelectorSettingsModal visible={state?.filtersModalVisible} hideModal={toggleFiltersModal} />
+        <CustomFilter />
       </Form.Item>
 
       <Form.Item name="defaultSelectedFilterId" label="Selected filter" required>
@@ -114,57 +112,6 @@ function ChildDataTableSettingsInner({ onSave, model, onValuesChange }: IChildDa
         />
       </Form.Item>
     </Form>
-  );
-}
-
-const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = props => {
-  const { selectedComponentRef } = useForm();
-
-  const metadata = useMetadata(false);
-
-  const columns = (selectedComponentRef?.current?.columns as ITableColumn[]) || [];
-  const dataSourceType: TableDataSourceType = selectedComponentRef?.current?.dataSourceType;
-
-  const fields = useMemo<IProperty[]>(() => {
-    if (dataSourceType === 'tableConfig') {
-      return columns.map<IProperty>(column => ({
-        label: column.header,
-        propertyName: column.columnId,
-        visible: column.isVisible,
-        dataType: column.dataType,
-        fieldSettings: {
-          typeShortAlias: column.entityReferenceTypeShortAlias,
-          referenceListName: column.referenceListName,
-          referenceListNamespace: column.referenceListNamespace,
-          allowInherited: column.allowInherited,
-        },
-        //tooltip: column.description
-        //preferWidgets: ['']
-      }));
-    }
-    if (dataSourceType === 'entity') {
-      const properties = metadata?.metadata?.properties || [];
-      if (Boolean(properties))
-        return properties.map<IProperty>(property => ({
-          label: property.label,
-          propertyName: property.path,
-          visible: property.isVisible,
-          dataType: property.dataType,
-          fieldSettings: {
-            typeShortAlias: property.entityType,
-            referenceListName: property.referenceListName,
-            referenceListNamespace: property.referenceListNamespace,
-            allowInherited: true,
-          },
-        }));
-    }
-    return [];
-  }, [dataSourceType, columns, metadata]);
-
-  return (
-    <QueryBuilderProvider fields={fields}>
-      <ChildDataTableSettingsInner {...props} />
-    </QueryBuilderProvider>
   );
 };
 

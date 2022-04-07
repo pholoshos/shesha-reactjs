@@ -14,8 +14,8 @@ export interface IQueryBuilderProps extends IConfigurableFormComponent {
 
 const settingsForm = settingsFormJson as FormMarkup;
 
-const QueryBuilderComponent: IToolboxComponent<IQueryBuilderProps> = {
-  type: 'queryBuilder',
+const QueryBuilderModelComponent: IToolboxComponent<IQueryBuilderProps> = {
+  type: 'queryBuilderModel',
   name: 'Query Builder',
   icon: <FilterOutlined />,
   //dataTypes: [DataTypes.string],
@@ -37,4 +37,4 @@ const QueryBuilderComponent: IToolboxComponent<IQueryBuilderProps> = {
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
 };
 
-export default QueryBuilderComponent;
+export default QueryBuilderModelComponent;

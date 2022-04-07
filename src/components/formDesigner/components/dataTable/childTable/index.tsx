@@ -11,10 +11,8 @@ import { ToolbarWithProvider } from '../toolbar/toolbarComponent';
 import { IChildTableSettingsProps } from './models';
 import ChildDataTableSettings from './settings';
 import settingsFormJson from './settingsForm.json';
-import './styles/index.less';
 import { evaluateDynamicFilters, hasDynamicFilter } from '../../../../../providers/dataTable/utils';
-import { QueryBuilderModelWrapper } from '../../queryBuilder/queryBuilderModelWrapper';
-import { QueryBuilderTableWrapper } from '../../queryBuilder/queryBuilderTableWrapper';
+import './styles/index.less';
 
 export interface IChildTableComponentProps extends IChildTableSettingsProps, IConfigurableFormComponent {}
 
@@ -140,14 +138,12 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
   // settingsFormMarkup: settingsForm, QueryBuilderTableWrapper
   settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
     return (
-      <>
-        <ChildDataTableSettings
-          model={(model as unknown) as IChildTableSettingsProps}
-          onSave={onSave as any}
-          onCancel={onCancel}
-          onValuesChange={onValuesChange as any}
-        />
-      </>
+      <ChildDataTableSettings
+        model={(model as unknown) as IChildTableSettingsProps}
+        onSave={onSave as any}
+        onCancel={onCancel}
+        onValuesChange={onValuesChange as any}
+      />
     );
   },
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),

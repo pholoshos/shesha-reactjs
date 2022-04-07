@@ -1,15 +1,9 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Button, Checkbox, Form, Input, Select } from 'antd';
 import { SectionSeparator } from '../../../..';
 import { IChildTableSettingsProps } from './models';
 import { ToolbarSettingsModal } from '../../dataTable/toolbar/toolbarSettingsModal';
-import TableViewSelectorSettingsModal from '../tableViewSelector/tableViewSelectorSettingsModal';
-import { QueryBuilderProvider, useForm, useMetadata } from '../../../../../providers';
-import { ITableColumn } from '../../../../../interfaces';
-import { TableDataSourceType } from '../../../../../providers/dataTable/interfaces';
-import { IProperty } from '../../../../../providers/queryBuilder/models';
 import CodeEditor from '../../codeEditor/codeEditor';
-import FilterSettingsModal from '../filter/filterSettingsModal';
 import { CustomFilter } from '../filter/filterComponent';
 
 export interface IChildDataTableSettingsProps {
@@ -84,7 +78,7 @@ export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ onSav
       <SectionSeparator sectionName="Filter" />
 
       <Form.Item name="filters" initialValue={model.filters}>
-        <CustomFilter />
+        <CustomFilter target="table" />
       </Form.Item>
 
       <Form.Item name="defaultSelectedFilterId" label="Selected filter" required>

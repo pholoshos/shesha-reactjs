@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'antd';
-import { ITableViewSelectorProps } from './models';
+import { ICustomFilterProps } from './models';
 import FilterSettingsModal from './filterSettingsModal';
 
 export interface IFilterSettingsSettingsProps {
-  model: ITableViewSelectorProps;
-  onSave: (model: ITableViewSelectorProps) => void;
+  model: ICustomFilterProps;
+  onSave: (model: ICustomFilterProps) => void;
   onCancel: () => void;
-  onValuesChange?: (changedValues: any, values: ITableViewSelectorProps) => void;
+  onValuesChange?: (changedValues: any, values: ICustomFilterProps) => void;
 }
 
 function FilterSettings({ model, onSave, onValuesChange }: IFilterSettingsSettingsProps) {

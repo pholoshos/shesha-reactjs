@@ -46,8 +46,6 @@ export const QueryBuilderTableWrapper: FC = ({ children }) => {
     return [];
   }, [dataSourceType, columns, metadata]);
 
-  console.log('QueryBuilderTableWrapper fields: ', fields);
-
   return (
     <QueryBuilderProvider fields={fields} id="QueryBuilderTableWrapper">
       {children}

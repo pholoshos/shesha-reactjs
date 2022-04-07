@@ -21,14 +21,15 @@ const QueryBuilderProvider: FC<PropsWithChildren<IQueryBuilderProviderProps>> = 
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
-  console.log('QueryBuilderProvider state', state, fields, id);
-
   const setFields = (newFields: IProperty[]) => {
     dispatch(setFieldsAction(newFields));
   };
 
+  //TODO: Fix the passing of fields so that it can be consumed properly by QueryBuilderComponent.
+  //TODO: For some weird reasons the component receives fields as empty, though it has been passed properly
+  //TODO: As a work-around I passed fields here as it seems to work. Will revisit this bug later
   return (
-    <QueryBuilderStateContext.Provider value={{ fields, id }}>
+    <QueryBuilderStateContext.Provider value={{ ...state, fields }}>
       <QueryBuilderActionsContext.Provider
         value={{
           setFields,

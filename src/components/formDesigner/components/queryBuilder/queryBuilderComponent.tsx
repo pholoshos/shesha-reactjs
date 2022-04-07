@@ -28,8 +28,6 @@ const QueryBuilderComponent: IToolboxComponent<IQueryBuilderProps> = {
 
     const fields = queryBuilder?.fields || [];
 
-    console.log('QueryBuilderComponent items, queryBuilder, selectedItemId: ', items, queryBuilder, selectedItemId);
-
     return (
       <ConfigurableFormItem model={model}>
         <QueryBuilderField fields={fields} jsonExpanded={model.jsonExpanded} useExpression={useExpression} />

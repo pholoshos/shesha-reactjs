@@ -23,12 +23,6 @@ const QueryBuilderModelWrapperInner: FC = ({ children }) => {
     return [];
   }, [metadata]);
 
-  console.log(
-    'QueryBuilderModelWrapperInner QueryBuilderModelWrapper id, fields: ',
-    'QueryBuilderModelWrapper',
-    fields
-  );
-
   return (
     <QueryBuilderProvider fields={fields} id="QueryBuilderModelWrapper">
       {children}

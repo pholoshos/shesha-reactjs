@@ -108,8 +108,6 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
   });
   */
 
-  console.log('TableViewSelectorSettings fields: ', fields);
-
   return (
     <QueryBuilderProvider fields={fields}>
       <Form form={form} onFinish={props.onSave} onValuesChange={props.onValuesChange}>

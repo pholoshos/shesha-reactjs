@@ -245,6 +245,18 @@
       ]
     },
     {
+      "id": "40abba89-228f-41a4-8113-9bd44fe78263",
+      "type": "editableTagGroup",
+      "name": "subscribedEventNames",
+      "label": "Subscribed Event Names",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {},
+      "description": "This is a list of event that, when dispatched, will trigger the refetching of items for the component"
+    },
+    {
       "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",
       "type": "sectionSeparator",
       "name": "separator2",

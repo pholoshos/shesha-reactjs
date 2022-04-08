@@ -40,6 +40,7 @@ export interface IAutocompleteProps extends IConfigurableFormComponent {
   width?: number;
   minWidth?: number;
   maxWidth?: number;
+  subscribedEventNames?: string[];
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -126,6 +127,7 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       quickviewDisplayPropertyName: model?.quickviewDisplayPropertyName,
       quickviewGetEntityUrl: model?.quickviewGetEntityUrl,
       quickviewWidth: model?.quickviewWidth,
+      subscribedEventNames: model?.subscribedEventNames,
       style: {
         width: model?.width,
         minWidth: model?.minWidth,

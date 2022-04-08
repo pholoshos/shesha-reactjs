@@ -177,7 +177,7 @@ const trimQueryString = (url: string): string => {
  * A component for working with dynamic autocomplete
  */
 
-export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
+export const Autocomplete = <TValue, >(props: IAutocompleteProps<TValue>) => {
   const {
     value,
     defaultValue,

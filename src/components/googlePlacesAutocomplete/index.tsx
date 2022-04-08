@@ -166,9 +166,8 @@ const GooglePlacesAutocomplete: FC<IGooglePlacesAutocompleteProps> = ({
 
   const onBlur = () => setShowSuggestionsDropdownContainer(false);
 
-  console.log('PlacesAutocomplete ');
-
   return (
+    // @ts-ignore
     <PlacesAutocomplete
       value={(prefixText ? `${prefixText} ${displayValue}` : displayValue) ?? ''}
       onChange={handleChange}

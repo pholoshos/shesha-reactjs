@@ -349,6 +349,7 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   return (
+    // @ts-ignore
     <IdleTimer>
       <AuthStateContext.Provider value={state}>
         <AuthActionsContext.Provider

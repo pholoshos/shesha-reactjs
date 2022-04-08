@@ -23,7 +23,11 @@
       "label": "Override Expression",
       "language": "typescript",
       "description": "Enter the code that, when evaluated, will return a string representation of a value. Objects that have been exposed to you are 'data', which is the form and 'formMode', which is the mode the form is currently in.",
-      "validate": {}
+      "validate": {},
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "formMode", "description": "Editable state of form", "type": "'designer' | 'edit' | 'readonly'" }
+      ]
     },
     {
       "id": "a4e0bc19-b081-4b38-bc9f-d8352ba2205d",
@@ -48,7 +52,11 @@
       "label": "Value Expression",
       "language": "typescript",
       "description": "Enter the code that, when evaluated, will return a string representation of a value. Objects that have been exposed to you are 'data', which is the form and 'formMode', which is the mode the form is currently in.",
-      "validate": {}
+      "validate": {},
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "formMode", "description": "Editable state of form", "type": "'designer' | 'edit' | 'readonly'" }
+      ]
     },
     {
       "id": "b8954bf6-f76d-4139-a850-c99bf06c8b66",
@@ -73,7 +81,11 @@
       "label": "Color Expression",
       "language": "typescript",
       "description": "Enter the code that, when evaluated, will return a string representation of a color. Objects that have been exposed to you are 'data', which is the form and 'formMode', which is the mode the form is currently in.",
-      "validate": {}
+      "validate": {},
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "formMode", "description": "Editable state of form", "type": "'designer' | 'edit' | 'readonly'" }
+      ]
     },
     {
       "id": "d5278346-8b05-482f-b1e6-7bedf5bf7712",

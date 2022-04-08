@@ -251,7 +251,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         path={path}
         id={formId}
         formRef={formRef}
-        mode={mode}
+        mode={state?.mode}
         form={form}
         onFinish={onFinish}
         initialValues={state?.fetchedEntity}

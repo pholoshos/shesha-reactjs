@@ -189,6 +189,7 @@
     "react-ace": "^9.5.0",
     "react-awesome-query-builder": "^3.0.0",
     "react-beautiful-dnd": "^13.1.0",
+    "react-error-boundary": "^3.1.4",
     "react-hook-thunk-reducer": "^0.2.4",
     "react-idle-timer": "^4.6.4",
     "react-places-autocomplete": "^7.3.0",

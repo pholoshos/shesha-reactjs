@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import modelSettingsMarkup from '../modelSettings.json';
-import { ErrorBoundary } from '../..';
+import { CustomErrorBoundary } from '../..';
 import ConfigurableForm from '../../configurableForm';
 import { FormMarkup } from '../../../providers/form/models';
 import { PropertiesEditorComponent } from '../propertiesEditor';
@@ -8,8 +8,7 @@ import { ModelConfiguratorToolbar } from '../toolbar';
 import { useModelConfigurator } from '../../..';
 import { message } from 'antd';
 
-export interface IModelConfiguratorRendererProps {
-}
+export interface IModelConfiguratorRendererProps {}
 
 export const ModelConfiguratorRenderer: FC<IModelConfiguratorRendererProps> = () => {
   const { modelConfiguration, form, save, id } = useModelConfigurator();
@@ -18,13 +17,13 @@ export const ModelConfiguratorRenderer: FC<IModelConfiguratorRendererProps> = ()
     const dto = { ...values, id };
     save(dto)
       .then(() => message.success('Model saved successfully'))
-      .catch(() => message.error('Failed to save model')); ;
+      .catch(() => message.error('Failed to save model'));
   };
 
   return (
     <div className="sha-model-configurator">
-      { false && <ModelConfiguratorToolbar /> }
-      <ErrorBoundary>
+      {false && <ModelConfiguratorToolbar />}
+      <CustomErrorBoundary>
         <ConfigurableForm
           layout="horizontal"
           labelCol={{ span: 5 }}
@@ -35,10 +34,10 @@ export const ModelConfiguratorRenderer: FC<IModelConfiguratorRendererProps> = ()
           form={form}
           initialValues={modelConfiguration}
           sections={{
-            properties: () => (<PropertiesEditorComponent />)
+            properties: () => <PropertiesEditorComponent />,
           }}
         />
-      </ErrorBoundary>
+      </CustomErrorBoundary>
     </div>
   );
 };

@@ -1,10 +1,10 @@
 import React, { FC, useMemo } from 'react';
 import { ConfigurableComponent, ISettingsEditorProps } from '../configurableComponent';
-import { ErrorBoundary } from '../errorBoundary/errorBoundary';
 import { SidebarMenu } from '../sidebarMenu';
 import { ISidebarMenuItem, SidebarMenuProvider } from '../../providers/sidebarMenu';
 import ComponentSettingsModal from './settingsModal';
 import { MenuTheme } from 'antd/lib/menu/MenuContext';
+import CustomErrorBoundary from '../customErrorBoundary';
 
 export interface ISideBarMenuProps {
   items: ISidebarMenuItem[];
@@ -12,7 +12,7 @@ export interface ISideBarMenuProps {
 
 const EmptySidebarProps: ISideBarMenuProps = {
   items: [],
-}
+};
 
 export interface IConfigurableSidebarMenuProps {
   theme?: MenuTheme;
@@ -30,15 +30,12 @@ export const ConfigurableSidebarMenu: FC<IConfigurableSidebarMenuProps> = props 
       />
     );
   };
-  const memoizedDefaults = useMemo(() =>
-    props.defaultSettings ?? { items: [] }
-    , [props.defaultSettings]);
+  const memoizedDefaults = useMemo(() => props.defaultSettings ?? { items: [] }, [props.defaultSettings]);
 
   return (
-    <ErrorBoundary>
+    <CustomErrorBoundary>
       <ConfigurableComponent<ISideBarMenuProps>
         defaultSettings={memoizedDefaults}
-
         settingsEditor={{
           render: editor,
         }}
@@ -54,7 +51,7 @@ export const ConfigurableSidebarMenu: FC<IConfigurableSidebarMenuProps> = props 
           </div>
         )}
       </ConfigurableComponent>
-    </ErrorBoundary>
+    </CustomErrorBoundary>
   );
 };
 

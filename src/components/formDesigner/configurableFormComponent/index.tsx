@@ -3,11 +3,11 @@ import { Button, Tooltip } from 'antd';
 import { DeleteFilled, StopOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import FormComponent from '../formComponent';
 import { useForm } from '../../../providers/form';
-import ErrorBoundary from '../../errorBoundary/errorBoundary';
 import DragHandle from './dragHandle';
 import ValidationIcon from './validationIcon';
 import { Show } from '../../show';
 import classNames from 'classnames';
+import CustomErrorBoundary from '../../customErrorBoundary';
 
 export interface IConfigurableFormComponentProps {
   id: string;
@@ -50,9 +50,9 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*,
 
   const renderComponent = () => {
     return (
-      <ErrorBoundary>
+      <CustomErrorBoundary>
         <FormComponent id={id} componentRef={componentRef} />
-      </ErrorBoundary>
+      </CustomErrorBoundary>
     );
   };
 

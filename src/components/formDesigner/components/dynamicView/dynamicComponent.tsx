@@ -1,27 +1,22 @@
 import React, { FC, useRef } from 'react';
-import { ErrorBoundary } from '../../..';
+import { CustomErrorBoundary } from '../../..';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 import { useForm } from '../../../..';
 
 export interface IConfigurableFormComponentProps {
-    model: IConfigurableFormComponent;
+  model: IConfigurableFormComponent;
 }
 
 const DynamicComponent: FC<IConfigurableFormComponentProps> = ({ model }) => {
-    const { form, getToolboxComponent } = useForm();
-    const componentRef = useRef();
-    const toolboxComponent = getToolboxComponent(model.type);
-    if (!toolboxComponent)
-        return null;
-    const renderComponent = () => {
-        return (
-            <ErrorBoundary>
-                {toolboxComponent.factory(model, componentRef, form)}
-            </ErrorBoundary>
-        );
-    };
+  const { form, getToolboxComponent } = useForm();
+  const componentRef = useRef();
+  const toolboxComponent = getToolboxComponent(model.type);
+  if (!toolboxComponent) return null;
+  const renderComponent = () => {
+    return <CustomErrorBoundary>{toolboxComponent.factory(model, componentRef, form)}</CustomErrorBoundary>;
+  };
 
-    return renderComponent();
+  return renderComponent();
 };
 
 export default DynamicComponent;

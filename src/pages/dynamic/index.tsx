@@ -65,7 +65,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const [state, setState] = useState<IDynamicPageState>({});
   const formRef = useRef<ConfigurableFormInstance>();
 
-  const { id, path, formId, mode } = state;
+  const { id, path, formId } = state;
 
   const {
     refetch: fetchEntity,
@@ -100,7 +100,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   } = useFormGet({ id: formId, lazy: true });
 
   useEffect(() => {
-    setState(prev => ({ ...prev, ...props, mode: props?.mode || 'readonly' }));
+    setState(prev => ({ ...prev, ...props, mode: props?.mode }));
   }, [props]);
 
   //#region get form data
@@ -251,7 +251,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         path={path}
         id={formId}
         formRef={formRef}
-        mode={state?.mode}
+        mode={state?.mode || 'readonly'}
         form={form}
         onFinish={onFinish}
         initialValues={state?.fetchedEntity}

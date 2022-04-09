@@ -187,6 +187,13 @@
       "validate": {}
     },
     {
+      "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
+      "type": "sectionSeparator",
+      "name": "sectionStyle",
+      "parentId": "root",
+      "label": "Style"
+    },
+    {
       "id": "75e9d871-570e-45b1-93c9-8979b63d6e94",
       "type": "sectionSeparator",
       "name": "separatorVisibility",
@@ -328,13 +335,6 @@
       "label": "Required"
     },
     {
-      "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
-      "type": "sectionSeparator",
-      "name": "sectionStyle",
-      "parentId": "root",
-      "label": "Style"
-    },
-    {
       "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
       "type": "dropdown",
       "name": "size",
@@ -359,24 +359,6 @@
         }
       ],
       "dataSourceType": "values"
-    },
-    {
-      "id": "128a7e5d-6ad1-4101-8c3f-41fd4e3cee6d",
-      "type": "numberField",
-      "name": "width",
-      "parentId": "root",
-      "label": "Width",
-      "validate": {},
-      "settingsValidationErrors": []
-    },
-    {
-      "id": "8b8c0a94-5e61-439c-bbf4-4c5ff3e3e4e3",
-      "type": "numberField",
-      "name": "minWidth",
-      "parentId": "root",
-      "label": "Min width",
-      "validate": {},
-      "settingsValidationErrors": []
     },
     {
       "id": "34417571-0535-42f7-8661-7579d969ca78",

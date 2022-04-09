@@ -4,6 +4,8 @@ import { Input, notification } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { LatLngPolygon, PointPolygon, pointsInPolygon } from '../../utils/googleMaps';
+import { CSSProperties } from 'react';
+import { SizeType } from 'antd/lib/config-provider/SizeContext';
 
 export interface IAddressAndCoords {
   address: string;
@@ -36,6 +38,8 @@ export interface IGooglePlacesAutocompleteProps {
   ignoreText?: string;
   tabIndex?: number;
   biasedCoordinates?: LatLngPolygon | PointPolygon;
+  style?: CSSProperties;
+  size?: SizeType;
 }
 
 const GooglePlacesAutocomplete: FC<IGooglePlacesAutocompleteProps> = ({
@@ -49,6 +53,8 @@ const GooglePlacesAutocomplete: FC<IGooglePlacesAutocompleteProps> = ({
   ignoreText,
   tabIndex,
   biasedCoordinates,
+  style,
+  size,
 }) => {
   const [highlightedPlaceId, setHighlightedPlaceId] = useState('');
   const [showSuggestionsDropdownContainer, setShowSuggestionsDropdownContainer] = useState(true);
@@ -205,6 +211,8 @@ const GooglePlacesAutocomplete: FC<IGooglePlacesAutocompleteProps> = ({
                 tabIndex={tabIndex}
                 onKeyDown={onKeyDown}
                 onBlur={onBlur}
+                style={style}
+                size={size}
               />
             );
           })()}

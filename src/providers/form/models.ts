@@ -1,5 +1,5 @@
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
-import { ReactNode } from 'react';
+import { ReactNode, CSSProperties } from 'react';
 import { IAsyncValidationError } from '../../interfaces';
 import { IFormSettings } from './contexts';
 
@@ -122,6 +122,11 @@ export interface IConfigurableFormComponent extends IFormComponentContainer {
    * The quickview is only displayed in readonly mode
    */
   enableQuickview?: boolean;
+
+  subscribedEventNames?: string[];
+  dispatchedEventNames?: string[];
+  dispatchedEventDebouncedMilliseconds?: number;
+  style?: string;
 }
 
 export interface IComponentsContainer {

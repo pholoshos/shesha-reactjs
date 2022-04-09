@@ -266,6 +266,17 @@
       "label": "Style"
     },
     {
+      "id": "06ab0599-914d-4d2d-875c-765a495472f8",
+      "type": "codeEditor",
+      "name": "style",
+      "label": "Style",
+      "parentId": "root",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
+      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
+    },
+    {
       "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
       "type": "dropdown",
       "name": "size",
@@ -290,15 +301,6 @@
         }
       ],
       "dataSourceType": "values"
-    },
-    {
-      "id": "128a7e5d-6ad1-4101-8c3f-41fd4e3cee6d",
-      "type": "numberField",
-      "name": "width",
-      "parentId": "root",
-      "label": "Width",
-      "validate": {},
-      "settingsValidationErrors": []
     },
     {
       "id": "040f9a56-b3b0-4fd2-a40b-8887f125b52d",

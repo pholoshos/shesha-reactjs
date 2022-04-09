@@ -6,7 +6,7 @@ import ConfigurableFormItem from '../formItem';
 import { INumberFieldProps } from './models';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { useForm } from '../../../../providers';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
@@ -19,7 +19,7 @@ const NumberField: IToolboxComponent<INumberFieldProps> = {
   icon: <NumberOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.number,
   factory: (model: INumberFieldProps) => {
-    const { formMode, isComponentDisabled } = useForm();
+    const { formMode, isComponentDisabled, formData } = useForm();
 
     const isReadOnly = model?.readOnly || formMode === 'readonly';
 
@@ -30,7 +30,14 @@ const NumberField: IToolboxComponent<INumberFieldProps> = {
         {isReadOnly ? (
           <ReadOnlyDisplayFormItem disabled={disabled} />
         ) : (
-          <InputNumber disabled={disabled} bordered={!model.hideBorder} min={model?.min} max={model?.max} />
+          <InputNumber
+            disabled={disabled}
+            bordered={!model.hideBorder}
+            min={model?.min}
+            max={model?.max}
+            size={model?.size}
+            style={getStyle(model?.style, formData)}
+          />
         )}
       </ConfigurableFormItem>
     );

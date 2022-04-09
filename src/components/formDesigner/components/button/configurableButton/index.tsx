@@ -13,12 +13,14 @@ import { IButtonGroupButton } from '../../../../../providers/buttonGroupConfigur
 import { usePubSub } from '../../../../../hooks';
 import { DataTablePubsubConstants } from '../../../../../providers/dataTable/pubSub';
 import { DynamicFormPubSubConstants } from '../../../../../pages/dynamic/pubSub';
+import { CSSProperties } from 'react';
 
-export interface IConfigurableButtonProps extends IButtonGroupButton {
+export interface IConfigurableButtonProps extends Omit<IButtonGroupButton, 'style'> {
   formComponentId: string;
   selectedRow?: ISelectionProps;
   disabled?: boolean;
   hidden?: boolean;
+  style?: CSSProperties;
 }
 
 export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
@@ -166,6 +168,7 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       className={classNames('sha-toolbar-btn sha-toolbar-btn-configurable')}
       size={props?.size}
       disabled={props?.disabled}
+      style={props?.style}
     >
       {props.label}
     </Button>
@@ -208,6 +211,7 @@ const ToolbarButtonPlainDialog: FC<IToolbarButtonTableDialogProps> = props => {
       className={classNames('sha-toolbar-btn sha-toolbar-btn-configurable')}
       size={props?.size}
       disabled={props?.disabled}
+      style={props?.style}
     >
       {props.label}
     </Button>

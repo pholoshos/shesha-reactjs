@@ -9,6 +9,8 @@ import { IAutocompleteProps } from '../components/formDesigner/components/autoco
 import { ICheckboxProps } from '../components/formDesigner/components/checkbox/checkbox';
 import { INumberFieldProps } from '../components/formDesigner/components/numberField/models';
 import { IQueryBuilderProps } from '../components/formDesigner/components/queryBuilder/queryBuilderComponent';
+import { ICodeEditorComponentProps } from '../components/formDesigner/components/codeEditor';
+import { IContainerComponentProps } from '../components/formDesigner/components/container/containerComponent';
 
 interface ToolbarSettingsProp extends Omit<IConfigurableFormComponent, 'type'> {}
 
@@ -32,8 +34,12 @@ type LabelValueEditorType = ToolbarSettingsProp & Omit<ILabelValueEditorProps, '
 
 type QueryBuilderType = ToolbarSettingsProp & Omit<IQueryBuilderProps, 'type'>;
 
+type CodeEditorType = ToolbarSettingsProp & Omit<ICodeEditorComponentProps, 'type'>;
+
+type ContainerType = ToolbarSettingsProp & Omit<IContainerComponentProps, 'type'>;
+
 export class DesignerToolbarSettings {
-  protected form: IConfigurableFormComponent[]; //sdsd
+  protected form: IConfigurableFormComponent[];
 
   constructor() {
     this.form = [];
@@ -77,6 +83,18 @@ export class DesignerToolbarSettings {
 
   public addCheckbox(props: CheckboxType) {
     this.form.push({ ...props, type: 'checkbox' });
+
+    return this;
+  }
+
+  public addCodeEditor(props: CodeEditorType) {
+    this.form.push({ ...props, type: 'codeEditor' });
+
+    return this;
+  }
+
+  public addContainer(props: ContainerType) {
+    this.form.push({ ...props, type: 'container' });
 
     return this;
   }

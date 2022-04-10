@@ -6,7 +6,7 @@ import { validateConfigurableComponentSettings } from '../../../../../formDesign
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../interfaces/formDesigner';
 import { useForm } from '../../../../../providers';
 import { FormMarkup } from '../../../../../providers/form/models';
-import { evaluateString } from '../../../../../providers/form/utils';
+import { evaluateString, getStyle } from '../../../../../providers/form/utils';
 import settingsFormJson from './settingsForm.json';
 
 const { Paragraph } = Typography;
@@ -45,6 +45,7 @@ const ParagraphComponent: IToolboxComponent<IParagraphProps> = {
       strong: model?.strong,
       italic: model?.italic,
       type: model?.contentType,
+      style: getStyle(model.style, formData),
     };
 
     const content = evaluateString(model?.content, formData);

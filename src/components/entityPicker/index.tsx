@@ -1,4 +1,4 @@
-import React, { FC, Fragment, ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { CSSProperties, FC, Fragment, ReactNode, useEffect, useMemo, useState } from 'react';
 import { Modal, Input, Button, ButtonProps, Select } from 'antd';
 import IndexTable from '../indexTable';
 import { IAnyObject } from '../../interfaces';
@@ -50,6 +50,7 @@ export interface IEntityPickerProps extends Omit<IWrappedEntityPickerProps, 'onD
   entityFooter?: ReactNode;
   configurableColumns?: IConfigurableColumnsBase[]; // Type it later
   addNewRecordsProps?: IAddNewRecordProps;
+  style?: CSSProperties;
 }
 
 export interface IEntityPickerState {
@@ -216,11 +217,13 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
 
   const footer = (
     <Fragment>
-      <Button type="primary" onClick={onAddNew}>
+      <Button type="primary" onClick={onAddNew} size={size}>
         Add New
       </Button>
 
-      <Button onClick={handleCancel}>Close</Button>
+      <Button onClick={handleCancel} size={size}>
+        Close
+      </Button>
     </Fragment>
   );
 

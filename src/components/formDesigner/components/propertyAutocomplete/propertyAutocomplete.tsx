@@ -1,11 +1,15 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
 import { AutoComplete, Button, Input } from 'antd';
 import { ThunderboltOutlined } from '@ant-design/icons';
 import { useForm, useMetadata } from '../../../../providers';
+import { SizeType } from 'antd/lib/config-provider/SizeContext';
 
 export interface IPropertyAutocompleteProps {
   id: string;
   value?: string;
+  style?: CSSProperties;
+  dropdownStyle?: CSSProperties;
+  size?: SizeType;
   onChange?: (value: string) => void;
 }
 
@@ -15,6 +19,7 @@ interface IOption {
 }
 
 export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = props => {
+  const { style = { width: '32px' } } = props;
   const [options, setOptions] = useState<IOption[]>([]);
 
   const { getAction } = useForm();
@@ -85,7 +90,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = props => {
 
   return (
     <>
-      <Input.Group>
+      <Input.Group style={props.style}>
         <AutoComplete
           value={props.value}
           options={options}
@@ -93,12 +98,15 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = props => {
           onSelect={onSelect}
           onSearch={onSearch}
           notFoundContent="Not found"
+          size={props.size}
+          dropdownStyle={props?.dropdownStyle}
         />
         <Button
           icon={<ThunderboltOutlined />}
           onClick={onFillPropsClick}
           disabled={!Boolean(selectedProperty)}
-          style={{ width: '32px' }}
+          style={style}
+          size={props.size}
         />
       </Input.Group>
     </>

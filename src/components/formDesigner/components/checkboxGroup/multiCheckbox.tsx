@@ -3,9 +3,9 @@ import React, { FC, useEffect, useState } from 'react';
 import { ReferenceListItemDto, useReferenceListGetItems } from '../../../../apis/referenceList';
 import { getCachedItems, saveListItems } from '../../../refListDropDown/utils';
 import { getDataSourceList } from '../radio/utils';
-import { getSpan, ICheckboxGoupProps } from './utils';
+import { getSpan, ICheckboxGroupProps } from './utils';
 
-const MultiCheckbox: FC<ICheckboxGoupProps> = model => {
+const MultiCheckbox: FC<ICheckboxGroupProps> = model => {
   const { items, referenceListName, referenceListNamespace, direction, value, onChange } = model;
 
   const { refetch: fetchItems, data: listItemsResult } = useReferenceListGetItems({
@@ -37,7 +37,7 @@ const MultiCheckbox: FC<ICheckboxGoupProps> = model => {
   const options = getDataSourceList(model?.dataSourceType, items, listItems) || [];
 
   return (
-    <Checkbox.Group value={value} onChange={onChange}>
+    <Checkbox.Group value={value} onChange={onChange} style={model?.style}>
       <Row>
         {options.map(({ id, label, value: v }) => (
           <Col id={id} span={getSpan(direction, options.length)}>

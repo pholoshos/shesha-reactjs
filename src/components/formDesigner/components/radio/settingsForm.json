@@ -162,6 +162,24 @@
       "label": "Required"
     },
     {
+      "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
+      "type": "sectionSeparator",
+      "name": "sectionStyle",
+      "parentId": "root",
+      "label": "Style"
+    },
+    {
+      "id": "06ab0599-914d-4d2d-875c-765a495472f8",
+      "type": "codeEditor",
+      "name": "style",
+      "label": "Style",
+      "parentId": "root",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
+      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
+    },
+    {
       "id": "fd96c8e3-9e41-48c5-9351-2a29abea27cf",
       "type": "sectionSeparator",
       "name": "separatorVisibility",

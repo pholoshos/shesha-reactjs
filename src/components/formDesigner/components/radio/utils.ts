@@ -1,9 +1,10 @@
+import { CSSProperties } from 'react';
 import { RadioChangeEvent, SpaceProps } from 'antd';
 import { ReferenceListItemDto } from '../../../../apis/referenceList';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 import { DataSourceType, ILabelValue } from '../dropdown/models';
 
-export interface IRadioProps extends IConfigurableFormComponent {
+export interface IRadioProps extends Omit<IConfigurableFormComponent, 'style'> {
   items?: ILabelValue[];
   referenceListNamespace?: string;
   referenceListName?: string;
@@ -11,6 +12,7 @@ export interface IRadioProps extends IConfigurableFormComponent {
   direction?: SpaceProps['direction'];
   value?: any;
   onChange?: (e: RadioChangeEvent) => void;
+  style?: CSSProperties;
 }
 
 export const getDataSourceList = (

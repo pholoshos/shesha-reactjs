@@ -4,7 +4,7 @@ import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/fo
 import { BorderOutlined } from '@ant-design/icons';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { IModalProperties } from '../../../../providers/dynamicModal/models';
 import ConfigurableButton from './configurableButton';
 import { IButtonGroupButton } from '../../../../providers/buttonGroupConfigurator/models';
@@ -20,8 +20,8 @@ const ButtonField: IToolboxComponent<IButtonProps> = {
   type: 'button',
   name: 'Button',
   icon: <BorderOutlined />,
-  factory: (model: IButtonProps) => {
-    const { isComponentDisabled, isComponentHidden, formMode } = useForm();
+  factory: ({ style, ...model }: IButtonProps) => {
+    const { isComponentDisabled, isComponentHidden, formMode, formData } = useForm();
     const { anyOfPermissionsGranted } = useAuth();
 
     const { id, isDynamic, hidden, disabled } = model;
@@ -44,7 +44,13 @@ const ButtonField: IToolboxComponent<IButtonProps> = {
 
     return (
       <ConfigurableFormItem model={fieldModel}>
-        <ConfigurableButton formComponentId={model?.id} {...model} disabled={isDisabled} hidden={isHidden} />
+        <ConfigurableButton
+          formComponentId={model?.id}
+          {...model}
+          disabled={isDisabled}
+          hidden={isHidden}
+          style={getStyle(style, formData)}
+        />
       </ConfigurableFormItem>
     );
   },

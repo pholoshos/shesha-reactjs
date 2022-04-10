@@ -44,7 +44,7 @@ const RadioGroup: FC<IRadioProps> = model => {
   const disabled = isComponentDisabled(model);
 
   const renderCheckGroup = () => (
-    <Radio.Group disabled={disabled} value={value} onChange={onChange}>
+    <Radio.Group disabled={disabled} value={value} onChange={onChange} style={model?.style}>
       <Space direction={model?.direction}>
         {options.map((checkItem, index) => (
           <Radio key={index} value={checkItem.value}>

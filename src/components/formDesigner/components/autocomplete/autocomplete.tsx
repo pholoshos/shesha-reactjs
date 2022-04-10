@@ -4,7 +4,12 @@ import { IToolboxComponent } from '../../../../interfaces';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { useForm } from '../../../../providers/form';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
-import { evaluateValue, replaceTags, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import {
+  evaluateValue,
+  getStyle,
+  replaceTags,
+  validateConfigurableComponentSettings,
+} from '../../../../providers/form/utils';
 import Autocomplete, { AutocompleteDataSourceType, ISelectOption } from '../../../autocomplete';
 import ConfigurableFormItem from '../formItem';
 import { customDropDownEventHandler } from '../utils';
@@ -40,7 +45,6 @@ export interface IAutocompleteProps extends IConfigurableFormComponent {
   width?: number;
   minWidth?: number;
   maxWidth?: number;
-  subscribedEventNames?: string[];
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -128,11 +132,7 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       quickviewGetEntityUrl: model?.quickviewGetEntityUrl,
       quickviewWidth: model?.quickviewWidth,
       subscribedEventNames: model?.subscribedEventNames,
-      style: {
-        width: model?.width,
-        minWidth: model?.minWidth,
-        maxWidth: model?.maxWidth,
-      },
+      style: getStyle(model?.style, formData),
       size: model?.size,
     };
 

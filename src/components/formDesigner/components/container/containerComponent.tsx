@@ -60,6 +60,7 @@ export interface IContainerComponentProps extends IConfigurableFormComponent {
   alignItems?: AlignItems;
   justifyItems?: JustifyItems;
   className?: string;
+  components: IConfigurableFormComponent[]; // Only important for fluent API
 }
 
 const settingsForm = settingsFormJson as FormMarkup;

@@ -8,7 +8,7 @@ import { FormMarkup } from '../../../../providers/form/models';
 import StatusTag, { DEFAULT_STATUS_TAG_MAPPINGS, IStatusTagProps as ITagProps } from '../../../statusTag';
 import settingsFormJson from './settingsForm.json';
 
-export interface IStatusTagProps extends Omit<ITagProps, 'mappings'>, IConfigurableFormComponent {
+export interface IStatusTagProps extends Omit<ITagProps, 'mappings' | 'style'>, IConfigurableFormComponent {
   colorCodeEvaluator?: string;
   overrideCodeEvaluator?: string;
   valueCodeEvaluator?: string;

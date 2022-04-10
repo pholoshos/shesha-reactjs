@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ButtonType } from 'antd/lib/button';
 
@@ -37,6 +38,8 @@ export interface IButtonGroupItemBase {
   customVisibility?: string;
   customEnabled?: string;
   permissions?: string[];
+  style?: string;
+  size?: SizeType;
 }
 
 export interface IButtonGroupButton extends IButtonGroupItemBase {

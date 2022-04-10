@@ -92,7 +92,7 @@ const TimeField: IToolboxComponent<ITimePickerProps> = {
   },
 };
 
-export const TimePickerWrapper: FC<ITimePickerProps> = ({
+export const TimePickerWrapper: FC<Omit<ITimePickerProps, 'style'>> = ({
   onChange,
   range,
   value,

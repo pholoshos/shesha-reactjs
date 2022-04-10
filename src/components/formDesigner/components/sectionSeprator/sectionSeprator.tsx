@@ -3,11 +3,14 @@ import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/fo
 import { LineOutlined } from '@ant-design/icons';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
 import SectionSeparator from '../../../sectionSeparator';
 
-export interface ISectionSeparatorProps extends IConfigurableFormComponent {}
+export interface ISectionSeparatorProps extends IConfigurableFormComponent {
+  containerStyle?: string;
+  titleStyle?: string;
+}
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -16,11 +19,17 @@ const SectionSeparatorComponent: IToolboxComponent<ISectionSeparatorProps> = {
   name: 'Section Separator',
   icon: <LineOutlined />,
   factory: (model: ISectionSeparatorProps) => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden, formData } = useForm();
 
     if (isComponentHidden(model)) return null;
 
-    return <SectionSeparator sectionName={model.label} />;
+    return (
+      <SectionSeparator
+        sectionName={model.label}
+        containerStyle={getStyle(model?.containerStyle, formData)}
+        titleStyle={getStyle(model?.titleStyle, formData)}
+      />
+    );
   },
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),

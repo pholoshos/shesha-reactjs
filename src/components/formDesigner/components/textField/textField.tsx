@@ -6,7 +6,7 @@ import { InputProps } from 'antd/lib/input';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
 import { customEventHandler } from '../utils';
 import { DataTypes, StringFormats } from '../../../../interfaces/dataTypes';
@@ -47,7 +47,7 @@ const TextField: IToolboxComponent<ITextFieldProps> = {
       dataFormat === StringFormats.phoneNumber ||
       dataFormat === StringFormats.password),
   factory: (model: ITextFieldProps, _c, form) => {
-    const { formMode, isComponentDisabled } = useForm();
+    const { formMode, isComponentDisabled, formData } = useForm();
 
     const disabled = isComponentDisabled(model);
 
@@ -62,6 +62,7 @@ const TextField: IToolboxComponent<ITextFieldProps> = {
       size: model?.size,
       disabled,
       readOnly,
+      style: getStyle(model?.style, formData),
     };
 
     const InputComponentType = renderInput(model.textType);

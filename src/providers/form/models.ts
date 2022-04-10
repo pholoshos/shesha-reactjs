@@ -122,6 +122,11 @@ export interface IConfigurableFormComponent extends IFormComponentContainer {
    * The quickview is only displayed in readonly mode
    */
   enableQuickview?: boolean;
+
+  subscribedEventNames?: string[];
+  dispatchedEventNames?: string[];
+  dispatchedEventDebouncedMilliseconds?: number;
+  style?: string;
 }
 
 export interface IComponentsContainer {

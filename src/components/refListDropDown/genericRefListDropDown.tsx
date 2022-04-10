@@ -22,6 +22,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
     getOptionFromFetchedItem,
     readOnly,
     disabled,
+    style,
     ...rest
   } = props;
 
@@ -141,7 +142,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
         return false;
       }}
       {...rest}
-      style={{ width }}
+      style={{ ...style, width }}
       onChange={handleChange}
       value={wrapValue(value)}
       mode={mode}

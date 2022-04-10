@@ -5,7 +5,7 @@ import { CheckSquareOutlined } from '@ant-design/icons';
 import { Checkbox } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { useForm } from '../../../../providers';
@@ -21,7 +21,7 @@ const CheckboxComponent: IToolboxComponent<ICheckboxProps> = {
   icon: <CheckSquareOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.boolean,
   factory: (model: ICheckboxProps) => {
-    const { formMode, isComponentDisabled } = useForm();
+    const { formMode, isComponentDisabled, formData } = useForm();
     const isReadOnly = model?.readOnly || formMode === 'readonly';
 
     const disabled = isComponentDisabled(model);
@@ -31,7 +31,7 @@ const CheckboxComponent: IToolboxComponent<ICheckboxProps> = {
         {isReadOnly ? (
           <ReadOnlyDisplayFormItem type="checkbox" disabled={disabled} />
         ) : (
-          <Checkbox disabled={disabled} />
+          <Checkbox disabled={disabled} style={getStyle(model?.style, formData)} />
         )}
       </ConfigurableFormItem>
     );

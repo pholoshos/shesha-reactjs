@@ -1,5 +1,5 @@
 import { CheckCircleOutlined } from '@ant-design/icons';
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { useForm } from '../../../..';
 import { IToolboxComponent } from '../../../../interfaces';
 import { DataTypes } from '../../../../interfaces/dataTypes';

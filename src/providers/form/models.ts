@@ -1,5 +1,5 @@
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
-import { ReactNode, CSSProperties } from 'react';
+import { ReactNode } from 'react';
 import { IAsyncValidationError } from '../../interfaces';
 import { IFormSettings } from './contexts';
 

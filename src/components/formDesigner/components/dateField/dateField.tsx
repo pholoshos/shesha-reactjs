@@ -6,7 +6,7 @@ import { DatePicker } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import moment, { isMoment } from 'moment';
-import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { HiddenFormItem } from '../../../hiddenFormItem';
 import { useForm } from '../../../../providers';
 import { DataTypes } from '../../../../interfaces/dataTypes';
@@ -125,7 +125,7 @@ export const DatePickerWrapper: FC<Omit<IDateFieldProps, 'style'>> = props => {
     readOnly,
     ...rest
   } = props;
-  const { form, formMode, isComponentDisabled, formData } = useForm();
+  const { form, formMode, isComponentDisabled } = useForm();
 
   const isDisabled = isComponentDisabled(rest);
 

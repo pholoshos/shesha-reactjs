@@ -11,9 +11,7 @@ import { DataTypes } from '../../../../interfaces/dataTypes';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { SwitchSize } from 'antd/lib/switch';
 
-export interface ISwitchProps extends Omit<IConfigurableFormComponent, 'size'> {
-  size?: SwitchSize;
-}
+export interface ISwitchProps extends IConfigurableFormComponent {}
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -36,7 +34,7 @@ const SwitchComponent: IToolboxComponent<ISwitchProps> = {
         {isReadOnly ? (
           <ReadOnlyDisplayFormItem type="switch" disabled={disabled} />
         ) : (
-          <Switch disabled={disabled} style={style} size={size} />
+          <Switch disabled={disabled} style={style} size={size as SwitchSize} />
         )}
       </ConfigurableFormItem>
     );

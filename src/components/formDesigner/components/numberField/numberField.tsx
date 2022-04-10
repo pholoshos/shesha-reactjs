@@ -10,6 +10,7 @@ import { validateConfigurableComponentSettings } from '../../../../providers/for
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { useForm } from '../../../../providers';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
+import { customInputNumberEventHandler } from '../utils';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -18,7 +19,7 @@ const NumberField: IToolboxComponent<INumberFieldProps> = {
   name: 'Number field',
   icon: <NumberOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.number,
-  factory: (model: INumberFieldProps) => {
+  factory: (model: INumberFieldProps, _c, form) => {
     const { formMode, isComponentDisabled } = useForm();
 
     const isReadOnly = model?.readOnly || formMode === 'readonly';
@@ -26,11 +27,17 @@ const NumberField: IToolboxComponent<INumberFieldProps> = {
     const disabled = isComponentDisabled(model);
 
     return (
-      <ConfigurableFormItem model={model}>
+      <ConfigurableFormItem model={model} initialValue={model?.defaultValue}>
         {isReadOnly ? (
           <ReadOnlyDisplayFormItem disabled={disabled} />
         ) : (
-          <InputNumber disabled={disabled} bordered={!model.hideBorder} min={model?.min} max={model?.max} />
+          <InputNumber
+            disabled={disabled}
+            bordered={!model.hideBorder}
+            min={model?.min}
+            max={model?.max}
+            {...customInputNumberEventHandler(model, form)}
+          />
         )}
       </ConfigurableFormItem>
     );

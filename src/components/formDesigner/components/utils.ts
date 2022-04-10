@@ -36,3 +36,10 @@ export const customDropDownEventHandler = <T = any>(model: IConfigurableFormComp
     return eventFunc(value, option, form);
   },
 });
+
+export const customInputNumberEventHandler = (model: IConfigurableFormComponent, form: FormInstance) => ({
+  onChange: (value: any) => {
+    const eventFunc = new Function('value', 'form', model?.onChangeCustom);
+    return eventFunc(value, form);
+  },
+});

@@ -41,7 +41,6 @@ module.exports = {
     ],
     "rules": {
         "@typescript-eslint/adjacent-overload-signatures": "error",
-        "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/await-thenable": "error",
         "@typescript-eslint/ban-types": [

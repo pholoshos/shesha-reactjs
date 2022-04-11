@@ -469,7 +469,14 @@
           "customVisibility": "return data.buttonAction === 'executeScript'",
           "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
           "validate": {},
-          "settingsValidationErrors": []
+          "settingsValidationErrors": [],
+          "exposedVariables": [
+            { "name": "data", "description": "The form data", "type": "object" },
+            { "name": "moment", "description": "The moment.js object", "type": "object" },
+            { "name": "form", "description": "Form instance", "type": "FormInstance" },
+            { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+            { "name": "axios", "description": "axios instance used to make http requests", "type": "object" }
+          ]
         }
       ]
     },
@@ -484,7 +491,11 @@
       "customVisibility": null,
       "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     },
     {
       "id": "4b5e5951-4998-4635-b1c8-0b6d3940c300",
@@ -497,7 +508,11 @@
       "customEnabled": null,
       "description": "Enter custom enabled code.  You must return true to enable the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     },
     {
       "id": "26c68b22-3211-475d-91e1-0745a4447329",

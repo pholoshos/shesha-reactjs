@@ -1,3 +1,4 @@
+import React from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { FilterOutlined } from '@ant-design/icons';
@@ -5,9 +6,7 @@ import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import QueryBuilderField from './queryBuilderField';
 import { useQueryBuilder, useTableViewSelectorConfigurator } from '../../../../providers';
-import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-//import { DataTypes } from '../../../../interfaces/dataTypes';
 
 export interface IQueryBuilderProps extends IConfigurableFormComponent {
   jsonExpanded?: boolean;
@@ -25,7 +24,8 @@ const QueryBuilderComponent: IToolboxComponent<IQueryBuilderProps> = {
 
     const useExpression = items?.find(({ id }) => id === selectedItemId)?.useExpression;
 
-    const queryBuilder = useQueryBuilder(false);
+    const queryBuilder = useQueryBuilder(true);
+
     const fields = queryBuilder?.fields || [];
 
     return (

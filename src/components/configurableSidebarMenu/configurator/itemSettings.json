@@ -298,7 +298,11 @@
       "autoSize": false,
       "showCount": false,
       "allowClear": false,
-      "validate": {}
+      "validate": {},
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     },
     {
       "id": "26c68b22-3211-475d-91e1-0745a4447329",

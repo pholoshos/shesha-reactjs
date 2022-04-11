@@ -4,12 +4,12 @@ import { useTableViewSelectorConfigurator } from '../../../../../providers/table
 import { ITableViewProps } from '../../../../../providers/tableViewSelectorConfigurator/models';
 import { ReactSortable, ItemInterface } from 'react-sortablejs';
 
-export interface IToolbarItemsSortableProps {
+export interface ITableViewSortableProps {
   index?: number[];
   items: ITableViewProps[];
 }
 
-export const ToolbarItemsContainer: FC<IToolbarItemsSortableProps> = props => {
+export const TableViewContainer: FC<ITableViewSortableProps> = props => {
   const { updateChildItems } = useTableViewSelectorConfigurator();
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
@@ -47,4 +47,4 @@ export const ToolbarItemsContainer: FC<IToolbarItemsSortableProps> = props => {
     </ReactSortable>
   );
 };
-export default ToolbarItemsContainer;
+export default TableViewContainer;

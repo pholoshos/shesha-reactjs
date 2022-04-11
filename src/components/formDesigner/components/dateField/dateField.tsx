@@ -100,7 +100,7 @@ const DateField: IToolboxComponent<IDateFieldProps> = {
   },
 };
 
-export const DatePickerWrapper: FC<IDateFieldProps> = props => {
+export const DatePickerWrapper: FC<Omit<IDateFieldProps, 'style'>> = props => {
   const {
     name,
     dateFormat = DATE_TIME_FORMATS.date,

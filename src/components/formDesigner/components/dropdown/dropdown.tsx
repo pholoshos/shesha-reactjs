@@ -6,7 +6,7 @@ import { Select } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import { IDropdownProps, ILabelValue } from './models';
 import settingsFormJson from './settingsForm.json';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import RefListDropDown from '../../../refListDropDown';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { useForm } from '../../../..';
@@ -66,9 +66,10 @@ export const Dropdown: FC<IDropdownProps> = ({
   useRawValues,
   readOnly,
   isDynamic,
+  style,
   size,
 }) => {
-  const { formMode, isComponentDisabled } = useForm();
+  const { formMode, isComponentDisabled, formData } = useForm();
   const getOptions = (): ILabelValue[] => {
     return value && typeof value === 'number' ? values?.map(i => ({ ...i, value: parseInt(i.value) })) : values;
   };
@@ -78,6 +79,8 @@ export const Dropdown: FC<IDropdownProps> = ({
   const isReadOnly = formMode === 'readonly' || readOnly;
 
   const isDisabled = isComponentDisabled({ id, isDynamic, disabled });
+
+  const localStyle = getStyle(style, formData);
 
   if (dataSourceType === 'referenceList') {
     return useRawValues ? (
@@ -95,6 +98,7 @@ export const Dropdown: FC<IDropdownProps> = ({
         placeholder={placeholder}
         readOnly={isReadOnly}
         size={size}
+        style={localStyle}
       />
     ) : (
       <RefListDropDown.Dto
@@ -111,6 +115,7 @@ export const Dropdown: FC<IDropdownProps> = ({
         placeholder={placeholder}
         readOnly={isReadOnly}
         size={size}
+        style={localStyle}
       />
     );
   }

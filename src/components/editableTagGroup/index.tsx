@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Input, InputProps, Tag } from 'antd';
 // import { TweenOneGroup } from 'rc-tween-one';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Show from '../show';
 
 export interface IEditableTagGroupProps extends Omit<InputProps, 'value' | 'onChange'> {
@@ -31,11 +31,13 @@ export const EditableTagGroup: FC<IEditableTagGroupProps> = ({ value = [], onCha
 
   const showInput = () => {
     setState({ ...state, inputVisible: true });
-
-    inputRef?.current?.focus({
-      cursor: 'start',
-    });
   };
+
+  useEffect(() => {
+    if (state.inputVisible) {
+      inputRef?.current?.focus({});
+    }
+  }, [state.inputVisible]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, inputValue: e.target.value });
@@ -140,7 +142,7 @@ export const EditableTagGroup: FC<IEditableTagGroupProps> = ({ value = [], onCha
 
       <Show when={!inputVisible && !rest?.disabled}>
         <Tag onClick={showInput} className="site-tag-plus">
-          <PlusOutlined /> New Tag
+          <PlusOutlined /> New value
         </Tag>
       </Show>
     </>

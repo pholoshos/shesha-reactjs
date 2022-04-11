@@ -90,17 +90,44 @@
       "validate": {}
     },
     {
-      "id": "4b5e5951-4998-4635-b1c8-0b6d3940c300",
+      "id": "ee76d5c8-7191-4dd8-84a1-cda3286ff9c6",
+      "type": "sectionSeparator",
+      "name": "separator3",
+      "parentId": "root",
+      "label": "Data"
+    },
+    {
+      "id": "539d2791-f529-4ff8-97f3-c1e1048c7613",
+      "type": "numberField",
+      "name": "defaultValue",
+      "parentId": "root",
+      "label": "Default Value",
+      "validate": {},
+      "settingsValidationErrors": []
+    },
+    {
+      "id": "a3c11595-6724-4ba7-80b7-9ea5340be272",
+      "type": "sectionSeparator",
+      "name": "sectionEvent",
+      "parentId": "root",
+      "label": "Events"
+    },
+    {
+      "id": "b0be3d84-88e0-454c-8d3c-63372e86a46b",
       "type": "codeEditor",
-      "name": "customEnabled",
-      "label": "Custom Enabled",
+      "name": "onChangeCustom",
+      "label": "On Change",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
-      "customEnabled": null,
-      "description": "Enter custom enabled code.  You must return true to enable the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
+      "customVisibility": null,
+      "description": "Enter custom even handler on changing of event. (form, value) are exposed. The callback triggered when the value is changed",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "value", "description": "Component current value", "type": "number | string | null" }
+      ]
     },
     {
       "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",
@@ -133,6 +160,50 @@
       "validate": {}
     },
     {
+      "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
+      "type": "sectionSeparator",
+      "name": "sectionStyle",
+      "parentId": "root",
+      "label": "Style"
+    },
+    {
+      "id": "06ab0599-914d-4d2d-875c-765a495472f8",
+      "type": "codeEditor",
+      "name": "style",
+      "label": "Style",
+      "parentId": "root",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
+      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
+    },
+    {
+      "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
+      "type": "dropdown",
+      "name": "size",
+      "parentId": "root",
+      "label": "Size",
+      "allowClear": true,
+      "values": [
+        {
+          "label": "Small",
+          "value": "small",
+          "id": "4f11403c-95fd-4e49-bb60-cb8c25f0f3c3"
+        },
+        {
+          "label": "Middle",
+          "value": "middle",
+          "id": "8f85c476-e632-4fa7-89ad-2be6cfb7f1f1"
+        },
+        {
+          "label": "Large",
+          "value": "large",
+          "id": "f01e54aa-a1a4-4bd6-ba73-c395e48af8ce"
+        }
+      ],
+      "dataSourceType": "values"
+    },
+    {
       "id": "9ec0fd10-a934-4946-a30c-2c045878ffe5",
       "type": "sectionSeparator",
       "name": "separatorVisibility",
@@ -150,7 +221,11 @@
       "customVisibility": null,
       "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     },
     {
       "id": "4b5e5951-4998-4635-b1c8-0b6d3940c300",
@@ -163,7 +238,11 @@
       "customEnabled": null,
       "description": "Enter custom enabled code.  You must return true to enable the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     }
   ],
   "formSettings": {

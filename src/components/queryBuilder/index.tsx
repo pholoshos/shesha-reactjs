@@ -75,19 +75,33 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
       refList: RefListType,
     };
 
+    const getDynamicWidgets = () => {
+      if (useExpression) {
+        const localWidgets = {};
+
+        Object.keys(widgets).forEach(key => {
+          if (key) {
+            localWidgets[key] = InitialConfig.widgets.text;
+          }
+        });
+
+        return localWidgets;
+      }
+      return null;
+    };
+
     const conf: Config = {
       ...InitialConfig,
       fields: {},
       // @ts-ignore
       types,
       operators,
-      widgets,
+      widgets: useExpression ? getDynamicWidgets() : widgets,
     };
 
     fields?.forEach(({ dataType, visible, propertyName, label, fieldSettings, preferWidgets }) => {
       let type: string = dataType;
       let defaultPreferWidgets = [];
-      let localPreferWidgets = preferWidgets;
 
       /*
       Fields can be of type:
@@ -138,19 +152,13 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
             break;
         }
 
-        if (useExpression) {
-          type = 'text';
-          defaultPreferWidgets = ['text'];
-          localPreferWidgets = ['text'];
-        }
-
         conf.fields[propertyName] = {
           label,
           type,
           valueSources: ['value'],
           // @ts-ignore note: types are wrong in the library, they doesn't allow to extend
           fieldSettings,
-          preferWidgets: localPreferWidgets || defaultPreferWidgets,
+          preferWidgets: preferWidgets || defaultPreferWidgets,
         };
       }
     });

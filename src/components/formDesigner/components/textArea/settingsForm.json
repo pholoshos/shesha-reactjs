@@ -150,7 +150,11 @@
       "customVisibility": null,
       "description": "Enter custom even handler on changing of event. (form, event) are exposed",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" }
+      ]
     },
     {
       "id": "88c2d96c-b808-4316-8a36-701b09e5f6c7",
@@ -163,7 +167,11 @@
       "customVisibility": null,
       "description": "Enter custom even handler on focus of event. (form, event) are exposed",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" }
+      ]
     },
     {
       "id": "4a2b7329-1a89-45d1-a5b0-f66db21744b0",
@@ -176,7 +184,11 @@
       "customVisibility": null,
       "description": "Enter custom even handler on blur of event. (form, event) are exposed",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" }
+      ]
     },
     {
       "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",
@@ -226,8 +238,17 @@
       "labelAlign": "right",
       "hidden": false,
       "customVisibility": null,
-      "description": "Enter custom validator logic for form.item rules. Params include (rules, value, callback). Returns a Promise",
-      "settingsValidationErrors": []
+      "description": "Enter custom validator logic for form.item rules. Params include (rules, value, callback). Customize validation rule. Accept Promise as return.",
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        {
+          "name": "rules",
+          "description": "Validate rules, only support customize validator",
+          "type": "object"
+        },
+        { "name": "value", "description": "Component current value", "type": "object" },
+        { "name": "callback", "description": "Callback called by component", "type": "function" }
+      ]
     },
     {
       "id": "d690a0b7-a9d3-4ab2-8843-9dcfbac08adc",
@@ -243,6 +264,17 @@
       "name": "sectionStyle",
       "parentId": "root",
       "label": "Style"
+    },
+    {
+      "id": "06ab0599-914d-4d2d-875c-765a495472f8",
+      "type": "codeEditor",
+      "name": "style",
+      "label": "Style",
+      "parentId": "root",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
+      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
     },
     {
       "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
@@ -271,15 +303,6 @@
       "dataSourceType": "values"
     },
     {
-      "id": "128a7e5d-6ad1-4101-8c3f-41fd4e3cee6d",
-      "type": "numberField",
-      "name": "width",
-      "parentId": "root",
-      "label": "Width",
-      "validate": {},
-      "settingsValidationErrors": []
-    },
-    {
       "id": "040f9a56-b3b0-4fd2-a40b-8887f125b52d",
       "type": "sectionSeparator",
       "name": "separatorVisibility",
@@ -297,7 +320,11 @@
       "customVisibility": null,
       "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     },
     {
       "id": "4b5e5951-4998-4635-b1c8-0b6d3940c300",
@@ -310,7 +337,11 @@
       "customEnabled": null,
       "description": "Enter custom enabled code.  You must return true to enable the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     }
   ],
   "formSettings": {

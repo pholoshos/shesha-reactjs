@@ -6,7 +6,7 @@ import { InputProps } from 'antd/lib/input';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import { AutoCompletePlaces } from '../../../';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../..';
 
 export interface IAddressCompomentProps extends IConfigurableFormComponent {
@@ -23,14 +23,9 @@ const AddressCompoment: IToolboxComponent<IAddressCompomentProps> = {
   name: 'Address',
   icon: <HomeOutlined />,
   factory: (model: IAddressCompomentProps) => {
-    const { formMode } = useForm();
-
-    const completeModel = model;
-    completeModel.readOnly = model?.readOnly || formMode === 'readonly';
-
     return (
       <ConfigurableFormItem model={model}>
-        <AutoCompletePlacesField {...completeModel} />
+        <AutoCompletePlacesField {...model} />
       </ConfigurableFormItem>
     );
   },
@@ -44,6 +39,11 @@ interface IAutoCompletePlacesFieldProps extends IAddressCompomentProps {
 }
 
 const AutoCompletePlacesField: FC<IAutoCompletePlacesFieldProps> = props => {
+  const { formMode, formData } = useForm();
+
+  const completeModel = props;
+  completeModel.readOnly = props?.readOnly || formMode === 'readonly';
+
   const inputProps: InputProps = {
     placeholder: props.placeholder,
     prefix: props.prefix,
@@ -51,6 +51,8 @@ const AutoCompletePlacesField: FC<IAutoCompletePlacesFieldProps> = props => {
     disabled: props.disabled,
     bordered: !props.hideBorder,
     readOnly: props.readOnly,
+    style: getStyle(props?.style, formData),
+    size: props?.size,
   };
 
   return (

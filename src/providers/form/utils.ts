@@ -31,6 +31,7 @@ import masterDetailsViewMarkup from './defaults/markups/masterDetailsView.json';
 import menuViewMarkup from './defaults/markups/menuView.json';
 import tableViewMarkup from './defaults/markups/tableView.json';
 import { useSheshaApplication } from '..';
+import { CSSProperties } from 'react';
 
 /**
  * Convert components tree to flat structure.
@@ -778,4 +779,10 @@ export const evaluateKeyValuesToObjectMatchedData = (arr: IKeyValue[], matches: 
   }
 
   return {};
+};
+
+export const getStyle = (style: string, formData: any): CSSProperties => {
+  if (!style) return {};
+  // tslint:disable-next-line:function-constructor
+  return new Function('data', style)(formData);
 };

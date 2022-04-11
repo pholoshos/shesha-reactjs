@@ -96,12 +96,31 @@ export const usePubSub = (): ISubscription<IPubSubPayload> => {
  * @param eventName event name
  * @param eventHandler handler for the event
  */
-export function useSubscribe<T extends IPubSubPayload>(eventName: string, eventHandler: (data: T) => void): void {
+export function useSubscribe<T extends IPubSubPayload>(
+  eventName: string | string[],
+  eventHandler: (data: T) => void
+): void {
   useEffect(() => {
-    window.addEventListener(eventName, e => eventHandler((e as any).detail));
+    if (typeof eventName === 'string') {
+      window.addEventListener(eventName, e => eventHandler((e as any).detail));
+    } else if (Array.isArray(eventName)) {
+      eventName.forEach(name => {
+        if (name) {
+          window.addEventListener(name, e => eventHandler((e as any).detail));
+        }
+      });
+    }
 
     return () => {
-      window.removeEventListener(eventName, () => {}, false);
+      if (typeof eventName === 'string') {
+        window.removeEventListener(eventName, () => {}, false);
+      } else if (Array.isArray(eventName)) {
+        eventName.forEach(name => {
+          if (name) {
+            window.removeEventListener(name, () => {}, false);
+          }
+        });
+      }
     };
   });
 }

@@ -61,12 +61,38 @@ export const alertSettingsForm = new DesignerToolbarSettings()
     parentId: 'root',
     label: 'Show Icon',
   })
+  .addCheckbox({
+    id: '148e12c0-41a0-4fa2-8c64-8f6dd5213a3e',
+    name: 'closable',
+    label: 'Closable',
+    parentId: 'root',
+  })
+  .addIconPicker({
+    id: '152f3d72-68fb-43ab-adf6-8cf7d11fe6e1',
+    name: 'icon',
+    label: 'Icon',
+    parentId: 'root',
+  })
+  .addSectionSeparator({
+    id: '516d72e1-3dfd-433f-8459-8b1610c3c9cb',
+    name: 'separatorStyle',
+    parentId: 'root',
+    label: 'Style',
+    sectionName: '',
+  })
+  .addCodeEditor({
+    id: '987c3de1-b959-4670-96f6-9b1747189a6e',
+    name: 'style',
+    label: 'Style',
+    parentId: 'root',
+    mode: 'dialog',
+  })
   .addSectionSeparator({
     id: 'bc67960e-77e3-40f2-89cc-f18f94678cce',
     name: 'separatorVisibility',
     parentId: 'root',
     label: 'Visibility',
-    sectionName: '',
+    sectionName: 'Visibility',
   })
   .addTextArea({
     id: '03959ffd-cadb-496c-bf6d-b742f7f6edc6',

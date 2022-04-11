@@ -69,7 +69,7 @@ export const ToolbarItemProperties: FC<IProps> = () => {
   if (!Boolean(selectedItemId)) {
     return (
       <div>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing"/>
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing" />
       </div>
     );
   }

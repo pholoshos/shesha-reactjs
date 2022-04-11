@@ -6,7 +6,7 @@ import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { useDebouncedCallback } from 'use-debounce';
 import qs from 'qs';
 import { LabeledValue } from 'antd/lib/select';
-import { IGuidNullableEntityWithDisplayNameDto } from '../..';
+import { IGuidNullableEntityWithDisplayNameDto, useSubscribe } from '../..';
 import { ReadOnlyDisplayFormItem } from './../readOnlyDisplayFormItem';
 import { IReadOnly } from '../../interfaces/readOnly';
 
@@ -147,6 +147,11 @@ export interface IAutocompleteProps<TValue = any> extends IReadOnly {
    * The width of the quickview
    */
   quickviewWidth?: number;
+
+  /**
+   * A list of event names which, when triggered, will trigger the autocomplete to refetch items
+   */
+  subscribedEventNames?: string[];
 }
 
 export interface IUrlFetcherQueryParams {
@@ -198,6 +203,7 @@ export const Autocomplete = <TValue, >(props: IAutocompleteProps<TValue>) => {
     quickviewDisplayPropertyName,
     quickviewGetEntityUrl,
     quickviewWidth,
+    subscribedEventNames,
   } = props;
 
   const entityFetcher = useAutocompleteList({ lazy: true });
@@ -253,6 +259,10 @@ export const Autocomplete = <TValue, >(props: IAutocompleteProps<TValue>) => {
   useEffect(() => {
     doFetchItems(null);
   }, [dataSourceType]);
+
+  useSubscribe(subscribedEventNames, () => {
+    debouncedFetchItems(autocompleteText);
+  });
 
   const getFetchedItems = (): AutocompleteItemDto[] => {
     switch (dataSourceType) {

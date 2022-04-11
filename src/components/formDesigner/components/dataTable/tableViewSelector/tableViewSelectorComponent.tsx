@@ -1,11 +1,13 @@
 import React, { FC, MutableRefObject, useEffect } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { SelectOutlined } from '@ant-design/icons';
-import TableViewSelectorSettings from './tableViewSelectorSettingsPanel';
+import TableViewSelectorSettings from './tableViewSelectorSettings';
 import { ITableViewSelectorProps } from './models';
-import { IndexViewSelectorRenderer, useForm } from '../../../../../';
+import { IndexViewSelectorRenderer, useForm } from '../../../../..';
 import { useDataTableStore } from '../../../../../providers';
 import { evaluateDynamicFilters } from '../../../../../providers/dataTable/utils';
+import { usePrevious } from '../../../../../hooks';
+import _ from 'lodash';
 
 const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
   type: 'tableViewSelector',
@@ -41,6 +43,7 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
     predefinedFilters,
     selectedStoredFilterIds,
     setPredefinedFilters,
+    refreshTable,
   } = useDataTableStore();
 
   const { formData } = useForm();
@@ -52,12 +55,19 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
     dataSourceType,
   };
 
+  const previousFilters = usePrevious(predefinedFilters);
+
   useEffect(() => {
     const evaluatedFilters = evaluateDynamicFilters(filters, formData);
 
     setPredefinedFilters(evaluatedFilters);
-    // setPredefinedFilters(filters);
-  }, [filters]);
+
+    if (!_.isEqual(_.sortBy(previousFilters), _.sortBy(evaluatedFilters))) {
+      setTimeout(() => {
+        refreshTable();
+      }, 100);
+    }
+  }, [filters, formData]);
 
   const changeSelectedFilter = (id: string) => {
     changeSelectedStoredFilterIds(id ? [id] : []);

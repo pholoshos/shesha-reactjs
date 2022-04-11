@@ -37,6 +37,7 @@ export { default as AutoCompletePlaces } from './googlePlacesAutocomplete';
 export { default as CustomFile } from './customFile';
 export { default as SimplePageToolbar } from './simplePageToolbar';
 export { default as ErrorBoundary } from './errorBoundary/errorBoundary';
+export { default as CustomErrorBoundary } from './customErrorBoundary';
 export { default as DetailsViewHeaderControls } from './detailsViewHeaderControls';
 export { default as AppliedCustomFilters, IAppliedCustomFiltersProps } from './appliedCustomFilters';
 export { default as CancelButton, ICancelButtonProps } from './cancelButton';

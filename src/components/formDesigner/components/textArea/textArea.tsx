@@ -6,7 +6,7 @@ import ConfigurableFormItem from '../formItem';
 import { TextAreaProps } from 'antd/lib/input';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { DataTypes, StringFormats } from '../../../../interfaces/dataTypes';
@@ -32,6 +32,7 @@ const TextField: IToolboxComponent<ITextAreaProps> = {
   dataTypeSupported: ({ dataType, dataFormat }) =>
     dataType === DataTypes.string && dataFormat === StringFormats.multiline,
   factory: (model: ITextAreaProps, _c, form) => {
+    const { formData } = useForm();
     const textAreaProps: TextAreaProps = {
       placeholder: model.placeholder,
       disabled: model.disabled,
@@ -41,6 +42,7 @@ const TextField: IToolboxComponent<ITextAreaProps> = {
       allowClear: model.allowClear,
       bordered: !model.hideBorder,
       size: model?.size,
+      style: getStyle(model?.style, formData),
     };
 
     const { formMode, isComponentDisabled } = useForm();

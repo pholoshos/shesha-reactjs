@@ -16,6 +16,7 @@ import { IconType } from '../../../../shaIcon';
 import { useAuth, useGlobalState } from '../../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
 import moment from 'moment';
+import { getStyle } from '../../../../../providers/form/utils';
 
 const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
   type: 'buttonGroup',
@@ -104,6 +105,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
                 key={uuid}
                 {...itemProps}
                 size={size}
+                style={getStyle(item?.style, formData)}
                 disabled={!isEnabledByCondition}
               />
             );

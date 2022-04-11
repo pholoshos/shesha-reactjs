@@ -4,10 +4,12 @@ import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/fo
 import { FileSearchOutlined } from '@ant-design/icons';
 import FormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { PropertyAutocomplete } from './propertyAutocomplete';
+import { useForm } from '../../../..';
 
 export interface IPropertyAutocompleteComponentProps extends IConfigurableFormComponent {
+  dropdownStyle?: string;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -17,9 +19,15 @@ const PropertyAutocompleteComponent: IToolboxComponent<IPropertyAutocompleteComp
   name: 'Property Autocomplete',
   icon: <FileSearchOutlined />,
   factory: (model: IPropertyAutocompleteComponentProps) => {
+    const { formData } = useForm();
     return (
       <FormItem model={model}>
-        <PropertyAutocomplete id={model.id} />
+        <PropertyAutocomplete
+          id={model.id}
+          style={getStyle(model?.style, formData)}
+          dropdownStyle={getStyle(model?.dropdownStyle, formData)}
+          size={model.size}
+        />
       </FormItem>
     );
   },

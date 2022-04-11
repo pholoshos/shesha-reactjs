@@ -235,9 +235,26 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "description": "Enter custom even handler on changing of event. (form, value, option) are exposed",
+      "description": "Enter custom even handler on changing of event. (form, value, option) are exposed. Called when select an option or input value change",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "option", "description": "Meta data of component current value", "type": "object" }
+      ]
+    },
+    {
+      "id": "40abba89-228f-41a4-8113-9bd44fe78263",
+      "type": "editableTagGroup",
+      "name": "subscribedEventNames",
+      "label": "Subscribed Event Names",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {},
+      "description": "This is a list of event that, when dispatched, will trigger the refetching of items for the component"
     },
     {
       "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",
@@ -307,6 +324,17 @@
       "label": "Style"
     },
     {
+      "id": "06ab0599-914d-4d2d-875c-765a495472f8",
+      "type": "codeEditor",
+      "name": "style",
+      "label": "Style",
+      "parentId": "root",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
+      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
+    },
+    {
       "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
       "type": "dropdown",
       "name": "size",
@@ -333,33 +361,6 @@
       "dataSourceType": "values"
     },
     {
-      "id": "128a7e5d-6ad1-4101-8c3f-41fd4e3cee6d",
-      "type": "numberField",
-      "name": "width",
-      "parentId": "root",
-      "label": "Width",
-      "validate": {},
-      "settingsValidationErrors": []
-    },
-    {
-      "id": "8b8c0a94-5e61-439c-bbf4-4c5ff3e3e4e3",
-      "type": "numberField",
-      "name": "minWidth",
-      "parentId": "root",
-      "label": "Min width",
-      "validate": {},
-      "settingsValidationErrors": []
-    },
-    {
-      "id": "ae72a0ad-4b20-4088-b76c-3d7546de7e95",
-      "type": "numberField",
-      "name": "maxWidth",
-      "parentId": "root",
-      "label": "Max width",
-      "validate": {},
-      "settingsValidationErrors": []
-    },
-    {
       "id": "6befdd49-41aa-41d6-a29e-76fa00590b74",
       "type": "sectionSeparator",
       "name": "sectionVisibility",
@@ -377,7 +378,11 @@
       "customVisibility": null,
       "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     },
     {
       "id": "4b5e5951-4998-4635-b1c8-0b6d3940c300",
@@ -390,7 +395,11 @@
       "customEnabled": null,
       "description": "Enter custom enabled code.  You must return true to enable the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     }
   ],
   "formSettings": {

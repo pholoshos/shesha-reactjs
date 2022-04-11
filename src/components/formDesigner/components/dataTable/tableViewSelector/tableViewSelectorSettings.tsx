@@ -4,18 +4,18 @@ import { ITableViewSelectorProps } from './models';
 import TableViewSelectorSettingsModal from './tableViewSelectorSettingsModal';
 import { QueryBuilderProvider } from '../../../../../providers';
 import { useForm } from '../../../../../providers/form';
-import { ITableColumn, useMetadata } from '../../../../../';
+import { ITableColumn, useMetadata } from '../../../../..';
 import { IProperty } from '../../../../../providers/queryBuilder/models';
 import { TableDataSourceType } from '../../../../../providers/dataTable/interfaces';
 
-export interface IProps {
+export interface ITableViewSelectorSettingsProps {
   model: ITableViewSelectorProps;
   onSave: (model: ITableViewSelectorProps) => void;
   onCancel: () => void;
   onValuesChange?: (changedValues: any, values: ITableViewSelectorProps) => void;
 }
 
-function ColumnsSettings(props: IProps) {
+function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const { selectedComponentRef } = useForm();
@@ -107,6 +107,7 @@ function ColumnsSettings(props: IProps) {
     });
   });
   */
+
   return (
     <QueryBuilderProvider fields={fields}>
       <Form form={form} onFinish={props.onSave} onValuesChange={props.onValuesChange}>
@@ -124,4 +125,4 @@ function ColumnsSettings(props: IProps) {
   );
 }
 
-export default ColumnsSettings;
+export default TableViewSelectorSettings;

@@ -9,12 +9,14 @@ import { IProperty } from './models';
 
 export interface IQueryBuilderProviderProps {
   fields?: IProperty[];
+  id?: string; // Just for testing
 }
 
-const QueryBuilderProvider: FC<PropsWithChildren<IQueryBuilderProviderProps>> = ({ children, fields }) => {
+const QueryBuilderProvider: FC<PropsWithChildren<IQueryBuilderProviderProps>> = ({ children, fields, id }) => {
   const [state, dispatch] = useReducer(QueryBuilderReducer, {
     ...QUERY_BUILDER_CONTEXT_INITIAL_STATE,
     fields: fields || [],
+    id,
   });
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
@@ -23,8 +25,11 @@ const QueryBuilderProvider: FC<PropsWithChildren<IQueryBuilderProviderProps>> = 
     dispatch(setFieldsAction(newFields));
   };
 
+  //TODO: Fix the passing of fields so that it can be consumed properly by QueryBuilderComponent.
+  //TODO: For some weird reasons the component receives fields as empty, though it has been passed properly
+  //TODO: As a work-around I passed fields here as it seems to work. Will revisit this bug later
   return (
-    <QueryBuilderStateContext.Provider value={state}>
+    <QueryBuilderStateContext.Provider value={{ ...state, fields }}>
       <QueryBuilderActionsContext.Provider
         value={{
           setFields,

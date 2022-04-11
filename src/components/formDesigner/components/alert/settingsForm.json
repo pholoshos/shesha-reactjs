@@ -87,6 +87,24 @@
       "label": "Show Icon"
     },
     {
+      "id": "148e12c0-41a0-4fa2-8c64-8f6dd5213a3e",
+      "type": "checkbox",
+      "name": "closable",
+      "parentId": "root",
+      "label": "Closable"
+    },
+    {
+      "id": "89fb54b3-c7ca-4f93-87a6-82c173b4c172",
+      "type": "iconPicker",
+      "name": "icon",
+      "label": "Icon",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "",
+      "settingsValidationErrors": []
+    },
+    {
       "id": "cfd7d45e-c7e3-4a27-987b-dc525c412448",
       "type": "checkbox",
       "name": "hidden",
@@ -111,7 +129,11 @@
       "customVisibility": null,
       "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     }
   ],
   "formSettings": {

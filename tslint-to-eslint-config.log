@@ -1,0 +1,41 @@
+9 ESLint rules behave differently from their TSLint counterparts:
+  * @typescript-eslint/no-unused-expressions:
+    - The TSLint optional config "allow-new" is the default ESLint behavior and will no longer be ignored.
+  * @typescript-eslint/no-unused-vars:
+    - Please read the following article as the rule behaviour may change on the short term: https://github.com/typescript-eslint/typescript-eslint/issues/1856
+  * eqeqeq:
+    - Option "smart" allows for comparing two literal values, evaluating the value of typeof and null comparisons.
+  * no-invalid-this:
+    - Functions in methods will no longer be ignored.
+  * no-redeclare:
+    - ESLint does not support check-parameters.
+  * no-underscore-dangle:
+    - Leading or trailing underscores (_) on identifiers will now be forbidden.
+  * padded-blocks:
+    - ESLint's padded-blocks rule also bans a blank line before a closing brace.
+  * prefer-arrow/prefer-arrow-functions:
+    - ESLint does not support allowing standalone function declarations.
+    - ESLint does not support allowing named functions defined with the function keyword.
+  * react/jsx-no-bind:
+    - ESLint rule 'jsx-no-bind' also checks for Function.bind
+    - ESLint rule 'jsx-no-bind' also checks for arrow functions
+
+Error: multiple output react/jsx-curly-spacing ESLint rule options were generated, but tslint-to-eslint-config doesn't have "merger" logic to deal with this.
+Please file an issue at https://github.com/typescript-eslint/tslint-to-eslint-config/issues/new?template=missing_merger.md. Thanks!
+
+12 rules are not known by tslint-to-eslint-config to have ESLint equivalents:
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "handle-callback-err".
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "jsx-no-string-ref".
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "no-duplicate-case".
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "no-empty-character-class".
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "no-ex-assign".
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "no-extra-boolean-cast".
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "no-inner-declarations".
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "no-unexpected-multiline".
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "strict-type-predicates".
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "ter-no-sparse-arrays".
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "valid-typeof".
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "whitespace".
+
+  * import-destructuring-spacing
+

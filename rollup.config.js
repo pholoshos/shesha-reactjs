@@ -99,6 +99,7 @@ export default {
       modulesOnly: true,
     }),
     typescript({
+      check: false,
       rollupCommonJSResolveHack: true,
       clean: true,
     }),

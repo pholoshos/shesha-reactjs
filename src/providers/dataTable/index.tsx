@@ -632,7 +632,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
       setGlobalState({
         key: uniqueStateId,
-        data: state,
+        data: { ...state, refreshTable },
       });
     }
   }, [state, uniqueStateId]);

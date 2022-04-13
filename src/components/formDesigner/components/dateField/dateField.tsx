@@ -2,17 +2,18 @@ import React, { FC, Fragment } from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { CalendarOutlined } from '@ant-design/icons';
-import { DatePicker } from 'antd';
+import { DatePicker, message } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import moment, { isMoment } from 'moment';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { HiddenFormItem } from '../../../hiddenFormItem';
-import { useForm } from '../../../../providers';
+import { useForm, useGlobalState, useSheshaApplication } from '../../../../providers';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { getMoment } from '../../../../utils/date';
 import { customDateEventHandler } from '../utils';
+import { axiosHttp } from '../../../../apis/axios';
 
 const DATE_TIME_FORMATS = {
   time: 'HH:mm',
@@ -65,10 +66,25 @@ const DateField: IToolboxComponent<IDateFieldProps> = {
   icon: <CalendarOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.date || dataType === DataTypes.dateTime,
   factory: (model: IDateFieldProps, _c, form) => {
+    const { formMode, formData } = useForm();
+    const { globalState } = useGlobalState();
+    const { backendUrl } = useSheshaApplication();
+
+    const eventProps = {
+      model,
+      form,
+      formData,
+      formMode,
+      globalState,
+      http: axiosHttp(backendUrl),
+      message,
+      moment,
+    };
+
     return (
       <Fragment>
         <ConfigurableFormItem model={model}>
-          <DatePickerWrapper {...model} {...customDateEventHandler(model, form)} />
+          <DatePickerWrapper {...model} {...customDateEventHandler(eventProps)} />
         </ConfigurableFormItem>
 
         {model?.range && (

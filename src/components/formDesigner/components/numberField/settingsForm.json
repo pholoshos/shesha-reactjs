@@ -125,7 +125,17 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
         { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "message",
+          "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+          "type": "object"
+        },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
         { "name": "value", "description": "Component current value", "type": "number | string | null" }
       ]
     },

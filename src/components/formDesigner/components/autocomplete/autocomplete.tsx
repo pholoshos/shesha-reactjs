@@ -1,7 +1,10 @@
 import { FileSearchOutlined } from '@ant-design/icons';
+import { message } from 'antd';
 import React, { Key } from 'react';
+import { axiosHttp } from '../../../../apis/axios';
 import { IToolboxComponent } from '../../../../interfaces';
 import { DataTypes } from '../../../../interfaces/dataTypes';
+import { useGlobalState, useSheshaApplication } from '../../../../providers';
 import { useForm } from '../../../../providers/form';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import {
@@ -14,6 +17,7 @@ import Autocomplete, { AutocompleteDataSourceType, ISelectOption } from '../../.
 import ConfigurableFormItem from '../formItem';
 import { customDropDownEventHandler } from '../utils';
 import settingsFormJson from './settingsForm.json';
+import moment from 'moment';
 
 interface IQueryParamProp {
   id: string;
@@ -57,6 +61,9 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
   factory: (model: IAutocompleteProps, _c, form) => {
     const { queryParams } = model;
     const { formData, formMode, isComponentDisabled } = useForm();
+    const { globalState } = useGlobalState();
+    const { backendUrl } = useSheshaApplication();
+
     const dataSourceUrl = model.dataSourceUrl
       ? replaceTags(model.dataSourceUrl, { data: formData })
       : model.dataSourceUrl;
@@ -113,6 +120,17 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       };
     };
 
+    const eventProps = {
+      model,
+      form,
+      formData,
+      formMode,
+      globalState,
+      http: axiosHttp(backendUrl),
+      message,
+      moment,
+    };
+
     const autocompleteProps = {
       typeShortAlias: model?.entityTypeShortAlias,
       allowInherited: true /*hardcoded for now*/,
@@ -140,9 +158,9 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
     return (
       <ConfigurableFormItem model={model}>
         {model.useRawValues ? (
-          <Autocomplete.Raw {...autocompleteProps} {...customDropDownEventHandler(model, form)} />
+          <Autocomplete.Raw {...autocompleteProps} {...customDropDownEventHandler(eventProps)} />
         ) : (
-          <Autocomplete.EntityDto {...autocompleteProps} {...customDropDownEventHandler(model, form)} />
+          <Autocomplete.EntityDto {...autocompleteProps} {...customDropDownEventHandler(eventProps)} />
         )}
       </ConfigurableFormItem>
     );

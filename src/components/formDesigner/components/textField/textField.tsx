@@ -1,16 +1,18 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { CodeOutlined } from '@ant-design/icons';
-import { Input } from 'antd';
+import { Input, message } from 'antd';
 import { InputProps } from 'antd/lib/input';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm } from '../../../../providers';
+import { useForm, useGlobalState, useSheshaApplication } from '../../../../providers';
 import { customEventHandler } from '../utils';
 import { DataTypes, StringFormats } from '../../../../interfaces/dataTypes';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
+import { axiosHttp } from '../../../../apis/axios';
+import moment from 'moment';
 
 type TextType = 'text' | 'password';
 
@@ -48,6 +50,8 @@ const TextField: IToolboxComponent<ITextFieldProps> = {
       dataFormat === StringFormats.password),
   factory: (model: ITextFieldProps, _c, form) => {
     const { formMode, isComponentDisabled, formData } = useForm();
+    const { globalState } = useGlobalState();
+    const { backendUrl } = useSheshaApplication();
 
     const disabled = isComponentDisabled(model);
 
@@ -67,12 +71,23 @@ const TextField: IToolboxComponent<ITextFieldProps> = {
 
     const InputComponentType = renderInput(model.textType);
 
+    const eventProps = {
+      model,
+      form,
+      formData,
+      formMode,
+      globalState,
+      http: axiosHttp(backendUrl),
+      message,
+      moment,
+    };
+
     return (
       <ConfigurableFormItem model={model} initialValue={(model?.passEmptyStringByDefault && '') || model?.initialValue}>
         {readOnly ? (
           <ReadOnlyDisplayFormItem disabled={disabled} />
         ) : (
-          <InputComponentType {...inputProps} disabled={disabled} {...customEventHandler(model, form)} />
+          <InputComponentType {...inputProps} disabled={disabled} {...customEventHandler(eventProps)} />
         )}
       </ConfigurableFormItem>
     );

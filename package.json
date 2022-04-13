@@ -18,6 +18,7 @@
     "start": "npm run build:less && rollup -c -w",
     "build:less": "node less-bundle.js",
     "prepare": "npm run build",
+    "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions",
     "changelog:major": "changelog -M && git add CHANGELOG.md && git commit -m \"updated CHANGELOG.md\" && npm version major && git push origin",
     "changelog:minor": "changelog -m && git add CHANGELOG.md && git commit -m \"updated CHANGELOG.md\" && npm version minor && git push origin",
     "changelog:patch": "changelog -p && git add CHANGELOG.md && git commit -m \"updated CHANGELOG.md\" && npm version patch && git push origin",
@@ -32,6 +33,10 @@
     "lint": "tslint src/**/*.ts{,x}",
     "lint:log": "tslint src/**/*.ts{,x} -o ./tslint.log",
     "lint-fix": "tslint src/**/*.ts{,x} --fix"
+  },
+  "resolutions": {
+    "@types/react": "17.0.2",
+    "@types/react-dom": "17.0.2"
   },
   "peerDependencies": {
     "@microsoft/signalr": "^5.0.3",
@@ -81,8 +86,8 @@
     "@types/point-in-polygon": "^1.0.0",
     "@types/pubsub-js": "^1.8.3",
     "@types/qs": "^6.9.3",
-    "@types/react": "^17.0.32",
-    "@types/react-dom": "^17.0.10",
+    "@types/react": "17.0.2",
+    "@types/react-dom": "17.0.2",
     "@types/react-places-autocomplete": "^7.2.6",
     "@types/react-table": "^7.7.0",
     "@types/redux-actions": "2.6.1",

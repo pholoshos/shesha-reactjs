@@ -1,16 +1,18 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { FontColorsOutlined } from '@ant-design/icons';
-import { Input } from 'antd';
+import { Input, message } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import { TextAreaProps } from 'antd/lib/input';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm } from '../../../../providers';
+import { useForm, useGlobalState, useSheshaApplication } from '../../../../providers';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { DataTypes, StringFormats } from '../../../../interfaces/dataTypes';
 import { customEventHandler } from '../utils';
+import { axiosHttp } from '../../../../apis/axios';
+import moment from 'moment';
 
 export interface ITextAreaProps extends IConfigurableFormComponent {
   placeholder?: string;
@@ -32,7 +34,10 @@ const TextField: IToolboxComponent<ITextAreaProps> = {
   dataTypeSupported: ({ dataType, dataFormat }) =>
     dataType === DataTypes.string && dataFormat === StringFormats.multiline,
   factory: (model: ITextAreaProps, _c, form) => {
-    const { formData } = useForm();
+    const { formData, formMode, isComponentDisabled } = useForm();
+    const { globalState } = useGlobalState();
+    const { backendUrl } = useSheshaApplication();
+
     const textAreaProps: TextAreaProps = {
       placeholder: model.placeholder,
       disabled: model.disabled,
@@ -45,18 +50,27 @@ const TextField: IToolboxComponent<ITextAreaProps> = {
       style: getStyle(model?.style, formData),
     };
 
-    const { formMode, isComponentDisabled } = useForm();
-
     const isReadOnly = model?.readOnly || formMode === 'readonly';
 
     const disabled = isComponentDisabled(model);
+
+    const eventProps = {
+      model,
+      form,
+      formData,
+      formMode,
+      globalState,
+      http: axiosHttp(backendUrl),
+      message,
+      moment,
+    };
 
     return (
       <ConfigurableFormItem model={model} initialValue={(model?.passEmptyStringByDefault && '') || model?.initialValue}>
         {isReadOnly ? (
           <ReadOnlyDisplayFormItem disabled={disabled} />
         ) : (
-          <Input.TextArea rows={2} {...textAreaProps} disabled={disabled} {...customEventHandler(model, form)} />
+          <Input.TextArea rows={2} {...textAreaProps} disabled={disabled} {...customEventHandler(eventProps)} />
         )}
       </ConfigurableFormItem>
     );

@@ -152,8 +152,18 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
         { "name": "form", "description": "Form instance", "type": "FormInstance" },
-        { "name": "event", "description": "Event callback when user input", "type": "object" }
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "message",
+          "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+          "type": "object"
+        },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
       ]
     },
     {
@@ -169,8 +179,18 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
         { "name": "form", "description": "Form instance", "type": "FormInstance" },
-        { "name": "event", "description": "Event callback when user input", "type": "object" }
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "message",
+          "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+          "type": "object"
+        },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
       ]
     },
     {
@@ -186,8 +206,18 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
         { "name": "form", "description": "Form instance", "type": "FormInstance" },
-        { "name": "event", "description": "Event callback when user input", "type": "object" }
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "message",
+          "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+          "type": "object"
+        },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
       ]
     },
     {

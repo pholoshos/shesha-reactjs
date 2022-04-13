@@ -2,16 +2,18 @@ import React, { FC } from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup } from '../../../../providers/form/models';
 import { DownSquareOutlined } from '@ant-design/icons';
-import { Select } from 'antd';
+import { message, Select } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import { IDropdownProps, ILabelValue } from './models';
 import settingsFormJson from './settingsForm.json';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import RefListDropDown from '../../../refListDropDown';
 import { DataTypes } from '../../../../interfaces/dataTypes';
-import { useForm } from '../../../..';
+import { useForm, useGlobalState, useSheshaApplication } from '../../../..';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { customDropDownEventHandler } from '../utils';
+import { axiosHttp } from '../../../../apis/axios';
+import moment from 'moment';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -21,9 +23,24 @@ const DropdownComponent: IToolboxComponent<IDropdownProps> = {
   icon: <DownSquareOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.referenceListItem,
   factory: (model: IDropdownProps, _c, form) => {
+    const { formData, formMode } = useForm();
+    const { globalState } = useGlobalState();
+    const { backendUrl } = useSheshaApplication();
+
+    const eventProps = {
+      model,
+      form,
+      formData,
+      formMode,
+      globalState,
+      http: axiosHttp(backendUrl),
+      message,
+      moment,
+    };
+
     return (
       <ConfigurableFormItem model={model}>
-        <Dropdown {...model} {...customDropDownEventHandler(model, form)} />
+        <Dropdown {...model} {...customDropDownEventHandler(eventProps)} />
       </ConfigurableFormItem>
     );
   },

@@ -1,16 +1,18 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup } from '../../../../providers/form/models';
 import { NumberOutlined } from '@ant-design/icons';
-import { InputNumber } from 'antd';
+import { InputNumber, message } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import { INumberFieldProps } from './models';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { DataTypes } from '../../../../interfaces/dataTypes';
-import { useForm } from '../../../../providers';
+import { useForm, useGlobalState, useSheshaApplication } from '../../../../providers';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { customInputNumberEventHandler } from '../utils';
+import { axiosHttp } from '../../../../apis/axios';
+import moment from 'moment';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -21,10 +23,23 @@ const NumberField: IToolboxComponent<INumberFieldProps> = {
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.number,
   factory: (model: INumberFieldProps, _c, form) => {
     const { formMode, isComponentDisabled, formData } = useForm();
+    const { globalState } = useGlobalState();
+    const { backendUrl } = useSheshaApplication();
 
     const isReadOnly = model?.readOnly || formMode === 'readonly';
 
     const disabled = isComponentDisabled(model);
+
+    const eventProps = {
+      model,
+      form,
+      formData,
+      formMode,
+      globalState,
+      http: axiosHttp(backendUrl),
+      message,
+      moment,
+    };
 
     return (
       <ConfigurableFormItem model={model} initialValue={model?.defaultValue}>
@@ -36,7 +51,7 @@ const NumberField: IToolboxComponent<INumberFieldProps> = {
             bordered={!model.hideBorder}
             min={model?.min}
             max={model?.max}
-            {...customInputNumberEventHandler(model, form)}
+            {...customInputNumberEventHandler(eventProps)}
             size={model?.size}
             style={getStyle(model?.style, formData)}
           />

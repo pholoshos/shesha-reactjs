@@ -74,8 +74,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     return removeZeroWidthCharsFromString(url);
   }, [formSettings]);
 
-  // console.log('ConfigurableFormRenderer formSettings, getSubmitPath() :>> ', formSettings, getSubmitPath());
-
   const { mutate: doSubmit, loading: submitting } = useMutate({
     verb: httpVerb || 'POST', // todo: convert to configurable
     path: submitUrl,
@@ -105,8 +103,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
       if (typeof localValues === 'object') {
         return localValues;
       }
-
-      console.error('Error: preparedValues is not an object::', localValues);
 
       return getExpressionExecutor(preparedValues);
     }

@@ -752,11 +752,23 @@ interface IMatchData {
   data: any;
 }
 
-export const evaluateKeyValuesToObjectMatchedData = (arr: IKeyValue[], matches: IMatchData[]): IAnyObject => {
+const convertToKeyValues = (obj: IAnyObject): IKeyValue[] => {
+  return Object.keys(obj).map(key => ({
+    key,
+    value: obj[key],
+  }));
+};
+
+export const evaluateKeyValuesToObjectMatchedData = (
+  obj: IKeyValue[] | IAnyObject,
+  matches: IMatchData[]
+): IAnyObject => {
   const queryParamObj: IAnyObject = {};
 
-  if (arr?.length) {
-    arr?.forEach(({ key, value }) => {
+  const valuesArray = Array.isArray(obj) ? obj : convertToKeyValues(obj);
+
+  if (valuesArray?.length) {
+    valuesArray?.forEach(({ key, value }) => {
       if (key?.length && value.length) {
         let matchedKey = '';
 

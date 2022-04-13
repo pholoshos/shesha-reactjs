@@ -9,7 +9,7 @@ import { ConfigurableForm, ValidationErrors } from '../../components';
 import { useSubscribe } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
 import { ConfigurableFormInstance } from '../../providers/form/contexts';
-import { FormMarkupWithSettings } from '../../providers/form/models';
+import { IFormDto } from '../../providers/form/models';
 import { removeZeroWidthCharsFromString } from '../../providers/form/utils';
 import { DynamicFormPubSubConstants } from './pubSub';
 
@@ -44,10 +44,6 @@ export interface EntityAjaxResponse {
   unAuthorizedRequest?: boolean;
   __abp?: boolean;
   result?: IEntity;
-}
-
-interface IFormDto extends Omit<FormDto, 'markup'> {
-  markup: FormMarkupWithSettings;
 }
 
 interface IEntity {

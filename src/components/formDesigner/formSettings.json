@@ -23,7 +23,8 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "validate": {}
+      "validate": {},
+      "description": "Check the 'URL variables' tab for the exposed variables"
     },
     {
       "id": "acaefed1-f12f-4cb9-b208-b74a1cbd8c40",
@@ -34,7 +35,8 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "validate": {}
+      "validate": {},
+      "description": "Check the 'URL variables' tab for the exposed variables"
     },
     {
       "id": "1d1b9011-1437-4ef2-9d52-ad32601544e9",
@@ -45,7 +47,8 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "validate": {}
+      "validate": {},
+      "description": "Check the 'URL variables' tab for the exposed variables"
     },
     {
       "id": "ebcf09bb-8cfe-4514-9bdf-d48fd325f438",
@@ -56,7 +59,8 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "validate": {}
+      "validate": {},
+      "description": "Check the 'URL variables' tab for the exposed variables"
     },
     {
       "id": "077f5a0d-d59e-44b8-bc5b-a06e18438f4d",

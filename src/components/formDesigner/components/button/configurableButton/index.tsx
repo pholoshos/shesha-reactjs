@@ -73,7 +73,7 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       destroyOnClose: true,
       width: props?.modalWidth,
       initialValues: evaluateKeyValuesToObject(convertedProps?.additionalProperties, formData),
-      parentFormValues: formData,
+      parentFormValues: formData || { id: '91081753-63b5-4d35-907c-6cacf1331d75' },
       modalConfirmDialogMessage: convertedProps?.modalConfirmDialogMessage,
       onSubmitted: values => {
         onSuccessScriptExecutor(values);

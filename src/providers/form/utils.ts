@@ -759,10 +759,7 @@ const convertToKeyValues = (obj: IAnyObject): IKeyValue[] => {
   }));
 };
 
-export const evaluateKeyValuesToObjectMatchedData = (
-  obj: IKeyValue[] | IAnyObject,
-  matches: IMatchData[]
-): IAnyObject => {
+export const evaluateKeyValuesToObjectMatchedData = <T>(obj: IKeyValue[] | IAnyObject, matches: IMatchData[]): T => {
   const queryParamObj: IAnyObject = {};
 
   const valuesArray = Array.isArray(obj) ? obj : convertToKeyValues(obj);
@@ -787,10 +784,10 @@ export const evaluateKeyValuesToObjectMatchedData = (
       }
     });
 
-    return queryParamObj;
+    return queryParamObj as T;
   }
 
-  return {};
+  return {} as T;
 };
 
 export const getStyle = (style: string, formData: any): CSSProperties => {

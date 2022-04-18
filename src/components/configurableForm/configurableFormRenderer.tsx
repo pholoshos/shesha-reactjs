@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Form, Spin } from 'antd';
 import ComponentsContainer from '../formDesigner/componentsContainer';
 import { ROOT_COMPONENT_KEY } from '../../providers/form/models';
@@ -7,11 +7,12 @@ import { IConfigurableFormRendererProps } from './models';
 import { useMutate } from 'restful-react';
 import { ValidateErrorEntity } from '../../interfaces';
 import { addFormFieldsList } from '../../utils/form';
-import { removeZeroWidthCharsFromString } from '../..';
 import { useGlobalState } from '../../providers';
 import moment from 'moment';
 import { evaluateKeyValuesToObjectMatchedData } from '../../providers/form/utils';
 import cleanDeep from 'clean-deep';
+import { useFormEntity } from './useFormEntity';
+import { useSubmitUrl } from './useSubmitUrl';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   children,
@@ -21,11 +22,14 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   parentFormValues,
   initialValues,
   beforeSubmit,
+  prepareInitialValues,
   ...props
 }) => {
   const { setFormData, formData, allComponents, formMode, isDragging, formSettings, setValidationErrors } = useForm();
   const { excludeFormFieldsInPayload } = formSettings;
+  const fetchedFormEntity = useFormEntity(parentFormValues);
   const { globalState } = useGlobalState();
+  const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);
 
   const onFieldsChange = (changedFields: any[], allFields: any[]) => {
     if (props.onFieldsChange) props.onFieldsChange(changedFields, allFields);
@@ -50,29 +54,14 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
   }, [allComponents, initialValues]);
 
-  /**
-   * This function return the submit url.
-   *
-   * @returns
-   */
-  const submitUrl = useMemo(() => {
-    const { postUrl, putUrl, deleteUrl } = formSettings || {};
-    let url = postUrl; // Fallback for now
-
-    if (httpVerb === 'POST' && postUrl) {
-      url = postUrl;
-    }
-
-    if (httpVerb === 'PUT' && putUrl) {
-      url = putUrl;
-    }
-
-    if (httpVerb === 'DELETE' && deleteUrl) {
-      url = deleteUrl;
-    }
-
-    return removeZeroWidthCharsFromString(url);
-  }, [formSettings]);
+  useEffect(() => {
+    const computedInitialValues = fetchedFormEntity
+      ? prepareInitialValues
+        ? prepareInitialValues(fetchedFormEntity)
+        : fetchedFormEntity
+      : initialValues;
+    setFormData({ values: computedInitialValues, mergeValues: true });
+  }, [fetchedFormEntity]);
 
   const { mutate: doSubmit, loading: submitting } = useMutate({
     verb: httpVerb || 'POST', // todo: convert to configurable

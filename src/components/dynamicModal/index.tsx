@@ -1,16 +1,10 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { Modal, Form, ModalProps } from 'antd';
-import { useDynamicModals, useGlobalState } from '../../providers';
-import { ConfigurableForm, Show } from '../';
-import { FormMode, IFormDto } from '../../providers/form/models';
+import { useDynamicModals } from '../../providers';
+import { ConfigurableForm } from '../';
+import { FormMode } from '../../providers/form/models';
 import { IModalProps } from '../../providers/dynamicModal/models';
-import { evaluateString, useForm, useShaRouting } from '../..';
-import { useGet } from 'restful-react';
-import { useFormGet } from '../../apis/form';
-import { getQueryParams } from '../../utils/url';
-import { evaluateKeyValuesToObjectMatchedData } from '../../providers/form/utils';
-import { IAnyObject } from '../../interfaces';
-import ValidationErrors from '../validationErrors';
+import { evaluateString, useShaRouting } from '../..';
 import _ from 'lodash';
 
 export interface IDynamicModalProps extends Omit<IModalProps, 'fetchUrl'> {
@@ -22,10 +16,6 @@ export interface IDynamicModalProps extends Omit<IModalProps, 'fetchUrl'> {
   formId: string;
   mode: FormMode;
   onSubmitted?: (response: any) => void;
-}
-
-interface IDynamicModalState {
-  formDto: IFormDto;
 }
 
 export const DynamicModal: FC<IDynamicModalProps> = props => {
@@ -47,72 +37,9 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     mode = 'edit',
   } = props;
 
-  const { globalState } = useGlobalState();
-  const [state, setState] = useState<IDynamicModalState>();
-  const { formData } = useForm();
   const [form] = Form.useForm();
   const { hide, removeModal } = useDynamicModals();
   const { router } = useShaRouting();
-
-  const { refetch: fetchEntity, error: fetchEntityError, data: fetchedEntity } = useGet({
-    path: state?.formDto?.markup?.formSettings?.getUrl,
-    lazy: true,
-  });
-
-  const {
-    refetch: fetchFormById,
-    data: dataById,
-    loading: isFetchingFormById,
-    error: fetchFormByIdError,
-  } = useFormGet({ id: formId, lazy: true });
-
-  useEffect(() => {
-    if (formId) {
-      fetchFormById();
-    }
-  }, [formId]);
-
-  useEffect(() => {
-    if (!isFetchingFormById && dataById) {
-      const result = dataById?.result;
-      if (dataById) {
-        const formDto: IFormDto = { ...(result as any) };
-
-        formDto.markup = JSON.parse(result.markup);
-
-        const getUrl = formDto?.markup?.formSettings?.getUrl;
-
-        const urlObj = new URL(decodeURIComponent(getUrl));
-        const rawQueryParamsToBeEvaluated = getQueryParams(getUrl);
-        const queryParamsFromAddressBar = getQueryParams();
-
-        let queryParams: IAnyObject;
-
-        if (getUrl?.includes('?')) {
-          if (getUrl?.includes('{{')) {
-            queryParams = evaluateKeyValuesToObjectMatchedData(rawQueryParamsToBeEvaluated, [
-              { match: 'data', data: formData },
-              { match: 'parentFormValues', data: parentFormValues },
-              { match: 'globalState', data: globalState },
-              { match: 'query', data: queryParamsFromAddressBar },
-            ]);
-          } else {
-            queryParams = rawQueryParamsToBeEvaluated;
-          }
-        }
-
-        if (getUrl && !_.isEmpty(queryParams)) {
-          fetchEntity({
-            queryParams,
-            path: urlObj?.pathname,
-            base: urlObj?.origin,
-          });
-        }
-
-        setState(prev => ({ ...prev, formDto }));
-      }
-    }
-  }, [isFetchingFormById]);
 
   const onOk = () => {
     if (showModalFooter) {
@@ -159,12 +86,6 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
 
   const footerProps: ModalProps = showModalFooter ? {} : { footer: null };
 
-  const computedInitialValues = fetchedEntity
-    ? prepareInitialValues
-      ? prepareInitialValues(fetchedEntity?.result)
-      : fetchedEntity?.result
-    : initialValues;
-
   return (
     <Modal
       key={id}
@@ -176,26 +97,21 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
       destroyOnClose
       width={width} // Hardcoded for now. This will be configurable very shortly
     >
-      <ValidationErrors error={fetchEntityError} />
-      <ValidationErrors error={fetchFormByIdError} />
-
-      <Show when={Boolean(state?.formDto?.markup)} loadingComponent={<div>Loading...</div>}>
-        <ConfigurableForm
-          // id={formId}
-          form={form}
-          markup={state?.formDto?.markup}
-          mode={mode}
-          actions={{
-            close: onCancel,
-          }}
-          onFinish={onSubmitted}
-          onFinishFailed={onFailed}
-          beforeSubmit={beforeSubmit}
-          httpVerb={submitHttpVerb}
-          initialValues={computedInitialValues}
-          parentFormValues={parentFormValues}
-        />
-      </Show>
+      <ConfigurableForm
+        id={formId}
+        form={form}
+        mode={mode}
+        actions={{
+          close: onCancel,
+        }}
+        onFinish={onSubmitted}
+        prepareInitialValues={prepareInitialValues}
+        onFinishFailed={onFailed}
+        beforeSubmit={beforeSubmit}
+        httpVerb={submitHttpVerb}
+        initialValues={initialValues}
+        parentFormValues={parentFormValues}
+      />
     </Modal>
   );
 };

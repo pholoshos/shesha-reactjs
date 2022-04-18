@@ -35,11 +35,25 @@ export interface IConfigurableFormRendererProps<Values = any, FieldData = any> e
    */
   beforeSubmit?: (values: Values) => Promise<boolean>;
 
+  /**
+   * If passed and the form has `getUrl` defined, you can use this function to prepare `fetchedData` for as `initialValues`
+   * If you want to use only `initialValues` without combining them with `fetchedData` and then ignore `fetchedData`
+   *
+   * If not passed, `fetchedData` will be used as `initialValues` and, thus override initial values
+   *
+   * Whenever the form has a getUrl and that url has queryParams, buy default, the `dynamicModal` will fetch the form and, subsequently, the data
+   * for that form
+   */
+  prepareInitialValues?: (fetchedData: any) => any;
+
   form?: FormInstance<any>;
   actions?: IFormActions;
   sections?: IFormSections;
   context?: any; // todo: make generic
 
+  /**
+   * Submit http verb to use. By default it's `POST`
+   */
   httpVerb?: 'POST' | 'PUT' | 'DELETE';
   /**
    * Pass this if you do not want an API call to be made on your behalf when you submit the form

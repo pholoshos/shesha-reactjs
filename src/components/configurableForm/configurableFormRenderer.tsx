@@ -23,11 +23,12 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   initialValues,
   beforeSubmit,
   prepareInitialValues,
+  skipFetchData,
   ...props
 }) => {
   const { setFormData, formData, allComponents, formMode, isDragging, formSettings, setValidationErrors } = useForm();
   const { excludeFormFieldsInPayload } = formSettings;
-  const fetchedFormEntity = useFormEntity(parentFormValues);
+  const fetchedFormEntity = useFormEntity(parentFormValues, skipFetchData);
   const { globalState } = useGlobalState();
   const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);
 

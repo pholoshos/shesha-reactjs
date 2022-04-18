@@ -247,11 +247,12 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         path={path}
         id={formId}
         formRef={formRef}
-        mode={state?.mode || 'readonly'}
+        mode={state?.mode}
         form={form}
         onFinish={onFinish}
         initialValues={state?.fetchedEntity}
         skipPostOnFinish
+        skipFetchData
         className="sha-dynamic-page"
       />
     </Spin>

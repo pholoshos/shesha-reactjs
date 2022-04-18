@@ -60,6 +60,12 @@ export interface IConfigurableFormRendererProps<Values = any, FieldData = any> e
    */
   skipPostOnFinish?: boolean;
 
+  /**
+   * By default, if the GET Url has parameters, the form configurator will proceed to fetch the entity
+   * Pass this this is you wanna bypass that
+   */
+  skipFetchData?: boolean;
+
   //onFinishFailed?: (errorInfo: ValidateErrorEntity<Values>) => void;
 }
 

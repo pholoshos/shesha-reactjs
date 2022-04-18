@@ -11,7 +11,7 @@ import { getQueryParams } from '../../utils/url';
  * @param parentFormValues parent form values to use to create query parameters
  * @returns formEntity
  */
-export const useFormEntity = (parentFormValues: any) => {
+export const useFormEntity = (parentFormValues: any, skipFetchData: boolean) => {
   const { globalState } = useGlobalState();
   const { formData, formSettings } = useForm();
   const { backendUrl } = useSheshaApplication();
@@ -22,6 +22,9 @@ export const useFormEntity = (parentFormValues: any) => {
   });
 
   useEffect(() => {
+    if (skipFetchData) {
+      return;
+    }
     const getUrl = formSettings?.getUrl;
     if (formSettings && getUrl) {
       const fullUrl = `${backendUrl}${getUrl}`;

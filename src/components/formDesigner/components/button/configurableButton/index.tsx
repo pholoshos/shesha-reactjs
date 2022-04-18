@@ -67,13 +67,14 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       isVisible: false,
       formId: props.modalFormId,
       title: props.modalTitle,
+      // mode: props?.modalFormMode,
       showModalFooter: convertedProps?.showModalFooter,
       submitHttpVerb: convertedProps?.submitHttpVerb,
       onSuccessRedirectUrl: convertedProps?.onSuccessRedirectUrl,
       destroyOnClose: true,
       width: props?.modalWidth,
       initialValues: evaluateKeyValuesToObject(convertedProps?.additionalProperties, formData),
-      parentFormValues: formData || { id: '91081753-63b5-4d35-907c-6cacf1331d75' },
+      parentFormValues: formData,
       modalConfirmDialogMessage: convertedProps?.modalConfirmDialogMessage,
       onSubmitted: values => {
         onSuccessScriptExecutor(values);

@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { Form, Spin } from 'antd';
 import ComponentsContainer from '../formDesigner/componentsContainer';
 import { ROOT_COMPONENT_KEY } from '../../providers/form/models';
@@ -55,12 +55,22 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   }, [allComponents, initialValues]);
 
   useEffect(() => {
-    const computedInitialValues = fetchedFormEntity
-      ? prepareInitialValues
-        ? prepareInitialValues(fetchedFormEntity)
-        : fetchedFormEntity
-      : initialValues;
-    setFormData({ values: computedInitialValues, mergeValues: true });
+    if (fetchedFormEntity) {
+      const computedInitialValues = fetchedFormEntity
+        ? prepareInitialValues
+          ? prepareInitialValues(fetchedFormEntity)
+          : fetchedFormEntity
+        : initialValues;
+
+      // TODO: setFormData doesn't update the fields when the form that needs to be initialized it modal.
+      // TODO: Tried with mergeValues as both true | false. The state got updated properly but that doesn't reflect on the form
+      // TODO: Investigate this
+      if (form) {
+        form?.setFieldsValue(computedInitialValues);
+      }
+
+      setFormData({ values: computedInitialValues, mergeValues: false });
+    }
   }, [fetchedFormEntity]);
 
   const { mutate: doSubmit, loading: submitting } = useMutate({

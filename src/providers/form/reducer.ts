@@ -27,7 +27,16 @@ import {
 } from './models';
 import { FormActionEnums } from './actions';
 import { handleActions } from 'redux-actions';
-import { camelize, cloneComponents, convertActions, createComponentModelForDataProperty, findToolboxComponent, getCustomEnabledFunc, getCustomVisibilityFunc, processRecursive } from './utils';
+import {
+  camelize,
+  cloneComponents,
+  convertActions,
+  createComponentModelForDataProperty,
+  findToolboxComponent,
+  getCustomEnabledFunc,
+  getCustomVisibilityFunc,
+  processRecursive,
+} from './utils';
 import undoable, { includeAction } from 'redux-undo';
 import { IFormValidationErrors } from '../../interfaces';
 import { IDataSource } from '../formDesigner/models';
@@ -47,7 +56,7 @@ const addComponentToFlatStructure = (
   formComponents.forEach(component => {
     processRecursive(structure.toolboxComponentGroups, containerId, component, (cmp, parentId) => {
       allComponents[cmp.id] = cmp;
-      
+
       if (parentId !== containerId) {
         const relations = childRelations[parentId] ?? [];
         childRelations[parentId] = [...relations, cmp.id];
@@ -202,7 +211,7 @@ const reducer = handleActions<IFormStateContext, any>(
 
         // remove deleted containers
         oldContainers.forEach(oldContainer => {
-          if (!(newContainers.find(nc => nc.id === oldContainer.id))) {
+          if (!newContainers.find(nc => nc.id === oldContainer.id)) {
             delete newComponents[oldContainer.id];
 
             delete componentRelations[oldContainer.id];

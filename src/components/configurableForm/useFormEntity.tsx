@@ -21,8 +21,6 @@ export const useFormEntity = (parentFormValues: any) => {
     lazy: true,
   });
 
-  console.log('useFormEntity formSettings: ', formSettings);
-
   useEffect(() => {
     const getUrl = formSettings?.getUrl;
     if (formSettings && getUrl) {
@@ -47,6 +45,11 @@ export const useFormEntity = (parentFormValues: any) => {
       }
 
       if (getUrl && !_.isEmpty(queryParams)) {
+        if (Object.hasOwn(queryParams, 'id') && !Boolean(queryParams['id'])) {
+          console.error('id cannot be null');
+          return;
+        }
+
         fetchEntity({
           queryParams,
           path: urlObj?.pathname,

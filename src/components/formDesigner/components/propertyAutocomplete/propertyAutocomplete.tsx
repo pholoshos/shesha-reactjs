@@ -1,16 +1,18 @@
 import React, { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
-import { AutoComplete, Button, Input } from 'antd';
+import { AutoComplete, Button, Input, Select } from 'antd';
 import { ThunderboltOutlined } from '@ant-design/icons';
 import { useForm, useMetadata } from '../../../../providers';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
+import { camelCase } from 'lodash';
 
 export interface IPropertyAutocompleteProps {
   id: string;
-  value?: string;
+  value?: string | string[];
   style?: CSSProperties;
   dropdownStyle?: CSSProperties;
   size?: SizeType;
-  onChange?: (value: string) => void;
+  onChange?: (value: string | string[]) => void;
+  mode?: 'single' | 'multiple';
 }
 
 interface IOption {
@@ -18,7 +20,7 @@ interface IOption {
   label: string;
 }
 
-export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = props => {
+export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 'single', ...props }) => {
   const { style = { width: '32px' } } = props;
   const [options, setOptions] = useState<IOption[]>([]);
 
@@ -90,25 +92,42 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = props => {
 
   return (
     <>
-      <Input.Group style={props.style}>
-        <AutoComplete
+      {mode === 'single' ? (
+        <Input.Group style={props.style}>
+          <AutoComplete
+            value={props.value}
+            options={options}
+            style={{ width: 'calc(100% - 32px)' }}
+            onSelect={onSelect}
+            onSearch={onSearch}
+            notFoundContent="Not found"
+            size={props.size}
+            dropdownStyle={props?.dropdownStyle}
+          />
+          <Button
+            icon={<ThunderboltOutlined />}
+            onClick={onFillPropsClick}
+            disabled={!Boolean(selectedProperty)}
+            style={style}
+            size={props.size}
+          />
+        </Input.Group>
+      ) : (
+        <Select
+          allowClear
+          onChange={props?.onChange}
           value={props.value}
-          options={options}
-          style={{ width: 'calc(100% - 32px)' }}
-          onSelect={onSelect}
-          onSearch={onSearch}
-          notFoundContent="Not found"
+          mode={'multiple'}
+          showSearch
           size={props.size}
-          dropdownStyle={props?.dropdownStyle}
-        />
-        <Button
-          icon={<ThunderboltOutlined />}
-          onClick={onFillPropsClick}
-          disabled={!Boolean(selectedProperty)}
-          style={style}
-          size={props.size}
-        />
-      </Input.Group>
+        >
+          {options.map((option, index) => (
+            <Select.Option key={index} value={camelCase(option.value)}>
+              {option.label}
+            </Select.Option>
+          ))}
+        </Select>
+      )}
     </>
   );
 };

@@ -70,6 +70,12 @@ export interface IModalProps {
 
   destroyOnClose?: boolean;
 
+  /**
+   * If specified, the form data will not be fetched, even if the GET Url has query parameters that can be used to fetch the data.
+   * This is useful in cases whereby one form is used both for create and edit mode
+   */
+  skipFetchData?: boolean;
+
   width?: number;
 
   modalConfirmDialogMessage?: string;

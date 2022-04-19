@@ -35,6 +35,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     onFailed,
     prepareInitialValues,
     mode = 'edit',
+    skipFetchData,
   } = props;
 
   const [form] = Form.useForm();
@@ -111,6 +112,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
         httpVerb={submitHttpVerb}
         initialValues={initialValues}
         parentFormValues={parentFormValues}
+        skipFetchData={skipFetchData}
       />
     </Modal>
   );

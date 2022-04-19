@@ -81,6 +81,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
               initialValues={instance?.props?.initialValues}
               parentFormValues={instance?.props?.parentFormValues}
               destroyOnClose={instance?.props?.destroyOnClose}
+              skipFetchData={instance?.props?.skipFetchData}
               width={instance?.props?.width}
               modalConfirmDialogMessage={instance?.props?.modalConfirmDialogMessage}
               prepareInitialValues={instance?.props?.prepareInitialValues}

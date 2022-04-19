@@ -374,6 +374,15 @@
               "dataSourceType": "values"
             },
             {
+              "id": "39303c04-8523-4918-8323-36eb21c2cf4b",
+              "type": "checkbox",
+              "name": "skipFetchData",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "label": "Skip Fetch Data",
+              "defaultChecked": false,
+              "description": "If specified, the form data will not be fetched, even if the GET Url has query parameters that can be used to fetch the data. This is useful in cases whereby one form is used both for create and edit mode"
+            },
+            {
               "id": "2ab34541-6fa0-4be2-bb1e-eb65ec63b353",
               "type": "dropdown",
               "name": "modalActionOnSuccess",

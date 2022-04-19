@@ -1,19 +1,28 @@
 import _ from 'lodash';
 import { useEffect } from 'react';
+import { usePrevious } from 'react-use';
 import { useGet } from 'restful-react';
 import { IAnyObject } from '../../interfaces';
-import { useForm, useGlobalState, useSheshaApplication } from '../../providers';
+import { useSheshaApplication } from '../../providers';
+import { IFormSettings } from '../../providers/form/contexts';
 import { evaluateKeyValuesToObjectMatchedData } from '../../providers/form/utils';
 import { getQueryParams } from '../../utils/url';
+
+interface IUseFormEntityProps {
+  parentFormValues: any;
+  skipFetchData: boolean;
+  formData: any;
+  formSettings: IFormSettings;
+  globalState: any;
+}
 
 /**
  * A hook for fetching the form entity
  * @param parentFormValues parent form values to use to create query parameters
  * @returns formEntity
  */
-export const useFormEntity = (parentFormValues: any, skipFetchData: boolean) => {
-  const { globalState } = useGlobalState();
-  const { formData, formSettings } = useForm();
+export const useFormEntity = (props: IUseFormEntityProps) => {
+  const { parentFormValues, skipFetchData = false, formData, formSettings, globalState } = props;
   const { backendUrl } = useSheshaApplication();
 
   const { refetch: fetchEntity, error: fetchEntityError, data: fetchedEntity } = useGet({
@@ -21,11 +30,19 @@ export const useFormEntity = (parentFormValues: any, skipFetchData: boolean) => 
     lazy: true,
   });
 
+  const previousProps = usePrevious(props);
+
   useEffect(() => {
+    const getUrl = formSettings?.getUrl;
+
     if (skipFetchData) {
       return;
     }
-    const getUrl = formSettings?.getUrl;
+
+    if (_.isEqual(props, previousProps)) {
+      return;
+    }
+
     if (formSettings && getUrl) {
       const fullUrl = `${backendUrl}${getUrl}`;
       const urlObj = new URL(decodeURIComponent(fullUrl));
@@ -60,7 +77,7 @@ export const useFormEntity = (parentFormValues: any, skipFetchData: boolean) => 
         });
       }
     }
-  }, [formSettings]);
+  }, [parentFormValues, skipFetchData, formData, formSettings, globalState]);
 
   if (fetchEntityError) {
     return new Error(fetchEntityError?.message ?? fetchEntityError?.data);

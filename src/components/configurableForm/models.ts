@@ -10,6 +10,7 @@ import { ValidateErrorEntity } from '../../interfaces';
 type BaseFormProps = Pick<FormProps, 'size'>;
 
 export interface IConfigurableFormRendererProps<Values = any, FieldData = any> extends BaseFormProps {
+  formId?: string; // This will be important for persisting
   labelCol?: ColProps;
   wrapperCol?: ColProps;
   layout?: FormLayout;

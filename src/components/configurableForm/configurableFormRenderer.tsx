@@ -24,13 +24,17 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   beforeSubmit,
   prepareInitialValues,
   skipFetchData,
+  formId,
   ...props
 }) => {
   const { setFormData, formData, allComponents, formMode, isDragging, formSettings, setValidationErrors } = useForm();
-  const { excludeFormFieldsInPayload } = formSettings;
-  const fetchedFormEntity = useFormEntity(parentFormValues, skipFetchData);
+  const { excludeFormFieldsInPayload, onInitialize, onUpdate } = formSettings;
   const { globalState } = useGlobalState();
   const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);
+
+  const fetchedFormEntity = useFormEntity({ parentFormValues, skipFetchData, formData, formSettings, globalState });
+
+  // const [persistedValue, setPersistedValue] = useLocalStorage(`Form_${uniqueFormId}`);
 
   const onFieldsChange = (changedFields: any[], allFields: any[]) => {
     if (props.onFieldsChange) props.onFieldsChange(changedFields, allFields);
@@ -46,6 +50,29 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
     // update validation rules
   };
+
+  useEffect(() => {
+    getExpressionExecutor(onInitialize); // On Initialize
+  }, []);
+
+  useEffect(() => {
+    getExpressionExecutor(onUpdate); // On Update
+  }, [formData]);
+
+  // useEffect(() => {
+  //   return () => {
+  //     if (persistedValues?.length && formData) {
+  //       console.log('Updating to localStore', formData, uniqueFormId);
+
+  //       setPersistedValue(getObjIncludedProps(formData, persistedValues));
+  //     }
+  //   };
+  // }, [formData]);
+
+  // const previousPersistedValue = usePrevious(persistedValue);
+  // useEffect(() => {
+  //   console.log('ConfigurableFormRenderer persistedValue ', persistedValue);
+  // }, [persistedValue]);
 
   // reset form to initial data on any change of components or initialData
   useEffect(() => {

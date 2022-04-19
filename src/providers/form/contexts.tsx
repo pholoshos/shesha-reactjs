@@ -68,7 +68,11 @@ export interface IFormSettings {
   showModeToggler?: boolean;
   preparedValues?: string;
   size?: SizeType;
+  persistedValues?: string[];
   excludeFormFieldsInPayload?: string;
+  uniqueFormId?: string;
+  onInitialize?: string;
+  onUpdate?: string;
   initialValues?: IKeyValue[];
 }
 

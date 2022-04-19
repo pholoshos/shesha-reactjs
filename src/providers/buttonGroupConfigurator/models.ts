@@ -66,6 +66,7 @@ export interface IButtonGroupButton extends IButtonGroupItemBase {
   modalFormId?: string;
   modalTitle?: string;
   modalFormMode?: FormMode;
+  skipFetchData?: boolean;
   modalWidth?: number;
   modalActionOnSuccess?: 'keepOpen' | 'navigateToUrl' | 'close' | undefined;
   showConfirmDialogBeforeSubmit?: boolean;

@@ -165,6 +165,33 @@
       "validate": {}
     },
     {
+      "id": "52f4460d-2e64-4d79-a900-7cd28b0bebd3",
+      "type": "propertyAutocomplete",
+      "name": "persistedValues",
+      "label": "Persisted properties",
+      "mode": "multiple",
+      "labelAlign": "right",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A list of form properties you want persisted"
+    },
+    {
+      "id": "ad28d795-92d8-4470-a87e-603822368cc8",
+      "type": "textField",
+      "name": "uniqueFormId",
+      "label": "Unique Form Id",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return !!data.persistedValues?.length",
+      "validate": {
+        "required": true
+      },
+      "description": "This is very important since some form are rendered using the markup, in which case they wouldn't have the path or id that could be used as a unique id of the form"
+    },
+    {
       "id": "58f715b9-624b-4189-812c-6144cafb7405",
       "type": "labelValueEditor",
       "name": "initialValues",
@@ -211,6 +238,80 @@
         { "name": "initialValues", "description": "Initial values", "type": "object" }
       ],
       "description": "Write a code that allows you to return an object whose values will be merged with the form state before submit. Check the variables tab for exposed variables"
+    },
+    {
+      "id": "087a4e7d-ff28-4175-9221-61bef0bbaea2",
+      "type": "codeEditor",
+      "name": "onInitialize",
+      "label": "On Initialize",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "",
+      "autoSize": false,
+      "showCount": false,
+      "allowClear": false,
+      "validate": {},
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        {
+          "name": "parentFormValues",
+          "description": "Parent form values. The values of the form rendering the dialog.",
+          "type": "object"
+        },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "initialValues", "description": "Initial values", "type": "object" }
+      ],
+      "description": "This action will be executed whenever the form initializes"
+    },
+    {
+      "id": "5092dd2b-c514-4b06-bfb5-546ce94fab97",
+      "type": "codeEditor",
+      "name": "onUpdate",
+      "label": "On Update",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "",
+      "autoSize": false,
+      "showCount": false,
+      "allowClear": false,
+      "validate": {},
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        {
+          "name": "parentFormValues",
+          "description": "Parent form values. The values of the form rendering the dialog.",
+          "type": "object"
+        },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "initialValues", "description": "Initial values", "type": "object" }
+      ],
+      "description": "This action will be executed whenever the form updates"
+    },
+    {
+      "id": "58f715b9-624b-4189-812c-6144cafb7405",
+      "type": "labelValueEditor",
+      "name": "initialValues",
+      "parentId": "root",
+      "label": "Initial Values",
+      "labelTitle": "Key",
+      "labelName": "key",
+      "valueTitle": "Value",
+      "valueName": "value",
+      "ignorePrefixesOnNewItems": true,
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        {
+          "name": "parentFormValues",
+          "description": "Parent form values. The values of the form rendering the dialog.",
+          "type": "object"
+        },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ],
+      "description": "Enter values that you would like passed to the server as payload. Note that you can also use Mustache expression as in {{parent.id}}. You have variables 'data', 'parentFormValues' and 'globalState' at your disposal"
     }
   ],
   "formSettings": { "layout": "horizontal", "colon": true, "labelCol": { "span": 5 }, "wrapperCol": { "span": 19 } }

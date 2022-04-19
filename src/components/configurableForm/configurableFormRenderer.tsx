@@ -4,15 +4,17 @@ import ComponentsContainer from '../formDesigner/componentsContainer';
 import { ROOT_COMPONENT_KEY } from '../../providers/form/models';
 import { useForm } from '../../providers/form';
 import { IConfigurableFormRendererProps } from './models';
-import { useMutate } from 'restful-react';
-import { ValidateErrorEntity } from '../../interfaces';
+import { useGet, useMutate } from 'restful-react';
+import { IAnyObject, ValidateErrorEntity } from '../../interfaces';
 import { addFormFieldsList } from '../../utils/form';
-import { useGlobalState } from '../../providers';
+import { useGlobalState, useSheshaApplication } from '../../providers';
 import moment from 'moment';
 import { evaluateKeyValuesToObjectMatchedData } from '../../providers/form/utils';
 import cleanDeep from 'clean-deep';
-import { useFormEntity } from './useFormEntity';
 import { useSubmitUrl } from './useSubmitUrl';
+import { getQueryParams } from '../../utils/url';
+import _ from 'lodash';
+import { usePrevious } from 'react-use';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   children,
@@ -31,10 +33,12 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const { excludeFormFieldsInPayload, onInitialize, onUpdate } = formSettings;
   const { globalState } = useGlobalState();
   const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);
-
-  const fetchedFormEntity = useFormEntity({ parentFormValues, skipFetchData, formData, formSettings, globalState });
-
-  // const [persistedValue, setPersistedValue] = useLocalStorage(`Form_${uniqueFormId}`);
+  const { backendUrl } = useSheshaApplication();
+  // const fetchedFormEntity = useFormEntity({ parentFormValues, skipFetchData, formData, formSettings, globalState });
+  const { refetch: fetchEntity, data: fetchedEntity } = useGet({
+    path: formSettings?.getUrl || '',
+    lazy: true,
+  });
 
   const onFieldsChange = (changedFields: any[], allFields: any[]) => {
     if (props.onFieldsChange) props.onFieldsChange(changedFields, allFields);
@@ -50,6 +54,63 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
     // update validation rules
   };
+
+  const getUrl = formSettings?.getUrl;
+
+  const previousUrl = usePrevious(getUrl);
+  const previousFormData = usePrevious(formData);
+  const previousGlobalState = usePrevious(globalState);
+  const previousParentFormValues = usePrevious(parentFormValues);
+
+  useEffect(() => {
+    if (skipFetchData) {
+      return;
+    }
+
+    if (
+      !_.isEqual(previousUrl, getUrl) ||
+      !_.isEqual(previousFormData, formData) ||
+      !_.isEqual(previousGlobalState, globalState) ||
+      !_.isEqual(previousParentFormValues, parentFormValues)
+    ) {
+      return;
+    }
+
+    if (getUrl) {
+      const fullUrl = `${backendUrl}${getUrl}`;
+      const urlObj = new URL(decodeURIComponent(fullUrl));
+      const rawQueryParamsToBeEvaluated = getQueryParams(fullUrl);
+      const queryParamsFromAddressBar = getQueryParams();
+
+      let queryParams: IAnyObject;
+
+      if (fullUrl?.includes('?')) {
+        if (fullUrl?.includes('{{')) {
+          queryParams = evaluateKeyValuesToObjectMatchedData(rawQueryParamsToBeEvaluated, [
+            { match: 'data', data: formData },
+            { match: 'parentFormValues', data: parentFormValues },
+            { match: 'globalState', data: globalState },
+            { match: 'query', data: queryParamsFromAddressBar },
+          ]);
+        } else {
+          queryParams = rawQueryParamsToBeEvaluated;
+        }
+      }
+
+      if (getUrl && !_.isEmpty(queryParams)) {
+        if (Object.hasOwn(queryParams, 'id') && !Boolean(queryParams['id'])) {
+          console.error('id cannot be null');
+          return;
+        }
+
+        fetchEntity({
+          queryParams,
+          path: urlObj?.pathname,
+          base: urlObj?.origin,
+        });
+      }
+    }
+  }, [getUrl, formData, globalState, parentFormValues]);
 
   useEffect(() => {
     getExpressionExecutor(onInitialize); // On Initialize
@@ -81,6 +142,8 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
       form.resetFields();
     }
   }, [allComponents, initialValues]);
+
+  const fetchedFormEntity = fetchedEntity?.result;
 
   useEffect(() => {
     if (fetchedFormEntity) {

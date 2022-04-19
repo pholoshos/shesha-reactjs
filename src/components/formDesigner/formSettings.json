@@ -192,7 +192,7 @@
       "description": "This is very important since some form are rendered using the markup, in which case they wouldn't have the path or id that could be used as a unique id of the form"
     },
     {
-      "id": "58f715b9-624b-4189-812c-6144cafb7405",
+      "id": "6c121baa-57e3-4965-a429-0632dadc2a99",
       "type": "labelValueEditor",
       "name": "initialValues",
       "parentId": "root",
@@ -292,7 +292,7 @@
       "description": "This action will be executed whenever the form updates"
     },
     {
-      "id": "58f715b9-624b-4189-812c-6144cafb7405",
+      "id": "893f155b-2020-4b2f-8876-b86e3614ce46",
       "type": "labelValueEditor",
       "name": "initialValues",
       "parentId": "root",

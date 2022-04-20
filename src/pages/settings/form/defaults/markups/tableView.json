@@ -105,7 +105,7 @@
                     {
                       "id": "3y491cGD3fkv8fCRmRhZU",
                       "type": "button",
-                      "name": "button1",
+                      "name": "btnFilter",
                       "label": "",
                       "labelAlign": "right",
                       "parentId": "O-ieWwy7eZB-jepFIUeiO",
@@ -116,12 +116,15 @@
                       "buttonType": "link",
                       "icon": "FilterOutlined",
                       "settingsValidationErrors": [],
-                      "customAction": "toggleAdvancedFilter"
+                      "customAction": "toggleAdvancedFilter",
+                      "uniqueStateId": "TABLE_VIEW_TEMPLATE_ID",
+                      "buttonAction": "executeFormAction",
+                      "formAction": "TOGGLE_ADVANCED_FILTER"
                     },
                     {
                       "id": "ULOVfm7i7MfYK8PSRtfWq",
                       "type": "button",
-                      "name": "button2",
+                      "name": "btnToggleColumn",
                       "label": "",
                       "labelAlign": "right",
                       "parentId": "O-ieWwy7eZB-jepFIUeiO",
@@ -132,7 +135,10 @@
                       "buttonType": "link",
                       "icon": "SlidersOutlined",
                       "settingsValidationErrors": [],
-                      "customAction": "toggleColumnsSelector"
+                      "customAction": "toggleColumnsSelector",
+                      "buttonAction": "executeFormAction",
+                      "formAction": "TOGGLE_COLUMNS_SELECTOR",
+                      "uniqueStateId": "TABLE_VIEW_TEMPLATE_ID"
                     },
                     {
                       "id": "8Y58eVa9ubhYs83X68ZZk",
@@ -149,7 +155,7 @@
                     {
                       "id": "7-jYsb8fQY2f1Hrw6s2Vr",
                       "type": "button",
-                      "name": "button3",
+                      "name": "btnRefresh",
                       "label": "",
                       "labelAlign": "right",
                       "parentId": "O-ieWwy7eZB-jepFIUeiO",
@@ -160,7 +166,10 @@
                       "buttonType": "link",
                       "icon": "ReloadOutlined",
                       "settingsValidationErrors": [],
-                      "customAction": "refresh"
+                      "customAction": "refresh",
+                      "buttonAction": "executeFormAction",
+                      "formAction": "REFRESH_TABLE",
+                      "uniqueStateId": "TABLE_VIEW_TEMPLATE_ID"
                     }
                   ],
                   "direction": "horizontal",
@@ -197,98 +206,46 @@
                   "customVisibility": null,
                   "components": [
                     {
-                      "id": "r_K43R86pKL4mbwRVynvE",
-                      "type": "toolbar",
-                      "name": "toolbar2",
-                      "label": "Toolbar2",
+                      "id": "nTwIhcOwPLNiFCHkcl6ZH",
+                      "type": "buttonGroup",
+                      "name": "buttonGroup1",
+                      "label": "Button Group1",
                       "labelAlign": "right",
                       "parentId": "46jNfZhuX5Qf-6cmtqWrO",
                       "hidden": false,
-                      "customVisibility": null,
+                      "isDynamic": false,
                       "items": [
                         {
-                          "id": "udkemPOwpE4itKlDsYpL4",
+                          "id": "mrWgvR9f5Y38nFSWDmc1b",
                           "itemType": "item",
                           "sortOrder": 0,
-                          "name": "Add",
+                          "name": "button1",
+                          "label": "Add",
                           "itemSubType": "button",
+                          "chosen": false,
                           "icon": "PlusOutlined",
                           "buttonType": "link",
+                          "uniqueStateId": "TABLE_VIEW_TEMPLATE_ID",
                           "buttonAction": "dialogue",
-                          "modalTitle": "Add New Area",
-                          "selected": false,
-                          "modalFormId": "28eb2ba3-37d2-4213-88a5-313b61b95668",
-                          "chosen": false
+                          "modalTitle": "Add New Record",
+                          "modalFormMode": "edit",
+                          "skipFetchData": true,
+                          "selected": false
                         },
                         {
-                          "id": "D0xNVk62p9GFliocBS9jA",
+                          "id": "DynXwKltw4gpJiAC0QU1R",
                           "itemType": "item",
-                          "sortOrder": 3,
-                          "name": "separator",
-                          "itemSubType": "separator",
-                          "selected": false,
-                          "childItems": [
-                            {
-                              "id": "nvnj0Q1wivGgkrCcfl9Jc",
-                              "itemType": "item",
-                              "sortOrder": 4,
-                              "name": "Open",
-                              "itemSubType": "button",
-                              "buttonAction": "navigate",
-                              "buttonType": "primary",
-                              "customVisibility": "",
-                              "targetUrl": "/page/details?id={{selectedRow.id}}",
-                              "selected": false
-                            },
-                            {
-                              "id": "cWvZyb0P456Ndcpyb7vrz",
-                              "itemType": "item",
-                              "sortOrder": 5,
-                              "name": "Edit",
-                              "itemSubType": "button",
-                              "buttonType": "primary",
-                              "buttonAction": "navigate",
-                              "targetUrl": "/page/edit?id={{selectedRow.id}}",
-                              "customVisibility": "",
-                              "selected": false
-                            }
-                          ],
-                          "chosen": false
-                        },
-                        {
-                          "id": "RjL_C607edu-_k4r5Oj_g",
-                          "itemType": "item",
-                          "sortOrder": 2,
-                          "name": "Export",
+                          "sortOrder": 1,
+                          "name": "button2",
+                          "label": "Export",
                           "itemSubType": "button",
+                          "chosen": false,
                           "icon": "DownloadOutlined",
                           "buttonType": "link",
                           "buttonAction": "executeFormAction",
-                          "formAction": "exportToExcel",
-                          "selected": false,
-                          "childItems": [
-                            {
-                              "id": "nvnj0Q1wivGgkrCcfl9Jc",
-                              "itemType": "item",
-                              "sortOrder": 4,
-                              "name": "Open",
-                              "itemSubType": "button",
-                              "buttonAction": "navigate",
-                              "buttonType": "primary",
-                              "customVisibility": "",
-                              "targetUrl": "/page/details?id={{selectedRow.id}}",
-                              "selected": false
-                            },
-                            {
-                              "id": "D0xNVk62p9GFliocBS9jA",
-                              "itemType": "item",
-                              "sortOrder": 3,
-                              "name": "separator",
-                              "itemSubType": "separator",
-                              "selected": false
-                            }
-                          ],
-                          "chosen": false
+                          "formAction": "EXPORT_TO_EXCEL",
+                          "uniqueStateId": "TABLE_VIEW_TEMPLATE_ID",
+                          "selected": false
                         }
                       ]
                     },
@@ -313,7 +270,11 @@
                           "modalFormId": "07e25729-5736-43bc-b561-6e772a4b5bbd",
                           "modalActionOnSuccess": "refresh123",
                           "modalFormModel": [
-                            { "id": "359dd655-1b25-469d-84dd-9ee2d0fb2511", "key": "id", "value": "new Value" }
+                            {
+                              "id": "359dd655-1b25-469d-84dd-9ee2d0fb2511",
+                              "key": "id",
+                              "value": "new Value"
+                            }
                           ]
                         },
                         {
@@ -331,7 +292,7 @@
                           "buttonType": "button",
                           "visibility": "return context.selectedRow && context.selectedRow.id",
                           "buttonAction": "navigate",
-                          "targetUrl": "/administration/user-management/details?id={{selectedRow.id}}"
+                          "targetUrl": "/administration/user-management/details?id="
                         },
                         {
                           "id": "ef7b5318-1cf0-4fe0-805b-ab13d71f1d5a",
@@ -340,7 +301,7 @@
                           "name": "Edit",
                           "buttonType": "button",
                           "buttonAction": "navigate",
-                          "targetUrl": "/administration/user-management/edit?id={{selectedRow.id}}",
+                          "targetUrl": "/administration/user-management/edit?id=",
                           "visibility": "return context.selectedRow && context.selectedRow.id"
                         },
                         {
@@ -459,14 +420,42 @@
                   "hidden": false,
                   "customVisibility": null,
                   "isDynamic": false,
-                  "items": []
+                  "items": [
+                    {
+                      "id": "E_QggxSvlks2V2O7Mt631",
+                      "itemType": "item",
+                      "sortOrder": 0,
+                      "caption": "",
+                      "columnType": "action",
+                      "isVisible": true,
+                      "chosen": false,
+                      "icon": "SearchOutlined",
+                      "minWidth": 30,
+                      "maxWidth": 30,
+                      "selected": false
+                    },
+                    {
+                      "id": "Uazw5Wg9SRb_AETxGSWIK",
+                      "itemType": "item",
+                      "sortOrder": 1,
+                      "caption": "",
+                      "columnType": "action",
+                      "isVisible": true,
+                      "chosen": false,
+                      "icon": "EditOutlined",
+                      "minWidth": 30,
+                      "maxWidth": 30,
+                      "selected": false
+                    }
+                  ]
                 }
               ]
             }
           ],
           "description": "",
           "settingsValidationErrors": [],
-          "entityType": "{{modelType}}"
+          "entityType": "{{modelType}}",
+          "uniqueStateId": "TABLE_VIEW_TEMPLATE_ID"
         }
       ]
     }
@@ -474,8 +463,12 @@
   "formSettings": {
     "layout": "horizontal",
     "colon": true,
-    "labelCol": { "span": 5 },
-    "wrapperCol": { "span": 13 },
+    "labelCol": {
+      "span": 5
+    },
+    "wrapperCol": {
+      "span": 13
+    },
     "modelType": "{{modelType}}"
   }
 }

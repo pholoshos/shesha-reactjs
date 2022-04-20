@@ -10,6 +10,7 @@ import { useForm } from '../../../..';
 
 export interface IPropertyAutocompleteComponentProps extends IConfigurableFormComponent {
   dropdownStyle?: string;
+  mode?: 'single' | 'multiple';
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -27,6 +28,7 @@ const PropertyAutocompleteComponent: IToolboxComponent<IPropertyAutocompleteComp
           style={getStyle(model?.style, formData)}
           dropdownStyle={getStyle(model?.dropdownStyle, formData)}
           size={model.size}
+          mode={model?.mode}
         />
       </FormItem>
     );

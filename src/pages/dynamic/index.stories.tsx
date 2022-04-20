@@ -11,8 +11,9 @@ export default {
 } as Meta;
 
 const DEFAULT_ARGS: IDynamicPageProps = {
-  path: 'details-view-demo',
-  id: '09be9a31-6697-4c50-9d15-0b381ee01030',
+  path: 'facility-patient-details',
+  id: 'f84056e6-73fb-4609-a286-07c2244e4c7b',
+  mode: 'edit',
 };
 
 // Create a master template for mapping args to render the Button component

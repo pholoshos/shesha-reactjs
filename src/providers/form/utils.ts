@@ -742,11 +742,27 @@ interface IMatchData {
   data: any;
 }
 
-export const evaluateKeyValuesToObjectMatchedData = (arr: IKeyValue[], matches: IMatchData[]): IAnyObject => {
+const convertToKeyValues = (obj: IAnyObject): IKeyValue[] => {
+  return Object.keys(obj).map(key => ({
+    key,
+    value: obj[key],
+  }));
+};
+
+export const evaluateKeyValuesToObjectMatchedData = <T extends any>(
+  obj: IKeyValue[] | IAnyObject,
+  matches: IMatchData[]
+): T => {
   const queryParamObj: IAnyObject = {};
 
-  if (arr?.length) {
-    arr?.forEach(({ key, value }) => {
+  if (!obj) {
+    return {} as T;
+  }
+
+  const valuesArray = Array.isArray(obj) ? obj : convertToKeyValues(obj);
+
+  if (valuesArray?.length) {
+    valuesArray?.forEach(({ key, value }) => {
       if (key?.length && value.length) {
         let matchedKey = '';
 
@@ -765,10 +781,24 @@ export const evaluateKeyValuesToObjectMatchedData = (arr: IKeyValue[], matches: 
       }
     });
 
-    return queryParamObj;
+    return queryParamObj as T;
   }
 
-  return {};
+  return {} as T;
+};
+
+export const getObjIncludedProps = (obj: IAnyObject, includedProps: string[]): IAnyObject => {
+  const response: IAnyObject = {};
+
+  if (includedProps?.length) {
+    includedProps?.forEach(key => {
+      if (obj[key]) {
+        response[key] = obj[key];
+      }
+    });
+  }
+
+  return response;
 };
 
 export const getStyle = (style: string, formData: any): CSSProperties => {

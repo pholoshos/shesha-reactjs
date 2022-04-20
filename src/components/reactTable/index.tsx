@@ -180,11 +180,7 @@ const ReactTable: FC<IReactTableProps> = ({
   const onResizeClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event?.stopPropagation();
 
   const handleSelectRow = (row: Row<object>) => {
-    if (onSelectRow) {
-      if (row?.index === selectedRowIndex) {
-        onSelectRow(null, null);
-      } else onSelectRow(row?.index, row?.original);
-    }
+    onSelectRow(row?.index, row?.original);
   };
 
   useEffect(() => {

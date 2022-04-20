@@ -93,7 +93,9 @@ export const TableWrapper: FC<ITableComponentProps> = ({
   if (isDesignMode && !tableId && !entityType) return <NotConfiguredWarning />;
 
   const onSelectRow = (index: number, row: any) => {
-    setSelectedRow(index, row);
+    if (row) {
+      setSelectedRow(index, row);
+    }
   };
 
   if (isNotWrapped) {

@@ -1,3 +1,4 @@
+import { FormMode } from './../form/models';
 import { ValidateErrorEntity } from '../../interfaces';
 import { IKeyValue } from '../../interfaces/keyValue';
 
@@ -56,6 +57,11 @@ export interface IModalProps {
   onSuccessRedirectUrl?: string;
 
   /**
+   * Mode of the form: "designer" | "edit" | "readonly"
+   */
+  mode?: FormMode;
+
+  /**
    * Initial values of the modal
    */
   initialValues?: any;
@@ -64,9 +70,26 @@ export interface IModalProps {
 
   destroyOnClose?: boolean;
 
+  /**
+   * If specified, the form data will not be fetched, even if the GET Url has query parameters that can be used to fetch the data.
+   * This is useful in cases whereby one form is used both for create and edit mode
+   */
+  skipFetchData?: boolean;
+
   width?: number;
 
   modalConfirmDialogMessage?: string;
+
+  /**
+   * If passed and the form has `getUrl` defined, you can use this function to prepare `fetchedData` for as `initialValues`
+   * If you want to use only `initialValues` without combining them with `fetchedData` and then ignore `fetchedData`
+   *
+   * If not passed, `fetchedData` will be used as `initialValues`
+   *
+   * Whenever the form has a getUrl and that url has queryParams, buy default, the `dynamicModal` will fetch the form and, subsequently, the data
+   * for that form
+   */
+  prepareInitialValues?: (fetchedData: any) => any;
 }
 
 /**

@@ -10,10 +10,11 @@ export default handleActions<IDataTableSelectionStateContext, any>(
       action: ReduxActions.Action<ISelectionProps>
     ) => {
       const { payload } = action;
+      const selectedRow = state?.selectedRow?.id === payload?.id ? null : payload;
 
       return {
         ...state,
-        selectedRow: payload,
+        selectedRow,
       };
     },
   },

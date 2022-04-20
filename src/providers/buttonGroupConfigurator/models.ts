@@ -1,3 +1,4 @@
+import { FormMode } from './../form/models';
 import { CSSProperties } from 'react';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ButtonType } from 'antd/lib/button';
@@ -64,6 +65,8 @@ export interface IButtonGroupButton extends IButtonGroupItemBase {
   size?: SizeType;
   modalFormId?: string;
   modalTitle?: string;
+  modalFormMode?: FormMode;
+  skipFetchData?: boolean;
   modalWidth?: number;
   modalActionOnSuccess?: 'keepOpen' | 'navigateToUrl' | 'close' | undefined;
   showConfirmDialogBeforeSubmit?: boolean;

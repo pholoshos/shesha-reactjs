@@ -5,6 +5,7 @@ import { ConfigurableForm } from '../';
 import { FormMode } from '../../providers/form/models';
 import { IModalProps } from '../../providers/dynamicModal/models';
 import { evaluateString, useShaRouting } from '../..';
+import _ from 'lodash';
 
 export interface IDynamicModalProps extends Omit<IModalProps, 'fetchUrl'> {
   id: string;
@@ -32,9 +33,10 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     width = 800,
     modalConfirmDialogMessage,
     onFailed,
+    prepareInitialValues,
+    mode = 'edit',
+    skipFetchData,
   } = props;
-
-  // const { formData } = useForm();
 
   const [form] = Form.useForm();
   const { hide, removeModal } = useDynamicModals();
@@ -99,16 +101,18 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
       <ConfigurableForm
         id={formId}
         form={form}
-        mode="edit"
+        mode={mode}
         actions={{
           close: onCancel,
         }}
         onFinish={onSubmitted}
+        prepareInitialValues={prepareInitialValues}
         onFinishFailed={onFailed}
         beforeSubmit={beforeSubmit}
         httpVerb={submitHttpVerb}
         initialValues={initialValues}
         parentFormValues={parentFormValues}
+        skipFetchData={skipFetchData}
       />
     </Modal>
   );

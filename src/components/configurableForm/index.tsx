@@ -13,8 +13,6 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
   const handleEditMode = Boolean(id) || Boolean(path);
   const { router } = useShaRouting(false);
 
-  // onSuccess siwtch to readonly mode
-
   return (
     <ConfigurableComponent
       canConfigure={handleEditMode}
@@ -40,7 +38,7 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
             formRef={formRef}
             onValuesChange={restProps.onValuesChange}
           >
-            <ConfigurableFormRenderer {...restProps} />
+            <ConfigurableFormRenderer {...restProps} formId={id} />
           </FormProvider>
         </div>
       )}

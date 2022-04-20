@@ -38,9 +38,10 @@ const reducer = handleActions<IDataTableStateContext, any>(
   {
     [DataTableActionEnums.ChangeSelectedRow]: (state: IDataTableStateContext, action: ReduxActions.Action<any>) => {
       const { payload } = action;
+
       return {
         ...state,
-        selectedRow: payload,
+        selectedRow: payload?.id === state?.selectedRow?.id ? null : payload,
       };
     },
 

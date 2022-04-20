@@ -1,5 +1,6 @@
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ReactNode } from 'react';
+import { FormDto } from '../../apis/form';
 import { IAsyncValidationError } from '../../interfaces';
 import { IFormSettings } from './contexts';
 
@@ -211,4 +212,8 @@ export interface IFormSection {
   name: string;
   /** Action body */
   body: (data?: any) => ReactNode;
+}
+
+export interface IFormDto extends Omit<FormDto, 'markup'> {
+  markup: FormMarkupWithSettings;
 }

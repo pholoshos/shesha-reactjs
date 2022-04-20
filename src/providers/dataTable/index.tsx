@@ -438,7 +438,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   };
 
   const changeSelectedRow = (val: any) => {
-    dispatch(changeSelectedRowAction(camelCaseKeys(val || {}, { deep: true })));
+    dispatch(changeSelectedRowAction(val ? camelCaseKeys(val, { deep: true }) : null));
   };
 
   const changeSelectedStoredFilterIds = (selectedStoredFilterIds: string[]) => {

@@ -6,7 +6,7 @@ module.exports = (function name() {
       src: './src/styles/index.less',
       dest: './dist/styles.less',
     },
-    function (err) {
+    err => {
       if (err) {
         console.log('lessBundle error :>> ', err);
       }

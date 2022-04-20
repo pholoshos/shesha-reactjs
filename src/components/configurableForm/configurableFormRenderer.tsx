@@ -1,17 +1,21 @@
-import React, { FC, useEffect, useMemo } from 'react';
-import { Form, Spin } from 'antd';
+import React, { FC, useEffect } from 'react';
+import { Form, message, Spin } from 'antd';
 import ComponentsContainer from '../formDesigner/componentsContainer';
 import { ROOT_COMPONENT_KEY } from '../../providers/form/models';
 import { useForm } from '../../providers/form';
 import { IConfigurableFormRendererProps } from './models';
-import { useMutate } from 'restful-react';
-import { ValidateErrorEntity } from '../../interfaces';
+import { useGet, useMutate } from 'restful-react';
+import { IAnyObject, ValidateErrorEntity } from '../../interfaces';
 import { addFormFieldsList } from '../../utils/form';
-import { removeZeroWidthCharsFromString } from '../..';
-import { useGlobalState } from '../../providers';
+import { useGlobalState, useSheshaApplication } from '../../providers';
 import moment from 'moment';
 import { evaluateKeyValuesToObjectMatchedData } from '../../providers/form/utils';
 import cleanDeep from 'clean-deep';
+import { useSubmitUrl } from './useSubmitUrl';
+import { getQueryParams } from '../../utils/url';
+import _ from 'lodash';
+import { usePrevious } from 'react-use';
+import { axiosHttp } from '../../apis/axios';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   children,
@@ -21,11 +25,23 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   parentFormValues,
   initialValues,
   beforeSubmit,
+  prepareInitialValues,
+  skipFetchData,
+  formId,
   ...props
 }) => {
   const { setFormData, formData, allComponents, formMode, isDragging, formSettings, setValidationErrors } = useForm();
-  const { excludeFormFieldsInPayload } = formSettings;
+  const { excludeFormFieldsInPayload, onInitialize, onUpdate } = formSettings;
   const { globalState } = useGlobalState();
+  const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);
+  const { backendUrl } = useSheshaApplication();
+  // const fetchedFormEntity = useFormEntity({ parentFormValues, skipFetchData, formData, formSettings, globalState });
+  const { refetch: fetchEntity, data: fetchedEntity } = useGet({
+    path: formSettings?.getUrl || '',
+    lazy: true,
+  });
+
+  // console.log('ConfigurableFormRenderer onInitialize, onUpdate: ', onInitialize, onUpdate, formSettings);
 
   const onFieldsChange = (changedFields: any[], allFields: any[]) => {
     if (props.onFieldsChange) props.onFieldsChange(changedFields, allFields);
@@ -42,6 +58,86 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     // update validation rules
   };
 
+  const getUrl = formSettings?.getUrl;
+
+  const previousUrl = usePrevious(getUrl);
+  const previousFormData = usePrevious(formData);
+  const previousGlobalState = usePrevious(globalState);
+  const previousParentFormValues = usePrevious(parentFormValues);
+
+  useEffect(() => {
+    if (skipFetchData) {
+      return;
+    }
+
+    if (
+      !_.isEqual(previousUrl, getUrl) ||
+      !_.isEqual(previousFormData, formData) ||
+      !_.isEqual(previousGlobalState, globalState) ||
+      !_.isEqual(previousParentFormValues, parentFormValues)
+    ) {
+      return;
+    }
+
+    if (getUrl) {
+      const fullUrl = `${backendUrl}${getUrl}`;
+      const urlObj = new URL(decodeURIComponent(fullUrl));
+      const rawQueryParamsToBeEvaluated = getQueryParams(fullUrl);
+      const queryParamsFromAddressBar = getQueryParams();
+
+      let queryParams: IAnyObject;
+
+      if (fullUrl?.includes('?')) {
+        if (fullUrl?.includes('{{')) {
+          queryParams = evaluateKeyValuesToObjectMatchedData(rawQueryParamsToBeEvaluated, [
+            { match: 'data', data: formData },
+            { match: 'parentFormValues', data: parentFormValues },
+            { match: 'globalState', data: globalState },
+            { match: 'query', data: queryParamsFromAddressBar },
+          ]);
+        } else {
+          queryParams = rawQueryParamsToBeEvaluated;
+        }
+      }
+
+      if (getUrl && !_.isEmpty(queryParams)) {
+        if (Object.hasOwn(queryParams, 'id') && !Boolean(queryParams['id'])) {
+          console.error('id cannot be null');
+          return;
+        }
+
+        fetchEntity({
+          queryParams,
+          path: urlObj?.pathname,
+          base: urlObj?.origin,
+        });
+      }
+    }
+  }, [getUrl, formData, globalState, parentFormValues]);
+
+  useEffect(() => {
+    getExpressionExecutor(onInitialize); // On Initialize
+  }, [onInitialize]);
+
+  useEffect(() => {
+    getExpressionExecutor(onUpdate); // On Update
+  }, [formData, onUpdate]);
+
+  // useEffect(() => {
+  //   return () => {
+  //     if (persistedValues?.length && formData) {
+  //       console.log('Updating to localStore', formData, uniqueFormId);
+
+  //       setPersistedValue(getObjIncludedProps(formData, persistedValues));
+  //     }
+  //   };
+  // }, [formData]);
+
+  // const previousPersistedValue = usePrevious(persistedValue);
+  // useEffect(() => {
+  //   console.log('ConfigurableFormRenderer persistedValue ', persistedValue);
+  // }, [persistedValue]);
+
   // reset form to initial data on any change of components or initialData
   useEffect(() => {
     setFormData({ values: initialValues, mergeValues: true });
@@ -50,49 +146,52 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
   }, [allComponents, initialValues]);
 
-  /**
-   * This function return the submit url.
-   *
-   * @returns
-   */
-  const submitUrl = useMemo(() => {
-    const { postUrl, putUrl, deleteUrl } = formSettings || {};
-    let url = postUrl; // Fallback for now
+  const fetchedFormEntity = fetchedEntity?.result;
 
-    if (httpVerb === 'POST' && postUrl) {
-      url = postUrl;
+  useEffect(() => {
+    if (fetchedFormEntity) {
+      const computedInitialValues = fetchedFormEntity
+        ? prepareInitialValues
+          ? prepareInitialValues(fetchedFormEntity)
+          : fetchedFormEntity
+        : initialValues;
+
+      // TODO: setFormData doesn't update the fields when the form that needs to be initialized it modal.
+      // TODO: Tried with mergeValues as both true | false. The state got updated properly but that doesn't reflect on the form
+      // TODO: Investigate this
+      if (form) {
+        form?.setFieldsValue(computedInitialValues);
+      }
+
+      setFormData({ values: computedInitialValues, mergeValues: false });
     }
-
-    if (httpVerb === 'PUT' && putUrl) {
-      url = putUrl;
-    }
-
-    if (httpVerb === 'DELETE' && deleteUrl) {
-      url = deleteUrl;
-    }
-
-    return removeZeroWidthCharsFromString(url);
-  }, [formSettings]);
-
-  // console.log('ConfigurableFormRenderer formSettings, getSubmitPath() :>> ', formSettings, getSubmitPath());
+  }, [fetchedFormEntity]);
 
   const { mutate: doSubmit, loading: submitting } = useMutate({
     verb: httpVerb || 'POST', // todo: convert to configurable
     path: submitUrl,
   });
 
-  const getExpressionExecutor = (expression: string, includeInitialValues = true, includeMoment = true) => {
+  const getExpressionExecutor = (
+    expression: string,
+    includeInitialValues = true,
+    includeMoment = true,
+    includeAxios = true,
+    includeMessage = true
+  ) => {
     if (!expression) {
       return null;
     }
 
     // tslint:disable-next-line:function-constructor
-    return new Function('data, parentFormValues, initialValues, globalState, moment', expression)(
+    return new Function('data, parentFormValues, initialValues, globalState, moment, http, message', expression)(
       formData,
       parentFormValues,
       includeInitialValues ? initialValues : undefined,
       globalState,
-      includeMoment ? moment : undefined
+      includeMoment ? moment : undefined,
+      includeAxios ? axiosHttp(backendUrl) : undefined,
+      includeMessage ? message : undefined
     );
   };
 
@@ -105,8 +204,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
       if (typeof localValues === 'object') {
         return localValues;
       }
-
-      console.error('Error: preparedValues is not an object::', localValues);
 
       return getExpressionExecutor(preparedValues);
     }

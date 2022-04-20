@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { Form, Spin } from 'antd';
+import { Form, message, Spin } from 'antd';
 import ComponentsContainer from '../formDesigner/componentsContainer';
 import { ROOT_COMPONENT_KEY } from '../../providers/form/models';
 import { useForm } from '../../providers/form';
@@ -15,6 +15,7 @@ import { useSubmitUrl } from './useSubmitUrl';
 import { getQueryParams } from '../../utils/url';
 import _ from 'lodash';
 import { usePrevious } from 'react-use';
+import { axiosHttp } from '../../apis/axios';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   children,
@@ -39,6 +40,8 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     path: formSettings?.getUrl || '',
     lazy: true,
   });
+
+  // console.log('ConfigurableFormRenderer onInitialize, onUpdate: ', onInitialize, onUpdate, formSettings);
 
   const onFieldsChange = (changedFields: any[], allFields: any[]) => {
     if (props.onFieldsChange) props.onFieldsChange(changedFields, allFields);
@@ -114,11 +117,11 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
   useEffect(() => {
     getExpressionExecutor(onInitialize); // On Initialize
-  }, []);
+  }, [onInitialize]);
 
   useEffect(() => {
     getExpressionExecutor(onUpdate); // On Update
-  }, [formData]);
+  }, [formData, onUpdate]);
 
   // useEffect(() => {
   //   return () => {
@@ -169,18 +172,26 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     path: submitUrl,
   });
 
-  const getExpressionExecutor = (expression: string, includeInitialValues = true, includeMoment = true) => {
+  const getExpressionExecutor = (
+    expression: string,
+    includeInitialValues = true,
+    includeMoment = true,
+    includeAxios = true,
+    includeMessage = true
+  ) => {
     if (!expression) {
       return null;
     }
 
     // tslint:disable-next-line:function-constructor
-    return new Function('data, parentFormValues, initialValues, globalState, moment', expression)(
+    return new Function('data, parentFormValues, initialValues, globalState, moment, http, message', expression)(
       formData,
       parentFormValues,
       includeInitialValues ? initialValues : undefined,
       globalState,
-      includeMoment ? moment : undefined
+      includeMoment ? moment : undefined,
+      includeAxios ? axiosHttp(backendUrl) : undefined,
+      includeMessage ? message : undefined
     );
   };
 

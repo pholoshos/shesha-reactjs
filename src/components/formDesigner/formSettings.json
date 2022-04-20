@@ -261,7 +261,13 @@
           "type": "object"
         },
         { "name": "globalState", "description": "The global state of the application", "type": "object" },
-        { "name": "initialValues", "description": "Initial values", "type": "object" }
+        { "name": "initialValues", "description": "Initial values", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "message",
+          "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+          "type": "object"
+        }
       ],
       "description": "This action will be executed whenever the form initializes"
     },
@@ -287,7 +293,13 @@
           "type": "object"
         },
         { "name": "globalState", "description": "The global state of the application", "type": "object" },
-        { "name": "initialValues", "description": "Initial values", "type": "object" }
+        { "name": "initialValues", "description": "Initial values", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "message",
+          "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+          "type": "object"
+        }
       ],
       "description": "This action will be executed whenever the form updates"
     },

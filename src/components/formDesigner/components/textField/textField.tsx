@@ -6,7 +6,7 @@ import { InputProps } from 'antd/lib/input';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
-import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { evaluateString, getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm, useGlobalState, useSheshaApplication } from '../../../../providers';
 import { customEventHandler } from '../utils';
 import { DataTypes, StringFormats } from '../../../../interfaces/dataTypes';
@@ -83,7 +83,13 @@ const TextField: IToolboxComponent<ITextFieldProps> = {
     };
 
     return (
-      <ConfigurableFormItem model={model} initialValue={(model?.passEmptyStringByDefault && '') || model?.initialValue}>
+      <ConfigurableFormItem
+        model={model}
+        initialValue={
+          (model?.passEmptyStringByDefault && '') ||
+          evaluateString(model?.initialValue, { formData, formMode, globalState })
+        }
+      >
         {readOnly ? (
           <ReadOnlyDisplayFormItem disabled={disabled} />
         ) : (

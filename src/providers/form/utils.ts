@@ -158,20 +158,15 @@ export const getCustomVisibilityFunc = ({ customVisibility, name }: IConfigurabl
     try {
       /* tslint:disable:function-constructor */
 
-      const customVisibilityExecutor = customVisibility ? new Function('value, data', customVisibility) : null;
+      const customVisibilityExecutor = new Function('value, data', customVisibility);
 
       const getIsVisible = (data = {}) => {
-        if (customVisibilityExecutor) {
-          try {
-            return customVisibilityExecutor(name ? data[name] : undefined, data);
-          } catch (e) {
-            console.warn(`Custom Visibility of field ${name} throws exception: ${e}`);
-            return true;
-          }
+        try {
+          return customVisibilityExecutor(data?.[name], data);
+        } catch (e) {
+          console.warn(`Custom Visibility of field ${name} throws exception: ${e}`);
+          return true;
         }
-
-        return true;
-        //return !(component.contextData && component.contextData.isEmpty && component.contextData.readOnly && component.hideWhenEmpty);
       };
 
       return getIsVisible;
@@ -186,20 +181,15 @@ export const getCustomVisibilityFunc = ({ customVisibility, name }: IConfigurabl
 export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormComponent) => {
   if (customEnabled) {
     try {
-      const customEnabledExecutor = customEnabled ? new Function('value, data', customEnabled) : null;
+      const customEnabledExecutor = new Function('value, data', customEnabled);
 
       const getIsEnabled = (data = {}) => {
-        if (customEnabledExecutor) {
-          try {
-            return customEnabledExecutor(name ? data[name] : undefined, data);
-          } catch (e) {
-            console.error(`Custom Enabled of field ${name} throws exception: ${e}`);
-            return true;
-          }
+        try {
+          return customEnabledExecutor(data?.[name], data);
+        } catch (e) {
+          console.error(`Custom Enabled of field ${name} throws exception: ${e}`);
+          return true;
         }
-
-        return true;
-        //return !(component.contextData && component.contextData.isEmpty && component.contextData.readOnly && component.hideWhenEmpty);
       };
 
       return getIsEnabled;

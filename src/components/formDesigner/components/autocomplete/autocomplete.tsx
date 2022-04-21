@@ -8,6 +8,7 @@ import { useGlobalState, useSheshaApplication } from '../../../../providers';
 import { useForm } from '../../../../providers/form';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import {
+  evaluateString,
   evaluateValue,
   getStyle,
   replaceTags,
@@ -141,7 +142,7 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       mode: model?.mode,
       queryParams: getQueryParams(),
       readOnly: model?.readOnly || formMode === 'readonly',
-      defaultValue: model?.defaultValue,
+      defaultValue: evaluateString(model?.defaultValue, { formData, formMode, globalState }) as any,
       getOptionFromFetchedItem,
 
       quickviewEnabled: model?.quickviewEnabled,

@@ -99,7 +99,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   id,
   path,
   markup,
-  mode,
+  mode = 'readonly',
   form,
   actions,
   sections,
@@ -240,6 +240,12 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
       }
     }
   }, [isFetchingFormInfo, fetchingFormInfoResponse, fetchingFormInfoError, markup]);
+
+  useEffect(() => {
+    if (mode !== state.present.formMode) {
+      setFormMode(mode);
+    }
+  }, [mode]);
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 

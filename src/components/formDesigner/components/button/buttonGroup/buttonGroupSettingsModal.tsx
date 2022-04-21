@@ -1,5 +1,5 @@
-import React, { FC, ReactNode } from 'react';
-import { Modal } from 'antd';
+import React, { FC, Fragment, ReactNode, useState } from 'react';
+import { Button, Modal } from 'antd';
 import {
   ButtonGroupConfiguratorProvider,
   useButtonGroupConfigurator,
@@ -8,8 +8,6 @@ import { ButtonGroupConfigurator } from './configurator';
 import { ButtonGroupItemProps } from '../../../../../providers/buttonGroupConfigurator/models';
 
 export interface IToolbarSettingsModal {
-  visible: boolean;
-  hideModal: () => void;
   value?: object;
   onChange?: any;
   allowAddGroups?: boolean;
@@ -19,25 +17,40 @@ export interface IToolbarSettingsModal {
 }
 
 export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
-  visible,
   onChange,
-  hideModal,
   allowAddGroups,
   render,
   title = 'Configure Buttons',
   heading,
 }) => {
+  const [showModal, setShowModal] = useState(false);
   const { items } = useButtonGroupConfigurator();
+
+  const toggleModalVisibility = () => setShowModal(prev => !prev);
 
   const onOkClick = () => {
     if (typeof onChange === 'function') onChange(items);
-    hideModal();
+    toggleModalVisibility();
   };
 
+  console.log("ButtonGroupSettingsModalInner items: ", items);
+  
+
   return (
-    <Modal width="60%" visible={visible} title={title} okText="Save" onCancel={hideModal} onOk={onOkClick}>
-      <ButtonGroupConfigurator allowAddGroups={allowAddGroups} heading={heading} render={render} />
-    </Modal>
+    <Fragment>
+      <Button onClick={toggleModalVisibility}>Customize Button Group</Button>
+
+      <Modal
+        width="60%"
+        visible={showModal}
+        title={title}
+        okText="Save"
+        onCancel={toggleModalVisibility}
+        onOk={onOkClick}
+      >
+        <ButtonGroupConfigurator allowAddGroups={allowAddGroups} heading={heading} render={render} />
+      </Modal>
+    </Fragment>
   );
 };
 

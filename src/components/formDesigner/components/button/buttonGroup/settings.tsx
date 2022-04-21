@@ -1,5 +1,5 @@
-import React, { FC, useState } from 'react';
-import { Form, Button, Select, Input } from 'antd';
+import React, { FC } from 'react';
+import { Form, Select, Input } from 'antd';
 import { IButtonGroupProps } from './models';
 import { ButtonGroupSettingsModal } from './buttonGroupSettingsModal';
 import SectionSeparator from '../../../../sectionSeparator';
@@ -16,7 +16,6 @@ export interface IButtonGroupSettingsProps {
 }
 
 const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
-  const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
 
   const onValuesChange = (changedValues, values) => {
@@ -58,15 +57,8 @@ const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
 
       <SectionSeparator sectionName="Customization" />
 
-      <Button onClick={() => setModalVisible(true)}>Customize Button Group</Button>
-
       <Form.Item name="items" initialValue={props.model.items}>
-        <ButtonGroupSettingsModal
-          visible={modalVisible}
-          hideModal={() => {
-            setModalVisible(false);
-          }}
-        />
+        <ButtonGroupSettingsModal />
       </Form.Item>
 
       <SectionSeparator sectionName="Security" />

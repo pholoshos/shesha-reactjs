@@ -7,12 +7,12 @@ import { validateConfigurableComponentSettings } from '../../../../../formDesign
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../interfaces';
 import { FormMarkup } from '../../../../../providers/form/models';
 import ComponentsContainer from '../../../componentsContainer';
-import { ToolbarWithProvider } from '../toolbar/toolbarComponent';
 import { IChildTableSettingsProps } from './models';
 import ChildDataTableSettings from './settings';
 import settingsFormJson from './settingsForm.json';
 import { evaluateDynamicFilters, hasDynamicFilter } from '../../../../../providers/dataTable/utils';
 import './styles/index.less';
+import { ButtonGroup } from '../../button/buttonGroup/buttonGroupComponent';
 
 export interface IChildTableComponentProps extends IChildTableSettingsProps, IConfigurableFormComponent {}
 
@@ -122,7 +122,7 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
 
                   <TablePager />
 
-                  <ToolbarWithProvider items={model?.toolbarItems || []} name={''} type={''} id={model.id} />
+                  <ButtonGroup items={model?.toolbarItems || []} name={''} type={''} id={model.id} />
                 </Space>
               </div>
             }

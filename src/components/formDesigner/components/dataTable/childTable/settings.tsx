@@ -1,10 +1,10 @@
 import React, { FC, useState } from 'react';
-import { Button, Checkbox, Form, Input, Select } from 'antd';
+import { Checkbox, Form, Input, Select } from 'antd';
 import { SectionSeparator } from '../../../..';
 import { IChildTableSettingsProps } from './models';
-import { ToolbarSettingsModal } from '../../dataTable/toolbar/toolbarSettingsModal';
 import CodeEditor from '../../codeEditor/codeEditor';
 import { CustomFilter } from '../filter/filterComponent';
+import ButtonGroupSettingsModal from '../../button/buttonGroup/buttonGroupSettingsModal';
 
 export interface IChildDataTableSettingsProps {
   model: IChildTableSettingsProps;
@@ -22,8 +22,6 @@ interface IChildDataTableSettingsState {
 export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ onSave, model, onValuesChange }) => {
   const [state, setState] = useState<IChildDataTableSettingsState>({ data: model });
   const [form] = Form.useForm();
-
-  const toggleToolbarModal = () => setState(prev => ({ ...prev, toolbarModalVisible: !prev?.toolbarModalVisible }));
 
   const initialValues = {
     title: model?.title,
@@ -65,14 +63,8 @@ export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ onSav
 
       <SectionSeparator sectionName="Toolbar" />
 
-      <Button onClick={toggleToolbarModal}>Configure Toolbar</Button>
-
       <Form.Item name="toolbarItems" initialValue={model.toolbarItems}>
-        <ToolbarSettingsModal
-          visible={state?.toolbarModalVisible}
-          allowAddGroups={false}
-          hideModal={toggleToolbarModal}
-        />
+        <ButtonGroupSettingsModal />
       </Form.Item>
 
       <SectionSeparator sectionName="Filter" />

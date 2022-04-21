@@ -103,7 +103,8 @@
       "parentId": "root",
       "label": "Default Value",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "description": "Enter default value of component. (formData, formMode, globalState) are exposed"
     },
     {
       "id": "a3c11595-6724-4ba7-80b7-9ea5340be272",

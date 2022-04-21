@@ -6,7 +6,7 @@ import ConfigurableFormItem from '../formItem';
 import { INumberFieldProps } from './models';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
-import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { evaluateString, getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { useForm, useGlobalState, useSheshaApplication } from '../../../../providers';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
@@ -42,7 +42,10 @@ const NumberField: IToolboxComponent<INumberFieldProps> = {
     };
 
     return (
-      <ConfigurableFormItem model={model} initialValue={model?.defaultValue}>
+      <ConfigurableFormItem
+        model={model}
+        initialValue={evaluateString(model?.defaultValue, { formData, formMode, globalState })}
+      >
         {isReadOnly ? (
           <ReadOnlyDisplayFormItem disabled={disabled} />
         ) : (

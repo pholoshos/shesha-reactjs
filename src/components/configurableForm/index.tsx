@@ -10,12 +10,12 @@ import classNames from 'classnames';
 export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
   const { id, markup, mode, path, actions, sections, context, formRef, ...restProps } = props;
 
-  const handleEditMode = Boolean(id) || Boolean(path);
+  const canConfigure = Boolean(id) || Boolean(path);
   const { router } = useShaRouting(false);
 
   return (
     <ConfigurableComponent
-      canConfigure={handleEditMode}
+      canConfigure={canConfigure}
       onStartEdit={() => {
         if (Boolean(id)) router?.push(`/settings/forms/designer?id=${id}`);
         else if (Boolean(path)) router?.push(`/settings/forms/designer?path=${path}`);

@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Form, message, Spin } from 'antd';
 import ComponentsContainer from '../formDesigner/componentsContainer';
 import { ROOT_COMPONENT_KEY } from '../../providers/form/models';
@@ -9,12 +9,12 @@ import { IAnyObject, ValidateErrorEntity } from '../../interfaces';
 import { addFormFieldsList } from '../../utils/form';
 import { useGlobalState, useSheshaApplication } from '../../providers';
 import moment from 'moment';
-import { evaluateKeyValuesToObjectMatchedData } from '../../providers/form/utils';
+import { evaluateKeyValuesToObjectMatchedData, getObjectWithOnlyIncludedKeys } from '../../providers/form/utils';
 import cleanDeep from 'clean-deep';
 import { useSubmitUrl } from './useSubmitUrl';
 import { getQueryParams } from '../../utils/url';
 import _ from 'lodash';
-import { usePrevious } from 'react-use';
+import { useLocalStorage, usePrevious, useUnmount } from 'react-use';
 import { axiosHttp } from '../../apis/axios';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
@@ -31,17 +31,29 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   ...props
 }) => {
   const { setFormData, formData, allComponents, formMode, isDragging, formSettings, setValidationErrors } = useForm();
-  const { excludeFormFieldsInPayload, onInitialize, onUpdate } = formSettings;
+  const { excludeFormFieldsInPayload, onInitialize, onUpdate, formKeysToPersist, uniqueFormId } = formSettings;
   const { globalState } = useGlobalState();
   const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);
   const { backendUrl } = useSheshaApplication();
-  // const fetchedFormEntity = useFormEntity({ parentFormValues, skipFetchData, formData, formSettings, globalState });
+  const [lastTruthyPersistedValue, setLastTruthyPersistedValue] = useState<IAnyObject>(null);
   const { refetch: fetchEntity, data: fetchedEntity } = useGet({
     path: formSettings?.getUrl || '',
     lazy: true,
   });
 
-  // console.log('ConfigurableFormRenderer onInitialize, onUpdate: ', onInitialize, onUpdate, formSettings);
+  //#region PERSISTED FORM VALUES
+  const [persistedFormValue, setPersistedFormValue, removePersistedVFormValue] = useLocalStorage<any>(
+    uniqueFormId || 'FORM_PATH'
+  ); //
+
+  useUnmount(() => {
+    if (uniqueFormId && formKeysToPersist?.length && !_.isEmpty(formData)) {
+      setPersistedFormValue(getObjectWithOnlyIncludedKeys(formData, formKeysToPersist));
+    } else {
+      removePersistedVFormValue();
+    }
+  });
+  //#endregion
 
   const onFieldsChange = (changedFields: any[], allFields: any[]) => {
     if (props.onFieldsChange) props.onFieldsChange(changedFields, allFields);
@@ -64,6 +76,10 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const previousFormData = usePrevious(formData);
   const previousGlobalState = usePrevious(globalState);
   const previousParentFormValues = usePrevious(parentFormValues);
+
+  useEffect(() => {
+    setLastTruthyPersistedValue(_.isEmpty(persistedFormValue) ? null : persistedFormValue);
+  }, [persistedFormValue]);
 
   useEffect(() => {
     if (skipFetchData) {
@@ -123,21 +139,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     getExpressionExecutor(onUpdate); // On Update
   }, [formData, onUpdate]);
 
-  // useEffect(() => {
-  //   return () => {
-  //     if (persistedValues?.length && formData) {
-  //       console.log('Updating to localStore', formData, uniqueFormId);
-
-  //       setPersistedValue(getObjIncludedProps(formData, persistedValues));
-  //     }
-  //   };
-  // }, [formData]);
-
-  // const previousPersistedValue = usePrevious(persistedValue);
-  // useEffect(() => {
-  //   console.log('ConfigurableFormRenderer persistedValue ', persistedValue);
-  // }, [persistedValue]);
-
   // reset form to initial data on any change of components or initialData
   useEffect(() => {
     setFormData({ values: initialValues, mergeValues: true });
@@ -146,15 +147,28 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
   }, [allComponents, initialValues]);
 
+  const previousFormEntity = usePrevious(fetchedEntity?.result);
+  const previousPersistedValues = usePrevious(lastTruthyPersistedValue);
   const fetchedFormEntity = fetchedEntity?.result;
 
   useEffect(() => {
-    if (fetchedFormEntity) {
-      const computedInitialValues = fetchedFormEntity
+    const hasFormEntityChanged = !_.isEqual(previousFormEntity, fetchedFormEntity);
+    const hasPersistedValuesChanged = !_.isEqual(previousPersistedValues, lastTruthyPersistedValue);
+
+    if (!hasFormEntityChanged && !hasPersistedValuesChanged) {
+      return;
+    }
+
+    if (fetchedFormEntity || lastTruthyPersistedValue) {
+      let computedInitialValues = fetchedFormEntity
         ? prepareInitialValues
           ? prepareInitialValues(fetchedFormEntity)
           : fetchedFormEntity
         : initialValues;
+
+      if (!_.isEmpty(lastTruthyPersistedValue)) {
+        computedInitialValues = { ...computedInitialValues, ...lastTruthyPersistedValue };
+      }
 
       // TODO: setFormData doesn't update the fields when the form that needs to be initialized it modal.
       // TODO: Tried with mergeValues as both true | false. The state got updated properly but that doesn't reflect on the form
@@ -165,7 +179,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
       setFormData({ values: computedInitialValues, mergeValues: false });
     }
-  }, [fetchedFormEntity]);
+  }, [fetchedFormEntity, lastTruthyPersistedValue]);
 
   const { mutate: doSubmit, loading: submitting } = useMutate({
     verb: httpVerb || 'POST', // todo: convert to configurable

@@ -160,7 +160,9 @@
           "parentId": "2a5acbcf-cd52-487e-9cd7-09594a04793a",
           "hidden": false,
           "customVisibility": null,
-          "validate": {}
+          "validate": {
+            "required": true
+          }
         },
         {
           "id": "fd3d4ef4-be06-40e9-9815-118754707d0e",
@@ -171,7 +173,9 @@
           "parentId": "2a5acbcf-cd52-487e-9cd7-09594a04793a",
           "hidden": false,
           "customVisibility": null,
-          "validate": {},
+          "validate": {
+            "required": true
+          },
           "dataSourceType": "entitiesList",
           "dataSourceUrl": "/api/services/app/Metadata/EntityTypeAutocomplete",
           "entityTypeShortAlias": "Shesha.Framework.Form",

@@ -787,7 +787,7 @@ export const evaluateKeyValuesToObjectMatchedData = <T extends any>(
   return {} as T;
 };
 
-export const getObjIncludedProps = (obj: IAnyObject, includedProps: string[]): IAnyObject => {
+export const getObjectWithOnlyIncludedKeys = (obj: IAnyObject, includedProps: string[]): IAnyObject => {
   const response: IAnyObject = {};
 
   if (includedProps?.length) {

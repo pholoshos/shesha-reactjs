@@ -167,7 +167,7 @@
     {
       "id": "52f4460d-2e64-4d79-a900-7cd28b0bebd3",
       "type": "propertyAutocomplete",
-      "name": "persistedValues",
+      "name": "formKeysToPersist",
       "label": "Persisted properties",
       "mode": "multiple",
       "labelAlign": "right",
@@ -185,7 +185,7 @@
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
-      "customVisibility": "return !!data.persistedValues?.length",
+      "customVisibility": "return !!data.formKeysToPersist?.length",
       "validate": {
         "required": true
       },
@@ -302,28 +302,6 @@
         }
       ],
       "description": "This action will be executed whenever the form updates"
-    },
-    {
-      "id": "893f155b-2020-4b2f-8876-b86e3614ce46",
-      "type": "labelValueEditor",
-      "name": "initialValues",
-      "parentId": "root",
-      "label": "Initial Values",
-      "labelTitle": "Key",
-      "labelName": "key",
-      "valueTitle": "Value",
-      "valueName": "value",
-      "ignorePrefixesOnNewItems": true,
-      "exposedVariables": [
-        { "name": "data", "description": "The form data", "type": "object" },
-        {
-          "name": "parentFormValues",
-          "description": "Parent form values. The values of the form rendering the dialog.",
-          "type": "object"
-        },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" }
-      ],
-      "description": "Enter values that you would like passed to the server as payload. Note that you can also use Mustache expression as in {{parent.id}}. You have variables 'data', 'parentFormValues' and 'globalState' at your disposal"
     }
   ],
   "formSettings": { "layout": "horizontal", "colon": true, "labelCol": { "span": 5 }, "wrapperCol": { "span": 19 } }

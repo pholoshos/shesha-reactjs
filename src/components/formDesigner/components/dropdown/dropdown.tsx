@@ -9,7 +9,7 @@ import settingsFormJson from './settingsForm.json';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import RefListDropDown from '../../../refListDropDown';
 import { DataTypes } from '../../../../interfaces/dataTypes';
-import { useForm, useGlobalState, useSheshaApplication } from '../../../..';
+import { evaluateString, useForm, useGlobalState, useSheshaApplication } from '../../../..';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { customDropDownEventHandler } from '../utils';
 import { axiosHttp } from '../../../../apis/axios';
@@ -77,7 +77,7 @@ export const Dropdown: FC<IDropdownProps> = ({
   referenceListNamespace,
   referenceListName,
   mode,
-  defaultValue,
+  defaultValue: defaultVal,
   ignoredValues = [],
   placeholder,
   useRawValues,
@@ -87,6 +87,8 @@ export const Dropdown: FC<IDropdownProps> = ({
   size,
 }) => {
   const { formMode, isComponentDisabled, formData } = useForm();
+  const { globalState } = useGlobalState();
+
   const getOptions = (): ILabelValue[] => {
     return value && typeof value === 'number' ? values?.map(i => ({ ...i, value: parseInt(i.value) })) : values;
   };
@@ -98,6 +100,8 @@ export const Dropdown: FC<IDropdownProps> = ({
   const isDisabled = isComponentDisabled({ id, isDynamic, disabled });
 
   const localStyle = getStyle(style, formData);
+
+  const defaultValue = evaluateString(defaultVal, { formData, formMode, globalState });
 
   if (dataSourceType === 'referenceList') {
     return useRawValues ? (

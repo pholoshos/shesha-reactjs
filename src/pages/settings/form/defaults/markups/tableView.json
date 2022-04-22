@@ -420,34 +420,7 @@
                   "hidden": false,
                   "customVisibility": null,
                   "isDynamic": false,
-                  "items": [
-                    {
-                      "id": "E_QggxSvlks2V2O7Mt631",
-                      "itemType": "item",
-                      "sortOrder": 0,
-                      "caption": "",
-                      "columnType": "action",
-                      "isVisible": true,
-                      "chosen": false,
-                      "icon": "SearchOutlined",
-                      "minWidth": 30,
-                      "maxWidth": 30,
-                      "selected": false
-                    },
-                    {
-                      "id": "Uazw5Wg9SRb_AETxGSWIK",
-                      "itemType": "item",
-                      "sortOrder": 1,
-                      "caption": "",
-                      "columnType": "action",
-                      "isVisible": true,
-                      "chosen": false,
-                      "icon": "EditOutlined",
-                      "minWidth": 30,
-                      "maxWidth": 30,
-                      "selected": false
-                    }
-                  ]
+                  "items": []
                 }
               ]
             }

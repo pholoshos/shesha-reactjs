@@ -63,7 +63,8 @@
       "type": "textField",
       "name": "initialValue",
       "parentId": "root",
-      "label": "Default Value"
+      "label": "Default Value",
+      "description": "Enter default value of component. (formData, formMode, globalState) are exposed"
     },
     {
       "id": "0225b82d-19aa-47c7-b665-90508112bd23",

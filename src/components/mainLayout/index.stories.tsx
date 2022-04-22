@@ -1,47 +1,41 @@
 import React from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
-import { SidebarMenuDefaultsProvider } from '../../providers';
-import MainLayout, { IMainLayoutProps } from './';
-import { SIDEBAR_MENU_ITEMS } from './menuItems';
+import { GenericDetailsPage, GenericIndexPage } from '../..';
+import { IGenericIndexPageProps } from '../crudViews/indexPage';
 import StoryApp from '../storyBookApp';
 
 export default {
   title: 'Components/MainLayout',
-  component: MainLayout,
-  argTypes: {},
+  component: GenericDetailsPage,
 } as Meta;
 
-const defaultProps: IMainLayoutProps = {
-  title: 'Default layout',
-  heading: 'This is the header',
+const id = '26f7507e-efa3-49eb-aa0c-775668f49370';
+
+const configurableFormProps = {
+  id,
 };
 
 // Create a master template for mapping args to render the Button component
-const Template: Story<IMainLayoutProps> = args => {
+const Template: Story<IGenericIndexPageProps> = () => {
   return (
     <StoryApp>
-      <SidebarMenuDefaultsProvider items={SIDEBAR_MENU_ITEMS}>
-        <MainLayout {...args} title="Any title">
-          <div>This is a div</div>
-        </MainLayout>
-      </SidebarMenuDefaultsProvider>
+      <GenericIndexPage
+        title="Members"
+        tableConfigId="Members_Index"
+        // tableConfigId="Members_Index"
+        detailsUrl={currentId => `/members/details?id=${currentId}`}
+        editUrl={currentId => `/members/edit?id=${currentId}`}
+      />
     </StoryApp>
   );
 };
-export const Default = Template.bind({});
 
-Default.args = { ...defaultProps };
+export const Basic = Template.bind({});
+Basic.args = { ...configurableFormProps };
 
-// // Create a master template for mapping args to render the Button component
-// const WithIndexTable: Story<IMainLayoutProps> = () => (
-//   <ShaApplicationProvider backendUrl={backendUrl}>
-//     <AuthContainer layout={true}>
-//       <SidebarMenuDefaultsProvider items={SIDEBAR_MENU_ITEMS}>
-//         <SimpleIndexPage loading={false} tableConfigId="Users_Index" title="Invoice Allocations" />
-//       </SidebarMenuDefaultsProvider>
-//     </AuthContainer>
-//   </ShaApplicationProvider>
-// );
+export const IndexPage = Template.bind({});
 
-// export const IndexPage = WithIndexTable.bind({});
+IndexPage.args = {
+  formPath: '/indexTable',
+};

@@ -387,8 +387,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(toggleColumnVisibilityAction(columnId));
   };
 
-  const toggleColumnFilter = (ids: string[]) => dispatch(toggleColumnFilterAction(ids));
-
   const changeFilterOption = (filterColumnId: string, filterOptionValue: IndexColumnFilterOption) =>
     dispatch(changeFilterOptionAction({ filterColumnId, filterOptionValue }));
 
@@ -435,6 +433,14 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
     dispatch(toggleColumnFilterAction([]));
     dispatch(applyFilterAction([]));
+  };
+
+  const toggleColumnFilter = (ids: string[]) => {
+    if (ids?.length) {
+      dispatch(toggleColumnFilterAction(ids));
+    } else {
+      clearFilters();
+    }
   };
 
   const changeSelectedRow = (val: any) => {

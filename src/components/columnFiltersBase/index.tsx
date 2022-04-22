@@ -42,6 +42,7 @@ export const ColumnFiltersBase: FC<IColumnFiltersBaseProps> = ({
           if (isFilterable) {
             const onRemoveFilter = (idOfFilter: string) => {
               const newIds = currentFilter.filter(f => f.columnId !== idOfFilter).map(f => f.columnId);
+
               toggleColumnFilter(newIds);
             };
 
@@ -58,6 +59,7 @@ export const ColumnFiltersBase: FC<IColumnFiltersBaseProps> = ({
             };
 
             const existingFilter = currentFilter.find(f => f.columnId === id);
+
             return (
               <ColumnItemFilter
                 onRemoveFilter={onRemoveFilter}

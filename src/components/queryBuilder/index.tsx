@@ -51,7 +51,7 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
   fields,
   useExpression,
 }) => {
-  const [state, setState] = useState<IQueryBuilderState>();
+  const [state, setState] = useState<IQueryBuilderState>({});
 
   useEffect(() => {
     initialize();

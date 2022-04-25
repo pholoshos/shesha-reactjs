@@ -52,6 +52,7 @@ const ReactTable: FC<IReactTableProps> = ({
   defaultSorting = [],
   defaultCanSort = false,
   manualPagination = true,
+  manualSortBy = true,
   manualFilters,
   selectedRowIndex,
   // defaultColumn,
@@ -94,6 +95,7 @@ const ReactTable: FC<IReactTableProps> = ({
       defaultCanSort,
       manualFilters,
       manualPagination,
+      manualSortBy,
       disableSortBy,
       pageCount,
     },
@@ -175,7 +177,7 @@ const ReactTable: FC<IReactTableProps> = ({
     if (onFetchData) {
       // onFetchData();
     }
-  }, [onFetchData, pageIndex, pageSize]);
+  }, [onFetchData, pageIndex, pageSize, sortBy]);
 
   const onResizeClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event?.stopPropagation();
 

@@ -246,7 +246,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     state.tableConfigLoaded,
     state.entityType,
     state.columns?.length,
-    state.tableSorting?.length,
+    state.tableSorting,
   ]);
 
   const refreshTable = () => {

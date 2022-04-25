@@ -104,6 +104,12 @@ export interface IReactTableProps {
   manualPagination?: boolean;
 
   /**
+   * Enables sorting detection functionality, but does not automatically perform row sorting. 
+   * Turn this on if you wish to implement your own sorting outside of the table (eg. server-side or manual row grouping/nesting)
+   */
+  manualSortBy?: boolean;
+
+  /**
    * Enables filter detection functionality, but does not automatically perform row filtering.
    * Turn this on if you wish to implement your own row filter outside of the table (e.g. server-side or manual row grouping/nesting)
    */

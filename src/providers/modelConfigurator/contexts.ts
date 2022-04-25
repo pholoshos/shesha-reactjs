@@ -18,7 +18,7 @@ export interface IModelConfiguratorActionsContext {
   load: () => void;
   save: (value: ModelConfigurationDto) => Promise<void>;
   submit: () => void;
-  getValues: () => ModelConfigurationDto;
+  getModelSettings: () => ModelConfigurationDto;
 
   /* NEW_ACTION_ACTION_DECLARATIOS_GOES_HERE */
 }

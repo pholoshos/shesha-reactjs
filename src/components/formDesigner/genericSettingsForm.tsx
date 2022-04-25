@@ -25,7 +25,7 @@ function Settings<TModel extends IConfigurableFormComponent>({
 }: IProps<TModel>) {
   const [form] = Form.useForm();
   const formRef = useRef<ConfigurableFormInstance>(null);
-  
+
   useEffect(() => {
     form.resetFields();
   });
@@ -44,9 +44,8 @@ function Settings<TModel extends IConfigurableFormComponent>({
     });
 
     form.setFieldsValue(newModel);
-    if (onValuesChange)
-      onValuesChange(newModel, newModel);
-  }
+    if (onValuesChange) onValuesChange(newModel, newModel);
+  };
 
   return (
     <ConfigurableForm
@@ -61,9 +60,9 @@ function Settings<TModel extends IConfigurableFormComponent>({
       initialValues={model}
       onValuesChange={onValuesChange}
       actions={{
-        linkToModelMetadata: linkToModelMetadata
+        linkToModelMetadata
       }}
-    ></ConfigurableForm>
+    />
   );
 }
 

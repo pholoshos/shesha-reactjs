@@ -3,11 +3,10 @@ import classNames from 'classnames';
 import { Avatar, Dropdown, Input, Menu } from 'antd';
 import { nanoid } from 'nanoid/non-secure';
 import { DownOutlined, LoginOutlined, UserOutlined } from '@ant-design/icons';
-import { useAuth } from '../../providers';
+import { useAuth, useSidebarMenu } from '../../providers';
 import ShaLink from '../shaLink';
 import { ProtectedContent, AppEditModeToggler, ConfigurableLogo } from '..';
 import { PERM_APP_CONFIGURATOR } from '../../constants';
-import { useSidebarMenu } from '../../providers';
 
 const { Search } = Input;
 

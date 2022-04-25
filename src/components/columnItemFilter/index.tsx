@@ -297,7 +297,9 @@ export const ColumnItemFilter: FC<IColumnItemFilterProps> = ({
     );
   };
 
-  const itemsFetcher = autocompleteUrl ? useGet(autocompleteUrl, { lazy: true }) : useAutocompleteList({ lazy: true });
+  const urlFetcher = useGet(autocompleteUrl || '', { lazy: true });
+  const standardFetcher = useAutocompleteList({ lazy: true });
+  const itemsFetcher = autocompleteUrl ? urlFetcher : standardFetcher;
 
   //#region Moved useEffect to the top level
   const fetchDefaultList = () => {

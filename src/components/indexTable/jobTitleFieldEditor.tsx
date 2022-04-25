@@ -30,11 +30,10 @@ export const JobTitleFieldEditor: FC<IColumnEditFieldProps> = ({
     handleChange(name, event?.target?.value);
   };
 
-  const renderRenderRefListDropdown = () => {
-    const placeholder = `Select ${caption}`;
+  const placeholder = `Select ${caption}`;
 
-    const onChange = (val: ReferenceListItemDto) => {
-      setSelectedOption(val);
+    const onChange = (newValue: ReferenceListItemDto) => {
+      setSelectedOption(newValue);
 
       // handleChange(name, val);
     };
@@ -44,9 +43,10 @@ export const JobTitleFieldEditor: FC<IColumnEditFieldProps> = ({
         ? (stateValue as ReferenceListItemDto[])
         : (stateValue as ReferenceListItemDto);
 
-    return (
+  return (
+    <div className="column-item-filter">
       <Fragment>
-        <RefListDropDown
+        <RefListDropDown.Dto
           listName="JobTitle"
           listNamespace="Dsd.Npo"
           size="small"
@@ -59,10 +59,8 @@ export const JobTitleFieldEditor: FC<IColumnEditFieldProps> = ({
 
         {selectedOption.itemValue === OTHER_OPTION && <Input onChange={handleInputChange} />}
       </Fragment>
-    );
-  };
-
-  return <div className="column-item-filter">{renderRenderRefListDropdown()}</div>;
+    </div>
+  );
 };
 
 export default JobTitleFieldEditor;

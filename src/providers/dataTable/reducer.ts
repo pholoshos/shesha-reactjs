@@ -9,11 +9,13 @@ import {
 } from './actions';
 import flagsReducer from '../utils/flagsReducer';
 import {
+  IColumnSorting,
   IEditableRowState,
   IGetDataPayload,
   IndexColumnDataType,
   IStoredFilter,
   ITableColumn,
+  ITableCrudConfig,
   ITableDataResponse,
   ITableFilter,
   SortDirection,
@@ -25,6 +27,7 @@ import {
   IDataColumnsProps,
 } from '../datatableColumnsConfigurator/models';
 import { getFilterOptions } from '../../components/columnItemFilter';
+import { cleanPropertyName, columnSorting2SortDirection } from './utils';
 
 /** get dirty filter if exists and fallback to current filter state */
 const getDirtyFilter = (state: IDataTableStateContext): ITableFilter[] => {
@@ -33,11 +36,12 @@ const getDirtyFilter = (state: IDataTableStateContext): ITableFilter[] => {
 
 const reducer = handleActions<IDataTableStateContext, any>(
   {
-    [DataTableActionEnums.ChangeSelectedRow]: (state: IDataTableStateContext, action: ReduxActions.Action<number>) => {
+    [DataTableActionEnums.ChangeSelectedRow]: (state: IDataTableStateContext, action: ReduxActions.Action<any>) => {
       const { payload } = action;
+
       return {
         ...state,
-        selectedRow: payload,
+        selectedRow: payload?.id === state?.selectedRow?.id ? null : payload,
       };
     },
 
@@ -52,11 +56,23 @@ const reducer = handleActions<IDataTableStateContext, any>(
       };
     },
 
+    [DataTableActionEnums.ChangeDisplayColumn]: (
+      state: IDataTableStateContext,
+      action: ReduxActions.Action<string>
+    ) => {
+      const { payload } = action;
+      return {
+        ...state,
+        displayColumnName: payload,
+      };
+    },
+
     [DataTableActionEnums.ChangeSelectedStoredFilterIds]: (
       state: IDataTableStateContext,
       action: ReduxActions.Action<string[]>
     ) => {
       const { payload } = action;
+
       return {
         ...state,
         selectedStoredFilterIds: payload,
@@ -273,12 +289,14 @@ const reducer = handleActions<IDataTableStateContext, any>(
           switch (colProps.columnType) {
             case 'data': {
               const dataProps = column as IDataColumnsProps;
-              const srvColumn = dataProps.propertyName ? columns.find(c => c.name === dataProps.propertyName) : {};
+              const srvColumn = dataProps.propertyName
+                ? columns.find(c => cleanPropertyName(c.name) === cleanPropertyName(dataProps.propertyName))
+                : {};
 
               return {
                 id: dataProps?.propertyName,
                 columnId: column.id,
-                accessor: dataProps?.propertyName,
+                accessor: cleanPropertyName(dataProps?.propertyName),
                 propertyName: dataProps?.propertyName,
                 minWidth: column.minWidth,
                 maxWidth: column.minWidth,
@@ -292,7 +310,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
                 referenceListNamespace: srvColumn.referenceListNamespace,
                 autocompleteUrl: srvColumn.autocompleteUrl,
                 allowInherited: srvColumn.allowInherited,
-                defaultSorting: srvColumn.defaultSorting as SortDirection,
+                defaultSorting: columnSorting2SortDirection(column.defaultSorting),
 
                 caption: column.caption,
                 header: column.caption,
@@ -314,7 +332,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
                 maxWidth: column.minWidth,
 
                 dataType: 'action',
-                actionProps: actionProps, // todo: review and add to interface
+                actionProps, // todo: review and add to interface
 
                 isSortable: false,
                 isHiddenByDefault: false,
@@ -333,6 +351,13 @@ const reducer = handleActions<IDataTableStateContext, any>(
         })
         .filter(c => c !== null);
 
+      const configuredTableSorting = cols.filter(c => c.defaultSorting !== null && c.defaultSorting !== undefined && c.propertyName)
+        .map<IColumnSorting>(c => ({ id: c.id, desc: c.defaultSorting === 1 }));
+        
+      const tableSorting = userConfig && userConfig.tableSorting && userConfig.tableSorting.length > 0 
+        ? userConfig.tableSorting
+        : configuredTableSorting;
+
       return {
         ...state,
         columns: cols,
@@ -342,7 +367,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
         quickSearch: userConfig?.quickSearch,
         tableFilter: userConfig?.tableFilter,
         selectedStoredFilterIds: userConfig?.selectedStoredFilterIds || [],
-        tableSorting: userConfig?.tableSorting,
+        tableSorting: tableSorting,
       };
     },
 
@@ -439,7 +464,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
         ...f,
         filterOption: f.columnId === filterColumnId ? filterOptionValue : f.filterOption,
       }));
-      0.0;
+
       return {
         ...state,
         tableFilterDirty: filter,
@@ -488,6 +513,27 @@ const reducer = handleActions<IDataTableStateContext, any>(
       return {
         ...state,
         configurableColumns: [...payload.columns],
+      };
+    },
+
+    [DataTableActionEnums.OnSort]: (state: IDataTableStateContext, action: ReduxActions.Action<IColumnSorting[]>) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        tableSorting: [...payload],
+      };
+    },
+
+    [DataTableActionEnums.SetCrudConfig]: (
+      state: IDataTableStateContext,
+      action: ReduxActions.Action<ITableCrudConfig>
+    ) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        crudConfig: payload,
       };
     },
   },

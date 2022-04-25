@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef, useMemo } from 'react';
 import classNames from 'classnames';
 import {
   useResizeColumns,
@@ -17,7 +17,7 @@ import { Empty, Spin } from 'antd';
 import _ from 'lodash';
 import { IReactTableProps } from './interfaces';
 import { nanoid } from 'nanoid/non-secure';
-// const headerProps = (props, { column }) => getStyles(props, column.align);
+import { usePrevious } from 'react-use';
 
 const cellProps: CellPropGetter<object> = (props, { cell }) => getStyles(props, cell.column.align);
 
@@ -52,6 +52,7 @@ const ReactTable: FC<IReactTableProps> = ({
   defaultSorting = [],
   defaultCanSort = false,
   manualPagination = true,
+  manualSortBy = true,
   manualFilters,
   selectedRowIndex,
   // defaultColumn,
@@ -63,6 +64,8 @@ const ReactTable: FC<IReactTableProps> = ({
   onSelectRow,
   onRowDoubleClick,
   onResizedChange,
+  onSelectedIdsChanged,
+  onSort,
   scrollBodyHorizontally = false,
   height = 250,
 }) => {
@@ -76,13 +79,26 @@ const ReactTable: FC<IReactTableProps> = ({
     []
   );
 
+  const getColumnAccessor = (cid) => {
+    const column = columns.find(c => c.id == cid);
+    return column ? column.accessor.toString() : "";
+  }
+
+  const initialSorting = useMemo(() => {
+    if (!defaultSorting)
+      return [];
+    return  defaultSorting.map(s => {
+      return { ...s, id: getColumnAccessor(s.id) };
+    });
+  }, [defaultSorting]);
+
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state } = useTable(
     {
       columns,
       data,
       defaultColumn,
       initialState: {
-        sortBy: defaultSorting || [],
+        sortBy: initialSorting,
         hiddenColumns: columns
           .map((column: any) => {
             if ([column.isVisible, column.show].includes(false)) return column.accessor || column.id;
@@ -92,6 +108,7 @@ const ReactTable: FC<IReactTableProps> = ({
       defaultCanSort,
       manualFilters,
       manualPagination,
+      manualSortBy,
       disableSortBy,
       pageCount,
     },
@@ -142,23 +159,43 @@ const ReactTable: FC<IReactTableProps> = ({
     }
   );
 
-  const { pageIndex, pageSize } = state;
+  const { pageIndex, pageSize, selectedRowIds, sortBy } = state;
+
+  const previousSortBy = usePrevious(sortBy);
+
+  useEffect(() => {
+    if (onSort && !_.isEqual(_.sortBy(previousSortBy), _.sortBy(sortBy))) {
+      onSort(sortBy);
+    }
+  }, [sortBy]);
+
+  useEffect(() => {
+    if (selectedRowIds && typeof onSelectedIdsChanged === 'function') {
+      const arrays: string[] = data
+        ?.map(({ Id }, index) => {
+          if (selectedRowIds[index]) {
+            return Id;
+          }
+
+          return null;
+        })
+        ?.filter(Boolean);
+
+      onSelectedIdsChanged(arrays);
+    }
+  }, [selectedRowIds]);
 
   // Listen for changes in pagination and use the state to fetch our new data
-  React.useEffect(() => {
+  useEffect(() => {
     if (onFetchData) {
       // onFetchData();
     }
-  }, [onFetchData, pageIndex, pageSize]);
+  }, [onFetchData, pageIndex, pageSize, sortBy]);
 
   const onResizeClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event?.stopPropagation();
 
   const handleSelectRow = (row: Row<object>) => {
-    if (onSelectRow) {
-      if (row?.index === selectedRowIndex) {
-        onSelectRow(null, null);
-      } else onSelectRow(row?.index, row?.original);
-    }
+    onSelectRow(row?.index, row?.original);
   };
 
   useEffect(() => {
@@ -167,9 +204,9 @@ const ReactTable: FC<IReactTableProps> = ({
     }
   }, [state?.columnResizing]);
 
-  const handleDoubleClickRow = (row: Row<object>) => {
+  const handleDoubleClickRow = (row: Row<object>, index: number) => {
     if (onRowDoubleClick) {
-      onRowDoubleClick(row?.original);
+      onRowDoubleClick(row?.original, index);
     }
   };
 
@@ -241,7 +278,7 @@ const ReactTable: FC<IReactTableProps> = ({
                 <span
                   key={nanoid()}
                   onClick={() => handleSelectRow(row)}
-                  onDoubleClick={() => handleDoubleClickRow(row)}
+                  onDoubleClick={() => handleDoubleClickRow(row, rowIndex)}
                   {...row.getRowProps()}
                   className={classNames(
                     'tr tr-body',

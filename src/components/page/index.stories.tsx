@@ -4,9 +4,10 @@ import { Story } from '@storybook/react';
 import { ShaApplicationProvider, SidebarMenuDefaultsProvider } from '../../providers';
 import AuthContainer from '../authedContainer';
 import Page, { IBreadcrumbItem, IPageProps } from './';
-import { IToolbarItem } from '../..';
+import { GlobalStateProvider, IToolbarItem } from '../..';
 import { CloseOutlined, DownloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { ITagProps } from './pageHeaderTag';
+import StoryApp from '../storyBookApp';
 
 export default {
   title: 'Components/Page',
@@ -66,15 +67,13 @@ const breadcrumbItems: IBreadcrumbItem[] = [
 
 //#region Default
 const BasicTemplate: Story<IPageProps> = args => (
-  <ShaApplicationProvider backendUrl={process.env.STORYBOOK_BASE_URL} applicationName="Storybook">
-    <AuthContainer layout={true}>
-      <SidebarMenuDefaultsProvider items={[]}>
-        <Page {...args} title="Any title">
-          <div>This is a div</div>
-        </Page>
-      </SidebarMenuDefaultsProvider>
-    </AuthContainer>
-  </ShaApplicationProvider>
+  <StoryApp>
+    <SidebarMenuDefaultsProvider items={[]}>
+      <Page {...args} title="Any title">
+        <div>This is a div</div>
+      </Page>
+    </SidebarMenuDefaultsProvider>
+  </StoryApp>
 );
 
 export const Basic = BasicTemplate.bind({ ...defaultProps });
@@ -82,15 +81,13 @@ export const Basic = BasicTemplate.bind({ ...defaultProps });
 
 //#region WithToolBarItem
 const WithToolBarItemTemplate: Story<IPageProps> = args => (
-  <ShaApplicationProvider backendUrl={process.env.STORYBOOK_BASE_URL} applicationName="Storybook">
-    <AuthContainer layout={true}>
-      <SidebarMenuDefaultsProvider items={[]}>
-        <Page {...args} title="Any title" toolbarItems={toolbarItems}>
-          <div>This is a div</div>
-        </Page>
-      </SidebarMenuDefaultsProvider>
-    </AuthContainer>
-  </ShaApplicationProvider>
+  <StoryApp>
+    <SidebarMenuDefaultsProvider items={[]}>
+      <Page {...args} title="Any title" toolbarItems={toolbarItems}>
+        <div>This is a div</div>
+      </Page>
+    </SidebarMenuDefaultsProvider>
+  </StoryApp>
 );
 
 export const WithToolBarItem = WithToolBarItemTemplate.bind({ ...defaultProps });
@@ -98,15 +95,13 @@ export const WithToolBarItem = WithToolBarItemTemplate.bind({ ...defaultProps })
 
 //#region WithToolBarItem
 const WithHeaderListTemplate: Story<IPageProps> = args => (
-  <ShaApplicationProvider backendUrl={process.env.STORYBOOK_BASE_URL} applicationName="Storybook">
-    <AuthContainer layout={true}>
-      <SidebarMenuDefaultsProvider items={[]}>
-        <Page {...args} title="Any title" headerTagList={headerTagList}>
-          <div>This is a div</div>
-        </Page>
-      </SidebarMenuDefaultsProvider>
-    </AuthContainer>
-  </ShaApplicationProvider>
+  <StoryApp>
+    <SidebarMenuDefaultsProvider items={[]}>
+      <Page {...args} title="Any title" headerTagList={headerTagList}>
+        <div>This is a div</div>
+      </Page>
+    </SidebarMenuDefaultsProvider>
+  </StoryApp>
 );
 
 export const WithHeaderList = WithHeaderListTemplate.bind({ ...defaultProps });
@@ -114,15 +109,13 @@ export const WithHeaderList = WithHeaderListTemplate.bind({ ...defaultProps });
 
 //#region WithToolBarItem
 const WithBackButtonTemplate: Story<IPageProps> = args => (
-  <ShaApplicationProvider backendUrl={process.env.STORYBOOK_BASE_URL} applicationName="Storybook">
-    <AuthContainer layout={true}>
-      <SidebarMenuDefaultsProvider items={[]}>
-        <Page {...args} title="Any title" backUrl="/">
-          <div>This is a div</div>
-        </Page>
-      </SidebarMenuDefaultsProvider>
-    </AuthContainer>
-  </ShaApplicationProvider>
+  <StoryApp>
+    <SidebarMenuDefaultsProvider items={[]}>
+      <Page {...args} title="Any title" backUrl="/">
+        <div>This is a div</div>
+      </Page>
+    </SidebarMenuDefaultsProvider>
+  </StoryApp>
 );
 
 export const WithBackButton = WithBackButtonTemplate.bind({ ...defaultProps });
@@ -130,22 +123,20 @@ export const WithBackButton = WithBackButtonTemplate.bind({ ...defaultProps });
 
 //#region WithToolBarItem
 const CompleteExampleTemplate: Story<IPageProps> = args => (
-  <ShaApplicationProvider backendUrl={process.env.STORYBOOK_BASE_URL} applicationName="Storybook">
-    <AuthContainer layout={true}>
-      <SidebarMenuDefaultsProvider items={[]}>
-        <Page
-          {...args}
-          title="Any title"
-          toolbarItems={toolbarItems}
-          headerTagList={headerTagList}
-          breadcrumbItems={breadcrumbItems}
-          backUrl="/"
-        >
-          <div>This is a div</div>
-        </Page>
-      </SidebarMenuDefaultsProvider>
-    </AuthContainer>
-  </ShaApplicationProvider>
+  <StoryApp>
+    <SidebarMenuDefaultsProvider items={[]}>
+      <Page
+        {...args}
+        title="Any title"
+        toolbarItems={toolbarItems}
+        headerTagList={headerTagList}
+        breadcrumbItems={breadcrumbItems}
+        backUrl="/"
+      >
+        <div>This is a div</div>
+      </Page>
+    </SidebarMenuDefaultsProvider>
+  </StoryApp>
 );
 
 export const CompleteExample = CompleteExampleTemplate.bind({ ...defaultProps });

@@ -2,8 +2,8 @@ import React, { FC, Fragment } from 'react';
 import { Tooltip, Button } from 'antd';
 import { IToolbarItem } from '../../interfaces';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
-import { joinStringValues } from '../..';
 import { nanoid } from 'nanoid/non-secure';
+import classNames from 'classnames';
 
 export interface IActionButtonGroupProps {
   /** The items to display as buttons */
@@ -23,13 +23,13 @@ export interface IActionButtonGroupProps {
  */
 export const ActionButtonGroup: FC<IActionButtonGroupProps> = ({ items, className, btnSize = 'small' }) => {
   return (
-    <div className={joinStringValues(['sha-action-btn-group', className])}>
+    <div className={classNames('sha-action-btn-group', className)}>
       <div className="sha-index-toolbar-left">
         <Fragment>
           <Fragment>
             {items
               ?.filter(({ hide }) => !hide)
-              ?.map(({ title, icon, onClick, className, disabled, tooltipName, render }) => {
+              ?.map(({ title, icon, onClick, className: localClassName, disabled, tooltipName, render }) => {
                 if (render && typeof render === 'function') {
                   return render();
                 }
@@ -42,7 +42,7 @@ export const ActionButtonGroup: FC<IActionButtonGroupProps> = ({ items, classNam
                         onClick(event);
                       }}
                       disabled={disabled}
-                      className={`toolbar-item ${disabled ? 'disabled' : ''} ${className || ''}`}
+                      className={`toolbar-item ${disabled ? 'disabled' : ''} ${localClassName || ''}`}
                       key={nanoid()}
                       type="link"
                       icon={icon}

@@ -7,10 +7,11 @@ import {
   UserResetPasswordSendOtpQueryParams,
 } from '../../apis/user';
 import { UserLoginInfoDto } from '../../apis/session';
-import { IFlagsSetters, IFlagsState } from '../../interfaces';
 import { IErrorInfo } from '../../interfaces/errorInfo';
 import { AuthenticateModel } from '../../apis/tokenAuth';
 import IRequestHeaders from '../../interfaces/requestHeaders';
+import { IFlagsSetters, IFlagsState } from '../../interfaces';
+import { EMPTY_FLAGS_STATE } from '../../interfaces/flagsState';
 
 export type IFlagProgressFlags =
   | 'isIdle'
@@ -79,17 +80,19 @@ export interface IAuthActionsContext
 
   resetPasswordSuccess?: () => void;
 
-  getAccessToken?: () => any;
+  getAccessToken: () => string;
 
   checkAuth?: () => void;
+
+  fireHttpHeadersChanged?: (state?: IAuthStateContext) => void;
 
   /* NEW_ACTION_ACTION_DECLARATION_GOES_HERE */
 }
 
 export const AUTH_CONTEXT_INITIAL_STATE: IAuthStateContext = {
-  isInProgress: {
-    isIdle: true,
-  },
+  ...EMPTY_FLAGS_STATE,
+  isCheckingAuth: false,
+  isFetchingUserInfo: false,
 };
 
 export const AuthStateContext = createContext<IAuthStateContext>(AUTH_CONTEXT_INITIAL_STATE);

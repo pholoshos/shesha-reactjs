@@ -12,10 +12,19 @@ import { DataTypes } from '../../../../interfaces/dataTypes';
 
 export interface IEntityPickerComponentProps extends IConfigurableFormComponent {
   placeholder?: string;
+  items?: [];
   hideBorder?: boolean;
   disabled?: boolean;
   tableId: string;
+  entityType: string;
   title?: string;
+  displayEntityKey?: string;
+  allowNewRecord?: boolean;
+  modalFormId?: string;
+  modalTitle?: string;
+  showModalFooter?: boolean;
+  onSuccessRedirectUrl?: string;
+  submitHttpVerb?: 'POST' | 'PUT';
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -26,15 +35,40 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
   icon: <EllipsisOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.entityReference,
   factory: (model: IEntityPickerComponentProps) => {
-    const { formMode } = useForm()
+    const { formMode } = useForm();
 
-    if (formMode === 'designer' && !model?.tableId) {
-      return <Alert message="Please make sure that you've specified the tableId property" />
+    if (formMode === 'designer' && !model?.tableId && !model?.entityType) {
+      return (
+        <Alert
+          showIcon
+          message="EntityPicker not configured properly"
+          description="Please make sure that you've specified either the 'tableId' or 'entityType' property."
+          type="warning"
+        />
+      );
     }
 
     return (
       <ConfigurableFormItem model={model} initialValue={model?.defaultValue}>
-        <EntityPicker disabled={model.disabled} tableId={model?.tableId} />
+        <EntityPicker
+          formId={model?.id}
+          disabled={model.disabled}
+          tableId={model?.tableId}
+          displayEntityKey={model?.displayEntityKey}
+          entityType={model?.entityType}
+          addNewRecordsProps={
+            model?.allowNewRecord
+              ? {
+                  modalFormId: model?.modalFormId,
+                  modalTitle: model?.modalTitle,
+                  showModalFooter: model?.showModalFooter,
+                  submitHttpVerb: model?.submitHttpVerb,
+                  onSuccessRedirectUrl: model?.onSuccessRedirectUrl,
+                }
+              : undefined
+          }
+          configurableColumns={model?.items}
+        />
       </ConfigurableFormItem>
     );
   },

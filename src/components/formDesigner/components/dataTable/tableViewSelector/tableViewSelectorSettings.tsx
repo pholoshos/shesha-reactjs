@@ -4,18 +4,18 @@ import { ITableViewSelectorProps } from './models';
 import TableViewSelectorSettingsModal from './tableViewSelectorSettingsModal';
 import { QueryBuilderProvider } from '../../../../../providers';
 import { useForm } from '../../../../../providers/form';
-import { ITableColumn, useMetadata } from '../../../../../';
+import { ITableColumn, useMetadata } from '../../../../..';
 import { IProperty } from '../../../../../providers/queryBuilder/models';
 import { TableDataSourceType } from '../../../../../providers/dataTable/interfaces';
 
-export interface IProps {
+export interface ITableViewSelectorSettingsProps {
   model: ITableViewSelectorProps;
   onSave: (model: ITableViewSelectorProps) => void;
   onCancel: () => void;
   onValuesChange?: (changedValues: any, values: ITableViewSelectorProps) => void;
 }
 
-function ColumnsSettings(props: IProps) {
+function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const { selectedComponentRef } = useForm();
@@ -27,40 +27,36 @@ function ColumnsSettings(props: IProps) {
 
   const fields = useMemo<IProperty[]>(() => {
     if (dataSourceType === 'tableConfig') {
-      return columns.map<IProperty>(column => (
-        {
-          label: column.header,
-          propertyName: column.columnId,
-          visible: column.isVisible,
-          dataType: column.dataType,
-          fieldSettings: {
-            typeShortAlias: column.entityReferenceTypeShortAlias,
-            referenceListName: column.referenceListName,
-            referenceListNamespace: column.referenceListNamespace,
-            allowInherited: column.allowInherited,
-          },
-          //tooltip: column.description
-          //preferWidgets: ['']
-        }
-      ));
+      return columns.map<IProperty>(column => ({
+        label: column.header,
+        propertyName: column.columnId,
+        visible: column.isVisible,
+        dataType: column.dataType,
+        fieldSettings: {
+          typeShortAlias: column.entityReferenceTypeShortAlias,
+          referenceListName: column.referenceListName,
+          referenceListNamespace: column.referenceListNamespace,
+          allowInherited: column.allowInherited,
+        },
+        //tooltip: column.description
+        //preferWidgets: ['']
+      }));
     }
     if (dataSourceType === 'entity') {
       const properties = metadata?.metadata?.properties || [];
       if (Boolean(properties))
-        return properties.map<IProperty>(property => (
-          {
-            label: property.label,
-            propertyName: property.path,
-            visible: property.isVisible,
-            dataType: property.dataType,
-            fieldSettings: {
-              typeShortAlias: property.entityType,
-              referenceListName: property.referenceListName,
-              referenceListNamespace: property.referenceListNamespace,
-              allowInherited: true,
-            }
-          }
-        ));
+        return properties.map<IProperty>(property => ({
+          label: property.label,
+          propertyName: property.path,
+          visible: property.isVisible,
+          dataType: property.dataType,
+          fieldSettings: {
+            typeShortAlias: property.entityType,
+            referenceListName: property.referenceListName,
+            referenceListNamespace: property.referenceListNamespace,
+            allowInherited: true,
+          },
+        }));
     }
     return [];
   }, [dataSourceType, columns, metadata]);
@@ -111,6 +107,7 @@ function ColumnsSettings(props: IProps) {
     });
   });
   */
+
   return (
     <QueryBuilderProvider fields={fields}>
       <Form form={form} onFinish={props.onSave} onValuesChange={props.onValuesChange}>
@@ -121,11 +118,11 @@ function ColumnsSettings(props: IProps) {
             hideModal={() => {
               setModalVisible(false);
             }}
-          ></TableViewSelectorSettingsModal>
+          />
         </Form.Item>
       </Form>
     </QueryBuilderProvider>
   );
 }
 
-export default ColumnsSettings;
+export default TableViewSelectorSettings;

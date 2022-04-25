@@ -1,9 +1,8 @@
 import React, { FC, ReactNode, useState } from 'react';
-import { useShaRouting } from '../../providers/shaRouting';
 import { Button, Form, Modal, Spin } from 'antd';
 import { ValidationErrors, ConfigurableForm } from '../';
 import { FormInstance } from 'antd/lib/form';
-import { useUi } from '../../providers';
+import { useShaRouting, useUi } from '../../providers';
 import { IDataMutator } from './models';
 import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
 
@@ -11,7 +10,7 @@ export enum OnSuccessActionType {
   Return = 'RETURN',
   AddMore = 'ADD_MORE',
   GoToDetails = 'GO_TO_DETAILS',
-  GoToUrl = 'GO_TO_URL'
+  GoToUrl = 'GO_TO_URL',
 }
 
 export interface IGenericCreateModalProps {
@@ -68,7 +67,7 @@ export interface IGenericCreateModalProps {
   /**
    * The URL to navigate to after successfully submitting the form and the OnSuccessAction is set to "GoToUrl"
    */
-  onSuccessUrl?: string;
+  onSuccessUrl?: string | ((data: any) => string);
 
   onFieldsChange?: (changedFields: any[], allFields: any[]) => void;
 
@@ -81,6 +80,8 @@ export interface IGenericCreateModalProps {
   destroyOnClose?: boolean;
 
   formMarkup?: FormMarkup;
+
+  returnUrlOnSuccess?: string | ((data: any) => string);
 }
 
 const GenericCreateModal: FC<IGenericCreateModalProps> = ({
@@ -103,12 +104,11 @@ const GenericCreateModal: FC<IGenericCreateModalProps> = ({
   formMarkup,
 }) => {
   const { mutate: save, error, loading } = updater({});
+  const { router } = useShaRouting();
 
   const [localKeepOpen, setLocalKeepOpen] = useState(false);
 
   const [form] = Form.useForm();
-
-  const { router } = useShaRouting();
 
   const onSubmit = () => {
     form.submit();
@@ -116,29 +116,28 @@ const GenericCreateModal: FC<IGenericCreateModalProps> = ({
 
   const onFinish = (values: any) => {
     // We must always use updated values, in case the user had prepared values by then also update the values in the form
-    const preparedValues = typeof prepareValues === 'function' ? { ...prepareValues(values), ...values } : values;
+    const preparedValues = typeof prepareValues === 'function' ? prepareValues(values) : values;
 
     if (beforeSubmit && !beforeSubmit(preparedValues)) {
       return;
     }
 
-    save(preparedValues).then((result) => {
-
+    save(preparedValues).then(result => {
       switch (OnSuccessAction) {
-
         // Go to the details page of the entity you just created
         case OnSuccessActionType.GoToDetails:
           setLocalKeepOpen(false);
           onSuccess(form, localKeepOpen);
-          console.log(JSON.stringify(result));
-          router?.push(onSuccessUrl + '/' + result.id);
+          router?.push(onSuccessUrl + '/?id=' + result.id);
           break;
 
         // Go to a specific url on success if the OnSuccessActionType is GoToUrl
         case OnSuccessActionType.GoToUrl:
           setLocalKeepOpen(false);
           onSuccess(form, localKeepOpen);
-          router?.push(onSuccessUrl);
+          if (onSuccessUrl) {
+            router?.push(typeof onSuccessUrl === 'function' ? onSuccessUrl(result) : onSuccessUrl);
+          }
           break;
 
         // Keep the form open and keep adding more items
@@ -153,8 +152,6 @@ const GenericCreateModal: FC<IGenericCreateModalProps> = ({
           onSuccess(form, localKeepOpen);
           break;
       }
-
-
     });
   };
 
@@ -174,14 +171,13 @@ const GenericCreateModal: FC<IGenericCreateModalProps> = ({
       destroyOnClose={destroyOnClose}
       footer={
         <div>
-          <Button onClick={handleCancel}>
-            {cancelButtonLabel}
-          </Button>
+          <Button onClick={handleCancel}>{cancelButtonLabel}</Button>
           <Button type="primary" onClick={onSubmit}>
             {submitButtonLabel}
           </Button>
         </div>
-      }>
+      }
+    >
       <Spin spinning={loading} tip="Please wait...">
         <ValidationErrors error={error?.data} />
 
@@ -195,6 +191,7 @@ const GenericCreateModal: FC<IGenericCreateModalProps> = ({
           onFieldsChange={onFieldsChange}
           actions={actions}
           sections={sections}
+          skipPostOnFinish
         />
       </Spin>
     </Modal>

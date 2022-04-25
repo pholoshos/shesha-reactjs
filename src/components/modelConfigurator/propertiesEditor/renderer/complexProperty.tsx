@@ -1,9 +1,8 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Button, Tooltip } from 'antd';
 import { DeleteFilled, QuestionCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { usePropertiesEditor } from '../provider';
 import DragHandle from './dragHandle';
-import React from 'react';
 import { IModelItem } from '../../../../interfaces/modelConfigurator';
 import ItemsContainer from './itemsContainer';
 import { getIconByDataType } from '../../../../utils/metadata';
@@ -22,7 +21,7 @@ export const ComplexProperty: FC<IProps> = props => {
     deleteItem(props.id);
   };
 
-  let classes = ['sha-sidebar-item'];
+  const classes = ['sha-sidebar-item'];
   if (selectedItemId === props.id) {
     classes.push('selected');
   }
@@ -34,8 +33,8 @@ export const ComplexProperty: FC<IProps> = props => {
   return (
     <div className={classes.reduce((a, c) => a + ' ' + c)} ref={selectedItemId === props.id ? selectedItemRef : undefined}>
       <div className="sha-sidebar-item-header">
-        <DragHandle id={props.id}></DragHandle>
-        {icon && <ShaIcon iconName={icon}></ShaIcon>}
+        <DragHandle id={props.id} />
+        {icon && <ShaIcon iconName={icon} />}
         <span className="sha-sidebar-item-name">{props.name}</span>
         {props.description && (
           <Tooltip title={props.description}>
@@ -45,7 +44,7 @@ export const ComplexProperty: FC<IProps> = props => {
         <Button icon={<PlusOutlined color="red" />} onClick={onAddChildClick} size="small">Add child</Button>
 
         <div className="sha-sidebar-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger></Button>
+          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
         </div>
         <div className="sha-sidebar-group-container">
           <ItemsContainer index={props.index} items={props.properties || []} />

@@ -9,8 +9,8 @@ import GlobalTableFilter from '../globalTableFilter';
 
 export interface IIndexTableControlsProps {
   /**
-  * @deprecated pass this on an `IndexTableProvider` level
-  */  
+   * @deprecated pass this on an `IndexTableProvider` level
+   */  
   header?: string;
   disableCustomFilters: boolean;
   showRefreshBtn?: boolean;

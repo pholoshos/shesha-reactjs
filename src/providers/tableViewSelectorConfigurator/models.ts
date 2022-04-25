@@ -8,4 +8,8 @@ export interface ITableViewProps {
   filterType: FilterType;
   visibility?: string;
   permissions?: string;
+
+  selected?: boolean;
+  useExpression?: boolean;
+  defaultSelected?: boolean;
 }

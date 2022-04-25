@@ -9,6 +9,8 @@ import {
   ITableDataResponse,
   IGetDataPayload,
   IEditableRowState,
+  ITableCrudConfig,
+  IColumnSorting,
 } from './interfaces';
 
 export enum DataTableActionEnums {
@@ -44,6 +46,12 @@ export enum DataTableActionEnums {
   UpdateLocalTableData = 'UPDATE_LOCAL_TABLE_DATA',
   DeleteRowItem = 'DELETE_ROW_ITEM',
   RegisterConfigurableColumns = 'REGISTER_CONFIGURABLE_COLUMNS',
+  OnSelectRow = 'ON_SELECT_ROW',
+  OnSort = 'ON_SORT',
+
+  SetCrudConfig = 'SET_CRUD_Config',
+
+  ChangeDisplayColumn = 'CHANGE_DISPLAY_COLUMN',
 
   /* NEW_ACTION_TYPE_GOES_HERE */
 }
@@ -58,7 +66,9 @@ export const fetchTableDataSuccessAction = createAction<ITableDataResponse, ITab
   p => p
 );
 
-export const fetchTableDataErrorAction = createAction(DataTableActionEnums.FetchTableDataError, () => {});
+export const fetchTableDataErrorAction = createAction(DataTableActionEnums.FetchTableDataError, () => {
+  /*nop*/
+});
 
 export const fetchTableConfigAction = createAction<string, string>(DataTableActionEnums.FetchTableConfig, p => p);
 
@@ -126,6 +136,7 @@ export interface IChangeFilterAction {
   filterColumnId: string;
   filterValue: any;
 }
+
 export const changeFilterAction = createAction<IChangeFilterAction, IChangeFilterAction>(
   DataTableActionEnums.ChangeFilter,
   p => p
@@ -133,7 +144,7 @@ export const changeFilterAction = createAction<IChangeFilterAction, IChangeFilte
 
 export const applyFilterAction = createAction<ITableFilter[], ITableFilter[]>(DataTableActionEnums.ApplyFilter, p => p);
 
-export const changeSelectedRowAction = createAction<number, number>(DataTableActionEnums.ChangeSelectedRow, p => p);
+export const changeSelectedRowAction = createAction<any, any>(DataTableActionEnums.ChangeSelectedRow, p => p);
 
 export const changeSelectedStoredFilterIdsAction = createAction<string[], string[]>(
   DataTableActionEnums.ChangeSelectedStoredFilterIds,
@@ -165,4 +176,13 @@ export const registerConfigurableColumnsAction = createAction<
   IRegisterConfigurableColumnsPayload
 >(DataTableActionEnums.RegisterConfigurableColumns, p => p);
 
+export const onSortAction = createAction<IColumnSorting[], IColumnSorting[]>(DataTableActionEnums.OnSort, p => p);
+
 /* NEW_ACTION_GOES_HERE */
+
+export const setCrudConfigAction = createAction<ITableCrudConfig, ITableCrudConfig>(
+  DataTableActionEnums.SetCrudConfig,
+  p => p
+);
+
+export const changeDisplayColumnAction = createAction<string, string>(DataTableActionEnums.ChangeDisplayColumn, p => p);

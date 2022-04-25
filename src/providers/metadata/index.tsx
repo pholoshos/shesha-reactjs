@@ -51,7 +51,7 @@ const MetadataProvider: FC<PropsWithChildren<IMetadataProviderProps>> = ({
   };
 
   const contextValue: IMetadataContext = { ...state, ...metadataActions };
-  registerProvider({ id, modelType, contextValue: contextValue });
+  registerProvider({ id, modelType, contextValue });
 
   return (
     <MetadataContext.Provider value={contextValue}>

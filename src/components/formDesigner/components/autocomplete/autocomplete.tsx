@@ -1,13 +1,24 @@
-import React, { Key } from 'react';
-import { IToolboxComponent } from '../../../../interfaces';
-import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { FileSearchOutlined } from '@ant-design/icons';
-import ConfigurableFormItem from '../formItem';
-import settingsFormJson from './settingsForm.json';
-import Autocomplete, { AutocompleteDataSourceType } from '../../../autocomplete';
-import { useForm } from '../../../../providers/form';
-import { evaluateValue, replaceTags, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { message } from 'antd';
+import React, { Key } from 'react';
+import { axiosHttp } from '../../../../apis/axios';
+import { IToolboxComponent } from '../../../../interfaces';
 import { DataTypes } from '../../../../interfaces/dataTypes';
+import { useGlobalState, useSheshaApplication } from '../../../../providers';
+import { useForm } from '../../../../providers/form';
+import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
+import {
+  evaluateString,
+  evaluateValue,
+  getStyle,
+  replaceTags,
+  validateConfigurableComponentSettings,
+} from '../../../../providers/form/utils';
+import Autocomplete, { AutocompleteDataSourceType, ISelectOption } from '../../../autocomplete';
+import ConfigurableFormItem from '../formItem';
+import { customDropDownEventHandler } from '../utils';
+import settingsFormJson from './settingsForm.json';
+import moment from 'moment';
 
 interface IQueryParamProp {
   id: string;
@@ -28,6 +39,17 @@ export interface IAutocompleteProps extends IConfigurableFormComponent {
   mode?: 'tags' | 'multiple';
   useRawValues: boolean;
   queryParams: IQueryParamProp[];
+  keyPropName?: string;
+  valuePropName?: string;
+
+  quickviewEnabled?: boolean;
+  quickviewFormPath?: string;
+  quickviewDisplayPropertyName?: string;
+  quickviewGetEntityUrl?: string;
+  quickviewWidth?: number;
+  width?: number;
+  minWidth?: number;
+  maxWidth?: number;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -37,12 +59,17 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
   name: 'Autocomplete',
   icon: <FileSearchOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.entityReference,
-  factory: (model: IAutocompleteProps) => {
+  factory: (model: IAutocompleteProps, _c, form) => {
     const { queryParams } = model;
-    const { formData, formMode } = useForm();
+    const { formData, formMode, isComponentDisabled } = useForm();
+    const { globalState } = useGlobalState();
+    const { backendUrl } = useSheshaApplication();
+
     const dataSourceUrl = model.dataSourceUrl
       ? replaceTags(model.dataSourceUrl, { data: formData })
       : model.dataSourceUrl;
+
+    const disabled = isComponentDisabled(model);
 
     const getQueryParams = (): IQueryParams => {
       const queryParamObj: IQueryParams = {};
@@ -63,25 +90,78 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       return null;
     };
 
+    const getFetchedItemData = (
+      item: object,
+      useRawValues: boolean,
+      value: string = 'value',
+      displayText: string = 'displayText'
+    ) =>
+      useRawValues
+        ? item[value]
+        : {
+            id: item[value],
+            displayText: item[displayText],
+          };
+
+    const getOptionFromFetchedItem = (item: object): ISelectOption => {
+      const { dataSourceType, keyPropName, useRawValues, valuePropName } = model;
+
+      if (dataSourceType === 'url' && keyPropName && valuePropName) {
+        return {
+          value: item[keyPropName],
+          label: item[valuePropName],
+          data: getFetchedItemData(item, useRawValues, keyPropName, valuePropName),
+        };
+      }
+
+      return {
+        value: item['value'],
+        label: item['displayText'],
+        data: getFetchedItemData(item, useRawValues),
+      };
+    };
+
+    const eventProps = {
+      model,
+      form,
+      formData,
+      formMode,
+      globalState,
+      http: axiosHttp(backendUrl),
+      message,
+      moment,
+    };
+
     const autocompleteProps = {
       typeShortAlias: model?.entityTypeShortAlias,
       allowInherited: true /*hardcoded for now*/,
-      disabled: model.disabled,
+      disabled,
       bordered: !model.hideBorder,
       dataSourceUrl,
       dataSourceType: model.dataSourceType,
       mode: model?.mode,
       queryParams: getQueryParams(),
       readOnly: model?.readOnly || formMode === 'readonly',
+      defaultValue: evaluateString(model?.defaultValue, { formData, formMode, globalState }) as any,
+      getOptionFromFetchedItem,
+
+      quickviewEnabled: model?.quickviewEnabled,
+      quickviewFormPath: model?.quickviewFormPath,
+      quickviewDisplayPropertyName: model?.quickviewDisplayPropertyName,
+      quickviewGetEntityUrl: model?.quickviewGetEntityUrl,
+      quickviewWidth: model?.quickviewWidth,
+      subscribedEventNames: model?.subscribedEventNames,
+      style: getStyle(model?.style, formData),
+      size: model?.size,
     };
 
     // todo: implement other types of datasources!
     return (
       <ConfigurableFormItem model={model}>
         {model.useRawValues ? (
-          <Autocomplete.Raw {...autocompleteProps} />
+          <Autocomplete.Raw {...autocompleteProps} {...customDropDownEventHandler(eventProps)} />
         ) : (
-          <Autocomplete.EntityDto {...autocompleteProps} />
+          <Autocomplete.EntityDto {...autocompleteProps} {...customDropDownEventHandler(eventProps)} />
         )}
       </ConfigurableFormItem>
     );

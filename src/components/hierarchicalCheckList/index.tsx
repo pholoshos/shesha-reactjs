@@ -101,7 +101,7 @@ export interface IHierarchicalCheckListProps {
   onSelectionsChange?: (selections: ISaveSelectionsInput) => void;
 }
 
-type HierarchicalCheckListHandle = {
+interface HierarchicalCheckListHandle {
   /**
    * A handle to check that the checklist is valid.
    *
@@ -119,7 +119,7 @@ type HierarchicalCheckListHandle = {
    * A callback for saving the selections
    */
   save: () => void;
-};
+}
 
 const Checklist: ForwardRefRenderFunction<HierarchicalCheckListHandle, IHierarchicalCheckListProps> = (
   props,
@@ -283,7 +283,7 @@ const Checklist: ForwardRefRenderFunction<HierarchicalCheckListHandle, IHierarch
    * @param incomingSelectedKeys selected keys
    * @param info information about the new selection
    */
-  const onSelect = (_: Key[], info: ISelectProps) => {
+  const onSelect = (_keys: Key[], info: ISelectProps) => {
     if (!info?.node?.isLeaf) {
       // Maybe show a message that you can only select a leaf
       return;
@@ -436,12 +436,12 @@ const Checklist: ForwardRefRenderFunction<HierarchicalCheckListHandle, IHierarch
 
   //#region Helper functions
   function mapData(data: IExtendedCheckListItemModel, parentId?: string): IDataNode {
-    const { id, name, childItems, description, allowAddComments, itemType } = data;
+    const { id: localId, name, childItems, description, allowAddComments, itemType } = data;
 
-    const itemInitialComments = selections?.find(({ checkListItemId }) => checkListItemId === id);
+    const itemInitialComments = selections?.find(({ checkListItemId }) => checkListItemId === localId);
 
     return {
-      key: id || '',
+      key: localId || '',
       data: {
         ...data,
         parentId,
@@ -453,7 +453,7 @@ const Checklist: ForwardRefRenderFunction<HierarchicalCheckListHandle, IHierarch
           title={name as string}
           onChange={updateSelectionComments}
           onBlur={saveComments}
-          checkListItemId={id}
+          checkListItemId={localId}
           showCommentBox={allowAddComments && itemInitialComments?.selection !== CheckListSelectionType.Yes}
           value={itemInitialComments?.comments || ''}
           description={description || ''}
@@ -486,7 +486,7 @@ const Checklist: ForwardRefRenderFunction<HierarchicalCheckListHandle, IHierarch
 
   const commonTreeProps: TreeProps = {
     disabled: (disableTree || readOnly) ?? false,
-    treeData: treeData,
+    treeData,
     multiple: true,
   };
 

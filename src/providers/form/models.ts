@@ -1,4 +1,6 @@
+import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ReactNode } from 'react';
+import { FormDto } from '../../apis/form';
 import { IAsyncValidationError } from '../../interfaces';
 import { IFormSettings } from './contexts';
 
@@ -7,6 +9,8 @@ export const TOOLBOX_COMPONENT_DROPPABLE_KEY: string = 'toolboxComponent';
 export const TOOLBOX_DATA_ITEM_DROPPABLE_KEY: string = 'toolboxDataItem';
 
 export type FormMode = 'designer' | 'edit' | 'readonly';
+
+export type ViewType = 'details' | 'table' | 'form' | 'blank' | 'masterDetails' | 'menu' | 'dashboard';
 
 export type LabelAlign = 'left' | 'right';
 
@@ -105,10 +109,25 @@ export interface IConfigurableFormComponent extends IFormComponentContainer {
   onFocusCustom?: string;
   //#endregion
 
+  /** Whether the component is read-only */
   readOnly?: boolean;
+
+  /** Control size */
+  size?: SizeType;
 
   /** If true, indicates that component is rendered dynamically and some of rules (e.g. visibility) shouldn't be applied to this component */
   isDynamic?: boolean;
+
+  /**
+   * This allows a component to display a quickview popover with entity details.
+   * The quickview is only displayed in readonly mode
+   */
+  enableQuickview?: boolean;
+
+  subscribedEventNames?: string[];
+  dispatchedEventNames?: string[];
+  dispatchedEventDebouncedMilliseconds?: number;
+  style?: string;
 }
 
 export interface IComponentsContainer {
@@ -138,6 +157,7 @@ export interface IFormProps extends IFlatComponentsStructure {
   description?: string;
   components: IConfigurableFormComponent[];
   formSettings: IFormSettings;
+  type?: ViewType;
 }
 
 export declare type StoreValue = any;
@@ -145,10 +165,10 @@ export interface Store {
   [name: string]: StoreValue;
 }
 
-export type FormMarkupWithSettings = {
+export interface FormMarkupWithSettings {
   formSettings: IFormSettings;
   components: IConfigurableFormComponent[];
-};
+}
 export type FormMarkup = IConfigurableFormComponent[] | FormMarkupWithSettings;
 
 export interface IConfigurableFormBaseProps {
@@ -192,4 +212,8 @@ export interface IFormSection {
   name: string;
   /** Action body */
   body: (data?: any) => ReactNode;
+}
+
+export interface IFormDto extends Omit<FormDto, 'markup'> {
+  markup: FormMarkupWithSettings;
 }

@@ -1,19 +1,23 @@
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, Space } from 'antd';
 import classNames from 'classnames';
 import { nanoid } from 'nanoid/non-secure';
 import React, { FC, useEffect } from 'react';
-import { CancelButton, ShaSpin } from '..';
-import { useShaRouting, useSheshaApplication } from '../..';
+import { CancelButton, IndexToolbar, ShaSpin } from '..';
 import { IToolbarItem } from '../../interfaces';
-import { IndexToolbar } from '../indexToolbar';
 import Show from '../show';
+import { useShaRouting, useSheshaApplication } from '../../providers';
 import PageHeaderTag, { ITagProps } from './pageHeaderTag';
+import StatusTag, { IStatusTagProps } from '../statusTag';
+import { IToolbarButtonItem } from '../toolbar/models';
+import Toolbar from '../toolbar';
 
 export interface IPageHeadProps {
   readonly title?: string;
   readonly description?: string;
   readonly url?: string;
   readonly ogImage?: string;
+  readonly formId?: string;
+  readonly formMode?: string;
 }
 
 export interface IBreadcrumbItem {
@@ -22,16 +26,18 @@ export interface IBreadcrumbItem {
 }
 
 export interface IPageProps extends IPageHeadProps {
-  toolbarItems?: IToolbarItem[];
+  toolbarItems?: IToolbarItem[] | IToolbarButtonItem[];
   backUrl?: string;
   breadcrumbItems?: IBreadcrumbItem[];
   headerTagList?: ITagProps[];
   loading?: boolean;
   noPadding?: boolean;
   loadingText?: string;
+  status?: IStatusTagProps;
 }
 
 export const Page: FC<IPageProps> = ({
+  formId,
   children,
   title,
   toolbarItems,
@@ -41,6 +47,7 @@ export const Page: FC<IPageProps> = ({
   breadcrumbItems,
   loadingText = 'Loading...',
   noPadding = false,
+  status,
 }) => {
   const { router } = useShaRouting();
   const { applicationName } = useSheshaApplication();
@@ -57,14 +64,22 @@ export const Page: FC<IPageProps> = ({
 
   const showHeading = !!title || hasBackUrl || hasTagList;
 
+  const hasStatus = Boolean(status);
+
   return (
     <section className="sha-page">
       <ShaSpin spinning={loading || false} tip={loadingText}>
         <Show when={showHeading}>
           <div className="sha-page-heading">
             <div className="sha-page-heading-left">
-              <Show when={!!title?.trim()}>
-                <h1 className="sha-page-title">{title}</h1>
+              <Show when={!!title?.trim() || hasStatus}>
+                <h1 className="sha-page-title">
+                  <Space>
+                    {title}
+
+                    <StatusTag color={status?.color} value={status?.value} override={status?.override} />
+                  </Space>
+                </h1>
               </Show>
             </div>
 
@@ -88,7 +103,9 @@ export const Page: FC<IPageProps> = ({
           </div>
         </Show>
 
-        <Show when={!!toolbarItems?.length}>{<IndexToolbar items={toolbarItems?.filter(({ hide }) => !hide)} />}</Show>
+        <Show when={!!toolbarItems?.length}>
+          {formId ? <Toolbar items={toolbarItems as IToolbarButtonItem[]} /> : <IndexToolbar items={toolbarItems} />}
+        </Show>
 
         <Show when={!!breadcrumbItems?.length}>
           <Breadcrumb className="sha-page-breadcrumb">
@@ -98,7 +115,14 @@ export const Page: FC<IPageProps> = ({
           </Breadcrumb>
         </Show>
 
-        <div className={classNames('sha-page-content', { 'no-padding': noPadding })}>{children}</div>
+        <div
+          className={classNames('sha-page-content', {
+            'no-padding': noPadding,
+            // 'is-designer-mode': formMode === 'designer',
+          })}
+        >
+          {children}
+        </div>
       </ShaSpin>
     </section>
   );

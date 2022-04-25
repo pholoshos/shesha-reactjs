@@ -1,13 +1,12 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Button } from 'antd';
 import { SidebarContainer } from '../../../../../../components';
 import { ColumnProperties } from './columnProperties';
 import ToolbarItemsContainer from './columnsContainer';
 import { useColumnsConfigurator } from '../../../../../../providers/datatableColumnsConfigurator';
-import React from 'react';
 import './styles/index.less';
 
-export interface IColumnsConfiguratorProps { }
+export interface IColumnsConfiguratorProps {}
 
 export const ColumnsConfigurator: FC<IColumnsConfiguratorProps> = () => {
   const { items, addButton, addGroup } = useColumnsConfigurator();
@@ -29,10 +28,10 @@ export const ColumnsConfigurator: FC<IColumnsConfiguratorProps> = () => {
         rightSidebarProps={{
           open: true,
           title: () => 'Properties',
-          content: () => <ColumnProperties></ColumnProperties>,
+          content: () => <ColumnProperties />,
         }}
       >
-        <ToolbarItemsContainer items={items} index={[]}></ToolbarItemsContainer>
+        <ToolbarItemsContainer items={items} index={[]} />
       </SidebarContainer>
     </div>
   );

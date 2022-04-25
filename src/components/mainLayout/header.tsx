@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, ReactNode } from 'react';
 import classNames from 'classnames';
 import { Avatar, Dropdown, Input, Menu } from 'antd';
 import { nanoid } from 'nanoid/non-secure';
@@ -15,9 +15,10 @@ interface ILayoutHeaderProps {
   onSearch?: (query: string) => void;
   searchQuery?: string;
   collapsed?: boolean;
+  customComponent?: ReactNode;
 }
 
-const LayoutHeader: FC<ILayoutHeaderProps> = ({ collapsed, onSearch }) => {
+const LayoutHeader: FC<ILayoutHeaderProps> = ({ collapsed, onSearch, customComponent }) => {
   const { loginInfo, logoutUser } = useAuth();
   const sidebar = useSidebarMenu(false);
   const { accountDropdownListItems, actions } = sidebar || {};
@@ -57,12 +58,15 @@ const LayoutHeader: FC<ILayoutHeaderProps> = ({ collapsed, onSearch }) => {
       </div>
 
       <div className="layout-header-right">
+        <div className="custom-components">{customComponent}</div>
+
         <div className="actions">
           {actions?.map(({ icon, url }) => (
             <span className="action-icon">
               <ShaLink linkTo={url} icon={icon} />
             </span>
           ))}
+
           <ProtectedContent permissionName={PERM_APP_CONFIGURATOR}>
             <div className="header-icon">
               <AppEditModeToggler />
@@ -70,7 +74,7 @@ const LayoutHeader: FC<ILayoutHeaderProps> = ({ collapsed, onSearch }) => {
           </ProtectedContent>
         </div>
         <div className="account">
-          <span className="separator"></span>
+          <span className="separator" />
           <Dropdown overlay={menu} trigger={['click']}>
             <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
               {loginInfo?.fullName} <DownOutlined />

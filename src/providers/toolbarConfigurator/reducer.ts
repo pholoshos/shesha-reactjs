@@ -18,13 +18,14 @@ const toolbarReducer = handleActions<IToolbarConfiguratorStateContext, any>(
         id: nanoid(),
         itemType: 'item',
         sortOrder: state.items.length,
-        name: `Button ${buttonsCount + 1}`,
+        name: `Button${buttonsCount + 1}`,
+        label: `Button ${buttonsCount + 1}`,
         itemSubType: 'button',
       };
 
       const newItems = [...state.items];
       const parent = state.selectedItemId ? (getItemById(newItems, state.selectedItemId) as IButtonGroup) : null;
-      if (parent && parent.itemType == 'group') {
+      if (parent && parent.itemType === 'group') {
         parent.childItems = [...parent.childItems, buttonProps];
       } else newItems.push(buttonProps);
 
@@ -56,7 +57,8 @@ const toolbarReducer = handleActions<IToolbarConfiguratorStateContext, any>(
         id: nanoid(),
         itemType: 'group',
         sortOrder: state.items.length,
-        name: `Group ${groupsCount + 1}`,
+        name: `Group${groupsCount + 1}`,
+        label: `Group ${groupsCount + 1}`,
         childItems: [],
       };
       return {
@@ -101,7 +103,7 @@ const toolbarReducer = handleActions<IToolbarConfiguratorStateContext, any>(
       const position = getItemPositionById(newItems, payload.id);
       if (!position) return state;
 
-      let newArray = position.ownerArray;
+      const newArray = position.ownerArray;
       newArray[position.index] = {
         ...newArray[position.index],
         ...payload.settings,
@@ -131,7 +133,6 @@ const toolbarReducer = handleActions<IToolbarConfiguratorStateContext, any>(
           ...state,
           items: newItems,
         };
-
       } else {
         return {
           ...state,

@@ -32,7 +32,7 @@ export const ToolbarItemProperties: FC<IProps> = () => {
     if (formRef.current) {
       const values = form.getFieldsValue();
 
-      formRef.current.setFormData({ values: values, mergeValues: false });
+      formRef.current.setFormData({ values, mergeValues: false });
     }
   }, [selectedItemId]);
 
@@ -44,9 +44,7 @@ export const ToolbarItemProperties: FC<IProps> = () => {
 
     //const markup = itemSettingsJson as FormMarkup;
     const markup =
-      componentModel.itemType === 'group'
-        ? groupSettingsJson as FormMarkup
-        : itemSettingsJson as FormMarkup;
+      componentModel.itemType === 'group' ? (groupSettingsJson as FormMarkup) : (itemSettingsJson as FormMarkup);
     return (
       <ConfigurableForm
         formRef={formRef}
@@ -59,19 +57,19 @@ export const ToolbarItemProperties: FC<IProps> = () => {
         form={form}
         initialValues={componentModel}
         onValuesChange={debouncedSave}
-      ></ConfigurableForm>
+      />
     );
   };
 
   useEffect(() => {
-    const editor = getEditor();
-    setEditor(editor);
+    const currentEditor = getEditor();
+    setEditor(currentEditor);
   }, [selectedItemId]);
 
   if (!Boolean(selectedItemId)) {
     return (
       <div>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing"></Empty>
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing" />
       </div>
     );
   }

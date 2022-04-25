@@ -92,7 +92,7 @@ const TimeField: IToolboxComponent<ITimePickerProps> = {
   },
 };
 
-export const TimePickerWrapper: FC<ITimePickerProps> = ({
+export const TimePickerWrapper: FC<Omit<ITimePickerProps, 'style'>> = ({
   onChange,
   range,
   value,
@@ -102,8 +102,10 @@ export const TimePickerWrapper: FC<ITimePickerProps> = ({
   readOnly,
   ...rest
 }) => {
-  const { form, formMode } = useForm();
+  const { form, formMode, isComponentDisabled } = useForm();
   const evaluatedValue = getMoment(value, format);
+
+  const isDisabled = isComponentDisabled(rest);
 
   const isReadOnly = readOnly || formMode === 'readonly';
 
@@ -132,7 +134,7 @@ export const TimePickerWrapper: FC<ITimePickerProps> = ({
   };
 
   if (isReadOnly) {
-    return <ReadOnlyDisplayFormItem value={evaluatedValue?.toISOString()} type="time" />;
+    return <ReadOnlyDisplayFormItem value={evaluatedValue?.toISOString()} disabled={isDisabled} type="time" />;
   }
 
   if (range) {

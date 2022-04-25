@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../../providers/form/models';
 import { FilterOutlined } from '@ant-design/icons';
@@ -6,7 +6,6 @@ import { Button } from 'antd';
 import { useForm } from '../../../../../providers/form';
 import settingsFormJson from './settingsForm.json';
 import { useDataTableStore } from '../../../../../providers';
-import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../../providers/form/utils';
 
 export interface IPagerComponentProps extends IConfigurableFormComponent { }
@@ -22,7 +21,7 @@ const AdvancedFilterButtonComponent: IToolboxComponent<IPagerComponentProps> = {
 
     if (isComponentHidden(model)) return null;
 
-    return <AdvancedFilterButton {...model}></AdvancedFilterButton>;
+    return <AdvancedFilterButton {...model} />;
   },
   initModel: (model: IPagerComponentProps) => {
     return {

@@ -110,7 +110,7 @@ const DraggableBodyRowInner = ({ columns, className, style, ...restProps }) => {
                 {...providedDraggable.draggableProps}
                 style={getItemStyle(providedDraggable.draggableProps.style, snapshotDraggable.isDragging)}
                 {...restProps}
-              ></tr>
+              />
             </EditableContext.Provider>
           </DragHandleContext.Provider>
         </Form>
@@ -145,8 +145,8 @@ export const ColumnsList: FC<IProps> = ({ value, onChange }) => {
   const handleSaveCell = row => {
     const newData = [...columns];
     const index = newData.findIndex(item => row.id === item.id);
-    const item = newData[index];
-    newData.splice(index, 1, { ...item, ...row });
+    const currentItem = newData[index];
+    newData.splice(index, 1, { ...currentItem, ...row });
 
     onChange(newData);
   };
@@ -225,18 +225,18 @@ export const ColumnsList: FC<IProps> = ({ value, onChange }) => {
       return;
     }
 
-    if (destination.droppableId == source.droppableId && source.index == destination.index) return;
+    if (destination.droppableId === source.droppableId && source.index === destination.index) return;
 
     const reorder = (list: IColumnProps[], startIndex: number, endIndex: number): IColumnProps[] => {
-      const result = [...list];
-      const [removed] = result.splice(startIndex, 1);
-      result.splice(endIndex, 0, removed);
+      const orderedList = [...list];
+      const [removed] = orderedList.splice(startIndex, 1);
+      orderedList.splice(endIndex, 0, removed);
 
-      return result;
+      return orderedList;
     };
 
     if (source.droppableId === destination.droppableId) {
-      let newColumns = reorder(columns, source.index, destination.index);
+      const newColumns = reorder(columns, source.index, destination.index);
 
       onChange(newColumns);
     }
@@ -263,7 +263,7 @@ export const ColumnsList: FC<IProps> = ({ value, onChange }) => {
                         className={className}
                         style={style}
                         {...restProps}
-                      ></DraggableBodyRowInner>
+                      />
                     ),
                     cell: EditableCell,
                   },

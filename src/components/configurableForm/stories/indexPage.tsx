@@ -67,7 +67,7 @@ export const IndexPageTemplate: Story<IIndexPageTemplateProps> = props => {
                   });
                 },
               }}
-            ></ConfigurableForm>
+            />
           </MainLayout>
         </SidebarMenuDefaultsProvider>
       </AuthContainer>

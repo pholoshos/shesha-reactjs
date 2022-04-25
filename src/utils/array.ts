@@ -15,7 +15,7 @@ export const removeUndefinedProperties = (input: IAnyObject, nested = false) => 
 };
 
 const removeUndefined = (input: IAnyObject) => {
-  let newObj = {};
+  const newObj = {};
 
   Object.keys(input).forEach(key => {
     if (input[key] === Object(input[key])) newObj[key] = removeUndefined(input[key]);

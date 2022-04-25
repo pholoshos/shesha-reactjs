@@ -7,11 +7,6 @@ import { CheckboxProps, CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { InfoCircleTwoTone, EditOutlined, LockOutlined } from '@ant-design/icons';
 import { ColProps } from 'antd/lib/col';
 import moment, { Moment } from 'moment';
-// import 'antd/lib/date-picker/style/index.less'; // REMOVE IT BEFORE PUBLISHING
-
-if (process.env.NODE_ENV !== 'production') {
-  require('antd/lib/date-picker/style/index.less');
-}
 
 const LAYOUT = {
   labelCol: {
@@ -97,7 +92,7 @@ export const EditableDisplayFormItem: FC<IEditableDisplayLabelProps> = ({
       return Date.parse(`${value}`) ? moment(`${value}`).format(dateFormat) : 'NA';
     }
 
-    return <>{!!value ? 'Yes' : 'No'}</>;
+    return <>{Boolean(value) ? 'Yes' : 'No'}</>;
   };
 
   const renderFormItemProperComponent = () => {

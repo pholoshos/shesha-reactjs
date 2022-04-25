@@ -1,4 +1,4 @@
-import React, { useContext, PropsWithChildren, useEffect, Context } from 'react';
+import React, { useContext, PropsWithChildren, useEffect, Context, useReducer } from 'react';
 import reducerFactory from './reducer';
 import {
   getConfigurableComponentActionsContext,
@@ -21,7 +21,6 @@ import {
   /*useConfigurableComponentUpdate,*/ useConfigurableComponentUpdateSettings,
   ConfigurableComponentUpdateSettingsInput,
 } from '../../apis/configurableComponent';
-import { useReducer } from 'react';
 import { useAppConfigurator } from '../appConfigurator';
 
 export interface IGenericConfigurableComponentProviderProps<TSettings extends any> {

@@ -1,10 +1,9 @@
-import { FC, memo } from 'react';
+import React, { FC, memo } from 'react';
 import { Button } from 'antd';
 import { SidebarContainer } from '../../';
 import { ToolbarItemProperties } from './itemProperties';
 import SidebarItemsContainer from './sidebarItemsContainer';
 import { useSidebarMenuConfigurator } from '../../../providers/sidebarMenuConfigurator';
-import React from 'react';
 import '../styles/index.less';
 
 export interface ISidebarConfiguratorProps {}

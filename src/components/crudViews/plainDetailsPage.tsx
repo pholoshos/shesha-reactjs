@@ -123,7 +123,7 @@ const GenericDetailsPagePlain = forwardRef<CommonCrudHandles, IGenericDetailsPag
   const { loading: isFetchingData, refetch: fetchData, error: fetchError, data: serverData } = useFetcher({
     lazy: true,
     requestOptions: { headers: requestHeaders() },
-    queryParams: { id: id },
+    queryParams: { id },
   });
 
   // fetch data on page load or when the id changes

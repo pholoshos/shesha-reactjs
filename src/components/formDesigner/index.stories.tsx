@@ -2,19 +2,15 @@ import React, { FC, useState } from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
 import FormDesigner from './formDesigner';
-import {
-  /*MetadataProvider,*/ FormProvider,
-  ShaApplicationProvider,
-  useSheshaApplication,
-  MetadataDispatcherProvider,
-} from '../../providers';
-import AuthContainer from '../authedContainer';
+import { /*MetadataProvider,*/ FormProvider, useSheshaApplication, MetadataDispatcherProvider } from '../../providers';
 import { Button, Select } from 'antd';
+// @ts-ignore
 import { formGetByPath, formTestDelayGet, formTestDelayPost, formUpdateMarkup } from '../../apis/form';
 import allFormsJson from './allForms.json';
 import { LabeledValue } from 'antd/lib/select';
 import { addStory } from '../../stories/utils';
 import { FormMode } from '../../providers/form/models';
+import StoryApp from '../storyBookApp';
 
 export default {
   title: 'Components/Temp/FormDesigner',
@@ -27,19 +23,15 @@ export interface IFormDesignerStoryProps {
   mode?: FormMode;
 }
 
-const backendUrl = process.env.STORYBOOK_BASE_URL; // TODO: Make this configurable
-
 // Create a master template for mapping args to render the Button component
 const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formPath, formId, mode = 'designer' }) => (
-  <ShaApplicationProvider backendUrl={backendUrl}>
-    <AuthContainer layout={true}>
-      <MetadataDispatcherProvider>
-        <FormProvider path={formPath} id={formId} mode={mode}>
-          <FormDesigner />
-        </FormProvider>
-      </MetadataDispatcherProvider>
-    </AuthContainer>
-  </ShaApplicationProvider>
+  <StoryApp>
+    <MetadataDispatcherProvider>
+      <FormProvider path={formPath} id={formId} mode={mode}>
+        <FormDesigner />
+      </FormProvider>
+    </MetadataDispatcherProvider>
+  </StoryApp>
 );
 
 //#region TableContextProps
@@ -62,11 +54,9 @@ export interface IActionsTemplateProps {
 }
 const ActionsTemplate: Story<IActionsTemplateProps> = props => {
   return (
-    <ShaApplicationProvider backendUrl={backendUrl}>
-      <AuthContainer layout={true}>
-        <ActionsTemplateContent {...props}></ActionsTemplateContent>
-      </AuthContainer>
-    </ShaApplicationProvider>
+    <StoryApp>
+      <ActionsTemplateContent {...props} />
+    </StoryApp>
   );
 };
 
@@ -78,11 +68,11 @@ const ActionsTemplateContent: FC<IActionsTemplateProps> = props => {
   const onLoadClick = () => {
     formGetByPath({ path: props.formPath }, { base: backendUrl, headers: httpHeaders })
       .then(response => {
-        console.log({ msg: 'loaded', response: response });
+        console.log({ msg: 'loaded', response });
         setForm(response.result);
       })
       .catch(error => {
-        console.log({ msg: 'failed to load', error: error });
+        console.log({ msg: 'failed to load', error });
       });
   };
 
@@ -94,7 +84,7 @@ const ActionsTemplateContent: FC<IActionsTemplateProps> = props => {
 
     formUpdateMarkup(form, { id: form.id, base: backendUrl, headers: httpHeaders })
       .then(response => {
-        console.log({ msg: 'form saved', response: response });
+        console.log({ msg: 'form saved', response });
       })
       .catch(err => {
         console.log({ msg: 'form save failed', error: err });
@@ -104,17 +94,17 @@ const ActionsTemplateContent: FC<IActionsTemplateProps> = props => {
   const onPostClick = () => {
     formTestDelayPost({ queryParams: { delayMs: 200 }, base: backendUrl, headers: httpHeaders })
       .then(response => {
-        console.log({ msg: 'post success', response: response });
+        console.log({ msg: 'post success', response });
       })
       .catch(error => {
-        console.log({ msg: 'post failed', error: error });
+        console.log({ msg: 'post failed', error });
       });
   };
 
   const onGetClick = () => {
     formTestDelayGet({ delayMs: 500 }, { base: backendUrl, headers: httpHeaders })
       .then(response => {
-        console.log({ msg: 'get success', response: response });
+        console.log({ msg: 'get success', response });
       })
       .catch(err => {
         console.log({ msg: 'get failed', error: err });
@@ -201,7 +191,8 @@ export const PropertyProps = addStory(DesignerTemplate, {
 });
 
 export const DynamicViewProps = addStory(DesignerTemplate, {
-  formPath: 'D:\\Boxfusion\\Shesha3\\opensource\\etalon\\shesha-reactjs\\src\\components\\formDesigner\\components\\dynamicView\\settingsForm.json'
+  formPath:
+    'D:\\Boxfusion\\Shesha3\\opensource\\etalon\\shesha-reactjs\\src\\components\\formDesigner\\components\\dynamicView\\settingsForm.json',
 });
 
 export const Empty = addStory(DesignerTemplate, {
@@ -230,7 +221,7 @@ export const FormsEditor: FC = () => {
           options={options}
           labelInValue={true}
           onChange={value => setCurrentForm(value.value)}
-        ></Select>
+        />
       </div>
       <div>
         Designer {currentForm}
@@ -247,11 +238,66 @@ export const FormsEditor: FC = () => {
 };
 
 const BrowserTemplate: Story = () => (
-  <ShaApplicationProvider backendUrl={backendUrl}>
-    <AuthContainer layout={true}>
-      <FormsEditor></FormsEditor>
-    </AuthContainer>
-  </ShaApplicationProvider>
+  <StoryApp>
+    <FormsEditor />
+  </StoryApp>
 );
 
 export const Browser = addStory(BrowserTemplate, null);
+
+//#region Views
+export const TableView = DesignerTemplate.bind({});
+
+TableView.args = {
+  // formPath: '/view/forms/table',
+  // formPath: '/view/table/playground',
+  formPath: 'test-new-table',
+  // formPath: 'table-cbfdec6c-8fe5-4d35-b067-6c00de8ba311',
+  modelType: 'table',
+  // vi
+};
+
+export const DetailsView = DesignerTemplate.bind({});
+
+DetailsView.args = {
+  // formPath: '/view/forms/details',
+  formPath: 'view-details-testing',
+  modelType: 'details',
+};
+
+export const FormComponentView = DesignerTemplate.bind({});
+
+FormComponentView.args = {
+  formPath: '/view/forms/form',
+  modelType: 'form',
+};
+
+export const BlankView = DesignerTemplate.bind({});
+
+export const ReadOnlyForm = DesignerTemplate.bind({});
+
+// BlankView.args = {
+//   formPath: '/view/forms/blank',
+//   modelType: 'blank',
+// };
+
+BlankView.args = {
+  formPath: 'area-index-child-table-test',
+  // formPath: '/view/test/typography',
+  modelType: 'blank',
+};
+
+ReadOnlyForm.args = {
+  formPath: '/settings/forms/playground',
+  // formPath: '/view/test/typography',
+  modelType: 'blank',
+};
+
+export const ExportJSONDemo = DesignerTemplate.bind({});
+
+ExportJSONDemo.args = {
+  formPath: 'blank-form-index',
+  modelType: 'blank',
+};
+
+//#endregion

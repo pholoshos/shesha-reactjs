@@ -23,7 +23,7 @@ export const useChecklistTreeSelections = (id: string, ownerId: string, ownerTyp
         return {
           ...item,
           hasError: false,
-          allowAddComments: flatTree?.find(({ id }) => id === item?.checkListItemId)?.allowAddComments,
+          allowAddComments: flatTree?.find(({ id: localId }) => localId === item?.checkListItemId)?.allowAddComments,
         };
       }) || []
     );
@@ -94,18 +94,18 @@ export const useChecklistTreeSelections = (id: string, ownerId: string, ownerTyp
 
       const selectionsFromServer = getMappedSelectionsFromServer(flattenedTree);
 
-      setTreeIds(flattenedTree?.map(({ id }) => id));
+      setTreeIds(flattenedTree?.map(({ id: localId }) => localId));
 
       const selectionsFromServerIds = selectionsFromServer?.map(({ checkListItemId }) => checkListItemId);
 
       const mappedSelections = flattenedTree
         ?.filter(
-          ({ id }) => !selectionsFromServerIds?.includes(id) // We do not initialize the ones from the server
+          ({ id: localId }) => !selectionsFromServerIds?.includes(localId) // We do not initialize the ones from the server
         )
-        ?.map<ICheckListItemSelection>(({ id, allowAddComments }) => ({
+        ?.map<ICheckListItemSelection>(({ id: localId, allowAddComments }) => ({
           selection: null,
           allowAddComments,
-          checkListItemId: id,
+          checkListItemId: localId,
           hasError: false,
         }));
 

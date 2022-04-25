@@ -15,7 +15,7 @@ const QuickSearchComponent: IToolboxComponent<IQuickSearchComponentProps> = {
   name: 'Quick Search',
   icon: <SearchOutlined />,
   factory: (_model: IQuickSearchComponentProps) => {
-    return <GlobalTableFilter></GlobalTableFilter>;
+    return <GlobalTableFilter />;
   },
   initModel: (model: IQuickSearchComponentProps) => {
     return {

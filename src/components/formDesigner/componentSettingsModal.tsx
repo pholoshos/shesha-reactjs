@@ -12,7 +12,12 @@ export interface IProps<T extends IConfigurableFormComponent> {
   id: string;
 }
 
-function ComponentSettingsModal<T extends IConfigurableFormComponent>({ isVisible, onSave, onCancel, model }: IProps<T>) {
+function ComponentSettingsModal<T extends IConfigurableFormComponent>({
+  isVisible,
+  onSave,
+  onCancel,
+  model,
+}: IProps<T>) {
   const [form] = Form.useForm();
   const formLayout = {
     labelCol: { span: 5 },
@@ -49,10 +54,10 @@ function ComponentSettingsModal<T extends IConfigurableFormComponent>({ isVisibl
           <Tabs type="card" defaultActiveKey="1" size={size} style={{ marginBottom: 32 }}>
             <TabPane tab="Display" key="1">
               <Form.Item name="name" label="Name" rules={[{ required: true }]} initialValue={model?.name}>
-                <Input></Input>
+                <Input />
               </Form.Item>
               <Form.Item name="label" label="Label" initialValue={model?.label}>
-                <Input></Input>
+                <Input />
               </Form.Item>
             </TabPane>
             <TabPane tab="Validation" key="2">

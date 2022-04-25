@@ -76,7 +76,7 @@ const sidebarMenuReducer = handleActions<ISidebarMenuConfiguratorStateContext, a
 
       if (!position) return state;
 
-      let newArray = position.ownerArray;
+      const newArray = position.ownerArray;
 
       newArray[position.index] = {
         ...newArray[position.index],
@@ -97,7 +97,7 @@ const sidebarMenuReducer = handleActions<ISidebarMenuConfiguratorStateContext, a
       const {
         payload: { index, childs: childIds },
       } = action;
-      if (!Boolean(index) || index.length == 0) {
+      if (!Boolean(index) || index.length === 0) {
         return {
           ...state,
           items: childIds,

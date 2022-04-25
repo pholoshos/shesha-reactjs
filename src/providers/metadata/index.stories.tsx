@@ -3,8 +3,6 @@ import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
 import { MetadataProvider, IMetadataProviderProps, useMetadata } from './';
 import { AutoComplete } from 'antd';
-//import { IPropertyMetadata } from './contexts';
-//import Autocomplete from '../../components/autocomplete';
 
 export default {
   title: 'Providers/MetadataProvider',
@@ -16,7 +14,7 @@ export default {
 const Template: Story<IMetadataProviderProps> = args => {
   return (
     <MetadataProvider {...args}>
-      <MetadataConsumer></MetadataConsumer>
+      <MetadataConsumer />
     </MetadataProvider>
   );
 };

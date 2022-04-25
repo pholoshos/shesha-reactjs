@@ -18,7 +18,9 @@ export const DynamicView: FC<DynamicViewProps> = (model) => {
     const staticComponents = useMemo<IConfigurableFormComponent[]>(() => {
         const result: IConfigurableFormComponent[] = [];
         for (const componentId in allComponents) {
-            result.push(allComponents[componentId]);
+            if (allComponents.hasOwnProperty(componentId)) {
+                result.push(allComponents[componentId]);
+            }
         }
         return result;
     }, [allComponents]);
@@ -48,7 +50,7 @@ export const DynamicView: FC<DynamicViewProps> = (model) => {
     if (isComponentHidden(model)) return null;
 
     return (
-        <DynamicContainer components={dynamicComponents}></DynamicContainer>
+        <DynamicContainer components={dynamicComponents} />
     );
 }
 

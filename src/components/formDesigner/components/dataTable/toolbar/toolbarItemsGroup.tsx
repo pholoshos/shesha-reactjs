@@ -18,23 +18,21 @@ export const ToolbarItemsGroup: FC<IProps> = props => {
     deleteGroup(props.id);
   };
 
-  let classes = ['sha-toolbar-item'];
+  const classes = ['sha-toolbar-item'];
   if (selectedItemId === props.id) classes.push('selected');
 
   return (
     <div className={classes.reduce((a, c) => a + ' ' + c)}>
       <div className="sha-toolbar-group-header">
-        <DragHandle id={props.id}></DragHandle>
-        { props.icon && <ShaIcon iconName={props.icon as IconType}/> }
-        <span className="sha-toolbar-item-name">
-          {props.name}
-        </span>
+        <DragHandle id={props.id} />
+        {props.icon && <ShaIcon iconName={props.icon as IconType} />}
+        <span className="sha-toolbar-item-name">{props.name}</span>
         <div className="sha-toolbar-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger></Button>
+          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
         </div>
       </div>
       <div className="sha-toolbar-group-container">
-        <ToolbarItemsContainer index={props.index} items={props.childItems || []} id={props.id}></ToolbarItemsContainer>
+        <ToolbarItemsContainer index={props.index} items={props.childItems || []} id={props.id} />
       </div>
     </div>
   );

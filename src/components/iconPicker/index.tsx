@@ -54,7 +54,7 @@ const IconPicker: FC<IIconPickerProps> = ({ selectBtnSize = 'middle', value, onI
   const [localSelectedIcon, setLocalSelectedIcon] = useState<ShaIconTypes>(value);
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchOption, setSearchOtion] = useState<IOption>({
+  const [searchOption, setSearchOption] = useState<IOption>({
     mode: 'outlined',
     group: ICON_MODE_GROUPS['outlined'],
   });
@@ -64,7 +64,7 @@ const IconPicker: FC<IIconPickerProps> = ({ selectBtnSize = 'middle', value, onI
   const changeIconModes = (e: RadioChangeEvent) => {
     const mode = e.target.value as IconModes;
 
-    setSearchOtion({ mode, group: ICON_MODE_GROUPS[mode] });
+    setSearchOption({ mode, group: ICON_MODE_GROUPS[mode] });
   };
 
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(event?.target?.value);
@@ -81,19 +81,21 @@ const IconPicker: FC<IIconPickerProps> = ({ selectBtnSize = 'middle', value, onI
   const onClear = () => {
     setLocalSelectedIcon(null);
     toggleModalVisibility();
+
+    if (onIconChange) {
+      onIconChange(null, null);
+    }
   };
 
   const memoizedActiveGroup = useMemo(() => {
     if (searchQuery) {
-      let _activeGroup = searchOption?.group;
-      let filteredGroup = {};
+      const _activeGroup = searchOption?.group;
+      const filteredGroup = {};
       const objectKeys = Object.keys(_activeGroup);
 
-      for (let index = 0; index < objectKeys.length; index++) {
-        const key = objectKeys[index];
-
+      for (const key of objectKeys) {
         filteredGroup[key] = _activeGroup[key].filter((groupItem: string) =>
-          groupItem?.toLowerCase().includes(searchQuery.toLowerCase())
+          groupItem?.toLowerCase()?.includes(searchQuery?.toLowerCase())
         );
       }
 

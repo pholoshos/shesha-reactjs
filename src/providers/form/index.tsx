@@ -63,18 +63,27 @@ import {
   getComponentsAndSettings,
   convertSectionsToList,
   getEnabledComponentIds,
+  sheshaApplication,
 } from './utils';
 import { FormInstance } from 'antd';
 import { ActionCreators } from 'redux-undo';
 import useThunkReducer from 'react-hook-thunk-reducer';
 import { useDebouncedCallback } from 'use-debounce';
-import { IAsyncValidationError, IConfigurableFormComponent, IFormValidationErrors, IToolboxComponent, IToolboxComponentGroup } from '../../interfaces';
+import {
+  IAsyncValidationError,
+  IConfigurableFormComponent,
+  IFormValidationErrors,
+  IToolboxComponent,
+} from '../../interfaces';
 import { IDataSource } from '../formDesigner/models';
 import { useMetadataDispatcher } from '../../providers';
+import { FormPubsubConstants } from './pubSub';
+import { useSubscribe } from '../../hooks';
 
 export interface IFormProviderProps {
   id?: string;
   path?: string;
+  uniqueStateId?: string;
   markup?: FormMarkup;
   mode: FormMode;
   form?: FormInstance<any>;
@@ -82,7 +91,6 @@ export interface IFormProviderProps {
   sections?: IFormSections;
   context?: any; // todo: make generic
   formRef?: MutableRefObject<Partial<ConfigurableFormInstance> | null>;
-  toolboxComponentGroups?: IToolboxComponentGroup[];
   onValuesChange?: (changedValues: any, values: any /*Values*/) => void;
 }
 
@@ -91,14 +99,15 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   id,
   path,
   markup,
-  mode,
+  mode = 'readonly',
   form,
   actions,
   sections,
   context,
   formRef,
-  toolboxComponentGroups,
+  uniqueStateId,
 }) => {
+  const { toolboxComponentGroups } = sheshaApplication();
   const formProps = getComponentsAndSettings(markup);
   const formComponents = formProps?.components;
 
@@ -115,14 +124,14 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   const initial: IFormStateContext = {
     ...FORM_CONTEXT_INITIAL_STATE,
-    id: id,
-    path: path,
+    id,
+    path,
     formMode: mode,
     components: formComponents || [],
     form,
     actions: convertActions(null, actions),
     sections: convertSectionsToList(null, sections),
-    context: context,
+    context,
     toolboxComponentGroups: actualComponentGroups,
     ...flatComponents,
   };
@@ -193,22 +202,9 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   useEffect(() => {
     if (markup) {
-      const formProps = getComponentsAndSettings(markup);
-      /*
-      const formProps: FormMarkupWithSettings = (markup as FormMarkupWithSettings)
-        ? markup as FormMarkupWithSettings
-        : {
-          components: markup as IFormComponent[],
-          formSettings: DEFAULT_FORM_SETTINGS,
-        } as FormMarkupWithSettings;
-        */
-
-      const flatComponents = componentsTreeToFlatStructure(toolboxComponents, formProps.components);
-      dispatch(changeMarkupAction(flatComponents));
-      /*
-      const flatComponents = componentsTreeToFlatStructure(markup);
-      dispatch(changeMarkupAction(flatComponents));
-      */
+      const newFormProps = getComponentsAndSettings(markup);
+      const newFlatComponents = componentsTreeToFlatStructure(toolboxComponents, newFormProps.components);
+      dispatch(changeMarkupAction(newFlatComponents));
     } else {
       if (!isFetchingFormInfo) {
         if (fetchingFormInfoResponse) {
@@ -216,7 +212,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
           if (fetchedForm) {
             const parsedForm = parseForm(fetchedForm.markup);
 
-            const flatComponents = componentsTreeToFlatStructure(toolboxComponents, parsedForm.components);
+            const newFlatComponents = componentsTreeToFlatStructure(toolboxComponents, parsedForm.components);
 
             const formContent: IFormProps = {
               // todo: use partial for loading
@@ -226,12 +222,13 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
               description: fetchedForm.description,
               components: parsedForm.components,
               formSettings: parsedForm.formSettings,
-              ...flatComponents,
+              ...newFlatComponents,
             };
+
             // parse json content
-            dispatch((dispatch, _getState) => {
-              dispatch(loadSuccessAction(formContent));
-              dispatch(ActionCreators.clearHistory());
+            dispatch((dispatchThunk, _getState) => {
+              dispatchThunk(loadSuccessAction(formContent));
+              dispatchThunk(ActionCreators.clearHistory());
             });
           }
         }
@@ -243,6 +240,12 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
       }
     }
   }, [isFetchingFormInfo, fetchingFormInfoResponse, fetchingFormInfoError, markup]);
+
+  useEffect(() => {
+    if (mode !== state.present.formMode) {
+      setFormMode(mode);
+    }
+  }, [mode]);
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
@@ -256,27 +259,33 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   const addComponentsFromTemplate = (payload: IComponentAddFromTemplatePayload) => {
     dispatch(componentAddFromTemplateAction(payload));
-  }
+  };
 
   const deleteComponent = (payload: IComponentDeletePayload) => {
     dispatch(componentDeleteAction(payload));
   };
 
-  const getComponentModel = id => {
-    return state.present.allComponents[id];
+  const getComponentModel = componentId => {
+    return state.present.allComponents[componentId];
   };
 
   const isComponentDisabled = (model: Pick<IConfigurableFormComponent, 'id' | 'isDynamic' | 'disabled'>): boolean => {
-    const disabledByCondition = (model.isDynamic !== true) && state.present.enabledComponentIds && !state.present.enabledComponentIds.includes(model.id);
+    const disabledByCondition =
+      model.isDynamic !== true &&
+      state.present.enabledComponentIds &&
+      !state.present.enabledComponentIds.includes(model.id);
 
     return state.present.formMode !== 'designer' && (model.disabled || disabledByCondition);
-  }
+  };
 
   const isComponentHidden = (model: Pick<IConfigurableFormComponent, 'id' | 'isDynamic' | 'hidden'>): boolean => {
-    const hiddenByCondition = (model.isDynamic !== true) && state.present.visibleComponentIds && !state.present.visibleComponentIds.includes(model.id);
+    const hiddenByCondition =
+      model.isDynamic !== true &&
+      state.present.visibleComponentIds &&
+      !state.present.visibleComponentIds.includes(model.id);
 
-    return state.present.formMode !== 'designer' && (model.hidden || hiddenByCondition);
-  }
+    return state.present.formMode !== 'designer' && hiddenByCondition;
+  };
 
   const updateComponent = (payload: IComponentUpdatePayload) => {
     dispatch(componentUpdateAction(payload));
@@ -294,7 +303,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
           dispatch(
             componentUpdateSettingsValidationAction({
               componentId: payload.componentId,
-              validationErrors: validationErrors,
+              validationErrors,
             })
           );
         });
@@ -307,22 +316,22 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   // todo: review usage of useFormUpdateMarkup after
   const { mutate: saveFormHttp /*, loading: saveFormInProgress, error: saveFormError*/ } = useFormUpdateMarkup({
-    id: id,
+    id,
   });
 
   const saveForm = (): Promise<void> => {
-    if (!state.present.id) return new Promise(() => {});
+    if (!state.present.id) return Promise.reject();
 
     dispatch(saveRequestAction());
 
-    const markup: FormMarkupWithSettings = {
+    const currentMarkup: FormMarkupWithSettings = {
       components: componentsFlatStructureToTree(toolboxComponents, state.present),
       formSettings: state.present.formSettings,
     };
 
     const dto: FormUpdateMarkupInput = {
       id: state.present.id,
-      markup: JSON.stringify(markup, null, 2),
+      markup: JSON.stringify(currentMarkup, null, 2),
     };
     return saveFormHttp(dto, {})
       .then(_response => {
@@ -333,11 +342,11 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
       });
   };
 
-  const getChildComponents = (id: string) => {
-    const childIds = state.present.componentRelations[id];
+  const getChildComponents = (componentId: string) => {
+    const childIds = state.present.componentRelations[componentId];
     if (!childIds) return [];
-    const components = childIds.map(componentId => {
-      return state.present.allComponents[componentId];
+    const components = childIds.map(childId => {
+      return state.present.allComponents[childId];
     });
     return components;
   };
@@ -363,14 +372,14 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     dispatch(setVisibleComponentsAction(payload));
   };
 
-  const updateVisibleComponents = (context: IFormStateContext) => {
-    const visibleComponents = getVisibleComponentIds(context.allComponents, context.formData);
+  const updateVisibleComponents = (formContext: IFormStateContext) => {
+    const visibleComponents = getVisibleComponentIds(formContext.allComponents, formContext.formData);
     setVisibleComponents({ componentIds: visibleComponents });
   };
 
   const debouncedUpdateVisibleComponents = useDebouncedCallback<(context: IFormStateContext) => void>(
-    context => {
-      updateVisibleComponents(context);
+    formContext => {
+      updateVisibleComponents(formContext);
     },
     // delay in ms
     200
@@ -382,15 +391,15 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     dispatch(setEnabledComponentsAction(payload));
   };
 
-  const updateEnabledComponents = (context: IFormStateContext) => {
-    const enabledComponents = getEnabledComponentIds(context.allComponents, context.formData);
+  const updateEnabledComponents = (formContext: IFormStateContext) => {
+    const enabledComponents = getEnabledComponentIds(formContext.allComponents, formContext.formData);
 
     setEnabledComponents({ componentIds: enabledComponents });
   };
 
   const debouncedUpdateEnabledComponents = useDebouncedCallback<(context: IFormStateContext) => void>(
-    context => {
-      updateEnabledComponents(context);
+    formContext => {
+      updateEnabledComponents(formContext);
     },
     // delay in ms
     200
@@ -398,19 +407,19 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   //#endregion
 
   const setFormData = (payload: ISetFormDataPayload) => {
-    dispatch((dispatch, getState) => {
-      dispatch(setFormDataAction(payload));
+    dispatch((dispatchThunk, getState) => {
+      dispatchThunk(setFormDataAction(payload));
       const newState = getState().present;
 
       // Update visible components. Note: debounced version is used to improve performance and prevent unneeded re-rendering
 
-      if (!newState.visibleComponentIds || newState.visibleComponentIds.length == 0) {
+      if (!newState.visibleComponentIds || newState.visibleComponentIds.length === 0) {
         updateVisibleComponents(newState);
       } else {
         debouncedUpdateVisibleComponents(newState);
       }
       // Update enabled components. Note: debounced version is used to improve performance and prevent unneeded re-rendering
-      if (!newState.enabledComponentIds || newState.enabledComponentIds.length == 0) {
+      if (!newState.enabledComponentIds || newState.enabledComponentIds.length === 0) {
         updateEnabledComponents(newState);
       } else {
         debouncedUpdateEnabledComponents(newState);
@@ -434,22 +443,22 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     dispatch(ActionCreators.redo());
   };
 
-  const setSelectedComponent = (id: string, dataSourceId: string, componentRef?: MutableRefObject<any>) => {
+  const setSelectedComponent = (componentId: string, dataSourceId: string, componentRef?: MutableRefObject<any>) => {
     activateProvider(dataSourceId);
-    dispatch(setSelectedComponentAction({ id, dataSourceId, componentRef }));
+    dispatch(setSelectedComponentAction({ id: componentId, dataSourceId, componentRef }));
   };
 
-  const registerActions = (id: string, actions: IFormActions) => {
-    dispatch(registerComponentActionsAction({ id, actions: actions }));
+  const registerActions = (ownerId: string, actionsToRegister: IFormActions) => {
+    dispatch(registerComponentActionsAction({ id: ownerId, actions: actionsToRegister }));
   };
 
-  const getAction = (id: string, name: string) => {
+  const getAction = (componentId: string, name: string) => {
     // search requested action in all parents and fallback to form
-    let currentId = id;
+    let currentId = componentId;
     do {
-      let component = state.present.allComponents[currentId];
+      const component = state.present.allComponents[currentId];
 
-      let action = state.present.actions.find(a => a.owner == component?.parentId && a.name == name);
+      const action = state.present.actions.find(a => a.owner === (component?.parentId ?? null) && a.name === name);
       if (action) return (data, parameters) => action.body(data, parameters);
 
       currentId = component?.parentId;
@@ -458,15 +467,15 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     return null;
   };
 
-  const getSection = (id: string, name: string) => {
+  const getSection = (componentId: string, name: string) => {
     // search requested section in all parents and fallback to form
-    let currentId = id;
+    let currentId = componentId;
 
     do {
-      let component = state.present.allComponents[currentId];
+      const component = state.present.allComponents[currentId];
 
-      let action = state.present.sections.find(a => a.owner == component?.parentId && a.name == name);
-      if (action) return data => action.body(data);
+      const section = state.present.sections.find(a => a.owner === (component?.parentId ?? null) && a.name === name);
+      if (section) return data => section.body(data);
 
       currentId = component?.parentId;
     } while (currentId);
@@ -482,12 +491,12 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   const addDataSource = (dataSource: IDataSource) => {
     dispatch(addDataSourceAction(dataSource));
   };
-  const removeDataSource = (id: string) => {
-    dispatch(removeDataSourceAction(id));
+  const removeDataSource = (datasourceId: string) => {
+    dispatch(removeDataSourceAction(datasourceId));
   };
 
-  const setActiveDataSource = (id: string) => {
-    dispatch(setActiveDataSourceAction(id));
+  const setActiveDataSource = (datasourceId: string) => {
+    dispatch(setActiveDataSourceAction(datasourceId));
   };
 
   const getActiveDataSource = () => {
@@ -495,6 +504,20 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
       ? state.present.dataSources.find(ds => ds.id === state.present.activeDataSourceId)
       : null;
   };
+  //#endregion
+
+  //#region PubSub
+  useSubscribe(FormPubsubConstants.setToEditMode, data => {
+    if (data.stateId === uniqueStateId) {
+      setFormMode('edit');
+    }
+  });
+
+  useSubscribe(FormPubsubConstants.exitEditMode, data => {
+    if (data.stateId === uniqueStateId) {
+      setFormMode('readonly');
+    }
+  });
   //#endregion
 
   const configurableFormActions: IFormActionsContext = {
@@ -526,7 +549,6 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     getSection,
     updateFormSettings,
     getToolboxComponent,
-
     addDataSource,
     removeDataSource,
     setActiveDataSource,

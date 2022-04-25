@@ -36,7 +36,7 @@ export const TableViewSelectorSettingsModalInner: FC<ITableViewSelectorSettingsM
 export const TableViewSelectorSettingsModal: FC<ITableViewSelectorSettingsModal> = props => {
   return (
     <TableViewSelectorConfiguratorProvider items={(props.value as ITableViewProps[]) || []}>
-      <TableViewSelectorSettingsModalInner {...props}></TableViewSelectorSettingsModalInner>
+      <TableViewSelectorSettingsModalInner {...props} />
     </TableViewSelectorConfiguratorProvider>
   );
 };

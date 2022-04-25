@@ -25,7 +25,7 @@ export const DisplayFormItem: FC<IDisplayFormItemProps> = ({
   const [state, setState] = useState({ isEdit: false });
 
   const onSave = () => {
-    if (!!value?.trim()) {
+    if (Boolean(value?.trim())) {
       setState({ ...state, isEdit: false });
     }
 
@@ -34,7 +34,7 @@ export const DisplayFormItem: FC<IDisplayFormItemProps> = ({
 
   const renderChildren = () => {
     try {
-      if (!!children) return children;
+      if (Boolean(children)) return children;
       return 'N/A';
     } catch (error) {
       return 'Invalid';

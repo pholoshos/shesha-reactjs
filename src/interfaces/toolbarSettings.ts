@@ -9,6 +9,8 @@ import { IAutocompleteProps } from '../components/formDesigner/components/autoco
 import { ICheckboxProps } from '../components/formDesigner/components/checkbox/checkbox';
 import { INumberFieldProps } from '../components/formDesigner/components/numberField/models';
 import { IQueryBuilderProps } from '../components/formDesigner/components/queryBuilder/queryBuilderComponent';
+import { ICodeEditorComponentProps } from '../components/formDesigner/components/codeEditor';
+import { IContainerComponentProps } from '../components/formDesigner/components/container/containerComponent';
 
 interface ToolbarSettingsProp extends Omit<IConfigurableFormComponent, 'type'> {}
 
@@ -32,6 +34,10 @@ type LabelValueEditorType = ToolbarSettingsProp & Omit<ILabelValueEditorProps, '
 
 type QueryBuilderType = ToolbarSettingsProp & Omit<IQueryBuilderProps, 'type'>;
 
+type CodeEditorType = ToolbarSettingsProp & Omit<ICodeEditorComponentProps, 'type'>;
+
+type ContainerType = ToolbarSettingsProp & Omit<IContainerComponentProps, 'type'>;
+
 export class DesignerToolbarSettings {
   protected form: IConfigurableFormComponent[];
 
@@ -39,61 +45,73 @@ export class DesignerToolbarSettings {
     this.form = [];
   }
 
-  addDropdown(props: DropdownType) {
+  public addDropdown(props: DropdownType) {
     this.form.push({ ...props, type: 'dropdown' });
 
     return this;
   }
 
-  addSectionSeparator(props: SectionSeparatorType) {
+  public addSectionSeparator(props: SectionSeparatorType) {
     this.form.push({ ...props, type: 'sectionSeparator' });
 
     return this;
   }
 
-  addTextField(props: TextFieldType) {
+  public addTextField(props: TextFieldType) {
     this.form.push({ ...props, type: 'textField' });
 
     return this;
   }
 
-  addTextArea(props: TextAreaType) {
+  public addTextArea(props: TextAreaType) {
     this.form.push({ ...props, type: 'textArea' });
 
     return this;
   }
 
-  addIconPicker(props: IconPickerType) {
+  public addIconPicker(props: IconPickerType) {
     this.form.push({ ...props, type: 'iconPicker' });
 
     return this;
   }
 
-  addAutocomplete(props: AutocompleteType) {
+  public addAutocomplete(props: AutocompleteType) {
     this.form.push({ ...props, type: 'autocomplete' });
 
     return this;
   }
 
-  addCheckbox(props: CheckboxType) {
+  public addCheckbox(props: CheckboxType) {
     this.form.push({ ...props, type: 'checkbox' });
 
     return this;
   }
 
-  addNumberField(props: NumberFieldType) {
+  public addCodeEditor(props: CodeEditorType) {
+    this.form.push({ ...props, type: 'codeEditor' });
+
+    return this;
+  }
+
+  public addContainer(props: ContainerType) {
+    this.form.push({ ...props, type: 'container' });
+
+    return this;
+  }
+
+  public addNumberField(props: NumberFieldType) {
     this.form.push({ ...props, type: 'numberField' });
 
     return this;
   }
 
-  addLabelValueEditor(props: LabelValueEditorType) {
+  public addLabelValueEditor(props: LabelValueEditorType) {
     this.form.push({ ...props, type: 'labelValueEditor' });
 
     return this;
   }
 
-  addQueryBuilder(props: QueryBuilderType) {
+  public addQueryBuilder(props: QueryBuilderType) {
     this.form.push({ ...props, type: 'queryBuilder' });
 
     return this;
@@ -103,11 +121,11 @@ export class DesignerToolbarSettings {
     return this.form;
   }
 
-  toJson() {
+  public toJson() {
     return this.form;
   }
 
-  toJsonString() {
+  public toJsonString() {
     return JSON?.stringify(this.form);
   }
 }

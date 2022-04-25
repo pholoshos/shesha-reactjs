@@ -70,7 +70,7 @@ export const ConfigurableComponentRenderer = <TSettings extends any>({
     isEditMode: mode === 'edit',
     isSelected: false,
     wrapperClassName: 'sha-configurable-component',
-    settings: settings,
+    settings,
   };
 
   const onOverlayClick = () => {

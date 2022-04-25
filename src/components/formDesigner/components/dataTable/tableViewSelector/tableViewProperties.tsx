@@ -1,11 +1,10 @@
-import { FC, useEffect, ReactNode, useState } from 'react';
+import React, { FC, useEffect, ReactNode, useState } from 'react';
 import { useTableViewSelectorConfigurator } from '../../../../../providers/tableViewSelectorConfigurator';
 import { Empty, Form } from 'antd';
 import { ConfigurableForm } from '../../../../../components';
 import tableViewSettingsJson from './tableViewSettings.json';
 import { FormMarkup } from '../../../../../providers/form/models';
 import { useDebouncedCallback } from 'use-debounce';
-import React from 'react';
 
 export interface IProps {}
 
@@ -44,13 +43,13 @@ export const TableViewProperties: FC<IProps> = () => {
         form={form}
         initialValues={componentModel}
         onValuesChange={debouncedSave}
-      ></ConfigurableForm>
+      />
     );
   };
 
   useEffect(() => {
-    const editor = getEditor();
-    setEditor(editor);
+    const currentEditor = getEditor();
+    setEditor(currentEditor);
   }, [selectedItemId]);
 
   useEffect(() => {
@@ -60,7 +59,7 @@ export const TableViewProperties: FC<IProps> = () => {
   if (!Boolean(selectedItemId)) {
     return (
       <div>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing"></Empty>
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing" />
       </div>
     );
   }

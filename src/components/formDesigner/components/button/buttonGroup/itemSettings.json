@@ -1,0 +1,773 @@
+{
+  "components": [
+    {
+      "id": "840aee56-42d2-40ed-a2c6-57abb255fb95",
+      "type": "dropdown",
+      "name": "itemSubType",
+      "label": "Item Type",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "dataSourceType": "values",
+      "values": [
+        {
+          "id": "8400a8ec-577d-4468-9347-5601f952b44c",
+          "label": "Button",
+          "value": "button"
+        },
+        {
+          "id": "cc268f50-47ca-4e4e-966f-7f2abfec902f",
+          "label": "Separator",
+          "value": "separator"
+        },
+        {
+          "id": "b4117249-8c2f-4991-a96c-9ea434293120",
+          "label": "Line",
+          "value": "line"
+        }
+      ],
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "id": "5d4d56fb-d7f8-4835-a529-c4fa93f3596d",
+      "type": "textField",
+      "name": "name",
+      "label": "Name",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "id": "d498779d-012a-4c6a-82a9-77231245ae28",
+      "type": "textField",
+      "name": "label",
+      "parentId": "root",
+      "label": "Label"
+    },
+    {
+      "id": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "type": "container",
+      "name": "cntButton",
+      "label": "Container2",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return data.itemSubType === 'button'",
+      "direction": "vertical",
+      "justifyContent": "left",
+      "components": [
+        {
+          "id": "9b671866-072e-4688-8b48-ddf5e12d70d4",
+          "type": "textArea",
+          "name": "tooltip",
+          "label": "Tooltip",
+          "labelAlign": "right",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+          "hidden": false,
+          "customVisibility": "",
+          "autoSize": false,
+          "showCount": false,
+          "allowClear": false,
+          "validate": {}
+        },
+        {
+          "id": "91b404a6-4021-4b0a-b9ef-007167a93075",
+          "type": "iconPicker",
+          "name": "icon",
+          "label": "Icon",
+          "labelAlign": "right",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+          "hidden": false,
+          "customVisibility": "return data.itemSubType === 'button'",
+          "settingsValidationErrors": []
+        },
+        {
+          "id": "be15598e-5c23-40bc-8245-6b5385bb7963",
+          "type": "dropdown",
+          "name": "buttonType",
+          "label": "Button Type",
+          "labelAlign": "right",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+          "hidden": false,
+          "customVisibility": null,
+          "validate": {
+            "required": true
+          },
+          "dataSourceType": "values",
+          "values": [
+            {
+              "id": "c4a96833-8ed7-4085-8848-169d5607136d",
+              "label": "primary",
+              "value": "primary"
+            },
+            {
+              "id": "c6f974da-ad28-44e5-8e4d-50280cf24ae7",
+              "label": "ghost",
+              "value": "ghost"
+            },
+            {
+              "id": "71c0dc14-0473-4748-ae75-a4ed3bd6cffd",
+              "label": "dashed",
+              "value": "dashed"
+            },
+            {
+              "id": "789d5733-2d4f-4969-890f-613e5b4a7d59",
+              "label": "link",
+              "value": "link"
+            },
+            {
+              "id": "36abe636-40b2-476c-95b0-78a50478146b",
+              "label": "text",
+              "value": "text"
+            },
+            {
+              "id": "de08ea36-a831-4373-ab10-ce25fadf80cd",
+              "label": "default",
+              "value": "default"
+            }
+          ]
+        },
+        {
+          "id": "4e9b886a-6186-4467-a688-639b30a0e06f",
+          "type": "checkbox",
+          "name": "danger",
+          "label": "Danger",
+          "labelAlign": "right",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+          "hidden": false,
+          "customVisibility": null,
+          "validate": {}
+        },
+        {
+          "id": "cfd7d45e-c7e3-4a27-987b-dc525c412448",
+          "type": "checkbox",
+          "name": "hidden",
+          "parentId": "root",
+          "label": "Hidden"
+        },
+        {
+          "id": "24a8be15-98eb-40f7-99ea-ebb602693e9c",
+          "type": "checkbox",
+          "name": "disabled",
+          "parentId": "root",
+          "label": "Disabled"
+        },
+        {
+          "id": "c6cd5508-c7fe-4e40-9c41-cf8ee0408793",
+          "type": "checkbox",
+          "name": "showConfirmDialogBeforeSubmit",
+          "parentId": "0a16b4f5-f2ca-4d9c-806f-f619da2e45cd",
+          "label": "Show Confirm Dialog Before Submit",
+          "defaultChecked": false,
+          "description": "Whether there should be a confirm dialog before submitting"
+        },
+        {
+          "id": "18f1873d-9832-4559-b851-617cf8c27e02",
+          "type": "textArea",
+          "name": "modalConfirmDialogMessage",
+          "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+          "label": "Modal Confirm Dialog Message",
+          "customVisibility": "return data.showConfirmDialogBeforeSubmit"
+        },
+        {
+          "id": "21d90871-5ca7-44c6-a4a8-cc646be05101",
+          "type": "dropdown",
+          "name": "buttonAction",
+          "label": "Action",
+          "labelAlign": "right",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+          "hidden": false,
+          "customVisibility": "",
+          "dataSourceType": "values",
+          "values": [
+            {
+              "id": "188c8767-90f3-4e43-a5c4-91be96f4e906",
+              "label": "Submit",
+              "value": "submit"
+            },
+            {
+              "id": "1b357606-45ee-4dcb-9afb-da1fd28e9b25",
+              "label": "Reset",
+              "value": "reset"
+            },
+            {
+              "id": "b2c59c38-6537-4d39-9612-c4c5ae26ef7a",
+              "label": "Start Edit",
+              "value": "startFormEdit"
+            },
+            {
+              "id": "b2c59c38-6537-4d39-9612-c4c5ae26ef7a",
+              "label": "Cancel Form Edit",
+              "value": "cancelFormEdit"
+            },
+            {
+              "id": "5c717647-2ecd-434d-8d74-6c6805303007",
+              "label": "Navigate",
+              "value": "navigate"
+            },
+            {
+              "id": "c025760d-b99b-4c44-89cf-1edb2a6cd014",
+              "label": "Dialog",
+              "value": "dialogue"
+            },
+            {
+              "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae",
+              "label": "Execute Script",
+              "value": "executeScript"
+            },
+            {
+              "id": "18fa8cc0-a327-466d-9513-52c53218d39d",
+              "label": "Execute form action",
+              "value": "executeFormAction"
+            }
+          ],
+          "validate": {}
+        },
+        {
+          "id": "75407830-901f-41a0-bfa0-da18f043b299",
+          "type": "container",
+          "name": "cntNavigate",
+          "label": "Container (horizontal or vertical)1",
+          "labelAlign": "right",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+          "hidden": false,
+          "customVisibility": "return data.buttonAction === 'navigate'",
+          "direction": "vertical",
+          "justifyContent": "left",
+          "components": [
+            {
+              "id": "62ef6e50-8762-476a-8f52-1376d7b8006a",
+              "type": "textField",
+              "name": "targetUrl",
+              "label": "Target Url",
+              "labelAlign": "right",
+              "parentId": "75407830-901f-41a0-bfa0-da18f043b299",
+              "hidden": false,
+              "customVisibility": "",
+              "validate": {
+                "required": false
+              },
+              "dataSourceType": "values",
+              "values": [
+                {
+                  "id": "5c717647-2ecd-434d-8d74-6c6805303007",
+                  "label": "Navigate",
+                  "value": "navigate"
+                },
+                {
+                  "id": "c025760d-b99b-4c44-89cf-1edb2a6cd014",
+                  "label": "Dialogue",
+                  "value": "dialogue"
+                },
+                {
+                  "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae",
+                  "label": "Execute Script",
+                  "value": "executeScript"
+                },
+                {
+                  "id": "18fa8cc0-a327-466d-9513-52c53218d39d",
+                  "label": "Execute form action",
+                  "value": "executeFormAction"
+                }
+              ],
+              "direction": "horizontal",
+              "justifyContent": "left",
+              "components": []
+            }
+          ],
+          "validate": {
+            "required": false
+          },
+          "dataSourceType": "values",
+          "values": [
+            {
+              "id": "5c717647-2ecd-434d-8d74-6c6805303007",
+              "label": "Navigate",
+              "value": "navigate"
+            },
+            {
+              "id": "c025760d-b99b-4c44-89cf-1edb2a6cd014",
+              "label": "Dialogue",
+              "value": "dialogue"
+            },
+            {
+              "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae",
+              "label": "Execute Script",
+              "value": "executeScript"
+            },
+            {
+              "id": "18fa8cc0-a327-466d-9513-52c53218d39d",
+              "label": "Execute form action",
+              "value": "executeFormAction"
+            }
+          ]
+        },
+        {
+          "id": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+          "type": "collapsiblePanel",
+          "name": "pnlModalSettings",
+          "label": "Dialogue settings",
+          "labelAlign": "right",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+          "hidden": false,
+          "customVisibility": "return data.buttonAction === 'dialogue'",
+          "validate": {
+            "required": false
+          },
+          "direction": "vertical",
+          "justifyContent": "left",
+          "components": [
+            {
+              "id": "a8b80cb4-b214-40e9-8289-0792376672ee",
+              "type": "textField",
+              "name": "modalTitle",
+              "label": "Title",
+              "labelAlign": "right",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "hidden": false,
+              "customVisibility": null,
+              "description": "The title that will be displayed on the modal",
+              "validate": {
+                "required": true
+              }
+            },
+            {
+              "id": "adbc3b29-9a53-4305-869a-f37ba6e8bb94",
+              "type": "autocomplete",
+              "name": "modalFormId",
+              "label": "Modal form",
+              "labelAlign": "right",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "hidden": false,
+              "customVisibility": null,
+              "validate": {
+                "required": true
+              },
+              "dataSourceType": "entitiesList",
+              "dataSourceUrl": "/api/services/app/Metadata/EntityTypeAutocomplete",
+              "entityTypeShortAlias": "Shesha.Framework.Form",
+              "description": "The form that will be rendered within the dialog. Please make sure the form has been been created",
+              "useRawValues": true
+            },
+            {
+              "id": "7bef58b8-b51a-41c1-9a5b-973ad3b9a696",
+              "type": "dropdown",
+              "name": "modalFormMode",
+              "label": "Form mode",
+              "labelAlign": "right",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "values": [
+                {
+                  "label": "Edit",
+                  "value": "edit",
+                  "id": "f9d09cf9-1882-408a-8067-05a3bf287b84"
+                },
+                {
+                  "label": "Read-only",
+                  "value": "readonly",
+                  "id": "e2dc87b9-e5ab-4e6b-b994-7f32e426a0c0"
+                }
+              ],
+              "dataSourceType": "values"
+            },
+            {
+              "id": "39303c04-8523-4918-8323-36eb21c2cf4b",
+              "type": "checkbox",
+              "name": "skipFetchData",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "label": "Skip Fetch Data",
+              "defaultChecked": false,
+              "description": "If specified, the form data will not be fetched, even if the GET Url has query parameters that can be used to fetch the data. This is useful in cases whereby one form is used both for create and edit mode"
+            },
+            {
+              "id": "2ab34541-6fa0-4be2-bb1e-eb65ec63b353",
+              "type": "dropdown",
+              "name": "modalActionOnSuccess",
+              "label": "Action on success",
+              "labelAlign": "right",
+              "description": "What action should be performed after the form has been posted successfully",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "values": [
+                {
+                  "label": "Keep Open",
+                  "value": "keepOpen",
+                  "id": "f9d09cf9-1882-408a-8067-05a3bf287b84"
+                },
+                {
+                  "label": "Navigate to URL",
+                  "value": "navigateToUrl",
+                  "id": "e2dc87b9-e5ab-4e6b-b994-7f32e426a0c0"
+                },
+                {
+                  "label": "Close Modal",
+                  "value": "close",
+                  "id": "08a4ab75-ca1b-4fc8-b5b8-e6f31d702b18"
+                }
+              ],
+              "dataSourceType": "values"
+            },
+            {
+              "id": "e669632e-55e0-46f4-9585-9e81ef0ae174",
+              "type": "textField",
+              "name": "onSuccessRedirectUrl",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "label": "Success Redirect URL",
+              "customVisibility": "return data.modalActionOnSuccess === 'navigateToUrl'"
+            },
+            {
+              "id": "665e4405-2531-4c59-a6ec-9d00a701a4f8",
+              "type": "codeEditor",
+              "name": "onSuccessScript",
+              "label": "On Success Script",
+              "labelAlign": "right",
+              "parentId": "root",
+              "hidden": false,
+              "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
+              "validate": {},
+              "settingsValidationErrors": [],
+              "exposedVariables": [
+                { "name": "data", "description": "The form data", "type": "object" },
+                { "name": "moment", "description": "The moment.js object", "type": "object" },
+                { "name": "form", "description": "Form instance", "type": "FormInstance" },
+                { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+                { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+                {
+                  "name": "result",
+                  "description": "This value is only available when the form has been successfully posted. This is the result from the server",
+                  "type": "object"
+                },
+                {
+                  "name": "message",
+                  "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+                  "type": "object"
+                }
+              ]
+            },
+            {
+              "id": "b406fd9b-563b-4923-8ce1-0e579c9fedfd",
+              "type": "codeEditor",
+              "name": "onErrorScript",
+              "label": "On Error Script",
+              "labelAlign": "right",
+              "parentId": "root",
+              "hidden": false,
+              "description": "Enter custom code that will be executed when the button is clicked. Global variables, which are defined in the Variables tag allow you to access the data of any form component, by using its API key.",
+              "validate": {},
+              "settingsValidationErrors": [],
+              "exposedVariables": [
+                { "name": "data", "description": "The form data", "type": "object" },
+                { "name": "moment", "description": "The moment.js object", "type": "object" },
+                { "name": "form", "description": "Form instance", "type": "FormInstance" },
+                { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+                { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+                {
+                  "name": "message",
+                  "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+                  "type": "object"
+                }
+              ]
+            },
+            {
+              "id": "c815c322-ba5d-4062-9736-e5d03c724134",
+              "type": "checkbox",
+              "name": "showModalFooter",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "label": "Show Modal Buttons",
+              "defaultChecked": false,
+              "description": "By default the modal does not show the buttons. Check this box if you wish to see the buttons"
+            },
+            {
+              "id": "ae69ab38-65fa-4b34-a701-3b46aff045f5",
+              "type": "checkbox",
+              "name": "refreshTableOnSuccess",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "label": "Refresh table on success?",
+              "description": "For this option to work, please make sure the Button is rendered within a DataTableContext",
+              "defaultChecked": false
+            },
+            {
+              "id": "f15848e8-87fa-4d76-b5a4-8548b8c2dd8b",
+              "type": "dropdown",
+              "name": "submitHttpVerb",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "label": "Submit Http Verb",
+              "values": [
+                {
+                  "label": "POST",
+                  "value": "POST",
+                  "id": "8418606a-d85d-4795-a2ee-4a69fcc656f9"
+                },
+                {
+                  "label": "PUT",
+                  "value": "PUT",
+                  "id": "64bbca8a-2fb1-4448-ab71-3db077233bd2"
+                },
+                {
+                  "label": "PATCH",
+                  "value": "PATCH",
+                  "id": "d2c75367-300e-4afb-a1a4-180086e7dadd"
+                },
+                {
+                  "label": "DELETE",
+                  "value": "DELETE",
+                  "id": "d5d75afa-c2c0-470e-a73e-a24f644c86f1"
+                }
+              ],
+              "dataSourceType": "values",
+              "customVisibility": "return data.showModalFooter === true",
+              "defaultValue": ["POST"]
+            },
+            {
+              "id": "b395c0e9-dbc1-44f1-8fef-c18a49442871",
+              "type": "labelValueEditor",
+              "name": "additionalProperties",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "label": "Additional properties",
+              "labelTitle": "Key",
+              "labelName": "key",
+              "valueTitle": "Value",
+              "valueName": "value",
+              "mode": "dialog",
+              "description": "Additional properties you want to be passed when the form gets submitted like parentId in the case where the modal is used in a childTable. Also note you can use Mustache expression like {{id}} for value property"
+            },
+            {
+              "id": "264903ff-b525-4a6e-893f-d560b219df9d",
+              "type": "numberField",
+              "name": "modalWidth",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "label": "Width",
+              "customVisibility": "return data.showModalFooter === true"
+            }
+          ],
+          "dataSourceType": "values",
+          "values": [
+            {
+              "id": "5c717647-2ecd-434d-8d74-6c6805303007",
+              "label": "Navigate",
+              "value": "navigate"
+            },
+            {
+              "id": "c025760d-b99b-4c44-89cf-1edb2a6cd014",
+              "label": "Dialogue",
+              "value": "dialogue"
+            },
+            {
+              "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae",
+              "label": "Execute Script",
+              "value": "executeScript"
+            },
+            {
+              "id": "18fa8cc0-a327-466d-9513-52c53218d39d",
+              "label": "Execute form action",
+              "value": "executeFormAction"
+            }
+          ]
+        },
+        {
+          "id": "8786d976-3822-4f8b-a532-ccac0b0130e3",
+          "type": "dropdown",
+          "name": "formAction",
+          "label": "Form Action",
+          "labelAlign": "right",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+          "hidden": false,
+          "customVisibility": "return data.buttonAction === 'executeFormAction'",
+          "validate": {},
+          "values": [
+            {
+              "label": "refreshTable",
+              "value": "REFRESH_TABLE",
+              "id": "f3281767-b747-424e-a588-f65434752524"
+            },
+            {
+              "label": "toggleColumnsSelector",
+              "value": "TOGGLE_COLUMNS_SELECTOR",
+              "id": "1e998444-b326-499e-ad0e-e847c2dad31d"
+            },
+            {
+              "label": "toggleAdvancedFilter",
+              "value": "TOGGLE_ADVANCED_FILTER",
+              "id": "acee8995-d0e8-4e88-be67-2b24265aa133"
+            },
+            {
+              "label": "exportToExcel",
+              "value": "EXPORT_TO_EXCEL",
+              "id": "3306c34d-8d5d-4f2b-a154-b87cab5fba98"
+            },
+            {
+              "label": "deleteRow",
+              "value": "DELETE_ROW",
+              "id": "13b1562c-3f5e-4e2a-9533-11b89c7ace52"
+            },
+            {
+              "label": "setToEditMode",
+              "value": "SET_TO_EDIT_MODE",
+              "id": "4417761c-5277-4b39-a8e9-e5493fc4488c"
+            },
+            {
+              "label": "(enter custom action)",
+              "value": "CUSTOM_ACTION",
+              "id": "b4224f35-1b69-43f5-99e8-8119be85a940"
+            }
+          ],
+          "dataSourceType": "values"
+        },
+        {
+          "id": "adaab7e3-c5c8-4701-aef2-96fe80bc5d5a",
+          "type": "textField",
+          "name": "customFormAction",
+          "label": "Custom Form Action",
+          "labelAlign": "right",
+          "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+          "hidden": false,
+          "customVisibility": "return data.formAction === 'CUSTOM_ACTION'",
+          "description": "",
+          "validate": {}
+        },
+        {
+          "id": "880f31ea-2a86-40a5-83ef-ccbe88aa0140",
+          "type": "textField",
+          "name": "uniqueStateId",
+          "label": "Unique State ID",
+          "labelAlign": "right",
+          "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+          "hidden": false,
+          "customVisibility": null,
+          "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
+          "validate": {}
+        },
+        {
+          "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
+          "type": "sectionSeparator",
+          "name": "sectionStyle",
+          "parentId": "root",
+          "label": "Style"
+        },
+        {
+          "id": "06ab0599-914d-4d2d-875c-765a495472f8",
+          "type": "codeEditor",
+          "name": "style",
+          "label": "Style",
+          "parentId": "root",
+          "validate": {},
+          "settingsValidationErrors": [],
+          "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
+          "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
+        },
+        {
+          "id": "0495b899-bb48-44ea-a212-c4920bf3a8a4",
+          "type": "sectionSeparator",
+          "name": "sectionVisibility",
+          "parentId": "root",
+          "label": "Visibility"
+        },
+        {
+          "id": "8e70db8a-addb-43a5-a8ce-24a829b4f3c7",
+          "type": "labelValueEditor",
+          "name": "customActionParameters",
+          "label": "Parameters",
+          "labelAlign": "right",
+          "hidden": false,
+          "customVisibility": "return data.buttonAction === 'executeFormAction'",
+          "labelTitle": "Key",
+          "labelName": "key",
+          "valueTitle": "Value",
+          "valueName": "value",
+          "validate": {},
+          "settingsValidationErrors": []
+        },
+        {
+          "id": "4b5e5951-4998-4635-b1c8-0b6d3940c301",
+          "type": "codeEditor",
+          "name": "actionScript",
+          "label": "Action Script",
+          "labelAlign": "right",
+          "parentId": "root",
+          "hidden": false,
+          "customVisibility": "return data.buttonAction === 'executeScript'",
+          "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
+          "validate": {},
+          "settingsValidationErrors": [],
+          "exposedVariables": [
+            { "name": "data", "description": "The form data", "type": "object" },
+            { "name": "moment", "description": "The moment.js object", "type": "object" },
+            { "name": "form", "description": "Form instance", "type": "FormInstance" },
+            { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+            { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
+            { "name": "result", "description": "only available after a successful http post", "type": "object" },
+            { "name": "message", "description": "A notification object by Ant", "type": "object" },
+            { "name": "globalState", "description": "The global state of the application", "type": "object" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "341beffe-2d62-4c4c-8c97-5f2b433716bf",
+      "type": "codeEditor",
+      "name": "customVisibility",
+      "label": "Custom Visibility",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ]
+    },
+    {
+      "id": "4b5e5951-4998-4635-b1c8-0b6d3940c300",
+      "type": "codeEditor",
+      "name": "customEnabled",
+      "label": "Custom Enabled",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customEnabled": null,
+      "description": "Enter custom enabled code.  You must return true to enable the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ]
+    },
+    {
+      "id": "26c68b22-3211-475d-91e1-0745a4447329",
+      "type": "editableTagGroup",
+      "name": "permissions",
+      "label": "Permissions",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {}
+    }
+  ],
+  "formSettings": {
+    "layout": "horizontal",
+    "colon": true,
+    "labelCol": {
+      "span": 5
+    },
+    "wrapperCol": {
+      "span": 13
+    }
+  }
+}

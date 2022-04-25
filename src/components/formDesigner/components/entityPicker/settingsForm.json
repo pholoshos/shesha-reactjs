@@ -52,14 +52,54 @@
       "label": "Description"
     },
     {
-      "id": "2d32fe60-99a0-4825-ae6c-8b933004e119",
+      "id": "d72b6367-0e34-4b76-8621-d198961239de",
       "type": "textField",
-      "name": "tableId",
+      "name": "displayEntityKey",
       "parentId": "root",
-      "label": "Table ID",
+      "label": "Display Entity Key",
       "validate": {
-        "required": true
+        "required": false
       }
+    },
+    {
+      "id": "8f8a9da8-1727-495a-b9eb-ff8627d97444",
+      "type": "autocomplete",
+      "name": "tableId",
+      "label": "Table Configuration Id",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {
+        "required": false
+      },
+      "dataSourceType": "url",
+      "dataSourceUrl": "/api/services/Shesha/NewDataTable/TableIdAutocomplete",
+      "settingsValidationErrors": [],
+      "useRawValues": true
+    },
+    {
+      "id": "6b0bd9c6-6a53-4a05-9de0-ad1b17eb0018",
+      "type": "autocomplete",
+      "name": "entityType",
+      "label": "Entity Type",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "dataSourceType": "url",
+      "validate": {},
+      "dataSourceUrl": "/api/services/app/Metadata/EntityTypeAutocomplete",
+      "settingsValidationErrors": [],
+      "useRawValues": true
+    },
+    {
+      "id": "2a6ee3b0-14f1-4521-bb6e-6a1c9d192ce2",
+      "type": "columnsEditorComponent",
+      "name": "items",
+      "parentId": "root",
+      "label": "Columns",
+      "customVisibility": "return data.tableId || data.entityType"
     },
     {
       "id": "cfd7d45e-c7e3-4a27-987b-dc525c412448",
@@ -83,9 +123,133 @@
       "label": "Disabled"
     },
     {
-      "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",
+      "id": "eb946e7c-5450-48b8-994a-ead765e3d631",
       "type": "sectionSeparator",
       "name": "separator2",
+      "parentId": "root",
+      "label": "Data"
+    },
+    {
+      "id": "0cc0b997-f3f7-4a3d-ba36-8590687af9bd",
+      "type": "checkbox",
+      "name": "allowNewRecord",
+      "parentId": "root",
+      "label": "Allow New Record"
+    },
+    {
+      "id": "2a5acbcf-cd52-487e-9cd7-09594a04793a",
+      "type": "collapsiblePanel",
+      "name": "pnlModalSettings",
+      "label": "Dialogue settings",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return data.allowNewRecord === true",
+      "validate": {
+        "required": false
+      },
+      "direction": "vertical",
+      "justifyContent": "left",
+      "components": [
+        {
+          "id": "4b3b0da0-f126-4e37-b5f5-568367dc008f",
+          "type": "textField",
+          "name": "modalTitle",
+          "label": "Title",
+          "labelAlign": "right",
+          "parentId": "2a5acbcf-cd52-487e-9cd7-09594a04793a",
+          "hidden": false,
+          "customVisibility": null,
+          "validate": {
+            "required": true
+          }
+        },
+        {
+          "id": "fd3d4ef4-be06-40e9-9815-118754707d0e",
+          "type": "autocomplete",
+          "name": "modalFormId",
+          "label": "Modal form",
+          "labelAlign": "right",
+          "parentId": "2a5acbcf-cd52-487e-9cd7-09594a04793a",
+          "hidden": false,
+          "customVisibility": null,
+          "validate": {
+            "required": true
+          },
+          "dataSourceType": "entitiesList",
+          "dataSourceUrl": "/api/services/app/Metadata/EntityTypeAutocomplete",
+          "entityTypeShortAlias": "Shesha.Framework.Form",
+          "useRawValues": true
+        },
+        {
+          "id": "43c5fcb7-a2d4-46d7-b671-6eac73e8d95c",
+          "type": "checkbox",
+          "name": "showModalFooter",
+          "parentId": "2a5acbcf-cd52-487e-9cd7-09594a04793a",
+          "label": "Show Modal Buttons",
+          "defaultChecked": false
+        },
+        {
+          "id": "ea60aee4-a7aa-4fd6-a641-638a5a609157",
+          "type": "dropdown",
+          "name": "submitHttpVerb",
+          "parentId": "2a5acbcf-cd52-487e-9cd7-09594a04793a",
+          "label": "Submit Http Verb",
+          "values": [
+            {
+              "label": "POST",
+              "value": "POST",
+              "parentId": "ea60aee4-a7aa-4fd6-a641-638a5a609157",
+              "id": "8418606a-d85d-4795-a2ee-4a69fcc656f9"
+            },
+            {
+              "label": "PUT",
+              "value": "PUT",
+              "parentId": "ea60aee4-a7aa-4fd6-a641-638a5a609157",
+              "id": "64bbca8a-2fb1-4448-ab71-3db077233bd2"
+            }
+          ],
+          "dataSourceType": "values",
+          "customVisibility": "return data.showModalFooter === true",
+          "defaultValue": ["POST"]
+        },
+        {
+          "id": "e669632e-55e0-46f4-9585-9e81ef0ae174",
+          "type": "textField",
+          "name": "onSuccessRedirectUrl",
+          "parentId": "2a5acbcf-cd52-487e-9cd7-09594a04793a",
+          "label": "Success Redirect URL",
+          "customVisibility": "return data.showModalFooter === true"
+        }
+      ],
+      "dataSourceType": "values",
+      "values": [
+        {
+          "id": "5c717647-2ecd-434d-8d74-6c6805303007",
+          "label": "Navigate",
+          "value": "navigate"
+        },
+        {
+          "id": "c025760d-b99b-4c44-89cf-1edb2a6cd014",
+          "label": "Dialogue",
+          "value": "dialogue"
+        },
+        {
+          "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae",
+          "label": "Execute Script",
+          "value": "executeScript"
+        },
+        {
+          "id": "18fa8cc0-a327-466d-9513-52c53218d39d",
+          "label": "Execute form action",
+          "value": "executeFormAction"
+        }
+      ]
+    },
+    {
+      "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",
+      "type": "sectionSeparator",
+      "name": "separator3",
       "parentId": "root",
       "label": "Validation"
     },
@@ -95,6 +259,50 @@
       "name": "validate.required",
       "parentId": "root",
       "label": "Required"
+    },
+    {
+      "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
+      "type": "sectionSeparator",
+      "name": "sectionStyle",
+      "parentId": "root",
+      "label": "Style"
+    },
+    {
+      "id": "06ab0599-914d-4d2d-875c-765a495472f8",
+      "type": "codeEditor",
+      "name": "style",
+      "label": "Style",
+      "parentId": "root",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
+      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
+    },
+    {
+      "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
+      "type": "dropdown",
+      "name": "size",
+      "parentId": "root",
+      "label": "Size",
+      "allowClear": true,
+      "values": [
+        {
+          "label": "Small",
+          "value": "small",
+          "id": "4f11403c-95fd-4e49-bb60-cb8c25f0f3c3"
+        },
+        {
+          "label": "Middle",
+          "value": "middle",
+          "id": "8f85c476-e632-4fa7-89ad-2be6cfb7f1f1"
+        },
+        {
+          "label": "Large",
+          "value": "large",
+          "id": "f01e54aa-a1a4-4bd6-ba73-c395e48af8ce"
+        }
+      ],
+      "dataSourceType": "values"
     },
     {
       "id": "bc67960e-77e3-40f2-89cc-f18f94678cce",
@@ -114,7 +322,11 @@
       "customVisibility": null,
       "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     }
   ],
   "formSettings": {

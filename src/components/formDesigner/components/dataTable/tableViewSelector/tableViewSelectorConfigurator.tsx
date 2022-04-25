@@ -1,11 +1,10 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Button } from 'antd';
 import { SidebarContainer } from '../../../../../components';
 import { TableViewProperties } from './tableViewProperties';
 import TableViewContainer from './tableViewContainer';
 import { useTableViewSelectorConfigurator } from '../../../../../providers/tableViewSelectorConfigurator';
 import { PlusSquareFilled } from '@ant-design/icons';
-import React from 'react';
 
 export interface ITableViewSelectorConfiguratorProps {}
 
@@ -24,10 +23,10 @@ export const TableViewSelectorConfigurator: FC<ITableViewSelectorConfiguratorPro
         rightSidebarProps={{
           open: true,
           title: () => 'Properties',
-          content: () => <TableViewProperties></TableViewProperties>,
+          content: () => <TableViewProperties />,
         }}
       >
-        <TableViewContainer items={items} index={[]}></TableViewContainer>
+        <TableViewContainer items={items} index={[]} />
       </SidebarContainer>
     </div>
   );

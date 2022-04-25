@@ -36,6 +36,7 @@ export const IndexTableFull: FC<IIndexTableFullProps> = ({
   onExportError,
   crud,
   crudMode = 'inline',
+  onSelectedIdsChanged,
 }) => {
   const {
     isInProgress: { isFiltering, isSelectingColumns, exportToExcel: isExportingToExcel },
@@ -110,6 +111,7 @@ export const IndexTableFull: FC<IIndexTableFullProps> = ({
           onSelectRow={onSelectRow}
           onExportSuccess={onExportSuccess}
           onExportError={onExportError}
+          onSelectedIdsChanged={onSelectedIdsChanged}
           customTypeRenders={customTypeRenders}
           tableRef={tableRef}
           crud={crud}

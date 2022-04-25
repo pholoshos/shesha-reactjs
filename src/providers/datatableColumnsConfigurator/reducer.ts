@@ -27,7 +27,7 @@ const toolbarReducer = handleActions<IColumnsConfiguratorStateContext, any>(
       const parent = state.selectedItemId
         ? (getItemById(newItems, state.selectedItemId) as IConfigurableColumnGroup)
         : null;
-      if (parent && parent.itemType == 'group') {
+      if (parent && parent.itemType === 'group') {
         parent.childItems = [...parent.childItems, columnProps];
       } else newItems.push(columnProps);
 
@@ -105,7 +105,7 @@ const toolbarReducer = handleActions<IColumnsConfiguratorStateContext, any>(
       const position = getItemPositionById(newItems, payload.id);
       if (!position) return state;
 
-      let newArray = position.ownerArray;
+      const newArray = position.ownerArray;
       newArray[position.index] = {
         ...newArray[position.index],
         ...payload.settings,
@@ -124,7 +124,7 @@ const toolbarReducer = handleActions<IColumnsConfiguratorStateContext, any>(
       const {
         payload: { index, childs: childIds },
       } = action;
-      if (!Boolean(index) || index.length == 0) {
+      if (!Boolean(index) || index.length === 0) {
         return {
           ...state,
           items: childIds,

@@ -37,9 +37,9 @@ export const IdleTimerRenderer: FC<PropsWithChildren<IIdleTimerRendererProps>> =
     }
   }, ONE_SECOND);
 
-  const onAction = (_event: Event) => {};
+  const onAction = (_event: Event) => { /*nop*/ };
 
-  const onActive = (_event: Event) => {};
+  const onActive = (_event: Event) => { /*nop*/ };
 
   const onIdle = (_event: Event) => setState(s => ({ ...s, isIdle: true }));
 

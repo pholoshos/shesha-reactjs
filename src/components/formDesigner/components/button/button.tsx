@@ -2,40 +2,29 @@ import React from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { BorderOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
-import { ButtonType } from 'antd/lib/button';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
-import { useForm } from '../../../../providers/form';
-import { useClosestModal } from '../../../../providers/dynamicModal';
-import { evaluateValue, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useShaRouting } from '../../../../providers';
-import ShaIcon, { IconType } from '../../../shaIcon';
-
-type ButtonActionType = 'submit' | 'reset' | 'close' | 'custom';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { IModalProperties } from '../../../../providers/dynamicModal/models';
+import ConfigurableButton from './configurableButton';
+import { IButtonGroupButton } from '../../../../providers/buttonGroupConfigurator/models';
+import { useAuth, useForm } from '../../../..';
 
 export type IActionParameters = [{ key: string; value: string }];
 
-export interface IButtonProps extends IConfigurableFormComponent {
-  actionType: ButtonActionType;
-  customAction?: string;
-  customActionParameters?: IActionParameters;
-  icon?: string;
-
-  buttonType?: ButtonType;
-  danger?: boolean;
-}
+export interface IButtonProps extends IButtonGroupButton, IConfigurableFormComponent, IModalProperties {}
 
 const settingsForm = settingsFormJson as FormMarkup;
 
-const TextField: IToolboxComponent<IButtonProps> = {
+const ButtonField: IToolboxComponent<IButtonProps> = {
   type: 'button',
   name: 'Button',
   icon: <BorderOutlined />,
-  factory: (model: IButtonProps) => {
-    const { form, getAction, formData } = useForm();
-    const { router } = useShaRouting();
-    const closestModal = useClosestModal();
+  factory: ({ style, ...model }: IButtonProps) => {
+    const { isComponentDisabled, isComponentHidden, formMode, formData } = useForm();
+    const { anyOfPermissionsGranted } = useAuth();
+
+    const { id, isDynamic, hidden, disabled } = model;
 
     const fieldModel = {
       ...model,
@@ -43,58 +32,25 @@ const TextField: IToolboxComponent<IButtonProps> = {
       tooltip: null,
     };
 
-    const onClick = () => {
-      switch (model.actionType) {
-        case 'submit':
-          if (!Boolean(form)) {
-            console.warn('Form not found');
-            return;
-          }
-          form.submit();
-          break;
-        case 'reset':
-          if (!Boolean(form)) {
-            console.warn('Form not found');
-            return;
-          }
-          form.resetFields();
-          break;
+    const isHidden = isComponentHidden({ id, isDynamic, hidden });
 
-        case 'close': // close modal or page
-          if (closestModal) closestModal.close();
-          else router?.back();
-          break;
+    const isDisabled = isComponentDisabled({ id, isDynamic, disabled });
 
-        case 'custom':
-          const action = model.customAction ? getAction(model.id, model.customAction) : null;
+    const grantedPermission = anyOfPermissionsGranted(model?.permissions || []);
 
-          if (action) {
-            let actionArgs = {};
-            for (let parameterIdx in model.customActionParameters) {
-              const parameter = model.customActionParameters[parameterIdx];
-              const value = evaluateValue(parameter.value, { data: formData });
-              actionArgs[parameter.key] = value;
-            }
-
-            action(formData, actionArgs);
-          }
-          break;
-
-        default:
-          break;
-      }
-    };
+    if (!grantedPermission && formMode !== 'designer') {
+      return null;
+    }
 
     return (
       <ConfigurableFormItem model={fieldModel}>
-        <Button
-          onClick={onClick}
-          type={model.buttonType}
-          danger={model.danger}
-          icon={model.icon ? <ShaIcon iconName={model.icon as IconType} /> : undefined}
-        >
-          {model.label}
-        </Button>
+        <ConfigurableButton
+          formComponentId={model?.id}
+          {...model}
+          disabled={isDisabled}
+          hidden={isHidden}
+          style={getStyle(style, formData)}
+        />
       </ConfigurableFormItem>
     );
   },
@@ -104,11 +60,11 @@ const TextField: IToolboxComponent<IButtonProps> = {
     const buttonModel: IButtonProps = {
       ...model,
       label: 'Submit',
-      actionType: 'submit',
+      buttonAction: 'submit',
       buttonType: 'default',
     };
     return buttonModel;
   },
 };
 
-export default TextField;
+export default ButtonField;

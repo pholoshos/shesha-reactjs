@@ -43,9 +43,9 @@ export interface IDynamicModalInstanceContext {
 
 export const DYNAMIC_MODAL_INSTANCE_CONTEXT_INITIAL_STATE: IDynamicModalInstanceContext = {
   instance: null,
-  show: () => {},
-  hide: () => {},
-  close: () => {},
+  show: () => { /*nop*/ },
+  hide: () => { /*nop*/ },
+  close: () => { /*nop*/ },
 };
 
 export const DynamicModalInstanceContext = createContext<IDynamicModalInstanceContext>(

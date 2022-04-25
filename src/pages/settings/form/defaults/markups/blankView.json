@@ -1,0 +1,10 @@
+{
+  "components": [],
+  "formSettings": {
+    "layout": "horizontal",
+    "colon": true,
+    "labelCol": { "span": 5 },
+    "wrapperCol": { "span": 13 },
+    "modelType": ""
+  }
+}

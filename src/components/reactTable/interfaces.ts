@@ -104,6 +104,12 @@ export interface IReactTableProps {
   manualPagination?: boolean;
 
   /**
+   * Enables sorting detection functionality, but does not automatically perform row sorting. 
+   * Turn this on if you wish to implement your own sorting outside of the table (eg. server-side or manual row grouping/nesting)
+   */
+  manualSortBy?: boolean;
+
+  /**
    * Enables filter detection functionality, but does not automatically perform row filtering.
    * Turn this on if you wish to implement your own row filter outside of the table (e.g. server-side or manual row grouping/nesting)
    */
@@ -117,7 +123,7 @@ export interface IReactTableProps {
   /**
    * A callback for double-clicking the rows
    */
-  onRowDoubleClick?: (rowData: any) => void;
+  onRowDoubleClick?: (rowData: any, index?: number) => void;
 
   /**
    * A callback for when ids are selected. Required if useMultiSelect is true
@@ -157,4 +163,6 @@ export interface IReactTableProps {
    * The table height. Required if scrollBodyHorizontally is true. Default value is 250px
    */
   height?: number;
+
+  onSort?: (sorting: SortingRule<any>[]) => void;
 }

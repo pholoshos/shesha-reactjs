@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, PropsWithChildren, useEffect } from 'react';
+import React, { FC, useReducer, useContext, PropsWithChildren, useEffect, MutableRefObject } from 'react';
 import modelReducer from './reducer';
 import {
   ModelConfiguratorActionsContext,
@@ -18,6 +18,7 @@ import {
 import { ModelConfigurationDto, modelConfigurationsGetById, modelConfigurationsUpdate, modelConfigurationsCreate } from '../../apis/modelConfigurations';
 import { useSheshaApplication } from '../../providers';
 import { FormInstance } from 'antd';
+import { IModelConfiguratorInstance } from './interfaces';
 
 export interface IModelConfiguratorProviderPropsBase {
   baseUrl?: string;
@@ -26,6 +27,7 @@ export interface IModelConfiguratorProviderPropsBase {
 export interface IModelConfiguratorProviderProps {
   id?: string;
   form: FormInstance;
+  configuratorRef?: MutableRefObject<IModelConfiguratorInstance | null>;
 }
 
 const ModelConfiguratorProvider: FC<PropsWithChildren<IModelConfiguratorProviderProps>> = props => {
@@ -70,8 +72,13 @@ const ModelConfiguratorProvider: FC<PropsWithChildren<IModelConfiguratorProvider
     state.form.submit();
   }
 
-  const save = (value: ModelConfigurationDto): Promise<void> => {
+  const prepareValues = (values: ModelConfigurationDto): ModelConfigurationDto => {
+    return {...values, id: state.id };
+  }
+
+  const save = (values: ModelConfigurationDto): Promise<void> => new Promise<void>((resolve, reject) => {
     // todo: validate all properties
+    const preparedValues = prepareValues(values);
 
     dispatch(saveRequestAction());
 
@@ -79,23 +86,38 @@ const ModelConfiguratorProvider: FC<PropsWithChildren<IModelConfiguratorProvider
       ? modelConfigurationsUpdate
       : modelConfigurationsCreate;
 
-    return mutate(value, { base: backendUrl })
+    mutate(preparedValues, { base: backendUrl })
       .then(response => {
-        if (response.success)
+        if (response.success) {
           dispatch(saveSuccessAction(response.result));
-        else
+          resolve();
+        }
+        else {
           dispatch(saveErrorAction(response.error));
+          reject();
+        }
       })
       .catch(error => {
         dispatch(saveErrorAction({ message: 'Failed to save model', details: error }));
+        reject();
       });
-  }
+  });
 
-  const getValues = () => {
-    const values = state.form.getFieldsValue();
-    return {
-      ...values,
-      id: state.id
+  const getModelSettings = () => prepareValues(state.form.getFieldsValue());
+
+  const savePromise: () => Promise<void> = () => new Promise<void>((resolve, reject) => {
+    state.form.validateFields()
+      .then((values) => {
+        save(values)
+          .then(() => resolve())
+          .catch(() => reject());
+      })
+      .catch((error) => reject(error));
+  });
+
+  if (props.configuratorRef) {
+    props.configuratorRef.current = {
+      save: savePromise
     };
   }
 
@@ -105,8 +127,8 @@ const ModelConfiguratorProvider: FC<PropsWithChildren<IModelConfiguratorProvider
         value={{
           load,
           save,
-          getValues,
           submit,
+          getModelSettings,
           /* NEW_ACTION_GOES_HERE */
         }}
       >

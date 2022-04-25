@@ -1,5 +1,5 @@
 /**
-import { IDispatchable } from './../models/dispatchable.d';
+ * import { IDispatchable } from './../models/dispatchable.d';
  * This is our own custom `react-calendar-timeline` type definition.
  * We are adding new interfaces and modifying the existing ones. I had an issue with the one I downloaded
  * from https://github.com/DefinitelyTyped/DefinitelyTyped because it some definition wrong. But I did use it,

@@ -97,7 +97,7 @@ export const StoredFilesRendererBase: FC<IStoredFilesRendererBaseProps> = ({
       const { type, size } = file;
 
       const isValidFileType =
-        validFileTypes.length === 0 ? true : validFileTypes.map(({ type }) => type).includes(type);
+        validFileTypes.length === 0 ? true : validFileTypes.map(({ type: fileType }) => fileType).includes(type);
 
       if (!isValidFileType) {
         const validTypes = validFileTypes.map(({ name }) => name).join(',');

@@ -12,7 +12,7 @@ export interface IProps {
 const DynamicContainer: FC<IProps> = ({ components, children, direction = 'vertical', className }) => {
   const renderComponents = () => {
     return components.map((component) => (
-      <DynamicComponent model={component}></DynamicComponent>
+      <DynamicComponent model={component} />
     ));
   };
 

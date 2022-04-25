@@ -1,20 +1,20 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { TableView } from './tableView';
 import { useTableViewSelectorConfigurator } from '../../../../../providers/tableViewSelectorConfigurator';
 import { ITableViewProps } from '../../../../../providers/tableViewSelectorConfigurator/models';
 import { ReactSortable, ItemInterface } from 'react-sortablejs';
-import React from 'react';
 
-export interface IToolbarItemsSortableProps {
+export interface ITableViewSortableProps {
   index?: number[];
   items: ITableViewProps[];
 }
 
-export const ToolbarItemsContainer: FC<IToolbarItemsSortableProps> = props => {
+export const TableViewContainer: FC<ITableViewSortableProps> = props => {
   const { updateChildItems } = useTableViewSelectorConfigurator();
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
-    const listChanged = !newState.some(item => item.chosen !== null && item.chosen !== undefined);
+    // temporary commented out, the behavoiur of the sortablejs differs sometimes
+    const listChanged = true; //!newState.some(item => item.chosen !== null && item.chosen !== undefined);
 
     if (listChanged) {
       const newChilds = newState.map<ITableViewProps>(item => item as ITableViewProps);
@@ -42,9 +42,9 @@ export const ToolbarItemsContainer: FC<IToolbarItemsSortableProps> = props => {
       bubbleScroll={true}
     >
       {props.items.map((item, index) => (
-        <TableView index={[index]} key={index} {...item}></TableView>
+        <TableView index={[index]} key={index} {...item} />
       ))}
     </ReactSortable>
   );
 };
-export default ToolbarItemsContainer;
+export default TableViewContainer;

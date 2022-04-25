@@ -2,11 +2,13 @@
   &.ant-form-item {
     margin-bottom: unset;
   }
-  .red-only-mode-toggler {
+
+  .read-only-mode-toggler {
     margin-left: @padding-lg;
 
-    cursor: pointer;
-
-    .textHoverEffect();
+    &:not(.disabled) {
+      cursor: pointer;
+      .textHoverEffect();
+    }
   }
 }

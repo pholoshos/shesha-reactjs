@@ -1,27 +1,26 @@
-import React, { Fragment, useMemo, useState } from 'react';
-import { FC } from 'react';
-import { IConfigurableFormComponent } from '../../../../interfaces';
+import React, { FC, Fragment, useMemo, useState } from 'react';
 import { useMetadata } from '../../../../providers';
 import { CodeEditor as BaseCodeEditor, Show } from '../../../..';
 import { ICodeTreeLevel } from '../../../codeEditor/codeCompleter';
 import { IPropertyMetadata } from '../../../../interfaces/metadata';
-import { Alert, Button, Modal } from 'antd';
+import { Alert, Button, Modal, Tabs } from 'antd';
 import { CodeOutlined } from '@ant-design/icons';
-import { IAceOptions } from 'react-ace';
+import { ICodeEditorProps } from './models';
+import { CodeVariablesTables } from '../../../codeVariablesTable';
 
-export interface ICodeEditorProps extends IConfigurableFormComponent {
-  placeholder?: string;
-  value?: string;
-  onChange?: (value: string) => void;
-  mode?: 'inline' | 'dialog';
-  setOptions?: IAceOptions;
-}
+const { TabPane } = Tabs;
 
-export const CodeEditor: FC<ICodeEditorProps> = ({ mode = 'inline', ...props }) => {
+export const CodeEditor: FC<ICodeEditorProps> = ({
+  mode = 'inline',
+  value,
+  language = 'javascript',
+  exposedVariables,
+  ...props
+}) => {
   const [showDialog, setShowDialog] = useState(false);
 
-  const onChange = value => {
-    if (props.onChange) props.onChange(value);
+  const onChange = _value => {
+    if (props.onChange) props.onChange(_value);
   };
   const meta = useMetadata(false);
 
@@ -66,14 +65,14 @@ export const CodeEditor: FC<ICodeEditorProps> = ({ mode = 'inline', ...props }) 
       name={props.id}
       style={{ width: 'unset' }}
       placeholder={props.placeholder}
-      mode="typescript"
+      mode={language}
       theme="monokai"
       onChange={onChange}
       fontSize={14}
       showPrintMargin={true}
       showGutter={true}
       highlightActiveLine={true}
-      value={props.value}
+      value={value}
       setOptions={{
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
@@ -106,7 +105,14 @@ export const CodeEditor: FC<ICodeEditorProps> = ({ mode = 'inline', ...props }) 
           <br />
         </Show>
 
-        {renderCodeEditor()}
+        <Tabs>
+          <TabPane tab="Code" key="code">
+            {renderCodeEditor()}
+          </TabPane>
+          <TabPane tab="Variables" key="variable">
+            <CodeVariablesTables data={exposedVariables} />
+          </TabPane>
+        </Tabs>
       </Modal>
     </Fragment>
   );

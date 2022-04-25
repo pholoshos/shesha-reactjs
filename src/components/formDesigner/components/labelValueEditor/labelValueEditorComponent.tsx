@@ -8,8 +8,12 @@ import settingsFormJson from './settingsForm.json';
 import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
+import { ICodeExposedVariable } from '../../../codeVariablesTable';
 
-export interface ILabelValueEditorProps extends IConfigurableFormComponent, ILabelValueEditorPropsBase {}
+export interface ILabelValueEditorProps extends IConfigurableFormComponent, ILabelValueEditorPropsBase {
+  mode?: 'dialog' | 'inline';
+  exposedVariables?: ICodeExposedVariable[];
+}
 
 const settingsForm = settingsFormJson as FormMarkup;
 

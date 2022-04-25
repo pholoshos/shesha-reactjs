@@ -10,9 +10,7 @@ import { SearchBox } from './toolboxSearchBox';
 
 const { Panel } = Collapse;
 
-export interface IToolboxComponentsProps {
-
-}
+export interface IToolboxComponentsProps {}
 
 export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
   const [openedKeys, setOpenedKeys] = useLocalStorage('shaDesigner.toolbox.components.openedKeys', ['']);
@@ -21,15 +19,15 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
   const { toolboxComponentGroups } = useForm();
 
   const filteredGroups = useMemo<IToolboxComponentGroup[]>(() => {
-    if (!Boolean(searchText))
-      return [...toolboxComponentGroups];
+    if (!Boolean(searchText)) return [...toolboxComponentGroups];
 
     const result: IToolboxComponentGroup[] = [];
 
-    toolboxComponentGroups.forEach((group) => {
-      const filteredComponents = group.components.filter(c => c.name.toLowerCase().includes(searchText.toLowerCase()))
-      if (filteredComponents.length > 0)
-        result.push({ ...group, components: filteredComponents });
+    toolboxComponentGroups.forEach(group => {
+      const filteredComponents = group.components.filter(c =>
+        c.name?.toLowerCase().includes(searchText?.toLowerCase())
+      );
+      if (filteredComponents.length > 0) result.push({ ...group, components: filteredComponents });
     });
     return result;
   }, [toolboxComponentGroups, searchText]);
@@ -41,7 +39,7 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
   let idx = 0;
   return (
     <>
-      <SearchBox value={searchText} onChange={setSearchText} placeholder='Search components'/>
+      <SearchBox value={searchText} onChange={setSearchText} placeholder="Search components" />
       {filteredGroups.length > 0 && (
         <Collapse activeKey={openedKeys} onChange={onCollapseChange} accordion>
           {filteredGroups.map((group, groupIndex) => {
@@ -59,7 +57,9 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
               <Panel header={group.name} key={groupIndex.toString()}>
                 <ReactSortable
                   list={sortableItems}
-                  setList={() => { }}
+                  setList={() => {
+                    /* nop */
+                  }}
                   group={{
                     name: 'shared',
                     pull: 'clone',
@@ -76,7 +76,7 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
                         key={`Group${groupIndex}:Component${componentIndex}`}
                         component={component}
                         index={idx}
-                      ></ToolboxComponent>
+                      />
                     );
                   })}
                 </ReactSortable>
@@ -85,11 +85,9 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
           })}
         </Collapse>
       )}
-      {filteredGroups.length === 0 && (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Components not found" />
-      )}
+      {filteredGroups.length === 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Components not found" />}
     </>
   );
-}
+};
 
 export default ToolboxComponents;

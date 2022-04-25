@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Page, ShaSpin } from '..';
+import { Page, ShaSpin } from '../';
 import IndexTableFull, { IIndexTableFullProps } from '../indexTableFull';
 import DataTableProvider from '../../providers/dataTable';
 

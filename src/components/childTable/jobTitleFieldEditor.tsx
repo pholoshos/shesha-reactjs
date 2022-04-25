@@ -1,6 +1,5 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useMemo } from 'react';
 import { Input } from 'antd';
-import { useMemo } from 'react';
 import { ReferenceListItemDto } from '../../apis/referenceList';
 import { IColumnEditFieldProps } from '../indexTable/interfaces';
 import { RefListDropDown } from '../';
@@ -31,40 +30,41 @@ export const JobTitleFieldEditor: FC<IColumnEditFieldProps> = ({
     handleChange(name, event?.target?.value);
   };
 
-  const renderRenderRefListDropdown = () => {
-    const placeholder = `Select ${caption}`;
 
-    const onChange = (val: ReferenceListItemDto) => {
-      setSelectedOption(val);
-    };
+  const placeholder = `Select ${caption}`;
 
-    const val =
-      dataType === 'multiValueRefList'
-        ? (stateValue as ReferenceListItemDto[])
-        : (stateValue as ReferenceListItemDto);
+  const onChange = (newVal: ReferenceListItemDto) => {
+    setSelectedOption(newVal);
+  };
 
-    const showInputField = useMemo(() => {
-      if (stateValue && !selectedOption?.itemValue) {
-        return true;
-      }
+  const val =
+    dataType === 'multiValueRefList'
+      ? (stateValue as ReferenceListItemDto[])
+      : (stateValue as ReferenceListItemDto);
 
-      if (selectedOption?.item) {
-        return selectedOption?.itemValue === OTHER_OPTION;
-      }
-      return false;
-    }, [selectedOption, stateValue]);
+  const showInputField = useMemo(() => {
+    if (stateValue && !selectedOption?.itemValue) {
+      return true;
+    }
 
-    const getInputValue = () => {
-      if (stateValue && !selectedOption?.itemValue) {
-        return stateValue;
-      }
+    if (selectedOption?.item) {
+      return selectedOption?.itemValue === OTHER_OPTION;
+    }
+    return false;
+  }, [selectedOption, stateValue]);
 
-      if (selectedOption?.item) {
-        return selectedOption?.itemValue === OTHER_OPTION ? stateValue : '';
-      }
-    };
+  const getInputValue = () => {
+    if (stateValue && !selectedOption?.itemValue) {
+      return stateValue;
+    }
 
-    return (
+    if (selectedOption?.item) {
+      return selectedOption?.itemValue === OTHER_OPTION ? stateValue : '';
+    }
+  };
+
+  return (
+    <div className="column-item-filter">
       <div>
         <RefListDropDown
           listName="JobTitle"
@@ -86,10 +86,7 @@ export const JobTitleFieldEditor: FC<IColumnEditFieldProps> = ({
           />
         )}
       </div>
-    );
-  };
-
-  return <div className="column-item-filter">{renderRenderRefListDropdown()}</div>;
+    </div>);
 };
 
 export default JobTitleFieldEditor;

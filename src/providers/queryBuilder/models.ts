@@ -2,12 +2,12 @@ import { FieldSettings } from 'react-awesome-query-builder';
 
 //Fields
 
-export type CustomFieldSettings = {
+export interface CustomFieldSettings {
   typeShortAlias?: string;
   referenceListName?: string;
   referenceListNamespace?: string;
   allowInherited?: boolean;
-};
+}
 
 export interface IProperty {
   label: string;

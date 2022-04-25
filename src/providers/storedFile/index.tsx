@@ -162,10 +162,10 @@ const StoredFileProvider: FC<PropsWithChildren<IStoredFileProviderProps>> = prop
       versionNo: payload.versionNo,
     })}`;
     axios({
-      url: url,
+      url,
       method: 'GET',
       responseType: 'blob',
-      headers: headers,
+      headers,
     })
       .then(response => {
         dispatch(downloadFileSuccessAction());
@@ -194,12 +194,12 @@ const StoredFileProvider: FC<PropsWithChildren<IStoredFileProviderProps>> = prop
   };
 
   const uploadFileAsync = (payload: IUploadFilePayload, callback?: (...args: any) => any) => {
-    let formData = new FormData();
+    const formData = new FormData();
 
     const { file } = payload;
 
-    const appendIfDefined = (name, value) => {
-      if (value) formData.append(name, value);
+    const appendIfDefined = (itemName, itemValue) => {
+      if (itemValue) formData.append(itemName, itemValue);
     };
 
     formData.append('file', file);
@@ -222,7 +222,7 @@ const StoredFileProvider: FC<PropsWithChildren<IStoredFileProviderProps>> = prop
 
     axios
       .put(`${baseUrl}/api/StoredFile`, formData, {
-        headers: headers,
+        headers,
       })
       .then((response: any) => {
         const responseFile = response.data.result as IStoredFile;
@@ -265,10 +265,10 @@ const StoredFileProvider: FC<PropsWithChildren<IStoredFileProviderProps>> = prop
     dispatch(deleteFileRequestAction());
 
     const deleteFileInput: StoredFileDeleteQueryParams = {
-      fileId: fileId,
-      ownerId: ownerId,
-      ownerType: ownerType,
-      propertyName: propertyName,
+      fileId,
+      ownerId,
+      ownerType,
+      propertyName,
     };
     deleteFileHttp('Delete', { queryParams: deleteFileInput })
       .then(() => {

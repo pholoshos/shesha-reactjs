@@ -1,11 +1,11 @@
 import React from 'react';
 import Catch from "./catch"
 
-type Props = {
+interface Props {
   children: React.ReactNode
 }
 
-export const ErrorBoundary = Catch(function ErrorBoundary(props: Props, error?: Error) {
+export const ErrorBoundary = Catch(function ErrorBoundaryFunc(props: Props, error?: Error) {
   if (error) {
     return (
       <div className="error-screen">

@@ -26,6 +26,7 @@ import { removeUndefinedProperties } from '../../utils/array';
 import { ValidationErrors } from '..';
 import { useAuthState, useDataTableStore } from '../../providers';
 import { IReactTableProps } from '../reactTable/interfaces';
+import { usePrevious } from 'react-use';
 
 const FormItem = Form.Item;
 
@@ -33,6 +34,7 @@ const CRUD_MODAL_WIDTH = 700;
 
 export interface IIndexTableProps extends IShaDataTableProps, ICrudProps, TableProps {
   tableRef?: MutableRefObject<Partial<DataTableFullInstance> | null>;
+  records?: object[];
 }
 
 export interface IExtendedModalProps extends ModalProps {
@@ -41,6 +43,7 @@ export interface IExtendedModalProps extends ModalProps {
 
 export const IndexTable: FC<Partial<IIndexTableProps>> = ({
   crud,
+  overrideDefaultCrudBehavior,
   saveLocally,
   useMultiselect: useMultiSelect,
   actionColumns,
@@ -55,7 +58,9 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
   onExportSuccess,
   onExportError,
   onFetchDataSuccess,
+  onSelectedIdsChanged,
   crudParentEntityKey = 'parentEntity',
+  records,
 }) => {
   const store = useDataTableStore();
   const { headers } = useAuthState();
@@ -65,7 +70,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
   const { router } = useShaRouting();
 
   const {
-    tableData,
+    tableData: recordsFromProvider,
     isFetchingTableData,
     totalPages,
     columns,
@@ -77,19 +82,45 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
     onDblClick: onDblClickDeprecated,
     selectedRow,
     parentEntityId,
+    selectedIds,
     tableSorting,
     quickSearch,
     crudConfig,
     refreshTable,
+    onSort,
     newOrEditableRowData,
     setCrudRowData,
     cancelCreateOrEditRowData,
     updateLocalTableData,
     deleteRowItem,
+    changeSelectedIds,
+    changeSelectedRow,
     // succeeded,
     succeeded: { exportToExcel: exportToExcelSuccess },
     error: { exportToExcel: exportToExcelError },
   } = store;
+
+  const tableData = useMemo(() => {
+    return records?.length ? records : recordsFromProvider;
+  }, [records, recordsFromProvider]);
+
+  const onSelectRowLocal = (index: number, row: any) => {
+    if (onSelectRow) {
+      onSelectRow(index, row);
+    }
+
+    if (changeSelectedRow) {
+      changeSelectedRow(row);
+    }
+  };
+
+  const previousIds = usePrevious(selectedIds);
+
+  useEffect(() => {
+    if (!(previousIds?.length === 0 && selectedIds?.length === 0) && typeof onSelectedIdsChanged === 'function') {
+      onSelectedIdsChanged(selectedIds);
+    }
+  }, [selectedIds]);
 
   useEffect(() => {
     if (!isFetchingTableData && tableData?.length && onFetchDataSuccess) {
@@ -191,7 +222,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
 
   // Crud is either boolean or ICrudState, so here we're just return allowed crud actions
   const getAllowedCrudActions = () => {
-    // console.log('getAllowedCrudActions ');
+    if (overrideDefaultCrudBehavior) return [];
 
     if (typeof crud === 'boolean') {
       return crudActionColumns;
@@ -255,7 +286,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
                 const { key, render } = customRender;
 
                 if (columnItem.dataType === key || columnItem.customDataType === key) {
-                  return render(props) || null;
+                  return render(props, router) || null;
                 }
               }
             }
@@ -377,7 +408,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
       });
 
     setPreparedColumns(localPreparedColumns);
-  }, [columns, newOrEditableRowData?.id, crud]);
+  }, [columns, newOrEditableRowData?.id, crud, overrideDefaultCrudBehavior]);
 
   /**
    * Returns a default action column icon
@@ -519,8 +550,10 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
     disableSortBy: Boolean(newOrEditableRowData?.id), // Disable sorting if we're creating or editing so that
     useMultiSelect,
     // disableSortBy: false, // Do not disable sorting
-    onSelectRow,
+    onSelectRow: onSelectRowLocal,
     onRowDoubleClick: dblClickHandler,
+    onSelectedIdsChanged: changeSelectedIds,
+    onSort, // Update it so that you can pass it as param. Quick fix for now
     columns: preparedColumns?.map(column => {
       const cleanedColumn = removeUndefinedProperties(column);
 
@@ -660,7 +693,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
       </div>
 
       {/* {useMultiselect ? <MultiselectWithState {...tableProps} /> : <ReactTable {...tableProps} />} */}
-      <ReactTable {...tableProps} />
+      { tableProps.columns && tableProps.columns.length > 0 && <ReactTable {...tableProps} /> }
 
       {renderConfirmDialog()}
 

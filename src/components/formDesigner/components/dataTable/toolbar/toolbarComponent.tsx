@@ -1,23 +1,25 @@
 import React, { FC } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
-import { DownOutlined, DashOutlined } from '@ant-design/icons';
+import { DashOutlined } from '@ant-design/icons';
 import ToolbarSettings from './toolbarSettingsPanel';
 import { IToolbarProps } from './models';
-import { Alert, Menu, Dropdown, Button } from 'antd';
+import { Alert, Menu, Dropdown } from 'antd';
 import { IButtonGroup, IToolbarButton, ToolbarItemProps } from '../../../../../providers/toolbarConfigurator/models';
 import { useForm, isInDesignerMode } from '../../../../../providers/form';
 import { getVisibilityFunc2 } from '../../../../../providers/form/utils';
-import { useDataTableSelection } from '../../../../../providers/dataTableSelection';
+import { DataTableSelectionProvider, useDataTableSelection } from '../../../../../providers/dataTableSelection';
 import { ToolbarButton } from './toolbarButton';
 import { ShaIcon } from '../../../..';
 import { IconType } from '../../../../shaIcon';
+import { useAuth } from '../../../../../providers';
+import { nanoid } from 'nanoid/non-secure';
 
 const ToolbarComponent: IToolboxComponent<IToolbarProps> = {
   type: 'toolbar',
   name: 'Toolbar',
   icon: <DashOutlined />,
   factory: (model: IToolbarProps) => {
-    return <Toolbar {...model}></Toolbar>;
+    return <ToolbarWithProvider {...model} />;
   },
   initModel: (model: IToolbarProps) => {
     return {
@@ -32,15 +34,16 @@ const ToolbarComponent: IToolboxComponent<IToolbarProps> = {
 
 export const Toolbar: FC<IToolbarProps> = ({ items, id }) => {
   const { formMode } = useForm();
+  const { anyOfPermissionsGranted } = useAuth();
   const { selectedRow } = useDataTableSelection();
   const isDesignMode = formMode === 'designer';
 
-  const renderItem = (item: ToolbarItemProps, index: number) => {
-    if (!isInDesignerMode()){
+  const renderItem = (item: ToolbarItemProps, uuid: string) => {
+    if (!isInDesignerMode()) {
       const visibilityFunc = getVisibilityFunc2(item.customVisibility, item.name);
-      const isVisible = visibilityFunc({}, { selectedRow: selectedRow });
-      if (!isVisible)
-        return null;
+
+      const isVisible = visibilityFunc({}, { selectedRow }, formMode);
+      if (!isVisible) return null;
     }
 
     switch (item.itemType) {
@@ -49,12 +52,10 @@ export const Toolbar: FC<IToolbarProps> = ({ items, id }) => {
 
         switch (itemProps.itemSubType) {
           case 'button':
-            return (
-              <ToolbarButton formComponentId={id} key={index} selectedRow={selectedRow} {...itemProps}></ToolbarButton>
-            );
+            return <ToolbarButton formComponentId={id} key={uuid} selectedRow={selectedRow} {...itemProps} />;
 
           case 'separator':
-            return <div key={index} className="sha-toolbar-separator"></div>;
+            return <div key={uuid} className="sha-toolbar-separator" />;
 
           default:
             return null;
@@ -63,10 +64,10 @@ export const Toolbar: FC<IToolbarProps> = ({ items, id }) => {
         const group = item as IButtonGroup;
         const menu = (
           <Menu>
-            {group.childItems.map((childItem, idx) => (
-              <Menu.Item 
-                key={idx} 
-                title={childItem.tooltip} 
+            {group.childItems.map(childItem => (
+              <Menu.Item
+                key={childItem?.id}
+                title={childItem.tooltip}
                 danger={childItem.danger}
                 icon={childItem.icon ? <ShaIcon iconName={childItem.icon as IconType} /> : undefined}
               >
@@ -76,15 +77,13 @@ export const Toolbar: FC<IToolbarProps> = ({ items, id }) => {
           </Menu>
         );
         return (
-          <Dropdown key={index} overlay={menu}>
-            <Button 
-              title={item.tooltip} 
-              type={item.buttonType}
-              icon={item.icon ? <ShaIcon iconName={item.icon as IconType} /> : undefined}
-            >
-              {item.name} <DownOutlined />
-            </Button>
-          </Dropdown>
+          <Dropdown.Button
+            key={uuid}
+            overlay={menu}
+            icon={item.icon ? <ShaIcon iconName={item.icon as IconType} /> : undefined}
+          >
+            {item.name}
+          </Dropdown.Button>
         );
     }
     return null;
@@ -99,7 +98,21 @@ export const Toolbar: FC<IToolbarProps> = ({ items, id }) => {
       />
     );
 
-  return <div style={{ minHeight: '30px' }}>{items.map((item, index) => renderItem(item, index))}</div>;
+  return (
+    <div style={{ minHeight: '30px' }}>
+      {items
+        ?.filter(({ permissions }) => anyOfPermissionsGranted(permissions || []))
+        .map(item => renderItem(item, nanoid()))}
+    </div>
+  );
 };
 
 export default ToolbarComponent;
+
+//#region Page Toolbar
+export const ToolbarWithProvider: FC<IToolbarProps> = props => (
+  <DataTableSelectionProvider>
+    <Toolbar {...props} />
+  </DataTableSelectionProvider>
+);
+//#endregion

@@ -63,7 +63,8 @@
       "type": "textField",
       "name": "initialValue",
       "parentId": "root",
-      "label": "Default value"
+      "label": "Default Value",
+      "description": "Enter default value of component. (formData, formMode, globalState) are exposed"
     },
     {
       "id": "0225b82d-19aa-47c7-b665-90508112bd23",
@@ -148,9 +149,23 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "description": "Enter custom even handler.",
+      "description": "Enter custom even handler on changing of event. (form, event) are exposed",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "message",
+          "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+          "type": "object"
+        },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
+      ]
     },
     {
       "id": "88c2d96c-b808-4316-8a36-701b09e5f6c7",
@@ -161,9 +176,23 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "description": "Enter custom even handler.",
+      "description": "Enter custom even handler on focus of event. (form, event) are exposed",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "message",
+          "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+          "type": "object"
+        },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
+      ]
     },
     {
       "id": "4a2b7329-1a89-45d1-a5b0-f66db21744b0",
@@ -174,9 +203,23 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "description": "Enter custom even handler.",
+      "description": "Enter custom even handler on blur of event. (form, event) are exposed",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "message",
+          "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+          "type": "object"
+        },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
+      ]
     },
     {
       "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",
@@ -226,8 +269,69 @@
       "labelAlign": "right",
       "hidden": false,
       "customVisibility": null,
-      "description": "Enter custom validator logic for form.item rules. Params include (rules, value, callback). Returns a Promise",
-      "settingsValidationErrors": []
+      "description": "Enter custom validator logic for form.item rules. Params include (rules, value, callback). Customize validation rule. Accept Promise as return.",
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        {
+          "name": "rules",
+          "description": "Validate rules, only support customize validator",
+          "type": "object"
+        },
+        { "name": "value", "description": "Component current value", "type": "object" },
+        { "name": "callback", "description": "Callback called by component", "type": "function" }
+      ]
+    },
+    {
+      "id": "d690a0b7-a9d3-4ab2-8843-9dcfbac08adc",
+      "type": "textField",
+      "name": "quickviewWidth",
+      "parentId": "root",
+      "label": "Width",
+      "customVisibility": "return data.quickviewEnabled === true"
+    },
+    {
+      "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
+      "type": "sectionSeparator",
+      "name": "sectionStyle",
+      "parentId": "root",
+      "label": "Style"
+    },
+    {
+      "id": "06ab0599-914d-4d2d-875c-765a495472f8",
+      "type": "codeEditor",
+      "name": "style",
+      "label": "Style",
+      "parentId": "root",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
+      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
+    },
+    {
+      "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
+      "type": "dropdown",
+      "name": "size",
+      "parentId": "root",
+      "label": "Size",
+      "allowClear": true,
+      "values": [
+        {
+          "label": "Small",
+          "value": "small",
+          "id": "4f11403c-95fd-4e49-bb60-cb8c25f0f3c3"
+        },
+        {
+          "label": "Middle",
+          "value": "middle",
+          "id": "8f85c476-e632-4fa7-89ad-2be6cfb7f1f1"
+        },
+        {
+          "label": "Large",
+          "value": "large",
+          "id": "f01e54aa-a1a4-4bd6-ba73-c395e48af8ce"
+        }
+      ],
+      "dataSourceType": "values"
     },
     {
       "id": "040f9a56-b3b0-4fd2-a40b-8887f125b52d",
@@ -247,7 +351,11 @@
       "customVisibility": null,
       "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     },
     {
       "id": "4b5e5951-4998-4635-b1c8-0b6d3940c300",
@@ -260,7 +368,11 @@
       "customEnabled": null,
       "description": "Enter custom enabled code.  You must return true to enable the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     }
   ],
   "formSettings": {

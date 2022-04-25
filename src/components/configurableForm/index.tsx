@@ -5,25 +5,24 @@ import { FormProvider } from '../../providers/form';
 import ConfigurableComponent from '../appConfigurator/configurableComponent';
 import EditViewMsg from '../appConfigurator/editViewMsg';
 import { useShaRouting } from '../../providers';
+import classNames from 'classnames';
 
 export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
   const { id, markup, mode, path, actions, sections, context, formRef, ...restProps } = props;
 
-  const handleEditMode = Boolean(id) || Boolean(path);
+  const canConfigure = Boolean(id) || Boolean(path);
   const { router } = useShaRouting(false);
-
-  console.log('ConfigurableForm mode: ', mode);
 
   return (
     <ConfigurableComponent
-      canConfigure={handleEditMode}
+      canConfigure={canConfigure}
       onStartEdit={() => {
         if (Boolean(id)) router?.push(`/settings/forms/designer?id=${id}`);
         else if (Boolean(path)) router?.push(`/settings/forms/designer?path=${path}`);
       }}
     >
       {(componentState, BlockOverlay) => (
-        <div className={`${componentState.wrapperClassName}`}>
+        <div className={classNames(componentState.wrapperClassName, props?.className)}>
           <BlockOverlay>
             <EditViewMsg />
           </BlockOverlay>
@@ -39,7 +38,7 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
             formRef={formRef}
             onValuesChange={restProps.onValuesChange}
           >
-            <ConfigurableFormRenderer {...restProps} />
+            <ConfigurableFormRenderer {...restProps} formId={id} />
           </FormProvider>
         </div>
       )}

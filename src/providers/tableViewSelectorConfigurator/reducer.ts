@@ -67,7 +67,7 @@ const toolbarReducer = handleActions<ITableViewSelectorConfiguratorStateContext,
       const position = getItemPositionById(newItems, payload.id);
       if (!position) return state;
 
-      let newArray = position.ownerArray;
+      const newArray = position.ownerArray;
       newArray[position.index] = {
         ...newArray[position.index],
         ...payload.settings,
@@ -86,7 +86,7 @@ const toolbarReducer = handleActions<ITableViewSelectorConfiguratorStateContext,
       const {
         payload: { index, childs: childIds },
       } = action;
-      if (!Boolean(index) || index.length == 0) {
+      if (!Boolean(index) || index.length === 0) {
         return {
           ...state,
           items: childIds,

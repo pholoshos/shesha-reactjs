@@ -1,10 +1,13 @@
 import React, { FC } from 'react';
-import { Modal, Form } from 'antd';
+import { Modal, Form, ModalProps } from 'antd';
 import { useDynamicModals } from '../../providers';
 import { ConfigurableForm } from '../';
 import { FormMode } from '../../providers/form/models';
+import { IModalProps } from '../../providers/dynamicModal/models';
+import { evaluateString, useShaRouting } from '../..';
+import _ from 'lodash';
 
-export interface IDynamicModalProps {
+export interface IDynamicModalProps extends Omit<IModalProps, 'fetchUrl'> {
   id: string;
   title?: string;
   isVisible: boolean;
@@ -12,44 +15,105 @@ export interface IDynamicModalProps {
   // todo: move to a separate object
   formId: string;
   mode: FormMode;
-  onSubmitted?: () => void;
+  onSubmitted?: (response: any) => void;
 }
 
 export const DynamicModal: FC<IDynamicModalProps> = props => {
-  const { id, title, isVisible, formId } = props;
-  const [form] = Form.useForm();
-  const { hide } = useDynamicModals();
+  const {
+    id,
+    title,
+    isVisible,
+    formId,
+    showModalFooter,
+    submitHttpVerb,
+    onSuccessRedirectUrl,
+    initialValues,
+    destroyOnClose,
+    parentFormValues,
+    width = 800,
+    modalConfirmDialogMessage,
+    onFailed,
+    prepareInitialValues,
+    mode = 'edit',
+    skipFetchData,
+  } = props;
 
-  const onSubmitted = () => {
+  const [form] = Form.useForm();
+  const { hide, removeModal } = useDynamicModals();
+  const { router } = useShaRouting();
+
+  const onOk = () => {
+    if (showModalFooter) {
+      form?.submit();
+    } else {
+      hideForm();
+    }
+  };
+
+  const beforeSubmit = () => {
+    return new Promise<boolean>((resolve, reject) => {
+      if (modalConfirmDialogMessage) {
+        Modal.confirm({ content: modalConfirmDialogMessage, onOk: () => resolve(true), onCancel: () => reject(false) });
+      } else {
+        resolve(true);
+      }
+    });
+  };
+
+  const onSubmitted = (_: any, response: any) => {
     form.resetFields();
-    hide(id);
-    if (props.onSubmitted) props.onSubmitted();
+
+    if (onSuccessRedirectUrl) {
+      const computedRedirectUrl = evaluateString(onSuccessRedirectUrl, response);
+
+      router?.push(computedRedirectUrl);
+    }
+
+    hideForm();
+    if (props.onSubmitted) props.onSubmitted(response);
   };
 
   const onCancel = () => {
-    hide(id);
+    hideForm();
   };
+
+  const hideForm = () => {
+    hide(id);
+
+    if (destroyOnClose) {
+      removeModal(id);
+    }
+  };
+
+  const footerProps: ModalProps = showModalFooter ? {} : { footer: null };
 
   return (
     <Modal
       key={id}
       title={title}
       visible={isVisible}
-      onOk={() => hide(id)} // not used
-      onCancel={() => hide(id)} // not used
-      footer={null}
+      onOk={onOk} // not used
+      onCancel={hideForm} // not used
+      {...footerProps}
+      destroyOnClose
+      width={width} // Hardcoded for now. This will be configurable very shortly
     >
-      <div>
-        <ConfigurableForm
-          id={formId}
-          form={form}
-          mode="edit"
-          actions={{
-            close: onCancel,
-          }}
-          onFinish={onSubmitted}
-        />
-      </div>
+      <ConfigurableForm
+        id={formId}
+        form={form}
+        mode={mode}
+        actions={{
+          close: onCancel,
+        }}
+        onFinish={onSubmitted}
+        prepareInitialValues={prepareInitialValues}
+        onFinishFailed={onFailed}
+        beforeSubmit={beforeSubmit}
+        httpVerb={submitHttpVerb}
+        initialValues={initialValues}
+        parentFormValues={parentFormValues}
+        skipFetchData={skipFetchData}
+      />
     </Modal>
   );
 };

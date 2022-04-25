@@ -198,6 +198,7 @@ export const dataTableGetConfiguration = (
 ) =>
   RestfulShesha.get<DataTableConfigDtoAjaxResponse, AjaxResponseBase, DataTableGetConfigurationQueryParams, void>(
     `/api/DataTable/GetConfiguration`,
+    // @ts-ignore
     props,
     signal
   );
@@ -264,6 +265,7 @@ export const dataTableGetColumns = (
     DataTableGetColumnsQueryParams,
     GetColumnsInput,
     void
+    // @ts-ignore
   >('POST', `/api/DataTable/GetColumns`, props, signal);
 
 export interface DataTableGetDataQueryParams {
@@ -314,6 +316,7 @@ export const dataTableGetData = (
     DataTableGetDataQueryParams,
     DataTableGetDataInput,
     void
+    // @ts-ignore
   >('POST', `/api/DataTable/GetData`, props, signal);
 
 export interface DataTableExportToExcelQueryParams {
@@ -384,4 +387,5 @@ export const dataTableExportToExcel = (
     DataTableExportToExcelQueryParams,
     DataTableGetDataInput,
     void
+    // @ts-ignore
   >('POST', `/api/DataTable/ExportToExcel`, props, signal);

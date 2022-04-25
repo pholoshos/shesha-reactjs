@@ -1,9 +1,8 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Button, Tooltip } from 'antd';
 import { DeleteFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { useSidebarMenuConfigurator } from '../../../providers/sidebarMenuConfigurator';
 import DragHandle from './dragHandle';
-import React from 'react';
 import ShaIcon, { IconType } from '../../shaIcon';
 import classNames from 'classnames';
 import { ISidebarMenuItem } from '../../../interfaces/sidebar';
@@ -23,7 +22,7 @@ export const SidebarMenuItem: FC<IProps> = props => {
 
   const renderedIcon = icon ? (
     typeof icon === 'string' ? (
-      <ShaIcon iconName={icon as IconType}></ShaIcon>
+      <ShaIcon iconName={icon as IconType} />
     ) : React.isValidElement(icon) ? (
       icon
     ) : null
@@ -42,7 +41,7 @@ export const SidebarMenuItem: FC<IProps> = props => {
           </Tooltip>
         )}
         <div className="sha-sidebar-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger></Button>
+          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
         </div>
       </div>
     </div>

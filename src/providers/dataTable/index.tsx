@@ -1,4 +1,4 @@
-import React, { FC, useContext, PropsWithChildren, useEffect, useRef } from 'react';
+import React, { FC, useContext, PropsWithChildren, useEffect, useRef, useMemo } from 'react';
 import useThunkReducer from 'react-hook-thunk-reducer';
 import { dataTableReducer } from './reducer';
 import axios from 'axios';
@@ -41,6 +41,9 @@ import {
   deleteRowItemAction,
   registerConfigurableColumnsAction,
   fetchColumnsSuccessSuccessAction,
+  setCrudConfigAction,
+  onSortAction,
+  changeDisplayColumnAction,
 } from './actions';
 import {
   ITableDataResponse,
@@ -52,22 +55,26 @@ import {
   ICrudProps,
   IStoredFilter,
   ITableFilter,
+  ITableCrudConfig,
+  IColumnSorting,
 } from './interfaces';
-import { useMutate } from 'restful-react';
+import { useMutate, useGet } from 'restful-react';
 import _ from 'lodash';
 import { GetColumnsInput, DataTableColumnDtoListAjaxResponse } from '../../apis/dataTable';
 import { IResult } from '../../interfaces/result';
-import { useLocalStorage } from '../../hooks';
+import { useLocalStorage, usePubSub, useSubscribe } from '../../hooks';
 import { useAuth } from '../auth';
 import { nanoid } from 'nanoid/non-secure';
 import { useDebouncedCallback } from 'use-debounce';
-import { useGet } from 'restful-react';
 import {
   IConfigurableColumnsBase,
   IConfigurableColumnsProps,
   IDataColumnsProps,
 } from '../datatableColumnsConfigurator/models';
 import { useSheshaApplication } from '../sheshaApplication';
+import { DataTablePubsubConstants } from './pubSub';
+import { useGlobalState } from '../globalState';
+import camelCaseKeys from 'camelcase-keys';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Table configuration Id */
@@ -78,6 +85,12 @@ interface IDataTableProviderProps extends ICrudProps {
 
   /** Id of the user config, is used for saving of the user settings (sorting, paging etc) to the local storage. `tableId` is used if missing  */
   userConfigId?: string;
+
+  /**
+   * Used for storing the data table state in the global store and publishing and listening to events
+   * If not provided, the state will not be saved globally and the user cannot listen to and publish events
+   */
+  uniqueStateId?: string;
 
   /** Table title */
   title?: string;
@@ -124,15 +137,18 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   getExportToExcelPath,
   defaultFilter,
   entityType,
+  uniqueStateId,
   onFetchDataSuccess,
 }) => {
   const [state, dispatch] = useThunkReducer(dataTableReducer, {
     ...DATA_TABLE_CONTEXT_INITIAL_STATE,
-    tableId: tableId,
-    entityType: entityType,
-    title: title,
-    parentEntityId: parentEntityId,
+    tableId,
+    entityType,
+    title,
+    parentEntityId,
   });
+  const { setState: setGlobalState } = useGlobalState();
+  const { publish } = usePubSub();
 
   const { backendUrl } = useSheshaApplication();
   const tableIsReady = useRef(false);
@@ -154,18 +170,30 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       quickSearch: payload.quickSearch,
       columns: state.columns,
       tableSorting: payload.sorting,
-
-      selectedStoredFilterIds: payload.selectedStoredFilterIds,
+      selectedStoredFilterIds: payload.selectedStoredFilterIds || state?.selectedStoredFilterIds,
       tableFilter: payload.filter,
     };
+
     setUserDTSettings(userConfigToSave);
 
     // convert filters
     const allFilters = [...(state.predefinedFilters || []), ...(state.storedFilters || [])];
+
     const filters = payload.selectedStoredFilterIds
       .map(id => allFilters.find(f => f.id === id))
       .filter(f => Boolean(f));
+
     const expandedPayload: IGetDataPayload = { ...payload, selectedFilters: filters };
+
+    // Check against state.selectedStoredFilterIds as well
+    if (filters?.length === 0 && state?.predefinedFilters?.length) {
+      const foundSelectedFilter = state?.predefinedFilters?.find(({ defaultSelected }) => defaultSelected);
+
+      if (foundSelectedFilter) {
+        expandedPayload.selectedStoredFilterIds = [foundSelectedFilter?.id];
+        expandedPayload.selectedFilters = [foundSelectedFilter];
+      }
+    }
 
     return fetchDataTableDataInternal(expandedPayload);
   };
@@ -210,14 +238,15 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       refreshTable();
     }
   }, [
-    state.tableFilter,
+    state.tableFilter?.length,
     state.currentPage,
-    state.selectedStoredFilterIds,
+    state.selectedStoredFilterIds?.length,
     state.selectedPageSize,
     isFetchingTableConfig,
     state.tableConfigLoaded,
     state.entityType,
-    state.columns,
+    state.columns?.length,
+    state.tableSorting,
   ]);
 
   const refreshTable = () => {
@@ -239,6 +268,14 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           console.log(e);
           dispatch(fetchTableDataErrorAction());
         });
+    },
+    // delay in ms
+    300
+  );
+
+  const debouncedExportToExcel = useDebouncedCallback(
+    () => {
+      exportToExcel();
     },
     // delay in ms
     300
@@ -302,12 +339,12 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     // Add default filter to table filter
     const filter = localState?.tableFilter || [];
 
-    const properties = getDataProperties(localState.configurableColumns);
+    const localProperties = getDataProperties(localState.configurableColumns);
 
     const payload: IGetDataPayload = {
       id: tableId,
-      entityType: entityType,
-      properties: properties,
+      entityType,
+      properties: localProperties,
       pageSize: localState.selectedPageSize,
       currentPage: localState.currentPage,
       sorting: localState.tableSorting,
@@ -358,8 +395,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(toggleColumnVisibilityAction(columnId));
   };
 
-  const toggleColumnFilter = (ids: string[]) => dispatch(toggleColumnFilterAction(ids));
-
   const changeFilterOption = (filterColumnId: string, filterOptionValue: IndexColumnFilterOption) =>
     dispatch(changeFilterOptionAction({ filterColumnId, filterOptionValue }));
 
@@ -380,9 +415,9 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   /** change quick search and refresh table data */
   const performQuickSearch = (val: string) => {
     // note: use thunk to get state after update
-    dispatch((dispatch, getState) => {
-      dispatch(changeQuickSearchAction(val));
-      dispatch(setCurrentPageAction(1));
+    dispatch((dispatchThunk, getState) => {
+      dispatchThunk(changeQuickSearchAction(val));
+      dispatchThunk(setCurrentPageAction(1));
 
       const payload = getFetchTableDataPayloadInternal(getState());
       fetchTableData(payload);
@@ -408,8 +443,16 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(applyFilterAction([]));
   };
 
-  const changeSelectedRow = (val: number) => {
-    dispatch(changeSelectedRowAction(val));
+  const toggleColumnFilter = (ids: string[]) => {
+    if (ids?.length) {
+      dispatch(toggleColumnFilterAction(ids));
+    } else {
+      clearFilters();
+    }
+  };
+
+  const changeSelectedRow = (val: any) => {
+    dispatch(changeSelectedRowAction(val ? camelCaseKeys(val, { deep: true }) : null));
   };
 
   const changeSelectedStoredFilterIds = (selectedStoredFilterIds: string[]) => {
@@ -427,7 +470,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const initializeNewDataCreation = () => {
     const id = nanoid();
 
-    let data = { Id: '' };
+    const data = { Id: '' };
 
     state?.columns?.forEach(column => {
       switch (column.dataType) {
@@ -436,7 +479,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           break;
         case 'date':
         case 'string':
-        case 'date':
           data[column.accessor] = '';
           break;
         case 'number':
@@ -459,7 +501,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     data.Id = id;
 
     setCrudRowData({
-      id: id,
+      id,
       data,
       mode: 'create',
     });
@@ -492,21 +534,31 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const getDataProperties = (columns: IConfigurableColumnsBase[]) => {
     const dataFields = columns.filter(
       c =>
-        c.itemType == 'item' &&
-        (c as IConfigurableColumnsProps).columnType == 'data' &&
+        c.itemType === 'item' &&
+        (c as IConfigurableColumnsProps).columnType === 'data' &&
         Boolean((c as IDataColumnsProps).propertyName)
     ) as IDataColumnsProps[];
 
-    const properties = dataFields.map(f => f.propertyName);
-    return properties;
+    return dataFields.map(f => f.propertyName);
   };
 
+  const properties = useMemo(() => {
+    const dataFields = state?.configurableColumns?.filter(
+      c =>
+        c.itemType === 'item' &&
+        (c as IConfigurableColumnsProps).columnType === 'data' &&
+        Boolean((c as IDataColumnsProps).propertyName)
+    ) as IDataColumnsProps[];
+
+    return dataFields.map(f => f.propertyName);
+  }, [state?.configurableColumns]);
+
   useEffect(() => {
-    const { configurableColumns, entityType } = state;
+    const { configurableColumns } = state;
     if (!entityType) return;
 
-    const properties = getDataProperties(configurableColumns);
-    if (properties.length == 0) {
+    const localProperties = getDataProperties(configurableColumns);
+    if (localProperties.length === 0) {
       // don't fetch data from server when properties is empty
       dispatch(fetchColumnsSuccessSuccessAction({ columns: [], configurableColumns, userConfig: userDTSettings }));
       return;
@@ -514,8 +566,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
     // fetch columns config from server
     const getColumnsPayload: GetColumnsInput = {
-      entityType: entityType,
-      properties: properties,
+      entityType,
+      properties: localProperties,
     };
 
     axios({
@@ -555,14 +607,92 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     return !tableId && entityType ? 'entity' : 'tableConfig';
   };
 
+  const setCrudConfig = (config: ITableCrudConfig) => {
+    dispatch(setCrudConfigAction(config));
+  };
+
+  const onSort = (sorting: IColumnSorting[]) => {
+    dispatch(onSortAction(sorting));
+  };
+
+  const flagSetters = getFlagSetters(dispatch);
+
+  //#region public
+  const deleteRow = () => {
+    console.log(`deleteRow ${state?.selectedRow}`);
+  };
+
+  const toggleColumnsSelector = () => {
+    flagSetters?.setIsInProgressFlag({ isSelectingColumns: true, isFiltering: false });
+  };
+
+  const toggleAdvancedFilter = () => {
+    flagSetters?.setIsInProgressFlag({ isFiltering: true, isSelectingColumns: false });
+  };
+
+  const changeDisplayColumn = (displayColumnName: string) => {
+    dispatch(changeDisplayColumnAction(displayColumnName));
+  };
+  //#endregion
+
+  //#region Subscriptions
+  useEffect(() => {
+    if (uniqueStateId) {
+      // First off, notify that the state has changed
+      publish(DataTablePubsubConstants.stateChanged, {
+        stateId: uniqueStateId,
+        state,
+      });
+
+      setGlobalState({
+        key: uniqueStateId,
+        data: { ...state, refreshTable },
+      });
+    }
+  }, [state, uniqueStateId]);
+
+  useSubscribe(DataTablePubsubConstants.refreshTable, data => {
+    if (data.stateId === uniqueStateId) {
+      refreshTable();
+    }
+  });
+
+  useSubscribe(DataTablePubsubConstants.deleteRow, data => {
+    if (data.stateId === uniqueStateId) {
+      deleteRow();
+    }
+  });
+
+  useSubscribe(DataTablePubsubConstants.exportToExcel, data => {
+    if (data.stateId === uniqueStateId) {
+      debouncedExportToExcel();
+    }
+  });
+
+  useSubscribe(DataTablePubsubConstants.toggleAdvancedFilter, data => {
+    if (data.stateId === uniqueStateId) {
+      toggleAdvancedFilter();
+    }
+  });
+
+  useSubscribe(DataTablePubsubConstants.toggleColumnsSelector, data => {
+    if (data.stateId === uniqueStateId) {
+      toggleColumnsSelector();
+    }
+  });
+
+  //#endregion
+
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   return (
-    <DataTableStateContext.Provider value={{ ...state, onDblClick, onSelectRow, selectedRow }}>
+    <DataTableStateContext.Provider value={{ ...state, onDblClick, onSelectRow, selectedRow, properties }}>
       <DataTableActionsContext.Provider
         value={{
-          ...getFlagSetters(dispatch),
+          onSort,
+          ...flagSetters,
           fetchTableConfig,
+          changeDisplayColumn,
           fetchTableData,
           setCurrentPage,
           changePageSize,
@@ -589,6 +719,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           registerConfigurableColumns,
           getCurrentFilter,
           getDataSourceType,
+          setCrudConfig,
           /* NEW_ACTION_GOES_HERE */
         }}
       >

@@ -13,14 +13,14 @@ export const AppEditModeToggler: FC<IAppEditModeTogglerProps> = () => {
     return (
       <>
         <CheckCircleOutlined title="Click to close Edit Mode" onClick={() => toggleCloseEditModeConfirmation(true)} />
-        <SwitchToLiveModeConfirmation></SwitchToLiveModeConfirmation>
+        <SwitchToLiveModeConfirmation/>
       </>
     );
   } else {
     return (
       <>
         <EditOutlined title="Click to launch Edit Mode" onClick={() => toggleEditModeConfirmation(true)} />
-        <SwitchToEditModeConfirmation></SwitchToEditModeConfirmation>
+        <SwitchToEditModeConfirmation/>
       </>
     );
   }

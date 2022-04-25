@@ -197,7 +197,7 @@ const StoredFilesProvider: FC<PropsWithChildren<IStoredFilesProviderProps>> = ({
       )}`,
       method: 'GET',
       responseType: 'blob',
-      headers: headers,
+      headers,
     })
       .then(response => {
         dispatch(downloadZipSuccessAction());
@@ -213,10 +213,10 @@ const StoredFilesProvider: FC<PropsWithChildren<IStoredFilesProviderProps>> = ({
       id: payload.fileId,
     })}`;
     axios({
-      url: url,
+      url,
       method: 'GET',
       responseType: 'blob',
-      headers: headers,
+      headers,
     })
       .then(response => {
         FileSaver.saveAs(new Blob([response.data]), payload.fileName);

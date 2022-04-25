@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, LockOutlined } from '@ant-design/icons';
 import { Show } from '../show';
 import { useForm } from '../../providers';
 import { IDtoType, ISelectOption } from '../autocomplete';
@@ -7,6 +7,8 @@ import Checkbox from 'antd/lib/checkbox/Checkbox';
 import { Switch, Tag } from 'antd';
 import { getMoment } from '../../utils/date';
 import moment from 'moment';
+import classNames from 'classnames';
+import QuickView from '../quickView';
 
 type AutocompleteType = ISelectOption<IDtoType>;
 
@@ -29,6 +31,11 @@ export interface IReadOnlyDisplayFormItemProps {
   disabled?: boolean;
   checked?: boolean;
   defaultChecked?: boolean;
+  quickviewEnabled?: boolean;
+  quickviewFormPath?: string;
+  quickviewDisplayPropertyName?: string;
+  quickviewGetEntityUrl?: string;
+  quickviewWidth?: number;
 }
 
 export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
@@ -41,11 +48,12 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
   disabled,
   checked,
   defaultChecked,
+  quickviewEnabled,
+  quickviewFormPath,
+  quickviewDisplayPropertyName,
+  quickviewGetEntityUrl,
+  quickviewWidth,
 }) => {
-  if (type === 'switch') {
-    console.log('ReadOnlyDisplayFormItem type, checkbox, defaultChecked: ', type, checked, defaultChecked);
-  }
-
   const { formSettings, setFormMode, formMode } = useForm();
 
   const setFormModeToEdit = () => setFormMode('edit');
@@ -62,7 +70,20 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
     switch (type) {
       case 'dropdown':
         if (!Array.isArray(value)) {
-          return (value as AutocompleteType)?.label;
+          const displayLabel = (value as AutocompleteType)?.label;
+          if (quickviewEnabled && quickviewFormPath) {
+            return (
+              <QuickView
+                entityId={value?.data}
+                formPath={quickviewFormPath}
+                getEntityUrl={quickviewGetEntityUrl}
+                displayProperty={quickviewDisplayPropertyName}
+                width={quickviewWidth}
+              />
+            );
+          } else {
+            return displayLabel;
+          }
         }
 
         throw new Error(
@@ -73,7 +94,9 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
         if (Array.isArray(value)) {
           const values = (value as AutocompleteType[])?.map(({ label }) => label);
 
-          return dropdownDisplayMode === 'raw' ? values?.join(', ') : values?.map(value => <Tag>{value}</Tag>);
+          return dropdownDisplayMode === 'raw'
+            ? values?.join(', ')
+            : values?.map((itemValue, index) => <Tag key={index}>{itemValue}</Tag>);
         }
 
         throw new Error(
@@ -104,12 +127,18 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
     return value;
   };
 
+  const iconClass = 'read-only-mode-toggler';
+
   return (
     <span className="read-only-display-form-item">
       {renderValue()}
 
-      <Show when={formSettings?.showModeToggler && !disabled && formMode === 'readonly'}>
-        <EditOutlined className="red-only-mode-toggler" onClick={setFormModeToEdit} />
+      <Show when={formSettings?.showModeToggler && formMode === 'readonly'}>
+        {disabled ? (
+          <LockOutlined className={classNames(iconClass, { disabled })} />
+        ) : (
+          <EditOutlined className={iconClass} onClick={setFormModeToEdit} />
+        )}
       </Show>
     </span>
   );

@@ -27,13 +27,11 @@ const mapPropertyToModelItem = (property: ModelPropertyDto): IModelItem => {
     properties: property.properties.map<IModelItem>(p => mapPropertyToModelItem(p)),
   }
 
-  return result;  
+  return result;
 }
 
 const findItemById = (items: IModelItem[], id: string): IModelItem => {
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-
+  for (const item of items) {
     if (item.id === id)
       return item;
     if (item.properties && item.properties.length > 0) {
@@ -115,7 +113,7 @@ const modelReducer = handleActions<IPropertiesEditorStateContext, any>(
 
       if (!position) return state;
 
-      let newArray = position.ownerArray;
+      const newArray = position.ownerArray;
 
       newArray[position.index] = {
         ...newArray[position.index],
@@ -135,7 +133,7 @@ const modelReducer = handleActions<IPropertiesEditorStateContext, any>(
       const {
         payload: { index, childs: childIds },
       } = action;
-      if (!Boolean(index) || index.length == 0) {
+      if (!Boolean(index) || index.length === 0) {
         return {
           ...state,
           items: childIds,

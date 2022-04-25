@@ -1,26 +1,31 @@
-import { FC, useRef } from 'react';
+import React, { FC, useRef } from 'react';
 import { Button, Tooltip } from 'antd';
-import { DeleteFilled, StopOutlined } from '@ant-design/icons';
+import { DeleteFilled, StopOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import FormComponent from '../formComponent';
 import { useForm } from '../../../providers/form';
-import { EyeInvisibleOutlined } from '@ant-design/icons';
-import React from 'react';
-import ErrorBoundary from '../../errorBoundary/errorBoundary';
 import DragHandle from './dragHandle';
 import ValidationIcon from './validationIcon';
 import { Show } from '../../show';
 import classNames from 'classnames';
+import CustomErrorBoundary from '../../customErrorBoundary';
 
 export interface IConfigurableFormComponentProps {
   id: string;
   index: number;
 }
 
-const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*, index*/ }) => {
-  const { formMode, visibleComponentIds, enabledComponentIds } = useForm();
+const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*, index*/, index }) => {
+  const {
+    formMode,
+    visibleComponentIds,
+    enabledComponentIds,
+    deleteComponent,
+    getComponentModel,
+    selectedComponentId,
+    type: viewType,
+  } = useForm();
   const componentRef = useRef(null);
 
-  const { deleteComponent, getComponentModel, selectedComponentId } = useForm();
   const onDeleteClick = () => {
     deleteComponent({ componentId: id });
   };
@@ -31,11 +36,23 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*,
   const hiddenByCondition = visibleComponentIds && !visibleComponentIds.includes(componentModel.id);
   const disabledByCondition = enabledComponentIds && !enabledComponentIds.includes(componentModel.id);
 
+  const isViewTemplateComponent =
+    (viewType === 'dashboard' ||
+      viewType === 'details' ||
+      viewType === 'masterDetails' ||
+      viewType === 'table' ||
+      viewType === 'menu') &&
+    index === 0;
+
+  if (isViewTemplateComponent && index === 0) {
+    console.log('ConfigurableFormComponent isViewTemplateComponent, index :>> ', isViewTemplateComponent, index);
+  }
+
   const renderComponent = () => {
     return (
-      <ErrorBoundary>
+      <CustomErrorBoundary>
         <FormComponent id={id} componentRef={componentRef} />
-      </ErrorBoundary>
+      </CustomErrorBoundary>
     );
   };
 
@@ -65,14 +82,12 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*,
         </Show>
       </span>
 
-      {invalidConfiguration && (
-        <ValidationIcon validationErrors={componentModel.settingsValidationErrors}></ValidationIcon>
-      )}
+      {invalidConfiguration && <ValidationIcon validationErrors={componentModel.settingsValidationErrors} />}
       <div className="sha-component-controls">
-        <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger></Button>
+        <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
       </div>
       <div>
-        <DragHandle componentId={id} componentRef={componentRef}></DragHandle>
+        <DragHandle componentId={id} componentRef={componentRef} />
         <div style={{ paddingLeft: '15px' }}>{renderComponent()}</div>
       </div>
     </div>

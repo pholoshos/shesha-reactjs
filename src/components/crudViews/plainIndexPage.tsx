@@ -1,12 +1,11 @@
 import React, { FC, useState } from 'react';
 import { GenericCreateModal, IGenericCreateModalProps, Page, Show } from '../';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { FormInstance } from 'antd/lib/form';
-import IndexTableFull from '../indexTableFull';
+import IndexTableFull, { IIndexTableFullProps } from '../indexTableFull';
 import { IToolbarItem } from '../../interfaces';
 import DataTableProvider from '../../providers/dataTable';
 import { useDataTableStore } from '../../providers';
-import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
 
 export interface IGenericIndexPageProps {
@@ -39,6 +38,8 @@ export interface IGenericIndexPageProps {
    * A callback for when the file export has succeeded
    */
   onExportSuccess?: () => void;
+
+  tableProps?: Omit<IIndexTableFullProps, 'id'>;
 }
 
 const TableWithControls: FC<IGenericIndexPageProps> = props => {
@@ -46,7 +47,7 @@ const TableWithControls: FC<IGenericIndexPageProps> = props => {
 
   const { refreshTable } = useDataTableStore();
 
-  let toolbarItems: IToolbarItem[] = [];
+  const toolbarItems: IToolbarItem[] = [];
 
   if (props.createModalProps)
     toolbarItems.push({
@@ -75,6 +76,9 @@ const TableWithControls: FC<IGenericIndexPageProps> = props => {
     form.resetFields();
   };
 
+  const extraTableProps = { ...(props?.tableProps || {}) };
+  delete extraTableProps.tableRef;
+
   return (
     <Page noPadding>
       <IndexTableFull
@@ -84,7 +88,9 @@ const TableWithControls: FC<IGenericIndexPageProps> = props => {
           { icon: <SearchOutlined />, onClick: props.detailsUrl },
           { icon: <EditOutlined />, onClick: props.editUrl },
         ]}
-        toolbarItems={toolbarItems}
+        tableRef={props?.tableProps?.tableRef}
+        {...extraTableProps}
+        toolbarItems={[...toolbarItems, ...(props?.tableProps?.toolbarItems || [])]}
       />
 
       <Show when={!!props.createModalProps}>

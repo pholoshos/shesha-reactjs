@@ -20,7 +20,7 @@ const PagerComponent: IToolboxComponent<IPagerComponentProps> = {
 
     if (isComponentHidden(model)) return null;
 
-    return <TablePager {...model}></TablePager>;
+    return <TablePager {...model} />;
   },
   initModel: (model: IPagerComponentProps) => {
     return {

@@ -10,7 +10,7 @@ export default {
 
 // Create a master template for mapping args to render the Button component
 const Template: Story<ICodeEditorProps> = props => (
-  <CodeEditor {...props}></CodeEditor>
+  <CodeEditor {...props}/>
 );
 
 const basicProps: ICodeEditorProps = {

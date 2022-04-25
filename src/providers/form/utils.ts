@@ -1,3 +1,4 @@
+import { IAnyObject } from './../../interfaces/anyObject';
 import {
   IFlatComponentsStructure,
   IConfigurableFormComponent,
@@ -10,6 +11,7 @@ import {
   FormMarkupWithSettings,
   IFormSection,
   IFormSections,
+  ViewType,
 } from './models';
 import Mustache from 'mustache';
 import { IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
@@ -19,18 +21,29 @@ import { formGet, formGetByPath } from '../../apis/form';
 import { IPropertyMetadata } from '../../interfaces/metadata';
 import { nanoid } from 'nanoid';
 import { Rule } from 'antd/lib/form';
+import nestedProperty from 'nested-property';
 import { getFullPath } from '../../utils/metadata';
+import blankViewMarkup from './defaults/markups/blankView.json';
+import dashboardViewMarkup from './defaults/markups/dashboardView.json';
+import detailsViewMarkup from './defaults/markups/detailsView.json';
+import formViewMarkup from './defaults/markups/formView.json';
+import masterDetailsViewMarkup from './defaults/markups/masterDetailsView.json';
+import menuViewMarkup from './defaults/markups/menuView.json';
+import tableViewMarkup from './defaults/markups/tableView.json';
+import { useSheshaApplication } from '..';
+import { CSSProperties } from 'react';
 
-/** Convert components tree to flat structure.
+/**
+ * Convert components tree to flat structure.
  * In flat structure we store components settings and their relations separately:
  *    allComponents - dictionary (key:value) of components. key - Id of the component, value - conponent settings
  *    componentRelations - dictionary of component relations. key - id of the container, value - ordered list of subcomponent ids
- * */
+ */
 export const componentsTreeToFlatStructure = (
   toolboxComponents: IToolboxComponents,
   components: IConfigurableFormComponent[]
 ): IFlatComponentsStructure => {
-  let result: IFlatComponentsStructure = {
+  const result: IFlatComponentsStructure = {
     allComponents: {},
     componentRelations: {},
   };
@@ -52,7 +65,7 @@ export const componentsTreeToFlatStructure = (
       const componentRegistration = toolboxComponents[component.type];
 
       // custom containers
-      let customContainerNames = componentRegistration?.customContainerNames || [];
+      const customContainerNames = componentRegistration?.customContainerNames || [];
       let subContainers: IComponentsContainer[] = [];
       customContainerNames.forEach(containerName => {
         const containers = component[containerName] as IComponentsContainer[];
@@ -84,7 +97,7 @@ export const componentsFlatStructureToTree = (
   toolboxComponents: IToolboxComponents,
   flat: IFlatComponentsStructure
 ): IConfigurableFormComponent[] => {
-  let tree: IConfigurableFormComponent[] = [];
+  const tree: IConfigurableFormComponent[] = [];
 
   const processComponent = (container: IConfigurableFormComponent[], ownerId: string) => {
     const componentIds = flat.componentRelations[ownerId];
@@ -133,6 +146,7 @@ export const componentsFlatStructureToTree = (
  * Load form from the back-end
  */
 export const loadFormById = (id: string) => {
+  // @ts-ignore
   return formGet({ id });
 };
 export const loadFormByPath = (path: string) => {
@@ -141,25 +155,18 @@ export const loadFormByPath = (path: string) => {
 
 export const getCustomVisibilityFunc = ({ customVisibility, name }: IConfigurableFormComponent) => {
   if (customVisibility) {
-    // console.log('customVisibility : name, customVisibility', name, customVisibility);
-  }
-
-  if (customVisibility) {
     try {
-      const customVisibilityExecutor = customVisibility ? new Function('value, data', customVisibility) : null;
+      /* tslint:disable:function-constructor */
 
-      const getIsVisible = function(data = {}) {
-        if (customVisibilityExecutor) {
-          try {
-            return customVisibilityExecutor(name ? data[name] : undefined, data);
-          } catch (e) {
-            console.warn(`Custom Visibility of field ${name} throws exception: ${e}`);
-            return true;
-          }
+      const customVisibilityExecutor = new Function('value, data', customVisibility);
+
+      const getIsVisible = (data = {}) => {
+        try {
+          return customVisibilityExecutor(data?.[name], data);
+        } catch (e) {
+          console.warn(`Custom Visibility of field ${name} throws exception: ${e}`);
+          return true;
         }
-
-        return true;
-        //return !(component.contextData && component.contextData.isEmpty && component.contextData.readOnly && component.hideWhenEmpty);
       };
 
       return getIsVisible;
@@ -174,20 +181,15 @@ export const getCustomVisibilityFunc = ({ customVisibility, name }: IConfigurabl
 export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormComponent) => {
   if (customEnabled) {
     try {
-      const customEnabledExecutor = customEnabled ? new Function('value, data', customEnabled) : null;
+      const customEnabledExecutor = new Function('value, data', customEnabled);
 
-      const getIsEnabled = function(data = {}) {
-        if (customEnabledExecutor) {
-          try {
-            return customEnabledExecutor(name ? data[name] : undefined, data);
-          } catch (e) {
-            console.error(`Custom Enabled of field ${name} throws exception: ${e}`);
-            return true;
-          }
+      const getIsEnabled = (data = {}) => {
+        try {
+          return customEnabledExecutor(data?.[name], data);
+        } catch (e) {
+          console.error(`Custom Enabled of field ${name} throws exception: ${e}`);
+          return true;
         }
-
-        return true;
-        //return !(component.contextData && component.contextData.isEmpty && component.contextData.readOnly && component.hideWhenEmpty);
       };
 
       return getIsEnabled;
@@ -199,19 +201,42 @@ export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormC
   } else return () => true;
 };
 
-export const evaluateString = (template, data) => {
-  return template ? Mustache.render(template, data) : template;
+/**
+ * Evaluates the string using Mustache template.
+ *
+ * Given a the below expression
+ *  const expression =  'My name is {{name}}';
+ *
+ * and the below data
+ *  const data = { name: 'John', surname: 'Dow' };
+ *  evaluateString()
+ * the expression below
+ *   evaluateString(expression, data);
+ * The below expression will return 'My name is John';
+ *
+ * @param template - string template
+ * @param data - data to use to evaluate the string
+ * @returns
+ */
+export const evaluateString = (template: string = '', data: any = {}) => {
+  // The function throws an exception if the expression passed doesn't have a corresponding curly braces
+  try {
+    return template ? Mustache.render(template, data) : template;
+  } catch (error) {
+    console.warn('evaluateString ', error);
+    return template;
+  }
 };
 
 export const getVisibilityFunc2 = (expression, name) => {
   if (expression) {
     try {
-      const customVisibilityExecutor = expression ? new Function('data, context', expression) : null;
+      const customVisibilityExecutor = expression ? new Function('data, context, formMode', expression) : null;
 
-      const getIsVisible = function(data = {}, context = {}) {
+      const getIsVisible = (data = {}, context = {}, formMode = '') => {
         if (customVisibilityExecutor) {
           try {
-            return customVisibilityExecutor(data, context);
+            return customVisibilityExecutor(data, context, formMode);
           } catch (e) {
             console.warn(`Custom Visibility of ${name} throws exception: ${e}`);
             return true;
@@ -234,13 +259,15 @@ export const getVisibilityFunc2 = (expression, name) => {
  * Return ids of visible components according to the custom visibility
  */
 export const getVisibleComponentIds = (components: IComponentsDictionary, values: any): string[] => {
-  let visibleComponents: string[] = [];
-  for (let key in components) {
-    const component = components[key] as IConfigurableFormComponent;
-    if (!component || component.hidden) continue;
+  const visibleComponents: string[] = [];
+  for (const key in components) {
+    if (components.hasOwnProperty(key)) {
+      const component = components[key] as IConfigurableFormComponent;
+      if (!component || component.hidden) continue;
 
-    const isVisible = component.visibilityFunc == null || component.visibilityFunc(values);
-    if (isVisible) visibleComponents.push(key);
+      const isVisible = component.visibilityFunc == null || component.visibilityFunc(values);
+      if (isVisible) visibleComponents.push(key);
+    }
   }
   return visibleComponents;
 };
@@ -249,16 +276,18 @@ export const getVisibleComponentIds = (components: IComponentsDictionary, values
  * Return ids of visible components according to the custom enabled
  */
 export const getEnabledComponentIds = (components: IComponentsDictionary, values: any): string[] => {
-  let enabledComponents: string[] = [];
-  for (let key in components) {
-    const component = components[key] as IConfigurableFormComponent;
-    if (!component || component.disabled) continue;
+  const enabledComponents: string[] = [];
+  for (const key in components) {
+    if (components.hasOwnProperty(key)) {
+      const component = components[key] as IConfigurableFormComponent;
+      if (!component || component.disabled) continue;
 
-    const isEnabled =
-      !Boolean(component?.enabledFunc) ||
-      (typeof component?.enabledFunc === 'function' && component?.enabledFunc(values));
+      const isEnabled =
+        !Boolean(component?.enabledFunc) ||
+        (typeof component?.enabledFunc === 'function' && component?.enabledFunc(values));
 
-    if (isEnabled) enabledComponents.push(key);
+      if (isEnabled) enabledComponents.push(key);
+    }
   }
   return enabledComponents;
 };
@@ -278,7 +307,7 @@ export const getFieldNameFromExpression = (expression: string) => {
  */
 export const getValidationRules = (component: IConfigurableFormComponent) => {
   const { validate } = component;
-  let rules: Rule[] = [];
+  const rules: Rule[] = [];
 
   // todo: implement more generic way (e.g. using validation providers)
 
@@ -315,6 +344,7 @@ export const getValidationRules = (component: IConfigurableFormComponent) => {
 
     if (validate.validator)
       rules.push({
+        // tslint:disable-next-line:function-constructor
         validator: (...r) => new Function('rule', 'value', 'callback', validate.validator)(...r),
       });
   }
@@ -325,8 +355,8 @@ export const getValidationRules = (component: IConfigurableFormComponent) => {
 /* Convert string to camelCase */
 export const camelize = str => {
   return str
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
-      return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
+      return index === 0 ? word?.toLowerCase() : word?.toUpperCase();
     })
     .replace(/\s+/g, '');
 };
@@ -334,8 +364,59 @@ export const camelize = str => {
 const DICTIONARY_ACCESSOR_REGEX = /(^[\s]*\{(?<key>[\w]+)\.(?<accessor>[^\}]+)\}[\s]*$)/;
 const NESTED_ACCESSOR_REGEX = /((?<key>[\w]+)\.(?<accessor>[^\}]+))/;
 
+/**
+ * Evaluates an string expression and returns the evaluated value.
+ *
+ * Example: Given
+ *  let const person = { name: 'First', surname: 'Last' };
+ *  let expression = 'Full name is {{name}} {{surname}}';
+ *
+ * evaluateExpression(expression, person) will display 'Full name is First Last';
+ * @param expression the expression to evaluate
+ * @param data the data to use to evaluate the expression
+ * @returns
+ */
+export const evaluateStringLiteralExpression = (expression: string, data: any) => {
+  return expression.replace(/\$\{(.*?)\}/g, (_, token) => nestedProperty.get(data, token));
+};
+
 export const evaluateValue = (value: string, dictionary: any) => {
   return _evaluateValue(value, dictionary, true);
+};
+
+/**
+ * Evaluates an string expression and returns the evaluated value.
+ *
+ * Example: Given
+ *  let const person = { name: 'First', surname: 'Last' };
+ *  let expression = 'Full name is {{name}} {{surname}}';
+ *
+ * evaluateExpression(expression, person) will display 'Full name is First Last';
+ * @param expression the expression to evaluate
+ * @param data the data to use to evaluate the expression
+ * @returns
+ */
+
+export const evaluateExpression = (expression, data: any) => {
+  return expression.replace(/\{\{(.*?)\}\}/g, (_, token) => nestedProperty.get(data, token)) as string;
+};
+
+/**
+ * Remove zero-width space characters from a string.
+ *
+ * Unicode has the following zero-width characters:
+ *  U+200B zero width space
+ *  U+200C zero width non-joiner Unicode code point
+ *  U+200D zero width joiner Unicode code point
+ *  U+FEFF zero width no-break space Unicode code point
+ * To remove them from a string in JavaScript, you can use a simple function:
+ *
+ * @see {@link https://stackoverflow.com/questions/11305797/remove-zero-width-space-characters-from-a-javascript-string} for further information
+ */
+export const removeZeroWidthCharsFromString = (value: string): string => {
+  if (!value) return '';
+
+  return value.replace(/[\u200B-\u200D\uFEFF]/g, '');
 };
 
 export const _evaluateValue = (value: string, dictionary: any, isRoot: boolean) => {
@@ -385,32 +466,36 @@ export const replaceTags = (value: string, dictionary: any) => {
 };
 
 export const convertActions = (ownerId: string, actions: IFormActions): IFormAction[] => {
-  let result: IFormAction[] = [];
-  for (let key in actions) {
-    result.push({
-      owner: ownerId,
-      name: key,
-      body: actions[key],
-    });
+  const result: IFormAction[] = [];
+  for (const key in actions) {
+    if (actions.hasOwnProperty(key)) {
+      result.push({
+        owner: ownerId,
+        name: key,
+        body: actions[key],
+      });
+    }
   }
   return result;
 };
 
 export const convertSectionsToList = (ownerId: string, sections: IFormSections): IFormSection[] => {
-  let result: IFormSection[] = [];
-  for (let key in sections) {
-    result.push({
-      owner: ownerId,
-      name: key,
-      body: sections[key],
-    });
+  const result: IFormSection[] = [];
+  for (const key in sections) {
+    if (sections.hasOwnProperty(key)) {
+      result.push({
+        owner: ownerId,
+        name: key,
+        body: sections[key],
+      });
+    }
   }
 
   return result;
 };
 
 export const toolbarGroupsToComponents = (availableComponents: IToolboxComponentGroup[]): IToolboxComponents => {
-  let allComponents: IToolboxComponents = {};
+  const allComponents: IToolboxComponents = {};
   if (availableComponents) {
     availableComponents.forEach(group => {
       group.components.forEach(component => {
@@ -426,10 +511,9 @@ export const findToolboxComponent = (
   predicate: (component: IToolboxComponent) => boolean
 ): IToolboxComponent => {
   if (availableComponents) {
-    for (let gIdx = 0; gIdx < availableComponents.length; gIdx++) {
-      const group = availableComponents[gIdx];
-      for (let cIdx = 0; cIdx < group.components.length; cIdx++) {
-        if (predicate(group.components[cIdx])) return group.components[cIdx];
+    for (const group of availableComponents) {
+      for (const component of group.components) {
+        if (predicate(component)) return component;
       }
     }
   }
@@ -501,23 +585,28 @@ export function listComponentToModelMetadata<TModel extends IConfigurableFormCom
 
 const getContainerNames = (toolboxComponent: IToolboxComponent): string[] => {
   const containers = [...(toolboxComponent.customContainerNames ?? [])];
-  if (!containers.includes('components'))
-    containers.push('components');
+  if (!containers.includes('components')) containers.push('components');
   return containers;
-}
+};
 
 export type ProcessingFunc = (child: IConfigurableFormComponent, parentId: string) => void;
 
-export const processRecursive = (componentsRegistration: IToolboxComponentGroup[], parentId: string, component: IConfigurableFormComponent, func: ProcessingFunc) => {
+export const processRecursive = (
+  componentsRegistration: IToolboxComponentGroup[],
+  parentId: string,
+  component: IConfigurableFormComponent,
+  func: ProcessingFunc
+) => {
   func(component, parentId);
 
   const toolboxComponent = findToolboxComponent(componentsRegistration, c => c.type === component.type);
+  if (!toolboxComponent) return;
   const containers = getContainerNames(toolboxComponent);
 
   if (containers) {
     containers.forEach(containerName => {
       const containerComponents = component[containerName] as IConfigurableFormComponent[];
-      if (containerComponents){
+      if (containerComponents) {
         containerComponents.forEach(child => {
           func(child, component.id);
           processRecursive(componentsRegistration, parentId, child, func);
@@ -525,29 +614,32 @@ export const processRecursive = (componentsRegistration: IToolboxComponentGroup[
       }
     });
   }
-}
+};
 
 /**
  * Clone components and generate new ids for them
- * @param componentsRegistration 
- * @param components 
- * @returns 
+ * @param componentsRegistration
+ * @param components
+ * @returns
  */
-export const cloneComponents = (componentsRegistration: IToolboxComponentGroup[], components: IConfigurableFormComponent[]): IConfigurableFormComponent[] => {
-  let result: IConfigurableFormComponent[] = [];
+export const cloneComponents = (
+  componentsRegistration: IToolboxComponentGroup[],
+  components: IConfigurableFormComponent[]
+): IConfigurableFormComponent[] => {
+  const result: IConfigurableFormComponent[] = [];
 
   components.forEach(component => {
-    let clone = {...component, id: nanoid() };
+    const clone = { ...component, id: nanoid() };
 
     result.push(clone);
 
     const toolboxComponent = findToolboxComponent(componentsRegistration, c => c.type === component.type);
     const containers = getContainerNames(toolboxComponent);
-  
+
     if (containers) {
       containers.forEach(containerName => {
         const containerComponents = clone[containerName] as IConfigurableFormComponent[];
-        if (containerComponents){
+        if (containerComponents) {
           const newChilds = cloneComponents(componentsRegistration, containerComponents);
           clone[containerName] = newChilds;
         }
@@ -556,8 +648,28 @@ export const cloneComponents = (componentsRegistration: IToolboxComponentGroup[]
   });
 
   return result;
-}
+};
 
+export const getDefaultFormMarkup = (type: ViewType = 'blank') => {
+  switch (type) {
+    case 'blank':
+      return blankViewMarkup;
+    case 'dashboard':
+      return dashboardViewMarkup;
+    case 'details':
+      return detailsViewMarkup;
+    case 'form':
+      return formViewMarkup;
+    case 'masterDetails':
+      return masterDetailsViewMarkup;
+    case 'menu':
+      return menuViewMarkup;
+    case 'table':
+      return tableViewMarkup;
+    default:
+      return blankViewMarkup;
+  }
+};
 export const createComponentModelForDataProperty = (
   components: IToolboxComponentGroup[],
   propertyMetadata: IPropertyMetadata
@@ -594,4 +706,103 @@ export const createComponentModelForDataProperty = (
   componentModel = listComponentToModelMetadata(toolboxComponent, componentModel, propertyMetadata);
 
   return componentModel;
+};
+
+export const sheshaApplication = () => {
+  try {
+    return useSheshaApplication();
+  } catch (error) {
+    return { toolboxComponentGroups: [] };
+  }
+};
+
+interface IKeyValue {
+  key: string;
+  value: string;
+}
+
+export const evaluateKeyValuesToObject = (arr: IKeyValue[], data: any): IAnyObject => {
+  const queryParamObj: IAnyObject = {};
+
+  if (arr?.length) {
+    arr?.forEach(({ key, value }) => {
+      if (key?.length && value.length) {
+        queryParamObj[key] = evaluateString(value, data);
+      }
+    });
+
+    return queryParamObj;
+  }
+
+  return {};
+};
+
+interface IMatchData {
+  match: string;
+  data: any;
+}
+
+const convertToKeyValues = (obj: IAnyObject): IKeyValue[] => {
+  return Object.keys(obj).map(key => ({
+    key,
+    value: obj[key],
+  }));
+};
+
+export const evaluateKeyValuesToObjectMatchedData = <T extends any>(
+  obj: IKeyValue[] | IAnyObject,
+  matches: IMatchData[]
+): T => {
+  const queryParamObj: IAnyObject = {};
+
+  if (!obj) {
+    return {} as T;
+  }
+
+  const valuesArray = Array.isArray(obj) ? obj : convertToKeyValues(obj);
+
+  if (valuesArray?.length) {
+    valuesArray?.forEach(({ key, value }) => {
+      if (key?.length && value.length) {
+        let matchedKey = '';
+
+        const data =
+          matches?.find(({ match }) => {
+            const isMatch = value?.includes(match);
+
+            if (isMatch) {
+              matchedKey = match;
+            }
+
+            return isMatch;
+          })?.data || {};
+
+        queryParamObj[key] = evaluateString(value, matchedKey ? { [matchedKey]: data } : data);
+      }
+    });
+
+    return queryParamObj as T;
+  }
+
+  return {} as T;
+};
+
+export const getObjectWithOnlyIncludedKeys = (obj: IAnyObject, includedProps: string[]): IAnyObject => {
+  const response: IAnyObject = {};
+
+  if (includedProps?.length) {
+    includedProps?.forEach(key => {
+      if (obj[key]) {
+        response[key] = obj[key];
+      }
+    });
+  }
+
+  return response;
+};
+
+export const getStyle = (style: string, formData: any): CSSProperties => {
+  if (!style) return {};
+  // tslint:disable-next-line:function-constructor
+  return new Function('data', style)(formData);
 };

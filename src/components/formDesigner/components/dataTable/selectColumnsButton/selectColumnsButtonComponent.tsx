@@ -1,10 +1,9 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../../providers/form/models';
 import { SlidersOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import settingsFormJson from './settingsForm.json';
-import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../../providers/form/utils';
 import { useDataTableStore } from '../../../../../providers';
 
@@ -17,7 +16,7 @@ const SelectColumnsButtonComponent: IToolboxComponent<IPagerComponentProps> = {
   name: 'Table Select Columns Button',
   icon: <SlidersOutlined />,
   factory: (model: IPagerComponentProps) => {
-    return <SelectColumnsButton {...model}></SelectColumnsButton>;
+    return <SelectColumnsButton {...model} />;
   },
   initModel: (model: IPagerComponentProps) => {
     return {

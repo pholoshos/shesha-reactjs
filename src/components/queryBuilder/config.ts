@@ -1,6 +1,4 @@
-/** Query Builder configuration
- * modified version of the standard configuration
- */
+/** Query Builder configuration (modified version of the standard configuration) */
 export const types = {
   text: {
     defaultOperator: 'equal',

@@ -1,6 +1,7 @@
-import { getLocalStorage } from "./storage";
+import { getLocalStorage } from './storage';
 
 const TENANT_KEY = 'TENANT';
+const CUSTOM_HEADERS_KEY = 'f5b34b63-d808-40d5-8b3b-01a16520ac9e';
 
 /**
  * Sets the tenant id
@@ -25,4 +26,27 @@ export const getTenantId = () => {
   }
 
   return parseInt(value);
+};
+
+export const getCustomHeaders = () => {
+  const value = getLocalStorage()?.getItem(CUSTOM_HEADERS_KEY);
+
+  if (value) {
+    const result = isJsonParseable(value) ? JSON.parse(value) : value;
+
+    if (typeof result === 'object' && Object.getOwnPropertyNames(result || {})?.length) {
+      return Object.entries(result);
+    }
+  }
+
+  return [];
+};
+
+export const isJsonParseable = (value: any): boolean => {
+  try {
+    JSON.parse(value);
+    return true;
+  } catch (error) {
+    return false;
+  }
 };

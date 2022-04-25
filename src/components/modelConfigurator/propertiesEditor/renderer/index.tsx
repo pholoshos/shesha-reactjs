@@ -1,10 +1,9 @@
-import { FC, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Button, Tabs } from 'antd';
 import { CodeEditor, SidebarContainer } from '../../../';
 import { ToolbarItemProperties } from './itemProperties';
 import ItemsContainer from './itemsContainer';
 import { usePropertiesEditor } from '../provider';
-import React from 'react';
 
 export interface IModelConfiguratorProps { }
 
@@ -16,7 +15,7 @@ export const PropertiesEditorRenderer: FC<IModelConfiguratorProps> = () => {
 const onAddClick = () => {
   addItem().then(_item => {
     const element = selectedItemRef?.current;
-    if (element){
+    if (element) {
       const offset = 0;
       
       //get how much pixels left to scrolling our ReactElement

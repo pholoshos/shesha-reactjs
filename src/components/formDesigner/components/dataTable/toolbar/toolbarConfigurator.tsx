@@ -1,24 +1,55 @@
-import { FC } from 'react';
-import { Button } from 'antd';
+import React, { FC, ReactNode } from 'react';
+import { Alert, Button } from 'antd';
 import { SidebarContainer } from '../../../../../components';
 import { ToolbarItemProperties } from './toolbarItemProperties';
 import ToolbarItemsContainer from './toolbarItemsContainer';
 import { useToolbarConfigurator } from '../../../../../providers/toolbarConfigurator';
-import React from 'react';
 import './styles/index.less';
 
-export interface IToolbarConfiguratorProps {}
+export interface IToolbarConfiguratorProps {
+  allowAddGroups?: boolean;
+  render?: ReactNode | (() => ReactNode);
+  heading?: ReactNode | (() => ReactNode);
+}
 
-export const ToolbarConfigurator: FC<IToolbarConfiguratorProps> = () => {
+export const ToolbarConfigurator: FC<IToolbarConfiguratorProps> = ({ allowAddGroups = true, render, heading }) => {
   const { items, addButton, addGroup } = useToolbarConfigurator();
+
+  const content = () => {
+    if (Boolean(render)) {
+      if (typeof render === 'function') {
+        return render();
+      } else {
+        return <>{render}</>;
+      }
+    }
+
+    return <ToolbarItemProperties />;
+  };
+
+  const title = () => {
+    if (Boolean(heading)) {
+      if (typeof heading === 'function') {
+        return heading();
+      } else {
+        return <>{heading}</>;
+      }
+    }
+
+    return 'Properties';
+  };
 
   return (
     <div className="sha-toolbar-configurator">
-      <h4>Here you can configure the toolbar by adjusting their settings and ordering.</h4>
+      <Alert message={<h4>Here you can configure the toolbar by adjusting their settings and ordering.</h4>} />
+
       <div className="sha-action-buttons">
-        <Button onClick={addGroup} type="primary">
-          Add Group
-        </Button>
+        {allowAddGroups && (
+          <Button onClick={addGroup} type="primary">
+            Add Group
+          </Button>
+        )}
+
         <Button onClick={addButton} type="primary">
           Add New Item
         </Button>
@@ -26,11 +57,11 @@ export const ToolbarConfigurator: FC<IToolbarConfiguratorProps> = () => {
       <SidebarContainer
         rightSidebarProps={{
           open: true,
-          title: () => 'Properties',
-          content: () => <ToolbarItemProperties></ToolbarItemProperties>,
+          title,
+          content,
         }}
       >
-        <ToolbarItemsContainer items={items} index={[]}></ToolbarItemsContainer>
+        <ToolbarItemsContainer items={items} index={[]} />
       </SidebarContainer>
     </div>
   );

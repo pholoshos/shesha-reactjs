@@ -18,10 +18,25 @@ import {
   ISetEnabledComponentsPayload,
   IHasComponentGroups,
 } from './contexts';
-import { IConfigurableFormComponent, IFormProps, FormMode, IFlatComponentsStructure, IComponentRelations } from './models';
+import {
+  IConfigurableFormComponent,
+  IFormProps,
+  FormMode,
+  IFlatComponentsStructure,
+  IComponentRelations,
+} from './models';
 import { FormActionEnums } from './actions';
 import { handleActions } from 'redux-actions';
-import { camelize, cloneComponents, convertActions, createComponentModelForDataProperty, findToolboxComponent, getCustomEnabledFunc, getCustomVisibilityFunc, processRecursive } from './utils';
+import {
+  camelize,
+  cloneComponents,
+  convertActions,
+  createComponentModelForDataProperty,
+  findToolboxComponent,
+  getCustomEnabledFunc,
+  getCustomVisibilityFunc,
+  processRecursive,
+} from './utils';
 import undoable, { includeAction } from 'redux-undo';
 import { IFormValidationErrors } from '../../interfaces';
 import { IDataSource } from '../formDesigner/models';
@@ -36,13 +51,13 @@ const addComponentToFlatStructure = (
   // build all components dictionary
   const allComponents = { ...structure.allComponents };
 
-  let childRelations: IComponentRelations = {};
+  const childRelations: IComponentRelations = {};
 
   formComponents.forEach(component => {
     processRecursive(structure.toolboxComponentGroups, containerId, component, (cmp, parentId) => {
       allComponents[cmp.id] = cmp;
-      
-      if (parentId != containerId){
+
+      if (parentId !== containerId) {
         const relations = childRelations[parentId] ?? [];
         childRelations[parentId] = [...relations, cmp.id];
       }
@@ -58,7 +73,11 @@ const addComponentToFlatStructure = (
   formComponents.forEach(component => {
     containerComponents.splice(index, 0, component.id);
   });
-  const componentRelations = { ...structure.componentRelations, [currentLevel]: containerComponents, ...childRelations };
+  const componentRelations = {
+    ...structure.componentRelations,
+    [currentLevel]: containerComponents,
+    ...childRelations,
+  };
 
   return {
     allComponents,
@@ -106,8 +125,8 @@ const reducer = handleActions<IFormStateContext, any>(
       } else {
         // create new component
         let count = 0;
-        for (let key in state.allComponents) {
-          if (state.allComponents[key].type == toolboxComponent.type) count++;
+        for (const key in state.allComponents) {
+          if (state.allComponents[key].type === toolboxComponent.type) count++;
         }
         const componentName = `${toolboxComponent.name}${count + 1}`;
 
@@ -135,7 +154,7 @@ const reducer = handleActions<IFormStateContext, any>(
         ...state,
         allComponents: newStructure.allComponents,
         componentRelations: newStructure.componentRelations,
-        selectedComponentId: (newComponents[0]?.id),
+        selectedComponentId: newComponents[0]?.id,
       };
     },
 
@@ -148,7 +167,7 @@ const reducer = handleActions<IFormStateContext, any>(
       const { [payload.componentId]: component, ...allComponents } = state.allComponents;
 
       // delete self as parent
-      let componentRelations = { ...state.componentRelations };
+      const componentRelations = { ...state.componentRelations };
       delete componentRelations[payload.componentId];
 
       // delete self as child
@@ -162,8 +181,8 @@ const reducer = handleActions<IFormStateContext, any>(
 
       return {
         ...state,
-        allComponents: allComponents,
-        componentRelations: componentRelations,
+        allComponents,
+        componentRelations,
         selectedComponentId: state.selectedComponentId === payload.componentId ? null : state.selectedComponentId, // clear selection if we delete current component
       };
     },
@@ -181,8 +200,8 @@ const reducer = handleActions<IFormStateContext, any>(
 
       const toolboxComponent = findToolboxComponent(state.toolboxComponentGroups, c => c.type === component.type);
 
-      let newComponents = { ...state.allComponents, [payload.componentId]: newComponent };
-      let componentRelations = { ...state.componentRelations };
+      const newComponents = { ...state.allComponents, [payload.componentId]: newComponent };
+      const componentRelations = { ...state.componentRelations };
 
       if (toolboxComponent.getContainers) {
         // update child components
@@ -192,7 +211,7 @@ const reducer = handleActions<IFormStateContext, any>(
 
         // remove deleted containers
         oldContainers.forEach(oldContainer => {
-          if (newContainers.find(nc => nc.id == oldContainer.id) == null) {
+          if (!newContainers.find(nc => nc.id === oldContainer.id)) {
             delete newComponents[oldContainer.id];
 
             delete componentRelations[oldContainer.id];
@@ -212,7 +231,7 @@ const reducer = handleActions<IFormStateContext, any>(
       return {
         ...state,
         allComponents: newComponents,
-        componentRelations: componentRelations,
+        componentRelations,
       };
     },
 
@@ -238,6 +257,7 @@ const reducer = handleActions<IFormStateContext, any>(
         allComponents: payload.allComponents,
         componentRelations: payload.componentRelations,
         formSettings: payload.formSettings,
+        type: payload.type,
       };
     },
 
@@ -327,14 +347,14 @@ const reducer = handleActions<IFormStateContext, any>(
       const { payload } = action;
 
       // 2. update parentId in new components list
-      let updatedComponents = {};
-      let updatedRelations: { [index: string]: string[] } = {
+      const updatedComponents = {};
+      const updatedRelations: { [index: string]: string[] } = {
         [payload.containerId]: payload.componentIds,
       };
 
       payload.componentIds.forEach(id => {
         const component = state.allComponents[id];
-        if (component.parentId != payload.containerId) {
+        if (component.parentId !== payload.containerId) {
           // NOTE: we don't need it because when the user moves a component from one container to another the react-sortable make two calls to update new parent and old parent
           // update old parent
           // const oldParentKey = component.parentId || ROOT_COMPONENT_KEY;
@@ -350,8 +370,8 @@ const reducer = handleActions<IFormStateContext, any>(
 
       return {
         ...state,
-        componentRelations: componentRelations,
-        allComponents: allComponents,
+        componentRelations,
+        allComponents,
       };
     },
 

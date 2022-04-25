@@ -6,7 +6,7 @@ import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { useDebouncedCallback } from 'use-debounce';
 import qs from 'qs';
 import { LabeledValue } from 'antd/lib/select';
-import { IGuidNullableEntityWithDisplayNameDto } from '../..';
+import { IGuidNullableEntityWithDisplayNameDto, useSubscribe } from '../..';
 import { ReadOnlyDisplayFormItem } from './../readOnlyDisplayFormItem';
 import { IReadOnly } from '../../interfaces/readOnly';
 
@@ -122,6 +122,36 @@ export interface IAutocompleteProps<TValue = any> extends IReadOnly {
   readOnlyMultipleMode?: 'raw' | 'tags';
 
   queryParams?: IQueryParams;
+
+  /**
+   * Deteremines if quickview is enabled when in read only mode
+   */
+  quickviewEnabled?: boolean;
+
+  /**
+   * Specifies the form to use when quickview is enabled
+   */
+  quickviewFormPath?: string;
+
+  /**
+   * Specifies which property to display for the quickview
+   */
+  quickviewDisplayPropertyName?: string;
+
+  /**
+   * The Url that details of the entity are retreived
+   */
+  quickviewGetEntityUrl?: string;
+
+  /**
+   * The width of the quickview
+   */
+  quickviewWidth?: number;
+
+  /**
+   * A list of event names which, when triggered, will trigger the autocomplete to refetch items
+   */
+  subscribedEventNames?: string[];
 }
 
 export interface IUrlFetcherQueryParams {
@@ -147,7 +177,7 @@ const trimQueryString = (url: string): string => {
  * A component for working with dynamic autocomplete
  */
 
-export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
+export const Autocomplete = <TValue, >(props: IAutocompleteProps<TValue>) => {
   const {
     value,
     defaultValue,
@@ -168,6 +198,12 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
     getLabeledValue,
     readOnly,
     readOnlyMultipleMode = 'raw',
+    quickviewEnabled,
+    quickviewFormPath,
+    quickviewDisplayPropertyName,
+    quickviewGetEntityUrl,
+    quickviewWidth,
+    subscribedEventNames,
   } = props;
 
   const entityFetcher = useAutocompleteList({ lazy: true });
@@ -223,6 +259,10 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
   useEffect(() => {
     doFetchItems(null);
   }, [dataSourceType]);
+
+  useSubscribe(subscribedEventNames, () => {
+    debouncedFetchItems(autocompleteText);
+  });
 
   const getFetchedItems = (): AutocompleteItemDto[] => {
     switch (dataSourceType) {
@@ -322,6 +362,12 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
       <ReadOnlyDisplayFormItem
         value={autocompleteValue}
         type={mode === 'multiple' || mode === 'tags' ? 'dropdownMultiple' : 'dropdown'}
+        disabled={disabled}
+        quickviewEnabled={quickviewEnabled}
+        quickviewFormPath={quickviewFormPath}
+        quickviewDisplayPropertyName={quickviewDisplayPropertyName}
+        quickviewGetEntityUrl={quickviewGetEntityUrl}
+        quickviewWidth={quickviewWidth}
       />
     );
   }

@@ -86,12 +86,13 @@ export const FileUpload: FC<IFileUploadProps> = ({
 
   const fileProps: UploadProps = {
     name: 'file',
-    accept: accept,
+    accept,
     multiple: false,
     fileList: fileInfo ? [fileInfo] : [],
     customRequest: onCustomRequest,
     onChange(info) {
       if (info.file.status !== 'uploading') {
+        //
       }
       if (info.file.status === 'done') {
         message.success(`${info.file.name} file uploaded successfully`);

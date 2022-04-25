@@ -110,6 +110,189 @@
       "validate": {}
     },
     {
+      "id": "7b484701-5ccf-475c-becb-9f148311d3de",
+      "type": "dropdown",
+      "name": "alignItems",
+      "label": "Align Items",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return data.direction === 'horizontal';",
+      "dataSourceType": "values",
+      "values": [
+        {
+          "id": "88d38a0d-3329-4484-be82-ecedfeef383b",
+          "label": "baseline",
+          "value": "baseline"
+        },
+        {
+          "id": "5a43cb2c-3765-4cd3-9fdd-a20c1fbc992a",
+          "label": "center",
+          "value": "center"
+        },
+        {
+          "id": "9d340272-bb51-487f-b7d7-8ee698c60268",
+          "label": "end",
+          "value": "end"
+        },
+        {
+          "id": "f1a09f30-b54c-4da2-99f7-b7be79ddb6ee",
+          "label": "flex-end",
+          "value": "flex-end"
+        },
+        {
+          "id": "1a8f1aae-df2c-447f-8e68-7cb825a4bc1f",
+          "label": "flex-start",
+          "value": "flex-start"
+        },
+        {
+          "id": "a2317312-efec-4367-b4d4-32eedaa5d577",
+          "label": "inherit",
+          "value": "inherit"
+        },
+        {
+          "id": "47959f3a-8e53-41d8-9540-793b030623e3",
+          "label": "initial",
+          "value": "initial"
+        },
+        {
+          "id": "dc20ecb9-e4c6-40a5-b1a9-a689e2cac4be",
+          "label": "normal",
+          "value": "normal"
+        },
+        {
+          "id": "d7f08b8b-e469-4df6-9a3f-526483f265d8",
+          "label": "revert",
+          "value": "revert"
+        },
+        {
+          "id": "5a30bd9c-1a2f-44bc-9121-df26c8b28004",
+          "label": "self-end",
+          "value": "self-end"
+        },
+        {
+          "id": "1aaebb63-3e5c-438f-976f-ca7ac90f47a6",
+          "label": "self-start",
+          "value": "self-start"
+        },
+        {
+          "id": "ff589b22-7aa8-4426-a9f4-df53e067a8f7",
+          "label": "start",
+          "value": "start"
+        },
+        {
+          "id": "03dbe2cb-f25e-4e4e-ad96-e0962c8cb654",
+          "label": "stretch",
+          "value": "stretch"
+        },
+        {
+          "id": "ad1542fe-c302-4aa6-8553-8e00c551ff69",
+          "label": "unset",
+          "value": "unset"
+        }
+      ],
+      "validate": {}
+    },
+    {
+      "id": "bfa728a6-8a09-4107-93a1-492f08871ff4",
+      "type": "dropdown",
+      "name": "justifyItems",
+      "label": "Justify Items",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return data.direction === 'horizontal';",
+      "dataSourceType": "values",
+      "values": [
+        {
+          "id": "5b36e0d9-e407-4e0a-9b45-c4ea2613322e",
+          "label": "baseline",
+          "value": "baseline"
+        },
+        {
+          "id": "5f8461a5-acca-4f42-9c0c-f9c398c85db7",
+          "label": "center",
+          "value": "center"
+        },
+        {
+          "id": "55741887-4f6c-4dbe-bbd5-f3ecd1a565c9",
+          "label": "end",
+          "value": "end"
+        },
+        {
+          "id": "e8c7dc84-67e2-44b3-9039-c17c5233d311",
+          "label": "flex-end",
+          "value": "flex-end"
+        },
+        {
+          "id": "abb60e6c-a15b-42c3-a0ff-ff7eec506d85",
+          "label": "flex-start",
+          "value": "flex-start"
+        },
+        {
+          "id": "f510a51b-212a-4c52-b9d3-3b68a0bfc7d5",
+          "label": "inherit",
+          "value": "inherit"
+        },
+        {
+          "id": "68ecf1d0-3898-4074-82fa-0edf7cd4e468",
+          "label": "initial",
+          "value": "initial"
+        },
+        {
+          "id": "03c8164d-17e5-4978-8bf3-9c2651f8413f",
+          "label": "left",
+          "value": "left"
+        },
+        {
+          "id": "67b6f81e-9301-40a8-8a2a-04c639c4e0be",
+          "label": "legacy",
+          "value": "legacy"
+        },
+        {
+          "id": "d3887602-8038-49a1-956f-a8d6cf870f88",
+          "label": "normal",
+          "value": "normal"
+        },
+        {
+          "id": "2d0de51d-0142-43d2-9ea6-d2cd51fbfa5f",
+          "label": "revert",
+          "value": "revert"
+        },
+        {
+          "id": "150bc995-de41-48ce-9cc5-2d373a1a110e",
+          "label": "right",
+          "value": "right"
+        },
+        {
+          "id": "6652ba6c-72eb-42c5-9297-d8809fd48f6c",
+          "label": "self-end",
+          "value": "self-end"
+        },
+        {
+          "id": "b199125c-8598-472b-b6e3-bea95ebf82c8",
+          "label": "self-start",
+          "value": "self-start"
+        },
+        {
+          "id": "c3e9f4f9-0335-4dc8-958f-59a8c7dba6c4",
+          "label": "start",
+          "value": "start"
+        },
+        {
+          "id": "6ef8480e-5a0d-457d-b08c-00301d57cc67",
+          "label": "stretch",
+          "value": "stretch"
+        },
+        {
+          "id": "61d24708-bd70-46bf-85ab-5845312dc96e",
+          "label": "unset",
+          "value": "unset"
+        }
+      ],
+      "validate": {}
+    },
+    {
       "textType": "text",
       "id": "jhbdWW6p65-RpmtpPhrNd",
       "type": "textField",
@@ -141,7 +324,11 @@
       "customVisibility": null,
       "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
     }
   ],
   "formSettings": {

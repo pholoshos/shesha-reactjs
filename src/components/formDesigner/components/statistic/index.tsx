@@ -3,7 +3,7 @@ import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/fo
 import { BarChartOutlined } from '@ant-design/icons';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import ShaStatistic, { IShaStatisticProps } from '../../../statistic';
 import ShaIcon from '../../../shaIcon';
 import { useForm } from '../../../../providers';
@@ -11,13 +11,17 @@ import _ from 'lodash';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
-interface IStatisticComponentProps extends IShaStatisticProps, IConfigurableFormComponent {}
+interface IStatisticComponentProps
+  extends Omit<IShaStatisticProps, 'style' | 'valueStyle'>,
+    IConfigurableFormComponent {
+  valueStyle?: string;
+}
 
 const StatisticComponent: IToolboxComponent<IStatisticComponentProps> = {
   type: 'statistic',
   name: 'Statistic',
   icon: <BarChartOutlined />,
-  factory: (model: IStatisticComponentProps) => {
+  factory: ({ style, valueStyle, ...model }: IStatisticComponentProps) => {
     const { prefix, suffix, name } = model;
     const { formData } = useForm();
 
@@ -35,6 +39,8 @@ const StatisticComponent: IToolboxComponent<IStatisticComponentProps> = {
         value={getDisplayValue(name)}
         prefix={prefix ? <ShaIcon iconName={prefix as any} /> : null}
         suffix={suffix ? <ShaIcon iconName={suffix as any} /> : null}
+        style={getStyle(style, formData)}
+        valueStyle={getStyle(valueStyle, formData)}
       />
     );
   },

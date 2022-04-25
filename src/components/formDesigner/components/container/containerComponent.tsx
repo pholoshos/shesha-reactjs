@@ -8,6 +8,22 @@ import { useForm } from '../../../../providers/form';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 
 export type ContainerDirection = 'horizontal' | 'vertical';
+export type AlignItems =
+  | 'baseline'
+  | 'center'
+  | 'end'
+  | 'flex-end'
+  | 'flex-start'
+  | 'inherit'
+  | 'initial'
+  | 'normal'
+  | 'revert'
+  | 'self-end'
+  | 'self-start'
+  | 'start'
+  | 'stretch'
+  | 'unset';
+
 export type JustifyContent =
   | 'center'
   | 'left'
@@ -19,10 +35,32 @@ export type JustifyContent =
   | 'space-evenly'
   | 'stretch';
 
+export type JustifyItems =
+  | 'baseline'
+  | 'center'
+  | 'end'
+  | 'flex-end'
+  | 'flex-start'
+  | 'inherit'
+  | 'initial'
+  | 'left'
+  | 'legacy'
+  | 'normal'
+  | 'revert'
+  | 'right'
+  | 'self-end'
+  | 'self-start'
+  | 'start'
+  | 'stretch'
+  | 'unset';
+
 export interface IContainerComponentProps extends IConfigurableFormComponent {
-  justifyContent?: JustifyContent;
   direction: ContainerDirection;
+  justifyContent?: JustifyContent;
+  alignItems?: AlignItems;
+  justifyItems?: JustifyItems;
   className?: string;
+  components: IConfigurableFormComponent[]; // Only important for fluent API
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -41,6 +79,8 @@ const ContainerComponent: IToolboxComponent<IContainerComponentProps> = {
         containerId={model.id}
         direction={model.direction}
         justifyContent={model.direction === 'horizontal' ? model?.justifyContent : null}
+        alignItems={model.direction === 'horizontal' ? model?.alignItems : null}
+        justifyItems={model.direction === 'horizontal' ? model?.justifyItems : null}
         className={model.className}
       />
     );

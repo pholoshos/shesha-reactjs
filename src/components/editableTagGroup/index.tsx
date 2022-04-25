@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Input, InputProps, Tag } from 'antd';
 // import { TweenOneGroup } from 'rc-tween-one';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Show from '../show';
 
 export interface IEditableTagGroupProps extends Omit<InputProps, 'value' | 'onChange'> {
@@ -31,23 +31,25 @@ export const EditableTagGroup: FC<IEditableTagGroupProps> = ({ value = [], onCha
 
   const showInput = () => {
     setState({ ...state, inputVisible: true });
-
-    inputRef?.current?.focus({
-      cursor: 'start',
-    });
   };
+
+  useEffect(() => {
+    if (state.inputVisible) {
+      inputRef?.current?.focus({});
+    }
+  }, [state.inputVisible]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, inputValue: e.target.value });
   };
 
   const handleInputConfirm = () => {
-    const { inputValue } = state;
+    const { inputValue: currentValue } = state;
 
     let localValue = value;
 
-    if (inputValue && localValue?.indexOf(inputValue) === -1) {
-      localValue = [...localValue, inputValue];
+    if (currentValue && localValue?.indexOf(currentValue) === -1) {
+      localValue = [...localValue, currentValue];
 
       if (onChange) {
         onChange(localValue);
@@ -62,14 +64,14 @@ export const EditableTagGroup: FC<IEditableTagGroupProps> = ({ value = [], onCha
 
   const onTagEdit = (tag: string) => {
     const newTags = value?.filter(v => v !== tag);
-    const { inputValue } = state;
+    const { inputValue: currentValue } = state;
 
     setState({
       inputVisible: true,
       inputValue: tag,
     });
 
-    onChange(inputValue?.trim() ? [...newTags, inputValue] : newTags);
+    onChange(currentValue?.trim() ? [...newTags, currentValue] : newTags);
   };
 
   const forMap = (tag: string) => {
@@ -140,7 +142,7 @@ export const EditableTagGroup: FC<IEditableTagGroupProps> = ({ value = [], onCha
 
       <Show when={!inputVisible && !rest?.disabled}>
         <Tag onClick={showInput} className="site-tag-plus">
-          <PlusOutlined /> New Tag
+          <PlusOutlined /> New value
         </Tag>
       </Show>
     </>

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import {
   Query,
   Builder,
@@ -20,6 +20,8 @@ import RefListDropdownWidget from './widgets/refListDropDown';
 import EntityReferenceType from './types/entityReference';
 import RefListType from './types/refList';
 import { DataTypes } from '../../interfaces/dataTypes';
+import DateTimeDynamicWidget from './widgets/dateTimeDynamic';
+import DateTimeDynamicType from './types/dateTimeDynamic';
 const InitialConfig = AntdConfig;
 
 export interface IQueryBuilderColumn extends ITableColumn {
@@ -33,15 +35,33 @@ export interface IQueryBuilderProps {
   columns?: IQueryBuilderColumn[];
   fields: IProperty[];
   showActionBtnOnHover?: boolean;
+  useExpression?: boolean;
 }
 
-export const QueryBuilder: FC<IQueryBuilderProps> = ({ showActionBtnOnHover = true, onChange, value, fields }) => {
+export const QueryBuilder: FC<IQueryBuilderProps> = ({
+  showActionBtnOnHover = true,
+  onChange,
+  value,
+  fields,
+  useExpression,
+}) => {
   const [tree, setTree] = useState<ImmutableTree>();
   const [config, setConfig] = useState<Config>();
 
   useEffect(() => {
     initialize();
   }, []);
+
+  const allFields = useMemo(
+    () =>
+      useExpression
+        ? fields?.map(({ dataType, ...field }) => ({
+            ...field,
+            dataType: ['date-time', 'date', 'time'].includes(dataType) ? 'dateTimeDynamic' : dataType,
+          }))
+        : fields,
+    [useExpression, fields]
+  );
 
   const initialize = () => {
     const operators = {
@@ -60,24 +80,26 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({ showActionBtnOnHover = tr
       ...InitialConfig.widgets,
       entityAutocomplete: EntityAutocompleteWidget,
       refListDropdown: RefListDropdownWidget,
+      dateTimeDynamic: DateTimeDynamicWidget,
     };
 
     const types = {
       ...InitialConfig.types,
       entityReference: EntityReferenceType,
       refList: RefListType,
+      dateTimeDynamic: DateTimeDynamicType,
     };
 
     const conf: Config = {
       ...InitialConfig,
       fields: {},
       // @ts-ignore
-      types: types,
-      operators: operators,
-      widgets: widgets,
+      types,
+      operators,
+      widgets,
     };
 
-    fields?.forEach(({ dataType, visible, propertyName, label, fieldSettings, preferWidgets }) => {
+    allFields?.forEach(({ dataType, visible, propertyName, label, fieldSettings, preferWidgets }) => {
       let type: string = dataType;
       let defaultPreferWidgets = [];
 
@@ -125,7 +147,9 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({ showActionBtnOnHover = tr
           case '!struct':
             type = dataType;
             break;
-
+          case 'dateTimeDynamic':
+            type = 'dateTimeDynamic';
+            defaultPreferWidgets = ['dateTimeDynamic'];
           default:
             break;
         }

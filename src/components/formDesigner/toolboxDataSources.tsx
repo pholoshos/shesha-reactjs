@@ -9,14 +9,34 @@ import { IPropertyMetadata } from '../../interfaces/metadata';
 
 const { Panel } = Collapse;
 
-export interface IToolboxDataSourcesProps {
-
-}
+export interface IToolboxDataSourcesProps {}
 
 interface FilteredDataSource {
   datasource: IDataSource;
   visibleItems: IPropertyMetadata[];
 }
+
+const getVisibleProperties = (items: IPropertyMetadata[], searchText: string): IPropertyMetadata[] => {
+  const result: IPropertyMetadata[] = [];
+  if (!items) return result;
+
+  items.forEach(item => {
+    if (!item.isFrameworkRelated && item.isVisible) {
+      const childItems = getVisibleProperties(item.properties, searchText);
+      const matched =
+        (searchText ?? '') === '' ||
+        item.path?.toLowerCase().includes(searchText) ||
+        item.label?.toLowerCase().includes(searchText);
+
+      if (matched || childItems.length > 0) {
+        const filteredItem: IPropertyMetadata = { ...item, properties: childItems };
+        result.push(filteredItem);
+      }
+    }
+  });
+
+  return result;
+};
 
 export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
   const [openedKeys, setOpenedKeys] = useLocalStorage('shaDesigner.toolbox.datasources.openedKeys', ['']);
@@ -25,84 +45,66 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
   const currentMeta = useMetadata(false);
   const currentDataSource: IDataSource = Boolean(currentMeta?.metadata?.properties)
     ? {
-      id: currentMeta.id,
-      name: currentMeta.metadata?.name,
-      containerType: currentMeta.metadata?.type,
-      items: currentMeta.metadata?.properties
-    }
+        id: currentMeta.id,
+        name: currentMeta.metadata?.name,
+        containerType: currentMeta.metadata?.type,
+        items: currentMeta.metadata?.properties,
+      }
     : null;
 
   const { dataSources: formDs, activeDataSourceId } = useForm();
 
   const allDataSources = useMemo<IDataSource[]>(() => {
     const dataSources = [...formDs];
-    if (currentDataSource)
-      dataSources.push(currentDataSource);
+    if (currentDataSource) dataSources.push(currentDataSource);
 
     return dataSources;
   }, [formDs, currentDataSource]);
 
-  const getVisibleProperties = (items: IPropertyMetadata[], searchText: string): IPropertyMetadata[] => {
-    const result: IPropertyMetadata[] = [];
-    if (!items)
-      return result;
-      
-    items.forEach(item => {
-      if (!item.isFrameworkRelated && item.isVisible){
-        const childItems = getVisibleProperties(item.properties, searchText);
-        const matched = (searchText ?? '') == '' || item.path.toLowerCase().includes(searchText) || item.label?.toLowerCase().includes(searchText);
-        
-        if (matched || childItems.length > 0){
-          const filteredItem: IPropertyMetadata = { ...item, properties: childItems };
-          result.push(filteredItem)
-        }
-      }
-    });
-
-    return result;
-  }
-
   const datasourcesWithVisible = useMemo<FilteredDataSource[]>(() => {
-    const dataSources = allDataSources.map<FilteredDataSource>((ds) => (
-      {
-        datasource: ds,
-        visibleItems: getVisibleProperties(ds.items, searchText),
-      }
-    ));
-    return dataSources;    
+    const dataSources = allDataSources.map<FilteredDataSource>(ds => ({
+      datasource: ds,
+      visibleItems: getVisibleProperties(ds.items, searchText),
+    }));
+    return dataSources;
   }, [allDataSources, searchText]);
 
   const itemContainsText = (item: IPropertyMetadata, loweredSearchText: string): boolean => {
-    if (item.path.toLowerCase().includes(loweredSearchText) || item.label?.toLowerCase().includes(loweredSearchText))
+    if (item.path?.toLowerCase()?.includes(loweredSearchText) || item.label?.toLowerCase()?.includes(loweredSearchText))
       return true;
 
-    return (item.properties ?? []).some(child => itemContainsText(child, loweredSearchText))
-  }
+    return (item.properties ?? []).some(child => itemContainsText(child, loweredSearchText));
+  };
 
-  if (allDataSources.length === 0)
-    return null;
+  if (allDataSources.length === 0) return null;
 
   const onCollapseChange = (key: string | string[]) => {
     setOpenedKeys(Array.isArray(key) ? key : [key]);
   };
   return (
     <>
-      <div className='sidebar-subheader'>
-        Data
-      </div>
-      <SearchBox value={searchText} onChange={setSearchText} placeholder='Search data properties' />
-      
+      <div className="sidebar-subheader">Data</div>
+      <SearchBox value={searchText} onChange={setSearchText} placeholder="Search data properties" />
+
       {datasourcesWithVisible.length > 0 && (
         <Collapse activeKey={openedKeys} onChange={onCollapseChange}>
           {datasourcesWithVisible.map((ds, dsIndex) => {
             const visibleItems = ds.visibleItems;
 
-            let classes = ['sha-toolbox-panel'];
+            const classes = ['sha-toolbox-panel'];
             if (ds.datasource.id === activeDataSourceId) classes.push('active');
-            
+
             return visibleItems.length === 0 ? null : (
-              <Panel header={ds.datasource.name} key={dsIndex.toString()} className={classes.reduce((a, c) => a + ' ' + c)}>
-                <DataSourceTree items={visibleItems} searchText={searchText} defaultExpandAll={(searchText ?? '') !== ''}></DataSourceTree>
+              <Panel
+                header={ds.datasource.name}
+                key={dsIndex.toString()}
+                className={classes.reduce((a, c) => a + ' ' + c)}
+              >
+                <DataSourceTree
+                  items={visibleItems}
+                  searchText={searchText}
+                  defaultExpandAll={(searchText ?? '') !== ''}
+                />
               </Panel>
             );
           })}
@@ -113,6 +115,6 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
       )}
     </>
   );
-}
+};
 
 export default ToolboxDataSources;

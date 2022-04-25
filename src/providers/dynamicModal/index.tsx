@@ -54,28 +54,41 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
   const renderInstances = () => {
     const rendered = [];
     for (const id in state.instances) {
-      const instance = state.instances[id];
-      rendered.push(
-        <DynamicModalInstanceContext.Provider
-          key={instance.id}
-          value={{
-            instance: instance,
-            show: () => show(instance.id),
-            hide: () => hide(instance.id),
-            close: () => removeModal(instance.id),
-          }}
-        >
-          <DynamicModal
+      if (state.instances.hasOwnProperty(id)) {
+        const instance = state.instances[id];
+        rendered.push(
+          <DynamicModalInstanceContext.Provider
             key={instance.id}
-            id={instance.id}
-            title={instance.props.title}
-            isVisible={instance.isVisible}
-            mode="edit"
-            formId={instance.props.formId}
-            onSubmitted={instance.props.onSubmitted}
-          ></DynamicModal>
-        </DynamicModalInstanceContext.Provider>
-      );
+            value={{
+              instance,
+              show: () => show(instance.id),
+              hide: () => hide(instance.id),
+              close: () => removeModal(instance.id),
+            }}
+          >
+            <DynamicModal
+              key={instance.id}
+              id={instance.id}
+              title={instance.props.title}
+              isVisible={instance.isVisible}
+              mode={instance?.props?.mode}
+              formId={instance.props.formId}
+              onSubmitted={instance.props.onSubmitted}
+              onFailed={instance.props.onFailed}
+              showModalFooter={instance?.props?.showModalFooter}
+              submitHttpVerb={instance?.props?.submitHttpVerb}
+              onSuccessRedirectUrl={instance?.props?.onSuccessRedirectUrl}
+              initialValues={instance?.props?.initialValues}
+              parentFormValues={instance?.props?.parentFormValues}
+              destroyOnClose={instance?.props?.destroyOnClose}
+              skipFetchData={instance?.props?.skipFetchData}
+              width={instance?.props?.width}
+              modalConfirmDialogMessage={instance?.props?.modalConfirmDialogMessage}
+              prepareInitialValues={instance?.props?.prepareInitialValues}
+            />
+          </DynamicModalInstanceContext.Provider>
+        );
+      }
     }
     return rendered;
   };
@@ -126,9 +139,9 @@ function useDynamicModals() {
 }
 
 function useModal(modalProps: IModalProps) {
-  if (!modalProps) return null;
-
   const context = useDynamicModals();
+
+  if (!modalProps) return null;
 
   const instance = {
     open: () => {

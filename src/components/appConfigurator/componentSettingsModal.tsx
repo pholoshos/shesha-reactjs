@@ -1,6 +1,5 @@
 import React from 'react';
-import { Modal } from 'antd';
-import { Form } from 'antd';
+import { Form, Modal } from 'antd';
 import { ConfigurableForm } from '../configurableForm';
 import { IConfigurableFormComponent } from '../../providers/form/models';
 
@@ -12,7 +11,13 @@ export interface IProps<TModel = any> {
   onSave: (model: TModel) => void;
 }
 
-export const ComponentSettingsModal = <TSettings extends any>({ title, markup, model, onCancel, onSave }: IProps<TSettings>) => {
+export const ComponentSettingsModal = <TSettings extends any>({
+  title,
+  markup,
+  model,
+  onCancel,
+  onSave,
+}: IProps<TSettings>) => {
   const formLayout = {
     labelCol: { span: 5 },
     wrapperCol: { span: 13 },
@@ -33,7 +38,7 @@ export const ComponentSettingsModal = <TSettings extends any>({ title, markup, m
         onFinish={onSave}
         markup={markup}
         initialValues={model}
-      ></ConfigurableForm>
+      />
     </Modal>
   );
 };

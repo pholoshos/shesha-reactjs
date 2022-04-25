@@ -1,6 +1,5 @@
 import React from 'react';
-import { Modal } from 'antd';
-import { Form } from 'antd';
+import { Modal, Form } from 'antd';
 import { ConfigurableForm } from '../configurableForm';
 import { IConfigurableFormComponent } from '../../providers/form/models';
 
@@ -33,7 +32,7 @@ export const ComponentSettingsModal = <TSettings extends any>({ title, markup, m
         onFinish={onSave}
         markup={markup}
         initialValues={model}
-      ></ConfigurableForm>
+      />
     </Modal>
   );
 };

@@ -47,9 +47,9 @@ const PropertiesEditorProvider: FC<PropsWithChildren<IPropertiesEditorProviderPr
   }
   */
   const dispatchAndFire = (action: Action<any>) => {
-    dispatch((dispatch, getState) => {
-      dispatch(action);
-      if (props.onChange){
+    dispatch((dispatchThunk, getState) => {
+      dispatchThunk(action);
+      if (props.onChange) {
         const updatedItems = getState()?.items;
         props.onChange(updatedItems);
       }        
@@ -62,7 +62,7 @@ const PropertiesEditorProvider: FC<PropsWithChildren<IPropertiesEditorProviderPr
       const item: IModelItem = {
         id: nanoid(),
       };
-      dispatchAndFire(addItemAction({ parentId: parentId, item: item }));
+      dispatchAndFire(addItemAction({ parentId, item }));
       resolve(item);
     });
   };

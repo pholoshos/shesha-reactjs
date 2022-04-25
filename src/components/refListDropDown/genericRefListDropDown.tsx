@@ -21,6 +21,8 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
     getLabeledValue,
     getOptionFromFetchedItem,
     readOnly,
+    disabled,
+    style,
     ...rest
   } = props;
 
@@ -115,6 +117,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
     return (
       <ReadOnlyDisplayFormItem
         value={wrapValue(value)}
+        disabled={disabled}
         type={mode === 'multiple' || mode === 'tags' ? 'dropdownMultiple' : 'dropdown'}
       />
     );
@@ -129,16 +132,17 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
       notFoundContent={null}
       allowClear={true}
       loading={loading}
+      disabled={disabled}
       filterOption={(input, option) => {
         if (typeof option?.children === 'string' && typeof input === 'string') {
           // @ts-ignore
-          return option?.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+          return option?.children?.toLowerCase().indexOf(input?.toLowerCase()) >= 0;
         }
 
         return false;
       }}
       {...rest}
-      style={{ width }}
+      style={{ ...style, width }}
       onChange={handleChange}
       value={wrapValue(value)}
       mode={mode}

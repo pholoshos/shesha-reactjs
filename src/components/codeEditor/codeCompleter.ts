@@ -6,7 +6,7 @@ import { Ace } from 'ace-builds';
 // @ts-ignore
 function getCurrentToken(editor) {
     try {
-        var pos = editor.getSelectionRange().end;
+        const pos = editor.getSelectionRange().end;
         return editor.session.getTokenAt(pos.row, pos.column);
     }
     catch (ex) {
@@ -27,14 +27,16 @@ export interface ICodeTreeLevel {
 }
 const treeLevel2Completions = (level: ICodeTreeLevel, prefix: string = ''): Ace.Completion[] => {
     const completions: Ace.Completion[] = [];
-    for (let key in level) {
-        const item = level[key];
-        completions.push({
-            caption: prefix + item.value,
-            value: prefix + item.value,
-            meta: item.caption,
-            score: 1,
-        });
+    for (const key in level) {
+        if (level.hasOwnProperty(key)) {
+            const item = level[key];
+            completions.push({
+                caption: prefix + item.value,
+                value: prefix + item.value,
+                meta: item.caption,
+                score: 1,
+            });
+        }
     }
 
     return completions;
@@ -63,7 +65,7 @@ export const metadataCodeCompleter =
             let currentItem: ICodeTreeItem = null;
             do {
                 const part = parts.shift();
-                if (part === '' && parts.length == 0)
+                if (part === '' && parts.length === 0)
                     break;
                 currentItem = currentLevel
                     ? currentLevel[part]
@@ -73,7 +75,7 @@ export const metadataCodeCompleter =
                 // todo: load if chlids are not loaded yet
             } while (parts.length > 0 && currentItem)
 
-            if (Boolean(currentLevel) && parts.length == 0) {
+            if (Boolean(currentLevel) && parts.length === 0) {
                 const completions = treeLevel2Completions(currentLevel, prefix);
 
                 //console.log({ completions });

@@ -1,9 +1,11 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Modal } from 'antd';
-import { ColumnsConfiguratorProvider, useColumnsConfigurator } from '../../../../../../providers/datatableColumnsConfigurator';
+import {
+  ColumnsConfiguratorProvider,
+  useColumnsConfigurator,
+} from '../../../../../../providers/datatableColumnsConfigurator';
 import { ColumnsConfigurator } from './columnsConfigurator';
 import { IConfigurableColumnsBase } from '../../../../../../providers/datatableColumnsConfigurator/models';
-import React from 'react';
 
 export interface IColumnsEditorModal {
   visible: boolean;
@@ -22,7 +24,7 @@ export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onCh
 
   return (
     <Modal width="60%" visible={visible} title="Configure Columns" okText="Save" onCancel={hideModal} onOk={onOkClick}>
-      <ColumnsConfigurator></ColumnsConfigurator>
+      <ColumnsConfigurator />
     </Modal>
   );
 };
@@ -30,7 +32,7 @@ export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onCh
 export const ColumnsEditorModal: FC<IColumnsEditorModal> = props => {
   return (
     <ColumnsConfiguratorProvider items={(props.value as IConfigurableColumnsBase[]) || []}>
-      <ColumnsEditorModalInner {...props}></ColumnsEditorModalInner>
+      <ColumnsEditorModalInner {...props} />
     </ColumnsConfiguratorProvider>
   );
 };

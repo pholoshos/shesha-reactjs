@@ -2,7 +2,6 @@ import { ReactNode, MutableRefObject } from 'react';
 import { IConfigurableFormComponent, IFormComponentContainer, FormMarkup } from '../providers/form/models';
 import { FormInstance } from 'antd';
 import { InternalNamePath } from 'rc-field-form/lib/interface';
-//import { AuthorizationSettingsDto } from '../apis/authorizationSettings';
 import { IPropertyMetadata } from './metadata';
 
 export interface ISettingsFormFactoryArgs<TModel = IConfigurableFormComponent> {
@@ -13,7 +12,9 @@ export interface ISettingsFormFactoryArgs<TModel = IConfigurableFormComponent> {
   toolboxComponent: IToolboxComponent;
 }
 
-export type ISettingsFormFactory<TModel = IConfigurableFormComponent> = (props: ISettingsFormFactoryArgs<TModel>) => ReactNode;
+export type ISettingsFormFactory<TModel = IConfigurableFormComponent> = (
+  props: ISettingsFormFactoryArgs<TModel>
+) => ReactNode;
 
 export interface IToolboxComponent<T = IConfigurableFormComponent> {
   /**
@@ -38,9 +39,9 @@ export interface IToolboxComponent<T = IConfigurableFormComponent> {
   factory?: (
     model: T,
     componentRef: MutableRefObject<any>,
-    form: FormInstance<any>,
-    //settings: AuthorizationSettingsDto
-  ) => ReactNode;
+    form: FormInstance<any>
+  ) => //settings: AuthorizationSettingsDto
+  ReactNode;
   /**
    * Fills the component properties with some default values. Fired when the user drops a component to the form
    */
@@ -61,9 +62,9 @@ export interface IToolboxComponent<T = IConfigurableFormComponent> {
    * Settings form factory. Renders the component settings form
    */
   settingsFormFactory?: ISettingsFormFactory<T>;
-  /** 
+  /**
    * Markup of the settings form. Applied when the @settingsFormFactory is not specified, in this case you can render settings for in the designer itself
-  */
+   */
   settingsFormMarkup?: FormMarkup;
   /**
    * Settings validator
@@ -81,6 +82,7 @@ export interface IToolboxComponent<T = IConfigurableFormComponent> {
 
 export interface IToolboxComponentGroup {
   name: string;
+  visible?: boolean;
   components: IToolboxComponent[];
 }
 
@@ -102,4 +104,4 @@ export interface IAsyncValidationError {
   message: string;
 }
 
-export interface IFormValidationErrors { }
+export interface IFormValidationErrors {}

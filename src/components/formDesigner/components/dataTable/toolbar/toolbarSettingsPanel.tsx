@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Button } from 'antd';
 import { IToolbarProps } from './models';
 import { ToolbarSettingsModal } from './toolbarSettingsModal';
-import React from 'react';
 
 export interface IProps {
   model: IToolbarProps;
@@ -29,7 +28,7 @@ function ColumnsSettings(props: IProps) {
             hideModal={() => {
               setModalVisible(false);
             }}
-          ></ToolbarSettingsModal>
+          />
         </Form.Item>
       </Form>
     </>

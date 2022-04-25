@@ -1,3 +1,3 @@
-export type CommonCrudHandles = {
+export interface CommonCrudHandles {
   refresh: () => void;
-};
+}

@@ -1,498 +1,498 @@
 [
-    {
-        "id": "KXXArjV3rLB6IbTebNCxp",
-        "type": "datatableContext",
-        "name": "dataTable1",
-        "label": "Table",
+  {
+    "id": "KXXArjV3rLB6IbTebNCxp",
+    "type": "datatableContext",
+    "name": "dataTable1",
+    "label": "Table",
+    "labelAlign": "right",
+    "parentId": "root",
+    "hidden": false,
+    "customVisibility": null,
+    "items": [],
+    "components": [
+      {
+        "id": "fwQ-yyXEThNSF4Bt4msUH",
+        "type": "container",
+        "name": "horizontalContainer5",
+        "label": "Horizontal Container7",
         "labelAlign": "right",
-        "parentId": "root",
+        "parentId": "KXXArjV3rLB6IbTebNCxp",
         "hidden": false,
         "customVisibility": null,
+        "justifyContent": "space-between",
         "items": [],
         "components": [
-            {
-                "id": "fwQ-yyXEThNSF4Bt4msUH",
-                "type": "container",
-                "name": "horizontalContainer5",
-                "label": "Horizontal Container7",
+          {
+            "id": "CTI0XKjHMiwet4AuHx__4",
+            "type": "container",
+            "name": "horizontalContainer6",
+            "label": "Horizontal Container7",
+            "labelAlign": "right",
+            "parentId": "fwQ-yyXEThNSF4Bt4msUH",
+            "hidden": false,
+            "customVisibility": null,
+            "justifyContent": "left",
+            "items": [],
+            "components": [
+              {
+                "id": "i4jUdZQIeFyj3kYX0EE4Y",
+                "type": "tableViewSelector",
+                "name": "tableViewSelector1",
+                "label": "Table view selector1",
                 "labelAlign": "right",
-                "parentId": "KXXArjV3rLB6IbTebNCxp",
+                "parentId": "CTI0XKjHMiwet4AuHx__4",
                 "hidden": false,
                 "customVisibility": null,
-                "justifyContent": "space-between",
-                "items": [],
-                "components": [
-                    {
-                        "id": "CTI0XKjHMiwet4AuHx__4",
-                        "type": "container",
-                        "name": "horizontalContainer6",
-                        "label": "Horizontal Container7",
-                        "labelAlign": "right",
-                        "parentId": "fwQ-yyXEThNSF4Bt4msUH",
-                        "hidden": false,
-                        "customVisibility": null,
-                        "justifyContent": "left",
-                        "items": [],
-                        "components": [
-                            {
-                                "id": "i4jUdZQIeFyj3kYX0EE4Y",
-                                "type": "tableViewSelector",
-                                "name": "tableViewSelector1",
-                                "label": "Table view selector1",
-                                "labelAlign": "right",
-                                "parentId": "CTI0XKjHMiwet4AuHx__4",
-                                "hidden": false,
-                                "customVisibility": null,
-                                "filters": [],
-                                "items": [
-                                    {
-                                        "id": "06782a0b-1419-41c7-aca0-dc38eb2d9b2d",
-                                        "sortOrder": 0,
-                                        "name": "Filter 1",
-                                        "filterType": "queryBuilder"
-                                    },
-                                    {
-                                        "id": "b3b8f624-478a-4e1f-90f4-f29829d7c4ad",
-                                        "sortOrder": 1,
-                                        "name": "Filter 2",
-                                        "filterType": "queryBuilder"
-                                    }
-                                ]
-                            }
-                        ],
-                        "direction": "horizontal"
-                    },
-                    {
-                        "id": "O-ieWwy7eZB-jepFIUeiO",
-                        "type": "container",
-                        "name": "horizontalContainer7",
-                        "label": "Horizontal Container7",
-                        "labelAlign": "right",
-                        "parentId": "fwQ-yyXEThNSF4Bt4msUH",
-                        "hidden": false,
-                        "customVisibility": null,
-                        "components": [
-                            {
-                                "id": "ItrB5cnWA8ej79HX-eok5",
-                                "type": "datatable.quickSearch",
-                                "name": "quickSearch1",
-                                "label": "Quick Search1",
-                                "labelAlign": "right",
-                                "parentId": "O-ieWwy7eZB-jepFIUeiO",
-                                "hidden": false,
-                                "customVisibility": null,
-                                "items": []
-                            },
-                            {
-                                "id": "rxYPsJCcRyIGsVhDExg-n",
-                                "type": "datatable.pager",
-                                "name": "tablePager1",
-                                "label": "Table Pager1",
-                                "labelAlign": "right",
-                                "parentId": "O-ieWwy7eZB-jepFIUeiO",
-                                "hidden": false,
-                                "customVisibility": null,
-                                "items": []
-                            }
-                        ],
-                        "direction": "horizontal",
-                        "justifyContent": "right"
-                    }
-                ],
-                "direction": "horizontal"
-            },
-            {
-                "id": "g38qlSIIoUYVnzqVaaNEy",
-                "type": "container",
-                "name": "horizontalContainer2",
-                "label": "Horizontal Container7",
+                "filters": [],
+                "items": [
+                  {
+                    "id": "06782a0b-1419-41c7-aca0-dc38eb2d9b2d",
+                    "sortOrder": 0,
+                    "name": "Filter 1",
+                    "filterType": "queryBuilder"
+                  },
+                  {
+                    "id": "b3b8f624-478a-4e1f-90f4-f29829d7c4ad",
+                    "sortOrder": 1,
+                    "name": "Filter 2",
+                    "filterType": "queryBuilder"
+                  }
+                ]
+              }
+            ],
+            "direction": "horizontal"
+          },
+          {
+            "id": "O-ieWwy7eZB-jepFIUeiO",
+            "type": "container",
+            "name": "horizontalContainer7",
+            "label": "Horizontal Container7",
+            "labelAlign": "right",
+            "parentId": "fwQ-yyXEThNSF4Bt4msUH",
+            "hidden": false,
+            "customVisibility": null,
+            "components": [
+              {
+                "id": "ItrB5cnWA8ej79HX-eok5",
+                "type": "datatable.quickSearch",
+                "name": "quickSearch1",
+                "label": "Quick Search1",
                 "labelAlign": "right",
-                "parentId": "KXXArjV3rLB6IbTebNCxp",
+                "parentId": "O-ieWwy7eZB-jepFIUeiO",
                 "hidden": false,
                 "customVisibility": null,
-                "components": [
-                    {
-                        "id": "46jNfZhuX5Qf-6cmtqWrO",
-                        "type": "container",
-                        "name": "horizontalContainer4",
-                        "label": "Horizontal Container7",
-                        "labelAlign": "right",
-                        "parentId": "g38qlSIIoUYVnzqVaaNEy",
-                        "hidden": false,
-                        "customVisibility": null,
-                        "components": [
-                            {
-                                "id": "r_K43R86pKL4mbwRVynvE",
-                                "type": "toolbar",
-                                "name": "toolbar2",
-                                "label": "Toolbar2",
-                                "labelAlign": "right",
-                                "parentId": "46jNfZhuX5Qf-6cmtqWrO",
-                                "hidden": false,
-                                "customVisibility": null,
-                                "items": [
-                                    {
-                                        "id": "udkemPOwpE4itKlDsYpL4",
-                                        "itemType": "item",
-                                        "sortOrder": 0,
-                                        "name": "Add",
-                                        "itemSubType": "button",
-                                        "icon": "PlusOutlined",
-                                        "buttonType": "primary",
-                                        "buttonAction": "dialogue",
-                                        "modalTitle": "Add New",
-                                        "selected": false
-                                    },
-                                    {
-                                        "id": "GhFkay6EZ8BoMYr88mWW1",
-                                        "itemType": "item",
-                                        "sortOrder": 5,
-                                        "name": "separator",
-                                        "itemSubType": "separator",
-                                        "selected": false
-                                    },
-                                    {
-                                        "id": "nvnj0Q1wivGgkrCcfl9Jc",
-                                        "itemType": "item",
-                                        "sortOrder": 4,
-                                        "name": "Open",
-                                        "itemSubType": "button",
-                                        "buttonAction": "navigate",
-                                        "buttonType": "primary",
-                                        "customVisibility": "return context.selectedRow && context.selectedRow.id",
-                                        "targetUrl": "/page/details?id={{selectedRow.id}}",
-                                        "selected": false
-                                    },
-                                    {
-                                        "id": "cWvZyb0P456Ndcpyb7vrz",
-                                        "itemType": "item",
-                                        "sortOrder": 5,
-                                        "name": "Edit",
-                                        "itemSubType": "button",
-                                        "buttonType": "primary",
-                                        "buttonAction": "navigate",
-                                        "targetUrl": "/page/edit?id={{selectedRow.id}}",
-                                        "customVisibility": "return context.selectedRow && context.selectedRow.id",
-                                        "selected": false
-                                    },
-                                    {
-                                        "id": "D0xNVk62p9GFliocBS9jA",
-                                        "itemType": "item",
-                                        "sortOrder": 3,
-                                        "name": "separator",
-                                        "itemSubType": "separator",
-                                        "selected": false,
-                                        "childItems": [
-                                            {
-                                                "id": "nvnj0Q1wivGgkrCcfl9Jc",
-                                                "itemType": "item",
-                                                "sortOrder": 4,
-                                                "name": "Open",
-                                                "itemSubType": "button",
-                                                "buttonAction": "navigate",
-                                                "buttonType": "primary",
-                                                "customVisibility": "",
-                                                "targetUrl": "/page/details?id={{selectedRow.id}}",
-                                                "selected": false
-                                            },
-                                            {
-                                                "id": "cWvZyb0P456Ndcpyb7vrz",
-                                                "itemType": "item",
-                                                "sortOrder": 5,
-                                                "name": "Edit",
-                                                "itemSubType": "button",
-                                                "buttonType": "primary",
-                                                "buttonAction": "navigate",
-                                                "targetUrl": "/page/edit?id={{selectedRow.id}}",
-                                                "customVisibility": "",
-                                                "selected": false
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "id": "RjL_C607edu-_k4r5Oj_g",
-                                        "itemType": "item",
-                                        "sortOrder": 2,
-                                        "name": "Export",
-                                        "itemSubType": "button",
-                                        "icon": "DownloadOutlined",
-                                        "buttonType": "primary",
-                                        "buttonAction": "executeFormAction",
-                                        "formAction": "exportToExcel",
-                                        "selected": false,
-                                        "childItems": [
-                                            {
-                                                "id": "nvnj0Q1wivGgkrCcfl9Jc",
-                                                "itemType": "item",
-                                                "sortOrder": 4,
-                                                "name": "Open",
-                                                "itemSubType": "button",
-                                                "buttonAction": "navigate",
-                                                "buttonType": "primary",
-                                                "customVisibility": "",
-                                                "targetUrl": "/page/details?id={{selectedRow.id}}",
-                                                "selected": false
-                                            },
-                                            {
-                                                "id": "D0xNVk62p9GFliocBS9jA",
-                                                "itemType": "item",
-                                                "sortOrder": 3,
-                                                "name": "separator",
-                                                "itemSubType": "separator",
-                                                "selected": false
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "id": "4bBJP0OY2qzgX--xLWd5V",
-                                "type": "toolbar",
-                                "name": "toolbar1",
-                                "label": "Toolbar1",
-                                "labelAlign": "right",
-                                "parentId": "46jNfZhuX5Qf-6cmtqWrO",
-                                "hidden": false,
-                                "customVisibility": null,
-                                "items": [
-                                    {
-                                        "id": "5eb2b39e-857c-414f-8837-aeebf6e0993a",
-                                        "type": "item",
-                                        "sortOrder": 8,
-                                        "name": "New User",
-                                        "buttonType": "button",
-                                        "buttonAction": "dialogue",
-                                        "modalTitle": "New User",
-                                        "modalFormId": "07e25729-5736-43bc-b561-6e772a4b5bbd",
-                                        "modalActionOnSuccess": "refresh123",
-                                        "modalFormModel": [
-                                            {
-                                                "id": "359dd655-1b25-469d-84dd-9ee2d0fb2511",
-                                                "key": "id",
-                                                "value": "new Value"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "id": "00fdcc82-5244-44c0-aeff-26b26a5fdab9",
-                                        "type": "item",
-                                        "sortOrder": 9,
-                                        "name": "separator",
-                                        "buttonType": "separator"
-                                    },
-                                    {
-                                        "id": "df2d236d-5cda-4d95-9848-a269c9bea5fd",
-                                        "type": "item",
-                                        "sortOrder": 2,
-                                        "name": "Open",
-                                        "buttonType": "button",
-                                        "visibility": "return context.selectedRow && context.selectedRow.id",
-                                        "buttonAction": "navigate",
-                                        "targetUrl": "/administration/user-management/details?id={{selectedRow.id}}"
-                                    },
-                                    {
-                                        "id": "ef7b5318-1cf0-4fe0-805b-ab13d71f1d5a",
-                                        "type": "item",
-                                        "sortOrder": 3,
-                                        "name": "Edit",
-                                        "buttonType": "button",
-                                        "buttonAction": "navigate",
-                                        "targetUrl": "/administration/user-management/edit?id={{selectedRow.id}}",
-                                        "visibility": "return context.selectedRow && context.selectedRow.id"
-                                    },
-                                    {
-                                        "id": "31c79a94-4d25-43ee-8161-8d22a379a7ac",
-                                        "type": "item",
-                                        "sortOrder": 5,
-                                        "name": "Delete",
-                                        "buttonType": "button",
-                                        "visibility": "return context.selectedRow && context.selectedRow.id",
-                                        "buttonAction": "executeFormAction",
-                                        "formAction": "deleteRow"
-                                    },
-                                    {
-                                        "id": "c41d8b7f-16a5-4a08-ab99-5ea50966dc32",
-                                        "type": "item",
-                                        "sortOrder": 5,
-                                        "name": "separator",
-                                        "buttonType": "separator",
-                                        "visibility": "return context.selectedRow && context.selectedRow.id"
-                                    },
-                                    {
-                                        "id": "66218f7a-f43c-4d74-af32-d5787feb13e2",
-                                        "type": "group",
-                                        "sortOrder": 1,
-                                        "name": "View PDF",
-                                        "childItems": [
-                                            {
-                                                "id": "f33edeee-c868-4001-9fa7-6ce628fe7707",
-                                                "type": "item",
-                                                "sortOrder": 2,
-                                                "name": "Submission",
-                                                "buttonType": "button",
-                                                "selected": false
-                                            },
-                                            {
-                                                "id": "34f42533-40d7-4765-a815-dafa9e0c9b49",
-                                                "type": "item",
-                                                "sortOrder": 2,
-                                                "name": "Route Form",
-                                                "buttonType": "button",
-                                                "selected": false,
-                                                "buttonAction": "navigate",
-                                                "tooltip": "Lorem ipsum dolor sit amet"
-                                            }
-                                        ],
-                                        "selected": false
-                                    },
-                                    {
-                                        "id": "530766c1-b5a3-4f84-9c30-89181e27be25",
-                                        "type": "item",
-                                        "sortOrder": 3,
-                                        "name": "Export to Excel",
-                                        "buttonType": "button",
-                                        "buttonAction": "executeFormAction",
-                                        "formAction": "exportToExcel"
-                                    },
-                                    {
-                                        "id": "9f083987-d31e-4257-a5be-4bb55653779b",
-                                        "type": "item",
-                                        "sortOrder": 6,
-                                        "name": "Test Modal",
-                                        "buttonType": "button",
-                                        "buttonAction": "dialogue",
-                                        "modalForm": "1d0031ce-0fac-43ed-ba88-3810a9319fce",
-                                        "modalFormId": "1d0031ce-0fac-43ed-ba88-3810a9319fce",
-                                        "modalTitle": "Delete User (new)",
-                                        "modalFormModel": "{id: context.selectedRow.id}",
-                                        "modalActionOnSuccess": "refresh"
-                                    },
-                                    {
-                                        "id": "2303005b-51fc-443d-b0da-e7c6dd2030c3",
-                                        "type": "item",
-                                        "sortOrder": 7,
-                                        "name": "Refresh table",
-                                        "buttonType": "button",
-                                        "buttonAction": "executeFormAction",
-                                        "modalTitle": "WoW!",
-                                        "modalFormId": "efd830e2-30e7-4727-ad2b-ac14c6355a07",
-                                        "formAction": "refresh"
-                                    }
-                                ]
-                            }
-                        ],
-                        "direction": "horizontal",
-                        "justifyContent": "flex-start"
-                    },
-                    {
-                        "id": "m9o4pOhm-t4mb4JKH-1It",
-                        "type": "container",
-                        "name": "horizontalContainer3",
-                        "label": "Horizontal Container7",
-                        "labelAlign": "right",
-                        "parentId": "g38qlSIIoUYVnzqVaaNEy",
-                        "hidden": false,
-                        "customVisibility": null,
-                        "components": [
-                            {
-                                "id": "BZZMhqzXrNLISIR67oHar",
-                                "type": "button",
-                                "name": "btnSelectColumns",
-                                "label": "",
-                                "labelAlign": "right",
-                                "parentId": "m9o4pOhm-t4mb4JKH-1It",
-                                "hidden": false,
-                                "customVisibility": null,
-                                "actionType": "custom",
-                                "buttonType": "link",
-                                "settingsValidationErrors": [],
-                                "icon": "SlidersOutlined",
-                                "customAction": "toggleColumnsSelector"
-                            },
-                            {
-                                "id": "x5FW_I0G8O_H2YFPY93JS",
-                                "type": "button",
-                                "name": "btnAdvancedFilter",
-                                "label": "",
-                                "labelAlign": "right",
-                                "parentId": "m9o4pOhm-t4mb4JKH-1It",
-                                "hidden": false,
-                                "customVisibility": null,
-                                "actionType": "custom",
-                                "buttonType": "link",
-                                "settingsValidationErrors": [],
-                                "icon": "FilterOutlined",
-                                "customAction": "toggleAdvancedFilter"
-                            },
-                            {
-                                "id": "Mqo5WrsmmXm8JL8S05RCR",
-                                "type": "button",
-                                "name": "btnRefresh",
-                                "label": "",
-                                "labelAlign": "right",
-                                "parentId": "m9o4pOhm-t4mb4JKH-1It",
-                                "hidden": false,
-                                "customVisibility": null,
-                                "actionType": "custom",
-                                "buttonType": "link",
-                                "settingsValidationErrors": [],
-                                "customAction": "refresh",
-                                "icon": "RedoOutlined"
-                            }
-                        ],
-                        "direction": "horizontal",
-                        "justifyContent": "right"
-                    }
-                ],
-                "justifyContent": "space-between",
-                "items": [],
-                "direction": "horizontal"
-            },
-            {
-                "id": "4C7ToUgt7-dmrecAH66df",
-                "type": "datatable",
-                "name": "dataTable1",
-                "label": "DataTable1",
+                "items": []
+              },
+              {
+                "id": "rxYPsJCcRyIGsVhDExg-n",
+                "type": "datatable.pager",
+                "name": "tablePager1",
+                "label": "Table Pager1",
                 "labelAlign": "right",
-                "parentId": "KXXArjV3rLB6IbTebNCxp",
+                "parentId": "O-ieWwy7eZB-jepFIUeiO",
+                "hidden": false,
+                "customVisibility": null,
+                "items": []
+              }
+            ],
+            "direction": "horizontal",
+            "justifyContent": "right"
+          }
+        ],
+        "direction": "horizontal"
+      },
+      {
+        "id": "g38qlSIIoUYVnzqVaaNEy",
+        "type": "container",
+        "name": "horizontalContainer2",
+        "label": "Horizontal Container7",
+        "labelAlign": "right",
+        "parentId": "KXXArjV3rLB6IbTebNCxp",
+        "hidden": false,
+        "customVisibility": null,
+        "components": [
+          {
+            "id": "46jNfZhuX5Qf-6cmtqWrO",
+            "type": "container",
+            "name": "horizontalContainer4",
+            "label": "Horizontal Container7",
+            "labelAlign": "right",
+            "parentId": "g38qlSIIoUYVnzqVaaNEy",
+            "hidden": false,
+            "customVisibility": null,
+            "components": [
+              {
+                "id": "r_K43R86pKL4mbwRVynvE",
+                "type": "toolbar",
+                "name": "toolbar2",
+                "label": "Toolbar2",
+                "labelAlign": "right",
+                "parentId": "46jNfZhuX5Qf-6cmtqWrO",
                 "hidden": false,
                 "customVisibility": null,
                 "items": [
-                    {
-                        "id": "2c717c38-30a0-4a51-b7a8-ae2b025636ed",
+                  {
+                    "id": "udkemPOwpE4itKlDsYpL4",
+                    "itemType": "item",
+                    "sortOrder": 0,
+                    "name": "Add",
+                    "itemSubType": "button",
+                    "icon": "PlusOutlined",
+                    "buttonType": "primary",
+                    "buttonAction": "dialogue",
+                    "modalTitle": "Add New",
+                    "selected": false
+                  },
+                  {
+                    "id": "GhFkay6EZ8BoMYr88mWW1",
+                    "itemType": "item",
+                    "sortOrder": 5,
+                    "name": "separator",
+                    "itemSubType": "separator",
+                    "selected": false
+                  },
+                  {
+                    "id": "nvnj0Q1wivGgkrCcfl9Jc",
+                    "itemType": "item",
+                    "sortOrder": 4,
+                    "name": "Open",
+                    "itemSubType": "button",
+                    "buttonAction": "navigate",
+                    "buttonType": "primary",
+                    "customVisibility": "return context.selectedRow && context.selectedRow.id",
+                    "targetUrl": "/page/details?id={{selectedRow.id}}",
+                    "selected": false
+                  },
+                  {
+                    "id": "cWvZyb0P456Ndcpyb7vrz",
+                    "itemType": "item",
+                    "sortOrder": 5,
+                    "name": "Edit",
+                    "itemSubType": "button",
+                    "buttonType": "primary",
+                    "buttonAction": "navigate",
+                    "targetUrl": "/page/edit?id={{selectedRow.id}}",
+                    "customVisibility": "return context.selectedRow && context.selectedRow.id",
+                    "selected": false
+                  },
+                  {
+                    "id": "D0xNVk62p9GFliocBS9jA",
+                    "itemType": "item",
+                    "sortOrder": 3,
+                    "name": "separator",
+                    "itemSubType": "separator",
+                    "selected": false,
+                    "childItems": [
+                      {
+                        "id": "nvnj0Q1wivGgkrCcfl9Jc",
                         "itemType": "item",
-                        "sortOrder": 6,
-                        "caption": "",
-                        "columnType": "action",
-                        "isVisible": true,
+                        "sortOrder": 4,
+                        "name": "Open",
+                        "itemSubType": "button",
                         "buttonAction": "navigate",
-                        "targetUrl": "/administration/user-management/details?id={{selectedRow.Id}}",
-                        "minWidth": 30,
-                        "maxWidth": 30,
-                        "icon": "SearchOutlined",
-                        "action": "navigate"
-                    },
-                    {
-                        "id": "c46bf767-de34-4d81-8c90-e610f95e4b6b",
+                        "buttonType": "primary",
+                        "customVisibility": "",
+                        "targetUrl": "/page/details?id={{selectedRow.id}}",
+                        "selected": false
+                      },
+                      {
+                        "id": "cWvZyb0P456Ndcpyb7vrz",
                         "itemType": "item",
-                        "sortOrder": 7,
-                        "caption": "",
-                        "columnType": "action",
-                        "isVisible": true,
+                        "sortOrder": 5,
+                        "name": "Edit",
+                        "itemSubType": "button",
+                        "buttonType": "primary",
                         "buttonAction": "navigate",
-                        "targetUrl": "/administration/user-management/edit?id={{selectedRow.Id}}",
-                        "minWidth": 30,
-                        "maxWidth": 30,
-                        "icon": "EditOutlined",
-                        "action": "navigate"
-                    }
-                ],
-                "allowViewDetails": true,
-                "allowEdit": true,
-                "allowDelete": false
-            }
+                        "targetUrl": "/page/edit?id={{selectedRow.id}}",
+                        "customVisibility": "",
+                        "selected": false
+                      }
+                    ]
+                  },
+                  {
+                    "id": "RjL_C607edu-_k4r5Oj_g",
+                    "itemType": "item",
+                    "sortOrder": 2,
+                    "name": "Export",
+                    "itemSubType": "button",
+                    "icon": "DownloadOutlined",
+                    "buttonType": "primary",
+                    "buttonAction": "executeFormAction",
+                    "formAction": "exportToExcel",
+                    "selected": false,
+                    "childItems": [
+                      {
+                        "id": "nvnj0Q1wivGgkrCcfl9Jc",
+                        "itemType": "item",
+                        "sortOrder": 4,
+                        "name": "Open",
+                        "itemSubType": "button",
+                        "buttonAction": "navigate",
+                        "buttonType": "primary",
+                        "customVisibility": "",
+                        "targetUrl": "/page/details?id={{selectedRow.id}}",
+                        "selected": false
+                      },
+                      {
+                        "id": "D0xNVk62p9GFliocBS9jA",
+                        "itemType": "item",
+                        "sortOrder": 3,
+                        "name": "separator",
+                        "itemSubType": "separator",
+                        "selected": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "4bBJP0OY2qzgX--xLWd5V",
+                "type": "toolbar",
+                "name": "toolbar1",
+                "label": "Toolbar1",
+                "labelAlign": "right",
+                "parentId": "46jNfZhuX5Qf-6cmtqWrO",
+                "hidden": false,
+                "customVisibility": null,
+                "items": [
+                  {
+                    "id": "5eb2b39e-857c-414f-8837-aeebf6e0993a",
+                    "type": "item",
+                    "sortOrder": 8,
+                    "name": "New User",
+                    "buttonType": "button",
+                    "buttonAction": "dialogue",
+                    "modalTitle": "New User",
+                    "modalFormId": "07e25729-5736-43bc-b561-6e772a4b5bbd",
+                    "modalActionOnSuccess": "refresh123",
+                    "modalFormModel": [
+                      {
+                        "id": "359dd655-1b25-469d-84dd-9ee2d0fb2511",
+                        "key": "id",
+                        "value": "new Value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "00fdcc82-5244-44c0-aeff-26b26a5fdab9",
+                    "type": "item",
+                    "sortOrder": 9,
+                    "name": "separator",
+                    "buttonType": "separator"
+                  },
+                  {
+                    "id": "df2d236d-5cda-4d95-9848-a269c9bea5fd",
+                    "type": "item",
+                    "sortOrder": 2,
+                    "name": "Open",
+                    "buttonType": "button",
+                    "visibility": "return context.selectedRow && context.selectedRow.id",
+                    "buttonAction": "navigate",
+                    "targetUrl": "/administration/user-management/details?id={{selectedRow.id}}"
+                  },
+                  {
+                    "id": "ef7b5318-1cf0-4fe0-805b-ab13d71f1d5a",
+                    "type": "item",
+                    "sortOrder": 3,
+                    "name": "Edit",
+                    "buttonType": "button",
+                    "buttonAction": "navigate",
+                    "targetUrl": "/administration/user-management/edit?id={{selectedRow.id}}",
+                    "visibility": "return context.selectedRow && context.selectedRow.id"
+                  },
+                  {
+                    "id": "31c79a94-4d25-43ee-8161-8d22a379a7ac",
+                    "type": "item",
+                    "sortOrder": 5,
+                    "name": "Delete",
+                    "buttonType": "button",
+                    "visibility": "return context.selectedRow && context.selectedRow.id",
+                    "buttonAction": "executeFormAction",
+                    "formAction": "deleteRow"
+                  },
+                  {
+                    "id": "c41d8b7f-16a5-4a08-ab99-5ea50966dc32",
+                    "type": "item",
+                    "sortOrder": 5,
+                    "name": "separator",
+                    "buttonType": "separator",
+                    "visibility": "return context.selectedRow && context.selectedRow.id"
+                  },
+                  {
+                    "id": "66218f7a-f43c-4d74-af32-d5787feb13e2",
+                    "type": "group",
+                    "sortOrder": 1,
+                    "name": "View PDF",
+                    "childItems": [
+                      {
+                        "id": "f33edeee-c868-4001-9fa7-6ce628fe7707",
+                        "type": "item",
+                        "sortOrder": 2,
+                        "name": "Submission",
+                        "buttonType": "button",
+                        "selected": false
+                      },
+                      {
+                        "id": "34f42533-40d7-4765-a815-dafa9e0c9b49",
+                        "type": "item",
+                        "sortOrder": 2,
+                        "name": "Route Form",
+                        "buttonType": "button",
+                        "selected": false,
+                        "buttonAction": "navigate",
+                        "tooltip": "Lorem ipsum dolor sit amet"
+                      }
+                    ],
+                    "selected": false
+                  },
+                  {
+                    "id": "530766c1-b5a3-4f84-9c30-89181e27be25",
+                    "type": "item",
+                    "sortOrder": 3,
+                    "name": "Export to Excel",
+                    "buttonType": "button",
+                    "buttonAction": "executeFormAction",
+                    "formAction": "exportToExcel"
+                  },
+                  {
+                    "id": "9f083987-d31e-4257-a5be-4bb55653779b",
+                    "type": "item",
+                    "sortOrder": 6,
+                    "name": "Test Modal",
+                    "buttonType": "button",
+                    "buttonAction": "dialogue",
+                    "modalForm": "1d0031ce-0fac-43ed-ba88-3810a9319fce",
+                    "modalFormId": "1d0031ce-0fac-43ed-ba88-3810a9319fce",
+                    "modalTitle": "Delete User (new)",
+                    "modalFormModel": "{id: context.selectedRow.id}",
+                    "modalActionOnSuccess": "refresh"
+                  },
+                  {
+                    "id": "2303005b-51fc-443d-b0da-e7c6dd2030c3",
+                    "type": "item",
+                    "sortOrder": 7,
+                    "name": "Refresh table",
+                    "buttonType": "button",
+                    "buttonAction": "executeFormAction",
+                    "modalTitle": "WoW!",
+                    "modalFormId": "efd830e2-30e7-4727-ad2b-ac14c6355a07",
+                    "formAction": "refresh"
+                  }
+                ]
+              }
+            ],
+            "direction": "horizontal",
+            "justifyContent": "flex-start"
+          },
+          {
+            "id": "m9o4pOhm-t4mb4JKH-1It",
+            "type": "container",
+            "name": "horizontalContainer3",
+            "label": "Horizontal Container7",
+            "labelAlign": "right",
+            "parentId": "g38qlSIIoUYVnzqVaaNEy",
+            "hidden": false,
+            "customVisibility": null,
+            "components": [
+              {
+                "id": "BZZMhqzXrNLISIR67oHar",
+                "type": "button",
+                "name": "btnSelectColumns",
+                "label": "",
+                "labelAlign": "right",
+                "parentId": "m9o4pOhm-t4mb4JKH-1It",
+                "hidden": false,
+                "customVisibility": null,
+                "actionType": "custom",
+                "buttonType": "link",
+                "settingsValidationErrors": [],
+                "icon": "SlidersOutlined",
+                "customAction": "toggleColumnsSelector"
+              },
+              {
+                "id": "x5FW_I0G8O_H2YFPY93JS",
+                "type": "button",
+                "name": "btnAdvancedFilter",
+                "label": "",
+                "labelAlign": "right",
+                "parentId": "m9o4pOhm-t4mb4JKH-1It",
+                "hidden": false,
+                "customVisibility": null,
+                "actionType": "custom",
+                "buttonType": "link",
+                "settingsValidationErrors": [],
+                "icon": "FilterOutlined",
+                "customAction": "toggleAdvancedFilter"
+              },
+              {
+                "id": "Mqo5WrsmmXm8JL8S05RCR",
+                "type": "button",
+                "name": "btnRefresh",
+                "label": "",
+                "labelAlign": "right",
+                "parentId": "m9o4pOhm-t4mb4JKH-1It",
+                "hidden": false,
+                "customVisibility": null,
+                "actionType": "custom",
+                "buttonType": "link",
+                "settingsValidationErrors": [],
+                "customAction": "refresh",
+                "icon": "RedoOutlined"
+              }
+            ],
+            "direction": "horizontal",
+            "justifyContent": "right"
+          }
         ],
-        "description": "",
-        "settingsValidationErrors": []
-    }
+        "justifyContent": "space-between",
+        "items": [],
+        "direction": "horizontal"
+      },
+      {
+        "id": "4C7ToUgt7-dmrecAH66df",
+        "type": "datatable",
+        "name": "dataTable1",
+        "label": "DataTable1",
+        "labelAlign": "right",
+        "parentId": "KXXArjV3rLB6IbTebNCxp",
+        "hidden": false,
+        "customVisibility": null,
+        "items": [
+          {
+            "id": "2c717c38-30a0-4a51-b7a8-ae2b025636ed",
+            "itemType": "item",
+            "sortOrder": 6,
+            "caption": "",
+            "columnType": "action",
+            "isVisible": true,
+            "buttonAction": "navigate",
+            "targetUrl": "/administration/user-management/details?id={{selectedRow.Id}}",
+            "minWidth": 30,
+            "maxWidth": 30,
+            "icon": "SearchOutlined",
+            "action": "navigate"
+          },
+          {
+            "id": "c46bf767-de34-4d81-8c90-e610f95e4b6b",
+            "itemType": "item",
+            "sortOrder": 7,
+            "caption": "",
+            "columnType": "action",
+            "isVisible": true,
+            "buttonAction": "navigate",
+            "targetUrl": "/administration/user-management/edit?id={{selectedRow.Id}}",
+            "minWidth": 30,
+            "maxWidth": 30,
+            "icon": "EditOutlined",
+            "action": "navigate"
+          }
+        ],
+        "allowViewDetails": true,
+        "allowEdit": true,
+        "allowDelete": false
+      }
+    ],
+    "description": "",
+    "settingsValidationErrors": []
+  }
 ]

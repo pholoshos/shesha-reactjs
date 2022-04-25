@@ -13,7 +13,7 @@ export const PropertiesEditorComponent: FC<IPropertiesEditorComponentProps> = ()
         labelCol={{ span: 0 }}
         wrapperCol={{ span: 24 }}
     >
-        <PropertiesEditor></PropertiesEditor>
+        <PropertiesEditor />
     </Form.Item>
  );   
 }
@@ -26,7 +26,7 @@ export interface IPropertiesEditorProps extends IPropertiesEditorComponentProps 
 export const PropertiesEditor: FC<IPropertiesEditorProps> = (props) => {
     return (
         <PropertiesEditorProvider items={props.value} onChange={props.onChange}>
-            <PropertiesEditorRenderer></PropertiesEditorRenderer>
+            <PropertiesEditorRenderer />
         </PropertiesEditorProvider>
     );
 }

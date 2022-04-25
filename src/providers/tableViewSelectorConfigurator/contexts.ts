@@ -14,6 +14,7 @@ export interface IUpdateItemSettingsPayload {
 export interface ITableViewSelectorConfiguratorStateContext {
   items: ITableViewProps[];
   selectedItemId?: string;
+  selectedItem?: ITableViewProps;
 }
 
 export interface ITableViewSelectorConfiguratorActionsContext {

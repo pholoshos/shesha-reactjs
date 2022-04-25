@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { SidebarContainer } from '../../components';
+import { SidebarContainer, ConfigurableFormRenderer } from '../../components';
 import { Row, Col, Divider } from 'antd';
 import { FormDto } from '../../apis/form';
 import Toolbox from './toolbox';
@@ -7,7 +7,6 @@ import FormDesignerToolbar from './formDesignerToolbar';
 import ComponentPropertiesPanel from './componentPropertiesPanel';
 import ComponentPropertiesTitle from './componentPropertiesTitle';
 import { useForm } from '../../providers/form';
-import { ConfigurableFormRenderer } from '../../components';
 import { FormDesignerHeader } from './formDesignerHeader';
 import { MetadataProvider } from '../../providers';
 import ConditionalWrap from '../conditionalWrapper';
@@ -43,7 +42,7 @@ export const FormDesigner: FC<IFormDesignerProps> = ({}) => {
             onOpen: toggleWidgetSidebar,
             onClose: toggleWidgetSidebar,
             title: 'Builder Widgets',
-            content: () => <Toolbox></Toolbox>,
+            content: () => <Toolbox />,
             placeholder: 'Builder Widgets',
           }}
           rightSidebarProps={{
@@ -57,6 +56,7 @@ export const FormDesigner: FC<IFormDesignerProps> = ({}) => {
           header={() => <FormDesignerToolbar />}
         >
           <FormDesignerHeader />
+
           <ConfigurableFormRenderer
             onValuesChange={(_changedValues, allvalues) => {
               setFormValues(allvalues);

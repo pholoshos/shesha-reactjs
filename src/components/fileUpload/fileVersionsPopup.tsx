@@ -11,16 +11,14 @@ interface IProps {
 }
 
 export const FileVersionsPopup: FC<IProps> = ({ fileId }) => {
-  if (fileId == null) return null;
-
   const { headers } = useAuth();
-
+  
   const {
     loading: loading,
     refetch: fetchHistory,
     /*error: fetchError, */ data: serverData,
   } = useStoredFileGetFileVersions({ 
-    fileId: fileId, 
+    fileId, 
     lazy: true, 
     requestOptions: {
       headers,
@@ -29,6 +27,8 @@ export const FileVersionsPopup: FC<IProps> = ({ fileId }) => {
 
   const { downloadFile } = useStoredFile();
 
+  if (fileId == null) return null;
+
   const handleVisibleChange = () => {
     if (!serverData) fetchHistory();
   };
@@ -36,7 +36,7 @@ export const FileVersionsPopup: FC<IProps> = ({ fileId }) => {
   const uploads = serverData?.result;
 
   const handleVersionDownloadClick = (fileVersion: StoredFileVersionInfoDto) => {
-    downloadFile({ fileId: fileId, versionNo: fileVersion.versionNo, fileName: fileVersion.fileName });
+    downloadFile({ fileId, versionNo: fileVersion.versionNo, fileName: fileVersion.fileName });
   };
 
   const content = (

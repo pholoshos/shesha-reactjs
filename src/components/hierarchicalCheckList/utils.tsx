@@ -1,10 +1,9 @@
 import { CheckSquareOutlined, CloseSquareOutlined } from '@ant-design/icons';
-import { Key } from 'react';
+import React, { Key } from 'react';
 import _ from 'lodash';
 import { CheckListSelectionType, ICheckListItemSelection, IDataNode, ISaveSelectionsInput } from './interface';
 import { CheckListItemModel } from '../../apis/checkList';
 import { treeToList } from '../../utils/tree';
-import React from 'react';
 
 // We do not want clicking anywhere on the tree to trigger the visibility of the overlay
 // By default, when you focus the text area, because this is part of the tree title, it'll trigger onSelect.
@@ -18,9 +17,7 @@ export const onPreventDefaultClickClick = (
 
 export const getParentKey = (key: Key, tree: IDataNode[]) => {
   let parentKey: string = '';
-  for (let i = 0; i < tree.length; i++) {
-    const node = tree[i];
-
+  for (const node of tree) {
     if (node.children) {
       if (node.children.some(item => item.key === key)) {
         parentKey = node.key;
@@ -29,14 +26,13 @@ export const getParentKey = (key: Key, tree: IDataNode[]) => {
       }
     }
   }
+  
   return parentKey;
 };
 
 export const getParentNode = (tree: CheckListItemModel[], key: Key) => {
   let parentKey: CheckListItemModel = null;
-  for (let i = 0; i < tree.length; i++) {
-    const node = tree[i];
-
+  for (const node of tree) {
     if (node.childItems) {
       if (node.childItems.some(item => item.id === key)) {
         parentKey = node;
@@ -115,8 +111,8 @@ export function updateTreeData(list: IDataNode[], key: React.Key, children: IDat
 }
 
 export function deepFlattenTree<T>(r: T[], a: T[], key: keyof T) {
-  var b = {};
-  Object.keys(a).forEach(function(k) {
+  const b = {};
+  Object.keys(a).forEach(k => {
     if (k !== key) {
       b[k] = a[k];
     }
@@ -134,7 +130,7 @@ export const filterOnSelectionsChange = (
 ): ISaveSelectionsInput => {
   let allChecked = true;
 
-  let response: ISaveSelectionsInput = {
+  const response: ISaveSelectionsInput = {
     id,
     ownerId,
     ownerType,

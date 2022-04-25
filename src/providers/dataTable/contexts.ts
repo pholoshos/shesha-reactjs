@@ -56,6 +56,13 @@ export interface IDataTableStoredConfig extends IGetDataPayload {
 export interface IDataTableStateContext
   extends IFlagsState<IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags> {
   title?: string;
+
+  /**
+   * Useful for entity picker as the column that has to be used to display when the entity has been selected
+   */
+  displayColumnName?: string;
+
+  formData?: any;
   /** Id of the table configuration */
   tableId?: string; // todo: move all table-specific properties to a separate sub-store
   /** Type of entity */
@@ -75,9 +82,9 @@ export interface IDataTableStateContext
 
   /** Datatable data (fetched from the back-end) */
   tableData?: object[];
-  /** Selected page size*/
+  /** Selected page size */
   selectedPageSize?: number;
-  /** Current page number*/
+  /** Current page number */
   currentPage?: number;
   /** Total number of pages */
   totalPages?: number;
@@ -96,14 +103,15 @@ export interface IDataTableStateContext
 
   /** Advanced filter: applied values */
   tableFilter?: ITableFilter[];
-  /** Advanced filter: current editor state*/
+  /** Advanced filter: current editor state */
   tableFilterDirty?: ITableFilter[];
 
   /** Selected filters (stored or predefined) */
   selectedStoredFilterIds?: string[];
 
   /** index of selected row */
-  selectedRow?: number;
+  selectedRow?: any;
+
   /** List of Ids of selected rows */
   selectedIds?: string[];
 
@@ -112,6 +120,7 @@ export interface IDataTableStateContext
 
   /** CRUD configuration */
   crudConfig?: ITableCrudConfig;
+
   /** Row data, is used for CRUD operations */
   newOrEditableRowData?: IEditableRowState;
 
@@ -125,6 +134,8 @@ export interface IDataTableStateContext
   hasFetchTableDataError?: boolean;
   tableConfigLoaded?: boolean;
 
+  properties?: string[];
+
   saveFilterModalVisible?: boolean;
   //#endregion
 }
@@ -134,6 +145,10 @@ export interface IPublicDataTableActions {
   exportToExcel?: () => void;
   setCrudRowData: (newOrEditableRowData?: IEditableRowState) => void;
   cancelCreateOrEditRowData: () => void;
+  deleteRow?: () => void;
+  toggleColumnsSelector?: () => void;
+  toggleAdvancedFilter?: () => void;
+  setToEditMode?: () => void;
 }
 
 export interface IDataTableActionsContext
@@ -156,10 +171,19 @@ export interface IDataTableActionsContext
   /** change quick search and refresh table data */
   performQuickSearch?: (val: string) => void;
   toggleSaveFilterModal?: (visible: boolean) => void;
-  changeSelectedRow?: (index: number) => void;
+  changeSelectedRow?: (index: any) => void;
 
   changeSelectedStoredFilterIds?: (selectedStoredFilterIds: string[]) => void;
   setPredefinedFilters: (filters: IStoredFilter[]) => void;
+
+  /**
+   * Sets the form state in the store.
+   *
+   * This function is used to pass the state of the form that can be used to evaluate the filters that are using expression
+   */
+  setFormData?: (formData: any) => void;
+
+  onSort?: (sorting: IColumnSorting[]) => void;
 
   changeSelectedIds?: (selectedIds: string[]) => void;
   updateLocalTableData?: () => void;
@@ -171,6 +195,10 @@ export interface IDataTableActionsContext
    * Register columns in the table context. Is used for configurable tables
    */
   registerConfigurableColumns: (ownerId: string, columns: IConfigurableColumnsBase[]) => void;
+
+  setCrudConfig?: (config: ITableCrudConfig) => void;
+
+  changeDisplayColumn: (displayColumnName: string) => void;
   /* NEW_ACTION_ACTION_DECLARATIO_GOES_HERE */
 }
 

@@ -1,7 +1,6 @@
+import React, { FC } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import { Input } from 'antd';
-import React from 'react';
-import { FC } from 'react';
 
 export interface ISearchBoxProps {
     value: string;

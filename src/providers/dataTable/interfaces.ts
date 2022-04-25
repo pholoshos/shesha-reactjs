@@ -28,7 +28,8 @@ export type IndexColumnFilterOption =
   | 'before'
   | 'after';
 
-export type SortDirection = 0 | 1;
+export type SortDirection = 0 /*asc*/ | 1 /*desc*/;
+export type ColumnSorting = 'asc' | 'desc';
 
 export interface ITableColumn {
   customDataType?: string;
@@ -88,8 +89,8 @@ export interface IGetDataPayload {
   readonly quickSearch: string;
   readonly filter?: IFilterItem[];
   readonly parentEntityId?: string;
-  readonly selectedStoredFilterIds?: string[];
-  readonly selectedFilters?: IStoredFilter[];
+  selectedStoredFilterIds?: string[];
+  selectedFilters?: IStoredFilter[];
 }
 
 export interface ITableDataResponse {
@@ -128,14 +129,28 @@ export type FilterExpressionType = 'jsonLogic' | 'hql';
 export type FilterType = 'predefined' | 'user-defined' | 'quick';
 export interface IStoredFilter {
   id: string;
+
   name: string;
+
   tooltip?: string;
   // Exclusive filters cannot be applied on top of other filters. Only one can be selected
+
   isExclusive?: boolean;
   // Private filters are managed within the data table control
   isPrivate?: boolean;
+
   expressionType?: FilterExpressionType | string;
-  expression?: string;
+
+  expression?: string | object;
+
+  filterType?: string;
+
+  // use
+  useExpression?: boolean;
+
+  selected?: boolean;
+
+  defaultSelected?: boolean;
 }
 
 export interface ITableDataResponse {
@@ -148,10 +163,10 @@ export interface ITableDataResponse {
 export interface IDataTableInstance extends IPublicDataTableActions {}
 
 export interface ITableCrudConfig {
-  createUrl: string;
-  deleteUrl: string;
-  detailsUrl: string;
-  updateUrl: string;
+  createUrl?: string;
+  deleteUrl?: string;
+  detailsUrl?: string;
+  updateUrl?: string;
 }
 
 export interface IEditableRowState {
@@ -191,4 +206,14 @@ export interface ICrudProps {
   pickerOptions?: boolean;
 
   crudParentEntityKey?: string;
+
+  overrideDefaultCrudBehavior?: boolean;
+}
+
+export interface IFormDataPayload {
+  formData?: any;
+}
+
+export interface IFormDataPayload {
+  crudSettings?: any;
 }

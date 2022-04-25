@@ -1,6 +1,7 @@
+import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { IReadOnly } from './../../interfaces/readOnly';
 import { LabeledValue, SelectProps } from 'antd/lib/select';
-import { Key } from 'react';
+import { Key, CSSProperties } from 'react';
 import { ReferenceListItemDto } from '../../apis/referenceList';
 
 export interface IGenericRefListDropDownProps<TValue = any> extends IRefListDropDownProps<TValue> {
@@ -30,9 +31,11 @@ export interface IRefListDropDownProps<TValue = any> extends Omit<SelectProps<an
   filters?: number[];
   includeFilters?: boolean;
   width?: number;
+  style?: CSSProperties;
   base?: string;
   value?: TValue | TValue[];
   ignoredValues?: number[];
+  size?: SizeType;
   onChange?: (value: TValue | TValue[]) => void;
 }
 

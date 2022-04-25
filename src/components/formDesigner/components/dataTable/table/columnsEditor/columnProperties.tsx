@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useColumnsConfigurator } from '../../../../../../providers/datatableColumnsConfigurator';
 import { Empty, Form } from 'antd';
 import { ConfigurableForm } from '../../../../../../components';
@@ -6,7 +6,6 @@ import columnSettingsJson from './columnSettings.json';
 import { FormMarkup } from '../../../../../../providers/form/models';
 import { useDebouncedCallback } from 'use-debounce';
 import { ConfigurableFormInstance } from '../../../../../../providers/form/contexts';
-import React from 'react';
 import { IDataColumnsProps } from '../../../../../../providers/datatableColumnsConfigurator/models';
 import { IPropertyMetadata } from '../../../../../../interfaces/metadata';
 
@@ -34,7 +33,7 @@ export const ColumnProperties: FC<IProps> = () => {
     if (formRef.current) {
       const values = form.getFieldsValue();
 
-      formRef.current.setFormData({ values: values, mergeValues: false });
+      formRef.current.setFormData({ values, mergeValues: false });
     }
   }, [selectedItemId]);
 
@@ -54,7 +53,7 @@ export const ColumnProperties: FC<IProps> = () => {
       };
       form.setFieldsValue(newValues);
       debouncedSave(newValues);
-    }
+    };
 
     return (
       <ConfigurableForm
@@ -69,22 +68,21 @@ export const ColumnProperties: FC<IProps> = () => {
         initialValues={componentModel}
         onValuesChange={debouncedSave}
         actions={{
-          linkToModelMetadata: linkToModelMetadata
+          linkToModelMetadata
         }}
-      >
-      </ConfigurableForm>
+      />
     );
   };
 
   useEffect(() => {
-    const editor = getEditor();
-    setEditor(editor);
+    const currentEditor = getEditor();
+    setEditor(currentEditor);
   }, [selectedItemId]);
 
   if (!Boolean(selectedItemId)) {
     return (
       <div>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing"></Empty>
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing" />
       </div>
     );
   }

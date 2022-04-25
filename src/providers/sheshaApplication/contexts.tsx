@@ -1,14 +1,17 @@
 import { createContext } from 'react';
+import { IToolboxComponentGroup } from '../..';
 
 export interface ISheshaApplicationStateContext {
   applicationName?: string;
   backendUrl: string;
   httpHeaders: { [key: string]: string };
+  toolboxComponentGroups?: IToolboxComponentGroup[];
 }
 
 export const SHESHA_APPLICATION_CONTEXT_INITIAL_STATE: ISheshaApplicationStateContext = {
   backendUrl: '',
   httpHeaders: {},
+  toolboxComponentGroups: [],
 };
 
 export interface ISheshaApplicationActionsContext {

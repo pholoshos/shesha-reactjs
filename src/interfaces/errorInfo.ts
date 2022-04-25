@@ -9,3 +9,7 @@ export interface IErrorInfo {
   details?: string | null;
   validationErrors?: IValidationErrorInfo[] | null;
 }
+
+export interface IHasErrorInfo {
+  errorInfo: IErrorInfo;
+}

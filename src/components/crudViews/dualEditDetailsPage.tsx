@@ -1,9 +1,10 @@
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import { Form, FormInstance, Spin } from 'antd';
-import React, { forwardRef, MutableRefObject, ReactNode, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, MutableRefObject, ReactNode, useEffect, useImperativeHandle, useRef } from 'react';
 import { ConfigurableForm, IndexToolbar, MainLayout, ValidationErrors } from '..';
 import { IToolbarItem } from '../../interfaces';
 import { useUi } from '../../providers';
+import { ConfigurableFormInstance } from '../../providers/form/contexts';
 import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
 import { useShaRouting } from '../../providers/shaRouting';
 import { requestHeaders } from '../../utils/requestHeaders';
@@ -11,7 +12,7 @@ import { CommonCrudHandles } from './interfaces';
 import { IDataFetcher, IDataMutator, UseGenericGetProps } from './models';
 import { DEFAULT_FILTERS, filterGenericModelData, IGenericFormFilter } from './utils';
 
-export type DualEditDetailsFormType = 'Edit' | 'Details';
+export type DualEditDetailsFormType = 'Edit' | 'Details' | 'Readonly';
 
 export interface IGenericDualEditDetailsPageProps {
   /**
@@ -85,6 +86,11 @@ export interface IGenericDualEditDetailsPageProps {
   onDataLoaded?: (model: any) => void;
 
   /**
+   * Form method when values is changed.
+   */
+  onFormValuesChange?: (changedValues: any, values: any) => void;
+
+  /**
    * Form Values. If passed, model will be overridden to FormValues, m.
    */
   formValues?: any;
@@ -118,6 +124,7 @@ export interface IGenericDualEditDetailsPageProps {
 const GenericDualEditDetailsPage = forwardRef<CommonCrudHandles, IGenericDualEditDetailsPageProps>(
   (props, forwardedRef) => {
     const [form] = Form.useForm();
+    const formRef = useRef<ConfigurableFormInstance>();
 
     const { formItemLayout } = useUi();
 
@@ -129,22 +136,22 @@ const GenericDualEditDetailsPage = forwardRef<CommonCrudHandles, IGenericDualEdi
       },
     }));
 
-    const { loading: loading, refetch: fetchData, error: fetchError, data: serverData } = props.fetcher({
+    const { loading: loading, refetch: fetchData, error: fetchError, data: serverData } = props?.fetcher({
       lazy: true,
       requestOptions: { headers: requestHeaders() },
-      queryParams: { id: props.id },
+      queryParams: { id: props?.id },
     });
 
-    const { mutate: save, loading: saving, error: savingError } = props.updater({});
+    const { mutate: save, loading: saving, error: savingError } = props?.updater({});
 
     // fetch data on page load or when the id changes
     useEffect(() => {
       fetchData();
-    }, [props.id]);
+    }, [props?.id]);
 
     useEffect(() => {
       if (props?.formValues) {
-        form.setFieldsValue(props.formValues);
+        form.setFieldsValue(props?.formValues);
       }
     }, [props?.formValues]);
 
@@ -152,14 +159,15 @@ const GenericDualEditDetailsPage = forwardRef<CommonCrudHandles, IGenericDualEdi
       if (props?.onDataLoaded) {
         props?.onDataLoaded(model);
       }
-      if (props.pageRef) {
+      if (props?.pageRef) {
         props.pageRef.current = model;
       }
     }, [loading]);
 
-    const filters = props.formFilters || DEFAULT_FILTERS;
+    const filters = props?.formFilters || DEFAULT_FILTERS;
 
-    const model = filterGenericModelData(serverData?.result, filters) as any;
+    const model = (filterGenericModelData(serverData?.result, filters) as any) || {};
+    const initialValues = (filterGenericModelData(props?.formValues, filters) as any) || model;
 
     const renderTitle = () => {
       const { title } = props;
@@ -177,8 +185,12 @@ const GenericDualEditDetailsPage = forwardRef<CommonCrudHandles, IGenericDualEdi
     };
 
     const handleClose = () => {
-      if (props?.onClose) props.onClose(form);
-      else router?.back();
+      if (props?.formType === 'Readonly') {
+        setFormModeReadOnly();
+      } else {
+        if (props?.onClose) props.onClose(form);
+        else router?.back();
+      }
     };
 
     const editToolbarItems: IToolbarItem[] = [
@@ -196,13 +208,15 @@ const GenericDualEditDetailsPage = forwardRef<CommonCrudHandles, IGenericDualEdi
 
     const handleSubmit = values => {
       const postData = { ...values, id: model.id };
-      const preparedValues = typeof props?.prepareValues === 'function' ? props?.prepareValues(postData) : postData;
+      const preparedValues = typeof props?.prepareValues === 'function' ? props.prepareValues(postData) : postData;
 
-      save(preparedValues).then(handleClose);
+      save(preparedValues)
+        .then(handleClose)
+        .then(setFormModeReadOnly);
     };
 
     const toolbar = () => {
-      if (props.formType === 'Details') {
+      if (props?.formType === 'Details') {
         return props?.toolbarItems?.filter(({ hide }) => !hide)?.length ? (
           <IndexToolbar items={props.toolbarItems} />
         ) : null;
@@ -211,30 +225,38 @@ const GenericDualEditDetailsPage = forwardRef<CommonCrudHandles, IGenericDualEdi
       return <IndexToolbar items={editToolbarItems} />;
     };
 
+    const setFormModeReadOnly = () => {
+      if (props?.formType === 'Readonly') {
+        formRef.current?.setFormMode('readonly');
+      }
+    };
+
     return (
       <Spin spinning={loading || saving} tip="Loading...">
         <MainLayout
           title={renderTitle()}
           description=""
-          showHeading={!!renderTitle() || !!props.headerControls}
+          showHeading={!!renderTitle() || !!props?.headerControls}
           toolbar={toolbar()}
           headerControls={
-            typeof props.headerControls === 'function' ? props.headerControls(model) : props.headerControls
+            typeof props?.headerControls === 'function' ? props.headerControls(model) : props.headerControls
           }
         >
           <ValidationErrors error={savingError?.data || fetchError?.data} />
           {model && (
             <>
               <ConfigurableForm
-                mode={props.formType === 'Details' ? 'readonly' : 'edit'}
+                mode={'edit'}
                 {...formItemLayout}
                 form={form}
+                formRef={formRef}
                 onFinish={handleSubmit}
                 path={props?.formPath || router?.pathname}
-                markup={props.markup}
-                initialValues={model}
-                actions={props.formActions}
-                sections={props.formSections}
+                markup={props?.markup}
+                initialValues={initialValues}
+                actions={props?.formActions}
+                sections={props?.formSections}
+                onValuesChange={props?.onFormValuesChange}
               />
               {typeof props?.footer === 'function' ? props?.footer(model) : props?.footer}
             </>

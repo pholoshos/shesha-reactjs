@@ -1,4 +1,5 @@
 import jseu from 'js-encoding-utils';
+import { getLocalizationOrDefault } from './localization';
 import { getLocalStorage } from './storage';
 
 // Fields to remove from the AuthContext
@@ -53,12 +54,12 @@ export const hasTokenExpired = (date: string): boolean => {
   return new Date(date) < new Date();
 };
 
-export const redirectRoute = (asPath: string, landingPage: string, unauthorizedRedirectUrl: string) => {
-  let redirectUrl = '';
+export const getHttpHeaders = (token: string | null) => {
+  const headers = {};
+  if (token)
+    headers['Authorization'] = `Bearer ${token}`;
 
-  if (asPath !== landingPage && !asPath.includes(unauthorizedRedirectUrl)) {
-    redirectUrl = `/?redirectUrl=${asPath}`;
-  }
-
-  return `${unauthorizedRedirectUrl}${redirectUrl}`;
-};
+  headers['.AspNetCore.Culture'] = getLocalizationOrDefault();
+    
+  return headers;
+}

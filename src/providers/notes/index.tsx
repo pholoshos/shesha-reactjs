@@ -64,7 +64,7 @@ const NotesProvider: FC<PropsWithChildren<INoteSettings>> = ({
 
   //#region Fetch notes
   const { refetch: refetchNotesHttp, loading: fetchingNotes, data, error: fetchNotesResError } = useNoteGetList({
-    queryParams: { ownerId: ownerId, ownerType: ownerType, category: category, allCategories: allCategories },
+    queryParams: { ownerId, ownerType, category, allCategories },
     lazy: true,
     requestOptions: {
       headers,

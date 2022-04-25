@@ -1,10 +1,9 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { IConfigurableActionColumnsProps, IConfigurableColumnsProps } from '../../../../../../providers/datatableColumnsConfigurator/models';
 import { Button, Tooltip } from 'antd';
 import { DeleteFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { useColumnsConfigurator } from '../../../../../../providers/datatableColumnsConfigurator';
 import DragHandle from './dragHandle';
-import React from 'react';
 import ShaIcon, { IconType } from '../../../../../shaIcon';
 
 export interface IProps extends IConfigurableColumnsProps {
@@ -18,28 +17,28 @@ export const Column: FC<IProps> = props => {
     deleteButton(props.id);
   };
 
-  let classes = ['sha-toolbar-item'];
+  const classes = ['sha-toolbar-item'];
   if (selectedItemId === props.id) classes.push('selected');
 
-  const actionProps = props.columnType == 'action'
+  const actionProps = props.columnType === 'action'
     ? props as IConfigurableActionColumnsProps
     : null;
 
   return (
     <div className={classes.reduce((a, c) => a + ' ' + c)}>
       <div className="sha-toolbar-item-header">
-        <DragHandle id={props.id}></DragHandle>
+        <DragHandle id={props.id} />
         { actionProps && actionProps.icon && <ShaIcon iconName={actionProps.icon as IconType}/> }
         <span className="sha-toolbar-item-name">
           {props.caption}
         </span>
         { props.description && (
           <Tooltip title={props.description}>
-            <QuestionCircleOutlined className="sha-help-icon"/>
+            <QuestionCircleOutlined className="sha-help-icon" />
           </Tooltip>
-        ) }
+        )}
         <div className="sha-toolbar-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger></Button>
+          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
         </div>
       </div>
     </div>

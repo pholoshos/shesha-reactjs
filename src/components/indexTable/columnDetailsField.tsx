@@ -11,7 +11,7 @@ export const ColumnDetailsField: FC<IColumnEditFieldProps> = ({ dataType = 'stri
   const columnRender = renderers?.find(({ key }) => key === dataType)?.render;
 
   if (columnRender) {
-    return <Fragment>{columnRender({ value })}</Fragment>;
+    return <Fragment>{columnRender({ value }, null)}</Fragment>;
   }
 
   return <Fragment />;

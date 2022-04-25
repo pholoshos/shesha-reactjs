@@ -75,9 +75,9 @@ const ChildDataTableComponent: IToolboxComponent<IChildDataTableProps> = {
       crudMode,
     };
 
-    if (!tableProps.id) return <Alert message="Child DataTable is not configured properly" type="warning" showIcon />;
-
     const { parentEntityId: currentParentEntityId } = useDataTableState();
+
+    if (!tableProps.id) return <Alert message="Child DataTable is not configured properly" type="warning" showIcon />;
 
     const evaluatedParentEntityId = evaluateValue(parentEntityId, { data: formData });
 

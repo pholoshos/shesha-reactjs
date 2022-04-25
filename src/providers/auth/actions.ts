@@ -1,13 +1,12 @@
 import { createAction } from 'redux-actions';
 import { UserLoginInfoDto } from '../../apis/session';
 import { ResetPasswordVerifyOtpResponse } from '../../apis/user';
-import { IErrorInfo } from '../../interfaces/errorInfo';
-import IRequestHeaders from '../../interfaces/requestHeaders';
-import { IAuthStateContext } from './contexts';
+import { IErrorInfo, IHasErrorInfo } from '../../interfaces/errorInfo';
+//import IRequestHeaders from '../../interfaces/requestHeaders';
 export enum AuthActionEnums {
   CheckAuthAction = 'CHECK_AUTH_ACTION',
   SetToken = 'SET_TOKEN',
-  SetHeaders = 'SET_HEADERS',
+  //SetHeaders = 'SET_HEADERS',
   LoginUserRequest = 'LOGIN_USER_REQUEST',
   LoginUserSuccess = 'LOGIN_USER_SUCCESS',
   LoginUserError = 'LOGIN_USER_ERROR',
@@ -24,49 +23,46 @@ export enum AuthActionEnums {
   /* NEW_ACTION_TYPE_GOES_HERE */
 }
 
-export const checkAuthAction = createAction<IAuthStateContext>(AuthActionEnums.CheckAuthAction, () => ({
-  isCheckingAuth: true,
-  errorInfo: null,
-}));
+export const checkAuthAction = createAction(AuthActionEnums.CheckAuthAction);
 
 //#region  Login user
-export const loginUserAction = createAction<IAuthStateContext>(AuthActionEnums.LoginUserRequest, () => ({
-  errorInfo: null,
-}));
+export const loginUserAction = createAction(AuthActionEnums.LoginUserRequest);
 
-export const loginUserSuccessAction = createAction<IAuthStateContext, UserLoginInfoDto>(
-  AuthActionEnums.LoginUserSuccess,
-  loginInfo => ({ loginInfo, isCheckingAuth: false, errorInfo: null })
+export const loginUserSuccessAction = createAction(
+  AuthActionEnums.LoginUserSuccess
 );
 
-export const loginUserErrorAction = createAction<IAuthStateContext, IErrorInfo>(
+export const loginUserErrorAction = createAction<IHasErrorInfo, IErrorInfo>(
   AuthActionEnums.LoginUserError,
-  errorInfo => ({ errorInfo, isCheckingAuth: false })
+  p => ({ errorInfo: p })
 );
-//#endregion
-
-//#region Logout user
-export const logoutUserAction = createAction<IAuthStateContext>(AuthActionEnums.LogoutUser, () => ({}));
 
 //#endregion
 
-export const verifyOtpSuccessAction = createAction<IAuthStateContext, ResetPasswordVerifyOtpResponse>(
+//#region Fetch user data
+
+export const fetchUserDataAction = createAction(AuthActionEnums.FetchUserDataRequest);
+
+export const fetchUserDataActionSuccessAction = createAction<UserLoginInfoDto, UserLoginInfoDto>(
+  AuthActionEnums.FetchUserDataSuccess,
+  p => p
+);
+
+export const fetchUserDataActionErrorAction = createAction<IHasErrorInfo, IErrorInfo>(
+  AuthActionEnums.FetchUserDataError,
+  p => ({ errorInfo: p })
+);
+
+//#endregion
+
+export const logoutUserAction = createAction(AuthActionEnums.LogoutUser);
+
+export const verifyOtpSuccessAction = createAction<ResetPasswordVerifyOtpResponse, ResetPasswordVerifyOtpResponse>(
   AuthActionEnums.VerifyOtpSuccess,
-  verifyOtpResPayload => ({ verifyOtpResPayload })
+  p => p
 );
 
-export const resetPasswordSuccessAction = createAction<IAuthStateContext>(AuthActionEnums.ResetPasswordSuccess, () => ({
-  verifyOtpResPayload: null,
-}));
+export const resetPasswordSuccessAction = createAction(AuthActionEnums.ResetPasswordSuccess);
 /* NEW_ACTION_GOES_HERE */
 
-//#region Token and Headers
-export const setAccessTokenAction = createAction<IAuthStateContext, string>(AuthActionEnums.SetToken, token => ({
-  token,
-}));
-
-export const setRequestHeadersAction = createAction<IAuthStateContext, IRequestHeaders>(
-  AuthActionEnums.SetHeaders,
-  headers => ({ headers })
-);
-//#endregion
+export const setAccessTokenAction = createAction<string, string>(AuthActionEnums.SetToken, p => p);

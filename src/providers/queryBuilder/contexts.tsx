@@ -3,6 +3,7 @@ import { IProperty } from './models';
 
 export interface IQueryBuilderStateContext {
   fields: IProperty[];
+  id?: string;
 }
 
 export interface IQueryBuilderActionsContext {

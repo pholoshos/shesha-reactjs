@@ -18,12 +18,15 @@ import {
   FormAction,
   FormSection,
   IFormSection,
+  ViewType,
 } from './models';
 import { FormInstance } from 'antd';
 import { StateWithHistory } from 'redux-undo';
 import { FormLayout } from 'antd/lib/form/Form';
 import { IDataSource } from '../formDesigner/models';
 import { IPropertyMetadata } from '../../interfaces/metadata';
+import { IKeyValue } from '../../interfaces/keyValue';
+import { SizeType } from 'antd/lib/config-provider/SizeContext';
 
 export type IFlagProgressFlags =
   | 'addComponent'
@@ -55,15 +58,25 @@ export interface ILayoutProps {
 export interface IFormSettings {
   modelType?: string;
   postUrl?: string;
+  putUrl?: string;
+  deleteUrl?: string;
   getUrl?: string;
   layout: FormLayout;
   colon: boolean;
   labelCol: ILayoutProps;
   wrapperCol: ILayoutProps;
   showModeToggler?: boolean;
+  preparedValues?: string;
+  size?: SizeType;
+  formKeysToPersist?: string[];
+  excludeFormFieldsInPayload?: string;
+  uniqueFormId?: string;
+  onInitialize?: string;
+  onUpdate?: string;
+  initialValues?: IKeyValue[];
 }
 
-export interface IFormDesignerStateContext extends StateWithHistory<IFormStateContext> { }
+export interface IFormDesignerStateContext extends StateWithHistory<IFormStateContext> {}
 
 export interface IHasComponentGroups {
   toolboxComponentGroups: IToolboxComponentGroup[];
@@ -71,11 +84,12 @@ export interface IHasComponentGroups {
 
 export interface IFormStateContext
   extends IFlagsState<IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags>,
-  IHasComponentGroups,
-  IFormProps {
+    IHasComponentGroups,
+    IFormProps {
   id?: string;
   path?: string;
   formMode: FormMode;
+  type?: ViewType;
   isDebug: boolean;
   form?: FormInstance<any>;
   actions: IFormAction[];
@@ -104,8 +118,7 @@ export interface IComponentAddPayload extends AddComonentPayloadBase {
   componentType: string;
 }
 
-export interface IComponentAddFromTemplatePayload extends AddComonentPayloadBase {
-}
+export interface IComponentAddFromTemplatePayload extends AddComonentPayloadBase {}
 
 export interface IAddDataPropertyPayload {
   propertyMetadata: IPropertyMetadata;
@@ -253,7 +266,7 @@ export const UndoableFormStateContext = createContext<IFormDesignerStateContext>
   future: [],
 });
 
-export interface ConfigurableFormInstance extends IFormActionsContext, IFormStateContext { }
+export interface ConfigurableFormInstance extends IFormActionsContext, IFormStateContext {}
 
 export const FormStateContext = createContext<IFormStateContext>(FORM_CONTEXT_INITIAL_STATE);
 

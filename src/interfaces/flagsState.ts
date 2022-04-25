@@ -11,3 +11,10 @@ export interface IFlagsState<
   readonly error?: { [key in ErrorFlags]?: boolean | string | IErrorInfo };
   readonly actioned?: { [key in ActionedFlags]?: boolean };
 }
+
+export const EMPTY_FLAGS_STATE: IFlagsState<string, string, string, string> = {
+  isInProgress: {},
+  succeeded: {},
+  error: {},
+  actioned: {},
+}

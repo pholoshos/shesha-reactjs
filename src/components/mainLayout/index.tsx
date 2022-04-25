@@ -37,6 +37,7 @@ export interface IMainLayoutProps extends IHtmlHeadProps {
   showHeading?: boolean;
   noPadding?: boolean;
   toolbar?: ReactNodeOrFunc;
+  customComponent?: ReactNode;
 
   /**
    * @deprecated
@@ -72,6 +73,7 @@ const DefaultLayout: FC<PropsWithChildren<IMainLayoutProps>> = props => {
     noPadding = false,
     toolbar,
     headerControls,
+    customComponent,
   } = props;
   const sidebarDefaults = useSidebarMenuDefaults();
   const sidebarDefaultItems = sidebarDefaults?.items || [];
@@ -138,7 +140,7 @@ const DefaultLayout: FC<PropsWithChildren<IMainLayoutProps>> = props => {
       </Sider>
       <Layout className="site-layout">
         <Header className="site-layout-background" style={headerStyle}>
-          <LayoutHeader collapsed={collapsed} />
+          <LayoutHeader collapsed={collapsed} customComponent={customComponent} />
         </Header>
         <Content className={classNames({ collapsed })} style={contentStyle}>
           {breadcrumb}

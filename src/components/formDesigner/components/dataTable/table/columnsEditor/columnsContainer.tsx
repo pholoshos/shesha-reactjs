@@ -1,10 +1,13 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Column } from './column';
 import { ColumnsGroup } from './columnsGroup';
 import { useColumnsConfigurator } from '../../../../../../providers/datatableColumnsConfigurator';
-import { IConfigurableColumnGroup, IConfigurableColumnsProps, IConfigurableColumnsBase } from '../../../../../../providers/datatableColumnsConfigurator/models';
+import {
+  IConfigurableColumnGroup,
+  IConfigurableColumnsProps,
+  IConfigurableColumnsBase,
+} from '../../../../../../providers/datatableColumnsConfigurator/models';
 import { ReactSortable, ItemInterface } from 'react-sortablejs';
-import React from 'react';
 
 export interface IToolbarItemsSortableProps {
   index?: number[];
@@ -18,16 +21,17 @@ export const ToolbarItemsContainer: FC<IToolbarItemsSortableProps> = props => {
     switch (item.itemType) {
       case 'item':
         const itemProps = item as IConfigurableColumnsProps;
-        return <Column key={index} index={[...props.index, index]} {...itemProps}></Column>;
+        return <Column key={index} index={[...props.index, index]} {...itemProps} />;
 
       case 'group':
         const groupProps = item as IConfigurableColumnGroup;
-        return <ColumnsGroup key={index} {...groupProps} index={[...props.index, index]}></ColumnsGroup>;
+        return <ColumnsGroup key={index} {...groupProps} index={[...props.index, index]} />;
     }
   };
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
-    const listChanged = !newState.some(item => item.chosen !== null && item.chosen !== undefined);
+    // temporary commented out, the behavoiur of the sortablejs differs sometimes
+    const listChanged = true; //!newState.some(item => item.chosen !== null && item.chosen !== undefined);
 
     if (listChanged) {
       const newChilds = newState.map<IConfigurableColumnsBase>(item => item as IConfigurableColumnsBase);
@@ -56,9 +60,7 @@ export const ToolbarItemsContainer: FC<IToolbarItemsSortableProps> = props => {
       scroll={true}
       bubbleScroll={true}
     >
-      {props.items.map(
-        (item, index) => renderItem(item, index)
-      )}
+      {props.items.map((item, index) => renderItem(item, index))}
     </ReactSortable>
   );
 };

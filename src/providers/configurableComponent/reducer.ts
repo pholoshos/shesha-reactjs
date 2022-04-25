@@ -36,7 +36,7 @@ const reducerFactory = <TSettings extends any>(
 
         const settings = payload?.settings as TSettings;
 
-        const typedPayload = { ...payload, settings: settings };
+        const typedPayload = { ...payload, settings };
 
         return {
           ...state,
@@ -82,7 +82,7 @@ const reducerFactory = <TSettings extends any>(
 
         return {
           ...state,
-          settings: settings,
+          settings,
           isInProgress: { ...state.isInProgress, save: false },
           error: { ...state.error, save: null },
         };

@@ -11,6 +11,27 @@ import { MetadataContext } from '../../../providers/metadata/contexts';
 export interface IProps {
 }
 
+const getDefaultFactory = (markup: FormMarkup): ISettingsFormFactory => {
+  return ({ 
+    model,
+    onSave,
+    onCancel,
+    onValuesChange,
+    toolboxComponent,
+  }) => {
+    return (
+      <GenericSettingsForm
+        model={model}
+        onSave={onSave}
+        onCancel={onCancel}
+        markup={markup}
+        onValuesChange={onValuesChange}
+        toolboxComponent={toolboxComponent}
+      />
+    );
+  };
+};
+
 export const ComponentPropertiesPanel: FC<IProps> = () => {
   const { updateComponent, selectedComponentId: id, getComponentModel, getToolboxComponent } = useForm();
   // note: we have to memoize the editor to prevent unneeded re-rendering and loosing of the focus
@@ -20,16 +41,18 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
 
   const debouncedSave = useDebouncedCallback(
     values => {
-      updateComponent({ componentId: id, settings: { ...values, id: id } });
+      updateComponent({ componentId: id, settings: { ...values, id } });
     },
     // delay in ms
     300
   );
 
-  const onCancel = () => { };
+  const onCancel = () => { 
+    //
+  };
 
   const onSave = values => {
-    updateComponent({ componentId: id, settings: { ...values, id: id } });
+    updateComponent({ componentId: id, settings: { ...values, id } });
   };
 
   const onValuesChange = (_changedValues, values) => {
@@ -43,21 +66,6 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
         console.log({ errorInfo });
       });
     */
-  };
-
-  const getDefaultFactory = (markup: FormMarkup): ISettingsFormFactory => {
-    return ({ model, onSave, onCancel, onValuesChange, toolboxComponent, }) => {
-      return (
-        <GenericSettingsForm
-          model={model}
-          onSave={onSave}
-          onCancel={onCancel}
-          markup={markup}
-          onValuesChange={onValuesChange}
-          toolboxComponent={toolboxComponent}
-        />
-      );
-    };
   };
 
   const wrapEditor = (renderEditor: () => ReactNode) => {
@@ -74,8 +82,7 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
 
   const getEditor = () => {
     const emptyEditor = null;
-    if (!id) return
-      emptyEditor;
+    if (!id) return emptyEditor;
 
     const componentModel = getComponentModel(id);
     const toolboxComponent = getToolboxComponent(componentModel.type);
@@ -104,14 +111,14 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
   };
 
   useEffect(() => {
-    const editor = getEditor();
-    setEditor(editor);
+    const currentEditor = getEditor();
+    setEditor(currentEditor);
   }, [id]);
 
   if (!Boolean(id))
     return (
       <>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing"></Empty>
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing" />
         {/* <Form form={form}></Form>  */}
         {/* is used just to remove warning */}
       </>

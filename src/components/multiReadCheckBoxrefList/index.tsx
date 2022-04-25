@@ -15,6 +15,7 @@ export const binaryToList = (val: number) => {
   let currentVal = 1;
 
   while (currentVal <= val) {
+    /* tslint:disable:no-bitwise */
     if ((val & currentVal) === currentVal) total.push(currentVal);
     currentVal *= 2;
   }

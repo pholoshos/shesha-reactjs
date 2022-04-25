@@ -71,7 +71,7 @@ export default handleActions<IDynamicModalStateContext, any>(
     [DynamicModalActionEnums.RemoveModal]: (state: IDynamicModalStateContext, action: ReduxActions.Action<string>) => {
       const { payload } = action;
 
-      let newInstances = { ...state.instances };
+      const newInstances = { ...state.instances };
       delete newInstances[payload];
 
       return {

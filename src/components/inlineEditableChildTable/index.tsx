@@ -31,9 +31,9 @@ export const InlineEditableChildTable: FC<IInlineEditableChildTableProps> = ({
 
   const tableProps: IChildTableProps = {
     id: tableId,
-    header: header,
+    header,
     crud,
-    saveLocally: saveLocally,
+    saveLocally,
   };
 
   const renderTotalItems = (total: number, itemsString: string) => {

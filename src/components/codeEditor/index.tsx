@@ -4,7 +4,7 @@ import type { IAceEditorProps } from 'react-ace';
 import ReactAce from "react-ace/lib/ace";
 import { metadataCodeCompleter } from './codeCompleter';
 
-const aceBaseUrl = 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.13/src-noconflict';
+const DEFAULT_ACE_URL = 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.13/src-noconflict';
 
 export interface ICodeEditorProps extends IAceEditorProps {
     aceBaseUrl?: string;
@@ -20,18 +20,18 @@ const AceEditorLazy = React.lazy<typeof ReactAce>(() => new Promise(async resolv
     await import("ace-builds/src-noconflict/mode-javascript");
     await import("ace-builds/src-noconflict/theme-monokai");
 
-    let ace = require("ace-builds/src-noconflict/ace");
+    const ace = require("ace-builds/src-noconflict/ace");
     ace.config.set(
         "basePath",
-        aceBaseUrl
+        DEFAULT_ACE_URL
     );
     ace.config.setModuleUrl(
         "ace/mode/javascript_worker",
-        `${aceBaseUrl}/worker-javascript.js`
+        `${DEFAULT_ACE_URL}/worker-javascript.js`
     );
 
     // register completer
-    var langTools = ace.require("ace/ext/language_tools");
+    const langTools = ace.require("ace/ext/language_tools");
 
     langTools.addCompleter(metadataCodeCompleter);
 

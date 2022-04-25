@@ -7,7 +7,7 @@ import { FormMarkup } from '../../../../providers/form/models';
 import { ConfigurableFormInstance } from '../../../../providers/form/contexts';
 import propertySettingsJson from './propertySettings.json';
 
-export interface IProps { }
+export interface IProps {}
 
 export const ToolbarItemProperties: FC<IProps> = () => {
   const { selectedItemId, getItem, updateItem } = usePropertiesEditor();
@@ -31,7 +31,7 @@ export const ToolbarItemProperties: FC<IProps> = () => {
     if (formRef.current) {
       const values = form.getFieldsValue();
 
-      formRef.current.setFormData({ values: values, mergeValues: false });
+      formRef.current.setFormData({ values, mergeValues: false });
     }
   }, [selectedItemId]);
 
@@ -42,11 +42,11 @@ export const ToolbarItemProperties: FC<IProps> = () => {
     const componentModel = getItem(selectedItemId);
 
     const markup = propertySettingsJson as FormMarkup;
-    
+
     return (
       <>
         <ConfigurableForm
-          size='small'
+          size="small"
           formRef={formRef}
           layout="horizontal"
           labelCol={{ span: 24 }}
@@ -57,20 +57,19 @@ export const ToolbarItemProperties: FC<IProps> = () => {
           form={form}
           initialValues={componentModel}
           onValuesChange={debouncedSave}
-        ></ConfigurableForm>
+        />
       </>
     );
   };
 
   useEffect(() => {
-    const editor = getEditor();
-    setEditor(editor);
+    setEditor(getEditor());
   }, [selectedItemId]);
 
   if (!Boolean(selectedItemId)) {
     return (
       <div>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing"></Empty>
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing" />
       </div>
     );
   }

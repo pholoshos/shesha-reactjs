@@ -1,18 +1,20 @@
-import { FC, MutableRefObject, useEffect } from 'react';
+import React, { FC, MutableRefObject, useEffect } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { SelectOutlined } from '@ant-design/icons';
-import TableViewSelectorSettings from './tableViewSelectorSettingsPanel';
+import TableViewSelectorSettings from './tableViewSelectorSettings';
 import { ITableViewSelectorProps } from './models';
-import { IndexViewSelectorRenderer } from '../../../../../';
-import React from 'react';
+import { IndexViewSelectorRenderer, useForm } from '../../../../..';
 import { useDataTableStore } from '../../../../../providers';
+import { evaluateDynamicFilters } from '../../../../../providers/dataTable/utils';
+import { usePrevious } from '../../../../../hooks';
+import _ from 'lodash';
 
 const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
   type: 'tableViewSelector',
   name: 'Table view selector',
   icon: <SelectOutlined />,
   factory: (model: ITableViewSelectorProps, componentRef: MutableRefObject<any>) => {
-    return <TableViewSelector componentRef={componentRef} {...model}></TableViewSelector>;
+    return <TableViewSelector componentRef={componentRef} {...model} />;
   },
   initModel: (model: ITableViewSelectorProps) => {
     return {
@@ -33,24 +35,39 @@ const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
 };
 
 export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, componentRef }) => {
-  const { columns, getDataSourceType } = useDataTableStore();
-  const dataSourceType = getDataSourceType();
-  componentRef.current = {
-    columns,
-    dataSourceType
-  };
-
   const {
+    columns,
+    getDataSourceType,
     title,
     changeSelectedStoredFilterIds,
     predefinedFilters,
     selectedStoredFilterIds,
     setPredefinedFilters,
+    refreshTable,
   } = useDataTableStore();
 
+  const { formData } = useForm();
+
+  const dataSourceType = getDataSourceType();
+
+  componentRef.current = {
+    columns,
+    dataSourceType,
+  };
+
+  const previousFilters = usePrevious(predefinedFilters);
+
   useEffect(() => {
-    setPredefinedFilters(filters);
-  }, [filters]);
+    const evaluatedFilters = evaluateDynamicFilters(filters, formData);
+
+    setPredefinedFilters(evaluatedFilters);
+
+    if (!_.isEqual(_.sortBy(previousFilters), _.sortBy(evaluatedFilters))) {
+      setTimeout(() => {
+        refreshTable();
+      }, 100);
+    }
+  }, [filters, formData]);
 
   const changeSelectedFilter = (id: string) => {
     changeSelectedStoredFilterIds(id ? [id] : []);

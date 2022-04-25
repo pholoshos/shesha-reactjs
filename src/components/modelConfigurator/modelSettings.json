@@ -15,8 +15,10 @@
       "maxLength": null,
       "parentId": "root",
       "validate": {
-        "required": true
+        "required": false
       },
+      "disabled": true,
+      "hideBorder": true,      
       "settingsValidationErrors": [],
       "textType": "text"
     },
@@ -35,8 +37,10 @@
       "maxLength": null,
       "parentId": "root",
       "validate": {
-        "required": true
+        "required": false
       },
+      "disabled": true,
+      "hideBorder": true,
       "settingsValidationErrors": [],
       "textType": "text"
     },

@@ -273,6 +273,14 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     300
   );
 
+  const debouncedExportToExcel = useDebouncedCallback(
+    () => {
+      exportToExcel();
+    },
+    // delay in ms
+    300
+  );
+
   const columnsAreReady = !tableId && entityType && state?.columns?.length > 0;
 
   const fetchTableData = (payload?: IGetDataPayload) => {
@@ -657,7 +665,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   useSubscribe(DataTablePubsubConstants.exportToExcel, data => {
     if (data.stateId === uniqueStateId) {
-      exportToExcel();
+      debouncedExportToExcel();
     }
   });
 

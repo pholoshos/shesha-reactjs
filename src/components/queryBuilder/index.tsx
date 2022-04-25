@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import {
   Query,
   Builder,
@@ -20,6 +20,8 @@ import RefListDropdownWidget from './widgets/refListDropDown';
 import EntityReferenceType from './types/entityReference';
 import RefListType from './types/refList';
 import { DataTypes } from '../../interfaces/dataTypes';
+import DateTimeDynamicWidget from './widgets/dateTimeDynamic';
+import DateTimeDynamicType from './types/dateTimeDynamic';
 const InitialConfig = AntdConfig;
 
 export interface IQueryBuilderColumn extends ITableColumn {
@@ -50,6 +52,17 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
     initialize();
   }, []);
 
+  const allFields = useMemo(
+    () =>
+      useExpression
+        ? fields?.map(({ dataType, ...field }) => ({
+            ...field,
+            dataType: ['date-time', 'date', 'time'].includes(dataType) ? 'dateTimeDynamic' : dataType,
+          }))
+        : fields,
+    [useExpression, fields]
+  );
+
   const initialize = () => {
     const operators = {
       ...InitialConfig.operators,
@@ -67,27 +80,14 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
       ...InitialConfig.widgets,
       entityAutocomplete: EntityAutocompleteWidget,
       refListDropdown: RefListDropdownWidget,
+      dateTimeDynamic: DateTimeDynamicWidget,
     };
 
     const types = {
       ...InitialConfig.types,
       entityReference: EntityReferenceType,
       refList: RefListType,
-    };
-
-    const getDynamicWidgets = () => {
-      if (useExpression) {
-        const localWidgets = {};
-
-        Object.keys(widgets).forEach(key => {
-          if (key) {
-            localWidgets[key] = InitialConfig.widgets.text;
-          }
-        });
-
-        return localWidgets;
-      }
-      return null;
+      dateTimeDynamic: DateTimeDynamicType,
     };
 
     const conf: Config = {
@@ -96,10 +96,10 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
       // @ts-ignore
       types,
       operators,
-      widgets: useExpression ? getDynamicWidgets() : widgets,
+      widgets,
     };
 
-    fields?.forEach(({ dataType, visible, propertyName, label, fieldSettings, preferWidgets }) => {
+    allFields?.forEach(({ dataType, visible, propertyName, label, fieldSettings, preferWidgets }) => {
       let type: string = dataType;
       let defaultPreferWidgets = [];
 
@@ -147,7 +147,9 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
           case '!struct':
             type = dataType;
             break;
-
+          case 'dateTimeDynamic':
+            type = 'dateTimeDynamic';
+            defaultPreferWidgets = ['dateTimeDynamic'];
           default:
             break;
         }

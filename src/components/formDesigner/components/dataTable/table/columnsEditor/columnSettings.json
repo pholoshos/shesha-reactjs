@@ -157,28 +157,48 @@
           "name": "actionScript",
           "label": "Action Script",
           "labelAlign": "right",
-          "parentId": "root",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
           "hidden": false,
           "autoSize": false,
           "showCount": false,
           "allowClear": false,
           "validate": {},
           "exposedVariables": [
-            { "name": "data", "description": "The form data", "type": "object" },
-            { "name": "moment", "description": "The moment.js object", "type": "object" },
+            {
+              "name": "data",
+              "description": "The form data",
+              "type": "object"
+            },
+            {
+              "name": "moment",
+              "description": "The moment.js object",
+              "type": "object"
+            },
             {
               "name": "formMode",
               "description": "The form mode - 'edit' | 'readonly' | 'designer'",
               "type": "string"
             },
-            { "name": "http", "description": "Axios instance", "type": "object" },
+            {
+              "name": "http",
+              "description": "Axios instance",
+              "type": "object"
+            },
             {
               "name": "message",
               "description": "Ant design message object for displaying toast messages",
               "type": "object"
             },
-            { "name": "globalState", "description": "The global state of the application", "type": "object" },
-            { "name": "selectedRow", "description": "The selected row", "type": "object" }
+            {
+              "name": "globalState",
+              "description": "The global state of the application",
+              "type": "object"
+            },
+            {
+              "name": "selectedRow",
+              "description": "The selected row",
+              "type": "object"
+            }
           ],
           "customVisibility": "return data.action === 'executeScript'",
           "description": "Write a code that allows you to return an object whose values will be merged with the form state before submit. Check the variables tab for exposed variables"
@@ -243,7 +263,7 @@
               "id": "c815c322-ba5d-4062-9736-e5d03c724134",
               "type": "checkbox",
               "name": "showModalFooter",
-              "parentId": "root",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
               "label": "Show Modal Buttons",
               "defaultChecked": false
             },
@@ -251,7 +271,7 @@
               "id": "ae69ab38-65fa-4b34-a701-3b46aff045f5",
               "type": "checkbox",
               "name": "refreshTableOnSuccess",
-              "parentId": "root",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
               "label": "Refresh table on success?",
               "defaultChecked": false
             },
@@ -259,7 +279,7 @@
               "id": "f15848e8-87fa-4d76-b5a4-8548b8c2dd8b",
               "type": "dropdown",
               "name": "submitHttpVerb",
-              "parentId": "root",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
               "label": "Submit Http Verb",
               "values": [
                 {
@@ -275,13 +295,15 @@
               ],
               "dataSourceType": "values",
               "customVisibility": "return data.showModalFooter === true",
-              "defaultValue": ["POST"]
+              "defaultValue": [
+                "POST"
+              ]
             },
             {
               "id": "e669632e-55e0-46f4-9585-9e81ef0ae174",
               "type": "textField",
               "name": "onSuccessRedirectUrl",
-              "parentId": "root",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
               "label": "Success Redirect URL",
               "customVisibility": "return data.showModalFooter === true"
             },
@@ -324,7 +346,7 @@
           "name": "deleteWarningMessage",
           "label": "Delete warning message",
           "labelAlign": "right",
-          "parentId": "root",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
           "hidden": false,
           "customVisibility": "return data.action === 'deleteRow'",
           "autoSize": false,
@@ -477,6 +499,38 @@
       "validate": {},
       "settingsValidationErrors": [],
       "description": "Whether this column is editable in inline mode"
+    },
+    {
+      "id": "eJiLlB4PoftEbhcEeg_0W",
+      "type": "dropdown",
+      "name": "defaultSorting",
+      "label": "Default Sorting",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return data.columnType === 'data'",
+      "isDynamic": false,
+      "dataSourceType": "values",
+      "useRawValues": false,
+      "placeholder": "",
+      "description": "",
+      "defaultValue": "",
+      "entityTypeShortAlias": "",
+      "dataSourceUrl": "",
+      "validate": {},
+      "values": [
+        {
+          "id": "kdYDKSB73uJuMSHvA3KCu",
+          "label": "Ascending",
+          "value": "asc"
+        },
+        {
+          "id": "5lV0k_ZT_9OylUs2x5rQ2",
+          "label": "Descending",
+          "value": "desc"
+        }
+      ],
+      "settingsValidationErrors": []
     }
   ],
   "formSettings": {

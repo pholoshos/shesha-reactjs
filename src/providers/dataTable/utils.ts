@@ -1,5 +1,5 @@
 import { evaluateString } from '../../formDesignerUtils';
-import { IStoredFilter } from './interfaces';
+import { ColumnSorting, IStoredFilter, SortDirection } from './interfaces';
 import camelCaseKeys from 'camelcase-keys';
 
 export const evaluateDynamicFilters = (filters: IStoredFilter[], data: any) => {
@@ -27,3 +27,20 @@ export const hasDynamicFilter = (filters: IStoredFilter[]) => {
 };
 
 export const cleanPropertyName = (keyValue: string) => keyValue?.replace('.', '_');
+
+export const sortDirection2ColumnSorting = (value?: SortDirection): ColumnSorting =>
+{
+  switch (value){
+    case 0: return 'asc';
+    case 1: return 'desc';
+    default: return null;
+  }
+}
+export const columnSorting2SortDirection = (value?: ColumnSorting): SortDirection =>
+{
+  switch (value){
+    case 'asc': return 0;
+    case 'desc': return 1;
+    default: return null;
+  }
+}

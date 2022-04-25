@@ -27,7 +27,7 @@ import {
   IDataColumnsProps,
 } from '../datatableColumnsConfigurator/models';
 import { getFilterOptions } from '../../components/columnItemFilter';
-import { cleanPropertyName } from './utils';
+import { cleanPropertyName, columnSorting2SortDirection } from './utils';
 
 /** get dirty filter if exists and fallback to current filter state */
 const getDirtyFilter = (state: IDataTableStateContext): ITableFilter[] => {
@@ -310,7 +310,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
                 referenceListNamespace: srvColumn.referenceListNamespace,
                 autocompleteUrl: srvColumn.autocompleteUrl,
                 allowInherited: srvColumn.allowInherited,
-                defaultSorting: srvColumn.defaultSorting as SortDirection,
+                defaultSorting: columnSorting2SortDirection(column.defaultSorting),
 
                 caption: column.caption,
                 header: column.caption,
@@ -351,6 +351,13 @@ const reducer = handleActions<IDataTableStateContext, any>(
         })
         .filter(c => c !== null);
 
+      const configuredTableSorting = cols.filter(c => c.defaultSorting !== null && c.defaultSorting !== undefined && c.propertyName)
+        .map<IColumnSorting>(c => ({ id: c.id, desc: c.defaultSorting === 1 }));
+        
+      const tableSorting = userConfig && userConfig.tableSorting && userConfig.tableSorting.length > 0 
+        ? userConfig.tableSorting
+        : configuredTableSorting;
+
       return {
         ...state,
         columns: cols,
@@ -360,7 +367,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
         quickSearch: userConfig?.quickSearch,
         tableFilter: userConfig?.tableFilter,
         selectedStoredFilterIds: userConfig?.selectedStoredFilterIds || [],
-        tableSorting: userConfig?.tableSorting,
+        tableSorting: tableSorting,
       };
     },
 

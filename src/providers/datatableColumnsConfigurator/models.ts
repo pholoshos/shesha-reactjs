@@ -1,8 +1,11 @@
+import { ColumnSorting } from "../dataTable/interfaces";
+
 type ColumnsItemType = 'item' | 'group';
 
 export type ColumnsItemProps = IConfigurableColumnsProps | IConfigurableColumnGroup;
 
 type ButtonActionType = 'navigate' | 'dialogue' | 'executeScript' | 'executeFormAction' | 'deleteRow' | 'editRow';
+
 /**
  * Base properties of configurable column
  */
@@ -15,6 +18,7 @@ export interface IConfigurableColumnsBase {
   minWidth?: number;
   maxWidth?: number;
   isVisible: boolean;
+  defaultSorting?: ColumnSorting;
 }
 
 export type DatatableColumnType = 'data' | 'action' | 'calculated';

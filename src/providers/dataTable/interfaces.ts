@@ -28,7 +28,8 @@ export type IndexColumnFilterOption =
   | 'before'
   | 'after';
 
-export type SortDirection = 0 | 1;
+export type SortDirection = 0 /*asc*/ | 1 /*desc*/;
+export type ColumnSorting = 'asc' | 'desc';
 
 export interface ITableColumn {
   customDataType?: string;

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef, useMemo } from 'react';
 import classNames from 'classnames';
 import {
   useResizeColumns,
@@ -79,13 +79,26 @@ const ReactTable: FC<IReactTableProps> = ({
     []
   );
 
+  const getColumnAccessor = (cid) => {
+    const column = columns.find(c => c.id == cid);
+    return column ? column.accessor.toString() : "";
+  }
+
+  const initialSorting = useMemo(() => {
+    if (!defaultSorting)
+      return [];
+    return  defaultSorting.map(s => {
+      return { ...s, id: getColumnAccessor(s.id) };
+    });
+  }, [defaultSorting]);
+
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state } = useTable(
     {
       columns,
       data,
       defaultColumn,
       initialState: {
-        sortBy: defaultSorting || [],
+        sortBy: initialSorting,
         hiddenColumns: columns
           .map((column: any) => {
             if ([column.isVisible, column.show].includes(false)) return column.accessor || column.id;

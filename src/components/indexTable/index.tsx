@@ -693,7 +693,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
       </div>
 
       {/* {useMultiselect ? <MultiselectWithState {...tableProps} /> : <ReactTable {...tableProps} />} */}
-      <ReactTable {...tableProps} />
+      { tableProps.columns && tableProps.columns.length > 0 && <ReactTable {...tableProps} /> }
 
       {renderConfirmDialog()}
 

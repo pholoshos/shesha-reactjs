@@ -2,12 +2,13 @@
 const camelcase = require('camelcase');
 
 // const STORYBOOK_BASE_URL = 'https://testpdkznotpbe.azurewebsites.net';
-const STORYBOOK_BASE_URL = 'https://kznotp-bursarymanagement-api-test.azurewebsites.net';
+const STORYBOOK_BASE_URL = 'http://localhost:21021';//'https://kznotp-bursarymanagement-api-test.azurewebsites.net';
 // const STORYBOOK_BASE_URL = process.env.STORYBOOK_BASE_URL;
 const ROOT_PATH = './src/apis';
 
 const API_LIST = [
-  'Form',
+  //'Form',
+  //'PermissionedObject'
   /*
   //'Applications',
   'Area',

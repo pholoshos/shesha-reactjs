@@ -5,12 +5,17 @@ import SearchBox from '../formDesigner/toolboxSearchBox';
 import ObjectsTree from './objectsTree';
 import { PermissionedObjectDto, usePermissionedObjectGetAllTree } from '../../apis/permissionedObject';
 import { DatabaseFilled } from '@ant-design/icons';
+import { useForm } from '../..';
 
 const { Panel } = Collapse;
 
-export interface IToolboxDataSourcesProps {
-  type?: string,
-  onChange: (id: string) => void;
+export interface IPermissionedObjectsTreeProps {
+  objectsType?: string,
+
+  /**
+   * A callback for when the value of this component changes
+   */
+   onChange?: any;
 }
 
 interface GrouppedObjects {
@@ -18,15 +23,26 @@ interface GrouppedObjects {
   visibleItems: PermissionedObjectDto[],
 }
 
-export const ToolboxObjects: FC<IToolboxDataSourcesProps> = (props) => {
+export const PermissionedObjectsTree: FC<IPermissionedObjectsTreeProps> = (props) => {
 
-  const [openedKeys, setOpenedKeys] = useLocalStorage('shaPermissionedObjects.toolbox.objects.openedKeys.' + props.type, ['']);
-  const [searchText, setSearchText] = useLocalStorage('shaPermissionedObjects.toolbox.objects.search.' + props.type, '');
+  const [openedKeys, setOpenedKeys] = useLocalStorage('shaPermissionedObjects.toolbox.objects.openedKeys.' + props.objectsType, ['']);
+  const [searchText, setSearchText] = useLocalStorage('shaPermissionedObjects.toolbox.objects.search.' + props.objectsType, '');
 
   const [allItems, setAllItems] = useState<PermissionedObjectDto[]>();
 
-  const fetcher = usePermissionedObjectGetAllTree({queryParams: {type: props.type}, lazy: true });
+  const fetcher = usePermissionedObjectGetAllTree({queryParams: {type: props.objectsType}, lazy: true });
   const { loading: isFetchingData, error: fetchingDataError, data: fetchingDataResponse } = fetcher;
+
+  const [objectId, setObjectId] = useState("");
+
+  const { getAction } = useForm();
+
+  useEffect(() => {
+    var action = getAction(null,'onChangeId')
+    if (Boolean(action)){
+      action(objectId);
+    }
+  }, [objectId])
 
   useEffect(() => {
     fetcher.refetch();
@@ -75,29 +91,18 @@ export const ToolboxObjects: FC<IToolboxDataSourcesProps> = (props) => {
     ];
   }, [allItems, searchText])
 
-  /*const datasourcesWithVisible = useMemo<FilteredDataSource[]>(() => {
-    const dataSources = allDataSources.map<FilteredDataSource>((ds) => (
-      {
-        datasource: ds,
-        visibleItems: getVisibleProperties(ds.items, searchText),
-      }
-    ));
-    return dataSources;    
-  }, [allDataSources, searchText]);*/
-
-  /*const itemContainsText = (item: PermissionedObjectDto, loweredSearchText: string): boolean => {
-    if (item.object.toLowerCase().includes(loweredSearchText) || item.name?.toLowerCase().includes(loweredSearchText))
-      return true;
-
-    return (item.child ?? []).some(child => itemContainsText(child, loweredSearchText))
-  }*/
-
   if (!allItems || allItems.length === 0)
     return null;
 
   const onCollapseChange = (key: string | string[]) => {
     setOpenedKeys(Array.isArray(key) ? key : [key]);
   };
+
+  const onChangeHandler = (id: string) => {
+    setObjectId(id);
+    if (Boolean(props.onChange))
+    props.onChange(id);
+  }
 
   const menu = (
     <Menu>
@@ -131,7 +136,7 @@ export const ToolboxObjects: FC<IToolboxDataSourcesProps> = (props) => {
                   items={visibleItems} 
                   searchText={searchText} 
                   defaultExpandAll={(searchText ?? '') !== ''}
-                  onChange={ (id) => {props.onChange(id)} }
+                  onChange={ onChangeHandler }
                   ></ObjectsTree>
               </Panel>
             );
@@ -145,4 +150,4 @@ export const ToolboxObjects: FC<IToolboxDataSourcesProps> = (props) => {
   );
 }
 
-export default ToolboxObjects;
+export default PermissionedObjectsTree;

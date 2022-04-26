@@ -17,6 +17,7 @@ export interface IMutateOptions extends Pick<MutateRequestOptions<any, any>, 'he
 }
 
 const GenericEditPanel = forwardRef<CommonCrudHandles, IGenericEditPageProps>((props, forwardedRef) => {
+  
   useImperativeHandle(forwardedRef, () => ({
     refresh() {
       fetchData();

@@ -145,6 +145,10 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [dataByPath, dataById]);
   //#endregion
 
+  const onChangeId = (id: string) => {
+    setState(prev => ({ ...prev, id }))
+  }
+
   const onFinish = (values: any) => {
     postEntity(values)
       .then(() => {
@@ -241,7 +245,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     }
   };
 
-  return (
+    return (
     <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
       <ConfigurableForm
         path={path}
@@ -249,6 +253,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         formRef={formRef}
         mode={state?.mode}
         form={form}
+        actions = {{onChangeId}}
         onFinish={onFinish}
         initialValues={state?.fetchedEntity}
         skipPostOnFinish

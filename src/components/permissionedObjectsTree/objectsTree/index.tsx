@@ -103,9 +103,8 @@ const ObjectTree: FC<IProps> = (props) => {
             draggable={false}
             selectable={true}
             titleRender={renderTitle}
-            onClick={ (e, node) => { props.onChange(node.key.toString()) } }
+            onClick={ (_, node) => { props.onChange(node.key.toString()) } }
             selectedKeys={[props.defaultSelected]}
-            //onSelect={(keys, info) => { props.onChange(info.selectedNodes[0].object.id) } }
         />
     );
 };

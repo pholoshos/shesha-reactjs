@@ -1,23 +1,23 @@
 import { Tree } from 'antd';
 import { DataNode } from 'antd/lib/tree';
 import React, { FC, useMemo, useState, useEffect } from 'react';
-import { ReactSortable } from 'react-sortablejs';
 import { PermissionedObjectDto } from '../../../apis/permissionedObject';
 import ShaIcon, { IconType } from '../../shaIcon';
 
 export interface IProps {
     items: PermissionedObjectDto[];
     defaultExpandAll: boolean;
+    defaultSelected?: string;
     searchText?: string;
     onChange: (id: string) => void;    
 }
 
 const getTreeData = (prop: PermissionedObjectDto, onAddItem: (prop: PermissionedObjectDto) => void): DataNodeWithObject => {
     const node: DataNodeWithObject = {
-        key: prop.object,
+        key: prop.id,
         title: prop.name,
         isLeaf: prop.child.length === 0,
-        selectable: true,
+        selectable: false,
         object: prop,
     };
     node.children = prop.child.map<DataNodeWithObject>(childObj => getTreeData(childObj, onAddItem));
@@ -42,7 +42,7 @@ const ObjectTree: FC<IProps> = (props) => {
     
     const treeData = useMemo<NodesWithExpanded>(() => {
         const expanded: string[] = [];
-        const nodes = props.items.map(item => getTreeData(item, (item) => { expanded.push(item.object); }));
+        const nodes = props.items.map(item => getTreeData(item, (item) => { expanded.push(item.id); }));
 
         return { nodes: nodes, expandedKeys: expanded };
     }, [props.items]);
@@ -80,33 +80,12 @@ const ObjectTree: FC<IProps> = (props) => {
             case "Shesha.WebCrudApi.Action": icon = 'ApiFilled'; break;
             default: icon = node.object.child && node.object.child.length > 0 ? 'BookOutlined' : 'FileFilled'; break;
         }
-        
-
-        const sortableItem = {
-            id: node.object.id,
-            parent_id: null,
-            //type: TOOLBOX_DATA_ITEM_DROPPABLE_KEY,
-            object: node.object,
-        };
 
         return (
-            <ReactSortable
-                list={[sortableItem]}
-                setList={() => { }}
-                group={{
-                    name: 'shared',
-                    pull: 'clone',
-                    put: false,
-                }}
-                sort={false}
-                draggable=".sha-toolbox-component"
-                ghostClass="sha-component-ghost"
-            >
-                <div className='sha-toolbox-component'>
-                    {icon && <ShaIcon iconName={icon}></ShaIcon>}
-                    <span className='sha-component-title'> {getTitle(node.object)}</span>
-                </div>
-            </ReactSortable>
+            <div className='sha-toolbox-component' key={node.object.id}>
+                {icon && <ShaIcon iconName={icon}></ShaIcon>}
+                <span className='sha-component-title'> {getTitle(node.object)}</span>
+            </div>
         );
     }
 
@@ -124,7 +103,9 @@ const ObjectTree: FC<IProps> = (props) => {
             draggable={false}
             selectable={true}
             titleRender={renderTitle}
-            onSelect={(keys, info) => { props.onChange(info.selectedNodes[0].object.id) } }
+            onClick={ (e, node) => { props.onChange(node.key.toString()) } }
+            selectedKeys={[props.defaultSelected]}
+            //onSelect={(keys, info) => { props.onChange(info.selectedNodes[0].object.id) } }
         />
     );
 };

@@ -217,3 +217,7 @@ export interface IFormSection {
 export interface IFormDto extends Omit<FormDto, 'markup'> {
   markup: FormMarkupWithSettings;
 }
+
+export interface IFormValidationRulesOptions {
+  formData?: any;
+}

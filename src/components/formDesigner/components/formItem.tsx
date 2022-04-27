@@ -33,7 +33,7 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
   labelCol,
   wrapperCol,
 }) => {
-  const { isComponentHidden } = useForm();
+  const { isComponentHidden, formData } = useForm();
 
   const isHidden = isComponentHidden(model);
 
@@ -49,7 +49,7 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
       valuePropName={valuePropName}
       initialValue={initialValue}
       tooltip={model.description}
-      rules={isHidden ? [] : getValidationRules(model)}
+      rules={isHidden ? [] : getValidationRules(model, { formData })}
       labelCol={labelCol}
       wrapperCol={wrapperCol}
       style={style}

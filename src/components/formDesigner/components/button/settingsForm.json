@@ -270,7 +270,7 @@
       "id": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
       "type": "collapsiblePanel",
       "name": "pnlModalSettings",
-      "label": "Dialogue settings",
+      "label": "Dialog settings",
       "labelAlign": "right",
       "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
       "hidden": false,

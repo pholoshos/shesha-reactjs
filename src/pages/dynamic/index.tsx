@@ -1,7 +1,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, message, notification, Result, Spin } from 'antd';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GetDataError, useGet, useMutate } from 'restful-react';
 import { FormDto, useFormGet, useFormGetByPath } from '../../apis/form';
 import { AjaxResponseBase } from '../../apis/user';
@@ -35,6 +35,14 @@ export interface IDynamicPageProps {
    * form mode.
    */
   mode?: FormMode;
+
+  /**
+   * This tells the dynamic page that the id should be passed as a path and not as a query parameter
+   * this is the id for fetching the entity
+   *
+   * Required if the id is not provided
+   */
+  entityPathId?: string;
 }
 
 export interface EntityAjaxResponse {
@@ -61,7 +69,17 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const [state, setState] = useState<IDynamicPageState>({});
   const formRef = useRef<ConfigurableFormInstance>();
 
-  const { id, path, formId } = state;
+  const { id, path, formId, entityPathId } = state;
+
+  const fetchEntityPath = useMemo(() => {
+    let pathToReturn = (removeZeroWidthCharsFromString(state?.formResponse?.markup?.formSettings?.getUrl) || '').trim();
+
+    if (entityPathId) {
+      return pathToReturn?.endsWith('/') ? `${pathToReturn}${entityPathId}` : `${pathToReturn}/${entityPathId}`;
+    }
+
+    return pathToReturn;
+  }, [state, entityPathId]);
 
   const {
     refetch: fetchEntity,
@@ -69,7 +87,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     loading: isFetchingEntity,
     data: fetchEntityResponse,
   } = useGet<EntityAjaxResponse>({
-    path: removeZeroWidthCharsFromString(state?.formResponse?.markup?.formSettings?.getUrl) || '',
+    path: fetchEntityPath,
     // queryParams: { id },
     lazy: true, // We wanna make sure we have both the id and the state?.markup?.formSettings?.getUrl before fetching data
   });
@@ -102,10 +120,10 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   //#region get form data
   useEffect(() => {
     // Avoid fetching entity if we're displaying index table
-    if (id && props?.id) {
-      fetchEntity({ queryParams: { id } });
+    if ((id && props?.id) || (entityPathId && props?.entityPathId)) {
+      fetchEntity({ queryParams: entityPathId ? {} : { id } });
     }
-  }, [id, state?.formResponse?.markup?.formSettings?.getUrl]);
+  }, [id, state?.formResponse?.markup?.formSettings?.getUrl, entityPathId]);
 
   useEffect(() => {
     if (!isFetchingFormByPath && fetchEntityResponse) {

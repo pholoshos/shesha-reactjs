@@ -566,30 +566,30 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   );
 };
 
-function useFormState() {
+function useFormState(require: boolean = true) {
   const context = useContext(FormStateContext);
 
-  if (context === undefined) {
+  if (require && context === undefined) {
     throw new Error('useFormState must be used within a FormProvider');
   }
 
   return context;
 }
 
-function useFormActions() {
+function useFormActions(require: boolean = true) {
   const context = useContext(FormActionsContext);
 
-  if (context === undefined) {
+  if (require && context === undefined) {
     throw new Error('useFormActions must be used within a FormProvider');
   }
 
   return context;
 }
 
-function useUndoableState() {
+function useUndoableState(require: boolean = true) {
   const context = useContext(UndoableFormStateContext);
 
-  if (context === undefined) {
+  if (require && context === undefined) {
     throw new Error('useUndoableState must be used within a FormProvider');
   }
 
@@ -599,8 +599,8 @@ function useUndoableState() {
   };
 }
 
-function useForm() {
-  return { ...useFormState(), ...useFormActions(), ...useUndoableState() };
+function useForm(require: boolean = true) {
+  return { ...useFormState(require), ...useFormActions(require), ...useUndoableState(require) };
 }
 
 const isInDesignerMode = () => {

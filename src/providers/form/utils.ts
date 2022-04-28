@@ -12,6 +12,7 @@ import {
   IFormSection,
   IFormSections,
   ViewType,
+  IFormValidationRulesOptions,
 } from './models';
 import Mustache from 'mustache';
 import { IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
@@ -20,7 +21,7 @@ import { DEFAULT_FORM_SETTINGS, IFormSettings } from './contexts';
 import { formGet, formGetByPath } from '../../apis/form';
 import { IPropertyMetadata } from '../../interfaces/metadata';
 import { nanoid } from 'nanoid';
-import { Rule } from 'antd/lib/form';
+import { Rule, RuleObject } from 'antd/lib/form';
 import nestedProperty from 'nested-property';
 import { getFullPath } from '../../utils/metadata';
 import blankViewMarkup from './defaults/markups/blankView.json';
@@ -350,7 +351,7 @@ export const getFieldNameFromExpression = (expression: string) => {
 /**
  * Return valudation rules for the specified form component
  */
-export const getValidationRules = (component: IConfigurableFormComponent) => {
+export const getValidationRules = (component: IConfigurableFormComponent, options?: IFormValidationRulesOptions) => {
   const { validate } = component;
   const rules: Rule[] = [];
 
@@ -390,7 +391,13 @@ export const getValidationRules = (component: IConfigurableFormComponent) => {
     if (validate.validator)
       rules.push({
         // tslint:disable-next-line:function-constructor
-        validator: (...r) => new Function('rule', 'value', 'callback', validate.validator)(...r),
+        validator: (rule: RuleObject, value: any, callback: (error?: string) => void) =>
+          new Function('rule', 'value', 'callback', 'data', validate.validator)(
+            rule,
+            value,
+            callback,
+            options?.formData
+          ),
       });
   }
 

@@ -73,3 +73,8 @@ export function isNumeric(value: string) {
     !isNaN(value as any) && !isNaN(parseFloat(value)) // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
   ); // ...and ensure strings of whitespace fail
 }
+
+export function getLastSection(separator:string, value: string) {
+  const s = value.split(separator);
+  return s.length > 0 ? s[s.length - 1] : "";
+}

@@ -120,10 +120,14 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   //#region get form data
   useEffect(() => {
     // Avoid fetching entity if we're displaying index table
-    if ((id && props?.id) || (entityPathId && props?.entityPathId)) {
+    if (id || entityPathId) {
       fetchEntity({ queryParams: entityPathId ? {} : { id } });
     }
   }, [id, state?.formResponse?.markup?.formSettings?.getUrl, entityPathId]);
+
+  const onChangeId = (id: string) => {
+    setState(prev => ({ ...prev, id }));
+  };
 
   useEffect(() => {
     if (!isFetchingFormByPath && fetchEntityResponse) {
@@ -267,6 +271,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         formRef={formRef}
         mode={state?.mode}
         form={form}
+        actions={{ onChangeId }}
         onFinish={onFinish}
         initialValues={state?.fetchedEntity}
         skipPostOnFinish

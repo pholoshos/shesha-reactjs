@@ -6,7 +6,8 @@ const STORYBOOK_BASE_URL = 'https://shesha-mmsample-backend-dev.azurewebsites.ne
 const ROOT_PATH = './src/apis';
 
 const API_LIST = [
-  'Form',
+  //'Form',
+  //'PermissionedObject'
   /*
   //'Applications',
   'Area',

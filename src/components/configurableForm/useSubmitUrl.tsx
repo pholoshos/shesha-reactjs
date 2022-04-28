@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { removeZeroWidthCharsFromString } from '../..';
 import { IFormSettings } from '../../providers/form/contexts';
-import { evaluateKeyValuesToObjectMatchedData } from '../../providers/form/utils';
+import { evaluateComplexString } from '../../providers/form/utils';
+import { getQueryParams } from '../../utils/url';
 
 export const useSubmitUrl = (
   formSettings: IFormSettings,
@@ -33,11 +34,12 @@ export const useSubmitUrl = (
 
     url = removeZeroWidthCharsFromString(url);
 
-    url = evaluateKeyValuesToObjectMatchedData<{ url: string }>({ url }, [
+    url = evaluateComplexString(url, [
+      { match: 'query', data: getQueryParams() },
       { match: 'data', data: formData },
       { match: 'parentFormValues', data: parentFormValues },
       { match: 'globalState', data: globalState },
-    ])?.url;
+    ]);
 
     return url;
   }, [formSettings]);

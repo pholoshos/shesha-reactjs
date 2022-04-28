@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Form, message, Spin } from 'antd';
 import ComponentsContainer from '../formDesigner/componentsContainer';
 import { ROOT_COMPONENT_KEY } from '../../providers/form/models';
@@ -9,7 +9,11 @@ import { IAnyObject, ValidateErrorEntity } from '../../interfaces';
 import { addFormFieldsList } from '../../utils/form';
 import { useGlobalState, useSheshaApplication } from '../../providers';
 import moment from 'moment';
-import { evaluateKeyValuesToObjectMatchedData, getObjectWithOnlyIncludedKeys } from '../../providers/form/utils';
+import {
+  evaluateComplexString,
+  evaluateKeyValuesToObjectMatchedData,
+  getObjectWithOnlyIncludedKeys,
+} from '../../providers/form/utils';
 import cleanDeep from 'clean-deep';
 import { useSubmitUrl } from './useSubmitUrl';
 import { getQueryParams } from '../../utils/url';
@@ -40,6 +44,8 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     path: formSettings?.getUrl || '',
     lazy: true,
   });
+
+  const queryParamsFromAddressBar = useMemo(() => getQueryParams(), []);
 
   //#region PERSISTED FORM VALUES
   const [persistedFormValue, setPersistedFormValue, removePersistedVFormValue] = useLocalStorage<any>(
@@ -81,6 +87,24 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     setLastTruthyPersistedValue(_.isEmpty(persistedFormValue) ? null : persistedFormValue);
   }, [persistedFormValue]);
 
+  const initialValuesFromSettings = useMemo(() => {
+    const computedInitialValues = {};
+
+    formSettings?.initialValues?.forEach(({ key, value }) => {
+      const evaluatedValue = value?.includes('{{')
+        ? evaluateComplexString(getUrl, [
+            { match: 'data', data: formData },
+            { match: 'parentFormValues', data: parentFormValues },
+            { match: 'globalState', data: globalState },
+            { match: 'query', data: queryParamsFromAddressBar },
+          ])
+        : value;
+      _.set(computedInitialValues, key, evaluatedValue);
+    });
+
+    return computedInitialValues;
+  }, [formSettings?.initialValues]);
+
   useEffect(() => {
     if (skipFetchData) {
       return;
@@ -96,27 +120,20 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
 
     if (getUrl) {
-      const fullUrl = `${backendUrl}${getUrl}`;
-      const urlObj = new URL(decodeURIComponent(fullUrl));
-      const rawQueryParamsToBeEvaluated = getQueryParams(fullUrl);
-      const queryParamsFromAddressBar = getQueryParams();
-
-      let queryParams: IAnyObject;
-
-      if (fullUrl?.includes('?')) {
-        if (fullUrl?.includes('{{')) {
-          queryParams = evaluateKeyValuesToObjectMatchedData(rawQueryParamsToBeEvaluated, [
+      const evaluatedGetUrl = getUrl?.includes('{{')
+        ? evaluateComplexString(getUrl, [
             { match: 'data', data: formData },
             { match: 'parentFormValues', data: parentFormValues },
             { match: 'globalState', data: globalState },
             { match: 'query', data: queryParamsFromAddressBar },
-          ]);
-        } else {
-          queryParams = rawQueryParamsToBeEvaluated;
-        }
-      }
+          ])
+        : getUrl;
 
-      if (getUrl && !_.isEmpty(queryParams)) {
+      const fullUrl = `${backendUrl}${evaluatedGetUrl}`;
+      const urlObj = new URL(decodeURIComponent(fullUrl));
+      const queryParams = getQueryParams(fullUrl);
+
+      if (!_.isEmpty(queryParams)) {
         if (Object.hasOwn(queryParams, 'id') && !Boolean(queryParams['id'])) {
           console.error('id cannot be null');
           return;
@@ -125,7 +142,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
         fetchEntity({
           queryParams,
           path: urlObj?.pathname,
-          base: urlObj?.origin,
         });
       }
     }
@@ -152,34 +168,41 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const fetchedFormEntity = fetchedEntity?.result;
 
   useEffect(() => {
-    const hasFormEntityChanged = !_.isEqual(previousFormEntity, fetchedFormEntity);
-    const hasPersistedValuesChanged = !_.isEqual(previousPersistedValues, lastTruthyPersistedValue);
+    let incomingInitialValues = initialValuesFromSettings;
 
-    if (!hasFormEntityChanged && !hasPersistedValuesChanged) {
-      return;
-    }
+    // Initial values from formSettings override any other initial values
+    if (_.isEmpty(initialValuesFromSettings)) {
+      const hasFormEntityChanged = !_.isEqual(previousFormEntity, fetchedFormEntity);
+      const hasPersistedValuesChanged = !_.isEqual(previousPersistedValues, lastTruthyPersistedValue);
 
-    if (fetchedFormEntity || lastTruthyPersistedValue) {
-      let computedInitialValues = fetchedFormEntity
-        ? prepareInitialValues
-          ? prepareInitialValues(fetchedFormEntity)
-          : fetchedFormEntity
-        : initialValues;
-
-      if (!_.isEmpty(lastTruthyPersistedValue)) {
-        computedInitialValues = { ...computedInitialValues, ...lastTruthyPersistedValue };
+      if (!hasFormEntityChanged && !hasPersistedValuesChanged) {
+        return;
       }
 
+      if (fetchedFormEntity || lastTruthyPersistedValue) {
+        let computedInitialValues = fetchedFormEntity
+          ? prepareInitialValues
+            ? prepareInitialValues(fetchedFormEntity)
+            : fetchedFormEntity
+          : initialValues;
+
+        if (!_.isEmpty(lastTruthyPersistedValue)) {
+          computedInitialValues = { ...computedInitialValues, ...lastTruthyPersistedValue };
+          incomingInitialValues = computedInitialValues;
+        }
+      }
+    }
+
+    if (incomingInitialValues) {
       // TODO: setFormData doesn't update the fields when the form that needs to be initialized it modal.
       // TODO: Tried with mergeValues as both true | false. The state got updated properly but that doesn't reflect on the form
       // TODO: Investigate this
       if (form) {
-        form?.setFieldsValue(computedInitialValues);
+        form?.setFieldsValue(incomingInitialValues);
       }
-
-      setFormData({ values: computedInitialValues, mergeValues: false });
+      setFormData({ values: incomingInitialValues, mergeValues: false });
     }
-  }, [fetchedFormEntity, lastTruthyPersistedValue]);
+  }, [fetchedFormEntity, lastTruthyPersistedValue, initialValuesFromSettings]);
 
   const { mutate: doSubmit, loading: submitting } = useMutate({
     verb: httpVerb || 'POST', // todo: convert to configurable

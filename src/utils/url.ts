@@ -32,6 +32,7 @@ export const getLoginUrlWithReturn = (landingPage: string, unauthorizedRedirectU
 export interface QueryStringParams {
   [key: string]: string | number;
 }
+
 export const getQueryParams = (url?: string): QueryStringParams => {
   const search = url ? new URL(decodeURIComponent(url)).search : getCurrentQueryString();
 

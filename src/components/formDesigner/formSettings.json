@@ -209,9 +209,10 @@
           "description": "Parent form values. The values of the form rendering the dialog.",
           "type": "object"
         },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "query", "description": "Query parameters from the address bar", "type": "object" }
       ],
-      "description": "Enter values that you would like passed to the server as payload. Note that you can also use Mustache expression as in {{parent.id}}. You have variables 'data', 'parentFormValues' and 'globalState' at your disposal"
+      "description": "Enter values that you would like passed to the server as payload. Note that you can also use Mustache expression as in {{parent.id}}. Also you can use dot notation such as query.name"
     },
     {
       "id": "fcfccb85-8fc3-436b-9f87-17e189bc3cdc",

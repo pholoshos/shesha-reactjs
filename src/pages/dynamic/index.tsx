@@ -1,16 +1,18 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, message, notification, Result, Spin } from 'antd';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GetDataError, useGet, useMutate } from 'restful-react';
 import { FormDto, useFormGet, useFormGetByPath } from '../../apis/form';
 import { AjaxResponseBase } from '../../apis/user';
 import { ConfigurableForm, ValidationErrors } from '../../components';
 import { useSubscribe } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
+import { useGlobalState } from '../../providers';
 import { ConfigurableFormInstance } from '../../providers/form/contexts';
 import { IFormDto } from '../../providers/form/models';
-import { removeZeroWidthCharsFromString } from '../../providers/form/utils';
+import { evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
+import { getQueryParams } from '../../utils/url';
 import { DynamicFormPubSubConstants } from './pubSub';
 
 type FormMode = 'designer' | 'edit' | 'readonly';
@@ -35,6 +37,14 @@ export interface IDynamicPageProps {
    * form mode.
    */
   mode?: FormMode;
+
+  /**
+   * This tells the dynamic page that the id should be passed as a path and not as a query parameter
+   * this is the id for fetching the entity
+   *
+   * Required if the id is not provided
+   */
+  entityPathId?: string;
 }
 
 export interface EntityAjaxResponse {
@@ -60,19 +70,9 @@ interface IDynamicPageState extends IDynamicPageProps {
 const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const [state, setState] = useState<IDynamicPageState>({});
   const formRef = useRef<ConfigurableFormInstance>();
+  const { globalState } = useGlobalState();
 
-  const { id, path, formId } = state;
-
-  const {
-    refetch: fetchEntity,
-    error: fetchEntityError,
-    loading: isFetchingEntity,
-    data: fetchEntityResponse,
-  } = useGet<EntityAjaxResponse>({
-    path: removeZeroWidthCharsFromString(state?.formResponse?.markup?.formSettings?.getUrl) || '',
-    // queryParams: { id },
-    lazy: true, // We wanna make sure we have both the id and the state?.markup?.formSettings?.getUrl before fetching data
-  });
+  const { id, path, formId, entityPathId } = state;
 
   const {
     refetch: fetchFormByPath,
@@ -80,11 +80,6 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     loading: isFetchingFormByPath,
     error: fetchFormByPathError,
   } = useFormGetByPath({ queryParams: { path }, lazy: true });
-
-  const { mutate: postEntity, loading: isPostingData } = useMutate({
-    path: removeZeroWidthCharsFromString(state?.formResponse?.markup?.formSettings?.putUrl),
-    verb: id ? 'PUT' : 'POST',
-  });
 
   const [form] = Form.useForm();
 
@@ -95,17 +90,82 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     error: fetchFormByIdError,
   } = useFormGet({ id: formId, lazy: true });
 
+  const formResponse: IFormDto = useMemo(() => {
+    if (isFetchingFormByPath || isFetchingFormById) {
+      return null;
+    }
+
+    let result: FormDto;
+    if (dataByPath) {
+      result = dataByPath.result;
+    }
+
+    if (dataById) {
+      result = dataById.result;
+    }
+
+    if (result) {
+      const formResponse: IFormDto = { ...(result as any) };
+      formResponse.markup = JSON.parse(result.markup);
+
+      return formResponse;
+    }
+
+    return null;
+  }, [isFetchingFormByPath, isFetchingFormById, props]);
+
+  const fetchEntityPath = useMemo(() => {
+    const pathToReturn = (removeZeroWidthCharsFromString(formResponse?.markup?.formSettings?.getUrl) || '').trim();
+
+    if (entityPathId) {
+      return pathToReturn?.endsWith('/') ? `${pathToReturn}${entityPathId}` : `${pathToReturn}/${entityPathId}`;
+    }
+
+    return pathToReturn?.trim();
+  }, [formResponse, entityPathId, props, state]);
+
+  const {
+    refetch: fetchEntity,
+    error: fetchEntityError,
+    loading: isFetchingEntity,
+    data: fetchEntityResponse,
+  } = useGet<EntityAjaxResponse>({
+    path: fetchEntityPath,
+    // queryParams: { id },
+    lazy: true, // We wanna make sure we have both the id and the state?.markup?.formSettings?.getUrl before fetching data
+  });
+
+  const putUrl = useMemo(() => {
+    const url = formResponse?.markup?.formSettings?.putUrl;
+
+    return url
+      ? evaluateComplexString(url, [
+          { match: 'query', data: getQueryParams() },
+          { match: 'globalState', data: globalState },
+        ])
+      : '';
+  }, [formResponse?.markup?.formSettings]);
+
+  const { mutate: postEntity, loading: isPostingData } = useMutate({
+    path: putUrl,
+    verb: id ? 'PUT' : 'POST',
+  });
+
   useEffect(() => {
-    setState(prev => ({ ...prev, ...props, mode: props?.mode }));
+    setState(() => ({ ...props }));
   }, [props]);
 
   //#region get form data
   useEffect(() => {
     // Avoid fetching entity if we're displaying index table
-    if (id && props?.id) {
-      fetchEntity({ queryParams: { id } });
+    if ((id || entityPathId) && fetchEntityPath) {
+      fetchEntity({ queryParams: entityPathId ? {} : { id } });
     }
-  }, [id, state?.formResponse?.markup?.formSettings?.getUrl]);
+  }, [id, formResponse?.markup?.formSettings?.getUrl, entityPathId, fetchEntityPath]);
+
+  const onChangeId = (id: string) => {
+    setState(prev => ({ ...prev, id }));
+  };
 
   useEffect(() => {
     if (!isFetchingFormByPath && fetchEntityResponse) {
@@ -194,22 +254,22 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   });
 
   useEffect(() => {
-    if (state && !state?.formResponse?.markup && state?.path) {
+    if (formResponse && !formResponse?.markup && state?.path) {
       notification.error({
         message: 'Form not found',
         description: (
           <span>
-            Could not firm with the path <strong>{state?.path}</strong>. Please make sure the path is correct or that it
-            hasn't been changed
+            Could not find a form with the path <strong>{state?.path}</strong>. Please make sure the path is correct or
+            that it hasn't been changed
           </span>
         ),
       });
     }
-  }, [state?.formResponse?.markup]);
+  }, [formResponse]);
 
   const isLoading = isFetchingEntity || isFetchingFormByPath || isFetchingFormById || isPostingData;
 
-  if (state && !state?.formResponse?.markup && !isLoading) {
+  if (state && !formResponse?.markup && !isLoading) {
     return (
       <Result
         status="404"
@@ -249,6 +309,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         formRef={formRef}
         mode={state?.mode}
         form={form}
+        actions={{ onChangeId }}
         onFinish={onFinish}
         initialValues={state?.fetchedEntity}
         skipPostOnFinish
@@ -258,5 +319,4 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     </Spin>
   );
 };
-
 export default DynamicPage;

@@ -33,9 +33,6 @@ export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
     toggleModalVisibility();
   };
 
-  console.log("ButtonGroupSettingsModalInner items: ", items);
-  
-
   return (
     <Fragment>
       <Button onClick={toggleModalVisibility}>Customize Button Group</Button>

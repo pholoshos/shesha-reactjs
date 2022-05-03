@@ -12,6 +12,7 @@ import {
   IFormSection,
   IFormSections,
   ViewType,
+  IFormValidationRulesOptions,
 } from './models';
 import Mustache from 'mustache';
 import { IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
@@ -20,7 +21,7 @@ import { DEFAULT_FORM_SETTINGS, IFormSettings } from './contexts';
 import { formGet, formGetByPath } from '../../apis/form';
 import { IPropertyMetadata } from '../../interfaces/metadata';
 import { nanoid } from 'nanoid';
-import { Rule } from 'antd/lib/form';
+import { Rule, RuleObject } from 'antd/lib/form';
 import nestedProperty from 'nested-property';
 import { getFullPath } from '../../utils/metadata';
 import blankViewMarkup from './defaults/markups/blankView.json';
@@ -216,9 +217,9 @@ export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormC
  *
  * @param template - string template
  * @param data - data to use to evaluate the string
- * @returns
+ * @returns {string} evaluated string
  */
-export const evaluateString = (template: string = '', data: any = {}) => {
+export const evaluateString = (template: string = '', data: any) => {
   // The function throws an exception if the expression passed doesn't have a corresponding curly braces
   try {
     return template ? Mustache.render(template, data) : template;
@@ -226,6 +227,51 @@ export const evaluateString = (template: string = '', data: any = {}) => {
     console.warn('evaluateString ', error);
     return template;
   }
+};
+
+/**
+ * Evaluates the string using Mustache template. Same as {evaluateString} except it allows you to pass an array of
+ * objects that can be used to evaluate one string using multiple objects like data1, data2, data3... which can have conflicting keys
+ *
+ * Given a the below expression
+ *  const expression =  'My name is {{person.name}} {{person.surname}}. I work at {{company.name}}';
+ *
+ * and the below data
+ *  const mappings = [{
+ *      match: 'person',
+ *      data: { name: 'John', surname: 'Dow' }
+ *    },
+ *      match: 'company',
+ *      data: { name: 'Boxfusion' }
+ *    {
+ *  }]
+ *  const data = { name: 'John', surname: 'Dow' };
+ *  const company = { name: 'Boxfusion' };
+ *  evaluateString(expression, mappings)
+ * the expression below
+ *   evaluateString(expression, data);
+ * The below expression will return 'My name is John Doe. I work at Boxfusion';
+ *
+ * @param template - string template
+ * @param data - data to use to evaluate the string
+ * @returns {string} evaluated string
+ */
+export const evaluateComplexString = (expression: string, mappings: IMatchData[]) => {
+  const matches = new Set([...expression?.matchAll(/\{\{(?:(?!}}).)*\}\}/g)].flat());
+
+  let result = expression;
+
+  Array.from(matches).forEach(matched => {
+    mappings.forEach(({ match, data }) => {
+      if (matched.includes(`{{${match}`)) {
+        const evaluatedValue = evaluateString(matched, { [match]: data });
+
+        result = result.replace(matched, evaluatedValue);
+      }
+    });
+  });
+
+  return result;
 };
 
 export const getVisibilityFunc2 = (expression, name) => {
@@ -305,7 +351,7 @@ export const getFieldNameFromExpression = (expression: string) => {
 /**
  * Return valudation rules for the specified form component
  */
-export const getValidationRules = (component: IConfigurableFormComponent) => {
+export const getValidationRules = (component: IConfigurableFormComponent, options?: IFormValidationRulesOptions) => {
   const { validate } = component;
   const rules: Rule[] = [];
 
@@ -345,7 +391,13 @@ export const getValidationRules = (component: IConfigurableFormComponent) => {
     if (validate.validator)
       rules.push({
         // tslint:disable-next-line:function-constructor
-        validator: (...r) => new Function('rule', 'value', 'callback', validate.validator)(...r),
+        validator: (rule: RuleObject, value: any, callback: (error?: string) => void) =>
+          new Function('rule', 'value', 'callback', 'data', validate.validator)(
+            rule,
+            value,
+            callback,
+            options?.formData
+          ),
       });
   }
 

@@ -3,7 +3,7 @@ import moment from 'moment';
 import { ITableCustomTypesRender } from './interfaces';
 import { IConfigurableActionColumnsProps } from '../../providers/datatableColumnsConfigurator/models';
 import ShaIcon, { IconType } from '../shaIcon';
-import { evaluateString } from '../../providers/form/utils';
+import { evaluateKeyValuesToObject, evaluateString } from '../../providers/form/utils';
 import { useDataTable, useForm, useGlobalState, useModal, useShaRouting, useSheshaApplication } from '../../providers';
 import camelCaseKeys from 'camelcase-keys';
 import { message, Modal, notification } from 'antd';
@@ -11,6 +11,9 @@ import { useGet, useMutate } from 'restful-react';
 import { IModalProps } from '../../providers/dynamicModal/models';
 import ValidationErrors from '../validationErrors';
 import { axiosHttp } from '../../apis/axios';
+import { DataTablePubsubConstants } from '../../providers/dataTable/pubSub';
+import { usePubSub } from '../../hooks';
+import { usePrevious } from 'react-use';
 
 export const renderers: ITableCustomTypesRender[] = [
   {
@@ -70,6 +73,7 @@ export const renderers: ITableCustomTypesRender[] = [
       const { backendUrl } = useSheshaApplication();
       const { formData, formMode } = useForm();
       const { globalState } = useGlobalState();
+      const { publish } = usePubSub();
 
       const { mutate: deleteRowHttp } = useMutate({
         verb: 'DELETE',
@@ -96,6 +100,16 @@ export const renderers: ITableCustomTypesRender[] = [
           fetchEntity();
         }
       }, [state?.entityId]);
+
+      const previousEntityId = usePrevious(state?.entityId);
+
+      useEffect(() => {
+        const hasNewEntityId = state?.entityId && state?.entityId !== previousEntityId;
+
+        if (state?.modalProps && !hasNewEntityId) {
+          dynamicModal?.open();
+        }
+      }, [state?.modalProps]);
 
       useEffect(() => {
         if (!loading && fetchEntityResponse) {
@@ -142,19 +156,20 @@ export const renderers: ITableCustomTypesRender[] = [
           .finally(deletingLoader);
       };
 
-      const getExpressionExecutor = (expression: string) => {
+      const getExpressionExecutor = (expression: string, result?: any) => {
         if (!expression) {
           return null;
         }
 
         // tslint:disable-next-line:function-constructor
-        return new Function('data, moment, formMode, http, message, globalState, selectedRow', expression)(
+        return new Function('data, moment, formMode, http, message, globalState, result, selectedRow', expression)(
           formData,
           moment,
           formMode,
           axiosHttp(backendUrl),
           message,
           globalState,
+          result,
           camelCaseKeys(props?.cell?.row?.original || {}, { deep: true })
         );
       };
@@ -210,6 +225,46 @@ export const renderers: ITableCustomTypesRender[] = [
             };
 
             setState(prev => ({ ...prev, modalProps, entityId: selectedRow?.Id }));
+
+            break;
+          }
+          case 'dialogue': {
+            const convertedProps = actionProps as Omit<IModalProps, 'formId'>;
+
+            const onSuccessScriptExecutor = (values: any) => {
+              getExpressionExecutor(props?.onSuccessScript, values);
+            };
+
+            const onErrorScriptExecutor = () => {
+              getExpressionExecutor(props?.onErrorScript);
+            };
+
+            const modalProps: IModalProps = {
+              id: selectedRow?.Id, // link modal to the current form component by id
+              isVisible: false,
+              formId: actionProps.modalFormId,
+              title: actionProps.modalTitle,
+              mode: actionProps?.modalFormMode,
+              showModalFooter: convertedProps?.showModalFooter,
+              submitHttpVerb: convertedProps?.submitHttpVerb,
+              onSuccessRedirectUrl: convertedProps?.onSuccessRedirectUrl,
+              destroyOnClose: true,
+              skipFetchData: convertedProps.skipFetchData,
+              width: actionProps?.modalWidth,
+              initialValues: evaluateKeyValuesToObject(actionProps?.additionalProperties, formData),
+              parentFormValues: formData,
+              modalConfirmDialogMessage: convertedProps?.modalConfirmDialogMessage,
+              onSubmitted: values => {
+                onSuccessScriptExecutor(values);
+
+                if (props?.refreshTableOnSuccess) {
+                  publish(DataTablePubsubConstants.refreshTable, { stateId: actionProps?.uniqueStateId });
+                }
+              },
+              onFailed: onErrorScriptExecutor,
+            };
+
+            setState(prev => ({ ...prev, modalProps }));
 
             break;
           }

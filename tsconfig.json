@@ -4,6 +4,7 @@
     "outDir": "build",
     "module": "esnext",
     "target": "es5",
+    "downlevelIteration": true,
     "lib": [
       "es6",
       "dom",

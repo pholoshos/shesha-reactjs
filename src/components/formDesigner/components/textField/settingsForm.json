@@ -282,7 +282,7 @@
       "labelAlign": "right",
       "hidden": false,
       "customVisibility": null,
-      "description": "Enter custom validator logic for form.item rules. Params include (rules, value, callback). Returns a Promise",
+      "description": "Enter custom validator logic for form.item rules. Returns a Promise",
       "settingsValidationErrors": [],
       "exposedVariables": [
         {
@@ -291,7 +291,8 @@
           "type": "object"
         },
         { "name": "value", "description": "Component current value", "type": "object" },
-        { "name": "callback", "description": "Callback called by component", "type": "function" }
+        { "name": "callback", "description": "Callback called by component", "type": "function" },
+        { "name": "data", "description": "Form values", "type": "object" }
       ]
     },
     {

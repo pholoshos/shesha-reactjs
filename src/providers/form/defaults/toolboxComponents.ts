@@ -55,6 +55,7 @@ import ColumnsEditor from '../../../components/formDesigner/components/dataTable
 import ButtonGroup from '../../../components/formDesigner/components/button/buttonGroup/buttonGroupComponent';
 import ColumnsSelector from '../../../components/formDesigner/components/entityPicker/columnsSelector';
 import Filter from '../../../components/formDesigner/components/dataTable/filter/filterComponent';
+import PermissionedObjectsTree from '../../../components/formDesigner/components/permissionedObjectsTree/permissionedObjectsTree';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -107,6 +108,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       StatusTag,
       DynamicView,
       Filter,
+      PermissionedObjectsTree
     ],
   },
   {

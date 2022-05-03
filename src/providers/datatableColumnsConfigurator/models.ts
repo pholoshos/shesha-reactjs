@@ -1,4 +1,5 @@
-import { ColumnSorting } from "../dataTable/interfaces";
+import { FormMode } from './../form/models';
+import { ColumnSorting } from '../dataTable/interfaces';
 
 type ColumnsItemType = 'item' | 'group';
 
@@ -84,6 +85,10 @@ export interface IConfigurableActionColumnsProps extends IConfigurableColumnsPro
   deleteWarningMessage?: string;
 
   additionalProperties?: any;
+
+  uniqueStateId?: string;
+
+  modalFormMode?: FormMode;
 
   modalWidth?: any;
   //#endregion

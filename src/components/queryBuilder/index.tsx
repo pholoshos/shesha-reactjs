@@ -22,6 +22,7 @@ import RefListType from './types/refList';
 import { DataTypes } from '../../interfaces/dataTypes';
 import DateTimeDynamicWidget from './widgets/dateTimeDynamic';
 import DateTimeDynamicType from './types/dateTimeDynamic';
+
 const InitialConfig = AntdConfig;
 
 export interface IQueryBuilderColumn extends ITableColumn {
@@ -38,6 +39,11 @@ export interface IQueryBuilderProps {
   useExpression?: boolean;
 }
 
+interface IQueryBuilderState {
+  tree?: ImmutableTree;
+  config?: Config;
+}
+
 export const QueryBuilder: FC<IQueryBuilderProps> = ({
   showActionBtnOnHover = true,
   onChange,
@@ -45,19 +51,20 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
   fields,
   useExpression,
 }) => {
-  const [tree, setTree] = useState<ImmutableTree>();
-  const [config, setConfig] = useState<Config>();
+  const [state, setState] = useState<IQueryBuilderState>({});
 
   useEffect(() => {
     initialize();
   }, []);
 
+  // In dynamic mode, we want all the widgets to to text so that they can be passed Mustache string templates
+  // TODO: Add a dynamic component for type: 'slider' and number as that also can be a range, which would have to receive 2 value - {{start}} and {{end}}
   const allFields = useMemo(
     () =>
       useExpression
         ? fields?.map(({ dataType, ...field }) => ({
             ...field,
-            dataType: ['date-time', 'date', 'time'].includes(dataType) ? 'dateTimeDynamic' : dataType,
+            dataType: ['date-time', 'date', 'time'].includes(dataType) ? 'dateTimeDynamic' : 'text',
           }))
         : fields,
     [useExpression, fields]
@@ -150,6 +157,7 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
           case 'dateTimeDynamic':
             type = 'dateTimeDynamic';
             defaultPreferWidgets = ['dateTimeDynamic'];
+            break;
           default:
             break;
         }
@@ -170,28 +178,38 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
       : QbUtils.loadTree({ id: QbUtils.uuid(), type: 'group' });
 
     const checkedTree = QbUtils.checkTree(loadedTree, conf);
-    setTree(checkedTree);
 
-    setConfig(conf);
+    // Call setState once to avoid updating the state twice
+    setState({
+      tree: checkedTree,
+      config: conf,
+    });
   };
 
-  const renderBuilder = (props: BuilderProps) => (
-    <div className="query-builder-container">
-      <div className={classNames('query-builder', { 'qb-lite': showActionBtnOnHover })}>
-        <Builder {...props} />
+  const renderBuilder = (props: BuilderProps) => {
+    return (
+      <div className="query-builder-container">
+        <div className={classNames('query-builder', { 'qb-lite': showActionBtnOnHover })}>
+          <Builder {...props} />
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const handleChange = (_tree: ImmutableTree, _config: Config) => {
     // Tip: for better performance you can apply `throttle` - see `examples/demo`
-    setTree(_tree);
-    setConfig(_config);
+
+    setState({
+      tree: _tree,
+      config: _config,
+    });
 
     if (onChange) {
       onChange(QbUtils.jsonLogicFormat(_tree, _config));
     }
   };
+
+  const { tree, config } = state;
 
   return (
     <div className="sha-query-builder">

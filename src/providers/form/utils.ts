@@ -257,7 +257,7 @@ export const evaluateString = (template: string = '', data: any) => {
  * @returns {string} evaluated string
  */
 export const evaluateComplexString = (expression: string, mappings: IMatchData[]) => {
-  const matches = new Set([...expression.matchAll(/\{\{(?:(?!}}).)*\}\}/g)].flat());
+  const matches = new Set([...expression?.matchAll(/\{\{(?:(?!}}).)*\}\}/g)].flat());
 
   let result = expression;
 

@@ -14,4 +14,5 @@ export {
   evaluateString,
   componentsFlatStructureToTree,
   componentsTreeToFlatStructure,
+  evaluateComplexString,
 } from './providers/form/utils';

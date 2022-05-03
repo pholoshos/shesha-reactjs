@@ -1,8 +1,10 @@
+import { IFormMarkupWithSettings } from './../pages/settings/form/defaults/utils';
 import { ReactNode, MutableRefObject } from 'react';
 import { IConfigurableFormComponent, IFormComponentContainer, FormMarkup } from '../providers/form/models';
 import { FormInstance } from 'antd';
 import { InternalNamePath } from 'rc-field-form/lib/interface';
 import { IPropertyMetadata } from './metadata';
+import { ConfigurableFormInstance } from '../providers/form/contexts';
 
 export interface ISettingsFormFactoryArgs<TModel = IConfigurableFormComponent> {
   model: TModel;
@@ -105,3 +107,6 @@ export interface IAsyncValidationError {
 }
 
 export interface IFormValidationErrors {}
+
+export { IFormMarkupWithSettings };
+export { ConfigurableFormInstance };

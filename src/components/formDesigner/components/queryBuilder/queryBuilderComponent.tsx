@@ -95,7 +95,7 @@ const QueryBuilderWithMetadata: FC<IQueryBuilderProps> = (props) => {
 
 const QueryBuilderComponentRenderer: FC<IQueryBuilderProps> = (props) => {
   const { fieldsUnavailableHint } = props;
-  const { selectedItemId, items } = useTableViewSelectorConfigurator(false) || {}; // note: it should be outside the QueryBuilder component!
+  const { selectedItemId, items } = useTableViewSelectorConfigurator(false) ?? {}; // note: it should be outside the QueryBuilder component!
 
   // TODO: implement combined components which support both expressions/functions and custom values like date/datetime and remove the `useExpression` property
   const useExpression = items?.find(({ id }) => id === selectedItemId)?.useExpression;

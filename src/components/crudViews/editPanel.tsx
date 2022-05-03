@@ -62,7 +62,7 @@ const GenericEditPanel = forwardRef<CommonCrudHandles, IGenericEditPageProps>((p
     router?.back();
   };
 
-  const { router } = useShaRouting(false);
+  const { router } = useShaRouting(false) ?? {};
 
   const toolbarItems: IToolbarItem[] = [
     {

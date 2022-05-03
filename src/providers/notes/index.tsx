@@ -39,7 +39,7 @@ const NotesProvider: FC<PropsWithChildren<INoteSettings>> = ({
 }) => {
   const [state, dispatch] = useReducer(notesReducer, COMMENTS_CONTEXT_INITIAL_STATE);
 
-  const { connection } = useSignalR(false);
+  const { connection } = useSignalR(false) ?? {};
   const { headers } = useAuth();
 
   //#region Register signal r events

@@ -31,7 +31,7 @@ const QueryBuilderComponent: IToolboxComponent<IQueryBuilderProps> = {
 
 const QueryBuilder: FC<IQueryBuilderProps> = (props) => {
   const queryBuilder = useQueryBuilder(false);
-  
+
   return queryBuilder
     ? <QueryBuilderComponentRenderer {...props}></QueryBuilderComponentRenderer>
     : <QueryBuilderWithModelType {...props}></QueryBuilderWithModelType>;
@@ -41,14 +41,14 @@ const QueryBuilderWithModelType: FC<IQueryBuilderProps> = (props) => {
   const { formData } = useForm();
   const { modelType: modelTypeExpression } = props;
   const modelType = evaluateString(modelTypeExpression, { data: formData });
-  
+
   return (
     <ConditionalWrap
       condition={Boolean(modelType)}
       wrap={(content) => (
         <MetadataProvider modelType={modelType}>
           {content}
-        </MetadataProvider>  
+        </MetadataProvider>
       )}
     >
       <QueryBuilderWithMetadata {...props}></QueryBuilderWithMetadata>
@@ -85,7 +85,7 @@ const QueryBuilderWithMetadata: FC<IQueryBuilderProps> = (props) => {
       wrap={(content) => (
         <QueryBuilderProvider fields={fields}>
           {content}
-        </QueryBuilderProvider>  
+        </QueryBuilderProvider>
       )}
     >
       <QueryBuilderComponentRenderer {...props}></QueryBuilderComponentRenderer>
@@ -110,12 +110,17 @@ const QueryBuilderComponentRenderer: FC<IQueryBuilderProps> = (props) => {
 
   const fields = queryBuilder?.fields || [];
 
-  return (
-    <ConfigurableFormItem model={props}>
-      { !fieldsAvailable && fieldsUnavailableHint && <Typography.Text type="secondary">{fieldsUnavailableHint}</Typography.Text> }
-      { fieldsAvailable && <QueryBuilderField fields={fields} jsonExpanded={props.jsonExpanded} useExpression={useExpression} /> }
-    </ConfigurableFormItem>
-  );
+  return !fieldsAvailable && fieldsUnavailableHint
+    ? (
+      <ConfigurableFormItem model={props}>
+        <Typography.Text type="secondary">{fieldsUnavailableHint}</Typography.Text>
+      </ConfigurableFormItem>
+    )
+    : (
+      <ConfigurableFormItem model={props}>
+        <QueryBuilderField fields={fields} jsonExpanded={props.jsonExpanded} useExpression={useExpression} />
+      </ConfigurableFormItem>
+    );
 }
 
 export default QueryBuilderComponent;

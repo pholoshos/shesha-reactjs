@@ -185,7 +185,7 @@
       "id": "c1ffda30-8eea-4621-aae7-0af583143df6",
       "type": "autocomplete",
       "name": "entityTypeShortAlias",
-      "label": "Entity Type Short Alias",
+      "label": "Entity Type",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
@@ -194,7 +194,32 @@
       "validate": {},
       "dataSourceUrl": "/api/services/app/Metadata/EntityTypeAutocomplete",
       "entityTypeShortAlias": "",
-      "useRawValues": true
+      "useRawValues": true,
+      "placeholder": "",
+      "description": "",
+      "defaultValue": "",
+      "keyPropName": "",
+      "valuePropName": "",
+      "quickviewFormPath": "",
+      "quickviewGetEntityUrl": "",
+      "quickviewDisplayPropertyName": "",
+      "quickviewWidth": "",
+      "settingsValidationErrors": []
+    },
+    {
+      "id": "n4enebtmhFgvkP5ukQK1f",
+      "type": "queryBuilder",
+      "name": "filter",
+      "label": "Entity Filter",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return data.dataSourceType === 'entitiesList'",
+      "isDynamic": false,
+      "validate": {},
+      "settingsValidationErrors": [],
+      "modelType": "{{data.entityTypeShortAlias}}",
+      "fieldsUnavailableHint": "Please select `Entity Type` to be able to configure this filter."
     },
     {
       "id": "dde8e245-1555-4a99-a333-4b7c31bcc5f4",
@@ -240,19 +265,51 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
-        { "name": "data", "description": "Selected form values", "type": "object" },
-        { "name": "form", "description": "Form instance", "type": "FormInstance" },
-        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" },
-        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "data",
+          "description": "Selected form values",
+          "type": "object"
+        },
+        {
+          "name": "form",
+          "description": "Form instance",
+          "type": "FormInstance"
+        },
+        {
+          "name": "formMode",
+          "description": "The form mode",
+          "type": "'readonly' | 'edit' | 'designer'"
+        },
+        {
+          "name": "globalState",
+          "description": "The global state of the application",
+          "type": "object"
+        },
+        {
+          "name": "http",
+          "description": "axios instance used to make http requests",
+          "type": "object"
+        },
         {
           "name": "message",
           "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
           "type": "object"
         },
-        { "name": "moment", "description": "The moment.js object", "type": "object" },
-        { "name": "option", "description": "Meta data of component current value", "type": "object" },
-        { "name": "value", "description": "Component current value", "type": "string | any" }
+        {
+          "name": "moment",
+          "description": "The moment.js object",
+          "type": "object"
+        },
+        {
+          "name": "option",
+          "description": "Meta data of component current value",
+          "type": "object"
+        },
+        {
+          "name": "value",
+          "description": "Component current value",
+          "type": "string | any"
+        }
       ]
     },
     {
@@ -343,7 +400,13 @@
       "validate": {},
       "settingsValidationErrors": [],
       "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
-      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
+      "exposedVariables": [
+        {
+          "name": "data",
+          "description": "Form values",
+          "type": "object"
+        }
+      ]
     },
     {
       "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
@@ -391,8 +454,16 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
-        { "name": "value", "description": "Component current value", "type": "string | any" },
-        { "name": "data", "description": "Selected form values", "type": "object" }
+        {
+          "name": "value",
+          "description": "Component current value",
+          "type": "string | any"
+        },
+        {
+          "name": "data",
+          "description": "Selected form values",
+          "type": "object"
+        }
       ]
     },
     {
@@ -408,8 +479,16 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
-        { "name": "value", "description": "Component current value", "type": "string | any" },
-        { "name": "data", "description": "Selected form values", "type": "object" }
+        {
+          "name": "value",
+          "description": "Component current value",
+          "type": "string | any"
+        },
+        {
+          "name": "data",
+          "description": "Selected form values",
+          "type": "object"
+        }
       ]
     }
   ],

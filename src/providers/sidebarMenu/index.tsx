@@ -99,7 +99,15 @@ function useSidebarMenuActions(require: boolean) {
 }
 
 function useSidebarMenu(require: boolean = true) {
-  return { ...useSidebarMenuState(require), ...useSidebarMenuActions(require) };
+  const actionsContext = useSidebarMenuActions(require);
+  const stateContext = useSidebarMenuState(require);
+
+  // useContext() returns initial state when provider is missing
+  // initial context state is useless especially when require == true
+  // so we must return value only when both context are available
+  return actionsContext !== undefined && stateContext !== undefined
+    ? { ...actionsContext, ...stateContext }
+    : undefined;  
 }
 
 //#region temporary defaults provider

@@ -136,7 +136,15 @@ function useMetadataDispatcherActions(require: boolean) {
 }
 
 function useMetadataDispatcher(require: boolean = true) {
-  return { ...useMetadataDispatcherState(require), ...useMetadataDispatcherActions(require) };
+  const actionsContext = useMetadataDispatcherActions(require);
+  const stateContext = useMetadataDispatcherState(require);
+
+  // useContext() returns initial state when provider is missing
+  // initial context state is useless especially when require == true
+  // so we must return value only when both context are available
+  return actionsContext !== undefined && stateContext !== undefined
+    ? { ...actionsContext, ...stateContext }
+    : undefined;
 }
 
 export { MetadataDispatcherProvider, useMetadataDispatcherState, useMetadataDispatcherActions, useMetadataDispatcher };

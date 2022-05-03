@@ -63,7 +63,15 @@ function useQueryBuilderActions(requireBuilder: boolean = true) {
 }
 
 function useQueryBuilder(requireBuilder: boolean = true) {
-  return { ...useQueryBuilderState(requireBuilder), ...useQueryBuilderActions(requireBuilder) };
+  const actionsContext = useQueryBuilderActions(requireBuilder);
+  const stateContext = useQueryBuilderState(requireBuilder);
+
+  // useContext() returns initial state when provider is missing
+  // initial context state is useless especially when requireBuilder == true
+  // so we must return value only when both context are available
+  return actionsContext !== undefined && stateContext !== undefined
+    ? { ...actionsContext, ...stateContext }
+    : undefined;
 }
 
 export { QueryBuilderProvider, useQueryBuilderState, useQueryBuilderActions, useQueryBuilder };

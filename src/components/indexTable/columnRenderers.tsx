@@ -204,6 +204,10 @@ export const renderers: ITableCustomTypesRender[] = [
             } else console.warn('target Url is not specified');
             break;
           }
+          case 'executeFormAction': {
+            publish(actionProps?.formAction, { stateId: actionProps?.uniqueStateId || 'NO_PROVIDED' });
+            break;
+          }
           case 'editRow': {
             const convertedProps = actionProps as Omit<IModalProps, 'formId'>;
 

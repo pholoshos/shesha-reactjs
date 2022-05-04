@@ -1,7 +1,7 @@
 {
   "components": [
     {
-      "id": "q7XRzGP9StLpD5NeOzfhX",
+      "id": "[[GEN_KEY]]",
       "type": "container",
       "name": "container8",
       "label": "Container8",
@@ -16,7 +16,7 @@
       "settingsValidationErrors": [],
       "components": [
         {
-          "id": "KXXArjV3rLB6IbTebNCxp",
+          "id": "[[NEW_KEY]]",
           "type": "datatableContext",
           "name": "dataTable1",
           "label": "Tables",
@@ -32,7 +32,7 @@
               "name": "horizontalContainer5",
               "label": "Horizontal Container7",
               "labelAlign": "right",
-              "parentId": "KXXArjV3rLB6IbTebNCxp",
+              "parentId": "[[NEW_KEY]]",
               "hidden": false,
               "customVisibility": null,
               "items": [],
@@ -191,7 +191,7 @@
               "name": "horizontalContainer2",
               "label": "Horizontal Container7",
               "labelAlign": "right",
-              "parentId": "KXXArjV3rLB6IbTebNCxp",
+              "parentId": "[[NEW_KEY]]",
               "hidden": false,
               "customVisibility": null,
               "components": [
@@ -401,7 +401,7 @@
               "name": "container7",
               "label": "Container7",
               "labelAlign": "right",
-              "parentId": "KXXArjV3rLB6IbTebNCxp",
+              "parentId": "[[NEW_KEY]]",
               "hidden": false,
               "customVisibility": null,
               "isDynamic": false,

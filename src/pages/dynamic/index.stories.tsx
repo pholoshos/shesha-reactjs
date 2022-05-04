@@ -3,6 +3,7 @@ import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
 import StoryApp from '../../components/storyBookApp';
 import DynamicPage, { IDynamicPageProps } from '.';
+import { addStory } from '../../stories/utils';
 
 export default {
   title: 'Pages/DynamicPage',
@@ -25,5 +26,10 @@ const Template: Story<IDynamicPageProps> = args => (
 
 // Reuse that template for creating different stories
 export const Basic = Template.bind({});
+
+export const OtpSettings = addStory(Template, {
+  path: 'settings/otp',
+  mode: 'edit',
+});
 
 Basic.args = DEFAULT_ARGS;

@@ -63,7 +63,7 @@ interface IEntity {
 
 interface IDynamicPageState extends IDynamicPageProps {
   formResponse?: IFormDto;
-  fetchedEntity?: IEntity;
+  fetchedData?: IEntity;
   mode?: FormMode;
 }
 
@@ -114,7 +114,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     return null;
   }, [isFetchingFormByPath, isFetchingFormById, props]);
 
-  const fetchEntityPath = useMemo(() => {
+  const fetchDataPath = useMemo(() => {
     const pathToReturn = (removeZeroWidthCharsFromString(formResponse?.markup?.formSettings?.getUrl) || '').trim();
 
     if (entityPathId) {
@@ -125,12 +125,12 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [formResponse, entityPathId, props, state]);
 
   const {
-    refetch: fetchEntity,
-    error: fetchEntityError,
-    loading: isFetchingEntity,
-    data: fetchEntityResponse,
+    refetch: fetchData,
+    error: fetchDataError,
+    loading: isFetchingData,
+    data: fetchDataResponse,
   } = useGet<EntityAjaxResponse>({
-    path: fetchEntityPath,
+    path: fetchDataPath,
     // queryParams: { id },
     lazy: true, // We wanna make sure we have both the id and the state?.markup?.formSettings?.getUrl before fetching data
   });
@@ -146,7 +146,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
       : '';
   }, [formResponse?.markup?.formSettings]);
 
-  const { mutate: postEntity, loading: isPostingData } = useMutate({
+  const { mutate: postData, loading: isPostingData } = useMutate({
     path: putUrl,
     verb: id ? 'PUT' : 'POST',
   });
@@ -157,21 +157,21 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   //#region get form data
   useEffect(() => {
-    // Avoid fetching entity if we're displaying index table
-    if ((id || entityPathId) && fetchEntityPath) {
-      fetchEntity({ queryParams: entityPathId ? {} : { id } });
+    // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
+    if (fetchDataPath) {
+      fetchData({ queryParams: entityPathId || !id ? {} : { id } });
     }
-  }, [id, formResponse?.markup?.formSettings?.getUrl, entityPathId, fetchEntityPath]);
+  }, [id, formResponse?.markup?.formSettings?.getUrl, entityPathId, fetchDataPath]);
 
   const onChangeId = (id: string) => {
     setState(prev => ({ ...prev, id }));
   };
 
   useEffect(() => {
-    if (!isFetchingFormByPath && fetchEntityResponse) {
-      setState(prev => ({ ...prev, fetchedEntity: fetchEntityResponse?.result }));
+    if (!isFetchingFormByPath && fetchDataResponse) {
+      setState(prev => ({ ...prev, fetchedData: fetchDataResponse?.result }));
     }
-  }, [isFetchingFormByPath, fetchEntityResponse]);
+  }, [isFetchingFormByPath, fetchDataResponse]);
   //#endregion
 
   //#region Fetch form and set the state
@@ -206,7 +206,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   //#endregion
 
   const onFinish = (values: any) => {
-    postEntity(values)
+    postData(values)
       .then(() => {
         message.success('Data saved successfully!');
 
@@ -219,10 +219,10 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   //#region Error messages
   useEffect(() => {
-    if (fetchEntityError) {
-      displayNotificationError(fetchEntityError);
+    if (fetchDataError) {
+      displayNotificationError(fetchDataError);
     }
-  }, [fetchEntityError]);
+  }, [fetchDataError]);
 
   useEffect(() => {
     if (fetchFormByPathError) {
@@ -246,9 +246,9 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   };
 
   useSubscribe(DynamicFormPubSubConstants.CancelFormEdit, () => {
-    form?.setFieldsValue(state?.fetchedEntity);
+    form?.setFieldsValue(state?.fetchedData);
 
-    formRef?.current?.setFormData({ values: state?.fetchedEntity, mergeValues: true });
+    formRef?.current?.setFormData({ values: state?.fetchedData, mergeValues: true });
 
     formRef?.current?.setFormMode('readonly');
   });
@@ -267,7 +267,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     }
   }, [formResponse]);
 
-  const isLoading = isFetchingEntity || isFetchingFormByPath || isFetchingFormById || isPostingData;
+  const isLoading = isFetchingData || isFetchingFormByPath || isFetchingFormById || isPostingData;
 
   if (state && !formResponse?.markup && !isLoading) {
     return (
@@ -289,7 +289,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   const getLoadingHint = () => {
     switch (true) {
-      case isFetchingEntity:
+      case isFetchingData:
         return 'Fetching data...';
       case isFetchingFormByPath:
       case isFetchingFormById:
@@ -311,7 +311,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         form={form}
         actions={{ onChangeId }}
         onFinish={onFinish}
-        initialValues={state?.fetchedEntity}
+        initialValues={state?.fetchedData}
         skipPostOnFinish
         skipFetchData
         className="sha-dynamic-page"

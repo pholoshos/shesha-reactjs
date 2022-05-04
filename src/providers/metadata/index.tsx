@@ -26,18 +26,18 @@ const MetadataProvider: FC<PropsWithChildren<IMetadataProviderProps>> = ({
     id,
     modelType,
   };
-  
+
   const [state, dispatch] = useThunkReducer(metadataReducer, initial);
 
   // register provider in the dispatcher if exists
-  const { registerProvider, getMetadata: fetchMeta } = useMetadataDispatcher(false) ?? {};
-  
+  const { registerProvider, getMetadata: fetchMeta } = useMetadataDispatcher();
+
   useEffect(() => {
     if (modelType)
       fetchMeta({ modelType }).then(meta => {
         dispatch(setMetadataAction({ metadata: meta }));
       });
-  }, [modelType]);  
+  }, [modelType]);
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
@@ -51,7 +51,7 @@ const MetadataProvider: FC<PropsWithChildren<IMetadataProviderProps>> = ({
   };
 
   const contextValue: IMetadataContext = { ...state, ...metadataActions };
-  registerProvider({ id, modelType, contextValue });
+    registerProvider({ id, modelType, contextValue });
 
   return (
     <MetadataContext.Provider value={contextValue}>

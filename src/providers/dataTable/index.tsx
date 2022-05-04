@@ -75,6 +75,7 @@ import { useSheshaApplication } from '../sheshaApplication';
 import { DataTablePubsubConstants } from './pubSub';
 import { useGlobalState } from '../globalState';
 import camelCaseKeys from 'camelcase-keys';
+import { usePrevious } from 'react-use';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Table configuration Id */
@@ -248,6 +249,38 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     state.columns?.length,
     state.tableSorting,
   ]);
+
+  // fetch table data when config is ready or something changed (selected filter, changed current page etc.)
+  const refreshTableWhenAppropriate = () => {
+    if (tableId) {
+      // fetch using table config
+      if (configIsReady) {
+        tableIsReady.current = true; // is used to prevent unneeded data fetch by the ReactTable. Any data fetch requests before this line should be skipped
+        refreshTable();
+      }
+    } else if (entityType) {
+      // fecth using entity type
+      tableIsReady.current = true; // is used to prevent unneeded data fetch by the ReactTable. Any data fetch requests before this line should be skipped
+      refreshTable();
+    }
+  };
+
+  // const previousPredefinedFilters = usePrevious(state.predefinedFilters);
+
+  const debouncedRefreshTable = useDebouncedCallback(() => {
+    // console.log(
+    //   'debouncedRefreshTable previousPredefinedFilters, state.predefinedFilters: ',
+    //   previousPredefinedFilters,
+    //   state.predefinedFilters,
+    //   _.isEqual(_.sortBy(previousPredefinedFilters), _.sortBy(state.predefinedFilters))
+    // );
+    // refreshTableWhenAppropriate();
+    // if (!_.isEqual(_.sortBy(previousPredefinedFilters), _.sortBy(state.predefinedFilters))) {
+    //   refreshTableWhenAppropriate();
+    // }
+  }, 500);
+
+  useEffect(debouncedRefreshTable, [state.predefinedFilters]);
 
   const refreshTable = () => {
     if ((configIsReady || columnsAreReady) && tableIsReady.current === true) {

@@ -1,15 +1,16 @@
-import { evaluateString } from '../../formDesignerUtils';
+import { evaluateComplexString } from '../../formDesignerUtils';
 import { ColumnSorting, IStoredFilter, SortDirection } from './interfaces';
-import camelCaseKeys from 'camelcase-keys';
+import { IMatchData } from '../form/utils';
 
-export const evaluateDynamicFilters = (filters: IStoredFilter[], data: any) => {
+// Filters should read properties as camelCase ?:(
+export const evaluateDynamicFilters = (filters: IStoredFilter[], mappings: IMatchData[]) => {
   if (filters?.length === 0) return [];
 
-  if (!data) return filters;
+  if (!mappings?.length) return filters;
 
   const filtersString = JSON.stringify(filters);
 
-  const evaluatedFiltersString = evaluateString(filtersString, camelCaseKeys(data || {}, { pascalCase: true }));
+  const evaluatedFiltersString = evaluateComplexString(filtersString, mappings);
 
   return JSON.parse(evaluatedFiltersString) as IStoredFilter[];
 };
@@ -28,19 +29,23 @@ export const hasDynamicFilter = (filters: IStoredFilter[]) => {
 
 export const cleanPropertyName = (keyValue: string) => keyValue?.replace('.', '_');
 
-export const sortDirection2ColumnSorting = (value?: SortDirection): ColumnSorting =>
-{
-  switch (value){
-    case 0: return 'asc';
-    case 1: return 'desc';
-    default: return null;
+export const sortDirection2ColumnSorting = (value?: SortDirection): ColumnSorting => {
+  switch (value) {
+    case 0:
+      return 'asc';
+    case 1:
+      return 'desc';
+    default:
+      return null;
   }
-}
-export const columnSorting2SortDirection = (value?: ColumnSorting): SortDirection =>
-{
-  switch (value){
-    case 'asc': return 0;
-    case 'desc': return 1;
-    default: return null;
+};
+export const columnSorting2SortDirection = (value?: ColumnSorting): SortDirection => {
+  switch (value) {
+    case 'asc':
+      return 0;
+    case 'desc':
+      return 1;
+    default:
+      return null;
   }
-}
+};

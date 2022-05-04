@@ -264,7 +264,11 @@ export const evaluateComplexString = (expression: string, mappings: IMatchData[]
   Array.from(matches).forEach(matched => {
     mappings.forEach(({ match, data }) => {
       if (matched.includes(`{{${match}`)) {
-        const evaluatedValue = evaluateString(matched, { [match]: data });
+        // When the match = "", we wanna send data as it is as that would mean that the expression doe nto use dot notation
+        // This is useful for backward compatibility
+        // Initially expression would simply be {{expression}} and they wou be evaluated against formData
+        // But dynamic expression now can use formData and globalState, so as a result the expressions need to use dot notation
+        const evaluatedValue = evaluateString(matched, match ? { [match]: data } : data);
 
         result = result.replace(matched, evaluatedValue);
       }
@@ -789,7 +793,7 @@ export const evaluateKeyValuesToObject = (arr: IKeyValue[], data: any): IAnyObje
   return {};
 };
 
-interface IMatchData {
+export interface IMatchData {
   match: string;
   data: any;
 }

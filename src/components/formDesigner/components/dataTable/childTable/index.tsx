@@ -2,7 +2,7 @@ import { TableOutlined } from '@ant-design/icons';
 import { Alert, Space } from 'antd';
 import React, { Fragment, MutableRefObject, useEffect } from 'react';
 import { CollapsiblePanel, GlobalTableFilter, Show, TablePager } from '../../../..';
-import { evaluateString, useDataTable, useForm } from '../../../../..';
+import { evaluateString, useDataTable, useForm, useGlobalState } from '../../../../..';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../interfaces';
 import { FormMarkup } from '../../../../../providers/form/models';
@@ -13,6 +13,10 @@ import settingsFormJson from './settingsForm.json';
 import { evaluateDynamicFilters, hasDynamicFilter } from '../../../../../providers/dataTable/utils';
 import './styles/index.less';
 import { ButtonGroup } from '../../button/buttonGroup/buttonGroupComponent';
+import camelCaseKeys from 'camelcase-keys';
+import { useDebouncedCallback } from 'use-debounce';
+import _ from 'lodash';
+import { useDebounce } from 'react-use';
 
 export interface IChildTableComponentProps extends IChildTableSettingsProps, IConfigurableFormComponent {}
 
@@ -24,7 +28,8 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
   icon: <TableOutlined />,
   factory: (model: IChildTableComponentProps, componentRef: MutableRefObject<any>) => {
     const { formData, formMode, isComponentHidden } = useForm();
-    const { columns, getDataSourceType, setPredefinedFilters } = useDataTable();
+    const { columns, getDataSourceType, setPredefinedFilters, predefinedFilters } = useDataTable();
+    const { globalState } = useGlobalState();
 
     const { defaultSelectedFilterId, filters } = model;
 
@@ -41,11 +46,35 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
 
     const hasManyFiltersButNoSelected = hasFilters && !defaultSelectedFilterId;
 
-    const hasFormData = Boolean(formData);
+    const hasFormData = !_.isEmpty(formData);
+    const hasGlobalState = !_.isEmpty(formData);
+
+    const debounceEvaluateDynamicFiltersHelper = useDebouncedCallback(
+      () => {
+        const data = camelCaseKeys(formData || {}, { pascalCase: true });
+
+        return evaluateDynamicFilters(filters, [
+          {
+            match: '', // For backward compatibility
+            data,
+          },
+          {
+            match: 'data',
+            data: data,
+          },
+          {
+            match: 'globalState',
+            data: globalState,
+          },
+        ]);
+      },
+      // delay in ms
+      400
+    );
 
     useEffect(() => {
       if (hasFilters) {
-        const evaluatedFilters = evaluateDynamicFilters(filters, formData);
+        const evaluatedFilters = debounceEvaluateDynamicFiltersHelper();
 
         let parsedFilters = evaluatedFilters;
 
@@ -69,7 +98,7 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
           evaluatedFilters[0] = firstElement;
         }
 
-        if (hasFormData) {
+        if (hasFormData || hasGlobalState) {
           // Here we know we have evaluated our filters
 
           // TODO: Deal with the situation whereby the expression value evaluated to empty string because the action GetData will fail
@@ -83,7 +112,7 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
         // TODO: Compare filters to see if they have not changed, in which case you should refresh
         // refreshTable();
       }
-    }, [model?.filters, formData]);
+    }, [model?.filters, formData, globalState]);
 
     const isVisible = !isComponentHidden(model);
 

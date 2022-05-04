@@ -4,9 +4,10 @@ import { SelectOutlined } from '@ant-design/icons';
 import TableViewSelectorSettings from './tableViewSelectorSettings';
 import { ITableViewSelectorProps } from './models';
 import { IndexViewSelectorRenderer, useForm } from '../../../../..';
-import { useDataTableStore } from '../../../../../providers';
+import { useDataTableStore, useGlobalState } from '../../../../../providers';
 import { evaluateDynamicFilters } from '../../../../../providers/dataTable/utils';
 import { usePrevious } from '../../../../../hooks';
+import camelCaseKeys from 'camelcase-keys';
 import _ from 'lodash';
 
 const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
@@ -45,7 +46,7 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
     setPredefinedFilters,
     refreshTable,
   } = useDataTableStore();
-
+  const { globalState } = useGlobalState();
   const { formData } = useForm();
 
   const dataSourceType = getDataSourceType();
@@ -57,9 +58,29 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
 
   const previousFilters = usePrevious(predefinedFilters);
 
-  useEffect(() => {
-    const evaluatedFilters = evaluateDynamicFilters(filters, formData);
+  const evaluateDynamicFiltersHelper = () => {
+    const data = camelCaseKeys(formData || {}, { pascalCase: true });
 
+    return evaluateDynamicFilters(filters, [
+      {
+        match: '', // For backward compatibility
+        data,
+      },
+      {
+        match: 'data',
+        data,
+      },
+      {
+        match: 'globalState',
+        data: globalState,
+      },
+    ]);
+  };
+
+  useEffect(() => {
+    const evaluatedFilters = evaluateDynamicFiltersHelper();
+
+    debugger;
     setPredefinedFilters(evaluatedFilters);
 
     if (!_.isEqual(_.sortBy(previousFilters), _.sortBy(evaluatedFilters))) {
@@ -67,7 +88,7 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
         refreshTable();
       }, 100);
     }
-  }, [filters, formData]);
+  }, [filters, formData, globalState]);
 
   const changeSelectedFilter = (id: string) => {
     changeSelectedStoredFilterIds(id ? [id] : []);

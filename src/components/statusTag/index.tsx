@@ -39,6 +39,14 @@ export const StatusTag: FC<IStatusTagProps> = ({
   mappings = DEFAULT_STATUS_TAG_MAPPINGS,
   style,
 }) => {
+  console.log('StatusTag props', {
+    override,
+    value,
+    color,
+    mappings,
+    style,
+  });
+
   const memoized = useMemo(() => {
     if (!override && !value && !color) {
       return {};

@@ -39,6 +39,7 @@ export enum DataTableActionEnums {
   ChangeQuickSearch = 'CHANGE_QUICK_SEARCH',
   ToggleSaveFilterModal = 'TOGGLE_SAVE_FILTER_MODAL',
   ChangeSelectedRow = 'CHANGE_SELECTED_ROW',
+  ChangeActionedRow = 'CHANGE_ACTIONED_ROW',
   ChangeSelectedStoredFilterIds = 'CHANGE_SELECTED_STORED_FILTER_IDS',
   SetPredefinedFilters = 'REGISTER_STORED_FILTER',
   ChangeSelectedIds = 'CHANGE_SELECTED_IDS',
@@ -145,6 +146,8 @@ export const changeFilterAction = createAction<IChangeFilterAction, IChangeFilte
 export const applyFilterAction = createAction<ITableFilter[], ITableFilter[]>(DataTableActionEnums.ApplyFilter, p => p);
 
 export const changeSelectedRowAction = createAction<any, any>(DataTableActionEnums.ChangeSelectedRow, p => p);
+
+export const changeActionedRowAction = createAction<any, any>(DataTableActionEnums.ChangeActionedRow, p => p);
 
 export const changeSelectedStoredFilterIdsAction = createAction<string[], string[]>(
   DataTableActionEnums.ChangeSelectedStoredFilterIds,

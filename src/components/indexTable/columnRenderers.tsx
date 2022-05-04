@@ -69,7 +69,7 @@ export const renderers: ITableCustomTypesRender[] = [
     key: 'action',
     render: props => {
       const { router } = useShaRouting();
-      const { crudConfig, refreshTable } = useDataTable();
+      const { crudConfig, refreshTable, changeActionedRow } = useDataTable();
       const { backendUrl } = useSheshaApplication();
       const { formData, formMode } = useForm();
       const { globalState } = useGlobalState();
@@ -182,6 +182,8 @@ export const renderers: ITableCustomTypesRender[] = [
         const selectedRow = getRowData(data);
 
         if (!actionProps) return;
+
+        changeActionedRow(data.row.original);
 
         switch (actionProps.action) {
           case 'navigate': {

@@ -112,6 +112,8 @@ export interface IDataTableStateContext
   /** index of selected row */
   selectedRow?: any;
 
+  actionedRow?: any;
+
   /** List of Ids of selected rows */
   selectedIds?: string[];
 
@@ -172,7 +174,7 @@ export interface IDataTableActionsContext
   performQuickSearch?: (val: string) => void;
   toggleSaveFilterModal?: (visible: boolean) => void;
   changeSelectedRow?: (index: any) => void;
-
+  changeActionedRow?: (data: any) => void;
   changeSelectedStoredFilterIds?: (selectedStoredFilterIds: string[]) => void;
   setPredefinedFilters: (filters: IStoredFilter[]) => void;
 

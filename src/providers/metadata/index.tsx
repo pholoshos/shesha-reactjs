@@ -30,7 +30,7 @@ const MetadataProvider: FC<PropsWithChildren<IMetadataProviderProps>> = ({
   const [state, dispatch] = useThunkReducer(metadataReducer, initial);
 
   // register provider in the dispatcher if exists
-  const { registerProvider, getMetadata: fetchMeta } = useMetadataDispatcher(false);
+  const { registerProvider, getMetadata: fetchMeta } = useMetadataDispatcher(false) ?? {};
   
   useEffect(() => {
     if (modelType)

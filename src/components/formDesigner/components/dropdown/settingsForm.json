@@ -152,7 +152,9 @@
         }
       ],
       "dataSourceType": "values",
-      "defaultValue": ["single"]
+      "defaultValue": [
+        "single"
+      ]
     },
     {
       "id": "bf5660d5-cae0-4df9-99f2-cbaf941ae7c7",
@@ -204,6 +206,20 @@
           "parentId": "ELxx5jarWvInJXJF5xHN2",
           "label": "ReferenceList Name",
           "customVisibility": "return data.dataSourceType === 'referenceList'"
+        },
+        {
+          "id": "e1xQrrBshDPQOwaaASyqe",
+          "type": "queryBuilder",
+          "name": "filter",
+          "label": "Items Filter",
+          "labelAlign": "right",
+          "parentId": "ELxx5jarWvInJXJF5xHN2",
+          "hidden": false,
+          "customVisibility": null,
+          "isDynamic": false,
+          "validate": {},
+          "settingsValidationErrors": [],
+          "modelType": "Shesha.Framework.ReferenceListItem"
         },
         {
           "id": "9JXKnC0XHz9xIvoxfQ-AK",
@@ -278,19 +294,51 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
-        { "name": "data", "description": "Selected form values", "type": "object" },
-        { "name": "form", "description": "Form instance", "type": "FormInstance" },
-        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" },
-        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "data",
+          "description": "Selected form values",
+          "type": "object"
+        },
+        {
+          "name": "form",
+          "description": "Form instance",
+          "type": "FormInstance"
+        },
+        {
+          "name": "formMode",
+          "description": "The form mode",
+          "type": "'readonly' | 'edit' | 'designer'"
+        },
+        {
+          "name": "globalState",
+          "description": "The global state of the application",
+          "type": "object"
+        },
+        {
+          "name": "http",
+          "description": "axios instance used to make http requests",
+          "type": "object"
+        },
         {
           "name": "message",
           "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
           "type": "object"
         },
-        { "name": "moment", "description": "The moment.js object", "type": "object" },
-        { "name": "option", "description": "Meta data of component current value", "type": "object" },
-        { "name": "value", "description": "Component current value", "type": "string | any" }
+        {
+          "name": "moment",
+          "description": "The moment.js object",
+          "type": "object"
+        },
+        {
+          "name": "option",
+          "description": "Meta data of component current value",
+          "type": "object"
+        },
+        {
+          "name": "value",
+          "description": "Component current value",
+          "type": "string | any"
+        }
       ]
     },
     {
@@ -323,7 +371,13 @@
       "validate": {},
       "settingsValidationErrors": [],
       "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
-      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
+      "exposedVariables": [
+        {
+          "name": "data",
+          "description": "Form values",
+          "type": "object"
+        }
+      ]
     },
     {
       "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
@@ -371,8 +425,16 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
-        { "name": "value", "description": "Component current value", "type": "string | any" },
-        { "name": "data", "description": "Selected form values", "type": "object" }
+        {
+          "name": "value",
+          "description": "Component current value",
+          "type": "string | any"
+        },
+        {
+          "name": "data",
+          "description": "Selected form values",
+          "type": "object"
+        }
       ]
     },
     {
@@ -388,8 +450,16 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
-        { "name": "value", "description": "Component current value", "type": "string | any" },
-        { "name": "data", "description": "Selected form values", "type": "object" }
+        {
+          "name": "value",
+          "description": "Component current value",
+          "type": "string | any"
+        },
+        {
+          "name": "data",
+          "description": "Selected form values",
+          "type": "object"
+        }
       ]
     }
   ],

@@ -25,6 +25,55 @@
       "label": "Label"
     },
     {
+      "id": "8kLKXupoy1C5LwYrJPQoZ",
+      "type": "autocomplete",
+      "name": "modelType",
+      "label": "Model Type",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "isDynamic": false,
+      "dataSourceType": "url",
+      "useRawValues": true,
+      "placeholder": "",
+      "description": "Type of model that can be fetched using MetadataProvider. Leave empty to use closest metadata provider. Note: you can use mustache syntax to access form fields.",
+      "validate": {},
+      "quickviewWidth": "",
+      "defaultValue": "",
+      "dataSourceUrl": "/api/services/app/Metadata/TypeAutocomplete",
+      "keyPropName": "",
+      "valuePropName": "",
+      "quickviewFormPath": "",
+      "quickviewGetEntityUrl": "",
+      "quickviewDisplayPropertyName": "",
+      "settingsValidationErrors": []
+    },
+    {
+      "id": "MtPY0VOhzmZ1oHiheHYkM",
+      "type": "textArea",
+      "name": "fieldsUnavailableHint",
+      "label": "Fields unavailable hint",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "isDynamic": false,
+      "autoSize": false,
+      "showCount": false,
+      "allowClear": false,
+      "placeholder": "",
+      "description": "A hint to be displayed when fields are not available. Can be used in pair with `Model Type` for cascading components.",
+      "initialValue": "",
+      "validate": {
+        "minLength": "",
+        "maxLength": "",
+        "message": ""
+      },
+      "quickviewWidth": "",
+      "settingsValidationErrors": []
+    },
+    {
       "id": "4367bba8-35c0-4622-bc57-bd8a58eec966",
       "type": "checkbox",
       "name": "jsonExpanded",
@@ -85,8 +134,16 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
-        { "name": "value", "description": "Component current value", "type": "string | any" },
-        { "name": "data", "description": "Selected form values", "type": "object" }
+        {
+          "name": "value",
+          "description": "Component current value",
+          "type": "string | any"
+        },
+        {
+          "name": "data",
+          "description": "Selected form values",
+          "type": "object"
+        }
       ]
     }
   ],

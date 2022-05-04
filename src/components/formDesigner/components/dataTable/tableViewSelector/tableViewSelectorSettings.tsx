@@ -4,9 +4,10 @@ import { ITableViewSelectorProps } from './models';
 import TableViewSelectorSettingsModal from './tableViewSelectorSettingsModal';
 import { QueryBuilderProvider } from '../../../../../providers';
 import { useForm } from '../../../../../providers/form';
-import { ITableColumn, useMetadata } from '../../../../..';
+import { ITableColumn } from '../../../../..';
 import { IProperty } from '../../../../../providers/queryBuilder/models';
 import { TableDataSourceType } from '../../../../../providers/dataTable/interfaces';
+import ConditionalWrap from '../../../../conditionalWrapper';
 
 export interface ITableViewSelectorSettingsProps {
   model: ITableViewSelectorProps;
@@ -19,8 +20,6 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const { selectedComponentRef } = useForm();
-
-  const metadata = useMetadata(false);
 
   const columns = (selectedComponentRef.current?.columns as ITableColumn[]) || [];
   const dataSourceType: TableDataSourceType = selectedComponentRef.current?.dataSourceType;
@@ -42,35 +41,8 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
         //preferWidgets: ['']
       }));
     }
-    if (dataSourceType === 'entity') {
-      const properties = metadata?.metadata?.properties || [];
-      if (Boolean(properties))
-        return properties.map<IProperty>(property => ({
-          label: property.label,
-          propertyName: property.path,
-          visible: property.isVisible,
-          dataType: property.dataType,
-          fieldSettings: {
-            typeShortAlias: property.entityType,
-            referenceListName: property.referenceListName,
-            referenceListNamespace: property.referenceListNamespace,
-            allowInherited: true,
-          },
-        }));
-    }
-    return [];
-  }, [dataSourceType, columns, metadata]);
-
-  /*
-  console.log({
-    metadata,
-    ref: selectedComponentRef.current,
-    dataSourceType,
-    fields
-  });
-  */
-
-  //console.log({ columns, fields });
+    return null;
+  }, [dataSourceType, columns/*, metadata*/]);
 
   /* NOTE: don't delete this code, it's not needed now but will be used in another part of the system
   // take all columns with dots, create a list of 
@@ -109,7 +81,14 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
   */
 
   return (
-    <QueryBuilderProvider fields={fields}>
+    <ConditionalWrap
+      condition={fields !== null}
+      wrap={(content) => (
+        <QueryBuilderProvider fields={fields}>
+          {content}
+        </QueryBuilderProvider>  
+      )}
+    >
       <Form form={form} onFinish={props.onSave} onValuesChange={props.onValuesChange}>
         <Button onClick={() => setModalVisible(true)}>Customise Filters</Button>
         <Form.Item name="filters" initialValue={props.model.filters}>
@@ -121,7 +100,7 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
           />
         </Form.Item>
       </Form>
-    </QueryBuilderProvider>
+    </ConditionalWrap>
   );
 }
 

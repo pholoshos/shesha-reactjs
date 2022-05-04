@@ -107,10 +107,15 @@ function useSignalRActions(require: boolean) {
 }
 
 function useSignalR(require: boolean = true) {
-  return {
-    ...useSignalRState(require),
-    ...useSignalRActions(require),
-  };
+  const actionsContext = useSignalRActions(require);
+  const stateContext = useSignalRState(require);
+
+  // useContext() returns initial state when provider is missing
+  // initial context state is useless especially when require == true
+  // so we must return value only when both context are available
+  return actionsContext !== undefined && stateContext !== undefined
+    ? { ...actionsContext, ...stateContext }
+    : undefined;
 }
 
 export default SignalRProvider;

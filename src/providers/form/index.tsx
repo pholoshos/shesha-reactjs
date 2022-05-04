@@ -136,7 +136,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     ...flatComponents,
   };
 
-  const { activateProvider } = useMetadataDispatcher(false);
+  const { activateProvider } = useMetadataDispatcher(false) ?? {};
 
   const [state, dispatch] = useThunkReducer(formReducer, {
     past: [],
@@ -444,7 +444,8 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   };
 
   const setSelectedComponent = (componentId: string, dataSourceId: string, componentRef?: MutableRefObject<any>) => {
-    activateProvider(dataSourceId);
+    if (activateProvider)
+      activateProvider(dataSourceId);
     dispatch(setSelectedComponentAction({ id: componentId, dataSourceId, componentRef }));
   };
 

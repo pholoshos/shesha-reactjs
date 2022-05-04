@@ -11,7 +11,7 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
   const { id, markup, mode, path, actions, sections, context, formRef, ...restProps } = props;
 
   const canConfigure = Boolean(id) || Boolean(path);
-  const { router } = useShaRouting(false);
+  const { router } = useShaRouting(false) ?? {};
 
   return (
     <ConfigurableComponent

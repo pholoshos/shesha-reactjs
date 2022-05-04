@@ -1,8 +1,8 @@
-import { IAnyObject } from './../../../dist/interfaces/anyObject.d';
 import { IndexColumnDataType } from './../../providers/dataTable/interfaces';
 import { MutableRefObject, ReactNode } from 'react';
 import { ICrudProps, IDataTableInstance } from '../../providers/dataTable/interfaces';
 import { DataTableFullInstance } from '../../providers/dataTable/contexts';
+import { IAnyObject } from '../../interfaces';
 
 export type TableActionColumnType = 'create' | 'read' | 'update' | 'delete' | 'cancel'; // CRUD and cancel
 

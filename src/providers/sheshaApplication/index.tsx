@@ -17,7 +17,7 @@ import ShaRoutingProvider from '../shaRouting';
 import { AppConfiguratorProvider } from '../appConfigurator';
 import { DynamicModalProvider } from '../dynamicModal';
 import { UiProvider } from '../ui';
-import { MetadataDispatcherProvider } from '..';
+import { MetadataDispatcherProvider } from '../metadataDispatcher';
 import { IToolboxComponentGroup } from '../..';
 
 /*

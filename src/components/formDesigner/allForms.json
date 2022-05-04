@@ -16,8 +16,8 @@
   },
   {
     "name": "autocomplete",
-    "path": "d:\\Boxfusion\\Shesha3\\opensource\\metadata\\shesha-reactjs_etalon\\src\\components\\formDesigner\\components\\autocomplete\\settingsForm.json",
-    "id": "84d895c2-37bd-4ed1-a530-01eabf6839ae"
+    "path": "D:\\Boxfusion\\_HIS\\shesha-reactjs\\src\\components\\formDesigner\\components\\autocomplete\\settingsForm.json",
+    "id": "f982fdda-53b6-4627-8d86-a122a17b3277"
   },
   {
     "name": "basicDisplayFormItem",
@@ -66,8 +66,8 @@
   },
   {
     "name": "dropdown",
-    "path": "d:\\Boxfusion\\Shesha3\\opensource\\metadata\\shesha-reactjs_etalon\\src\\components\\formDesigner\\components\\dropdown\\settingsForm.json",
-    "id": "3e03910d-46af-4338-a3e2-54d1b2d7e20a"
+    "path": "D:\\Boxfusion\\_HIS\\shesha-reactjs\\src\\components\\formDesigner\\components\\dropdown\\settingsForm.json",
+    "id": "6ca2c692-cd40-4941-86e8-3ccdab4916ff"
   },
   {
     "name": "entityPicker",
@@ -111,8 +111,8 @@
   },
   {
     "name": "queryBuilder",
-    "path": "d:\\Boxfusion\\Shesha3\\opensource\\metadata\\shesha-reactjs_etalon\\src\\components\\formDesigner\\components\\queryBuilder\\settingsForm.json",
-    "id": "7490f400-1d50-47f7-ab84-97625e67ea29"
+    "path": "D:\\Boxfusion\\_HIS\\shesha-reactjs\\src\\components\\formDesigner\\components\\queryBuilder\\settingsForm.json",
+    "id": "5f29ee6e-4959-4739-83f7-7030197715bd"
   },
   {
     "name": "radio",

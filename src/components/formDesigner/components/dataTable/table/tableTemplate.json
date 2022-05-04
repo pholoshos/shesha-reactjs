@@ -1,6 +1,6 @@
 [
   {
-    "id": "KXXArjV3rLB6IbTebNCxp",
+    "id": "[[NEW_KEY]]",
     "type": "datatableContext",
     "name": "dataTable1",
     "label": "Table",
@@ -16,7 +16,7 @@
         "name": "horizontalContainer5",
         "label": "Horizontal Container7",
         "labelAlign": "right",
-        "parentId": "KXXArjV3rLB6IbTebNCxp",
+        "parentId": "[[NEW_KEY]]",
         "hidden": false,
         "customVisibility": null,
         "justifyContent": "space-between",
@@ -107,7 +107,7 @@
         "name": "horizontalContainer2",
         "label": "Horizontal Container7",
         "labelAlign": "right",
-        "parentId": "KXXArjV3rLB6IbTebNCxp",
+        "parentId": "[[NEW_KEY]]",
         "hidden": false,
         "customVisibility": null,
         "components": [
@@ -454,7 +454,7 @@
         "name": "dataTable1",
         "label": "DataTable1",
         "labelAlign": "right",
-        "parentId": "KXXArjV3rLB6IbTebNCxp",
+        "parentId": "[[NEW_KEY]]",
         "hidden": false,
         "customVisibility": null,
         "items": [

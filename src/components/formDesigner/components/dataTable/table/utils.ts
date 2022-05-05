@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
 
-const NEW_KEY = ['[[NEW_KEY]]', '[[GEN_KEY]]'];
+const NEW_KEY = ['{{NEW_KEY}}', '{{GEN_KEY}}'];
 
 export const generateNewKey = (json: object) => {
   try {

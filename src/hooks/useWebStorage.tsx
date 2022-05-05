@@ -29,8 +29,7 @@ export function useWebStorage<T>(
       // Save state
       setStoredValue(valueToStore);
       // Save to local storage
-      if (window)
-        window[storage].setItem(key, JSON.stringify(valueToStore));
+      if (window) window[storage].setItem(key, JSON.stringify(valueToStore));
     } catch (error) {
       // A more advanced implementation would handle the error case
       console.log(error);

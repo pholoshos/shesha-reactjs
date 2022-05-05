@@ -18,7 +18,7 @@ import cleanDeep from 'clean-deep';
 import { useSubmitUrl } from './useSubmitUrl';
 import { getQueryParams } from '../../utils/url';
 import _ from 'lodash';
-import { useLocalStorage, usePrevious, useUnmount } from 'react-use';
+import { usePrevious, useUnmount } from 'react-use';
 import { axiosHttp } from '../../apis/axios';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
@@ -48,15 +48,20 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const queryParamsFromAddressBar = useMemo(() => getQueryParams(), []);
 
   //#region PERSISTED FORM VALUES
-  const [persistedFormValue, setPersistedFormValue, removePersistedVFormValue] = useLocalStorage<any>(
-    uniqueFormId || 'FORM_PATH'
-  ); //
+  // I decided to do the persisting manually since the hook way fails in prod. Only works perfectly, but on Storybook
+  // TODO: Revisit this
+  useEffect(() => {
+    if (window && uniqueFormId) {
+      const itemFromStorage = window?.localStorage?.getItem(uniqueFormId);
+      setLastTruthyPersistedValue(_.isEmpty(itemFromStorage) ? null : JSON.parse(itemFromStorage));
+    }
+  }, [uniqueFormId]);
 
   useUnmount(() => {
     if (uniqueFormId && formKeysToPersist?.length && !_.isEmpty(formData)) {
-      setPersistedFormValue(getObjectWithOnlyIncludedKeys(formData, formKeysToPersist));
+      localStorage.setItem(uniqueFormId, JSON.stringify(getObjectWithOnlyIncludedKeys(formData, formKeysToPersist)));
     } else {
-      removePersistedVFormValue();
+      localStorage.removeItem(uniqueFormId);
     }
   });
   //#endregion
@@ -79,10 +84,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const getUrl = formSettings?.getUrl;
 
   const previousUrl = usePrevious(getUrl);
-
-  useEffect(() => {
-    setLastTruthyPersistedValue(_.isEmpty(persistedFormValue) ? null : persistedFormValue);
-  }, [persistedFormValue]);
 
   const initialValuesFromSettings = useMemo(() => {
     const computedInitialValues = {};
@@ -115,7 +116,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     ) {
       return;
     }
-    console.log('previousUrl, getUrl: ', previousUrl, getUrl);
 
     if (getUrl) {
       const evaluatedGetUrl = getUrl?.includes('{{')
@@ -198,7 +198,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
       }
       setFormData({ values: incomingInitialValues, mergeValues: false });
     }
-  }, [fetchedFormEntity, lastTruthyPersistedValue, initialValuesFromSettings]);
+  }, [fetchedFormEntity, lastTruthyPersistedValue, initialValuesFromSettings, uniqueFormId]);
 
   const { mutate: doSubmit, loading: submitting } = useMutate({
     verb: httpVerb || 'POST', // todo: convert to configurable

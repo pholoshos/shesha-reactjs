@@ -227,6 +227,12 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     </Fragment>
   );
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event?.target?.value?.trim()) {
+      onChange('', null);
+    }
+  };
+
   return (
     <div className="entity-picker-container">
       <div>
@@ -245,6 +251,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
                 name={name}
                 size={size}
                 defaultValue={defaultValue}
+                onChange={handleChange}
               />
             </Show>
 

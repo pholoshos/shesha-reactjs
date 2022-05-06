@@ -41,6 +41,7 @@ export interface IAutocompleteProps extends IConfigurableFormComponent {
   queryParams: IQueryParamProp[];
   keyPropName?: string;
   valuePropName?: string;
+  filter?: string;
 
   quickviewEnabled?: boolean;
   quickviewFormPath?: string;
@@ -60,7 +61,7 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
   icon: <FileSearchOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.entityReference,
   factory: (model: IAutocompleteProps, _c, form) => {
-    const { queryParams } = model;
+    const { queryParams, filter } = model;
     const { formData, formMode, isComponentDisabled } = useForm();
     const { globalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();
@@ -83,11 +84,14 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
               : value;
           }
         });
-
-        return queryParamObj;
       }
 
-      return null;
+      if (filter)
+        queryParamObj['filter'] = typeof(filter) === 'string'
+          ? filter
+          : JSON.stringify(filter);
+
+      return queryParamObj;
     };
 
     const getFetchedItemData = (
@@ -99,9 +103,9 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       useRawValues
         ? item[value]
         : {
-            id: item[value],
-            displayText: item[displayText],
-          };
+          id: item[value],
+          displayText: item[displayText],
+        };
 
     const getOptionFromFetchedItem = (item: object): ISelectOption => {
       const { dataSourceType, keyPropName, useRawValues, valuePropName } = model;

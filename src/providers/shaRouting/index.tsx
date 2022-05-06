@@ -51,7 +51,15 @@ function useShaRoutingActions(require: boolean = true) {
 }
 
 function useShaRouting(require: boolean = true) {
-  return { ...useShaRoutingState(require), ...useShaRoutingActions(require) };
+  const actionsContext = useShaRoutingActions(require);
+  const stateContext = useShaRoutingState(require);
+
+  // useContext() returns initial state when provider is missing
+  // initial context state is useless especially when require == true
+  // so we must return value only when both context are available
+  return actionsContext !== undefined && stateContext !== undefined
+    ? { ...actionsContext, ...stateContext }
+    : undefined;
 }
 
 export default ShaRoutingProvider;

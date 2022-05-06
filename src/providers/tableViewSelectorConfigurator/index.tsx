@@ -104,10 +104,10 @@ const TableViewSelectorConfiguratorProvider: FC<PropsWithChildren<
   );
 };
 
-function useTableViewSelectorConfiguratorState() {
+function useTableViewSelectorConfiguratorState(require: boolean = true) {
   const context = useContext(TableViewSelectorConfiguratorStateContext);
 
-  if (context === undefined) {
+  if (require && context === undefined) {
     throw new Error(
       'useTableViewSelectorConfiguratorState must be used within a TableViewSelectorConfiguratorProvider'
     );
@@ -116,10 +116,10 @@ function useTableViewSelectorConfiguratorState() {
   return context;
 }
 
-function useTableViewSelectorConfiguratorActions() {
+function useTableViewSelectorConfiguratorActions(require: boolean = true) {
   const context = useContext(TableViewSelectorConfiguratorActionsContext);
 
-  if (context === undefined) {
+  if (require && context === undefined) {
     throw new Error(
       'useTableViewSelectorConfiguratorActions must be used within a TableViewSelectorConfiguratorProvider'
     );
@@ -128,8 +128,16 @@ function useTableViewSelectorConfiguratorActions() {
   return context;
 }
 
-function useTableViewSelectorConfigurator() {
-  return { ...useTableViewSelectorConfiguratorState(), ...useTableViewSelectorConfiguratorActions() };
+function useTableViewSelectorConfigurator(require: boolean = true) {
+  const actionsContext = useTableViewSelectorConfiguratorActions(require);
+  const stateContext = useTableViewSelectorConfiguratorState(require);
+
+  // useContext() returns initial state when provider is missing
+  // initial context state is useless especially when require == true
+  // so we must return value only when both context are available
+  return actionsContext !== undefined && stateContext !== undefined
+    ? { ...actionsContext, ...stateContext }
+    : undefined;
 }
 
 export { TableViewSelectorConfiguratorProvider, useTableViewSelectorConfigurator };

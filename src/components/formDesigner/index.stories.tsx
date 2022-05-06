@@ -176,6 +176,10 @@ export const PersonDetails = addStory(DesignerTemplate, {
   formPath: '/persons/details',
 });
 
+export const OtpSettings = addStory(DesignerTemplate, {
+  formPath: 'settings/otp',
+});
+
 export const ModelItemProps = addStory(DesignerTemplate, {
   formPath:
     'D:\\Boxfusion\\Shesha3\\opensource\\metadata\\shesha-reactjs\\src\\components\\modelConfigurator\\propertiesEditor\\itemSettings.json',

@@ -2,6 +2,7 @@ import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../in
 import { TableOutlined } from '@ant-design/icons';
 import React from 'react';
 import templateJson from './tableTemplate.json';
+import { generateNewKey } from './utils';
 
 const TableTemplateComponent: IToolboxComponent = {
   type: 'datatable_template',
@@ -12,10 +13,10 @@ const TableTemplateComponent: IToolboxComponent = {
     return <>test</>;
   },
   build: () => {
-    const components: IConfigurableFormComponent[] = templateJson as IConfigurableFormComponent[];
+    const components: IConfigurableFormComponent[] = generateNewKey(templateJson) as IConfigurableFormComponent[];
 
     return components;
-  }
+  },
 };
 
 export default TableTemplateComponent;

@@ -57,10 +57,15 @@ const StatusTagComponent: IToolboxComponent<IStatusTagProps> = {
     const computedOverrideByCode = getExpressionExecutor(overrideCodeEvaluator) || '';
     const computedValueByCode = getExpressionExecutor(valueCodeEvaluator) || '';
 
-    // const allEvaluationEmpty = [evaluatedOverride, evaluatedValue, evaluatedColor].filter(Boolean)?.length === 0;
-
     const allEvaluationEmpty =
-      [evaluatedOverrideByExpression, localValueByExpression, localColorByExpression].filter(Boolean)?.length === 0;
+      [
+        evaluatedOverrideByExpression,
+        localValueByExpression,
+        localColorByExpression,
+        computedColorByCode,
+        computedOverrideByCode,
+        computedValueByCode,
+      ].filter(Boolean)?.length === 0;
 
     const getParsedMappings = () => {
       try {

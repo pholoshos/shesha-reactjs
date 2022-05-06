@@ -44,6 +44,7 @@ import {
   setCrudConfigAction,
   onSortAction,
   changeDisplayColumnAction,
+  changeActionedRowAction,
 } from './actions';
 import {
   ITableDataResponse,
@@ -488,6 +489,10 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(changeSelectedRowAction(val ? camelCaseKeys(val, { deep: true }) : null));
   };
 
+  const changeActionedRow = (val: any) => {
+    dispatch(changeActionedRowAction(val ? camelCaseKeys(val, { deep: true }) : null));
+  };
+
   const changeSelectedStoredFilterIds = (selectedStoredFilterIds: string[]) => {
     dispatch(changeSelectedStoredFilterIdsAction(selectedStoredFilterIds));
   };
@@ -741,6 +746,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           performQuickSearch,
           toggleSaveFilterModal,
           changeSelectedRow,
+          changeActionedRow,
           changeSelectedStoredFilterIds,
           setPredefinedFilters,
           changeSelectedIds,

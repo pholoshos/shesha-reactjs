@@ -44,6 +44,14 @@ const reducer = handleActions<IDataTableStateContext, any>(
         selectedRow: payload?.id === state?.selectedRow?.id ? null : payload,
       };
     },
+    [DataTableActionEnums.ChangeActionedRow]: (state: IDataTableStateContext, action: ReduxActions.Action<any>) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        actionedRow: payload,
+      };
+    },
 
     [DataTableActionEnums.ChangeSelectedIds]: (
       state: IDataTableStateContext,
@@ -351,12 +359,14 @@ const reducer = handleActions<IDataTableStateContext, any>(
         })
         .filter(c => c !== null);
 
-      const configuredTableSorting = cols.filter(c => c.defaultSorting !== null && c.defaultSorting !== undefined && c.propertyName)
+      const configuredTableSorting = cols
+        .filter(c => c.defaultSorting !== null && c.defaultSorting !== undefined && c.propertyName)
         .map<IColumnSorting>(c => ({ id: c.id, desc: c.defaultSorting === 1 }));
-        
-      const tableSorting = userConfig && userConfig.tableSorting && userConfig.tableSorting.length > 0 
-        ? userConfig.tableSorting
-        : configuredTableSorting;
+
+      const tableSorting =
+        userConfig && userConfig.tableSorting && userConfig.tableSorting.length > 0
+          ? userConfig.tableSorting
+          : configuredTableSorting;
 
       return {
         ...state,

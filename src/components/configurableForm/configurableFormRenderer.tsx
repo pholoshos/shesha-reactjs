@@ -18,7 +18,7 @@ import cleanDeep from 'clean-deep';
 import { useSubmitUrl } from './useSubmitUrl';
 import { getQueryParams } from '../../utils/url';
 import _ from 'lodash';
-import { useLocalStorage, usePrevious, useUnmount } from 'react-use';
+import { usePrevious, useUnmount } from 'react-use';
 import { axiosHttp } from '../../apis/axios';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
@@ -48,15 +48,20 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const queryParamsFromAddressBar = useMemo(() => getQueryParams(), []);
 
   //#region PERSISTED FORM VALUES
-  const [persistedFormValue, setPersistedFormValue, removePersistedVFormValue] = useLocalStorage<any>(
-    uniqueFormId || 'FORM_PATH'
-  ); //
+  // I decided to do the persisting manually since the hook way fails in prod. Only works perfectly, but on Storybook
+  // TODO: Revisit this
+  useEffect(() => {
+    if (window && uniqueFormId) {
+      const itemFromStorage = window?.localStorage?.getItem(uniqueFormId);
+      setLastTruthyPersistedValue(_.isEmpty(itemFromStorage) ? null : JSON.parse(itemFromStorage));
+    }
+  }, [uniqueFormId]);
 
   useUnmount(() => {
     if (uniqueFormId && formKeysToPersist?.length && !_.isEmpty(formData)) {
-      setPersistedFormValue(getObjectWithOnlyIncludedKeys(formData, formKeysToPersist));
+      localStorage.setItem(uniqueFormId, JSON.stringify(getObjectWithOnlyIncludedKeys(formData, formKeysToPersist)));
     } else {
-      removePersistedVFormValue();
+      localStorage.removeItem(uniqueFormId);
     }
   });
   //#endregion
@@ -79,13 +84,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const getUrl = formSettings?.getUrl;
 
   const previousUrl = usePrevious(getUrl);
-  const previousFormData = usePrevious(formData);
-  const previousGlobalState = usePrevious(globalState);
-  const previousParentFormValues = usePrevious(parentFormValues);
-
-  useEffect(() => {
-    setLastTruthyPersistedValue(_.isEmpty(persistedFormValue) ? null : persistedFormValue);
-  }, [persistedFormValue]);
 
   const initialValuesFromSettings = useMemo(() => {
     const computedInitialValues = {};
@@ -111,10 +109,10 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
 
     if (
-      !_.isEqual(previousUrl, getUrl) ||
-      !_.isEqual(previousFormData, formData) ||
-      !_.isEqual(previousGlobalState, globalState) ||
-      !_.isEqual(previousParentFormValues, parentFormValues)
+      _.isEqual(previousUrl, getUrl)
+      // !_.isEqual(previousFormData, formData) ||
+      // !_.isEqual(previousGlobalState, globalState) ||
+      // !_.isEqual(previousParentFormValues, parentFormValues)
     ) {
       return;
     }
@@ -145,7 +143,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
         });
       }
     }
-  }, [getUrl, formData, globalState, parentFormValues]);
+  }, [getUrl, formData, globalState, parentFormValues, skipFetchData]);
 
   useEffect(() => {
     getExpressionExecutor(onInitialize); // On Initialize
@@ -163,35 +161,33 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
   }, [allComponents, initialValues]);
 
-  const previousFormEntity = usePrevious(fetchedEntity?.result);
-  const previousPersistedValues = usePrevious(lastTruthyPersistedValue);
   const fetchedFormEntity = fetchedEntity?.result;
 
   useEffect(() => {
-    let incomingInitialValues = initialValuesFromSettings;
+    let incomingInitialValues = null;
 
-    // Initial values from formSettings override any other initial values
-    if (_.isEmpty(initialValuesFromSettings)) {
-      const hasFormEntityChanged = !_.isEqual(previousFormEntity, fetchedFormEntity);
-      const hasPersistedValuesChanged = !_.isEqual(previousPersistedValues, lastTruthyPersistedValue);
+    // By default the `initialValuesFromSettings` are merged with `fetchedFormEntity`
+    // If you want only `initialValuesFromSettings`, then pass skipFetchData
+    // If you want only `fetchedFormEntity`, don't pass `initialValuesFromSettings`
+    if (!_.isEmpty(initialValuesFromSettings)) {
+      incomingInitialValues = fetchedFormEntity
+        ? { ...fetchedFormEntity, ...initialValuesFromSettings }
+        : initialValuesFromSettings;
+    } else if (!_.isEmpty(fetchedFormEntity) || !_.isEmpty(lastTruthyPersistedValue)) {
+      // `fetchedFormEntity` will always be merged with persisted values from local storage
+      // To override this, to not persist values or pass skipFetchData
+      let computedInitialValues = fetchedFormEntity
+        ? prepareInitialValues
+          ? prepareInitialValues(fetchedFormEntity)
+          : fetchedFormEntity
+        : initialValues;
 
-      if (!hasFormEntityChanged && !hasPersistedValuesChanged) {
-        return;
+      if (!_.isEmpty(lastTruthyPersistedValue)) {
+        computedInitialValues = { ...computedInitialValues, ...lastTruthyPersistedValue };
       }
-
-      if (fetchedFormEntity || lastTruthyPersistedValue) {
-        let computedInitialValues = fetchedFormEntity
-          ? prepareInitialValues
-            ? prepareInitialValues(fetchedFormEntity)
-            : fetchedFormEntity
-          : initialValues;
-
-        if (!_.isEmpty(lastTruthyPersistedValue)) {
-          computedInitialValues = { ...computedInitialValues, ...lastTruthyPersistedValue };
-          incomingInitialValues = computedInitialValues;
-        }
-      }
+      incomingInitialValues = computedInitialValues;
     }
+    // }
 
     if (incomingInitialValues) {
       // TODO: setFormData doesn't update the fields when the form that needs to be initialized it modal.
@@ -202,7 +198,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
       }
       setFormData({ values: incomingInitialValues, mergeValues: false });
     }
-  }, [fetchedFormEntity, lastTruthyPersistedValue, initialValuesFromSettings]);
+  }, [fetchedFormEntity, lastTruthyPersistedValue, initialValuesFromSettings, uniqueFormId]);
 
   const { mutate: doSubmit, loading: submitting } = useMutate({
     verb: httpVerb || 'POST', // todo: convert to configurable

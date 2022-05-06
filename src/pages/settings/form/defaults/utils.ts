@@ -1,5 +1,12 @@
 import { UseMutateReturn } from 'restful-react';
-import { AjaxResponseBase, FormDto, FormDtoAjaxResponse, useFormCreate, UseFormCreateProps } from '../../../../apis/form';
+import {
+  AjaxResponseBase,
+  FormDto,
+  FormDtoAjaxResponse,
+  useFormCreate,
+  UseFormCreateProps,
+} from '../../../../apis/form';
+import { generateNewKey } from '../../../../components/formDesigner/components/dataTable/table/utils';
 import { evaluateString } from '../../../../providers/form/utils';
 import blankViewMarkup from '../defaults/markups/blankView.json';
 import dashboardViewMarkup from '../defaults/markups/dashboardView.json';
@@ -86,7 +93,7 @@ export const getDefaultFormMarkup = (type: ViewType) => {
     case 'menu':
       return menuViewMarkup;
     case 'table':
-      return tableViewMarkup;
+      return generateNewKey(tableViewMarkup);
     default:
       return blankViewMarkup;
   }

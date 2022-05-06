@@ -22,7 +22,7 @@ const Template: Story<IMetadataDispatcherProviderProps> = args => {
 };
 
 const MetadataConsumer = () => {
-  const { getActiveProvider } = useMetadataDispatcher(false);
+  const { getActiveProvider } = useMetadataDispatcher(false) ?? {};
   const provider = Boolean(getActiveProvider) ? getActiveProvider() : null;
   const properties = provider?.metadata?.properties;
 

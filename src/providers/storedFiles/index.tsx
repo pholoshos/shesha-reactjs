@@ -67,7 +67,7 @@ const StoredFilesProvider: FC<PropsWithChildren<IStoredFilesProviderProps>> = ({
     allCategories,
   });
 
-  const { connection } = useSignalR(false);
+  const { connection } = useSignalR(false) ?? {};
   const { headers } = useAuth();
 
   const { config } = useApplicationConfiguration();

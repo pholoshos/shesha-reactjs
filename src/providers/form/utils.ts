@@ -270,7 +270,7 @@ export const evaluateComplexString = (expression: string, mappings: IMatchData[]
         // But dynamic expression now can use formData and globalState, so as a result the expressions need to use dot notation
         const evaluatedValue = evaluateString(matched, match ? { [match]: data } : data);
 
-        result = result.replace(matched, evaluatedValue);
+        result = result.replaceAll(matched, evaluatedValue);
       }
     });
   });

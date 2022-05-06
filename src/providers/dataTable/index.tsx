@@ -76,7 +76,7 @@ import { useSheshaApplication } from '../sheshaApplication';
 import { DataTablePubsubConstants } from './pubSub';
 import { useGlobalState } from '../globalState';
 import camelCaseKeys from 'camelcase-keys';
-import { usePrevious } from 'react-use';
+import { usePrevious, usePreviousDistinct } from 'react-use';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Table configuration Id */
@@ -269,19 +269,14 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   // const previousPredefinedFilters = usePrevious(state.predefinedFilters);
 
   const debouncedRefreshTable = useDebouncedCallback(() => {
-    // console.log(
-    //   'debouncedRefreshTable previousPredefinedFilters, state.predefinedFilters: ',
-    //   previousPredefinedFilters,
-    //   state.predefinedFilters,
-    //   _.isEqual(_.sortBy(previousPredefinedFilters), _.sortBy(state.predefinedFilters))
-    // );
-    // refreshTableWhenAppropriate();
-    // if (!_.isEqual(_.sortBy(previousPredefinedFilters), _.sortBy(state.predefinedFilters))) {
-    //   refreshTableWhenAppropriate();
-    // }
+    refreshTableWhenAppropriate();
   }, 500);
 
-  useEffect(debouncedRefreshTable, [state.predefinedFilters]);
+  useEffect(() => {
+    if (state.predefinedFilters) {
+      debouncedRefreshTable();
+    }
+  }, [state.predefinedFilters]);
 
   const refreshTable = () => {
     if ((configIsReady || columnsAreReady) && tableIsReady.current === true) {
@@ -497,8 +492,14 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(changeSelectedStoredFilterIdsAction(selectedStoredFilterIds));
   };
 
+  const previousPredefinedFilters = usePreviousDistinct(state?.predefinedFilters);
+
   const setPredefinedFilters = (filters: IStoredFilter[]) => {
-    dispatch(setPredefinedFiltersAction(filters));
+    const filtersChanged = !_.isEqual(_.sortBy(previousPredefinedFilters), _.sortBy(filters));
+
+    if (filtersChanged) {
+      dispatch(setPredefinedFiltersAction(filters));
+    }
   };
 
   const changeSelectedIds = (selectedIds: string[]) => {

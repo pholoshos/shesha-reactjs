@@ -16,7 +16,6 @@ import { ButtonGroup } from '../../button/buttonGroup/buttonGroupComponent';
 import camelCaseKeys from 'camelcase-keys';
 import { useDebouncedCallback } from 'use-debounce';
 import _ from 'lodash';
-import { useDebounce } from 'react-use';
 
 export interface IChildTableComponentProps extends IChildTableSettingsProps, IConfigurableFormComponent {}
 
@@ -28,7 +27,8 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
   icon: <TableOutlined />,
   factory: (model: IChildTableComponentProps, componentRef: MutableRefObject<any>) => {
     const { formData, formMode, isComponentHidden } = useForm();
-    const { columns, getDataSourceType, setPredefinedFilters, predefinedFilters } = useDataTable();
+    const { columns, getDataSourceType, setPredefinedFilters } = useDataTable();
+
     const { globalState } = useGlobalState();
 
     const { defaultSelectedFilterId, filters } = model;
@@ -40,6 +40,7 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
       dataSourceType,
     };
 
+    //#region Filters
     const hasFilters = filters?.length > 0;
 
     const foundDynamicFilter = hasDynamicFilter(filters);
@@ -51,68 +52,67 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
 
     const debounceEvaluateDynamicFiltersHelper = useDebouncedCallback(
       () => {
-        const data = camelCaseKeys(formData || {}, { pascalCase: true });
+        if (hasFilters) {
+          const data = !_.isEmpty(formData) ? camelCaseKeys(formData, { deep: true, pascalCase: true }) : formData;
 
-        return evaluateDynamicFilters(filters, [
-          {
-            match: '', // For backward compatibility
-            data,
-          },
-          {
-            match: 'data',
-            data: data,
-          },
-          {
-            match: 'globalState',
-            data: globalState,
-          },
-        ]);
+          const evaluatedFilters = evaluateDynamicFilters(filters, [
+            {
+              match: 'data',
+              data: data,
+            },
+            {
+              match: 'globalState',
+              data: globalState,
+            },
+            {
+              match: '', // For backward compatibility. It's also important that the empty one is the last one as it's a fallback
+              data,
+            },
+          ]);
+
+          let parsedFilters = evaluatedFilters;
+
+          if (defaultSelectedFilterId) {
+            parsedFilters = evaluatedFilters?.map(filter => {
+              const localFilter = { ...filter };
+
+              if (localFilter.id === defaultSelectedFilterId) {
+                localFilter.defaultSelected = true;
+                localFilter.selected = true;
+              }
+
+              return localFilter;
+            });
+          } else {
+            const firstElement = evaluatedFilters[0];
+
+            firstElement.defaultSelected = true;
+            firstElement.selected = true;
+
+            evaluatedFilters[0] = firstElement;
+          }
+
+          if (hasFormData || hasGlobalState) {
+            // Here we know we have evaluated our filters
+
+            // TODO: Deal with the situation whereby the expression value evaluated to empty string because the action GetData will fail
+            setPredefinedFilters(parsedFilters);
+          } else if (!foundDynamicFilter) {
+            // Here we do not need dynamic filters
+            setPredefinedFilters(parsedFilters);
+          }
+        }
       },
       // delay in ms
-      400
+      300
     );
 
     useEffect(() => {
       if (hasFilters) {
-        const evaluatedFilters = debounceEvaluateDynamicFiltersHelper();
-
-        let parsedFilters = evaluatedFilters;
-
-        if (defaultSelectedFilterId) {
-          parsedFilters = evaluatedFilters?.map(filter => {
-            const localFilter = { ...filter };
-
-            if (localFilter.id === defaultSelectedFilterId) {
-              localFilter.defaultSelected = true;
-              localFilter.selected = true;
-            }
-
-            return localFilter;
-          });
-        } else {
-          const firstElement = evaluatedFilters[0];
-
-          firstElement.defaultSelected = true;
-          firstElement.selected = true;
-
-          evaluatedFilters[0] = firstElement;
-        }
-
-        if (hasFormData || hasGlobalState) {
-          // Here we know we have evaluated our filters
-
-          // TODO: Deal with the situation whereby the expression value evaluated to empty string because the action GetData will fail
-          setPredefinedFilters(parsedFilters);
-        } else if (!foundDynamicFilter) {
-          // Here we do not need dynamic filters
-          setPredefinedFilters(parsedFilters);
-        }
-
-        // Do not refresh the table when the data changes.
-        // TODO: Compare filters to see if they have not changed, in which case you should refresh
-        // refreshTable();
+        debounceEvaluateDynamicFiltersHelper();
       }
     }, [model?.filters, formData, globalState]);
+    //#endregion
 
     const isVisible = !isComponentHidden(model);
 

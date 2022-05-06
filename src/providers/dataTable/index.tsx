@@ -76,7 +76,7 @@ import { useSheshaApplication } from '../sheshaApplication';
 import { DataTablePubsubConstants } from './pubSub';
 import { useGlobalState } from '../globalState';
 import camelCaseKeys from 'camelcase-keys';
-import { usePrevious, usePreviousDistinct } from 'react-use';
+import { usePreviousDistinct } from 'react-use';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Table configuration Id */

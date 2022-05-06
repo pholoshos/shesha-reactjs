@@ -27,11 +27,15 @@ export const ValidationErrors: FC<IValidationErrorsProps> = ({ error, renderMode
   let errorObj = error as IErrorInfo;
 
   if (typeof error === 'string') {
-    return renderValidationErrors({ message: DEFAULT_ERROR_MSG });
+    return renderValidationErrors({ message: error });
   }
 
   if (Object.keys(error).includes('error')) {
     errorObj = error['error'] as IErrorInfo;
+  }
+
+  if (Object.keys(error).includes('errorInfo') && Object.keys(error['errorInfo']).includes('error')) {
+    errorObj = error['errorInfo']['error'] as IErrorInfo;
   }
 
   // IAjaxResponseBase

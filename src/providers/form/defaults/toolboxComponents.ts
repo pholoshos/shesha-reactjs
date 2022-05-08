@@ -81,12 +81,12 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
     name: 'Static',
     visible: true,
-    components: [Alert, ValidationErrors, DisplayFormItem, Section],
+    components: [Alert, DisplayFormItem, Section, ValidationErrors],
   },
   {
     name: 'Layout',
     visible: true,
-    components: [CollapsiblePanel, Columns, ContainerComponent, SectionSeprator, Tabs, Divider, Space],
+    components: [CollapsiblePanel, Columns, ContainerComponent, Divider, SectionSeprator, Space, Tabs],
   },
   {
     name: 'Custom',
@@ -95,44 +95,44 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       Address,
       AttachmentsEditor,
       ChildDataTable,
+      CodeEditor,
+      DynamicView,
+      EditableTagGroup,
+      EntityPickerComponent,
       FileUpload,
+      Filter,
       HierarchicalChecklistComponent,
       KeyValueEditor,
       Notes,
       IconPicker,
-      QueryBuilderComponent,
-      EntityPickerComponent,
+      PermissionedObjectsTree,
       PropertyAutocomplete,
-      CodeEditor,
-      EditableTagGroup,
+      QueryBuilderComponent,
       StatusTag,
-      DynamicView,
-      Filter,
-      PermissionedObjectsTree
     ],
   },
   {
     name: 'Datatable',
     visible: true,
     components: [
-      TableTemplate,
       AdvancedFilterButton,
+      ChildTable,
+      ColumnsEditor, // Hidden
+      ColumnsSelector, // Hidden
       DataTable,
+      TableTemplate,
       Pager,
       QuickSearch,
       SelectColumnsButton,
       TableContext,
       TableViewSelector,
       Toolbar,
-      ChildTable,
-      ColumnsEditor, // Hidden
-      ColumnsSelector, // Hidden
     ],
   },
   {
     visible: true,
     name: 'Typography',
-    components: [Text, Title, Paragraph],
+    components: [Paragraph, Text, Title],
   },
 
   // {

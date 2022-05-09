@@ -77,6 +77,7 @@ import { DataTablePubsubConstants } from './pubSub';
 import { useGlobalState } from '../globalState';
 import camelCaseKeys from 'camelcase-keys';
 import { usePreviousDistinct } from 'react-use';
+import { useShaRouting } from '../shaRouting';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Table configuration Id */
@@ -155,6 +156,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const { backendUrl } = useSheshaApplication();
   const tableIsReady = useRef(false);
   const { headers } = useAuth();
+
+  const { router } = useShaRouting();
 
   const { mutate: fetchDataTableDataInternal } = useMutate<IResult<ITableDataResponse>>({
     verb: 'POST',
@@ -305,6 +308,14 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const debouncedExportToExcel = useDebouncedCallback(
     () => {
       exportToExcel();
+    },
+    // delay in ms
+    300
+  );
+
+  const debouncedDownloadLogFile = useDebouncedCallback(
+    () => {
+      downloadLogFile();
     },
     // delay in ms
     300
@@ -672,6 +683,19 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const changeDisplayColumn = (displayColumnName: string) => {
     dispatch(changeDisplayColumnAction(displayColumnName));
   };
+
+  const downloadLogFile = () => {
+    axios({
+      url: `${backendUrl}/api/services/Scheduler/ScheduledJobExecution/DownloadLogFile?id=${router?.query?.id}`,
+      method: 'GET',
+      responseType: 'blob',
+    })
+      .then(response => {
+        const fileName = response.headers['content-disposition']?.split('filename=')[1] ?? 'logfile.log';
+        FileSaver.saveAs(new Blob([response.data]), fileName);
+      })
+      .catch(e => console.error(e));
+  };
   //#endregion
 
   //#region Subscriptions
@@ -717,6 +741,12 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   useSubscribe(DataTablePubsubConstants.toggleColumnsSelector, data => {
     if (data.stateId === uniqueStateId) {
       toggleColumnsSelector();
+    }
+  });
+
+  useSubscribe(DataTablePubsubConstants.downloadLogFile, data => {
+    if (data.stateId === uniqueStateId) {
+      debouncedDownloadLogFile();
     }
   });
 

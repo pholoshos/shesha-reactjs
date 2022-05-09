@@ -639,6 +639,11 @@
               "id": "4417761c-5277-4b39-a8e9-e5493fc4488c"
             },
             {
+              "label": "downloadLogFile",
+              "value": "DOWNLOAD_LOG_FILE",
+              "id": "3580449c-b124-4531-bc0d-b56d939a09d8"
+            },
+            {
               "label": "(enter custom action)",
               "value": "CUSTOM_ACTION",
               "id": "b4224f35-1b69-43f5-99e8-8119be85a940"

@@ -313,10 +313,13 @@ export const getVisibleComponentIds = (components: IComponentsDictionary, values
   for (const key in components) {
     if (components.hasOwnProperty(key)) {
       const component = components[key] as IConfigurableFormComponent;
-      if (!component || component.hidden) continue;
+
+      if (!component || component.hidden || component.visibility === 'No' || component.visibility === 'Removed') continue;
 
       const isVisible = component.visibilityFunc == null || component.visibilityFunc(values);
       if (isVisible) visibleComponents.push(key);
+
+
     }
   }
   return visibleComponents;
@@ -753,6 +756,7 @@ export const createComponentModelForDataProperty = (
     labelAlign: 'right',
     //parentId: containerId,
     hidden: false,
+    visibility: 'Yes',
     customVisibility: null,
     visibilityFunc: _data => true,
     isDynamic: false,

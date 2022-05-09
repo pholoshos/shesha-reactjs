@@ -71,7 +71,7 @@ export interface IFormSettings {
   formKeysToPersist?: string[];
   excludeFormFieldsInPayload?: string;
   uniqueFormId?: string;
-  onInitialize?: string;
+  onDataLoaded?: string;
   onUpdate?: string;
   initialValues?: IKeyValue[];
 }

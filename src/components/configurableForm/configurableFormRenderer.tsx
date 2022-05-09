@@ -35,7 +35,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   ...props
 }) => {
   const { setFormData, formData, allComponents, formMode, isDragging, formSettings, setValidationErrors } = useForm();
-  const { excludeFormFieldsInPayload, onInitialize, onUpdate, formKeysToPersist, uniqueFormId } = formSettings;
+  const { excludeFormFieldsInPayload, onDataLoaded, onUpdate, formKeysToPersist, uniqueFormId } = formSettings;
   const { globalState } = useGlobalState();
   const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);
   const { backendUrl } = useSheshaApplication();
@@ -148,10 +148,10 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const fetchedFormEntity = fetchedEntity?.result;
 
   useEffect(() => {
-    if (fetchedFormEntity && onInitialize) {
-      getExpressionExecutor(onInitialize); // On Initialize
+    if (fetchedFormEntity && onDataLoaded) {
+      getExpressionExecutor(onDataLoaded); // On Initialize
     }
-  }, [onInitialize, fetchedEntity]);
+  }, [onDataLoaded, fetchedEntity]);
 
   useEffect(() => {
     if (onUpdate) {

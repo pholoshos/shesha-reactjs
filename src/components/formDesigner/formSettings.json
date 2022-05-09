@@ -243,8 +243,8 @@
     {
       "id": "087a4e7d-ff28-4175-9221-61bef0bbaea2",
       "type": "codeEditor",
-      "name": "onInitialize",
-      "label": "On Initialize",
+      "name": "onDataLoaded",
+      "label": "On Data Loaded",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
@@ -270,7 +270,7 @@
           "type": "object"
         }
       ],
-      "description": "This action will be executed whenever the form initializes"
+      "description": "This action will be executed immediately after the data has been loaded (Fetched from the API)"
     },
     {
       "id": "5092dd2b-c514-4b06-bfb5-546ce94fab97",

@@ -21,6 +21,7 @@ export const IndexViewSelectorRenderer: FC<IIndexViewSelectorRendererProps> = ({
     id: null,
     name: header,
   };
+
   const viewsToSelect: IStoredFilter[] = [defaultView, ...filters].filter(view => {
     return view.id ? view.id !== selectedFilterId : Boolean(selectedFilterId);
   });

@@ -43,7 +43,6 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
     changeSelectedStoredFilterIds,
     selectedStoredFilterIds,
     setPredefinedFilters,
-    predefinedFilters,
   } = useDataTableStore();
   const { globalState } = useGlobalState();
   const { formData } = useForm();
@@ -137,7 +136,7 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
   return (
     <IndexViewSelectorRenderer
       header={title || 'Table'}
-      filters={predefinedFilters || []}
+      filters={filters || []}
       onSelectFilter={changeSelectedFilter}
       selectedFilterId={defaultSelectedFilterId}
     />

@@ -145,12 +145,18 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
   }, [getUrl, formData, globalState, parentFormValues, skipFetchData]);
 
-  useEffect(() => {
-    getExpressionExecutor(onInitialize); // On Initialize
-  }, [onInitialize]);
+  const fetchedFormEntity = fetchedEntity?.result;
 
   useEffect(() => {
-    getExpressionExecutor(onUpdate); // On Update
+    if (fetchedFormEntity && onInitialize) {
+      getExpressionExecutor(onInitialize); // On Initialize
+    }
+  }, [onInitialize, fetchedEntity]);
+
+  useEffect(() => {
+    if (onUpdate) {
+      getExpressionExecutor(onUpdate); // On Update
+    }
   }, [formData, onUpdate]);
 
   // reset form to initial data on any change of components or initialData
@@ -160,8 +166,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
       form.resetFields();
     }
   }, [allComponents, initialValues]);
-
-  const fetchedFormEntity = fetchedEntity?.result;
 
   useEffect(() => {
     let incomingInitialValues = null;

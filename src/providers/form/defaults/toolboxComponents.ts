@@ -56,6 +56,7 @@ import ButtonGroup from '../../../components/formDesigner/components/button/butt
 import ColumnsSelector from '../../../components/formDesigner/components/entityPicker/columnsSelector';
 import Filter from '../../../components/formDesigner/components/dataTable/filter/filterComponent';
 import PermissionedObjectsTree from '../../../components/formDesigner/components/permissionedObjectsTree/permissionedObjectsTree';
+import ScheduledJobExecutionLog from '../../../components/formDesigner/components/scheduledJobExecutionLog/scheduledJobExecutionLog';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -108,6 +109,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       PermissionedObjectsTree,
       PropertyAutocomplete,
       QueryBuilderComponent,
+      ScheduledJobExecutionLog,
       StatusTag,
     ],
   },

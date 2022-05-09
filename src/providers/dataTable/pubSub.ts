@@ -5,4 +5,5 @@ export const DataTablePubsubConstants = {
   exportToExcel: 'EXPORT_TO_EXCEL',
   deleteRow: 'DELETE_ROW',
   stateChanged: 'STATE_CHANGED',
+  downloadLogFile: 'DOWNLOAD_LOG_FILE',
 };

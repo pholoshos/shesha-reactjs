@@ -35,7 +35,11 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
   icon: <EllipsisOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.entityReference,
   factory: (model: IEntityPickerComponentProps) => {
-    const { formMode } = useForm();
+    const { formMode, isComponentDisabled } = useForm();
+
+    const isReadOnly = model?.readOnly || formMode === 'readonly';
+
+    const disabled = isComponentDisabled(model);
 
     if (formMode === 'designer' && !model?.tableId && !model?.entityType) {
       return (
@@ -52,7 +56,8 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
       <ConfigurableFormItem model={model} initialValue={model?.defaultValue}>
         <EntityPicker
           formId={model?.id}
-          disabled={model.disabled}
+          disabled={disabled}
+          readOnly={isReadOnly}
           tableId={model?.tableId}
           displayEntityKey={model?.displayEntityKey}
           entityType={model?.entityType}

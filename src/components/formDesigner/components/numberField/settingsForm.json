@@ -93,6 +93,13 @@
       "label": "Hidden"
     },
     {
+      "id": "1ceb3851-f15e-437b-98b6-84d6a1fbf801",
+      "type": "checkbox",
+      "name": "readOnly",
+      "parentId": "root",
+      "label": "Read Only"
+    },
+    {
       "id": "c6885251-96a6-40ce-99b2-4b5209a9e01c",
       "type": "checkbox",
       "name": "hideLabel",

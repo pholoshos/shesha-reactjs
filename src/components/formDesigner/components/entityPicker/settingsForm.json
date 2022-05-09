@@ -150,6 +150,13 @@
       "label": "Disabled"
     },
     {
+      "id": "1ceb3851-f15e-437b-98b6-84d6a1fbf801",
+      "type": "checkbox",
+      "name": "readOnly",
+      "parentId": "root",
+      "label": "Read Only"
+    },
+    {
       "id": "eb946e7c-5450-48b8-994a-ead765e3d631",
       "type": "sectionSeparator",
       "name": "separator2",

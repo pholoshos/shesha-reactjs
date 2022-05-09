@@ -14,6 +14,7 @@ import { useModal } from '../../providers';
 import { useSelectedTableRow } from './useSelectedTableRow';
 import { usePublish } from '../../hooks';
 import Show from '../show';
+import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
 
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
 
@@ -51,6 +52,7 @@ export interface IEntityPickerProps extends Omit<IWrappedEntityPickerProps, 'onD
   configurableColumns?: IConfigurableColumnsBase[]; // Type it later
   addNewRecordsProps?: IAddNewRecordProps;
   style?: CSSProperties;
+  readOnly?: boolean;
 }
 
 export interface IEntityPickerState {
@@ -81,6 +83,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   configurableColumns,
   formId,
   addNewRecordsProps,
+  readOnly,
 }) => {
   const [state, setState] = useState<IEntityPickerState>({
     showModal: false,
@@ -232,6 +235,12 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
       onChange('', null);
     }
   };
+
+  if (readOnly) {
+    return <ReadOnlyDisplayFormItem value={getValueRow()} />;
+  }
+
+  console.log('EntityPicker readOnly ', readOnly);
 
   return (
     <div className="entity-picker-container">

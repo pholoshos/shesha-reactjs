@@ -78,6 +78,7 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       parentFormValues: formData,
       modalConfirmDialogMessage: convertedProps?.modalConfirmDialogMessage,
       onSubmitted: values => {
+        debugger;
         onSuccessScriptExecutor(values);
 
         if (props?.refreshTableOnSuccess) {
@@ -181,16 +182,9 @@ interface IToolbarButtonTableDialogProps extends Omit<IModalProps, 'formId' | 'i
 }
 
 const ToolbarButtonPlainDialog: FC<IToolbarButtonTableDialogProps> = props => {
-  const { publish } = usePubSub();
-
   const dynamicModal = useModal({
     ...props?.modalProps,
     formId: props?.modalFormId,
-    onSubmitted: () => {
-      if (props?.refreshTableOnSuccess) {
-        publish(DataTablePubsubConstants.refreshTable, { stateId: props?.uniqueStateId });
-      }
-    },
   });
 
   const onButtonClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {

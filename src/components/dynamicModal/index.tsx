@@ -61,16 +61,19 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
   };
 
   const onSubmitted = (_: any, response: any) => {
-    form.resetFields();
-
     if (onSuccessRedirectUrl) {
       const computedRedirectUrl = evaluateString(onSuccessRedirectUrl, response);
 
       router?.push(computedRedirectUrl);
     }
 
+    if (props.onSubmitted) {
+      props.onSubmitted(response);
+    }
+
     hideForm();
-    if (props.onSubmitted) props.onSubmitted(response);
+
+    form.resetFields();
   };
 
   const onCancel = () => {

@@ -54,12 +54,12 @@
         {
           "label": "left",
           "value": "left",
-          "id": "f01e54aa-a1a4-4bd6-ba73-c395e48af8ce"
+          "id": "2d6411ae-0b56-4b4c-ad7c-fb15aa7fa1f5"
         },
         {
           "label": "right",
           "value": "right",
-          "id": "b920ef96-ae27-4a01-bfad-b5b7d07218da"
+          "id": "9e89461b-f916-4689-8789-1854ccedc666"
         }
       ],
       "dataSourceType": "values"
@@ -332,17 +332,17 @@
         {
           "label": "Small",
           "value": "small",
-          "id": "4f11403c-95fd-4e49-bb60-cb8c25f0f3c3"
+          "id": "2f56ae38-e5f3-40ff-9830-bc048736ddb4"
         },
         {
           "label": "Middle",
           "value": "middle",
-          "id": "8f85c476-e632-4fa7-89ad-2be6cfb7f1f1"
+          "id": "470d820b-7cd7-439c-8e95-1f5b3134f80c"
         },
         {
           "label": "Large",
           "value": "large",
-          "id": "f01e54aa-a1a4-4bd6-ba73-c395e48af8ce"
+          "id": "1f2ac3db-3b3f-486c-991f-ad703088ab2d"
         }
       ],
       "dataSourceType": "values"

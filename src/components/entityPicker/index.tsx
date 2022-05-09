@@ -240,8 +240,6 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     return <ReadOnlyDisplayFormItem value={getValueRow()} />;
   }
 
-  console.log('EntityPicker readOnly ', readOnly);
-
   return (
     <div className="entity-picker-container">
       <div>

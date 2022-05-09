@@ -242,7 +242,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   }, [
     state.tableFilter?.length,
     state.currentPage,
-    state.selectedStoredFilterIds?.length,
+    state.selectedStoredFilterIds,
     state.selectedPageSize,
     isFetchingTableConfig,
     state.tableConfigLoaded,

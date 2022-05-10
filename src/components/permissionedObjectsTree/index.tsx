@@ -51,7 +51,7 @@ export const PermissionedObjectsTree: FC<IPermissionedObjectsTreeProps> = (props
 
   useEffect(() => {
     fetcher.refetch();
-  }, [props, objectsType])
+  }, [objectsType])
 
   useEffect(() => {
     if (!isFetchingData) {

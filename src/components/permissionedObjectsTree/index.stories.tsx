@@ -5,6 +5,7 @@ import PermissionedObjectsTree from '.';
 import { GlobalStateProvider, ShaApplicationProvider } from '../..';
 import AuthContainer from '../authedContainer';
 import { addStory } from '../../stories/utils';
+import './index.less';
 
 export default {
   title: 'Components/PermissionedObjectsTree',
@@ -24,7 +25,9 @@ const Template: Story<IPermissionedObjectsConfiguratorStoryProps> = (props) => {
     <GlobalStateProvider>
       <ShaApplicationProvider backendUrl={backendUrl}>
         <AuthContainer layout>
-          <PermissionedObjectsTree objectsType={props.type}></PermissionedObjectsTree>  
+          <div id='test' className='treeContainer'>
+            <PermissionedObjectsTree objectsType={props.type}></PermissionedObjectsTree>  
+          </div>
         </AuthContainer>
       </ShaApplicationProvider>
     </GlobalStateProvider>

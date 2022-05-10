@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { InputProps, Tag } from 'antd';
 import React, { FC, useEffect, useState } from 'react'; 
-import { RawAutocomplete } from '../autocomplete';
+import Autocomplete from '../autocomplete';
 import Show from '../show';
 
 export interface IAutocompleteTagGroupProps extends Omit<InputProps, 'value' | 'onChange'> {
@@ -117,20 +117,17 @@ export const AutocompleteTagGroup: FC<IAutocompleteTagGroupProps> =
       </div>
 
       <Show when={inputVisible}>
-        <RawAutocomplete
+        <Autocomplete.Raw
           defaultValue={defaultValue}
-          type="text"
           size="small"
           style={{ width: '100%' }}
           value={inputValue}
           onChange={handleInputChange}
           readOnly={rest?.readOnly}
           disabled={rest?.disabled}
-          allowClear
-          {...rest}
+          allowClear={true}
           dataSourceType='url'
           dataSourceUrl={autocompleteUrl}
-          //ref={inputRef}
         />
       </Show>
 

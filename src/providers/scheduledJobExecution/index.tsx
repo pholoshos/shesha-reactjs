@@ -94,7 +94,7 @@ const ScheduledJobExecutionProvider: FC<PropsWithChildren<IScheduledJobExecution
 
         await connection.start().then(() => connection.invoke('JoinGroup', id));
       } catch (err) {
-        alert(err);
+        console.error(err);
       }
 
       dispatch(setHubConnectionAction(connection));

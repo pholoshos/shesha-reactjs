@@ -1,14 +1,16 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, message, notification, Result, Spin } from 'antd';
+import moment from 'moment';
 import Link from 'next/link';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GetDataError, useGet, useMutate } from 'restful-react';
+import { axiosHttp } from '../../apis/axios';
 import { FormDto, useFormGet, useFormGetByPath } from '../../apis/form';
 import { AjaxResponseBase } from '../../apis/user';
 import { ConfigurableForm, ValidationErrors } from '../../components';
 import { useSubscribe } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
-import { useGlobalState } from '../../providers';
+import { useGlobalState, useSheshaApplication } from '../../providers';
 import { ConfigurableFormInstance } from '../../providers/form/contexts';
 import { IFormDto } from '../../providers/form/models';
 import { evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
@@ -68,6 +70,7 @@ interface IDynamicPageState extends IDynamicPageProps {
 }
 
 const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
+  const { backendUrl } = useSheshaApplication();
   const [state, setState] = useState<IDynamicPageState>({});
   const formRef = useRef<ConfigurableFormInstance>();
   const { globalState } = useGlobalState();
@@ -124,12 +127,9 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     return pathToReturn?.trim();
   }, [formResponse, entityPathId, props, state]);
 
-  const {
-    refetch: fetchData,
-    error: fetchDataError,
-    loading: isFetchingData,
-    data: fetchDataResponse,
-  } = useGet<EntityAjaxResponse>({
+  const { refetch: fetchData, error: fetchDataError, loading: isFetchingData, data: fetchDataResponse } = useGet<
+    EntityAjaxResponse
+  >({
     path: fetchDataPath,
     // queryParams: { id },
     lazy: true, // We wanna make sure we have both the id and the state?.markup?.formSettings?.getUrl before fetching data
@@ -145,6 +145,14 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         ])
       : '';
   }, [formResponse?.markup?.formSettings]);
+
+  const onDataLoaded = formResponse?.markup?.formSettings?.onDataLoaded;
+
+  useEffect(() => {
+    if (onDataLoaded && state?.fetchedData) {
+      getExpressionExecutor(onDataLoaded);
+    }
+  }, [onDataLoaded, state?.fetchedData]);
 
   const { mutate: postData, loading: isPostingData } = useMutate({
     path: putUrl,
@@ -198,6 +206,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
     if (result) {
       const formResponse: IFormDto = { ...(result as any) };
+
       formResponse.markup = JSON.parse(result.markup);
 
       setState(prev => ({ ...prev, formResponse }));
@@ -266,6 +275,23 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
       });
     }
   }, [formResponse]);
+
+  //#region Expression executor
+  const getExpressionExecutor = (expression: string) => {
+    if (!expression) {
+      return null;
+    }
+
+    // tslint:disable-next-line:function-constructor
+    return new Function('data, globalState, moment, http, message', expression)(
+      state?.fetchedData,
+      globalState,
+      moment,
+      axiosHttp(backendUrl),
+      message
+    );
+  };
+  //#endregion
 
   const isLoading = isFetchingData || isFetchingFormByPath || isFetchingFormById || isPostingData;
 

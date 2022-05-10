@@ -48,7 +48,7 @@ export const AutocompleteTagGroup: FC<IAutocompleteTagGroupProps> =
     }
   }, [state.inputVisible]);
 
-  const handleInputChange = (selected: string, e: any) => {
+  const handleInputChange = (selected: string) => {
     let localValue = value;
 
     if (selected && localValue?.indexOf(selected) === -1) {

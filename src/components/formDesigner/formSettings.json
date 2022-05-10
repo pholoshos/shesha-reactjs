@@ -254,7 +254,7 @@
       "allowClear": false,
       "validate": {},
       "exposedVariables": [
-        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "data", "description": "Fetched data from the server", "type": "object" },
         { "name": "moment", "description": "The moment.js object", "type": "object" },
         {
           "name": "parentFormValues",

@@ -149,9 +149,9 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
   useEffect(() => {
     if (fetchedFormEntity && onDataLoaded) {
-      getExpressionExecutor(onDataLoaded); // On Initialize
+      getExpressionExecutor(onDataLoaded, true, true, true, true, fetchedFormEntity); // On Initialize
     }
-  }, [onDataLoaded, fetchedEntity]);
+  }, [onDataLoaded, fetchedFormEntity]);
 
   useEffect(() => {
     if (onUpdate) {
@@ -214,7 +214,8 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     includeInitialValues = true,
     includeMoment = true,
     includeAxios = true,
-    includeMessage = true
+    includeMessage = true,
+    exposedData = null
   ) => {
     if (!expression) {
       return null;
@@ -222,7 +223,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
     // tslint:disable-next-line:function-constructor
     return new Function('data, parentFormValues, initialValues, globalState, moment, http, message', expression)(
-      formData,
+      exposedData || formData,
       parentFormValues,
       includeInitialValues ? initialValues : undefined,
       globalState,

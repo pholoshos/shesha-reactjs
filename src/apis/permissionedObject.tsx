@@ -29,7 +29,9 @@ export interface PermissionedObjectDto {
   name?: string | null;
   description?: string | null;
   permissions?: string[] | null;
+  actualPermissions?: string[] | null;
   inherited?: boolean;
+  access?: number | null;
   parent?: string | null;
   dependency?: string | null;
   child?: PermissionedObjectDto[] | null;

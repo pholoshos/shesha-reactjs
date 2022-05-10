@@ -57,6 +57,7 @@ import ColumnsSelector from '../../../components/formDesigner/components/entityP
 import Filter from '../../../components/formDesigner/components/dataTable/filter/filterComponent';
 import PermissionedObjectsTree from '../../../components/formDesigner/components/permissionedObjectsTree/permissionedObjectsTree';
 import ScheduledJobExecutionLog from '../../../components/formDesigner/components/scheduledJobExecutionLog/scheduledJobExecutionLog';
+import AutocompleteTagGroup from '../../../components/formDesigner/components/autocompleteTagGroup';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -110,6 +111,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       PropertyAutocomplete,
       QueryBuilderComponent,
       ScheduledJobExecutionLog,
+      AutocompleteTagGroup,
       StatusTag,
     ],
   },

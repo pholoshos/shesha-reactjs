@@ -269,6 +269,8 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     });
   };
 
+  const options = { setValidationErrors };
+
   const onFinish = () => {
     const initialValuesFromFormSettings = getInitialValuesFromFormSettings();
 
@@ -288,7 +290,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
     if (skipPostOnFinish) {
       if (props?.onFinish) {
-        props?.onFinish(postData);
+        props?.onFinish(postData, null, options);
       }
 
       return;
@@ -301,7 +303,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
         doSubmit(postData)
           .then(response => {
             // note: we pass merged values
-            if (props.onFinish) props.onFinish(postData, response?.result);
+            if (props.onFinish) props.onFinish(postData, response?.result, options);
           })
           .catch(e => {
             setValidationErrors(e?.data?.error || e);
@@ -322,7 +324,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
         doPost();
       }
     } // note: we pass merged values
-    else if (props.onFinish) props.onFinish(postData);
+    else if (props.onFinish) props.onFinish(postData, null, options);
   };
 
   const onFinishFailed = (errorInfo: ValidateErrorEntity) => {

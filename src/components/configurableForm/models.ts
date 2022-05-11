@@ -28,7 +28,7 @@ export interface IConfigurableFormRendererProps<Values = any, FieldData = any> e
    * @param values form data before being submitted
    * @param response response data
    */
-  onFinish?: (values: Values, response?: any) => void;
+  onFinish?: (values: Values, response?: any, options?: object) => void;
   onFinishFailed?: (errorInfo: ValidateErrorEntity<Values>) => void;
 
   /**

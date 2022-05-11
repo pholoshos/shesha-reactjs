@@ -165,8 +165,13 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   //#region get form data
   useEffect(() => {
+    // The mismatch happens if you're drilled down to a page and then click the back button on the browser
+    // When you land, because you'd still be having the formResponse, before the correct form is being fetched
+    // Data/Entity will be fetched with the previous value of the response. That is why we have to check that we don't have the old form response
+    const isPathMismatch = props?.path !== formResponse?.path;
+
     // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
-    if (fetchDataPath) {
+    if (fetchDataPath && !isPathMismatch) {
       fetchData({ queryParams: entityPathId || !id ? {} : { id } });
     }
   }, [id, formResponse?.markup?.formSettings?.getUrl, entityPathId, fetchDataPath]);

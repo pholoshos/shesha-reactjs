@@ -1,4 +1,5 @@
 export * from './utils';
+export * from './utils/publicUtils';
 export * from './interfaces';
 export * from './providers';
 export * from './components';

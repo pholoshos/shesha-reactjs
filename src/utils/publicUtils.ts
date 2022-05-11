@@ -1,4 +1,6 @@
+export { axiosHttp } from '../apis/axios';
 export { requestHeaders } from './requestHeaders';
+
 export {
   QueryStringParams,
   getCurrentUrl,

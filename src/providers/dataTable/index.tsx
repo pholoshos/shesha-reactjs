@@ -415,24 +415,25 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   };
 
   const exportToExcel = () => {
-    const payload = getFetchTableDataPayload();
+    dispatch((dispatchThunk, getState) => {
+      dispatchThunk(exportToExcelRequestAction());
+      const payload = getFetchTableDataPayloadInternal(getState());
 
-    dispatch(exportToExcelRequestAction());
-
-    axios({
-      url: `${backendUrl}` + (getExportToExcelPath ?? `/api/DataTable/ExportToExcel`),
-      method: 'POST',
-      data: payload,
-      responseType: 'blob', // important
-      headers,
-    })
-      .then(response => {
-        dispatch(exportToExcelSuccessAction());
-        FileSaver.saveAs(new Blob([response.data]), 'Export.xlsx');
+      axios({
+        url: `${backendUrl}` + (getExportToExcelPath ?? `/api/DataTable/ExportToExcel`),
+        method: 'POST',
+        data: payload,
+        responseType: 'blob', // important
+        headers,
       })
-      .catch(() => {
-        dispatch(exportToExcelErrorAction());
-      });
+        .then(response => {
+          dispatchThunk(exportToExcelSuccessAction());
+          FileSaver.saveAs(new Blob([response.data]), 'Export.xlsx');
+        })
+        .catch(() => {
+          dispatchThunk(exportToExcelErrorAction());
+        });
+    });
   };
 
   const fetchTableConfig = (id: string) => dispatch(fetchTableConfigAction(id));

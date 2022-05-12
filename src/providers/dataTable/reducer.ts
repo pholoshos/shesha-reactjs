@@ -1,4 +1,9 @@
-import { DATA_TABLE_CONTEXT_INITIAL_STATE, DEFAULT_PAGE_SIZE_OPTIONS, IDataTableStateContext } from './contexts';
+import {
+  DATA_TABLE_CONTEXT_INITIAL_STATE,
+  DEFAULT_PAGE_SIZE_OPTIONS,
+  IDataTableStateContext,
+  MIN_COLUMN_WIDTH,
+} from './contexts';
 import {
   DataTableActionEnums,
   IChangeFilterAction,
@@ -316,7 +321,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
                 columnId: column.id,
                 accessor: cleanPropertyName(dataProps?.propertyName),
                 propertyName: dataProps?.propertyName,
-                minWidth: column.minWidth,
+                minWidth: column.minWidth || MIN_COLUMN_WIDTH,
                 maxWidth: column.minWidth,
 
                 dataType: srvColumn.dataType as IndexColumnDataType,

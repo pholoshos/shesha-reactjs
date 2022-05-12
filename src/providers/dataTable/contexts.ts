@@ -26,6 +26,8 @@ export type IFlagActionedFlags = '__DEFAULT__' /* NEW_ACTIONED_FLAG_GOES_HERE */
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 30, 40, 50, 100];
 
+export const MIN_COLUMN_WIDTH = 150;
+
 export interface IDataTableUserConfig {
   pageSize: number;
   currentPage: number;

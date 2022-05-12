@@ -109,6 +109,8 @@ export interface IDataTableStateContext
   /** Selected filters (stored or predefined) */
   selectedStoredFilterIds?: string[];
 
+  defaultSelectedFilterId?: string;
+
   /** index of selected row */
   selectedRow?: any;
 
@@ -176,6 +178,8 @@ export interface IDataTableActionsContext
   changeSelectedRow?: (index: any) => void;
   changeActionedRow?: (data: any) => void;
   changeSelectedStoredFilterIds?: (selectedStoredFilterIds: string[]) => void;
+  changeDefaultSelectedFilterId?: (defaultSelectedFilterId: string) => void;
+
   setPredefinedFilters: (filters: IStoredFilter[]) => void;
 
   /**

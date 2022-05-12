@@ -74,6 +74,16 @@ const reducer = handleActions<IDataTableStateContext, any>(
         displayColumnName: payload,
       };
     },
+    [DataTableActionEnums.ChangeDefaultSelectedFilterId]: (
+      state: IDataTableStateContext,
+      action: ReduxActions.Action<string>
+    ) => {
+      const { payload } = action;
+      return {
+        ...state,
+        defaultSelectedFilterId: payload,
+      };
+    },
 
     [DataTableActionEnums.ChangeSelectedStoredFilterIds]: (
       state: IDataTableStateContext,

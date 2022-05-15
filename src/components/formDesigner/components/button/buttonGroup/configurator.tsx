@@ -19,6 +19,8 @@ export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
 }) => {
   const { items, addButton, addGroup } = useButtonGroupConfigurator();
 
+  console.log('LOGS:: ButtonGroupConfigurator items:', items);
+
   const content = () => {
     if (Boolean(render)) {
       if (typeof render === 'function') {

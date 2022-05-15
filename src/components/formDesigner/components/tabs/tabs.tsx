@@ -62,7 +62,6 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
   customContainerNames: ['tabs'],
-
   getContainers: model => {
     const { tabs } = model as ITabsComponentProps;
     return tabs.map<IFormComponentContainer>(t => ({ id: t.id }));

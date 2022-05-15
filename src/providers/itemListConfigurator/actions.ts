@@ -1,6 +1,6 @@
 import { createAction } from 'redux-actions';
 import {
-  IConfigurableItem,
+  IConfigurableItemBase,
   IConfigurableItemGroup,
   IUpdateChildItemsPayload,
   IUpdateItemSettingsPayload,
@@ -20,7 +20,7 @@ export enum ItemListConfiguratorActionEnums {
   /* NEW_ACTION_TYPE_GOES_HERE */
 }
 
-export const addItemAction = createAction<IConfigurableItem, IConfigurableItem>(
+export const addItemAction = createAction<IConfigurableItemBase, IConfigurableItemBase>(
   ItemListConfiguratorActionEnums.AddItem,
   p => p
 );

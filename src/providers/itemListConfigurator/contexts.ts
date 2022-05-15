@@ -1,29 +1,40 @@
 import { createContext } from 'react';
+import { FormMarkup } from '../form/models';
 
-export interface IConfigurableItem {
+export interface IConfigurableItemBase {
   id: string;
   selected?: boolean;
-  title: string;
-  itemType?: 'group' | string;
+  sortOrder?: number;
+  title?: string;
+  itemType?: 'group' | 'item';
+  icon?: string;
+  label?: string;
+  name?: string;
+  tooltip?: string;
 }
 
-export interface IConfigurableItemGroup extends IConfigurableItem {
-  childItems?: IConfigurableItem[];
+export interface IConfigurableItemGroup extends IConfigurableItemBase {
+  childItems?: IConfigurableItemBase[];
 }
 
 export interface IItemsOptions {
   /**
    * A function that get called whenever a new item gets created. You can use it to pass
    */
-  onAddNewItem?: (incomingItem: IConfigurableItem, lastItemNumber: number) => IConfigurableItem;
+  onAddNewItem?: (items: IConfigurableItemBase[], itemTypeLength: number) => IConfigurableItemBase;
 
   /**
    * A function that get called whenever a new item gets created. You can use it to pass
    */
-  onAddNewGroup?: (incomingItem: IConfigurableItem, lastItemNumber: number) => IConfigurableItem;
+  onAddNewGroup?: (items: IConfigurableItemBase[], groupTypeLength: number) => IConfigurableItemBase;
 }
 
 export interface IUpdateChildItemsPayload {
+  /**
+   * Id of the item being updated
+   */
+  id?: string;
+
   /**
    * Index of the item being updated
    */
@@ -32,7 +43,7 @@ export interface IUpdateChildItemsPayload {
   /**
    * Children to update the item with
    */
-  children: IConfigurableItem[];
+  children: IConfigurableItemBase[];
 }
 
 export interface IUpdateItemSettingsPayload {
@@ -44,13 +55,15 @@ export interface IUpdateItemSettingsPayload {
   /**
    * The settings
    */
-  settings: IConfigurableItem;
+  settings: IConfigurableItemBase;
 }
 
 export interface IItemListConfiguratorStateContext {
-  items: IConfigurableItem[];
+  items: IConfigurableItemBase[];
   selectedItemId?: string;
   childrenKey?: string;
+  itemTypeMarkup?: FormMarkup;
+  groupTypeMarkup?: FormMarkup;
 }
 
 export interface IItemListConfiguratorActionsContext {
@@ -58,7 +71,7 @@ export interface IItemListConfiguratorActionsContext {
   deleteItem: (uid: string) => void;
   selectItem: (uid: string) => void;
   updateChildItems: (payload: IUpdateChildItemsPayload) => void;
-  getItem: (uid: string) => IConfigurableItem;
+  getItem: (uid: string) => IConfigurableItemBase;
   updateItem: (payload: IUpdateItemSettingsPayload) => void;
   addGroup: () => void;
   deleteGroup: (uid: string) => void;

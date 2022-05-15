@@ -1,12 +1,12 @@
-import { IConfigurableItem, IConfigurableItemGroup } from './contexts';
+import { IConfigurableItemBase, IConfigurableItemGroup } from './contexts';
 
-export const getItemById = (items: IConfigurableItem[], id: string): IConfigurableItem => {
+export const getItemById = (items: IConfigurableItemBase[], id: string): IConfigurableItemBase => {
   const position = getItemPositionById(items, id);
   return position ? position.ownerArray[position.index] : null;
 };
 
 export interface IItemPosition {
-  ownerArray: IConfigurableItem[];
+  ownerArray: IConfigurableItemBase[];
   index: number;
 }
 

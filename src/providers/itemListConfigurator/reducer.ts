@@ -3,7 +3,7 @@ import {
   IUpdateChildItemsPayload,
   IUpdateItemSettingsPayload,
   ITEM_LIST_CONFIGURATOR_CONTEXT_INITIAL_STATE,
-  IConfigurableItem,
+  IConfigurableItemBase,
   IConfigurableItemGroup,
 } from './contexts';
 import { ItemListConfiguratorActionEnums } from './actions';
@@ -13,12 +13,12 @@ import { nanoid } from 'nanoid/non-secure';
 
 const itemListConfiguratorReducer = handleActions<IItemListConfiguratorStateContext, any>(
   {
-    [ItemListConfiguratorActionEnums.AddItem]: (state: IItemListConfiguratorStateContext) => {
-      const itemProps: IConfigurableItem = {
-        id: nanoid(),
-        title: `New item`,
-        selected: false,
-      };
+    [ItemListConfiguratorActionEnums.AddItem]: (
+      state: IItemListConfiguratorStateContext,
+      action: ReduxActions.Action<IConfigurableItemBase>
+    ) => {
+      const itemProps = action.payload;
+      itemProps.itemType = 'item';
 
       const newItems = [...state.items];
 
@@ -158,7 +158,7 @@ const itemListConfiguratorReducer = handleActions<IItemListConfiguratorStateCont
 
 export default itemListConfiguratorReducer;
 
-function removeIdDeep(list: IConfigurableItem[], idToRemove: string, childrenKey: string = 'children') {
+function removeIdDeep(list: IConfigurableItemBase[], idToRemove: string, childrenKey: string = 'children') {
   const filtered = list.filter(entry => entry.id !== idToRemove);
 
   return filtered.map(entry => {

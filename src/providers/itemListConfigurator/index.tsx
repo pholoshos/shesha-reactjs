@@ -1,7 +1,7 @@
 import React, { FC, useReducer, useContext, PropsWithChildren, useMemo } from 'react';
 import itemListConfiguratorReducer from './reducer';
 import {
-  IConfigurableItem,
+  IConfigurableItemBase,
   IItemsOptions,
   IUpdateChildItemsPayload,
   IUpdateItemSettingsPayload,
@@ -23,21 +23,25 @@ import {
 import { getItemById } from './utils';
 import { usePrevious } from 'react-use';
 import { nanoid } from 'nanoid/non-secure';
+import { FormMarkup } from '../form/models';
 
 export interface IItemListConfiguratorProviderPropsBase {
   baseUrl?: string;
 }
 
 export interface IItemListConfiguratorProviderProps {
-  items: IConfigurableItem[];
+  items: IConfigurableItemBase[];
   options: IItemsOptions;
-  childrenKey: string;
+  itemTypeMarkup?: FormMarkup;
+  groupTypeMarkup?: FormMarkup;
 }
 
 const ItemListConfiguratorProvider: FC<PropsWithChildren<IItemListConfiguratorProviderProps>> = ({
   items,
   options: { onAddNewItem, onAddNewGroup } = {},
   children,
+  itemTypeMarkup,
+  groupTypeMarkup,
 }) => {
   const [state, dispatch] = useReducer(itemListConfiguratorReducer, {
     ...ITEM_LIST_CONFIGURATOR_CONTEXT_INITIAL_STATE,
@@ -48,13 +52,16 @@ const ItemListConfiguratorProvider: FC<PropsWithChildren<IItemListConfiguratorPr
   const previousSelectedItem = usePrevious(state?.selectedItemId);
 
   const addItem = () => {
-    const itemProps: IConfigurableItem = {
+    const itemTypeLength = state.items.filter(i => i.itemType === 'item').length;
+    const itemProps: IConfigurableItemBase = {
       id: nanoid(),
       title: `New item`,
       selected: false,
     };
 
-    dispatch(addItemAction(typeof onAddNewItem === 'function' ? onAddNewItem(itemProps, 1) : itemProps));
+    dispatch(
+      addItemAction(typeof onAddNewItem === 'function' ? onAddNewItem(state?.items, itemTypeLength) : itemProps)
+    );
   };
 
   const deleteItem = (uid: string) => {
@@ -72,6 +79,7 @@ const ItemListConfiguratorProvider: FC<PropsWithChildren<IItemListConfiguratorPr
   };
 
   const addGroup = () => {
+    const groupTypeLength = state.items.filter(i => i.itemType === 'item').length;
     const groupProps: IConfigurableItemGroup = {
       id: nanoid(),
       itemType: 'group',
@@ -80,14 +88,16 @@ const ItemListConfiguratorProvider: FC<PropsWithChildren<IItemListConfiguratorPr
       selected: false,
     };
 
-    dispatch(addGroupAction(typeof onAddNewGroup === 'function' ? onAddNewGroup(groupProps, 1) : groupProps));
+    dispatch(
+      addGroupAction(typeof onAddNewGroup === 'function' ? onAddNewGroup(state?.items, groupTypeLength) : groupProps)
+    );
   };
 
   const deleteGroup = (uid: string) => {
     dispatch(deleteGroupAction(uid));
   };
 
-  const getItem = (uid: string): IConfigurableItem => {
+  const getItem = (uid: string): IConfigurableItemBase => {
     return getItemById(state.items, uid);
   };
 
@@ -100,7 +110,9 @@ const ItemListConfiguratorProvider: FC<PropsWithChildren<IItemListConfiguratorPr
   const memoizedSelectedItemId = useMemo(() => state?.selectedItemId, [state.selectedItemId]);
 
   return (
-    <ItemListConfiguratorStateContext.Provider value={{ ...state, selectedItemId: memoizedSelectedItemId }}>
+    <ItemListConfiguratorStateContext.Provider
+      value={{ ...state, selectedItemId: memoizedSelectedItemId, itemTypeMarkup, groupTypeMarkup }}
+    >
       <ItemListConfiguratorProviderActionsContext.Provider
         value={{
           addItem,

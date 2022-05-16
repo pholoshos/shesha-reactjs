@@ -378,7 +378,7 @@ export const Autocomplete = <TValue, >(props: IAutocompleteProps<TValue>) => {
       labelInValue={true}
       notFoundContent={notFoundContent}
       defaultActiveFirstOption={false}
-      showArrow={false}
+      showArrow={true}
       filterOption={false}
       onSearch={handleSearch}
       value={autocompleteValue}

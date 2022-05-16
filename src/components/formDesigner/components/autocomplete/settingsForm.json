@@ -113,6 +113,13 @@
       "label": "Hidden"
     },
     {
+      "id": "733811b4-d7c0-4447-bba0-a9fb7d6d5f05",
+      "type": "checkbox",
+      "name": "disableSearch",
+      "parentId": "root",
+      "label": "Disable Search"
+    },
+    {
       "id": "c6885251-96a6-40ce-99b2-4b5209a9e01c",
       "type": "checkbox",
       "name": "hideLabel",

@@ -9,7 +9,6 @@ import {
 import { ItemListConfiguratorActionEnums } from './actions';
 import { handleActions } from 'redux-actions';
 import { getItemById, getItemPositionById } from './utils';
-import { nanoid } from 'nanoid/non-secure';
 
 const itemListConfiguratorReducer = handleActions<IItemListConfiguratorStateContext, any>(
   {
@@ -18,7 +17,7 @@ const itemListConfiguratorReducer = handleActions<IItemListConfiguratorStateCont
       action: ReduxActions.Action<IConfigurableItemBase>
     ) => {
       const itemProps = action.payload;
-      itemProps.itemType = 'item';
+      itemProps.itemType = 'item'; // Make sure we use the correct `itemType`
 
       const newItems = [...state.items];
 
@@ -123,14 +122,12 @@ const itemListConfiguratorReducer = handleActions<IItemListConfiguratorStateCont
       };
     },
 
-    [ItemListConfiguratorActionEnums.AddGroup]: (state: IItemListConfiguratorStateContext) => {
-      const groupProps: IConfigurableItemGroup = {
-        id: nanoid(),
-        itemType: 'group',
-        title: `New Group`,
-        childItems: [],
-        selected: false,
-      };
+    [ItemListConfiguratorActionEnums.AddGroup]: (
+      state: IItemListConfiguratorStateContext,
+      action: ReduxActions.Action<IConfigurableItemBase>
+    ) => {
+      const groupProps = action.payload;
+      groupProps.itemType = 'group'; // Make sure we use the correct `itemType`
 
       return {
         ...state,

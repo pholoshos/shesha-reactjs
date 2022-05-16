@@ -24,6 +24,7 @@ import { getItemById } from './utils';
 import { usePrevious } from 'react-use';
 import { nanoid } from 'nanoid/non-secure';
 import { FormMarkup } from '../form/models';
+import { treeToList } from '../../utils/tree';
 
 export interface IItemListConfiguratorProviderPropsBase {
   baseUrl?: string;
@@ -52,7 +53,9 @@ const ItemListConfiguratorProvider: FC<PropsWithChildren<IItemListConfiguratorPr
   const previousSelectedItem = usePrevious(state?.selectedItemId);
 
   const addItem = () => {
-    const itemTypeLength = state.items.filter(i => i.itemType === 'item').length;
+    const itemTypeLength = treeToList(state.items as IConfigurableItemGroup[], 'childItems').filter(
+      i => i.itemType === 'item'
+    ).length;
     const itemProps: IConfigurableItemBase = {
       id: nanoid(),
       title: `New item`,
@@ -79,12 +82,16 @@ const ItemListConfiguratorProvider: FC<PropsWithChildren<IItemListConfiguratorPr
   };
 
   const addGroup = () => {
-    const groupTypeLength = state.items.filter(i => i.itemType === 'item').length;
+    const groupTypeLength = treeToList(state.items as IConfigurableItemGroup[], 'childItems').filter(
+      i => i.itemType === 'group'
+    ).length;
+
     const groupProps: IConfigurableItemGroup = {
       id: nanoid(),
       itemType: 'group',
-      title: `New Group`,
-      childItems: [],
+      sortOrder: groupTypeLength,
+      name: `Group${groupTypeLength + 1}`,
+      title: `Group ${groupTypeLength + 1}`,
       selected: false,
     };
 

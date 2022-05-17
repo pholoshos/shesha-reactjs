@@ -236,7 +236,8 @@
       "name": "hourStep",
       "parentId": "root",
       "label": "Hour Step",
-      "min": 1
+      "min": 1,
+      "description": "It should be a factor of 24"
     },
     {
       "id": "d30ff140-74c0-41b5-bf79-1a7733e30982",
@@ -244,7 +245,8 @@
       "name": "minuteStep",
       "parentId": "root",
       "label": "Minute Step",
-      "min": 1
+      "min": 1,
+      "description": "It should be a factor of 60"
     },
     {
       "id": "9ddab21e-8afa-434d-8a78-1d8359ea8ad0",
@@ -252,7 +254,8 @@
       "name": "secondStep",
       "parentId": "root",
       "label": "Second Step",
-      "min": 1
+      "min": 1,
+      "description": "It should be a factor of 60"
     },
     {
       "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
@@ -260,6 +263,20 @@
       "name": "sectionStyle",
       "parentId": "root",
       "label": "Style"
+    },
+    {
+      "id": "06ab0599-914d-4d2d-875c-765a495472f8",
+      "type": "codeEditor",
+      "name": "style",
+      "label": "Style",
+      "parentId": "root",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
+      "exposedVariables": [
+        { "name": "data", "description": "Form values", "type": "object" },
+        { "name": "globalState", "description": "The global state", "type": "object" }
+      ]
     },
     {
       "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",

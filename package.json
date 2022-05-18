@@ -204,7 +204,7 @@
     "react-spinners": "^0.11.0",
     "react-table": "^7.7.0",
     "redux-undo": "^1.0.1",
-    "tree-to-list": "^2.0.0",
+    "tree-to-list": "^3.0.2",
     "use-debounce": "^6.0.1"
   },
   "config": {

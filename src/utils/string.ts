@@ -74,7 +74,15 @@ export function isNumeric(value: string) {
   ); // ...and ensure strings of whitespace fail
 }
 
-export function getLastSection(separator:string, value: string) {
+export function getLastSection(separator: string, value: string) {
   const s = value.split(separator);
-  return s.length > 0 ? s[s.length - 1] : "";
+  return s.length > 0 ? s[s.length - 1] : '';
 }
+
+export const getNumericValue = (localValue: any) => {
+  try {
+    return Number(localValue);
+  } catch (error) {
+    return 0;
+  }
+};

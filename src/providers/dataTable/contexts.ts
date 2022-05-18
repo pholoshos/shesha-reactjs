@@ -26,6 +26,8 @@ export type IFlagActionedFlags = '__DEFAULT__' /* NEW_ACTIONED_FLAG_GOES_HERE */
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 30, 40, 50, 100];
 
+export const MIN_COLUMN_WIDTH = 150;
+
 export interface IDataTableUserConfig {
   pageSize: number;
   currentPage: number;
@@ -109,6 +111,8 @@ export interface IDataTableStateContext
   /** Selected filters (stored or predefined) */
   selectedStoredFilterIds?: string[];
 
+  defaultSelectedFilterId?: string;
+
   /** index of selected row */
   selectedRow?: any;
 
@@ -176,6 +180,8 @@ export interface IDataTableActionsContext
   changeSelectedRow?: (index: any) => void;
   changeActionedRow?: (data: any) => void;
   changeSelectedStoredFilterIds?: (selectedStoredFilterIds: string[]) => void;
+  changeDefaultSelectedFilterId?: (defaultSelectedFilterId: string) => void;
+
   setPredefinedFilters: (filters: IStoredFilter[]) => void;
 
   /**

@@ -226,7 +226,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [dataByPath, dataById]);
   //#endregion
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: any, _response?: any, options?: any) => {
     postData(values)
       .then(() => {
         message.success('Data saved successfully!');
@@ -236,7 +236,9 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         formRef?.current?.setFormMode('readonly');
       })
       .catch(error => {
-        console.log('onFinish error :>> ', error);
+        if (options?.setValidationErrors) {
+          options.setValidationErrors(error);
+        }
       });
   };
 

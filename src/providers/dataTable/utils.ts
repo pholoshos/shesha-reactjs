@@ -27,7 +27,7 @@ export const hasDynamicFilter = (filters: IStoredFilter[]) => {
   return Boolean(found);
 };
 
-export const cleanPropertyName = (keyValue: string) => keyValue?.replace('.', '_');
+export const cleanPropertyName = (keyValue: string) => keyValue?.replace(/\./g, '_');
 
 export const sortDirection2ColumnSorting = (value?: SortDirection): ColumnSorting => {
   switch (value) {

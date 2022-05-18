@@ -74,20 +74,19 @@ const ReactTable: FC<IReactTableProps> = ({
       // When using the useFlexLayout:
       minWidth: 30, // minWidth is only used as a limit for resizing
       width: 150, // width is used for both the flex-basis and flex-grow
-      maxWidth: 200, // maxWidth is only used as a limit for resizing
+      // maxWidth: 200, // maxWidth is only used as a limit for resizing
     }),
     []
   );
 
-  const getColumnAccessor = (cid) => {
+  const getColumnAccessor = cid => {
     const column = columns.find(c => c.id == cid);
-    return column ? column.accessor.toString() : "";
-  }
+    return column ? column.accessor.toString() : '';
+  };
 
   const initialSorting = useMemo(() => {
-    if (!defaultSorting)
-      return [];
-    return  defaultSorting.map(s => {
+    if (!defaultSorting) return [];
+    return defaultSorting.map(s => {
       return { ...s, id: getColumnAccessor(s.id) };
     });
   }, [defaultSorting]);

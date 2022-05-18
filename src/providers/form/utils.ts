@@ -314,12 +314,11 @@ export const getVisibleComponentIds = (components: IComponentsDictionary, values
     if (components.hasOwnProperty(key)) {
       const component = components[key] as IConfigurableFormComponent;
 
-      if (!component || component.hidden || component.visibility === 'No' || component.visibility === 'Removed') continue;
+      if (!component || component.hidden || component.visibility === 'No' || component.visibility === 'Removed')
+        continue;
 
       const isVisible = component.visibilityFunc == null || component.visibilityFunc(values);
       if (isVisible) visibleComponents.push(key);
-
-
     }
   }
   return visibleComponents;
@@ -861,8 +860,8 @@ export const getObjectWithOnlyIncludedKeys = (obj: IAnyObject, includedProps: st
   return response;
 };
 
-export const getStyle = (style: string, formData: any): CSSProperties => {
+export const getStyle = (style: string, formData: any = {}, globalState: any = {}): CSSProperties => {
   if (!style) return {};
   // tslint:disable-next-line:function-constructor
-  return new Function('data', style)(formData);
+  return new Function('data, globalState', style)(formData, globalState);
 };

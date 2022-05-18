@@ -45,6 +45,7 @@ import {
   onSortAction,
   changeDisplayColumnAction,
   changeActionedRowAction,
+  changeDefaultSelectedFilterIdAction,
 } from './actions';
 import {
   ITableDataResponse,
@@ -215,9 +216,21 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   });
 
   const [userDTSettingsInner, setUserDTSettings] = useLocalStorage<IDataTableUserConfig>(userConfigId || tableId, null);
-  const userDTSettings = defaultFilter
-    ? { ...DEFAULT_DT_USER_CONFIG, tableFilter: defaultFilter }
-    : userDTSettingsInner;
+
+  const userDTSettings = useMemo(() => {
+    const { defaultSelectedFilterId } = state;
+
+    const settingsToReturn: IDataTableUserConfig = defaultFilter
+      ? { ...DEFAULT_DT_USER_CONFIG, tableFilter: defaultFilter }
+      : userDTSettingsInner;
+
+    return {
+      ...settingsToReturn,
+      selectedStoredFilterIds: defaultSelectedFilterId?.length
+        ? [defaultSelectedFilterId]
+        : settingsToReturn?.selectedStoredFilterIds,
+    };
+  }, [defaultFilter, userDTSettingsInner, state?.defaultSelectedFilterId]);
 
   // refresh table data on change of the `dataStamp` property
   useEffect(() => {
@@ -370,6 +383,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     if (!_.isEmpty(userDTSettings) && state?.columns?.length > 0) {
       setUserDTSettings({
         ...userDTSettings,
+        selectedStoredFilterIds: state?.selectedStoredFilterIds,
         columns: state?.columns,
       });
     }
@@ -401,24 +415,25 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   };
 
   const exportToExcel = () => {
-    const payload = getFetchTableDataPayload();
+    dispatch((dispatchThunk, getState) => {
+      dispatchThunk(exportToExcelRequestAction());
+      const payload = getFetchTableDataPayloadInternal(getState());
 
-    dispatch(exportToExcelRequestAction());
-
-    axios({
-      url: `${backendUrl}` + (getExportToExcelPath ?? `/api/DataTable/ExportToExcel`),
-      method: 'POST',
-      data: payload,
-      responseType: 'blob', // important
-      headers,
-    })
-      .then(response => {
-        dispatch(exportToExcelSuccessAction());
-        FileSaver.saveAs(new Blob([response.data]), 'Export.xlsx');
+      axios({
+        url: `${backendUrl}` + (getExportToExcelPath ?? `/api/DataTable/ExportToExcel`),
+        method: 'POST',
+        data: payload,
+        responseType: 'blob', // important
+        headers,
       })
-      .catch(() => {
-        dispatch(exportToExcelErrorAction());
-      });
+        .then(response => {
+          dispatchThunk(exportToExcelSuccessAction());
+          FileSaver.saveAs(new Blob([response.data]), 'Export.xlsx');
+        })
+        .catch(() => {
+          dispatchThunk(exportToExcelErrorAction());
+        });
+    });
   };
 
   const fetchTableConfig = (id: string) => dispatch(fetchTableConfigAction(id));
@@ -470,12 +485,13 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   const clearFilters = () => {
     if (Boolean(userDTSettings)) {
-      const newUserSTSettings = { ...userDTSettings };
+      const newUserSTSettings = { ...userDTSettings, selectedStoredFilterIds: state?.selectedStoredFilterIds };
       delete newUserSTSettings.pageSize;
       delete newUserSTSettings.currentPage;
       delete newUserSTSettings.quickSearch;
       delete newUserSTSettings.tableFilter;
 
+      console.log('setUserDTSettings under clearFilters ');
       setUserDTSettings(newUserSTSettings);
     }
 
@@ -501,6 +517,10 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   const changeSelectedStoredFilterIds = (selectedStoredFilterIds: string[]) => {
     dispatch(changeSelectedStoredFilterIdsAction(selectedStoredFilterIds));
+  };
+
+  const changeDefaultSelectedFilterId = (defaultSelectedFilterId: string) => {
+    dispatch(changeDefaultSelectedFilterIdAction(defaultSelectedFilterId));
   };
 
   const previousPredefinedFilters = usePreviousDistinct(state?.predefinedFilters);
@@ -779,6 +799,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           changeSelectedRow,
           changeActionedRow,
           changeSelectedStoredFilterIds,
+          changeDefaultSelectedFilterId,
           setPredefinedFilters,
           changeSelectedIds,
           refreshTable,

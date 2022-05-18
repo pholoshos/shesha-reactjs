@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import { Form, Button } from 'antd';
+import { Form, Button, Select } from 'antd';
 import { ITableViewSelectorProps } from './models';
 import TableViewSelectorSettingsModal from './tableViewSelectorSettingsModal';
 import { QueryBuilderProvider } from '../../../../../providers';
 import { useForm } from '../../../../../providers/form';
-import { ITableColumn } from '../../../../..';
+import { ITableColumn, SectionSeparator } from '../../../../..';
 import { IProperty } from '../../../../../providers/queryBuilder/models';
 import { TableDataSourceType } from '../../../../../providers/dataTable/interfaces';
 import ConditionalWrap from '../../../../conditionalWrapper';
@@ -42,7 +42,7 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
       }));
     }
     return null;
-  }, [dataSourceType, columns/*, metadata*/]);
+  }, [dataSourceType, columns /*, metadata*/]);
 
   /* NOTE: don't delete this code, it's not needed now but will be used in another part of the system
   // take all columns with dots, create a list of 
@@ -83,14 +83,28 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
   return (
     <ConditionalWrap
       condition={fields !== null}
-      wrap={(content) => (
-        <QueryBuilderProvider fields={fields}>
-          {content}
-        </QueryBuilderProvider>  
-      )}
+      wrap={content => <QueryBuilderProvider fields={fields}>{content}</QueryBuilderProvider>}
     >
       <Form form={form} onFinish={props.onSave} onValuesChange={props.onValuesChange}>
+        <SectionSeparator sectionName="Filters" />
+
         <Button onClick={() => setModalVisible(true)}>Customise Filters</Button>
+
+        <Form.Item
+          label="Default filter"
+          labelCol={{ span: 24 }}
+          name="defaultFilterId"
+          initialValue={props.model.defaultFilterId}
+        >
+          <Select allowClear>
+            {props.model.filters?.map(filter => (
+              <Select.Option key={filter?.id} value={filter?.id}>
+                {filter?.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+
         <Form.Item name="filters" initialValue={props.model.filters}>
           <TableViewSelectorSettingsModal
             visible={modalVisible}

@@ -34,7 +34,7 @@ const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
   },
 };
 
-export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, componentRef }) => {
+export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, componentRef, defaultFilterId }) => {
   const {
     columns,
     getDataSourceType,
@@ -43,9 +43,10 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
     selectedStoredFilterIds,
     setPredefinedFilters,
     predefinedFilters,
+    changeDefaultSelectedFilterId,
   } = useDataTableStore();
   const { globalState } = useGlobalState();
-  const { formData } = useForm();
+  const { formData, formMode } = useForm();
 
   const dataSourceType = getDataSourceType();
 
@@ -83,6 +84,12 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
     debounceEvaluateDynamicFiltersHelper();
   }, [filters, formData, globalState]);
   //#endregion
+
+  useEffect(() => {
+    if (formMode !== 'designer' && defaultFilterId) {
+      changeDefaultSelectedFilterId(defaultFilterId);
+    }
+  }, [formMode]);
 
   const changeSelectedFilter = (id: string) => {
     changeSelectedStoredFilterIds(id ? [id] : []);

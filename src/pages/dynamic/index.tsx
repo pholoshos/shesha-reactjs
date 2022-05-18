@@ -8,10 +8,10 @@ import { axiosHttp } from '../../apis/axios';
 import { FormDto, useFormGet, useFormGetByPath } from '../../apis/form';
 import { AjaxResponseBase } from '../../apis/user';
 import { ConfigurableForm, ValidationErrors } from '../../components';
-import { useSubscribe } from '../../hooks';
+import { useSubscribe, usePubSub } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
 import { useGlobalState, useSheshaApplication } from '../../providers';
-import { ConfigurableFormInstance } from '../../providers/form/contexts';
+import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
 import { IFormDto } from '../../providers/form/models';
 import { evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
 import { getQueryParams } from '../../utils/url';
@@ -74,6 +74,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const [state, setState] = useState<IDynamicPageState>({});
   const formRef = useRef<ConfigurableFormInstance>();
   const { globalState } = useGlobalState();
+
+  const { publish } = usePubSub();
 
   const { id, path, formId, entityPathId } = state;
 
@@ -180,6 +182,11 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     setState(prev => ({ ...prev, id }));
   };
 
+  const onChangeFormData = (payload: ISetFormDataPayload) => {
+    form?.setFieldsValue(payload?.values);
+    formRef?.current?.setFormData({ values: payload?.values, mergeValues: true });
+  };
+
   useEffect(() => {
     if (!isFetchingFormByPath && fetchDataResponse) {
       setState(prev => ({ ...prev, fetchedData: fetchDataResponse?.result }));
@@ -223,6 +230,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     postData(values)
       .then(() => {
         message.success('Data saved successfully!');
+        
+        publish(DynamicFormPubSubConstants.DataSaved)
 
         formRef?.current?.setFormMode('readonly');
       })
@@ -340,7 +349,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         formRef={formRef}
         mode={state?.mode}
         form={form}
-        actions={{ onChangeId }}
+        actions={{ onChangeId, onChangeFormData }}
         onFinish={onFinish}
         initialValues={state?.fetchedData}
         skipPostOnFinish

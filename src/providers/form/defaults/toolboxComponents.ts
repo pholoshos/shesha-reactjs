@@ -58,6 +58,7 @@ import Filter from '../../../components/formDesigner/components/dataTable/filter
 import PermissionedObjectsTree from '../../../components/formDesigner/components/permissionedObjectsTree/permissionedObjectsTree';
 import ScheduledJobExecutionLog from '../../../components/formDesigner/components/scheduledJobExecutionLog/scheduledJobExecutionLog';
 import AutocompleteTagGroup from '../../../components/formDesigner/components/autocompleteTagGroup';
+import PermissionsTree from '../../../components/formDesigner/components/permissionsTree/permissionsTree';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -108,6 +109,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       Notes,
       IconPicker,
       PermissionedObjectsTree,
+      PermissionsTree,
       PropertyAutocomplete,
       QueryBuilderComponent,
       ScheduledJobExecutionLog,

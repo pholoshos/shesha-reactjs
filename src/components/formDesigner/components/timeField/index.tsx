@@ -7,11 +7,12 @@ import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import moment, { Moment, isMoment } from 'moment';
 
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
 import { HiddenFormItem } from '../../../hiddenFormItem';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
+import { getNumericValue } from '../../../../utils/string';
 
 type RangeType = 'start' | 'end';
 // tslint:disable-next-line:interface-over-type-literal
@@ -92,7 +93,7 @@ const TimeField: IToolboxComponent<ITimePickerProps> = {
   },
 };
 
-export const TimePickerWrapper: FC<Omit<ITimePickerProps, 'style'>> = ({
+export const TimePickerWrapper: FC<ITimePickerProps> = ({
   onChange,
   range,
   value,
@@ -100,10 +101,24 @@ export const TimePickerWrapper: FC<Omit<ITimePickerProps, 'style'>> = ({
   placeholder,
   format = DATE_TIME_FORMAT,
   readOnly,
+  style,
+  hourStep,
+  minuteStep,
+  secondStep,
   ...rest
 }) => {
-  const { form, formMode, isComponentDisabled } = useForm();
+  const { form, formMode, formData, isComponentDisabled } = useForm();
   const evaluatedValue = getMoment(value, format);
+
+  const hourStepLocal = getNumericValue(hourStep);
+  const minuteStepLocal = getNumericValue(minuteStep);
+  const secondStepLocal = getNumericValue(secondStep);
+
+  const steps = {
+    hourStep: 24 % hourStepLocal === 0 ? hourStepLocal : 1, // It should be a factor of 24.
+    minuteStep: 60 % minuteStepLocal === 0 ? minuteStepLocal : 1, // It should be a factor of 60.
+    secondStep: 60 % secondStepLocal === 0 ? secondStepLocal : 1, // It should be a factor of 60.
+  };
 
   const isDisabled = isComponentDisabled(rest);
 
@@ -144,6 +159,8 @@ export const TimePickerWrapper: FC<Omit<ITimePickerProps, 'style'>> = ({
         onCalendarChange={onCalendarChange}
         format={format}
         defaultValue={getDefaultRangePickerValues() as RangeValue}
+        {...steps}
+        style={getStyle(style, formData)}
         {...rest}
         placeholder={null}
       />
@@ -156,6 +173,8 @@ export const TimePickerWrapper: FC<Omit<ITimePickerProps, 'style'>> = ({
       onChange={handleTimePickerChange}
       format={format}
       defaultValue={defaultValue && moment(defaultValue)}
+      {...steps}
+      style={getStyle(style, formData)}
       // show
       {...rest}
     />

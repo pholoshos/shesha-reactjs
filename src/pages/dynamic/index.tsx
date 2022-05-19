@@ -175,8 +175,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
     if (fetchDataPath && !isPathMismatch) {
       // clear form data
-      formRef?.current?.setFormData({ values: null, mergeValues: false });
-      
+      //formRef?.current?.setFormData({ values: null, mergeValues: false });
+
       fetchData({ queryParams: entityPathId || !id ? {} : { id } });
     }
   }, [id, formResponse?.markup?.formSettings?.getUrl, entityPathId, fetchDataPath]);

@@ -1,12 +1,12 @@
-import { IToolboxComponent } from '../../../../interfaces';
-import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
+import { IToolboxComponent } from '../../../../../interfaces';
+import { FormMarkup, IConfigurableFormComponent } from '../../../../../providers/form/models';
 import { ApartmentOutlined } from '@ant-design/icons';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { PermissionsTree, PermissionsTreeMode } from '../../../permissionsTree';
-import { useForm } from '../../../..';
-import ConfigurableFormItem from '../formItem';
+import { validateConfigurableComponentSettings } from '../../../../../providers/form/utils';
+import { PermissionsTree, PermissionsTreeMode } from '../../../../permissionsTree';
+import { useForm } from '../../../../..';
+import ConfigurableFormItem from '../../formItem';
 
 export interface IPermissionsTreeComponentProps extends IConfigurableFormComponent {
   value?: string[];
@@ -27,7 +27,7 @@ export interface IPermissionsTreeComponentProps extends IConfigurableFormCompone
 const settingsForm = settingsFormJson as FormMarkup;
 
 const PermissionedObjectsTreeComponent: IToolboxComponent<IPermissionsTreeComponentProps> = {
-  type: 'permissions.permissionsTree',
+  type: 'permissionsTree',
   name: 'Permissions tree',
   icon: <ApartmentOutlined />,
   factory: (model: IPermissionsTreeComponentProps) => {

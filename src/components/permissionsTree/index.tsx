@@ -57,7 +57,7 @@ export const PermissionsTree: FC<IPermissionsTreeProps> = ({value, onChange, ...
     const [searchText, setSearchText] = useLocalStorage('shaPermissions.toolbox.objects.search', '');
   
     const [visibleNodes, setVisibleNodes] = useState<IDataNode[]>();
-    const [allItems, setAllItems] = useState<PermissionDto[]>();
+    const [allItems, setAllItems] = useState<PermissionDto[]>(null);
     const [checked, setChecked] = useState<Key[]>([]);
     const [expanded, setExpanded] = useState<Key[]>([]);
     const [selected, setSelected] = useState<string[]>([]);
@@ -80,6 +80,9 @@ export const PermissionsTree: FC<IPermissionsTreeProps> = ({value, onChange, ...
     const { getAction, registerActions, formData, setFormMode } = useForm(false);
   
     useEffect(() => {
+        if (rest.mode == "Select" && allItems != null)
+            return; // skip refetch for selectmode if fetched
+
         fetcher.refetch();
         setSearchText("");
     }, [])
@@ -118,7 +121,8 @@ export const PermissionsTree: FC<IPermissionsTreeProps> = ({value, onChange, ...
                 const fetchedData = fetchingDataResponse?.result;
                 if (fetchedData) {
                     setAllItems(fetchedData);
-                    registerActions(null, { createRootPermission, createPermission, deletePermission })
+                    if (rest.mode != "Select")
+                        registerActions(null, { createRootPermission, createPermission, deletePermission })
                 }
             }
     
@@ -232,7 +236,7 @@ export const PermissionsTree: FC<IPermissionsTreeProps> = ({value, onChange, ...
     }, [doUpdateTree])
 
     useSubscribe(DynamicFormPubSubConstants.DataSaved, () => {
-        setDoUpdateTree(true);
+        if (rest.mode == "Edit") setDoUpdateTree(true);
     })
 
     useEffect(() => {

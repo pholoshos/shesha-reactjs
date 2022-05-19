@@ -55,10 +55,11 @@ import ColumnsEditor from '../../../components/formDesigner/components/dataTable
 import ButtonGroup from '../../../components/formDesigner/components/button/buttonGroup/buttonGroupComponent';
 import ColumnsSelector from '../../../components/formDesigner/components/entityPicker/columnsSelector';
 import Filter from '../../../components/formDesigner/components/dataTable/filter/filterComponent';
-import PermissionedObjectsTree from '../../../components/formDesigner/components/permissionedObjectsTree/permissionedObjectsTree';
+import PermissionedObjectsTree from '../../../components/formDesigner/components/permissions/permissionedObjectsTree/permissionedObjectsTree';
 import ScheduledJobExecutionLog from '../../../components/formDesigner/components/scheduledJobExecutionLog/scheduledJobExecutionLog';
 import AutocompleteTagGroup from '../../../components/formDesigner/components/autocompleteTagGroup';
-import PermissionsTree from '../../../components/formDesigner/components/permissionsTree/permissionsTree';
+import PermissionsTree from '../../../components/formDesigner/components/permissions/permissionsTree/permissionsTree';
+import PermissionTagGroup from '../../../components/formDesigner/components/permissions/permissionTagGroup';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -108,14 +109,21 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       KeyValueEditor,
       Notes,
       IconPicker,
-      PermissionedObjectsTree,
-      PermissionsTree,
       PropertyAutocomplete,
       QueryBuilderComponent,
       ScheduledJobExecutionLog,
       AutocompleteTagGroup,
       StatusTag,
     ],
+  },
+  {
+    name: 'Permissions',
+    visible: true,
+    components: [
+      PermissionedObjectsTree,
+      PermissionsTree,
+      PermissionTagGroup
+    ]
   },
   {
     name: 'Datatable',

@@ -118,6 +118,7 @@ export const PermissionsTree: FC<IPermissionsTreeProps> = ({value, onChange, ...
                 const fetchedData = fetchingDataResponse?.result;
                 if (fetchedData) {
                     setAllItems(fetchedData);
+                    registerActions(null, { createRootPermission, createPermission, deletePermission })
                 }
             }
     
@@ -330,10 +331,6 @@ export const PermissionsTree: FC<IPermissionsTreeProps> = ({value, onChange, ...
     const deletePermission = () => {
         setDoDelete(true);
     }
-
-    useEffect(() => { 
-        registerActions(null, { createRootPermission, createPermission, deletePermission })
-    }, []);
 
     useEffect(() => {
         if (!isParentUpdating && Boolean(dragInfo)) {

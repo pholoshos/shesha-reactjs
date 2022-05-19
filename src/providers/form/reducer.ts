@@ -412,7 +412,7 @@ const reducer = handleActions<IFormStateContext, any>(
       } = action;
 
       const componentActions = convertActions(id, actionsToRegister);
-      const otherActions = state.actions;//.filter(a => a.owner !== id);
+      const otherActions = state.actions.filter(a => a.owner !== id || !componentActions.find((ca) => ca.name == a.name ));
 
       return {
         ...state,

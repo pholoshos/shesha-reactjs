@@ -117,6 +117,11 @@ export interface IAutocompleteProps<TValue = any> extends IReadOnly {
   readOnly?: boolean;
 
   /**
+   * If true, search mode will be disabled for the autocomplete
+   */
+   disableSearch?: boolean;
+
+  /**
    *
    */
   readOnlyMultipleMode?: 'raw' | 'tags';
@@ -198,6 +203,7 @@ export const Autocomplete = <TValue, >(props: IAutocompleteProps<TValue>) => {
     getLabeledValue,
     readOnly,
     readOnlyMultipleMode = 'raw',
+    disableSearch,
     quickviewEnabled,
     quickviewFormPath,
     quickviewDisplayPropertyName,
@@ -374,11 +380,11 @@ export const Autocomplete = <TValue, >(props: IAutocompleteProps<TValue>) => {
 
   return (
     <Select<CustomLabeledValue<TValue> | CustomLabeledValue<TValue>[]>
-      showSearch
+      showSearch={!disableSearch}
       labelInValue={true}
       notFoundContent={notFoundContent}
       defaultActiveFirstOption={false}
-      showArrow={false}
+      showArrow={true}
       filterOption={false}
       onSearch={handleSearch}
       value={autocompleteValue}

@@ -1,7 +1,7 @@
 import TextField from '../../../components/formDesigner/components/textField/textField';
 import NumberField from '../../../components/formDesigner/components/numberField/numberField';
 import DateField from '../../../components/formDesigner/components/dateField/dateField';
-import Tabs from '../../../components/formDesigner/components/tabs/tabs';
+import Tabs from '../../../components/formDesigner/components/tabs';
 import Columns from '../../../components/formDesigner/components/columns/columns';
 import SectionSeprator from '../../../components/formDesigner/components/sectionSeprator/sectionSeprator';
 import TextArea from '../../../components/formDesigner/components/textArea/textArea';
@@ -55,10 +55,12 @@ import ColumnsEditor from '../../../components/formDesigner/components/dataTable
 import ButtonGroup from '../../../components/formDesigner/components/button/buttonGroup/buttonGroupComponent';
 import ColumnsSelector from '../../../components/formDesigner/components/entityPicker/columnsSelector';
 import Filter from '../../../components/formDesigner/components/dataTable/filter/filterComponent';
-import PermissionedObjectsTree from '../../../components/formDesigner/components/permissionedObjectsTree/permissionedObjectsTree';
+import PermissionedObjectsTree from '../../../components/formDesigner/components/permissions/permissionedObjectsTree/permissionedObjectsTree';
 import ScheduledJobExecutionLog from '../../../components/formDesigner/components/scheduledJobExecutionLog/scheduledJobExecutionLog';
 import AutocompleteTagGroup from '../../../components/formDesigner/components/autocompleteTagGroup';
 import PasswordCombo from '../../../components/formDesigner/components/passwordCombo';
+import PermissionsTree from '../../../components/formDesigner/components/permissions/permissionsTree/permissionsTree';
+import PermissionTagGroup from '../../../components/formDesigner/components/permissions/permissionTagGroup';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -109,13 +111,17 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       Notes,
       IconPicker,
       PasswordCombo,
-      PermissionedObjectsTree,
       PropertyAutocomplete,
       QueryBuilderComponent,
       ScheduledJobExecutionLog,
       AutocompleteTagGroup,
       StatusTag,
     ],
+  },
+  {
+    name: 'Permissions',
+    visible: true,
+    components: [PermissionedObjectsTree, PermissionsTree, PermissionTagGroup],
   },
   {
     name: 'Datatable',

@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Collapse, Dropdown, Empty, Menu } from 'antd';
+import { Collapse, Dropdown, Empty, Menu, Spin } from 'antd';
 import { useLocalStorage } from '../../hooks';
 import SearchBox from '../formDesigner/toolboxSearchBox';
 import ObjectsTree from './objectsTree';
 import { PermissionedObjectDto, usePermissionedObjectGetAllTree } from '../../apis/permissionedObject';
-import { DatabaseFilled } from '@ant-design/icons';
+import { DatabaseFilled, LoadingOutlined } from '@ant-design/icons';
 import { useForm } from '../..';
 import { getLastSection } from '../../utils/string';
 
@@ -38,7 +38,7 @@ export const PermissionedObjectsTree: FC<IPermissionedObjectsTreeProps> = (props
 
   const [objectId, setObjectId] = useState("");
   
-    const { getAction } = useForm(false);
+  const { getAction} = useForm(false);
 
   useEffect(() => {
     if (Boolean(getAction)){
@@ -67,15 +67,17 @@ export const PermissionedObjectsTree: FC<IPermissionedObjectsTreeProps> = (props
     }
   }, [isFetchingData, fetchingDataError, fetchingDataResponse])
 
-  const getVisibleProperties = (items: PermissionedObjectDto[], searchText: string): PermissionedObjectDto[] => {
+  const getVisible = (items: PermissionedObjectDto[], searchText: string): PermissionedObjectDto[] => {
     const result: PermissionedObjectDto[] = [];
     if (!items)
       return result;
       
     items.forEach(item => {
       if (!item.hidden){
-        const childItems = getVisibleProperties(item.child, searchText);
-        const matched = (searchText ?? '') == '' || item.object.toLowerCase().includes(searchText) || item.name?.toLowerCase().includes(searchText);
+        const childItems = getVisible(item.child, searchText);
+        const matched = (searchText ?? '') == '' 
+                        || item.object.toLowerCase().includes(searchText.toLowerCase()) 
+                        || item.name?.toLowerCase().includes(searchText.toLowerCase());
         
         if (matched || childItems.length > 0) {
           const filteredItem: PermissionedObjectDto = { ...item, child: childItems };
@@ -100,7 +102,7 @@ export const PermissionedObjectsTree: FC<IPermissionedObjectsTreeProps> = (props
           groups.push({ groupName: name, visibleItems: [item]});
         }
       });
-      groups.forEach(group => { group.visibleItems = getVisibleProperties(group.visibleItems, searchText) });
+      groups.forEach(group => { group.visibleItems = getVisible(group.visibleItems, searchText) });
     }
     return groups.sort((a, b) => { return a.groupName == '-' ? 1 : b.groupName == '-' ? -1 
       : a.groupName > b.groupName ? 1 : b.groupName > a.groupName ? -1 : 0; });
@@ -110,7 +112,7 @@ export const PermissionedObjectsTree: FC<IPermissionedObjectsTreeProps> = (props
     switch (groupBy) {
       case 'c': return grouping('category', false);
       case 'm': return grouping('module', true);
-      default: return [{ groupName: "-", visibleItems: getVisibleProperties(allItems, searchText) }];
+      default: return [{ groupName: "-", visibleItems: getVisible(allItems, searchText) }];
     }
   }, [allItems, searchText, groupBy])
 
@@ -141,7 +143,7 @@ export const PermissionedObjectsTree: FC<IPermissionedObjectsTreeProps> = (props
   );
 
   return (
-    <>
+    <Spin spinning={isFetchingData} tip={'Fetching data...'} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
       <div className="sha-page-heading">
         <div className="sha-page-heading-left">
           <SearchBox value={searchText} onChange={setSearchText} placeholder='Search objects' />
@@ -191,7 +193,7 @@ export const PermissionedObjectsTree: FC<IPermissionedObjectsTreeProps> = (props
       {groups.length === 0 && (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Objects not found" />
       )}
-    </>
+    </Spin>
   );
 }
 

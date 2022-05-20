@@ -1,25 +1,19 @@
 import React, { FC, ReactNode } from 'react';
 import { Alert, Button } from 'antd';
-import { SidebarContainer } from '../../../..';
-import { ButtonGroupProperties } from './properties';
-import ButtonGroupItemsContainer from './buttonGrouptemsContainer';
-import { useButtonGroupConfigurator } from '../../../../../providers/buttonGroupConfigurator';
+import { SidebarContainer } from '../../..';
+import { ItemConfigProperties } from './properties';
+import ItemListContainer from './listItemsContainer';
+import { useItemListConfigurator } from '../../../..';
 import './styles/index.less';
 
-export interface IButtonGroupConfiguratorProps {
+export interface IItemListConfiguratorProps {
   allowAddGroups?: boolean;
   render?: ReactNode | (() => ReactNode);
   heading?: ReactNode | (() => ReactNode);
 }
 
-export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
-  allowAddGroups = true,
-  render,
-  heading,
-}) => {
-  const { items, addButton, addGroup } = useButtonGroupConfigurator();
-
-  console.log('LOGS:: ButtonGroupConfigurator items:', items);
+export const ItemListConfigurator: FC<IItemListConfiguratorProps> = ({ allowAddGroups = true, render, heading }) => {
+  const { items, addItem, addGroup } = useItemListConfigurator();
 
   const content = () => {
     if (Boolean(render)) {
@@ -30,7 +24,7 @@ export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
       }
     }
 
-    return <ButtonGroupProperties />;
+    return <ItemConfigProperties />;
   };
 
   const title = () => {
@@ -47,7 +41,7 @@ export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
 
   return (
     <div className="sha-button-group-configurator">
-      <Alert message={<h4>Here you can configure the button group by adjusting their settings and ordering.</h4>} />
+      <Alert message={<h4>Here you can configure the items by adjusting their settings and ordering.</h4>} />
 
       <div className="sha-action-buttons">
         {allowAddGroups && (
@@ -56,7 +50,7 @@ export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
           </Button>
         )}
 
-        <Button onClick={addButton} type="primary">
+        <Button onClick={addItem} type="primary">
           Add New Item
         </Button>
       </div>
@@ -68,10 +62,10 @@ export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
           content,
         }}
       >
-        <ButtonGroupItemsContainer items={items} index={[]} />
+        <ItemListContainer items={items} index={[]} />
       </SidebarContainer>
     </div>
   );
 };
 
-export default ButtonGroupConfigurator;
+export default ItemListConfigurator;

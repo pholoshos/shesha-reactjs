@@ -1,5 +1,3 @@
-const path = require('path');
-
 module.exports = {
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.md', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.md', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -15,7 +13,7 @@ module.exports = {
     //   },
     // },
   ],
-  webpackFinal: async (config, { configType }) => {
+  webpackFinal: async config => {
     // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
     // You can change the configuration based on that.
     // 'PRODUCTION' is used when building the static version of storybook.

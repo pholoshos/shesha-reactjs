@@ -1,8 +1,9 @@
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import React, { FC, useState } from 'react';
 import { JsonLogicResult } from 'react-awesome-query-builder';
 import { IProperty } from '../../../../providers/queryBuilder/models';
 import QueryBuilder from '../../../queryBuilder';
+import './styles/queryBuilderPlain.less';
 
 export interface IQueryBuilderPlainProps {
   useExpression?: boolean;
@@ -11,7 +12,7 @@ export interface IQueryBuilderPlainProps {
   onChange?: (value: any) => void;
 }
 
-export const QueryBuilderPlain: FC<IQueryBuilderPlainProps> = props => {
+export const QueryBuilderPlain: FC<IQueryBuilderPlainProps> = ({ value, fields, useExpression, onChange }) => {
   const [jsonLogicResult, setJsonLogicResult] = useState<JsonLogicResult>(undefined);
 
   const onOkClick = () => {
@@ -22,30 +23,26 @@ export const QueryBuilderPlain: FC<IQueryBuilderPlainProps> = props => {
         return;
       }
 
-      if (props.onChange) {
-        props.onChange(jsonLogicResult?.logic);
+      if (onChange) {
+        onChange(jsonLogicResult?.logic);
+        message.success('Query saved locally!');
       }
     }
   };
 
-  const onChange = (result: JsonLogicResult) => {
+  const handleChange = (result: JsonLogicResult) => {
     setJsonLogicResult(result);
   };
 
   return (
-    <div>
-      <div>
-        <Button onClick={onOkClick} type="primary">
+    <div className="sha-query-builder-plain-wrapper">
+      <QueryBuilder value={value} onChange={handleChange} fields={fields} useExpression={useExpression} />
+
+      <div className="sha-query-builder-plain-wrapper-btn-wrapper">
+        <Button onClick={onOkClick} size="small" type="primary" disabled={!jsonLogicResult}>
           Save filters
         </Button>
       </div>
-
-      <QueryBuilder
-        value={props.value}
-        onChange={onChange}
-        fields={props.fields}
-        useExpression={props?.useExpression}
-      />
     </div>
   );
 };

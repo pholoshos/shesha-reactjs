@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Form, Select } from 'antd';
+import React, { useMemo, useState } from 'react';
+import { Form, Input, Select } from 'antd';
 import { ITableViewSelectorProps } from './models';
 import TableViewSelectorSettingsModal from './tableViewSelectorSettingsModal';
 import { QueryBuilderProvider } from '../../../../../providers';
@@ -8,6 +8,7 @@ import { ITableColumn, SectionSeparator } from '../../../../..';
 import { IProperty } from '../../../../../providers/queryBuilder/models';
 import { TableDataSourceType } from '../../../../../providers/dataTable/interfaces';
 import ConditionalWrap from '../../../../conditionalWrapper';
+import { ITableViewProps } from '../../../../../providers/tableViewSelectorConfigurator/models';
 
 export interface ITableViewSelectorSettingsProps {
   model: ITableViewSelectorProps;
@@ -19,6 +20,7 @@ export interface ITableViewSelectorSettingsProps {
 function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
   const [form] = Form.useForm();
   const { selectedComponentRef } = useForm();
+  const [localFilters, setLocalFilters] = useState<ITableViewProps[]>(props.model.filters || []);
 
   const columns = (selectedComponentRef.current?.columns as ITableColumn[]) || [];
   const dataSourceType: TableDataSourceType = selectedComponentRef.current?.dataSourceType;
@@ -79,31 +81,44 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
   });
   */
 
+  const handleValuesChange = (changedValues: any, values: ITableViewSelectorProps) => {
+    setLocalFilters(values?.filters);
+
+    if (props.onValuesChange) {
+      props.onValuesChange(changedValues, values);
+    }
+  };
+
   return (
     <ConditionalWrap
       condition={fields !== null}
       wrap={content => <QueryBuilderProvider fields={fields}>{content}</QueryBuilderProvider>}
     >
-      <Form form={form} onFinish={props.onSave} onValuesChange={props.onValuesChange}>
+      <Form form={form} onFinish={props.onSave} onValuesChange={handleValuesChange}>
+        <SectionSeparator sectionName="Title" />
+        <Form.Item name="title" initialValue={props.model.title}>
+          <Input />
+        </Form.Item>
+
         <SectionSeparator sectionName="Filters" />
 
+        <Form.Item name="filters" initialValue={props.model.filters}>
+          <TableViewSelectorSettingsModal />
+        </Form.Item>
+
         <Form.Item
-          label="Default filter"
+          label="Default selected filter"
           labelCol={{ span: 24 }}
           name="defaultFilterId"
           initialValue={props.model.defaultFilterId}
         >
-          <Select allowClear>
-            {props.model.filters?.map(filter => (
+          <Select allowClear disabled={localFilters?.length === 0}>
+            {localFilters?.map(filter => (
               <Select.Option key={filter?.id} value={filter?.id}>
                 {filter?.name}
               </Select.Option>
             ))}
           </Select>
-        </Form.Item>
-
-        <Form.Item name="filters" initialValue={props.model.filters}>
-          <TableViewSelectorSettingsModal />
         </Form.Item>
       </Form>
     </ConditionalWrap>

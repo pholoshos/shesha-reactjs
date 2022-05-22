@@ -19,6 +19,7 @@ const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
   initModel: (model: ITableViewSelectorProps) => {
     return {
       ...model,
+      title: 'Title',
       filters: [],
     };
   },
@@ -34,11 +35,10 @@ const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
   },
 };
 
-export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, componentRef, defaultFilterId }) => {
+export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, componentRef, defaultFilterId, title }) => {
   const {
     columns,
     getDataSourceType,
-    title,
     changeSelectedStoredFilterIds,
     selectedStoredFilterIds,
     setPredefinedFilters,

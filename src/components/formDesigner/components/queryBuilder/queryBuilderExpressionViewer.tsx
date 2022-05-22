@@ -1,18 +1,14 @@
 import React, { FC, useState } from 'react';
 import { Collapse } from 'antd';
-import { IProperty } from '../../../../providers/queryBuilder/models';
 import { CodeEditor } from '../../..';
 import { CaretRightOutlined } from '@ant-design/icons';
 
-export interface IQueryBuilderFieldProps {
+export interface IQueryBuilderExpressionViewerProps {
   jsonExpanded?: boolean;
-  useExpression?: boolean;
-  fields: IProperty[];
   value?: object;
-  onChange?: (value: any) => void;
 }
 
-export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
+export const QueryBuilderExpressionViewer: FC<IQueryBuilderExpressionViewerProps> = props => {
   const [jsonExpanded, setJsonExpanded] = useState(props.jsonExpanded ?? false);
 
   const onExpandClick = () => {
@@ -42,7 +38,7 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
         <CodeEditor
           width="100%"
           readOnly={true}
-          value={props.value ? JSON.stringify(props.value, null, 2) : null}
+          value={props.value ? JSON.stringify(props.value, null, 2) : ''}
           mode="json"
           theme="monokai"
           fontSize={14}
@@ -65,4 +61,4 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
   );
 };
 
-export default QueryBuilderField;
+export default QueryBuilderExpressionViewer;

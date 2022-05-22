@@ -6,6 +6,7 @@ import TableViewContainer from './tableViewContainer';
 import { useTableViewSelectorConfigurator } from '../../../../../providers/tableViewSelectorConfigurator';
 import { PlusSquareFilled } from '@ant-design/icons';
 import QueryBuilderSettings from '../../queryBuilder/queryBuilderSettings';
+import QueryBuilderExpressionViewer from '../../queryBuilder/queryBuilderExpressionViewer';
 
 export interface ITableViewSelectorConfiguratorProps {}
 
@@ -38,12 +39,15 @@ export const TableViewSelectorConfigurator: FC<ITableViewSelectorConfiguratorPro
           content: () => <TableViewProperties />,
         }}
       >
-        <Row gutter={[8, 8]}>
+        <Row gutter={[8, 8]} style={{ paddingRight: 8 }}>
           <Col span={24}>
             <QueryBuilderSettings onChange={onQueryBuilderValueChange} value={queryBuilderValue} />
           </Col>
           <Col span={24}>
             <TableViewContainer items={items} index={[]} />
+          </Col>
+          <Col span={24}>
+            <QueryBuilderExpressionViewer value={queryBuilderValue} jsonExpanded={true} />
           </Col>
         </Row>
       </SidebarContainer>

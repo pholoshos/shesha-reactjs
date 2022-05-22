@@ -1,13 +1,10 @@
-import { FormInstance, FormItemProps, FormProps, InputProps } from 'antd';
+import { FormItemProps, FormProps, InputProps } from 'antd';
 import React, { FC, useState } from 'react';
 import PasswordInputCombo from '../../../passwordInputCombo';
-
-type ChangeEvent = React.ChangeEvent<HTMLInputElement>;
 
 interface IProps {
   readonly confirmPlaceholder: string;
   readonly errorMessage?: string;
-  readonly form: FormInstance;
   readonly formItemProps: FormItemProps;
   readonly formItemConfirmProps?: FormItemProps;
   readonly formProps?: FormProps;
@@ -31,7 +28,6 @@ export const PasswordCombo: FC<IProps> = ({
   errorMessage,
   placeholder,
   inputProps,
-  form,
   formItemProps,
   formItemConfirmProps,
   formProps,
@@ -40,13 +36,8 @@ export const PasswordCombo: FC<IProps> = ({
   const [state, setState] = useState<IState>(INIT_STATE);
   const { newPassword, repeatPassword } = state;
 
-  const onPasswordChange = ({ target: { value } }: ChangeEvent, key: keyof IState) => {
-    form.setFieldsValue({ [key]: value });
-    setState(s => ({ ...s, [key]: value }));
-  };
-
-  const setNewPassword = (e: ChangeEvent) => onPasswordChange(e, 'newPassword');
-  const setRepeatPassword = (e: ChangeEvent) => onPasswordChange(e, 'repeatPassword');
+  const setNewPassword = (newPassword: string) => setState(s => ({ ...s, newPassword }));
+  const setRepeatPassword = (repeatPassword: string) => setState(s => ({ ...s, repeatPassword }));
 
   return (
     <PasswordInputCombo
@@ -62,7 +53,6 @@ export const PasswordCombo: FC<IProps> = ({
       formProps={formProps}
       passwordLength={passwordLength}
       errorMessage={errorMessage}
-      eventSetType={'event'}
       isPasswordOk={_e => {}}
     />
   );

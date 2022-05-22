@@ -13,6 +13,7 @@ import {
   IFormSections,
   ViewType,
   IFormValidationRulesOptions,
+  SILENT_KEY,
 } from './models';
 import Mustache from 'mustache';
 import { IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
@@ -864,4 +865,17 @@ export const getStyle = (style: string, formData: any = {}, globalState: any = {
   if (!style) return {};
   // tslint:disable-next-line:function-constructor
   return new Function('data, globalState', style)(formData, globalState);
+};
+
+export const filterFormData = (data: any) => {
+  if (typeof data === 'object' && Object.getOwnPropertyNames(data || {}).length) {
+    return Object.entries(data)
+      .filter(([k]) => !k.startsWith(SILENT_KEY))
+      .reduce((accum, [k, v]) => {
+        accum[k] = v;
+        return accum;
+      }, {});
+  }
+
+  return data;
 };

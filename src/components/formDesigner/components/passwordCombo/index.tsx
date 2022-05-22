@@ -20,14 +20,13 @@ const PasswordComboComponent: IToolboxComponent<IPasswordComponentProps> = {
   factory: (model: IPasswordComponentProps) => {
     const defaultModel = getDefaultModel(model);
     const { placeholder, confirmPlaceholder, message, minLength } = defaultModel || {};
-    const { formData, form, isComponentHidden } = useForm();
+    const { formData, isComponentHidden } = useForm();
 
     const options = { isComponentHidden, formData };
 
     return (
       <Fragment>
         <PasswordCombo
-          form={form}
           inputProps={getInputProps(defaultModel, formData)}
           placeholder={placeholder}
           confirmPlaceholder={confirmPlaceholder}

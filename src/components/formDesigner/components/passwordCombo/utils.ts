@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { getFieldNameFromExpression, getValidationRules } from '../../../../formDesignerUtils';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 import { IFormSettings } from '../../../../providers/form/contexts';
+import { SILENT_KEY } from '../../../../providers/form/models';
 import { getStyle } from '../../../../providers/form/utils';
 
 export interface IFormPropOptions {
@@ -26,8 +27,7 @@ export const confirmModel = (m: IPasswordComponentProps): IPasswordComponentProp
   model.description = m.confirmDescription;
   model.placeholder = m.confirmPlaceholder;
   model.label = m.confirmLabel;
-
-  delete model.name;
+  model.name = `${SILENT_KEY}${model.name}`;
 
   return model;
 };

@@ -32,6 +32,7 @@ import {
   cloneComponents,
   convertActions,
   createComponentModelForDataProperty,
+  filterFormData,
   findToolboxComponent,
   getCustomEnabledFunc,
   getCustomVisibilityFunc,
@@ -325,7 +326,7 @@ const reducer = handleActions<IFormStateContext, any>(
 
       return {
         ...state,
-        formData: newData,
+        formData: filterFormData(newData),
       };
     },
 
@@ -412,7 +413,7 @@ const reducer = handleActions<IFormStateContext, any>(
       } = action;
 
       const componentActions = convertActions(id, actionsToRegister);
-      const otherActions = state.actions.filter(a => a.owner !== id || !componentActions.find((ca) => ca.name == a.name ));
+      const otherActions = state.actions.filter(a => a.owner !== id || !componentActions.find(ca => ca.name == a.name));
 
       return {
         ...state,

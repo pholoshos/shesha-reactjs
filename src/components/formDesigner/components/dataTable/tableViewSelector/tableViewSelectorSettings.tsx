@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Form, Button, Select } from 'antd';
+import React, { useMemo } from 'react';
+import { Form, Select } from 'antd';
 import { ITableViewSelectorProps } from './models';
 import TableViewSelectorSettingsModal from './tableViewSelectorSettingsModal';
 import { QueryBuilderProvider } from '../../../../../providers';
@@ -17,7 +17,6 @@ export interface ITableViewSelectorSettingsProps {
 }
 
 function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
-  const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const { selectedComponentRef } = useForm();
 
@@ -88,8 +87,6 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
       <Form form={form} onFinish={props.onSave} onValuesChange={props.onValuesChange}>
         <SectionSeparator sectionName="Filters" />
 
-        <Button onClick={() => setModalVisible(true)}>Customise Filters</Button>
-
         <Form.Item
           label="Default filter"
           labelCol={{ span: 24 }}
@@ -106,12 +103,7 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
         </Form.Item>
 
         <Form.Item name="filters" initialValue={props.model.filters}>
-          <TableViewSelectorSettingsModal
-            visible={modalVisible}
-            hideModal={() => {
-              setModalVisible(false);
-            }}
-          />
+          <TableViewSelectorSettingsModal />
         </Form.Item>
       </Form>
     </ConditionalWrap>

@@ -4,23 +4,21 @@ import { Button, Tooltip } from 'antd';
 import { DeleteFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { useTableViewSelectorConfigurator } from '../../../../../providers/tableViewSelectorConfigurator';
 import DragHandle from './dragHandle';
+import classNames from 'classnames';
 
 export interface IProps extends ITableViewProps {
   index: number[];
 }
 
-export const TableView: FC<IProps> = (props) => {
+export const TableView: FC<IProps> = props => {
   const { deleteButton, selectedItemId } = useTableViewSelectorConfigurator();
 
   const onDeleteClick = () => {
     deleteButton(props.id);
   };
 
-  const classes = ['sha-toolbar-item'];
-  if (selectedItemId === props.id) classes.push('selected');
-
   return (
-    <div className={classes.reduce((a, c) => a + ' ' + c)}>
+    <div className={classNames('sha-toolbar-item', { selected: selectedItemId === props.id })}>
       <div className="sha-toolbar-item-header">
         <DragHandle id={props.id} />
         {props.name}

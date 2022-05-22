@@ -95,8 +95,13 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
       wrap={content => <QueryBuilderProvider fields={fields}>{content}</QueryBuilderProvider>}
     >
       <Form form={form} onFinish={props.onSave} onValuesChange={handleValuesChange}>
-        <SectionSeparator sectionName="Title" />
-        <Form.Item name="title" initialValue={props.model.title}>
+        <Form.Item
+          name="title"
+          label="Title"
+          initialValue={props.model.title}
+          labelCol={{ span: 24 }}
+          rules={[{ required: true }]}
+        >
           <Input />
         </Form.Item>
 

@@ -1,6 +1,8 @@
 import { FormItemProps } from 'antd';
 import { IPasswordValidation } from '../../interfaces';
 
+const ERROR_MSG = 'Passwords do not match';
+
 export const confirmPasswordValidations = (
   password: string,
   confirmPassword: string,
@@ -15,6 +17,10 @@ export const confirmPasswordValidations = (
   const validateStatus = confirmPaswordDirty ? 'success' : !confirmPassword ? undefined : 'error';
 
   const help = validateStatus === 'error' ? errorMessage : null;
+
+  const rules = help ? [{ required: true, validator: () => Promise.reject(errorMessage || ERROR_MSG) }] : undefined;
+
+  if (rules) return { hasFeedback, validateStatus, help, rules };
 
   return { hasFeedback, validateStatus, help };
 };
@@ -59,6 +65,10 @@ export const passwordValidations = (
   const validateStatus = password ? (passwordIsBad ? 'error' : 'success') : '';
 
   const help = validateStatus === 'error' ? errorMessage : null;
+
+  const rules = help ? [{ required: true, validator: () => Promise.reject(errorMessage || ERROR_MSG) }] : undefined;
+
+  if (rules) return { hasFeedback, validateStatus, help, rules };
 
   return { hasFeedback, validateStatus, help };
 };

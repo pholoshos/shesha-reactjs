@@ -93,7 +93,7 @@ export const renderers: ITableCustomTypesRender[] = [
         lazy: true,
       });
 
-      const dynamicModal = useModal({ ...state?.modalProps, initialValues: state?.entity });
+      const dynamicModal = useModal({ ...state?.modalProps, initialValues: state?.entity, parentFormValues: formData });
 
       useEffect(() => {
         if (state?.entityId) {

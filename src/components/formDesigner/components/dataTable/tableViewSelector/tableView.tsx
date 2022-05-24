@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { ITableViewProps } from '../../../../../providers/tableViewSelectorConfigurator/models';
-import { Button, Input, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { DeleteFilled, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { useTableViewSelectorConfigurator } from '../../../../../providers/tableViewSelectorConfigurator';
 import DragHandle from './dragHandle';

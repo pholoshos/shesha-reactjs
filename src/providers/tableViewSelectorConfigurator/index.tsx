@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, PropsWithChildren, useMemo } from 'react';
+import React, { FC, useReducer, useContext, PropsWithChildren } from 'react';
 import toolbarReducer from './reducer';
 import {
   IUpdateChildItemsPayload,

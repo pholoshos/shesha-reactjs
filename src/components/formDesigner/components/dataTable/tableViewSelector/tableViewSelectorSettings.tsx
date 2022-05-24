@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Form, Input, Select } from 'antd';
+import { Form, Select } from 'antd';
 import { ITableViewSelectorProps } from './models';
 import TableViewSelectorSettingsModal from './tableViewSelectorSettingsModal';
 import { QueryBuilderProvider } from '../../../../../providers';
@@ -95,16 +95,6 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
       wrap={content => <QueryBuilderProvider fields={fields}>{content}</QueryBuilderProvider>}
     >
       <Form form={form} onFinish={props.onSave} onValuesChange={handleValuesChange}>
-        <Form.Item
-          name="title"
-          label="Title"
-          initialValue={props.model.title}
-          labelCol={{ span: 24 }}
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-
         <SectionSeparator sectionName="Filters" />
 
         <Form.Item name="filters" initialValue={props.model.filters}>

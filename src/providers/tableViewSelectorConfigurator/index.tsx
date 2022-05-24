@@ -76,14 +76,10 @@ const TableViewSelectorConfiguratorProvider: FC<PropsWithChildren<
     dispatch(updateItemAction(payload));
   };
 
-  const selectedItem = useMemo(() => {
-    return getItemById(state?.items, state?.selectedItemId);
-  }, [state?.selectedItemId]);
-
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   return (
-    <TableViewSelectorConfiguratorStateContext.Provider value={{ ...state, selectedItem }}>
+    <TableViewSelectorConfiguratorStateContext.Provider value={{ ...state }}>
       <TableViewSelectorConfiguratorActionsContext.Provider
         value={{
           addButton,

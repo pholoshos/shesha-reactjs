@@ -7,9 +7,10 @@ import { ReactSortable, ItemInterface } from 'react-sortablejs';
 export interface ITableViewSortableProps {
   index?: number[];
   items: ITableViewProps[];
+  onConfigClick?: (selectedItemId: string) => void;
 }
 
-export const TableViewContainer: FC<ITableViewSortableProps> = props => {
+export const TableViewContainer: FC<ITableViewSortableProps> = ({ onConfigClick, ...props }) => {
   const { updateChildItems } = useTableViewSelectorConfigurator();
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
@@ -42,7 +43,7 @@ export const TableViewContainer: FC<ITableViewSortableProps> = props => {
       bubbleScroll={true}
     >
       {props.items.map((item, index) => (
-        <TableView index={[index]} key={index} {...item} />
+        <TableView index={[index]} key={index} {...item} onConfigClick={onConfigClick} />
       ))}
     </ReactSortable>
   );

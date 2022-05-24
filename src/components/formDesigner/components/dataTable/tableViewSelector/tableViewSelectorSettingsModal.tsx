@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Button, Divider, Modal } from 'antd';
 import {
   TableViewSelectorConfiguratorProvider,
@@ -14,7 +14,13 @@ interface IFiltersListProps {
 }
 
 const FiltersListInner: FC<Omit<IFiltersListProps, 'filters'>> = ({ showModal }) => {
-  const { items, addButton, selectedItemId } = useTableViewSelectorConfigurator();
+  const { items, addButton, selectItem } = useTableViewSelectorConfigurator();
+
+  const onConfigClick = (localSelectedId: string) => {
+    selectItem(localSelectedId);
+
+    showModal();
+  };
 
   return (
     <div>
@@ -22,15 +28,11 @@ const FiltersListInner: FC<Omit<IFiltersListProps, 'filters'>> = ({ showModal })
         <Button onClick={addButton} size="small" type="primary">
           Add Filter Item
         </Button>
-
-        <Button onClick={showModal} size="small" disabled={!selectedItemId}>
-          Configure Item
-        </Button>
       </div>
 
       <Divider />
 
-      <TableViewContainer items={items} index={[]} />
+      <TableViewContainer items={items} index={[]} onConfigClick={onConfigClick} />
     </div>
   );
 };
@@ -49,13 +51,26 @@ export const TableViewSelectorSettingsModalInner: FC<ITableViewSelectorSettingsM
 }) => {
   const { items } = useTableViewSelectorConfigurator();
 
-  const onOkClick = () => {
+  useEffect(() => {
+    if (!visible) {
+      updateFilters();
+    }
+  }, [items]);
+
+  const updateFilters = () => {
     if (typeof onChange === 'function') onChange(items);
     hideModal();
   };
 
   return (
-    <Modal width="75%" visible={visible} title="Configure Filters" okText="Save" onCancel={hideModal} onOk={onOkClick}>
+    <Modal
+      width="75%"
+      visible={visible}
+      title="Configure Filters"
+      okText="Save"
+      onCancel={hideModal}
+      onOk={updateFilters}
+    >
       <TableViewSelectorConfigurator />
     </Modal>
   );

@@ -24,3 +24,4 @@ export * from './metadata';
 export * from './metadataDispatcher';
 export * from './modelConfigurator';
 export * from './globalState';
+export * from './tableViewSelectorConfigurator';

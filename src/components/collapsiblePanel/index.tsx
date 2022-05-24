@@ -28,6 +28,10 @@ export const CollapsiblePanel: FC<ICollapsiblePanelProps> = ({
   loading,
   className,
 }) => {
+  const onClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    event?.stopPropagation();
+  };
+
   return (
     <Collapse
       defaultActiveKey={['1']}
@@ -35,7 +39,15 @@ export const CollapsiblePanel: FC<ICollapsiblePanelProps> = ({
       expandIconPosition={expandIconPosition}
       className={classNames('sha-collapsible-panel', className, { 'no-content-padding': noContentPadding })}
     >
-      <Panel header={<span className={`ant-collapse-header-text`}>{header || ' '}</span>} key="1" extra={extra}>
+      <Panel
+        header={
+          <span onClick={onClick} className={`ant-collapse-header-text`}>
+            {header || ' '}
+          </span>
+        }
+        key="1"
+        extra={<div onClick={onClick}>{extra}</div>}
+      >
         <Skeleton loading={loading}>{children}</Skeleton>
       </Panel>
     </Collapse>

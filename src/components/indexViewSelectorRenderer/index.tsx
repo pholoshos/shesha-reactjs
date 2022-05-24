@@ -16,13 +16,22 @@ export const IndexViewSelectorRenderer: FC<IIndexViewSelectorRendererProps> = ({
   selectedFilterId,
   onSelectFilter,
 }) => {
-  const selectedFilter = selectedFilterId ? filters.find(f => f.id === selectedFilterId) : null;
   const defaultView: IStoredFilter = {
     id: null,
     name: header,
   };
 
-  const viewsToSelect: IStoredFilter[] = [defaultView, ...filters].filter(view => {
+  console.log('IndexViewSelectorRenderer selectedFilterId', selectedFilterId);
+
+  const selectedFilter = selectedFilterId
+    ? filters.find(f => f.id === selectedFilterId)
+    : !header && filters?.length
+    ? filters[0]
+    : null;
+
+  const allFilters = header ? [defaultView, ...filters] : filters;
+
+  const viewsToSelect: IStoredFilter[] = allFilters.filter(view => {
     return view.id ? view.id !== selectedFilterId : Boolean(selectedFilterId);
   });
 
@@ -34,6 +43,16 @@ export const IndexViewSelectorRenderer: FC<IIndexViewSelectorRendererProps> = ({
       </span>
     );
   };
+
+  if (filters?.length === 1 && !Boolean(header)) {
+    return (
+      <div className="index-view-selector">
+        <h2 className="title">
+          {selectedFilter.name} {selectedFilter.tooltip && <TooltipIcon tooltip={selectedFilter.tooltip} />}
+        </h2>
+      </div>
+    );
+  }
 
   return (
     <div className="index-view-selector">

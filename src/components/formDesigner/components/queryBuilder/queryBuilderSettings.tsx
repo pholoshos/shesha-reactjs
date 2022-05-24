@@ -1,10 +1,4 @@
 import React, { FC, useMemo } from 'react';
-import { IToolboxComponent } from '../../../../interfaces';
-import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
-import { FilterOutlined } from '@ant-design/icons';
-import ConfigurableFormItem from '../formItem';
-import settingsFormJson from './settingsForm.json';
-import QueryBuilderField from './queryBuilderField';
 import {
   MetadataProvider,
   QueryBuilderProvider,
@@ -13,30 +7,21 @@ import {
   useQueryBuilder,
   useTableViewSelectorConfigurator,
 } from '../../../../providers';
-import { validateConfigurableComponentSettings, evaluateString } from '../../../../providers/form/utils';
+import { evaluateString } from '../../../../providers/form/utils';
 import ConditionalWrap from '../../../conditionalWrapper';
 import { IProperty } from '../../../../providers/queryBuilder/models';
 import { Alert, Typography } from 'antd';
+import QueryBuilderPlain from './queryBuilderPlain';
 
-export interface IQueryBuilderProps extends IConfigurableFormComponent {
+export interface IQueryBuilderProps {
   jsonExpanded?: boolean;
   modelType?: string;
   fieldsUnavailableHint?: string;
+  value?: object;
+  onChange?: (value: Object) => void;
 }
 
-const settingsForm = settingsFormJson as FormMarkup;
-
-const QueryBuilderComponent: IToolboxComponent<IQueryBuilderProps> = {
-  type: 'queryBuilder',
-  name: 'Query Builder',
-  icon: <FilterOutlined />,
-  //dataTypes: [DataTypes.string],
-  factory: (model: IQueryBuilderProps) => <QueryBuilder {...model}></QueryBuilder>,
-  settingsFormMarkup: settingsForm,
-  validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
-};
-
-const QueryBuilder: FC<IQueryBuilderProps> = props => {
+const QueryBuilderSettings: FC<IQueryBuilderProps> = props => {
   const queryBuilder = useQueryBuilder(false);
 
   return queryBuilder ? (
@@ -118,14 +103,11 @@ const QueryBuilderComponentRenderer: FC<IQueryBuilderProps> = props => {
   const fields = queryBuilder?.fields || [];
 
   return !fieldsAvailable && fieldsUnavailableHint ? (
-    <ConfigurableFormItem model={props}>
-      <Typography.Text type="secondary">{fieldsUnavailableHint}</Typography.Text>
-    </ConfigurableFormItem>
+    <Typography.Text type="secondary">{fieldsUnavailableHint}</Typography.Text>
   ) : (
-    <ConfigurableFormItem model={props}>
-      <QueryBuilderField fields={fields} jsonExpanded={props.jsonExpanded} useExpression={useExpression} />
-    </ConfigurableFormItem>
+    <QueryBuilderPlain fields={fields} useExpression={useExpression} onChange={props?.onChange} value={props?.value} />
+    // <QueryBuilderPlain fields={fields} useExpression={useExpression} onChange={props?.onChange} value={props?.value} />
   );
 };
 
-export default QueryBuilderComponent;
+export default QueryBuilderSettings;

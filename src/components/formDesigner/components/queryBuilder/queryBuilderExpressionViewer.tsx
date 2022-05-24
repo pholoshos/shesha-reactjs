@@ -11,8 +11,6 @@ export interface IQueryBuilderExpressionViewerProps {
 export const QueryBuilderExpressionViewer: FC<IQueryBuilderExpressionViewerProps> = props => {
   const [jsonExpanded, setJsonExpanded] = useState(props.jsonExpanded ?? false);
 
-  console.log('QueryBuilderExpressionViewer value: ', props?.value);
-
   const onExpandClick = () => {
     setJsonExpanded(!jsonExpanded);
   };

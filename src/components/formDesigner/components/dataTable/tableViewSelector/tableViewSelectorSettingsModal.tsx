@@ -1,10 +1,10 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Button, Divider, Modal } from 'antd';
 import {
   TableViewSelectorConfiguratorProvider,
   useTableViewSelectorConfigurator,
 } from '../../../../../providers/tableViewSelectorConfigurator';
-import { TableViewSelectorConfigurator } from './tableViewSelectorConfigurator';
+import { ITableViewSelectorConfiguratorHandles, TableViewSelectorConfigurator } from './tableViewSelectorConfigurator';
 import { ITableViewProps } from '../../../../../providers/tableViewSelectorConfigurator/models';
 import TableViewContainer from './tableViewContainer';
 
@@ -50,15 +50,19 @@ export const TableViewSelectorSettingsModalInner: FC<ITableViewSelectorSettingsM
   hideModal,
 }) => {
   const { items } = useTableViewSelectorConfigurator();
+  const configRef = useRef<ITableViewSelectorConfiguratorHandles>();
 
   useEffect(() => {
     if (!visible) {
       updateFilters();
     }
-  }, [items]);
+  }, [items?.length]);
 
   const updateFilters = () => {
-    if (typeof onChange === 'function') onChange(items);
+    if (typeof onChange === 'function') {
+      configRef?.current?.saveFilters();
+      onChange(items);
+    }
     hideModal();
   };
 
@@ -71,7 +75,7 @@ export const TableViewSelectorSettingsModalInner: FC<ITableViewSelectorSettingsM
       onCancel={hideModal}
       onOk={updateFilters}
     >
-      <TableViewSelectorConfigurator />
+      <TableViewSelectorConfigurator ref={configRef} />
     </Modal>
   );
 };

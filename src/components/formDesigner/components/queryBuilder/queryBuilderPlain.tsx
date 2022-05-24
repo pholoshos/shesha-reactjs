@@ -8,30 +8,10 @@ export interface IQueryBuilderPlainProps {
   useExpression?: boolean;
   fields: IProperty[];
   value?: object;
-  onChange?: (value: any) => void;
+  onChange?: (value: Object) => void;
 }
 
 export const QueryBuilderPlain: FC<IQueryBuilderPlainProps> = ({ value, fields, useExpression, onChange }) => {
-  // const [jsonLogicResult, setJsonLogicResult] = useState<JsonLogicResult>(undefined);
-
-  // useEffect(() => {
-  //   onOkClick();
-  // }, [jsonLogicResult.logic]);
-
-  // const onOkClick = () => {
-  //   if (jsonLogicResult) {
-  //     if (jsonLogicResult && jsonLogicResult.errors && jsonLogicResult.errors.length > 0) {
-  //       console.log(jsonLogicResult);
-  //       // show errors
-  //       return;
-  //     }
-
-  //     if (onChange) {
-  //       onChange(jsonLogicResult?.logic);
-  //     }
-  //   }
-  // };
-
   const handleChange = (jsonLogicResult: JsonLogicResult) => {
     if (jsonLogicResult) {
       if (jsonLogicResult && jsonLogicResult.errors && jsonLogicResult.errors.length > 0) {

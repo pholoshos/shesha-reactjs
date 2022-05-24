@@ -22,8 +22,8 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
   const { selectedComponentRef } = useForm();
   const [localFilters, setLocalFilters] = useState<ITableViewProps[]>(props.model.filters || []);
 
-  const columns = (selectedComponentRef.current?.columns as ITableColumn[]) || [];
-  const dataSourceType: TableDataSourceType = selectedComponentRef.current?.dataSourceType;
+  const columns = (selectedComponentRef?.current?.columns as ITableColumn[]) || [];
+  const dataSourceType: TableDataSourceType = selectedComponentRef?.current?.dataSourceType;
 
   const fields = useMemo<IProperty[]>(() => {
     if (dataSourceType === 'tableConfig') {

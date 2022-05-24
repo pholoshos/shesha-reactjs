@@ -1,38 +1,42 @@
-import React, { FC, useMemo } from 'react';
+import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { Alert, Tabs } from 'antd';
 import { SidebarContainer } from '../../../../../components';
 import { TableViewProperties } from './tableViewProperties';
 import { useTableViewSelectorConfigurator } from '../../../../../providers/tableViewSelectorConfigurator';
 import QueryBuilderSettings from '../../queryBuilder/queryBuilderSettings';
 import QueryBuilderExpressionViewer from '../../queryBuilder/queryBuilderExpressionViewer';
-import { useDebouncedCallback } from 'use-debounce/lib';
 
 const { TabPane } = Tabs;
 
 export interface ITableViewSelectorConfiguratorProps {}
 
-export const TableViewSelectorConfigurator: FC<ITableViewSelectorConfiguratorProps> = () => {
+export interface ITableViewSelectorConfiguratorHandles {
+  saveFilters: () => void;
+}
+
+export const TableViewSelectorConfigurator = forwardRef<
+  ITableViewSelectorConfiguratorHandles,
+  ITableViewSelectorConfiguratorProps
+>(({}, forwardedRef) => {
+  useImperativeHandle(forwardedRef, () => ({
+    saveFilters() {
+      onQueryBuilderValueChange();
+    },
+  }));
+
   const { selectedItemId, updateItem, items } = useTableViewSelectorConfigurator();
+  const [localQueryExpression, setLocalQueryExpression] = useState<any>();
 
-  const selectedItem = useMemo(() => items?.find(({ id }) => id === selectedItemId), [items]);
+  const selectedItem = useMemo(() => items?.find(({ id }) => id === selectedItemId), [items, selectedItemId]);
 
-  const debouncedOnQueryBuilderValueChange = useDebouncedCallback(
-    (expression: any) => {
+  const onQueryBuilderValueChange = () => {
+    if (localQueryExpression) {
       updateItem({
         id: selectedItemId,
-        settings: { ...selectedItem, expression },
+        settings: { ...selectedItem, expression: localQueryExpression },
       });
-    },
-    // delay in ms
-    300
-  );
-
-  // const onQueryBuilderValueChange = (expression: any) => {
-  //   updateItem({
-  //     id: selectedItemId,
-  //     settings: { ...selectedItem, expression },
-  //   });
-  // };
+    }
+  };
 
   const queryBuilderValue = useMemo(() => {
     return selectedItem?.expression;
@@ -56,9 +60,10 @@ export const TableViewSelectorConfigurator: FC<ITableViewSelectorConfiguratorPro
           defaultActiveKey="queryBuilderConfigureTab"
           className="sha-toolbar-configurator-body-tabs"
           destroyInactiveTabPane
+          onChange={onQueryBuilderValueChange}
         >
           <TabPane tab="Query builder" key="queryBuilderConfigureTab">
-            <QueryBuilderSettings onChange={debouncedOnQueryBuilderValueChange} value={queryBuilderValue} />
+            <QueryBuilderSettings onChange={setLocalQueryExpression} value={queryBuilderValue} />
           </TabPane>
 
           <TabPane tab="Query expression viewer" key="expressionViewerTab">
@@ -68,6 +73,8 @@ export const TableViewSelectorConfigurator: FC<ITableViewSelectorConfiguratorPro
       </SidebarContainer>
     </div>
   );
-};
+});
+
+export type TableViewSelectorConfiguratorRefType = React.ElementRef<typeof TableViewSelectorConfigurator>;
 
 export default TableViewSelectorConfigurator;

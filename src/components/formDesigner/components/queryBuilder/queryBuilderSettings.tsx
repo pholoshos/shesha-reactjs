@@ -18,7 +18,7 @@ export interface IQueryBuilderProps {
   modelType?: string;
   fieldsUnavailableHint?: string;
   value?: object;
-  onChange?: (value: any) => void;
+  onChange?: (value: Object) => void;
 }
 
 const QueryBuilderSettings: FC<IQueryBuilderProps> = props => {

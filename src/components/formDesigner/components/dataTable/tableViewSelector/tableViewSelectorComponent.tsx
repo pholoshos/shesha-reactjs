@@ -8,6 +8,7 @@ import { useDataTableStore, useGlobalState } from '../../../../../providers';
 import { evaluateDynamicFilters } from '../../../../../providers/dataTable/utils';
 import camelCaseKeys from 'camelcase-keys';
 import _ from 'lodash';
+import { Alert } from 'antd';
 
 const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
   type: 'tableViewSelector',
@@ -19,6 +20,7 @@ const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
   initModel: (model: ITableViewSelectorProps) => {
     return {
       ...model,
+      title: 'Title',
       filters: [],
     };
   },
@@ -38,7 +40,6 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
   const {
     columns,
     getDataSourceType,
-    title,
     changeSelectedStoredFilterIds,
     selectedStoredFilterIds,
     setPredefinedFilters,
@@ -95,9 +96,14 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
     changeSelectedStoredFilterIds(id ? [id] : []);
   };
 
+  const defaultTitle = predefinedFilters?.length ? predefinedFilters[0]?.name : null;
+
+  if (!defaultTitle) {
+    return <Alert message="Please make sure that you have at least 1 filter" type="warning" showIcon />;
+  }
+
   return (
     <IndexViewSelectorRenderer
-      header={title || 'Table'}
       filters={predefinedFilters || []}
       onSelectFilter={changeSelectedFilter}
       selectedFilterId={defaultSelectedFilterId}

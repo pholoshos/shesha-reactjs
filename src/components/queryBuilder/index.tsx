@@ -55,7 +55,7 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
 
   useEffect(() => {
     initialize();
-  }, []);
+  }, [value]);
 
   // In dynamic mode, we want all the widgets to to text so that they can be passed Mustache string templates
   // TODO: Add a dynamic component for type: 'slider' and number as that also can be a range, which would have to receive 2 value - {{start}} and {{end}}

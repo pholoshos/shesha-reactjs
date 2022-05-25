@@ -1,41 +1,56 @@
-import React, { FC } from 'react';
-import { Input } from 'antd';
+// import { useAuth, useAuthorizationSettings, useGlobalState, usePublish } from '@shesha/reactjs';
+import React, { FC, useEffect, useState } from 'react';
+import { Button, Input, message } from 'antd';
+import { useGlobalState } from '../../providers';
 
 export interface ICurrencyConverterProps {
     /**
-     * The base value of the currency to convert from
-     */
-    inputValue: number;
-
-    /**
      * The base currency to convert from
      */
-    inputCurrency: string;
+    from: string;
 
     /**
      * The output currency to convert to
      */
-    outputCurrency: string;
+    to: string;
 
     /**
-     * The currency conversion rate
+     * The exhange rate
      */
-    conversionRate: number;
+    rate: number;
 }
 
 const CurrencyConverter: FC<ICurrencyConverterProps> = ({
-    inputValue,
-    inputCurrency = 'USD',
-    outputCurrency = 'ZAR',
-    // conversionRate
+    from = 'USD',
+    to = 'ZAR',
+    rate = 15
 }) => {
+
+    const [uAmount, setAmount] = useState(0);
+    const [uExchange, setExchange] = useState(0);
+
+    const { setState: setGlobalState } = useGlobalState();
+
+    useEffect(() => {
+        onConvert();
+    }, [uExchange]);
+
+    const onConvert = () => {
+        setExchange(uAmount * rate);
+        setGlobalState({ key: "Echange", data: uExchange });
+        message.info(uExchange);
+        console.log("OnConvert After: amount[%d] exchange[%d] rate[%d]", uAmount, uExchange, rate);
+    };
+
+    const onChange = (e) => {
+        setAmount(e.target.value);
+    };
+
     return (
-        <>
-            <Input.Group>
-                <Input addonAfter={inputCurrency} defaultValue={inputValue} />
-                <Input addonAfter={outputCurrency} />
-            </Input.Group>
-        </>
+        <div>
+            <Input style={{ width: '80px' }} onChange={onChange} />
+            <Button onClick={onConvert}>Convert {uAmount} {from} to {to}</Button>
+        </div>
     );
 };
 

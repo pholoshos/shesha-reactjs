@@ -31,10 +31,9 @@ const BaseTemplate: Story<ICurrencyConverterProps> = props => {
 };
 
 const baseProps: ICurrencyConverterProps = {
-    inputValue: 100,
-    inputCurrency: 'USD',
-    outputCurrency: 'ZAR',
-    conversionRate: 15.6
+    from: 'USD',
+    to: 'ZAR',
+    rate: 15
 };
 
 export const Base = BaseTemplate.bind({});

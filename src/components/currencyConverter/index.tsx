@@ -29,7 +29,13 @@ const CurrencyConverter: FC<ICurrencyConverterProps> = ({
     const [uAmount, setAmount] = useState(0);
     const [uExchange, setExchange] = useState(0);
 
-    const { setState: setGlobalState } = useGlobalState();
+    const ECHANGE_GLOBAL_KEY = "EchangeGlobalKey";
+
+    const {
+        setState: setGlobalState,
+        getStateByKey: getGlobalStateByKey,
+        clearState: clearGlobalState
+    } = useGlobalState();
 
     useEffect(() => {
         onConvert();
@@ -37,19 +43,30 @@ const CurrencyConverter: FC<ICurrencyConverterProps> = ({
 
     const onConvert = () => {
         setExchange(uAmount * rate);
-        setGlobalState({ key: "Echange", data: uExchange });
+        setGlobalState({ key: ECHANGE_GLOBAL_KEY, data: uExchange });
         message.info(uExchange);
-        console.log("OnConvert After: amount[%d] exchange[%d] rate[%d]", uAmount, uExchange, rate);
     };
 
     const onChange = (e) => {
         setAmount(e.target.value);
     };
 
+    const onCheckCache = () => {
+        const state = getGlobalStateByKey(ECHANGE_GLOBAL_KEY);
+        message.info(state);
+    };
+
+    const onClearCache = () => {
+        clearGlobalState(ECHANGE_GLOBAL_KEY);
+        message.info("Deleted Cache");
+    };
+
     return (
         <div>
             <Input style={{ width: '80px' }} onChange={onChange} />
             <Button onClick={onConvert}>Convert {uAmount} {from} to {to}</Button>
+            <Button onClick={onCheckCache} type="primary">View Cache</Button>
+            <Button onClick={onClearCache} type="link">Clear Cache</Button>
         </div>
     );
 };

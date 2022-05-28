@@ -22,6 +22,7 @@ import RefListType from './types/refList';
 import { DataTypes } from '../../interfaces/dataTypes';
 import DateTimeDynamicWidget from './widgets/dateTimeDynamic';
 import DateTimeDynamicType from './types/dateTimeDynamic';
+import moment from 'moment';
 
 const InitialConfig = AntdConfig;
 
@@ -88,6 +89,12 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
       entityAutocomplete: EntityAutocompleteWidget,
       refListDropdown: RefListDropdownWidget,
       dateTimeDynamic: DateTimeDynamicWidget,
+      datetime: {
+        ...InitialConfig.widgets.datetime,
+        jsonLogic: (val, _, wgtDef) => {
+          return moment.utc(val, wgtDef.valueFormat).toDate(); // Ignore timezone
+        },
+      },
     };
 
     const types = {

@@ -21,8 +21,6 @@ export const IndexViewSelectorRenderer: FC<IIndexViewSelectorRendererProps> = ({
     name: header,
   };
 
-  console.log('IndexViewSelectorRenderer selectedFilterId', selectedFilterId);
-
   const selectedFilter = selectedFilterId
     ? filters.find(f => f.id === selectedFilterId)
     : !header && filters?.length

@@ -177,14 +177,14 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
       : [null, null];
 
   const handleDatePickerChange = (localValue: any | null, dateString: string) => {
-    const newValue = isMoment(localValue) ? localValue.format() : localValue;
+    const newValue = isMoment(localValue) ? localValue.utc().format() : localValue;
 
     (onChange as TimePickerChangeEvent)(newValue, dateString);
   };
 
   const handleRangePicker = (values: any[], formatString: [string, string]) => {
     const dates = (values as []).map((val: any) => {
-      if (isMoment(val)) return val.format();
+      if (isMoment(val)) return val.utc().format();
 
       return val;
     });

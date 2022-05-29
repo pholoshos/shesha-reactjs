@@ -90,7 +90,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
     formSettings?.initialValues?.forEach(({ key, value }) => {
       const evaluatedValue = value?.includes('{{')
-        ? evaluateComplexString(getUrl, [
+        ? evaluateComplexString(value, [
             { match: 'data', data: formData },
             { match: 'parentFormValues', data: parentFormValues },
             { match: 'globalState', data: globalState },

@@ -17,6 +17,12 @@ export interface ITablePagerBaseProps {
   /** the selected page size of the table */
   selectedPageSize: number;
 
+  /** show size changer of the table */
+  showSizeChanger?: boolean;
+
+  /** show size of table rows */
+  showTotalItems?: boolean;
+
   /** A function to set the page the table should be on */
   setCurrentPage: (page: number) => void;
 
@@ -30,6 +36,8 @@ export const TablePagerBase: FC<ITablePagerBaseProps> = ({
   currentPage,
   totalRows,
   selectedPageSize,
+  showSizeChanger = true,
+  showTotalItems = true,
   setCurrentPage,
   changePageSize,
 }) => {
@@ -43,6 +51,14 @@ export const TablePagerBase: FC<ITablePagerBaseProps> = ({
     setCurrentPage(current);
   };
 
+  const showTotal = (total: number, range: number[]) => {
+    if (showTotalItems) {
+      return total > 0 ? `${range[0]}-${range[1]} of ${total} items` : '0 items found';
+    }
+
+    return null;
+  };
+
   return (
     <Pagination
       size="small"
@@ -50,12 +66,12 @@ export const TablePagerBase: FC<ITablePagerBaseProps> = ({
       pageSizeOptions={(pageSizeOptions || []).map(s => `${s}`)}
       current={currentPage}
       pageSize={selectedPageSize}
-      showSizeChanger
+      showSizeChanger={showSizeChanger}
       onChange={onPageNumberChange}
       onShowSizeChange={onShowSizeChange}
       showLessItems
       disabled={disabled}
-      showTotal={(total, range) => (total > 0 ? `${range[0]}-${range[1]} of ${total} items` : '0 items found')} // todo: add `filtered from xxx` here if needed
+      showTotal={showTotal} // todo: add `filtered from xxx` here if needed
     />
   );
 };

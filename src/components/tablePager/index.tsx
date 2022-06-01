@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
-import TablePagerBase from '../tablePagerBase';
+import { useMediaQuery } from 'react-responsive';
+import { DESKTOP_SIZE_QUERY, PHONE_SIZE_QUERY } from '../../constants/media-queries';
 import { useDataTable } from '../../providers';
+import TablePagerBase from '../tablePagerBase';
 
 export interface ITablePagerProps {}
 
@@ -15,6 +17,14 @@ export const TablePager: FC<ITablePagerProps> = () => {
     newOrEditableRowData,
   } = useDataTable();
 
+  const hideSizeChanger = useMediaQuery({
+    query: DESKTOP_SIZE_QUERY,
+  });
+
+  const hideTotalItems = useMediaQuery({
+    query: PHONE_SIZE_QUERY,
+  });
+
   return (
     <TablePagerBase
       {...{
@@ -22,6 +32,8 @@ export const TablePager: FC<ITablePagerProps> = () => {
         currentPage,
         totalRows,
         selectedPageSize,
+        showSizeChanger: !hideSizeChanger,
+        showTotalItems: !hideTotalItems,
         setCurrentPage,
         changePageSize,
         disabled: !!newOrEditableRowData,

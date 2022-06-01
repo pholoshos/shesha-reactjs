@@ -82,15 +82,12 @@ export const ChildDataTable: FC<IChildTableProps> = ({
     return <Fragment />;
   };
 
-  // Prevent the CollapsiblePanel from collapsing every time you click anywhere on the extra
-  const onExtraClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event?.stopPropagation();
-
   return (
     <div className="sha-child-table">
       <CollapsiblePanel
         header={header}
         extra={
-          <div className="sha-child-table-extra" onClick={onExtraClick}>
+          <div className="sha-child-table-extra">
             <ChildTableControls
               crud={crud}
               showPagination={paginationMode === 'pagination'}

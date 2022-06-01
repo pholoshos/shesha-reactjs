@@ -5,7 +5,14 @@ import { FilterOutlined } from '@ant-design/icons';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import QueryBuilderField from './queryBuilderField';
-import { MetadataProvider, QueryBuilderProvider, useForm, useMetadata, useQueryBuilder, useTableViewSelectorConfigurator } from '../../../../providers';
+import {
+  MetadataProvider,
+  QueryBuilderProvider,
+  useForm,
+  useMetadata,
+  useQueryBuilder,
+  useTableViewSelectorConfigurator,
+} from '../../../../providers';
 import { validateConfigurableComponentSettings, evaluateString } from '../../../../providers/form/utils';
 import ConditionalWrap from '../../../conditionalWrapper';
 import { IProperty } from '../../../../providers/queryBuilder/models';
@@ -24,20 +31,22 @@ const QueryBuilderComponent: IToolboxComponent<IQueryBuilderProps> = {
   name: 'Query Builder',
   icon: <FilterOutlined />,
   //dataTypes: [DataTypes.string],
-  factory: (model: IQueryBuilderProps) => (<QueryBuilder {...model}></QueryBuilder>),
+  factory: (model: IQueryBuilderProps) => <QueryBuilder {...model}></QueryBuilder>,
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
 };
 
-const QueryBuilder: FC<IQueryBuilderProps> = (props) => {
+const QueryBuilder: FC<IQueryBuilderProps> = props => {
   const queryBuilder = useQueryBuilder(false);
 
-  return queryBuilder
-    ? <QueryBuilderComponentRenderer {...props}></QueryBuilderComponentRenderer>
-    : <QueryBuilderWithModelType {...props}></QueryBuilderWithModelType>;
-}
+  return queryBuilder ? (
+    <QueryBuilderComponentRenderer {...props}></QueryBuilderComponentRenderer>
+  ) : (
+    <QueryBuilderWithModelType {...props}></QueryBuilderWithModelType>
+  );
+};
 
-const QueryBuilderWithModelType: FC<IQueryBuilderProps> = (props) => {
+const QueryBuilderWithModelType: FC<IQueryBuilderProps> = props => {
   const { formData } = useForm();
   const { modelType: modelTypeExpression } = props;
   const modelType = evaluateString(modelTypeExpression, { data: formData });
@@ -45,18 +54,14 @@ const QueryBuilderWithModelType: FC<IQueryBuilderProps> = (props) => {
   return (
     <ConditionalWrap
       condition={Boolean(modelType)}
-      wrap={(content) => (
-        <MetadataProvider modelType={modelType}>
-          {content}
-        </MetadataProvider>
-      )}
+      wrap={content => <MetadataProvider modelType={modelType}>{content}</MetadataProvider>}
     >
       <QueryBuilderWithMetadata {...props}></QueryBuilderWithMetadata>
     </ConditionalWrap>
-  )
-}
+  );
+};
 
-const QueryBuilderWithMetadata: FC<IQueryBuilderProps> = (props) => {
+const QueryBuilderWithMetadata: FC<IQueryBuilderProps> = props => {
   const metadata = useMetadata(false);
 
   const fields = useMemo<IProperty[]>(() => {
@@ -82,18 +87,14 @@ const QueryBuilderWithMetadata: FC<IQueryBuilderProps> = (props) => {
   return (
     <ConditionalWrap
       condition={fields !== null}
-      wrap={(content) => (
-        <QueryBuilderProvider fields={fields}>
-          {content}
-        </QueryBuilderProvider>
-      )}
+      wrap={content => <QueryBuilderProvider fields={fields}>{content}</QueryBuilderProvider>}
     >
       <QueryBuilderComponentRenderer {...props}></QueryBuilderComponentRenderer>
     </ConditionalWrap>
   );
-}
+};
 
-const QueryBuilderComponentRenderer: FC<IQueryBuilderProps> = (props) => {
+const QueryBuilderComponentRenderer: FC<IQueryBuilderProps> = props => {
   const { fieldsUnavailableHint } = props;
   const { selectedItemId, items } = useTableViewSelectorConfigurator(false) ?? {}; // note: it should be outside the QueryBuilder component!
 
@@ -106,21 +107,25 @@ const QueryBuilderComponentRenderer: FC<IQueryBuilderProps> = (props) => {
   const fieldsAvailable = Boolean(queryBuilder);
 
   if (!fieldsAvailable && formMode === 'designer' && !fieldsUnavailableHint)
-    return <Alert className="sha-designer-warning" message="Fields are not available. Wrap Query Builder with a QueryBuilderProvider/MetadataProvider or specify `Model Type`" type="warning" />;
+    return (
+      <Alert
+        className="sha-designer-warning"
+        message="Fields are not available. Wrap Query Builder with a QueryBuilderProvider/MetadataProvider or specify `Model Type`"
+        type="warning"
+      />
+    );
 
   const fields = queryBuilder?.fields || [];
 
-  return !fieldsAvailable && fieldsUnavailableHint
-    ? (
-      <ConfigurableFormItem model={props}>
-        <Typography.Text type="secondary">{fieldsUnavailableHint}</Typography.Text>
-      </ConfigurableFormItem>
-    )
-    : (
-      <ConfigurableFormItem model={props}>
-        <QueryBuilderField fields={fields} jsonExpanded={props.jsonExpanded} useExpression={useExpression} />
-      </ConfigurableFormItem>
-    );
-}
+  return !fieldsAvailable && fieldsUnavailableHint ? (
+    <ConfigurableFormItem model={props}>
+      <Typography.Text type="secondary">{fieldsUnavailableHint}</Typography.Text>
+    </ConfigurableFormItem>
+  ) : (
+    <ConfigurableFormItem model={props}>
+      <QueryBuilderField fields={fields} jsonExpanded={props.jsonExpanded} useExpression={useExpression} />
+    </ConfigurableFormItem>
+  );
+};
 
 export default QueryBuilderComponent;

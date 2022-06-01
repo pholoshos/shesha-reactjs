@@ -316,7 +316,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   // todo: review usage of useFormUpdateMarkup after
   const { mutate: saveFormHttp /*, loading: saveFormInProgress, error: saveFormError*/ } = useFormUpdateMarkup({
-    id,
+    id: id || state?.present?.id,
   });
 
   const saveForm = (): Promise<void> => {
@@ -444,8 +444,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   };
 
   const setSelectedComponent = (componentId: string, dataSourceId: string, componentRef?: MutableRefObject<any>) => {
-    if (activateProvider)
-      activateProvider(dataSourceId);
+    if (activateProvider) activateProvider(dataSourceId);
     dispatch(setSelectedComponentAction({ id: componentId, dataSourceId, componentRef }));
   };
 

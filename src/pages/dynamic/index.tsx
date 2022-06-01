@@ -8,10 +8,10 @@ import { axiosHttp } from '../../apis/axios';
 import { FormDto, useFormGet, useFormGetByPath } from '../../apis/form';
 import { AjaxResponseBase } from '../../apis/user';
 import { ConfigurableForm, ValidationErrors } from '../../components';
-import { useSubscribe } from '../../hooks';
+import { useSubscribe, usePubSub } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
 import { useGlobalState, useSheshaApplication } from '../../providers';
-import { ConfigurableFormInstance } from '../../providers/form/contexts';
+import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
 import { IFormDto } from '../../providers/form/models';
 import { evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
 import { getQueryParams } from '../../utils/url';
@@ -74,6 +74,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const [state, setState] = useState<IDynamicPageState>({});
   const formRef = useRef<ConfigurableFormInstance>();
   const { globalState } = useGlobalState();
+
+  const { publish } = usePubSub();
 
   const { id, path, formId, entityPathId } = state;
 
@@ -172,12 +174,20 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
     // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
     if (fetchDataPath && !isPathMismatch) {
+      // clear form data
+      //formRef?.current?.setFormData({ values: null, mergeValues: false });
+
       fetchData({ queryParams: entityPathId || !id ? {} : { id } });
     }
   }, [id, formResponse?.markup?.formSettings?.getUrl, entityPathId, fetchDataPath]);
 
   const onChangeId = (id: string) => {
     setState(prev => ({ ...prev, id }));
+  };
+
+  const onChangeFormData = (payload: ISetFormDataPayload) => {
+    form?.setFieldsValue(payload?.values);
+    formRef?.current?.setFormData({ values: payload?.values, mergeValues: payload?.mergeValues });
   };
 
   useEffect(() => {
@@ -223,6 +233,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     postData(values)
       .then(() => {
         message.success('Data saved successfully!');
+        
+        publish(DynamicFormPubSubConstants.DataSaved)
 
         formRef?.current?.setFormMode('readonly');
       })
@@ -342,7 +354,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         formRef={formRef}
         mode={state?.mode}
         form={form}
-        actions={{ onChangeId }}
+        actions={{ onChangeId, onChangeFormData }}
         onFinish={onFinish}
         initialValues={state?.fetchedData}
         skipPostOnFinish

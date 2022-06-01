@@ -1,7 +1,7 @@
 import React from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
-import { HomeOutlined } from '@ant-design/icons';
+import { TagOutlined } from '@ant-design/icons';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
@@ -27,9 +27,9 @@ export interface IAutocompleteTagsOutlinedComponentProps extends IConfigurableFo
 const settingsForm = settingsFormJson as FormMarkup;
 
 const AutocompleteTagGroupComponent: IToolboxComponent<IAutocompleteTagsOutlinedComponentProps> = {
-  type: 'AutocompleteTagGroup',
+  type: 'autocompleteTagGroup',
   name: 'AutocompleteTagsOutlined',
-  icon: <HomeOutlined />,
+  icon: <TagOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.array,
   factory: (model: IAutocompleteTagsOutlinedComponentProps) => {
 

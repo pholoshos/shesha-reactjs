@@ -193,7 +193,7 @@ export const ColumnItemFilter: FC<IColumnItemFilterProps> = ({
 
     if (isMoment(value)) return value;
 
-    return moment(value as string, format).isValid() ? moment(value as string, format) : undefined;
+    return moment(value as string, format).isValid() ? moment.utc(value as string, format) : undefined;
   };
 
   const renderDateInput = () => {

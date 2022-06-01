@@ -89,6 +89,16 @@ const reducer = handleActions<IDataTableStateContext, any>(
         defaultSelectedFilterId: payload,
       };
     },
+    [DataTableActionEnums.ChangePersistedFiltersToggle]: (
+      state: IDataTableStateContext,
+      action: ReduxActions.Action<boolean>
+    ) => {
+      const { payload } = action;
+      return {
+        ...state,
+        persistSelectedFilters: payload,
+      };
+    },
 
     [DataTableActionEnums.ChangeSelectedStoredFilterIds]: (
       state: IDataTableStateContext,
@@ -324,15 +334,15 @@ const reducer = handleActions<IDataTableStateContext, any>(
                 minWidth: column.minWidth || MIN_COLUMN_WIDTH,
                 maxWidth: column.minWidth,
 
-                dataType: srvColumn.dataType as IndexColumnDataType,
-                isSortable: srvColumn.isSortable,
-                isHiddenByDefault: srvColumn.isHiddenByDefault,
-                isFilterable: srvColumn.isFilterable,
-                entityReferenceTypeShortAlias: srvColumn.entityReferenceTypeShortAlias,
-                referenceListName: srvColumn.referenceListName,
-                referenceListNamespace: srvColumn.referenceListNamespace,
-                autocompleteUrl: srvColumn.autocompleteUrl,
-                allowInherited: srvColumn.allowInherited,
+                dataType: srvColumn?.dataType as IndexColumnDataType,
+                isSortable: srvColumn?.isSortable,
+                isHiddenByDefault: srvColumn?.isHiddenByDefault,
+                isFilterable: srvColumn?.isFilterable,
+                entityReferenceTypeShortAlias: srvColumn?.entityReferenceTypeShortAlias,
+                referenceListName: srvColumn?.referenceListName,
+                referenceListNamespace: srvColumn?.referenceListNamespace,
+                autocompleteUrl: srvColumn?.autocompleteUrl,
+                allowInherited: srvColumn?.allowInherited,
                 defaultSorting: columnSorting2SortDirection(column.defaultSorting),
 
                 caption: column.caption,
@@ -340,7 +350,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
                 isVisible: column.isVisible,
                 allowShowHide: true,
 
-                show: srvColumn.isVisible && colVisibility,
+                show: srvColumn?.isVisible && colVisibility,
               };
             }
             case 'action': {

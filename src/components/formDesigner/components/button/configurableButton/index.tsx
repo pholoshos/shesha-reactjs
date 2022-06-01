@@ -78,7 +78,6 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       parentFormValues: formData,
       modalConfirmDialogMessage: convertedProps?.modalConfirmDialogMessage,
       onSubmitted: values => {
-        debugger;
         onSuccessScriptExecutor(values);
 
         if (props?.refreshTableOnSuccess) {
@@ -142,18 +141,18 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       case 'executeFormAction':
       case 'customAction':
         if (props?.formAction) {
-          publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
-        } else {
-          if (props.customFormAction) {
-            const actionBody = getAction(props.formComponentId, props.customFormAction);
+          if (props?.formAction != 'CUSTOM_ACTION') {
+            publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
+          } else {
+            if (props.customFormAction) {
+              const actionBody = getAction(props.formComponentId, props.customFormAction);
 
-            if (actionBody) actionBody();
-            else console.warn(`action ${props.customFormAction} not found on the form`);
-          } else console.warn('customFormAction is not specified');
+              if (actionBody) actionBody();
+              else console.warn(`action ${props.customFormAction} not found on the form`);
+            } else console.warn('customFormAction is not specified');
+          }
         }
-
         break;
-
       default:
         break;
     }

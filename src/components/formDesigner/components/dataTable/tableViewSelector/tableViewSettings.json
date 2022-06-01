@@ -82,7 +82,7 @@
       "label": "Expression",
       "labelAlign": "right",
       "parentId": "root",
-      "hidden": false,
+      "hidden": true,
       "customVisibility": "",
       "hideLabel": true,
       "validate": {},

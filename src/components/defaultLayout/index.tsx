@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, ReactElement } from 'react';
+import React, { FC, PropsWithChildren, ReactElement, useEffect } from 'react';
 import { Layout } from 'antd';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
@@ -8,6 +8,8 @@ import { useSidebarMenuDefaults } from '../../providers/sidebarMenu';
 import ConfigurableSidebarMenu from '../configurableSidebarMenu';
 import { Show, useLocalStorage } from '../..';
 import { SIDEBAR_MENU_ID } from '../../constants';
+import { useMediaQuery } from 'react-responsive';
+import { TABLET_MD_SIZE_QUERY } from '../../constants/media-queries';
 
 const { Header, Content, Sider } = Layout;
 
@@ -40,6 +42,12 @@ export const DefaultLayout: FC<PropsWithChildren<IDefaultLayoutProps>> = ({
 
   const [collapsed, setCollapsed] = useLocalStorage('SIDEBAR_COLLAPSE', true);
 
+  const showCollapsed = useMediaQuery({
+    query: TABLET_MD_SIZE_QUERY,
+  });
+
+  useEffect(() => (showCollapsed ? setCollapsed(showCollapsed) : null), [showCollapsed]);
+
   return (
     <Layout>
       <Sider
@@ -56,7 +64,7 @@ export const DefaultLayout: FC<PropsWithChildren<IDefaultLayoutProps>> = ({
         }}
         theme={theme}
       >
-        <ConfigurableSidebarMenu theme={theme} id={SIDEBAR_MENU_ID} defaultSettings={ sidebarDefaults } />
+        <ConfigurableSidebarMenu theme={theme} id={SIDEBAR_MENU_ID} defaultSettings={sidebarDefaults} />
       </Sider>
       <Layout className="site-layout">
         <Header className="site-layout-background">

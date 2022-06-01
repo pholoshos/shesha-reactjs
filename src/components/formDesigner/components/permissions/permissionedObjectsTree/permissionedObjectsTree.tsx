@@ -1,10 +1,10 @@
-import { IToolboxComponent } from '../../../../interfaces';
-import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
+import { IToolboxComponent } from '../../../../../interfaces';
+import { FormMarkup, IConfigurableFormComponent } from '../../../../../providers/form/models';
 import { ApartmentOutlined } from '@ant-design/icons';
 import settingsFormJson from './settingsForm.json';
 import React from 'react';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import PermissionedObjectsTree from '../../../permissionedObjectsTree';
+import { validateConfigurableComponentSettings } from '../../../../../providers/form/utils';
+import PermissionedObjectsTree from '../../../../permissionedObjectsTree';
 
 export interface IPermissionedObjectsTreeComponentProps extends IConfigurableFormComponent { 
   objectsType?: string;
@@ -18,7 +18,7 @@ export interface IPermissionedObjectsTreeComponentProps extends IConfigurableFor
 const settingsForm = settingsFormJson as FormMarkup;
 
 const PermissionedObjectsTreeComponent: IToolboxComponent<IPermissionedObjectsTreeComponentProps> = {
-  type: 'permissions.permissionedObjectsTree',
+  type: 'permissionedObjectsTree',
   name: 'Permissioned objects tree',
   icon: <ApartmentOutlined />,
   factory: (model: IPermissionedObjectsTreeComponentProps) => {

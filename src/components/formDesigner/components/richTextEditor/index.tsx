@@ -2,53 +2,14 @@ import React from 'react';
 import { EditOutlined } from '@ant-design/icons';
 import { ConfigurableFormItem } from '../../..';
 import { validateConfigurableComponentSettings } from '../../../../formDesignerUtils';
-import { IConfigurableFormComponent, IToolboxComponent } from '../../../../interfaces/formDesigner';
+import { IToolboxComponent } from '../../../../interfaces/formDesigner';
 import { FormMarkup } from '../../../../providers/form/models';
 import settingsFormJson from './settingsForm.json';
 import { JoditProps } from 'jodit-react';
 import RichTextEditor from '../../../richTextEditor';
 import { useForm } from '../../../..';
-
-export interface IRichTextEditorProps extends IConfigurableFormComponent {
-  placeholder?: string;
-  toolbar?: boolean;
-  textIcons?: boolean;
-  preset?: 'inline';
-  toolbarButtonSize?: 'tiny' | 'xsmall' | 'middle' | 'large';
-  toolbarStickyOffset?: number;
-  theme?: string;
-  toolbarSticky?: boolean;
-  autofocus?: boolean;
-  useSearch?: boolean;
-  iframe?: boolean;
-  spellcheck?: boolean;
-  direction?: 'rtl' | 'ltr';
-  enter?: 'P' | 'DIV' | 'BR';
-  defaultMode?: '1' | '2' | '3';
-  showCharsCounter?: boolean;
-  showWordsCounter?: boolean;
-  showXPathInStatusbar?: boolean;
-  disablePlugins?: string[];
-  insertImageAsBase64URI?: boolean;
-  // Sizes
-  autoHeight?: boolean;
-  allowResizeY?: boolean;
-  height?: number;
-  minHeight?: number;
-  maxHeight?: number;
-
-  autoWidth?: boolean;
-  allowResizeX?: boolean;
-  width?: number;
-  minWidth?: number;
-  maxWidth?: number;
-
-  // State
-  saveHeightInStorage?: boolean;
-  saveModeInStorage?: boolean;
-  askBeforePasteHTML?: boolean;
-  askBeforePasteFromWord?: boolean;
-}
+import { IRichTextEditorProps } from './interfaces';
+import { getStyle } from '../../../../providers/form/utils';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -57,8 +18,10 @@ const RichTextEditorComponent: IToolboxComponent<IRichTextEditorProps> = {
   name: 'Rich Text Editor',
   icon: <EditOutlined />,
   factory: ({ ...model }: IRichTextEditorProps) => {
-    const { formMode } = useForm();
+    const { formMode, isComponentDisabled, formData } = useForm();
     const { insertImageAsBase64URI } = model;
+
+    const disabled = isComponentDisabled(model);
 
     const readOnly = formMode === 'readonly' || model.readOnly;
 
@@ -91,7 +54,8 @@ const RichTextEditorComponent: IToolboxComponent<IRichTextEditorProps> = {
       width: model?.width,
       minWidth: model?.minWidth,
       maxWidth: model?.maxWidth,
-      readonly: readOnly,
+      readonly: readOnly || disabled,
+      style: getStyle(model?.style, formData),
     };
 
     return (
@@ -115,9 +79,9 @@ const RichTextEditorComponent: IToolboxComponent<IRichTextEditorProps> = {
     useSearch: true,
     autoHeight: true,
     autoWidth: true,
-    disablePlugins: undefined,
     askBeforePasteHTML: true,
     askBeforePasteFromWord: true,
+    disablePlugins: null,
   }),
 };
 

@@ -112,6 +112,23 @@
       ]
     },
     {
+      "id": "aec2d8de-6e86-4e4e-a9da-62c11e538363",
+      "type": "codeEditor",
+      "name": "customVisibility",
+      "label": "Custom Visibility",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
+    },
+    {
       "id": "b9c20717-7949-42fe-a960-16067f09ae18",
       "type": "sectionSeparator",
       "name": "separator1",
@@ -478,6 +495,17 @@
       "name": "separator1",
       "parentId": "root",
       "label": "Theme"
+    },
+    {
+      "id": "06ab0599-914d-4d2d-875c-765a495472f8",
+      "type": "codeEditor",
+      "name": "style",
+      "label": "Style",
+      "parentId": "root",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
+      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
     },
     {
       "id": "d541e913-4d88-4bcd-a58b-6a659ab4dd19",

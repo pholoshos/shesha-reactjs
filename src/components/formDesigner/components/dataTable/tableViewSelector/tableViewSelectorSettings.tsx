@@ -94,19 +94,14 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
       condition={fields !== null}
       wrap={content => <QueryBuilderProvider fields={fields}>{content}</QueryBuilderProvider>}
     >
-      <Form form={form} onFinish={props.onSave} onValuesChange={handleValuesChange}>
+      <Form form={form} onFinish={props.onSave} onValuesChange={handleValuesChange} initialValues={props.model}>
         <SectionSeparator sectionName="Filters" />
 
-        <Form.Item name="filters" initialValue={props.model.filters}>
+        <Form.Item name="filters">
           <TableViewSelectorSettingsModal />
         </Form.Item>
 
-        <Form.Item
-          label="Default selected filter"
-          labelCol={{ span: 24 }}
-          name="defaultFilterId"
-          initialValue={props.model.defaultFilterId}
-        >
+        <Form.Item label="Default selected filter" labelCol={{ span: 24 }} name="defaultFilterId">
           <Select allowClear disabled={localFilters?.length === 0}>
             {localFilters?.map(filter => (
               <Select.Option key={filter?.id} value={filter?.id}>
@@ -115,6 +110,15 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
             ))}
           </Select>
         </Form.Item>
+
+        {/* <Form.Item
+          label="Persist selected filter"
+          valuePropName={'checked'}
+          labelCol={{ span: 24 }}
+          name="persistSelectedFilters"
+        >
+          <Checkbox />
+        </Form.Item> */}
       </Form>
     </ConditionalWrap>
   );

@@ -89,6 +89,16 @@ const reducer = handleActions<IDataTableStateContext, any>(
         defaultSelectedFilterId: payload,
       };
     },
+    [DataTableActionEnums.ChangePersistedFiltersToggle]: (
+      state: IDataTableStateContext,
+      action: ReduxActions.Action<boolean>
+    ) => {
+      const { payload } = action;
+      return {
+        ...state,
+        persistSelectedFilters: payload,
+      };
+    },
 
     [DataTableActionEnums.ChangeSelectedStoredFilterIds]: (
       state: IDataTableStateContext,

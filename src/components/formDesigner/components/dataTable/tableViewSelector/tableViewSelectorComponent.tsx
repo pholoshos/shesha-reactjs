@@ -36,7 +36,12 @@ const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
   },
 };
 
-export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, componentRef, defaultFilterId }) => {
+export const TableViewSelector: FC<ITableViewSelectorProps> = ({
+  filters,
+  componentRef,
+  defaultFilterId,
+  persistSelectedFilters,
+}) => {
   const {
     columns,
     getDataSourceType,
@@ -45,6 +50,7 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
     setPredefinedFilters,
     predefinedFilters,
     changeDefaultSelectedFilterId,
+    changePersistedFiltersToggle,
   } = useDataTableStore();
   const { globalState } = useGlobalState();
   const { formData, formMode } = useForm();
@@ -84,6 +90,10 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
   useEffect(() => {
     debounceEvaluateDynamicFiltersHelper();
   }, [filters, formData, globalState]);
+
+  useEffect(() => {
+    changePersistedFiltersToggle(persistSelectedFilters);
+  }, [persistSelectedFilters]);
   //#endregion
 
   useEffect(() => {
@@ -99,7 +109,11 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
   const defaultTitle = predefinedFilters?.length ? predefinedFilters[0]?.name : null;
 
   if (!defaultTitle) {
-    return <Alert message="Please make sure that you have at least 1 filter" type="warning" showIcon />;
+    if (formMode === 'designer') {
+      return <Alert message="Please make sure that you have at least 1 filter" type="warning" showIcon />;
+    }
+
+    return null;
   }
 
   return (

@@ -46,6 +46,7 @@ import {
   changeDisplayColumnAction,
   changeActionedRowAction,
   changeDefaultSelectedFilterIdAction,
+  changePersistedFiltersToggleAction,
 } from './actions';
 import {
   ITableDataResponse,
@@ -201,6 +202,20 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       }
     }
 
+    //Make sure you don't query the data for a selected filter that has no expression
+    const outgoingSelectedFilterId = expandedPayload?.selectedStoredFilterIds?.length
+      ? expandedPayload?.selectedStoredFilterIds[0]
+      : null;
+
+    if (outgoingSelectedFilterId) {
+      const foundFilter = expandedPayload?.selectedFilters?.find(({ id }) => id === outgoingSelectedFilterId);
+
+      if (foundFilter && !foundFilter?.expression) {
+        expandedPayload.selectedStoredFilterIds = [];
+        expandedPayload.selectedFilters = [];
+      }
+    }
+
     return fetchDataTableDataInternal(expandedPayload);
   };
 
@@ -215,7 +230,12 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     path: '/api/DataTable/GetConfiguration',
   });
 
-  const [userDTSettingsInner, setUserDTSettings] = useLocalStorage<IDataTableUserConfig>(userConfigId || tableId, null);
+  const [userDTSettingsInner, setUserDTSettings] = useLocalStorage<IDataTableUserConfig>(
+    userConfigId || tableId,
+    null,
+    ['selectedStoredFilterIds'] // TODO: Fix the configuareble mode issue
+    // state?.persistSelectedFilters ? null : ['selectedStoredFilterIds']
+  );
 
   const userDTSettings = useMemo(() => {
     const { defaultSelectedFilterId } = state;
@@ -389,6 +409,10 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     }
   }, [state?.columns]);
 
+  useEffect(() => {
+    setUserDTSettings({ ...userDTSettingsInner });
+  }, [state?.persistSelectedFilters]);
+
   const getFetchTableDataPayloadInternal = (localState: IDataTableStateContext): IGetDataPayload => {
     // Add default filter to table filter
     const filter = localState?.tableFilter || [];
@@ -491,7 +515,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       delete newUserSTSettings.quickSearch;
       delete newUserSTSettings.tableFilter;
 
-      console.log('setUserDTSettings under clearFilters ');
       setUserDTSettings(newUserSTSettings);
     }
 
@@ -704,6 +727,10 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(changeDisplayColumnAction(displayColumnName));
   };
 
+  const changePersistedFiltersToggle = (persistSelectedFilters: boolean) => {
+    dispatch(changePersistedFiltersToggleAction(persistSelectedFilters));
+  };
+
   const downloadLogFile = () => {
     axios({
       url: `${backendUrl}/api/services/Scheduler/ScheduledJobExecution/DownloadLogFile?id=${router?.query?.id}`,
@@ -811,6 +838,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           getCurrentFilter,
           getDataSourceType,
           setCrudConfig,
+          changePersistedFiltersToggle,
           /* NEW_ACTION_GOES_HERE */
         }}
       >

@@ -78,7 +78,6 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       parentFormValues: formData,
       modalConfirmDialogMessage: convertedProps?.modalConfirmDialogMessage,
       onSubmitted: values => {
-        debugger;
         onSuccessScriptExecutor(values);
 
         if (props?.refreshTableOnSuccess) {
@@ -141,7 +140,7 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
         break;
       case 'executeFormAction':
       case 'customAction':
-        if (props?.formAction){
+        if (props?.formAction) {
           if (props?.formAction != 'CUSTOM_ACTION') {
             publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
           } else {

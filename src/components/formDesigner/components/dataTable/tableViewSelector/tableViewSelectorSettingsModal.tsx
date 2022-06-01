@@ -7,6 +7,7 @@ import {
 import { ITableViewSelectorConfiguratorHandles, TableViewSelectorConfigurator } from './tableViewSelectorConfigurator';
 import { ITableViewProps } from '../../../../../providers/tableViewSelectorConfigurator/models';
 import TableViewContainer from './tableViewContainer';
+import { useDeepCompareEffect } from 'react-use';
 
 interface IFiltersListProps {
   filters?: ITableViewProps[];
@@ -52,11 +53,17 @@ export const TableViewSelectorSettingsModalInner: FC<ITableViewSelectorSettingsM
   const { items } = useTableViewSelectorConfigurator();
   const configRef = useRef<ITableViewSelectorConfiguratorHandles>();
 
+  const filtersIds = items?.map(({ id }) => id);
+
   useEffect(() => {
     if (!visible) {
       updateFilters();
     }
   }, [items?.length]);
+
+  useDeepCompareEffect(() => {
+    updateFilters();
+  }, [filtersIds]);
 
   const updateFilters = () => {
     if (typeof onChange === 'function') {

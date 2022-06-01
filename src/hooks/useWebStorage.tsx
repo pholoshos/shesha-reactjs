@@ -3,7 +3,8 @@ import { useState } from 'react';
 export function useWebStorage<T>(
   storage: 'localStorage' | 'sessionStorage',
   key: string,
-  initialValue: T
+  initialValue: T,
+  ignoredKeys?: string[]
 ): [T, (v: T) => void] {
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
@@ -26,8 +27,19 @@ export function useWebStorage<T>(
     try {
       // Allow value to be a function so we have same API as useState
       const valueToStore = value instanceof Function ? value(storedValue) : value;
-      // Save state
-      setStoredValue(valueToStore);
+
+      if (ignoredKeys?.length && typeof valueToStore === 'object') {
+        const intermediateValue = { ...valueToStore };
+
+        ignoredKeys?.forEach(localKey => {
+          delete intermediateValue[localKey];
+        });
+
+        setStoredValue(intermediateValue);
+      } else {
+        setStoredValue(valueToStore);
+      }
+
       // Save to local storage
       if (window) window[storage].setItem(key, JSON.stringify(valueToStore));
     } catch (error) {

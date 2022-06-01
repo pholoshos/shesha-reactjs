@@ -143,6 +143,8 @@ export interface IDataTableStateContext
   properties?: string[];
 
   saveFilterModalVisible?: boolean;
+
+  persistSelectedFilters?: boolean;
   //#endregion
 }
 
@@ -207,6 +209,7 @@ export interface IDataTableActionsContext
   setCrudConfig?: (config: ITableCrudConfig) => void;
 
   changeDisplayColumn: (displayColumnName: string) => void;
+  changePersistedFiltersToggle: (persistSelectedFilters: boolean) => void;
   /* NEW_ACTION_ACTION_DECLARATIO_GOES_HERE */
 }
 
@@ -236,6 +239,7 @@ export const DATA_TABLE_CONTEXT_INITIAL_STATE: IDataTableStateContext = {
   selectedIds: [],
   configurableColumns: [],
   tableFilterDirty: null,
+  persistSelectedFilters: true, // Persist by default
 };
 
 export interface DataTableFullInstance extends IDataTableStateContext, IDataTableActionsContext {}

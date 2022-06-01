@@ -55,6 +55,7 @@ export enum DataTableActionEnums {
   ChangeDisplayColumn = 'CHANGE_DISPLAY_COLUMN',
 
   ChangeDefaultSelectedFilterId = 'CHANGE_DEFAULT_SELECTED_FILTER_ID',
+  ChangePersistedFiltersToggle = 'CHANGE_PERSISTED_FILTERS_TOGGLE',
   /* NEW_ACTION_TYPE_GOES_HERE */
 }
 
@@ -193,5 +194,10 @@ export const changeDisplayColumnAction = createAction<string, string>(DataTableA
 
 export const changeDefaultSelectedFilterIdAction = createAction<string, string>(
   DataTableActionEnums.ChangeDefaultSelectedFilterId,
+  p => p
+);
+
+export const changePersistedFiltersToggleAction = createAction<boolean, boolean>(
+  DataTableActionEnums.ChangePersistedFiltersToggle,
   p => p
 );

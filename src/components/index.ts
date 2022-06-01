@@ -144,3 +144,4 @@ export { default as CurrencyConverter, ICurrencyConverterProps } from './currenc
 export { default as ToolbarSettingsModal } from './formDesigner/components/dataTable/toolbar/toolbarSettingsModal';
 export { default as CodeEditorModal } from './formDesigner/components/codeEditor/codeEditor';
 export { default as LabelValueEditor } from './formDesigner/components/labelValueEditor/labelValueEditor';
+export { default as RichTextEditor, IRichTextEditorProps } from './richTextEditor';

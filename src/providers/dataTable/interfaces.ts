@@ -151,6 +151,14 @@ export interface IStoredFilter {
   selected?: boolean;
 
   defaultSelected?: boolean;
+
+  //#region dynamic expressions
+  hasDynamicExpression?: boolean;
+
+  allFieldsEvaluatedSuccessfully?: boolean;
+
+  unevaluatedExpressions?: string[];
+  //#endregion
 }
 
 export interface ITableDataResponse {

@@ -1,7 +1,9 @@
 import React, { FC } from 'react';
-import { DownOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Dropdown, Menu, Tooltip } from 'antd';
+import { BulbOutlined, BulbTwoTone, DownOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Dropdown, Menu, Popover, Tooltip } from 'antd';
 import { IStoredFilter } from '../../providers/dataTable/interfaces';
+import Show from '../show';
+import { nanoid } from 'nanoid/non-secure';
 
 export interface IIndexViewSelectorRendererProps {
   header?: string;
@@ -26,6 +28,31 @@ export const IndexViewSelectorRenderer: FC<IIndexViewSelectorRendererProps> = ({
     : !header && filters?.length
     ? filters[0]
     : null;
+
+  const { hasDynamicExpression, allFieldsEvaluatedSuccessfully, unevaluatedExpressions } = selectedFilter || {};
+
+  const getPopoverHintContent = () => {
+    if (unevaluatedExpressions) {
+      return (
+        <div style={{ width: 450 }}>
+          <div>
+            This filter has dynamic expressions which have not been evaluated. Below are the filters which have not been
+            evaluated
+          </div>
+
+          <ul>
+            {unevaluatedExpressions?.map(item => (
+              <li key={nanoid()}>{item}</li>
+            ))}
+          </ul>
+
+          <div>Please make sure you enter the relevant data</div>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   const allFilters = header ? [defaultView, ...filters] : filters;
 
@@ -75,6 +102,14 @@ export const IndexViewSelectorRenderer: FC<IIndexViewSelectorRendererProps> = ({
             header
           )}
           {filters.length > 0 && <DownOutlined style={{ marginLeft: '5px' }} />}
+
+          <Show when={hasDynamicExpression && !allFieldsEvaluatedSuccessfully}>
+            <Popover content={getPopoverHintContent} trigger="hover" title="Some fields have not been evaluated">
+              <span className="index-view-selector-bulb">
+                <BulbTwoTone twoToneColor="orange" />
+              </span>
+            </Popover>
+          </Show>
         </h2>
       </Dropdown>
     </div>

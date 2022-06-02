@@ -1,18 +1,27 @@
-import { evaluateComplexString } from '../../formDesignerUtils';
+import { evaluateComplexStringWithResult } from './../form/utils';
 import { ColumnSorting, IStoredFilter, SortDirection } from './interfaces';
 import { IMatchData } from '../form/utils';
 
 // Filters should read properties as camelCase ?:(
 export const evaluateDynamicFilters = (filters: IStoredFilter[], mappings: IMatchData[]) => {
-  if (filters?.length === 0) return [];
+  if (filters?.length === 0 || !mappings?.length) return filters;
 
-  if (!mappings?.length) return filters;
+  return filters.map(filter => {
+    const filterString = JSON.stringify(filter);
 
-  const filtersString = JSON.stringify(filters);
+    if (filterString?.includes('{{')) {
+      const { result, success, unevaluatedExpressions } = evaluateComplexStringWithResult(filterString, mappings);
 
-  const evaluatedFiltersString = evaluateComplexString(filtersString, mappings);
+      return {
+        ...JSON.parse(result),
+        hasDynamicExpression: true,
+        allFieldsEvaluatedSuccessfully: success,
+        unevaluatedExpressions,
+      } as IStoredFilter;
+    }
 
-  return JSON.parse(evaluatedFiltersString) as IStoredFilter[];
+    return filter;
+  });
 };
 
 export const hasDynamicFilter = (filters: IStoredFilter[]) => {

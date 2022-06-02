@@ -235,9 +235,10 @@ export const evaluateString = (template: string = '', data: any) => {
  * objects that can be used to evaluate one string using multiple objects like data1, data2, data3... which can have conflicting keys
  *
  * Given a the below expression
+ * ```typescript
  *  const expression =  'My name is {{person.name}} {{person.surname}}. I work at {{company.name}}';
  *
- * and the below data
+ *  // and the below data
  *  const mappings = [{
  *      match: 'person',
  *      data: { name: 'John', surname: 'Dow' }
@@ -246,12 +247,15 @@ export const evaluateString = (template: string = '', data: any) => {
  *      data: { name: 'Boxfusion' }
  *    {
  *  }]
+ *
  *  const data = { name: 'John', surname: 'Dow' };
  *  const company = { name: 'Boxfusion' };
- *  evaluateString(expression, mappings)
- * the expression below
- *   evaluateString(expression, data);
- * The below expression will return 'My name is John Doe. I work at Boxfusion';
+ *
+ *  // the expression below
+ *  const evaluatedString = evaluateString(expression, mappings);
+ *  // will yield
+ *  'My name is John Doe. I work at Boxfusion';
+ * ```
  *
  * @param template - string template
  * @param data - data to use to evaluate the string
@@ -277,6 +281,91 @@ export const evaluateComplexString = (expression: string, mappings: IMatchData[]
   });
 
   return result;
+};
+
+interface IEvaluateComplexStringResult {
+  result: string;
+  unevaluatedExpressions?: string[];
+  success?: boolean;
+}
+
+/**
+ * Evaluates the string using Mustache template. Same as {evaluateComplexString} except it returns the result
+ * with a flag indicating if evaluation was successful.
+ *
+ * A successful evaluation is the one in which not all the expressions were evaluated
+ *
+ * Given a the below expression
+ * ```typescript
+ *  const expression =  'My name is {{person.name}} {{person.surname}}. I work at {{company.name}}';
+ *
+ *  const expression2 =  'My name is {{person.name}} {{person.surname}}. I work at {{someCompany.name}}';
+ *
+ *  // and the below data
+ *  const mappings = [{
+ *      match: 'person',
+ *      data: { name: 'John', surname: 'Dow' }
+ *    },
+ *      match: 'company',
+ *      data: { name: 'Boxfusion' }
+ *    {
+ *  }]
+ *
+ *  const data = { name: 'John', surname: 'Dow' };
+ *  const company = { name: 'Boxfusion' };
+ *
+ *
+ *
+ *  // the expression below
+ *  const evaluatedStringResult = evaluateString(expression, mappings);
+ *  // will yield
+ *  { result: 'My name is John Doe. I work at Boxfusion', success: true }
+ *
+ *  // However, the the below expression
+ * const evaluatedStringResults = evaluateString(expression2, mappings);
+ * will yield
+ *
+ * { result: 'My name is John Doe. I work at {{someCompany.name}}', success: false }
+ *
+ * // because {{someCompany.name}} could not be evaluated successfully
+ * ```
+ *
+ * @param template - string template
+ * @param data - data to use to evaluate the string
+ * @returns {string} evaluated string
+ */
+export const evaluateComplexStringWithResult = (
+  expression: string,
+  mappings: IMatchData[]
+): IEvaluateComplexStringResult => {
+  const matches = new Set([...expression?.matchAll(/\{\{(?:(?!}}).)*\}\}/g)].flat());
+
+  let result = expression;
+
+  let success = true;
+
+  const unevaluatedExpressions = [];
+
+  Array.from(matches).forEach(template => {
+    mappings.forEach(({ match, data }) => {
+      if (template.includes(`{{${match}`)) {
+        // When the match = "", we wanna send data as it is as that would mean that the expression doe nto use dot notation
+        // This is useful for backward compatibility
+        // Initially expression would simply be {{expression}} and they wou be evaluated against formData
+        // But dynamic expression now can use formData and globalState, so as a result the expressions need to use dot notation
+        const evaluatedValue = evaluateString(template, match ? { [match]: data } : data);
+
+        if (!evaluatedValue?.trim()) {
+          success = false;
+          unevaluatedExpressions?.push(template);
+        } else {
+          result = result.replaceAll(template, evaluatedValue);
+        }
+      }
+    });
+  });
+
+  return { result, success, unevaluatedExpressions: Array.from(new Set(unevaluatedExpressions)) };
 };
 
 export const getVisibilityFunc2 = (expression, name) => {

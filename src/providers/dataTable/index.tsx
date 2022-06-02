@@ -210,7 +210,17 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     if (outgoingSelectedFilterId) {
       const foundFilter = expandedPayload?.selectedFilters?.find(({ id }) => id === outgoingSelectedFilterId);
 
-      if (foundFilter && !foundFilter?.expression) {
+      /**
+       * We want to make sure that we do not pass the filters under the following conditions as they would cause the server to fail
+       * 1. The filter has no expression
+       * 2. Filter has an expression but not all dynamic expressions have been evaluated
+       */
+
+      if (
+        foundFilter &&
+        (!foundFilter?.expression || // Filter has no expression
+          (foundFilter?.hasDynamicExpression && !foundFilter?.allFieldsEvaluatedSuccessfully)) // Filter has expression but not all expressions have been evaluated
+      ) {
         expandedPayload.selectedStoredFilterIds = [];
         expandedPayload.selectedFilters = [];
       }

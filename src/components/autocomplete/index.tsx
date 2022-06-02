@@ -267,6 +267,10 @@ export const Autocomplete = <TValue, >(props: IAutocompleteProps<TValue>) => {
   }, [dataSourceType]);
 
   useSubscribe(subscribedEventNames, () => {
+    setAutocompleteText(null);
+    if (onchange) {
+      onChange(null);
+    }
     debouncedFetchItems(autocompleteText);
   });
 

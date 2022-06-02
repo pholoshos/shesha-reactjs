@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { BulbOutlined, BulbTwoTone, DownOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { BulbTwoTone, DownOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Dropdown, Menu, Popover, Tooltip } from 'antd';
 import { IStoredFilter } from '../../providers/dataTable/interfaces';
 import Show from '../show';

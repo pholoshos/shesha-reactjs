@@ -1,6 +1,7 @@
-import React, { CSSProperties, FC, useRef, useState } from 'react';
+import React, { CSSProperties, FC, useEffect, useRef, useState } from 'react';
 import JoditEditor, { JoditProps } from 'jodit-react';
 import classNames from 'classnames';
+import Show from '../show';
 
 export interface IRichTextEditorProps extends Omit<JoditProps, 'value'> {
   value?: string;
@@ -9,12 +10,23 @@ export interface IRichTextEditorProps extends Omit<JoditProps, 'value'> {
   style?: CSSProperties;
 }
 
+interface IRichTextEditorState {
+  content?: any;
+  hasWindow?: boolean;
+}
+
 export const RichTextEditor: FC<IRichTextEditorProps> = ({ value, onChange, config, style, className }) => {
   const editor = useRef(null);
-  const [content, setContent] = useState(value);
+  const [state, setState] = useState<IRichTextEditorState>({ content: value, hasWindow: false });
+
+  const { hasWindow, content } = state;
+
+  useEffect(() => {
+    setState(prev => ({ ...prev, hasWindow: true }));
+  }, []);
 
   const handleChange = (incomingValue: string) => {
-    setContent(incomingValue);
+    setState(prev => ({ ...prev, content: incomingValue }));
 
     if (onChange) {
       onChange(incomingValue);
@@ -23,12 +35,14 @@ export const RichTextEditor: FC<IRichTextEditorProps> = ({ value, onChange, conf
 
   return (
     <div style={style} className={classNames('sha-rich-text-editor', className)}>
-      <JoditEditor
-        ref={editor}
-        value={content}
-        config={config}
-        onBlur={handleChange} // preferred to use only this option to update the content for performance reasons
-      />
+      <Show when={hasWindow}>
+        <JoditEditor
+          ref={editor}
+          value={content}
+          config={config}
+          onBlur={handleChange} // preferred to use only this option to update the content for performance reasons
+        />
+      </Show>
     </div>
   );
 };

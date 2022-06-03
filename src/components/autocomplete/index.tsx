@@ -268,9 +268,6 @@ export const Autocomplete = <TValue, >(props: IAutocompleteProps<TValue>) => {
 
   useSubscribe(subscribedEventNames, () => {
     setAutocompleteText(null);
-    if (onchange) {
-      onChange(null);
-    }
     debouncedFetchItems(autocompleteText);
   });
 

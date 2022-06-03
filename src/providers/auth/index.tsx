@@ -83,6 +83,8 @@ interface IAuthProviderProps {
   whitelistUrls?: string[];
 }
 
+const ASPNET_CORE_CULTURE = '.AspNetCore.Culture';
+
 const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
   children,
   tokenName = '',
@@ -131,12 +133,8 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
           // user may be null in some cases
           clearAccessToken();
 
-          if (router?.pathname !== URL_LOGIN_PAGE) {
-            dispatch(fetchUserDataActionErrorAction({ message: 'Not authorized' }));
-            redirectToUnauthorized();
-          } else {
-            dispatch(fetchUserDataActionSuccessAction(null));
-          }
+          dispatch(fetchUserDataActionErrorAction({ message: 'Not authorized' }));
+          redirectToUnauthorized();
         }
       })
       .catch(e => {
@@ -178,7 +176,7 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
     if (providedState.token) headers['Authorization'] = `Bearer ${providedState.token}`;
 
     // todo: move culture and tenant to state and restore from localStorage on start
-    headers['.AspNetCore.Culture'] = getLocalizationOrDefault();
+    headers[ASPNET_CORE_CULTURE] = getLocalizationOrDefault();
 
     const tenantId = getTenantId();
 
@@ -191,6 +189,15 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
     additionalHeaders.forEach(([key, value]) => {
       headers[key] = value?.toString();
     });
+
+    return headers;
+  };
+
+  const getCleanedInitHeaders = <T,>(headers: T) => {
+    const propName = Object.getOwnPropertyNames(headers || {});
+    if (propName.length === 1 && propName[0] === ASPNET_CORE_CULTURE) {
+      return null;
+    }
 
     return headers;
   };
@@ -216,7 +223,7 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
   };
 
   useEffect(() => {
-    const httpHeaders = getHttpHeaders();
+    const httpHeaders = getCleanedInitHeaders(getHttpHeaders());
 
     const currentUrl = getCurrentUrl();
 

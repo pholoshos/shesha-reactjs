@@ -12,7 +12,7 @@ export interface IPropertyAutocompleteProps {
   dropdownStyle?: CSSProperties;
   size?: SizeType;
   onChange?: (value: string | string[]) => void;
-  mode?: 'single' | 'multiple';
+  mode?: 'single' | 'multiple' | 'tags';
 }
 
 interface IOption {
@@ -57,7 +57,6 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
   }, [props.value, metadata]);
 
   const onSearch = (data: string) => {
-    console.log('onSearch');
     if (props.onChange) props.onChange(data);
 
     const properties = metadata?.properties || [];
@@ -113,14 +112,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
           />
         </Input.Group>
       ) : (
-        <Select
-          allowClear
-          onChange={props?.onChange}
-          value={props.value}
-          mode={'multiple'}
-          showSearch
-          size={props.size}
-        >
+        <Select allowClear onChange={props?.onChange} value={props.value} mode={mode} showSearch size={props.size}>
           {options.map((option, index) => (
             <Select.Option key={index} value={camelCase(option.value)}>
               {option.label}

@@ -169,7 +169,7 @@
       "type": "propertyAutocomplete",
       "name": "formKeysToPersist",
       "label": "Persisted properties",
-      "mode": "multiple",
+      "mode": "tags",
       "labelAlign": "right",
       "hidden": false,
       "customVisibility": null,

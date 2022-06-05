@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Form, Select } from 'antd';
+import React, { useMemo } from 'react';
+import { Form } from 'antd';
 import { ITableViewSelectorProps } from './models';
 import TableViewSelectorSettingsModal from './tableViewSelectorSettingsModal';
 import { QueryBuilderProvider } from '../../../../../providers';
@@ -8,7 +8,6 @@ import { ITableColumn, SectionSeparator } from '../../../../..';
 import { IProperty } from '../../../../../providers/queryBuilder/models';
 import { TableDataSourceType } from '../../../../../providers/dataTable/interfaces';
 import ConditionalWrap from '../../../../conditionalWrapper';
-import { ITableViewProps } from '../../../../../providers/tableViewSelectorConfigurator/models';
 
 export interface ITableViewSelectorSettingsProps {
   model: ITableViewSelectorProps;
@@ -20,7 +19,6 @@ export interface ITableViewSelectorSettingsProps {
 function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
   const [form] = Form.useForm();
   const { selectedComponentRef } = useForm();
-  const [localFilters, setLocalFilters] = useState<ITableViewProps[]>(props.model.filters || []);
 
   const columns = (selectedComponentRef?.current?.columns as ITableColumn[]) || [];
   const dataSourceType: TableDataSourceType = selectedComponentRef?.current?.dataSourceType;
@@ -82,8 +80,6 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
   */
 
   const handleValuesChange = (changedValues: any, values: ITableViewSelectorProps) => {
-    setLocalFilters(values?.filters);
-
     if (props.onValuesChange) {
       props.onValuesChange(changedValues, values);
     }

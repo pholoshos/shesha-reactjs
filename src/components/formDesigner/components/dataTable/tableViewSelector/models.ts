@@ -5,7 +5,6 @@ import { MutableRefObject } from 'react';
 export interface ITableViewSelectorProps extends IConfigurableFormComponent {
   filters: ITableViewProps[];
   useExpression?: boolean;
-  defaultFilterId?: string;
   persistSelectedFilters?: boolean;
   componentRef: MutableRefObject<any>;
 }

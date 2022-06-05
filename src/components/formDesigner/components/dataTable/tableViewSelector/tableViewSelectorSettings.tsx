@@ -101,16 +101,6 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
           <TableViewSelectorSettingsModal />
         </Form.Item>
 
-        <Form.Item label="Default selected filter" labelCol={{ span: 24 }} name="defaultFilterId">
-          <Select allowClear disabled={localFilters?.length === 0}>
-            {localFilters?.map(filter => (
-              <Select.Option key={filter?.id} value={filter?.id}>
-                {filter?.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
         {/* <Form.Item
           label="Persist selected filter"
           valuePropName={'checked'}

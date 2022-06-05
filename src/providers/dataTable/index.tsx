@@ -45,7 +45,6 @@ import {
   onSortAction,
   changeDisplayColumnAction,
   changeActionedRowAction,
-  changeDefaultSelectedFilterIdAction,
   changePersistedFiltersToggleAction,
 } from './actions';
 import {
@@ -248,19 +247,15 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   );
 
   const userDTSettings = useMemo(() => {
-    const { defaultSelectedFilterId } = state;
-
     const settingsToReturn: IDataTableUserConfig = defaultFilter
       ? { ...DEFAULT_DT_USER_CONFIG, tableFilter: defaultFilter }
       : userDTSettingsInner;
 
     return {
       ...settingsToReturn,
-      selectedStoredFilterIds: defaultSelectedFilterId?.length
-        ? [defaultSelectedFilterId]
-        : settingsToReturn?.selectedStoredFilterIds,
+      selectedStoredFilterIds: settingsToReturn?.selectedStoredFilterIds,
     };
-  }, [defaultFilter, userDTSettingsInner, state?.defaultSelectedFilterId]);
+  }, [defaultFilter, userDTSettingsInner]);
 
   // refresh table data on change of the `dataStamp` property
   useEffect(() => {
@@ -552,10 +547,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(changeSelectedStoredFilterIdsAction(selectedStoredFilterIds));
   };
 
-  const changeDefaultSelectedFilterId = (defaultSelectedFilterId: string) => {
-    dispatch(changeDefaultSelectedFilterIdAction(defaultSelectedFilterId));
-  };
-
   const previousPredefinedFilters = usePreviousDistinct(state?.predefinedFilters);
 
   const setPredefinedFilters = (filters: IStoredFilter[]) => {
@@ -836,7 +827,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           changeSelectedRow,
           changeActionedRow,
           changeSelectedStoredFilterIds,
-          changeDefaultSelectedFilterId,
           setPredefinedFilters,
           changeSelectedIds,
           refreshTable,

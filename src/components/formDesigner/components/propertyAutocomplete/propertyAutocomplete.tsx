@@ -57,7 +57,6 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
   }, [props.value, metadata]);
 
   const onSearch = (data: string) => {
-    console.log('onSearch');
     if (props.onChange) props.onChange(data);
 
     const properties = metadata?.properties || [];

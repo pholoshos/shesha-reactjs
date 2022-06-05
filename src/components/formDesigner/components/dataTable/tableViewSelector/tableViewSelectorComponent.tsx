@@ -36,12 +36,7 @@ const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
   },
 };
 
-export const TableViewSelector: FC<ITableViewSelectorProps> = ({
-  filters,
-  componentRef,
-  defaultFilterId,
-  persistSelectedFilters,
-}) => {
+export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, componentRef, persistSelectedFilters }) => {
   const {
     columns,
     getDataSourceType,
@@ -49,7 +44,6 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({
     selectedStoredFilterIds,
     setPredefinedFilters,
     predefinedFilters,
-    changeDefaultSelectedFilterId,
     changePersistedFiltersToggle,
   } = useDataTableStore();
   const { globalState } = useGlobalState();
@@ -62,7 +56,7 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({
     dataSourceType,
   };
 
-  const defaultSelectedFilterId =
+  const selectedFilterId =
     selectedStoredFilterIds && selectedStoredFilterIds.length > 0 ? selectedStoredFilterIds[0] : null;
 
   //#region Filters
@@ -97,10 +91,14 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({
   //#endregion
 
   useEffect(() => {
-    if (formMode !== 'designer' && defaultFilterId) {
-      changeDefaultSelectedFilterId(defaultFilterId);
+    if (formMode !== 'designer') {
+      if (!selectedFilterId && predefinedFilters?.length) {
+        setTimeout(() => {
+          changeSelectedFilter(predefinedFilters[0]?.id);
+        }, 1000);
+      }
     }
-  }, [formMode]);
+  }, [formMode, predefinedFilters]);
 
   const changeSelectedFilter = (id: string) => {
     changeSelectedStoredFilterIds(id ? [id] : []);
@@ -120,7 +118,7 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({
     <IndexViewSelectorRenderer
       filters={predefinedFilters || []}
       onSelectFilter={changeSelectedFilter}
-      selectedFilterId={defaultSelectedFilterId}
+      selectedFilterId={selectedFilterId}
     />
   );
 };

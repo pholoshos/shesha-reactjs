@@ -171,10 +171,10 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
 
   const formattedValue = getMoment(value, pickerFormat);
 
-  const getDefaultRangePickerValues = () =>
-    Array.isArray(defaultValue) && defaultValue?.length === 2
-      ? defaultValue?.map(v => moment(new Date(v), pickerFormat))
-      : [null, null];
+  const getRangePickerValues = (valueToUse: any) =>
+    (Array.isArray(valueToUse) && valueToUse?.length === 2
+      ? valueToUse?.map(v => moment(new Date(v), pickerFormat))
+      : [null, null]) as RangeValue;
 
   const handleDatePickerChange = (localValue: any | null, dateString: string) => {
     const newValue = isMoment(localValue) ? localValue.utc().format() : localValue;
@@ -223,7 +223,8 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
         onCalendarChange={onCalendarChange}
         onChange={handleRangePicker}
         format={pickerFormat}
-        defaultValue={getDefaultRangePickerValues() as RangeValue}
+        value={getRangePickerValues(value)}
+        defaultValue={getRangePickerValues(defaultValue)}
         {...rest}
         picker={picker}
         showTime={showTime}

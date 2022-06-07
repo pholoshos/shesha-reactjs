@@ -7,17 +7,17 @@ export const evaluateDynamicFilters = (filters: IStoredFilter[], mappings: IMatc
   if (filters?.length === 0 || !mappings?.length) return filters;
 
   return filters.map(filter => {
-    const filterString = JSON.stringify(filter);
+    const expressionString = JSON.stringify(filter?.expression);
 
-    if (filterString?.includes('{{')) {
-      const { result, success, unevaluatedExpressions } = evaluateComplexStringWithResult(filterString, mappings);
+    if (expressionString?.includes('{{')) {
+      const { result, success, unevaluatedExpressions } = evaluateComplexStringWithResult(expressionString, mappings);
 
       return {
-        ...JSON.parse(result),
-        hasDynamicExpression: true,
+        ...filter,
+        expression: JSON.parse(result),
         allFieldsEvaluatedSuccessfully: success,
         unevaluatedExpressions,
-      } as IStoredFilter;
+      };
     }
 
     return filter;

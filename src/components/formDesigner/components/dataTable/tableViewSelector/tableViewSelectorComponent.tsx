@@ -72,16 +72,14 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
         match: 'globalState',
         data: globalState,
       },
-      {
-        match: '', // For backward compatibility. It's also important that the empty one is the last one as it's a fallback
-        data,
-      },
     ]);
 
     setPredefinedFilters(evaluatedFilters);
   };
 
   useEffect(() => {
+    // console.log('useEffect [filters, formData, globalState]', filters, formData, globalState);
+
     debounceEvaluateDynamicFiltersHelper();
   }, [filters, formData, globalState]);
 

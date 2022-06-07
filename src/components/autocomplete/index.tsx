@@ -119,7 +119,7 @@ export interface IAutocompleteProps<TValue = any> extends IReadOnly {
   /**
    * If true, search mode will be disabled for the autocomplete
    */
-   disableSearch?: boolean;
+  disableSearch?: boolean;
 
   /**
    *
@@ -182,7 +182,7 @@ const trimQueryString = (url: string): string => {
  * A component for working with dynamic autocomplete
  */
 
-export const Autocomplete = <TValue, >(props: IAutocompleteProps<TValue>) => {
+export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
   const {
     value,
     defaultValue,
@@ -265,6 +265,14 @@ export const Autocomplete = <TValue, >(props: IAutocompleteProps<TValue>) => {
   useEffect(() => {
     doFetchItems(null);
   }, [dataSourceType]);
+
+  useEffect(() => {
+    if (value && !autocompleteText) {
+      // Refresh the autocomplete whenever the value changes to
+      // TODO: Review this by, maybe, passing renderWhenDataIsReady to the dialog form so that items are not fetched may times
+      doFetchItems(null);
+    }
+  }, [value]);
 
   useSubscribe(subscribedEventNames, () => {
     setAutocompleteText(null);

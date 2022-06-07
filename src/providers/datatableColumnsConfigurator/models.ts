@@ -20,6 +20,7 @@ export interface IConfigurableColumnsBase {
   maxWidth?: number;
   isVisible: boolean;
   defaultSorting?: ColumnSorting;
+  permissions?: string[];
 }
 
 export type DatatableColumnType = 'data' | 'action' | 'calculated';

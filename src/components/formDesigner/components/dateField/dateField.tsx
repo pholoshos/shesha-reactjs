@@ -230,6 +230,7 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
         showTime={showTime}
         disabled={isDisabled}
         style={getStyle(style, formData)}
+        allowClear
       />
     );
   }
@@ -249,6 +250,7 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
       format={pickerFormat}
       style={getStyle(style, formData)}
       {...rest}
+      allowClear
     />
   );
 };

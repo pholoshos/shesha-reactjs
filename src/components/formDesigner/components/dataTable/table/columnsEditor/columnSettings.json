@@ -636,6 +636,17 @@
       "description": "Whether this column is editable in inline mode"
     },
     {
+      "id": "26c68b22-3211-475d-91e1-0745a4447329",
+      "type": "editableTagGroup",
+      "name": "permissions",
+      "label": "Permissions",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {}
+    },
+    {
       "id": "eJiLlB4PoftEbhcEeg_0W",
       "type": "dropdown",
       "name": "defaultSorting",

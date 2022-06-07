@@ -8,6 +8,7 @@ import {
   CollapsibleSidebarContainer,
   IndexTableColumnFilters,
   IndexTableColumnVisibilityToggle,
+  useAuth,
 } from '../../../../../';
 import { useDataTableSelection } from '../../../../../providers/dataTableSelection';
 import { useDataTableStore } from '../../../../../providers';
@@ -49,6 +50,7 @@ export const TableWrapper: FC<ITableComponentProps> = ({
   isNotWrapped,
 }) => {
   const { formMode } = useForm();
+  const { anyOfPermissionsGranted } = useAuth();
 
   const isDesignMode = formMode === 'designer';
 
@@ -67,8 +69,12 @@ export const TableWrapper: FC<ITableComponentProps> = ({
 
   useEffect(() => {
     // register columns
-    registerConfigurableColumns(id, items);
-  }, [items]);
+    const permissibleColumns = isDesignMode
+      ? items
+      : items?.filter(({ permissions }) => anyOfPermissionsGranted(permissions || []));
+
+    registerConfigurableColumns(id, permissibleColumns);
+  }, [items, isDesignMode]);
 
   const { selectedRow, setSelectedRow } = useDataTableSelection();
 

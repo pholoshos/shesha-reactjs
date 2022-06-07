@@ -5,6 +5,7 @@ import { TableViewProperties } from './tableViewProperties';
 import { useTableViewSelectorConfigurator } from '../../../../../providers/tableViewSelectorConfigurator';
 import QueryBuilderSettings from '../../queryBuilder/queryBuilderSettings';
 import QueryBuilderExpressionViewer from '../../queryBuilder/queryBuilderExpressionViewer';
+import { CodeVariablesTables } from '../../../../codeVariablesTable';
 
 const { TabPane } = Tabs;
 
@@ -68,6 +69,25 @@ export const TableViewSelectorConfigurator = forwardRef<
 
           <TabPane tab="Query expression viewer" key="expressionViewerTab">
             <QueryBuilderExpressionViewer value={queryBuilderValue} jsonExpanded={true} />
+          </TabPane>
+
+          <TabPane tab="Variables" key="exposedVariables">
+            <CodeVariablesTables
+              data={[
+                {
+                  id: '61955479-c9fd-4613-b639-d2be14795245',
+                  name: 'data',
+                  description: 'The state of the form',
+                  type: 'object',
+                },
+                {
+                  id: 'e27dd783-c204-4b53-a6a0-babe4cb46e39',
+                  name: 'globalState',
+                  description: 'The global state',
+                  type: 'object',
+                },
+              ]}
+            />
           </TabPane>
         </Tabs>
       </SidebarContainer>

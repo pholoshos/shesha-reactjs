@@ -18,7 +18,7 @@ import cleanDeep from 'clean-deep';
 import { useSubmitUrl } from './useSubmitUrl';
 import { getQueryParams } from '../../utils/url';
 import _ from 'lodash';
-import { usePrevious, useUnmount } from 'react-use';
+import { usePrevious } from 'react-use';
 import { axiosHttp } from '../../apis/axios';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
@@ -57,13 +57,13 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
   }, [uniqueFormId]);
 
-  useUnmount(() => {
+  useEffect(() => {
     if (uniqueFormId && formKeysToPersist?.length && !_.isEmpty(formData)) {
       localStorage.setItem(uniqueFormId, JSON.stringify(getObjectWithOnlyIncludedKeys(formData, formKeysToPersist)));
     } else {
       localStorage.removeItem(uniqueFormId);
     }
-  });
+  }, [formData]);
   //#endregion
 
   const onFieldsChange = (changedFields: any[], allFields: any[]) => {

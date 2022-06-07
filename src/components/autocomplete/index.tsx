@@ -233,7 +233,7 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
         ? value
         : /*: isStringArray(value)
         ? value*/
-          undefined;
+        undefined;
 
     // if value is specified but displayText is not specified - fetch text from the server
     if (dataSourceType === 'entitiesList') {
@@ -276,6 +276,10 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
 
   useSubscribe(subscribedEventNames, () => {
     setAutocompleteText(null);
+
+    if (onchange)
+      onChange(null);
+
     debouncedFetchItems(autocompleteText);
   });
 
@@ -304,8 +308,8 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
     if (mode === 'multiple' || mode === 'tags') {
       return Array.isArray(localValue)
         ? (localValue as TValue[]).map<CustomLabeledValue<TValue>>(o => {
-            return getLabeledValue(o, options);
-          })
+          return getLabeledValue(o, options);
+        })
         : [getLabeledValue(localValue as TValue, options)];
     } else return getLabeledValue(localValue as TValue, options);
   };
@@ -326,8 +330,8 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
     // Note: we shouldn't process full list and make it unique because by this way we'll hide duplicates received from the back-end
     const selectedItems = selectedItem
       ? (Array.isArray(selectedItem) ? selectedItem : [selectedItem]).filter(
-          i => fetchedItems.findIndex(fi => fi.value === i.value) === -1
-        )
+        i => fetchedItems.findIndex(fi => fi.value === i.value) === -1
+      )
       : [];
 
     const result = [...fetchedItems, ...selectedItems];

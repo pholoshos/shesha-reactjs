@@ -121,7 +121,6 @@ interface IDataTableProviderProps extends ICrudProps {
    * @deprecated pass this on an `IndexTable` level
    */
   selectedRow?: any;
-  dataStamp?: number;
   getDataPath?: string;
   getExportToExcelPath?: string;
   defaultFilter?: IFilterItem[];
@@ -136,7 +135,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   onDblClick,
   onSelectRow,
   selectedRow,
-  dataStamp,
   getDataPath,
   getExportToExcelPath,
   defaultFilter,
@@ -241,9 +239,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   const [userDTSettingsInner, setUserDTSettings] = useLocalStorage<IDataTableUserConfig>(
     userConfigId || tableId,
-    null,
-    ['selectedStoredFilterIds'] // TODO: Fix the configuareble mode issue
-    // state?.persistSelectedFilters ? null : ['selectedStoredFilterIds']
+    null
+    // ['selectedStoredFilterIds'] // TODO: Review the saving of selected filters
   );
 
   const userDTSettings = useMemo(() => {
@@ -256,13 +253,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       selectedStoredFilterIds: settingsToReturn?.selectedStoredFilterIds,
     };
   }, [defaultFilter, userDTSettingsInner]);
-
-  // refresh table data on change of the `dataStamp` property
-  useEffect(() => {
-    if (dataStamp) {
-      refreshTable();
-    }
-  }, [dataStamp]);
 
   const configIsReady =
     tableId && !isFetchingTableConfig && state.tableConfigLoaded && tableConfig && (state?.columns?.length || 0) > 0;
@@ -414,9 +404,9 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     }
   }, [state?.columns]);
 
-  useEffect(() => {
-    setUserDTSettings({ ...userDTSettingsInner });
-  }, [state?.persistSelectedFilters]);
+  // useEffect(() => {
+  //   setUserDTSettings({ ...userDTSettingsInner });
+  // }, [state?.persistSelectedFilters]);
 
   const getFetchTableDataPayloadInternal = (localState: IDataTableStateContext): IGetDataPayload => {
     // Add default filter to table filter

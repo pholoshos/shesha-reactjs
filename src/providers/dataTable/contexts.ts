@@ -119,9 +119,6 @@ export interface IDataTableStateContext
   /** List of Ids of selected rows */
   selectedIds?: string[];
 
-  /** @deprecated */
-  dataStamp?: number;
-
   /** CRUD configuration */
   crudConfig?: ITableCrudConfig;
 

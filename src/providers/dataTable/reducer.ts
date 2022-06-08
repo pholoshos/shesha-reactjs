@@ -167,6 +167,10 @@ const reducer = handleActions<IDataTableStateContext, any>(
     ) => {
       const { payload } = action;
 
+      const selectedStoredFilterIds = state?.selectedStoredFilterIds?.length
+        ? state?.selectedStoredFilterIds
+        : payload.selectedStoredFilterIds ?? [];
+
       return {
         ...state,
         isFetchingTableData: true,
@@ -175,7 +179,8 @@ const reducer = handleActions<IDataTableStateContext, any>(
         currentPage: payload.currentPage,
         selectedPageSize: payload.pageSize,
         parentEntityId: payload.parentEntityId,
-        selectedStoredFilterIds: payload.selectedStoredFilterIds ?? [],
+        selectedStoredFilterIds, // TODO: Review the saving of filters
+        // selectedStoredFilterIds: payload.selectedStoredFilterIds ?? [],
       };
     },
 
@@ -271,6 +276,10 @@ const reducer = handleActions<IDataTableStateContext, any>(
         ?.filter(f => Boolean(f.id))
         .map<IStoredFilter>(filter => ({ ...filter }));
 
+      const selectedStoredFilterIds = state?.selectedStoredFilterIds?.length
+        ? state?.selectedStoredFilterIds
+        : userConfig.selectedStoredFilterIds ?? [];
+
       return {
         ...state,
 
@@ -289,7 +298,8 @@ const reducer = handleActions<IDataTableStateContext, any>(
         selectedPageSize: userConfig?.pageSize || DEFAULT_PAGE_SIZE_OPTIONS[1],
         quickSearch: userConfig?.quickSearch,
         tableFilter: userConfig?.tableFilter,
-        selectedStoredFilterIds: userConfig?.selectedStoredFilterIds || [],
+        selectedStoredFilterIds, // TODO: Review the persisting of selectedStoredFilterIds
+        // selectedStoredFilterIds: userConfig?.selectedStoredFilterIds || [],
         tableSorting: userConfig?.tableSorting,
       };
     },
@@ -383,6 +393,11 @@ const reducer = handleActions<IDataTableStateContext, any>(
           ? userConfig.tableSorting
           : configuredTableSorting;
 
+      // TODO: Review the saving of selected filters
+      const selectedStoredFilterIds = state?.selectedStoredFilterIds?.length
+        ? state?.selectedStoredFilterIds
+        : userConfig.selectedStoredFilterIds ?? [];
+
       return {
         ...state,
         columns: cols,
@@ -391,7 +406,8 @@ const reducer = handleActions<IDataTableStateContext, any>(
         selectedPageSize: userConfig?.pageSize || DEFAULT_PAGE_SIZE_OPTIONS[1],
         quickSearch: userConfig?.quickSearch,
         tableFilter: userConfig?.tableFilter,
-        selectedStoredFilterIds: userConfig?.selectedStoredFilterIds || [],
+        selectedStoredFilterIds, // TODO: Review the saving of selected filters
+        // selectedStoredFilterIds: userConfig?.selectedStoredFilterIds || [],
         tableSorting: tableSorting,
       };
     },
@@ -522,10 +538,19 @@ const reducer = handleActions<IDataTableStateContext, any>(
       action: ReduxActions.Action<IStoredFilter[]>
     ) => {
       const { payload: filters } = action;
+      const { selectedStoredFilterIds } = state;
+
+      // Make sure that whenever you set the `predefinedFilters` the first one is the selected
+      // This is because the logic for displaying the title is that it should be a part of the filters
+      // So that, by default, the first filter is the selected one
+      const incomingSelectedStoredFilterIds = filters?.length ? [filters[0]?.id] : [];
 
       return {
         ...state,
-        predefinedFilters: filters ? [...filters] : [],
+        predefinedFilters: filters || [],
+        selectedStoredFilterIds: selectedStoredFilterIds?.length
+          ? selectedStoredFilterIds
+          : incomingSelectedStoredFilterIds,
       };
     },
 

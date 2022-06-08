@@ -1,4 +1,4 @@
-import React, { FC, MutableRefObject, useEffect } from 'react';
+import React, { FC, MutableRefObject } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { SelectOutlined } from '@ant-design/icons';
 import TableViewSelectorSettings from './tableViewSelectorSettings';
@@ -9,6 +9,7 @@ import { evaluateDynamicFilters } from '../../../../../providers/dataTable/utils
 import camelCaseKeys from 'camelcase-keys';
 import _ from 'lodash';
 import { Alert } from 'antd';
+import { useDeepCompareEffect } from 'react-use';
 
 const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
   type: 'tableViewSelector',
@@ -77,26 +78,14 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
     setPredefinedFilters(evaluatedFilters);
   };
 
-  useEffect(() => {
-    // console.log('useEffect [filters, formData, globalState]', filters, formData, globalState);
-
+  useDeepCompareEffect(() => {
     debounceEvaluateDynamicFiltersHelper();
   }, [filters, formData, globalState]);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     changePersistedFiltersToggle(persistSelectedFilters);
   }, [persistSelectedFilters]);
   //#endregion
-
-  useEffect(() => {
-    if (formMode !== 'designer') {
-      if (!selectedFilterId && predefinedFilters?.length) {
-        setTimeout(() => {
-          changeSelectedFilter(predefinedFilters[0]?.id);
-        }, 1000);
-      }
-    }
-  }, [formMode, predefinedFilters]);
 
   const changeSelectedFilter = (id: string) => {
     changeSelectedStoredFilterIds(id ? [id] : []);

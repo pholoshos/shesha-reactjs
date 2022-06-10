@@ -104,7 +104,7 @@ export interface IReactTableProps {
   manualPagination?: boolean;
 
   /**
-   * Enables sorting detection functionality, but does not automatically perform row sorting. 
+   * Enables sorting detection functionality, but does not automatically perform row sorting.
    * Turn this on if you wish to implement your own sorting outside of the table (eg. server-side or manual row grouping/nesting)
    */
   manualSortBy?: boolean;
@@ -165,4 +165,6 @@ export interface IReactTableProps {
   height?: number;
 
   onSort?: (sorting: SortingRule<any>[]) => void;
+
+  allowRowSorting?: boolean;
 }

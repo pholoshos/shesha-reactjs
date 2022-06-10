@@ -49,6 +49,8 @@ import { getCurrentUrl, getLoginUrlWithReturn, getQueryParam, isSameUrls } from 
 import { getFlagSetters } from '../utils/flagsSetters';
 import { IErrorInfo } from '../../interfaces/errorInfo';
 
+const DEFAULT_HOME_PAGE = '/';
+
 interface IAuthProviderProps {
   /**
    * What the token name should be
@@ -126,7 +128,7 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
             // if we are on the login page - redirect to the returnUrl or home page
             if (isSameUrls(currentUrl, unauthorizedRedirectUrl)) {
               const returnUrl = getQueryParam('returnUrl')?.toString();
-              redirect(returnUrl ?? homePageUrl);
+              redirect(returnUrl ?? response.result?.user?.homeUrl ?? homePageUrl ?? DEFAULT_HOME_PAGE);
             }
           }
         } else {

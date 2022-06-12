@@ -61,6 +61,8 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
   onSelectedIdsChanged,
   crudParentEntityKey = 'parentEntity',
   records,
+  onRowDropped,
+  allowRowDragAndDrop,
 }) => {
   const store = useDataTableStore();
   const { headers } = useAuthState();
@@ -573,6 +575,8 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
         <LoadingOutlined /> loading...
       </span>
     ),
+    onRowDropped,
+    allowRowDragAndDrop,
     // pageSize: selectedPageSize,
   };
 
@@ -693,7 +697,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
       </div>
 
       {/* {useMultiselect ? <MultiselectWithState {...tableProps} /> : <ReactTable {...tableProps} />} */}
-      { tableProps.columns && tableProps.columns.length > 0 && <ReactTable {...tableProps} /> }
+      {tableProps.columns && tableProps.columns.length > 0 && <ReactTable {...tableProps} />}
 
       {renderConfirmDialog()}
 

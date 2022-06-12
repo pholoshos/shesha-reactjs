@@ -1,28 +1,31 @@
-import React, { FC, useEffect, useRef, useMemo, useCallback, useState } from 'react';
+import React, { FC, useEffect, useMemo, useCallback, useState, useRef } from 'react';
 import classNames from 'classnames';
-import { useResizeColumns, useFlexLayout, useRowSelect, useSortBy, usePagination, Row, useTable } from 'react-table';
+import {
+  useResizeColumns,
+  useFlexLayout,
+  useRowSelect,
+  useSortBy,
+  usePagination,
+  Row,
+  useTable,
+  Column,
+} from 'react-table';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Empty, Spin } from 'antd';
 import _ from 'lodash';
 import { IReactTableProps } from './interfaces';
 import { nanoid } from 'nanoid/non-secure';
 import { useDeepCompareEffect, usePrevious } from 'react-use';
-import { TableRow } from './tableRow';
+import { RowHandler, SortableRow, TableRow } from './tableRow';
 import ConditionalWrap from '../conditionalWrapper';
 import { SortableContainer } from './sortableContainer';
 import { arrayMove } from 'react-sortable-hoc';
+import { IndeterminateCheckbox } from './indeterminateCheckbox';
 
-const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }: any, ref) => {
-  const defaultRef = useRef();
-  const resolvedRef = ref || defaultRef;
-
-  useEffect(() => {
-    // @ts-ignore
-    resolvedRef.current.indeterminate = indeterminate;
-  }, [resolvedRef, indeterminate]);
-
-  return <input type="checkbox" ref={resolvedRef} {...rest} />;
-});
+interface IReactTableState {
+  allRows: any[];
+  allColumns: Column<any>[];
+}
 
 const ReactTable: FC<IReactTableProps> = ({
   columns = [],
@@ -47,9 +50,16 @@ const ReactTable: FC<IReactTableProps> = ({
   onSort,
   scrollBodyHorizontally = false,
   height = 250,
-  allowRowSorting = true,
+  allowRowDragAndDrop = false,
+  onRowDropped,
 }) => {
-  const [items, setItems] = useState(data);
+  const [componentState, setComponentState] = useState<IReactTableState>({
+    allRows: data,
+    allColumns: columns,
+  });
+
+  const { allColumns, allRows } = componentState;
+
   const defaultColumn = React.useMemo(
     () => ({
       // When using the useFlexLayout:
@@ -59,6 +69,26 @@ const ReactTable: FC<IReactTableProps> = ({
     }),
     []
   );
+
+  const preparedColumns = useMemo(() => {
+    const localColumn = [...allColumns];
+
+    if (allowRowDragAndDrop) {
+      localColumn.unshift({
+        accessor: nanoid(),
+        // id: accessor, // This needs to be fixed
+        Header: '',
+        width: 35,
+        minWidth: 35,
+        maxWidth: 35,
+        disableSortBy: true,
+        disableResizing: true,
+        Cell: () => <RowHandler />,
+      });
+    }
+
+    return localColumn;
+  }, [allColumns, allowRowDragAndDrop]);
 
   const getColumnAccessor = cid => {
     const column = columns.find(c => c.id == cid);
@@ -73,13 +103,19 @@ const ReactTable: FC<IReactTableProps> = ({
   }, [defaultSorting]);
 
   useDeepCompareEffect(() => {
-    setItems(data);
+    setComponentState(prev => ({ ...prev, allRows: data }));
   }, [data]);
+
+  const allRowsRef = useRef(allRows);
+
+  useEffect(() => {
+    allRowsRef.current = allRows;
+  }, [allRows]);
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state } = useTable(
     {
-      columns,
-      data: items,
+      columns: preparedColumns,
+      data: allRows,
       defaultColumn,
       initialState: {
         sortBy: initialSorting,
@@ -143,8 +179,6 @@ const ReactTable: FC<IReactTableProps> = ({
     }
   );
 
-  console.log('LOGS:: rows, rows?.length', rows, rows?.length, data?.length, items?.length);
-
   const { pageIndex, pageSize, selectedRowIds, sortBy } = state;
 
   const previousSortBy = usePrevious(sortBy);
@@ -157,7 +191,7 @@ const ReactTable: FC<IReactTableProps> = ({
 
   useEffect(() => {
     if (selectedRowIds && typeof onSelectedIdsChanged === 'function') {
-      const arrays: string[] = items
+      const arrays: string[] = allRows
         ?.map(({ Id }, index) => {
           if (selectedRowIds[index]) {
             return Id;
@@ -172,7 +206,10 @@ const ReactTable: FC<IReactTableProps> = ({
   }, [selectedRowIds]);
 
   const onSortEnd = useCallback(({ oldIndex, newIndex }) => {
-    setItems(oldItems => arrayMove(oldItems, oldIndex, newIndex));
+    if (onRowDropped) {
+      onRowDropped(allRowsRef?.current[oldIndex], oldIndex, newIndex);
+    }
+    setComponentState(prev => ({ ...prev, allRows: arrayMove(prev?.allRows, oldIndex, newIndex) }));
   }, []);
 
   // Listen for changes in pagination and use the state to fetch our new data
@@ -199,6 +236,8 @@ const ReactTable: FC<IReactTableProps> = ({
       onRowDoubleClick(row?.original, index);
     }
   };
+
+  const Row = useMemo(() => (allowRowDragAndDrop ? SortableRow : TableRow), [allowRowDragAndDrop]);
 
   return (
     <Spin
@@ -248,7 +287,7 @@ const ReactTable: FC<IReactTableProps> = ({
             ))}
 
           <ConditionalWrap
-            condition={allowRowSorting}
+            condition={allowRowDragAndDrop}
             wrap={children => (
               <SortableContainer
                 onSortEnd={onSortEnd}
@@ -279,13 +318,13 @@ const ReactTable: FC<IReactTableProps> = ({
 
               {rows.map((row, rowIndex) => {
                 return (
-                  <TableRow
+                  <Row
                     prepareRow={prepareRow}
                     onClick={handleSelectRow}
                     onDoubleClick={handleDoubleClickRow}
                     row={row}
                     index={rowIndex}
-                    allowSort={allowRowSorting}
+                    allowSort={allowRowDragAndDrop}
                   />
                 );
               })}

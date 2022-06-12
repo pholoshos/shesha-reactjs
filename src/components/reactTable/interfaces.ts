@@ -14,7 +14,13 @@ export interface IColumnResizing {
   isResizingColumn?: string;
 }
 
-export interface IReactTableProps {
+export interface ITableRowDragProps {
+  allowRowDragAndDrop?: boolean;
+
+  onRowDropped?: (row: any, oldIndex: number, newIndex: number) => void;
+}
+
+export interface IReactTableProps extends ITableRowDragProps {
   /**
    * @deprecated - use scrollBodyHorizontally
    * Whether the table should be scrollable or not
@@ -165,6 +171,4 @@ export interface IReactTableProps {
   height?: number;
 
   onSort?: (sorting: SortingRule<any>[]) => void;
-
-  allowRowSorting?: boolean;
 }

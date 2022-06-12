@@ -9,6 +9,8 @@ export interface ITableComponentBaseProps extends ITableCrudConfig {
   isNotWrapped: boolean;
   crudMode?: 'inline' | 'dialog';
   overrideDefaultCrudBehavior?: boolean;
+  allowRowDragAndDrop?: boolean;
+  onRowDropped?: string;
 }
 
 /** Table component props */

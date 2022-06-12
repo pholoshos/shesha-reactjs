@@ -1,48 +1,31 @@
-import React, { FC, useEffect, useRef, useMemo } from 'react';
+import React, { FC, useEffect, useMemo, useCallback, useState, useRef } from 'react';
 import classNames from 'classnames';
 import {
   useResizeColumns,
   useFlexLayout,
   useRowSelect,
-  CellPropGetter,
-  TableHeaderProps,
-  TableCellProps,
   useSortBy,
   usePagination,
   Row,
   useTable,
+  Column,
 } from 'react-table';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Empty, Spin } from 'antd';
 import _ from 'lodash';
 import { IReactTableProps } from './interfaces';
 import { nanoid } from 'nanoid/non-secure';
-import { usePrevious } from 'react-use';
+import { useDeepCompareEffect, usePrevious } from 'react-use';
+import { RowHandler, SortableRow, TableRow } from './tableRow';
+import ConditionalWrap from '../conditionalWrapper';
+import { SortableContainer } from './sortableContainer';
+import { arrayMove } from 'react-sortable-hoc';
+import { IndeterminateCheckbox } from './indeterminateCheckbox';
 
-const cellProps: CellPropGetter<object> = (props, { cell }) => getStyles(props, cell.column.align);
-
-const getStyles = (props: Partial<TableHeaderProps | TableCellProps>, align = 'left') => [
-  props,
-  {
-    style: {
-      justifyContent: align === 'right' ? 'flex-end' : 'flex-start',
-      alignItems: 'flex-start',
-      display: 'flex',
-    },
-  },
-];
-
-const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }: any, ref) => {
-  const defaultRef = useRef();
-  const resolvedRef = ref || defaultRef;
-
-  useEffect(() => {
-    // @ts-ignore
-    resolvedRef.current.indeterminate = indeterminate;
-  }, [resolvedRef, indeterminate]);
-
-  return <input type="checkbox" ref={resolvedRef} {...rest} />;
-});
+interface IReactTableState {
+  allRows: any[];
+  allColumns: Column<any>[];
+}
 
 const ReactTable: FC<IReactTableProps> = ({
   columns = [],
@@ -54,7 +37,6 @@ const ReactTable: FC<IReactTableProps> = ({
   manualPagination = true,
   manualSortBy = true,
   manualFilters,
-  selectedRowIndex,
   // defaultColumn,
   // changeSelectedIds,
   disableSortBy = false,
@@ -68,7 +50,16 @@ const ReactTable: FC<IReactTableProps> = ({
   onSort,
   scrollBodyHorizontally = false,
   height = 250,
+  allowRowDragAndDrop = false,
+  onRowDropped,
 }) => {
+  const [componentState, setComponentState] = useState<IReactTableState>({
+    allRows: data,
+    allColumns: columns,
+  });
+
+  const { allColumns, allRows } = componentState;
+
   const defaultColumn = React.useMemo(
     () => ({
       // When using the useFlexLayout:
@@ -78,6 +69,26 @@ const ReactTable: FC<IReactTableProps> = ({
     }),
     []
   );
+
+  const preparedColumns = useMemo(() => {
+    const localColumn = [...allColumns];
+
+    if (allowRowDragAndDrop) {
+      localColumn.unshift({
+        accessor: nanoid(),
+        // id: accessor, // This needs to be fixed
+        Header: '',
+        width: 35,
+        minWidth: 35,
+        maxWidth: 35,
+        disableSortBy: true,
+        disableResizing: true,
+        Cell: () => <RowHandler />,
+      });
+    }
+
+    return localColumn;
+  }, [allColumns, allowRowDragAndDrop]);
 
   const getColumnAccessor = cid => {
     const column = columns.find(c => c.id == cid);
@@ -91,10 +102,20 @@ const ReactTable: FC<IReactTableProps> = ({
     });
   }, [defaultSorting]);
 
+  useDeepCompareEffect(() => {
+    setComponentState(prev => ({ ...prev, allRows: data }));
+  }, [data]);
+
+  const allRowsRef = useRef(allRows);
+
+  useEffect(() => {
+    allRowsRef.current = allRows;
+  }, [allRows]);
+
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state } = useTable(
     {
-      columns,
-      data,
+      columns: preparedColumns,
+      data: allRows,
       defaultColumn,
       initialState: {
         sortBy: initialSorting,
@@ -170,7 +191,7 @@ const ReactTable: FC<IReactTableProps> = ({
 
   useEffect(() => {
     if (selectedRowIds && typeof onSelectedIdsChanged === 'function') {
-      const arrays: string[] = data
+      const arrays: string[] = allRows
         ?.map(({ Id }, index) => {
           if (selectedRowIds[index]) {
             return Id;
@@ -183,6 +204,13 @@ const ReactTable: FC<IReactTableProps> = ({
       onSelectedIdsChanged(arrays);
     }
   }, [selectedRowIds]);
+
+  const onSortEnd = useCallback(({ oldIndex, newIndex }) => {
+    if (onRowDropped) {
+      onRowDropped(allRowsRef?.current[oldIndex], oldIndex, newIndex);
+    }
+    setComponentState(prev => ({ ...prev, allRows: arrayMove(prev?.allRows, oldIndex, newIndex) }));
+  }, []);
 
   // Listen for changes in pagination and use the state to fetch our new data
   useEffect(() => {
@@ -208,6 +236,8 @@ const ReactTable: FC<IReactTableProps> = ({
       onRowDoubleClick(row?.original, index);
     }
   };
+
+  const Row = useMemo(() => (allowRowDragAndDrop ? SortableRow : TableRow), [allowRowDragAndDrop]);
 
   return (
     <Spin
@@ -256,46 +286,50 @@ const ReactTable: FC<IReactTableProps> = ({
               </span>
             ))}
 
-          <span
-            className="tbody"
-            style={{
-              height: scrollBodyHorizontally ? height || 250 : 'unset',
-              overflowY: scrollBodyHorizontally ? 'auto' : 'unset',
-            }}
-            {...getTableBodyProps()}
-          >
-            {rows?.length === 0 && !loading && (
-              <span className="sha-table-empty">
-                <Empty description="There is no data for this table" />
-              </span>
+          <ConditionalWrap
+            condition={allowRowDragAndDrop}
+            wrap={children => (
+              <SortableContainer
+                onSortEnd={onSortEnd}
+                axis="y"
+                lockAxis="y"
+                lockToContainerEdges={true}
+                lockOffset={['30%', '50%']}
+                helperClass="helperContainerClass"
+                useDragHandle={true}
+              >
+                {children}
+              </SortableContainer>
             )}
-
-            {rows.map((row, rowIndex) => {
-              prepareRow(row);
-
-              return (
-                <span
-                  key={nanoid()}
-                  onClick={() => handleSelectRow(row)}
-                  onDoubleClick={() => handleDoubleClickRow(row, rowIndex)}
-                  {...row.getRowProps()}
-                  className={classNames(
-                    'tr tr-body',
-                    { 'tr-odd': rowIndex % 2 === 0 },
-                    { 'sha-tr-selected': selectedRowIndex === row?.index }
-                  )}
-                >
-                  {row.cells.map(cell => {
-                    return (
-                      <span key={nanoid()} {...cell.getCellProps(cellProps)} className="td">
-                        {cell.render('Cell')}
-                      </span>
-                    );
-                  })}
+          >
+            <span
+              className="tbody"
+              style={{
+                height: scrollBodyHorizontally ? height || 250 : 'unset',
+                overflowY: scrollBodyHorizontally ? 'auto' : 'unset',
+              }}
+              {...getTableBodyProps()}
+            >
+              {rows?.length === 0 && !loading && (
+                <span className="sha-table-empty">
+                  <Empty description="There is no data for this table" />
                 </span>
-              );
-            })}
-          </span>
+              )}
+
+              {rows.map((row, rowIndex) => {
+                return (
+                  <Row
+                    prepareRow={prepareRow}
+                    onClick={handleSelectRow}
+                    onDoubleClick={handleDoubleClickRow}
+                    row={row}
+                    index={rowIndex}
+                    allowSort={allowRowDragAndDrop}
+                  />
+                );
+              })}
+            </span>
+          </ConditionalWrap>
         </table>
       </div>
     </Spin>

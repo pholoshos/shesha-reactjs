@@ -24,7 +24,7 @@ export interface ICodeExposedVariable {
   id: string;
   name: string;
   description: string;
-  type: 'object' | 'function';
+  type: 'bigint' | 'object' | 'function' | 'number' | 'string' | 'boolean' | 'symbol' | ' ';
 }
 
 export interface ICodeVariablesTableProps {

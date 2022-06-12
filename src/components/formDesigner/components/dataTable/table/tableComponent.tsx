@@ -1,7 +1,7 @@
 import React, { FC, Fragment, useEffect } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { TableOutlined } from '@ant-design/icons';
-import { Alert } from 'antd';
+import { Alert, message } from 'antd';
 import { useForm } from '../../../../../providers/form';
 import {
   IndexTable,
@@ -9,9 +9,11 @@ import {
   IndexTableColumnFilters,
   IndexTableColumnVisibilityToggle,
   useAuth,
+  axiosHttp,
+  useSheshaApplication,
 } from '../../../../../';
 import { useDataTableSelection } from '../../../../../providers/dataTableSelection';
-import { useDataTableStore } from '../../../../../providers';
+import { useDataTableStore, useGlobalState } from '../../../../../providers';
 import TableSettings from './tableComponent-settings';
 import { ITableComponentProps } from './models';
 
@@ -48,9 +50,13 @@ export const TableWrapper: FC<ITableComponentProps> = ({
   detailsUrl,
   updateUrl,
   isNotWrapped,
+  allowRowDragAndDrop,
+  onRowDropped,
 }) => {
-  const { formMode } = useForm();
+  const { formMode, formData } = useForm();
+  const { globalState } = useGlobalState();
   const { anyOfPermissionsGranted } = useAuth();
+  const { backendUrl } = useSheshaApplication();
 
   const isDesignMode = formMode === 'designer';
 
@@ -90,6 +96,27 @@ export const TableWrapper: FC<ITableComponentProps> = ({
     return <Fragment />;
   };
 
+  const getExpressionExecutor = (expression: string, row: any, oldIndex: number, newIndex: number) => {
+    if (!expression) {
+      return null;
+    }
+
+    // tslint:disable-next-line:function-constructor
+    return new Function('row, oldIndex, newIndex, globalState, http, message, data', expression)(
+      row,
+      oldIndex,
+      newIndex,
+      globalState,
+      axiosHttp(backendUrl),
+      message,
+      formData
+    );
+  };
+
+  const handleOnRowDropped = (row: any, oldIndex: number, newIndex: number) => {
+    getExpressionExecutor(onRowDropped, row, oldIndex, newIndex);
+  };
+
   const toggleFieldPropertiesSidebar = () => {
     !isSelectingColumns && !isFiltering
       ? setIsInProgressFlag({ isFiltering: true })
@@ -113,6 +140,8 @@ export const TableWrapper: FC<ITableComponentProps> = ({
         useMultiselect={useMultiselect}
         crud={crud}
         overrideDefaultCrudBehavior={overrideDefaultCrudBehavior}
+        allowRowDragAndDrop={allowRowDragAndDrop}
+        onRowDropped={handleOnRowDropped}
       />
     );
   }
@@ -135,6 +164,8 @@ export const TableWrapper: FC<ITableComponentProps> = ({
         useMultiselect={useMultiselect}
         crud={crud}
         overrideDefaultCrudBehavior={overrideDefaultCrudBehavior}
+        allowRowDragAndDrop={allowRowDragAndDrop}
+        onRowDropped={handleOnRowDropped}
         // crudMode="dialog"
       />
     </CollapsibleSidebarContainer>

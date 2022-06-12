@@ -14,7 +14,13 @@ export interface IColumnResizing {
   isResizingColumn?: string;
 }
 
-export interface IReactTableProps {
+export interface ITableRowDragProps {
+  allowRowDragAndDrop?: boolean;
+
+  onRowDropped?: (row: any, oldIndex: number, newIndex: number) => void;
+}
+
+export interface IReactTableProps extends ITableRowDragProps {
   /**
    * @deprecated - use scrollBodyHorizontally
    * Whether the table should be scrollable or not
@@ -104,7 +110,7 @@ export interface IReactTableProps {
   manualPagination?: boolean;
 
   /**
-   * Enables sorting detection functionality, but does not automatically perform row sorting. 
+   * Enables sorting detection functionality, but does not automatically perform row sorting.
    * Turn this on if you wish to implement your own sorting outside of the table (eg. server-side or manual row grouping/nesting)
    */
   manualSortBy?: boolean;

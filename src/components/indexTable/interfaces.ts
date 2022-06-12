@@ -1,3 +1,4 @@
+import { ITableRowDragProps } from './../reactTable/interfaces';
 import { IndexColumnDataType } from './../../providers/dataTable/interfaces';
 import { MutableRefObject, ReactNode } from 'react';
 import { ICrudProps, IDataTableInstance } from '../../providers/dataTable/interfaces';
@@ -41,7 +42,7 @@ export interface IColumnEditFieldProps {
   onChange: (key: string, value: any) => void;
 }
 
-export interface IShaDataTableProps extends ICrudProps {
+export interface IShaDataTableProps extends ICrudProps, ITableRowDragProps {
   id: string;
   useMultiselect?: boolean;
   disableCustomFilters?: boolean;

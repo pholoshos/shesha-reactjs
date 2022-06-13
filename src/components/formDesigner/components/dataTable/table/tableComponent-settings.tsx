@@ -182,6 +182,12 @@ function ColumnsSettings(props: IProps) {
                   description: 'Fetched data from the server',
                   type: 'object',
                 },
+                {
+                  id: '4244cb63-1086-419f-8333-517390a2271d',
+                  name: 'refreshTable',
+                  description: 'A function for refreshing the table',
+                  type: 'function',
+                },
               ]}
             />
           </Form.Item>

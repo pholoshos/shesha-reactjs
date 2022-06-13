@@ -67,6 +67,7 @@ export const TableWrapper: FC<ITableComponentProps> = ({
     setIsInProgressFlag,
     registerConfigurableColumns,
     setCrudConfig,
+    refreshTable,
   } = useDataTableStore();
 
   useEffect(() => {
@@ -102,14 +103,15 @@ export const TableWrapper: FC<ITableComponentProps> = ({
     }
 
     // tslint:disable-next-line:function-constructor
-    return new Function('row, oldIndex, newIndex, globalState, http, message, data', expression)(
+    return new Function('row, oldIndex, newIndex, globalState, http, message, data, refreshTable', expression)(
       row,
       oldIndex,
       newIndex,
       globalState,
       axiosHttp(backendUrl),
       message,
-      formData
+      formData,
+      refreshTable
     );
   };
 

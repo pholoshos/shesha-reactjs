@@ -106,6 +106,10 @@ const ReactTable: FC<IReactTableProps> = ({
     setComponentState(prev => ({ ...prev, allRows: data }));
   }, [data]);
 
+  useDeepCompareEffect(() => {
+    setComponentState(prev => ({ ...prev, allColumns: columns }));
+  }, [columns]);
+
   const allRowsRef = useRef(allRows);
 
   useEffect(() => {

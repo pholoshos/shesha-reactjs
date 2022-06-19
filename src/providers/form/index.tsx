@@ -319,7 +319,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     id: id || state?.present?.id,
   });
 
-  const saveForm = (): Promise<void> => {
+  const saveForm = async (): Promise<void> => {
     if (!state.present.id) return Promise.reject();
 
     dispatch(saveRequestAction());
@@ -333,12 +333,15 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
       id: state.present.id,
       markup: JSON.stringify(currentMarkup, null, 2),
     };
-    return saveFormHttp(dto, {})
+
+    await saveFormHttp(dto, {})
       .then(_response => {
         dispatch(saveSuccessAction());
+        return Promise.resolve();
       })
       .catch(_error => {
         dispatch(saveErrorAction());
+        return Promise.reject();
       });
   };
 

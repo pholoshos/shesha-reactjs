@@ -16,6 +16,7 @@ import { useDataTableSelection } from '../../../../../providers/dataTableSelecti
 import { useDataTableStore, useGlobalState } from '../../../../../providers';
 import TableSettings from './tableComponent-settings';
 import { ITableComponentProps } from './models';
+import ConditionalWrap from '../../../../conditionalWrapper';
 
 const TableComponent: IToolboxComponent<ITableComponentProps> = {
   type: 'datatable',
@@ -133,31 +134,23 @@ export const TableWrapper: FC<ITableComponentProps> = ({
     }
   };
 
-  if (isNotWrapped) {
-    return (
-      <IndexTable
-        id={tableId}
-        onSelectRow={onSelectRow}
-        selectedRowIndex={selectedRow?.index}
-        useMultiselect={useMultiselect}
-        crud={crud}
-        overrideDefaultCrudBehavior={overrideDefaultCrudBehavior}
-        allowRowDragAndDrop={allowRowDragAndDrop}
-        onRowDropped={handleOnRowDropped}
-      />
-    );
-  }
-
   return (
-    <CollapsibleSidebarContainer
-      rightSidebarProps={{
-        open: isSelectingColumns || isFiltering,
-        onOpen: toggleFieldPropertiesSidebar,
-        onClose: toggleFieldPropertiesSidebar,
-        title: 'Table Columns',
-        content: renderSidebarContent,
-      }}
-      allowFullCollapse
+    <ConditionalWrap
+      condition={!isNotWrapped}
+      wrap={children => (
+        <CollapsibleSidebarContainer
+          rightSidebarProps={{
+            open: isSelectingColumns || isFiltering,
+            onOpen: toggleFieldPropertiesSidebar,
+            onClose: toggleFieldPropertiesSidebar,
+            title: 'Table Columns',
+            content: renderSidebarContent,
+          }}
+          allowFullCollapse
+        >
+          {children}
+        </CollapsibleSidebarContainer>
+      )}
     >
       <IndexTable
         id={tableId}
@@ -170,7 +163,7 @@ export const TableWrapper: FC<ITableComponentProps> = ({
         onRowDropped={handleOnRowDropped}
         // crudMode="dialog"
       />
-    </CollapsibleSidebarContainer>
+    </ConditionalWrap>
   );
 };
 

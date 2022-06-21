@@ -52,6 +52,7 @@ const ReactTable: FC<IReactTableProps> = ({
   height = 250,
   allowRowDragAndDrop = false,
   onRowDropped,
+  selectedRowIndex,
 }) => {
   const [componentState, setComponentState] = useState<IReactTableState>({
     allRows: data,
@@ -329,6 +330,7 @@ const ReactTable: FC<IReactTableProps> = ({
                     row={row}
                     index={rowIndex}
                     allowSort={allowRowDragAndDrop}
+                    selectedRowIndex={selectedRowIndex}
                   />
                 );
               })}

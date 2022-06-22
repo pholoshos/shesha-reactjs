@@ -1,7 +1,7 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup } from '../../../../providers/form/models';
 import { NumberOutlined } from '@ant-design/icons';
-import { InputNumber, message } from 'antd';
+import { InputNumber, InputNumberProps, message } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import { INumberFieldProps } from './models';
 import settingsFormJson from './settingsForm.json';
@@ -41,28 +41,35 @@ const NumberField: IToolboxComponent<INumberFieldProps> = {
       moment,
     };
 
+    const renderInputNumber = () => {
+      const inputProps: InputNumberProps = {
+        disabled: disabled,
+        bordered: !model.hideBorder,
+        min: model?.min,
+        max: model?.max,
+        size: model?.size,
+        style: getStyle(model?.style, formData),
+        step: model?.highPrecision ? model?.stepNumeric : model?.stepNumeric,
+        ...customInputNumberEventHandler(eventProps),
+        defaultValue: model?.defaultValue,
+      };
+
+      return <InputNumber {...inputProps} stringMode={model?.highPrecision} />;
+    };
+
     return (
       <ConfigurableFormItem
         model={model}
         initialValue={evaluateString(model?.defaultValue, { formData, formMode, globalState })}
       >
-        {isReadOnly ? (
-          <ReadOnlyDisplayFormItem disabled={disabled} />
-        ) : (
-          <InputNumber
-            disabled={disabled}
-            bordered={!model.hideBorder}
-            min={model?.min}
-            max={model?.max}
-            {...customInputNumberEventHandler(eventProps)}
-            size={model?.size}
-            style={getStyle(model?.style, formData)}
-          />
-        )}
+        {isReadOnly ? <ReadOnlyDisplayFormItem disabled={disabled} /> : renderInputNumber()}
       </ConfigurableFormItem>
     );
   },
   settingsFormMarkup: settingsForm,
+  initModel: model => ({
+    ...model,
+  }),
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
   linkToModelMetadata: (model, metadata): INumberFieldProps => {
     return {

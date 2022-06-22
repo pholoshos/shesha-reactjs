@@ -86,6 +86,35 @@
       "dataSourceType": "values"
     },
     {
+      "id": "f6f4a345-a529-4720-a90b-d84532e556fb",
+      "type": "checkbox",
+      "name": "highPrecision",
+      "parentId": "root",
+      "label": "High precision",
+      "description": "To support high precision decimals support"
+    },
+    {
+      "id": "874aa450-6274-48d4-8032-395fdd680fa5",
+      "type": "numberField",
+      "name": "stepNumeric",
+      "parentId": "root",
+      "label": "Step",
+      "defaultValue": 1,
+      "validate": {},
+      "settingsValidationErrors": [],
+      "customVisibility": "return !data.highPrecision"
+    },
+    {
+      "id": "7eef80f0-041c-49bf-a9dd-8ee3dff2ee3f",
+      "type": "textField",
+      "name": "stepString",
+      "parentId": "root",
+      "label": "Step",
+      "initialValue": "0.1",
+      "validate": {},
+      "customVisibility": "return data.highPrecision"
+    },
+    {
       "id": "cfd7d45e-c7e3-4a27-987b-dc525c412448",
       "type": "checkbox",
       "name": "hidden",

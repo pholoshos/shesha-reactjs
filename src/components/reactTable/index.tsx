@@ -21,6 +21,7 @@ import ConditionalWrap from '../conditionalWrapper';
 import { SortableContainer } from './sortableContainer';
 import { arrayMove } from 'react-sortable-hoc';
 import { IndeterminateCheckbox } from './indeterminateCheckbox';
+import camelCaseKeys from 'camelcase-keys';
 
 interface IReactTableState {
   allRows: any[];
@@ -212,7 +213,7 @@ const ReactTable: FC<IReactTableProps> = ({
 
   const onSortEnd = useCallback(({ oldIndex, newIndex }) => {
     if (onRowDropped) {
-      onRowDropped(allRowsRef?.current[oldIndex], oldIndex, newIndex);
+      onRowDropped(camelCaseKeys(allRowsRef?.current[oldIndex], { deep: true, pascalCase: true }), oldIndex, newIndex);
     }
     setComponentState(prev => ({ ...prev, allRows: arrayMove(prev?.allRows, oldIndex, newIndex) }));
   }, []);

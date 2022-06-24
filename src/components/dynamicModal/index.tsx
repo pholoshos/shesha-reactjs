@@ -36,6 +36,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     prepareInitialValues,
     mode = 'edit',
     skipFetchData,
+    onCancel,
   } = props;
 
   const [form] = Form.useForm();
@@ -76,8 +77,12 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     form.resetFields();
   };
 
-  const onCancel = () => {
+  const handleCancel = () => {
     hideForm();
+
+    if (onCancel) {
+      onCancel();
+    }
   };
 
   const hideForm = () => {
@@ -106,7 +111,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
         form={form}
         mode={mode}
         actions={{
-          close: onCancel,
+          close: handleCancel,
         }}
         onFinish={onSubmitted}
         prepareInitialValues={prepareInitialValues}

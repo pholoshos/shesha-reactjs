@@ -95,6 +95,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
             { match: 'parentFormValues', data: parentFormValues },
             { match: 'globalState', data: globalState },
             { match: 'query', data: queryParamsFromAddressBar },
+            { match: 'initialValues', data: initialValues },
           ])
         : value;
       _.set(computedInitialValues, key, evaluatedValue);

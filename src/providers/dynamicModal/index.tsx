@@ -85,6 +85,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
               width={instance?.props?.width}
               modalConfirmDialogMessage={instance?.props?.modalConfirmDialogMessage}
               prepareInitialValues={instance?.props?.prepareInitialValues}
+              onCancel={instance?.props?.onCancel}
             />
           </DynamicModalInstanceContext.Provider>
         );

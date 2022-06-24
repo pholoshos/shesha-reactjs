@@ -90,6 +90,8 @@ export interface IModalProps {
    * for that form
    */
   prepareInitialValues?: (fetchedData: any) => any;
+
+  onCancel?: () => void;
 }
 
 /**

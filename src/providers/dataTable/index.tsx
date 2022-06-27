@@ -61,7 +61,7 @@ import {
   IColumnSorting,
 } from './interfaces';
 import { useMutate, useGet } from 'restful-react';
-import _ from 'lodash';
+import { isEmpty, isEqual, sortBy } from 'lodash';
 import { GetColumnsInput, DataTableColumnDtoListAjaxResponse } from '../../apis/dataTable';
 import { IResult } from '../../interfaces/result';
 import { useLocalStorage, usePubSub, useSubscribe } from '../../hooks';
@@ -395,7 +395,9 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   useEffect(() => {
     // Save the settings whenever the columns change
-    if (!_.isEmpty(userDTSettings) && state?.columns?.length > 0) {
+    if (!isEmpty(userDTSettings) && state?.columns?.length > 0) {
+      console.log('useEffect: ', state?.columns, userConfigId);
+
       setUserDTSettings({
         ...userDTSettings,
         selectedStoredFilterIds: state?.selectedStoredFilterIds,
@@ -540,7 +542,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const previousPredefinedFilters = usePreviousDistinct(state?.predefinedFilters);
 
   const setPredefinedFilters = (filters: IStoredFilter[]) => {
-    const filtersChanged = !_.isEqual(_.sortBy(previousPredefinedFilters), _.sortBy(filters));
+    const filtersChanged = !isEqual(sortBy(previousPredefinedFilters), sortBy(filters));
 
     if (filtersChanged) {
       dispatch(setPredefinedFiltersAction(filters));
@@ -642,6 +644,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     if (!entityType) return;
 
     const localProperties = getDataProperties(configurableColumns);
+
     if (localProperties.length === 0) {
       // don't fetch data from server when properties is empty
       dispatch(fetchColumnsSuccessSuccessAction({ columns: [], configurableColumns, userConfig: userDTSettings }));

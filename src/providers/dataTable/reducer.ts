@@ -314,14 +314,14 @@ const reducer = handleActions<IDataTableStateContext, any>(
 
       const cols = configurableColumns
         .map<ITableColumn>(column => {
+          const dataProps = column as IDataColumnsProps;
           const colProps = column as IConfigurableColumnsProps;
-          const userColumn = userConfig?.columns?.find(c => c.id === column.id);
+          const userColumn = userConfig?.columns?.find(c => c.id === dataProps?.propertyName);
           const colVisibility =
             userColumn?.show === null || userColumn?.show === undefined ? column.isVisible : userColumn?.show;
 
           switch (colProps.columnType) {
             case 'data': {
-              const dataProps = column as IDataColumnsProps;
               const srvColumn = dataProps.propertyName
                 ? columns.find(c => cleanPropertyName(c.name) === cleanPropertyName(dataProps.propertyName))
                 : {};
@@ -476,6 +476,25 @@ const reducer = handleActions<IDataTableStateContext, any>(
       action: ReduxActions.Action<string>
     ) => {
       const { payload: columnIdToToggle } = action;
+
+      const incomingColumns = state.columns.map(({ id, show, ...rest }) => {
+        if (id === columnIdToToggle) {
+          return {
+            id,
+            ...rest,
+            show: !show,
+          };
+        }
+        return { id, show, ...rest };
+      });
+
+      console.log(
+        'state.columns, columnIdToToggle, incomingColumns: ',
+        state.columns,
+        columnIdToToggle,
+        incomingColumns
+      );
+
       return {
         ...state,
         columns: state.columns.map(({ id, show, ...rest }) => {

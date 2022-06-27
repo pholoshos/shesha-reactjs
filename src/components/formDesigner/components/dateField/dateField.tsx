@@ -5,7 +5,7 @@ import { CalendarOutlined } from '@ant-design/icons';
 import { DatePicker, message } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
-import moment, { isMoment } from 'moment';
+import moment, { isMoment, Moment } from 'moment';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { HiddenFormItem } from '../../../hiddenFormItem';
 import { useForm, useGlobalState, useSheshaApplication } from '../../../../providers';
@@ -190,7 +190,9 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
   const handleRangePicker = (values: any[], formatString: [string, string]) => {
     if (formatString?.includes('')) {
       (onChange as RangePickerChangeEvent)(null, null);
+      return;
     }
+
     const dates = (values as []).map((val: any) => {
       if (isMoment(val)) return val.utc().format();
 
@@ -200,11 +202,14 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
     (onChange as RangePickerChangeEvent)(dates, formatString);
   };
 
-  const onCalendarChange = (values: any[], _formatString: [string, string], info: IRangeInfo) => {
+  const onCalendarChange = (values: Moment[], _formatString: [string, string], info: IRangeInfo) => {
+    const startDate = Array.isArray(values) && values[0];
+    const endDate = Array.isArray(values) && values[1];
+
     if (info?.range === 'end' && form) {
       form.setFieldsValue({
-        [`${name}Start`]: values[0]?.toISOString(),
-        [`${name}End`]: values[1]?.toISOString(),
+        [`${name}Start`]: isMoment(startDate) ? startDate?.toISOString() : null,
+        [`${name}End`]: isMoment(endDate) ? endDate?.toISOString() : null,
       });
     }
   };

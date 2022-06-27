@@ -396,8 +396,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   useEffect(() => {
     // Save the settings whenever the columns change
     if (!isEmpty(userDTSettings) && state?.columns?.length > 0) {
-      console.log('useEffect: ', state?.columns, userConfigId);
-
       setUserDTSettings({
         ...userDTSettings,
         selectedStoredFilterIds: state?.selectedStoredFilterIds,

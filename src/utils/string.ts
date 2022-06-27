@@ -8,7 +8,7 @@ const handlePreserveConsecutiveUppercase = (decamelized: string, separator: stri
   // simply lowercase the separated string at the end.
   // `data_For_USACounties` → `data_for_USACounties`
   const result = decamelized.replace(
-    /((?<![\p{Uppercase_Letter}\d])[\p{Uppercase_Letter}\d](?![\p{Uppercase_Letter}\d]))/gu,
+    /([\p{Uppercase_Letter}\d])[\p{Uppercase_Letter}\d](?![\p{Uppercase_Letter}\d])/gu,
     $0 => $0?.toLowerCase()
   );
 

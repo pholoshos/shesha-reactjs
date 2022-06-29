@@ -10,6 +10,7 @@ import camelCaseKeys from 'camelcase-keys';
 import _ from 'lodash';
 import { Alert } from 'antd';
 import { useDeepCompareEffect } from 'react-use';
+import TableViewSelectorRenderer from '../../../../tableViewSelectorRenderer';
 
 const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
   type: 'tableViewSelector',
@@ -102,7 +103,7 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
   }
 
   return (
-    <IndexViewSelectorRenderer
+    <TableViewSelectorRenderer
       filters={predefinedFilters || []}
       onSelectFilter={changeSelectedFilter}
       selectedFilterId={selectedFilterId}

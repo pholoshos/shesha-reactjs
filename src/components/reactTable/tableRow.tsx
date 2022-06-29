@@ -46,7 +46,7 @@ export const TableRow: FC<ISortableRowProps> = props => {
       )}
     >
       {row.cells.map(cell => {
-        return <RowCell cell={cell} />;
+        return <RowCell cell={cell} key={nanoid()} />;
       })}
     </span>
   );

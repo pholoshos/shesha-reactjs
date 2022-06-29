@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { ITableViewProps } from '../../../../../providers/tableViewSelectorConfigurator/models';
-import { Button, Tooltip } from 'antd';
+import { Button, Space, Tooltip } from 'antd';
 import { DeleteFilled, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { useTableViewSelectorConfigurator } from '../../../../../providers/tableViewSelectorConfigurator';
 import DragHandle from './dragHandle';
@@ -34,13 +34,15 @@ export const TableView: FC<IProps> = ({ onConfigClick, tooltip, id, name }) => {
     <div className={classNames('sha-toolbar-item', { selected: selectedItemId === id })}>
       <div className="sha-toolbar-item-header">
         <DragHandle id={id} />
-        {name}
+        <Space>
+          {name}
 
-        {tooltip && (
-          <Tooltip title={tooltip} className="sha-tooltip-icon">
-            <QuestionCircleOutlined />
-          </Tooltip>
-        )}
+          {tooltip && (
+            <Tooltip title={tooltip} className="sha-tooltip-icon">
+              <QuestionCircleOutlined />
+            </Tooltip>
+          )}
+        </Space>
         <div className="sha-toolbar-item-controls">
           <Button icon={<SettingOutlined />} onClick={onEditBtnClick} size="small" />
 

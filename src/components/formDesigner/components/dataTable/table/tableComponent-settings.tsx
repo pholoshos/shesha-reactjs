@@ -78,10 +78,10 @@ function ColumnsSettings(props: IProps) {
       </Form.Item>
 
       <Form.Item
-        name="isNotWrapped"
-        label="Is Not Wrapped"
+        name="flexibleHeight"
+        label="Flexible height"
         valuePropName="checked"
-        tooltip="By default, a table is wrapped inside"
+        tooltip="By default the height of the container of the table fills the entire screen to allow for the table wrapper for columns selector and filters. Check this if you wish to override that setting"
       >
         <Checkbox />
       </Form.Item>

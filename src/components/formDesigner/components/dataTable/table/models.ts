@@ -8,7 +8,7 @@ export interface ITableComponentBaseProps extends ITableCrudConfig {
   items: IConfigurableColumnsBase[];
   useMultiselect: boolean;
   crud: boolean;
-  isNotWrapped: boolean;
+  flexibleHeight: boolean;
   crudMode?: 'inline' | 'dialog';
   overrideDefaultCrudBehavior?: boolean;
   allowRowDragAndDrop?: boolean;

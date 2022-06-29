@@ -1,5 +1,9 @@
 .sidebar-container {
   height: calc(100vh);
+  &.flexible-height {
+    height: unset;
+  }
+
   width: 100%;
   overflow-x: hidden;
   background: @background-color;
@@ -10,9 +14,14 @@
   }
 
   .sidebar-container-body {
+    height: 100%;
+
+    &.flexible-height {
+      height: unset;
+    }
+
     display: flex;
     position: relative;
-    height: 100%;
     width: 100%;
 
     .sidebar-container-left,

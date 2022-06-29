@@ -73,6 +73,8 @@ export interface ICollapsibleSidebarContainerProps {
    * Whether there should no be padding
    */
   noPadding?: boolean;
+
+  flexibleHeight?: boolean;
 }
 
 export const CollapsibleSidebarContainer: FC<ICollapsibleSidebarContainerProps> = ({
@@ -82,6 +84,7 @@ export const CollapsibleSidebarContainer: FC<ICollapsibleSidebarContainerProps> 
   children,
   allowFullCollapse = false,
   noPadding = false,
+  flexibleHeight = false,
 }) => {
   const renderSidebar = (side: 'left' | 'right') => {
     const sidebarProps = side === 'left' ? leftSidebarProps : rightSidebarProps;
@@ -93,7 +96,13 @@ export const CollapsibleSidebarContainer: FC<ICollapsibleSidebarContainerProps> 
     const { open, onOpen, title, onClose, tooltip, content } = sidebarProps;
 
     return (
-      <div className={classNames(`sidebar-container-${side}`, { open }, { 'allow-full-collapse': allowFullCollapse })}>
+      <div
+        className={classNames(
+          `sidebar-container-${side}`,
+          { open },
+          { 'allow-full-collapse': allowFullCollapse, 'flexible-height': flexibleHeight }
+        )}
+      >
         <div className="sidebar-header">
           <div className={`sidebar-header-title ${side}`}>{typeof title === 'function' ? title() : title}</div>
           <div className={`sidebar-header-btn ${side}`} onClick={open ? onClose : onOpen}>
@@ -116,11 +125,17 @@ export const CollapsibleSidebarContainer: FC<ICollapsibleSidebarContainerProps> 
     );
   };
 
+  console.log('CollapsibleSidebarContainer flexibleHeight', flexibleHeight);
+
   return (
     <div className="sidebar-container">
       {header && <div className="sidebar-container-header">{typeof header === 'function' ? header() : header}</div>}
 
-      <div className="sidebar-container-body">
+      <div
+        className={classNames('sidebar-container-body', {
+          'flexible-height': flexibleHeight,
+        })}
+      >
         {renderSidebar('left')}
 
         <div

@@ -308,6 +308,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
             onDblClick={onDblClick}
             selectedRowIndex={selectedRowIndex}
             records={records}
+            options={{ omitClick: true }}
           />
         </>
       </Modal>

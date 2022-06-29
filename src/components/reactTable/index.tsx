@@ -54,6 +54,7 @@ const ReactTable: FC<IReactTableProps> = ({
   allowRowDragAndDrop = false,
   onRowDropped,
   selectedRowIndex,
+  omitClick,
 }) => {
   const [componentState, setComponentState] = useState<IReactTableState>({
     allRows: data,
@@ -228,7 +229,9 @@ const ReactTable: FC<IReactTableProps> = ({
   const onResizeClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event?.stopPropagation();
 
   const handleSelectRow = (row: Row<object>) => {
-    onSelectRow(row?.index, row?.original);
+    if (!omitClick) {
+      onSelectRow(row?.index, row?.original);
+    }
   };
 
   useEffect(() => {

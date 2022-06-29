@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { Button, Divider, Modal } from 'antd';
 import {
   TableViewSelectorConfiguratorProvider,
@@ -53,22 +53,18 @@ export const TableViewSelectorSettingsModalInner: FC<ITableViewSelectorSettingsM
   const { items } = useTableViewSelectorConfigurator();
   const configRef = useRef<ITableViewSelectorConfiguratorHandles>();
 
-  const filtersIds = items?.map(({ id }) => id);
-
-  useEffect(() => {
-    if (!visible) {
-      updateFilters();
-    }
-  }, [items?.length]);
-
   useDeepCompareEffect(() => {
-    updateFilters();
-  }, [filtersIds]);
+    if (!visible) {
+      // We only want to execute this code when the dialog is not visible
+      onChange(items);
+    }
+  }, [items]);
 
   const updateFilters = () => {
     if (typeof onChange === 'function') {
+      // This code will cause `items` to change, in which case `onChange` will get triggered
+      // As a result, we do not want want to call `onChange` again here
       configRef?.current?.saveFilters();
-      onChange(items);
     }
     hideModal();
   };

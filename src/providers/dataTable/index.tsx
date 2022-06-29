@@ -536,17 +536,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(changeSelectedStoredFilterIdsAction(selectedStoredFilterIds));
   };
 
-  // const previousPredefinedFilters = usePreviousDistinct(state?.predefinedFilters);
-
   const setPredefinedFilters = (filters: IStoredFilter[]) => {
     const filtersChanged = !isEqual(sortBy(state?.predefinedFilters), sortBy(filters));
-
-    console.log(
-      'setPredefinedFilters: previousPredefinedFilters, filters, filtersChanged: ',
-      state?.predefinedFilters,
-      filters,
-      filtersChanged
-    );
 
     if (filtersChanged) {
       dispatch(setPredefinedFiltersAction(filters));

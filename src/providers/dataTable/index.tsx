@@ -77,7 +77,6 @@ import { useSheshaApplication } from '../sheshaApplication';
 import { DataTablePubsubConstants } from './pubSub';
 import { useGlobalState } from '../globalState';
 import camelCaseKeys from 'camelcase-keys';
-import { usePreviousDistinct } from 'react-use';
 import { useShaRouting } from '../shaRouting';
 
 interface IDataTableProviderProps extends ICrudProps {
@@ -537,10 +536,17 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(changeSelectedStoredFilterIdsAction(selectedStoredFilterIds));
   };
 
-  const previousPredefinedFilters = usePreviousDistinct(state?.predefinedFilters);
+  // const previousPredefinedFilters = usePreviousDistinct(state?.predefinedFilters);
 
   const setPredefinedFilters = (filters: IStoredFilter[]) => {
-    const filtersChanged = !isEqual(sortBy(previousPredefinedFilters), sortBy(filters));
+    const filtersChanged = !isEqual(sortBy(state?.predefinedFilters), sortBy(filters));
+
+    console.log(
+      'setPredefinedFilters: previousPredefinedFilters, filters, filtersChanged: ',
+      state?.predefinedFilters,
+      filters,
+      filtersChanged
+    );
 
     if (filtersChanged) {
       dispatch(setPredefinedFiltersAction(filters));

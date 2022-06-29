@@ -1,9 +1,9 @@
-import React, { FC, MutableRefObject } from 'react';
+import React, { FC, MutableRefObject, useEffect } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { SelectOutlined } from '@ant-design/icons';
 import TableViewSelectorSettings from './tableViewSelectorSettings';
 import { ITableViewSelectorProps } from './models';
-import { IndexViewSelectorRenderer, useForm } from '../../../../..';
+import { useForm } from '../../../../..';
 import { useDataTableStore, useGlobalState } from '../../../../../providers';
 import { evaluateDynamicFilters } from '../../../../../providers/dataTable/utils';
 import camelCaseKeys from 'camelcase-keys';

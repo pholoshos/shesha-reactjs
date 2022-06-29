@@ -54,10 +54,13 @@ export const TableViewSelectorSettingsModalInner: FC<ITableViewSelectorSettingsM
   const configRef = useRef<ITableViewSelectorConfiguratorHandles>();
 
   useDeepCompareEffect(() => {
-    if (!visible) {
-      // We only want to execute this code when the dialog is not visible
-      onChange(items);
-    }
+    // TODO: Check why the items are not updating properly when the model closes
+    // if (!visible) {
+    //   // We only want to execute this code when the dialog is not visible
+    //   onChange(items);
+    // }
+
+    onChange(items);
   }, [items]);
 
   const updateFilters = () => {

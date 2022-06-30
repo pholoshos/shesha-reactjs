@@ -96,13 +96,7 @@ export const CollapsibleSidebarContainer: FC<ICollapsibleSidebarContainerProps> 
     const { open, onOpen, title, onClose, tooltip, content } = sidebarProps;
 
     return (
-      <div
-        className={classNames(
-          `sidebar-container-${side}`,
-          { open },
-          { 'allow-full-collapse': allowFullCollapse, 'flexible-height': flexibleHeight }
-        )}
-      >
+      <div className={classNames(`sidebar-container-${side}`, { open }, { 'allow-full-collapse': allowFullCollapse })}>
         <div className="sidebar-header">
           <div className={`sidebar-header-title ${side}`}>{typeof title === 'function' ? title() : title}</div>
           <div className={`sidebar-header-btn ${side}`} onClick={open ? onClose : onOpen}>
@@ -125,10 +119,8 @@ export const CollapsibleSidebarContainer: FC<ICollapsibleSidebarContainerProps> 
     );
   };
 
-  console.log('CollapsibleSidebarContainer flexibleHeight', flexibleHeight);
-
   return (
-    <div className="sidebar-container">
+    <div className={classNames('sidebar-container', { 'flexible-height': flexibleHeight })}>
       {header && <div className="sidebar-container-header">{typeof header === 'function' ? header() : header}</div>}
 
       <div

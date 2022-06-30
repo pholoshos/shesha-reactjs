@@ -32,9 +32,14 @@ const FormItem = Form.Item;
 
 const CRUD_MODAL_WIDTH = 700;
 
+export interface IIndexTableOptions {
+  omitClick?: boolean;
+}
+
 export interface IIndexTableProps extends IShaDataTableProps, ICrudProps, TableProps {
   tableRef?: MutableRefObject<Partial<DataTableFullInstance> | null>;
   records?: object[];
+  options?: IIndexTableOptions;
 }
 
 export interface IExtendedModalProps extends ModalProps {
@@ -63,6 +68,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
   records,
   onRowDropped,
   allowRowDragAndDrop,
+  options,
 }) => {
   const store = useDataTableStore();
   const { headers } = useAuthState();
@@ -578,6 +584,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
     onRowDropped,
     allowRowDragAndDrop,
     // pageSize: selectedPageSize,
+    omitClick: options?.omitClick,
   };
 
   const renderConfirmDialog = () => {

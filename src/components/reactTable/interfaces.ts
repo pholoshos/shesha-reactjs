@@ -171,4 +171,8 @@ export interface IReactTableProps extends ITableRowDragProps {
   height?: number;
 
   onSort?: (sorting: SortingRule<any>[]) => void;
+  /**
+   * Allows the click event to be skipped. Required if conflicting with double click event
+   */
+  omitClick?: boolean;
 }

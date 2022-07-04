@@ -18,7 +18,7 @@ import { AppConfiguratorProvider } from '../appConfigurator';
 import { DynamicModalProvider } from '../dynamicModal';
 import { UiProvider } from '../ui';
 import { MetadataDispatcherProvider } from '../metadataDispatcher';
-import { IToolboxComponentGroup } from '../..';
+import { IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
 
 /*
 import { 
@@ -39,6 +39,7 @@ export interface IShaApplicationProviderProps {
   toolboxComponentGroups?: IToolboxComponentGroup[];
   unauthorizedRedirectUrl?: string;
   whitelistUrls?: string[];
+  themeProps?: ThemeProviderProps;
 }
 
 const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>> = ({
@@ -80,22 +81,24 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
           }}
         >
           <UiProvider>
-            <ShaRoutingProvider router={router}>
-              <AuthProvider
-                tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
-                onSetRequestHeaders={onSetRequestHeaders}
-                unauthorizedRedirectUrl={unauthorizedRedirectUrl}
-                whitelistUrls={whitelistUrls}
-              >
-                <AuthorizationSettingsProvider>
-                  <AppConfiguratorProvider>
-                    <MetadataDispatcherProvider>
-                      <DynamicModalProvider>{children}</DynamicModalProvider>
-                    </MetadataDispatcherProvider>
-                  </AppConfiguratorProvider>
-                </AuthorizationSettingsProvider>
-              </AuthProvider>
-            </ShaRoutingProvider>
+            <ThemeProvider>
+              <ShaRoutingProvider router={router}>
+                <AuthProvider
+                  tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
+                  onSetRequestHeaders={onSetRequestHeaders}
+                  unauthorizedRedirectUrl={unauthorizedRedirectUrl}
+                  whitelistUrls={whitelistUrls}
+                >
+                  <AuthorizationSettingsProvider>
+                    <AppConfiguratorProvider>
+                      <MetadataDispatcherProvider>
+                        <DynamicModalProvider>{children}</DynamicModalProvider>
+                      </MetadataDispatcherProvider>
+                    </AppConfiguratorProvider>
+                  </AuthorizationSettingsProvider>
+                </AuthProvider>
+              </ShaRoutingProvider>
+            </ThemeProvider>
           </UiProvider>
         </RestfulProvider>
       </SheshaApplicationActionsContext.Provider>

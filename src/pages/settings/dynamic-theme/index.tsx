@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { ClockCircleOutlined, DownOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -6,7 +6,6 @@ import {
   Card,
   Checkbox,
   Col,
-  ConfigProvider,
   DatePicker,
   Divider,
   Dropdown,
@@ -36,497 +35,465 @@ import {
 } from 'antd';
 import { SketchPicker } from 'react-color';
 import { Page } from '../../../components';
-import { Theme } from 'antd/lib/config-provider/context';
 import { MyTransfer } from './transfer';
 import { SplitSpace } from './splitSpace';
-import { carTabListNoTitle, customTheme, inputProps, menuItems, selectProps, treeData, treeSelectProps } from './data';
-import { useLocalStorage } from 'react-use';
+import { carTabListNoTitle, inputProps, menuItems, selectProps, treeData, treeSelectProps } from './data';
+import { useTheme } from '../../..';
 
 export interface IConfigurableThemePageProps {}
 
-interface ITheme extends Theme {
-  outlineColor?: string;
-  [key: string]: any;
-}
-
-interface IPageState {
-  color?: ITheme;
-}
-
 const ConfigurableThemePage: FC<IConfigurableThemePageProps> = () => {
-  const [state, setState] = useState<IPageState>({
-    color: {},
-  });
+  const { theme, changeTheme } = useTheme();
 
-  const [persistedTheme, setPresistedTheme] = useLocalStorage('CUSTOM_THEME', customTheme);
-
-  useEffect(() => {
-    setState(prev => ({ ...prev, color: persistedTheme }));
-  }, [persistedTheme]);
-
-  const onColorChange = (nextColor: Partial<typeof state.color>) => {
-    const mergedNextColor: ITheme = {
-      ...state?.color,
+  const onColorChange = (nextColor: Partial<typeof theme>) => {
+    changeTheme({
+      ...theme,
       ...nextColor,
-    };
-    setState(prev => ({ ...prev, color: mergedNextColor }));
-    setPresistedTheme(mergedNextColor);
-
-    // console.log('mergedNextColor: ', mergedNextColor);
-
-    ConfigProvider.config({
-      theme: mergedNextColor,
     });
   };
 
   return (
     <Page title="Customize themme">
-      <ConfigProvider>
-        <Row gutter={16} wrap={false}>
-          <Col flex="none">
-            <Space direction="vertical" align="center">
-              {/* Primary Color */}
-              <SketchPicker
-                presetColors={['#1890ff', '#25b864', '#ff6f00']}
-                color={state?.color?.primaryColor}
-                onChange={({ hex }) => {
-                  onColorChange({
-                    primaryColor: hex,
-                  });
-                }}
-              />
+      <Row gutter={16} wrap={false}>
+        <Col flex="none">
+          <Space direction="vertical" align="center">
+            {/* Primary Color */}
+            <SketchPicker
+              presetColors={['#1890ff', '#25b864', '#ff6f00']}
+              color={theme?.primaryColor}
+              onChange={({ hex }) => {
+                onColorChange({
+                  primaryColor: hex,
+                });
+              }}
+            />
 
-              <span style={{ color: 'var(--ant-primary-color)' }}>var(`--ant-primary-color`)</span>
+            <span style={{ color: 'var(--ant-primary-color)' }}>var(`--ant-primary-color`)</span>
 
-              {/* Error Color */}
-              <SketchPicker
-                presetColors={['#ff4d4f']}
-                color={state?.color?.errorColor}
-                onChange={({ hex }) => {
-                  onColorChange({
-                    errorColor: hex,
-                  });
-                }}
-              />
+            {/* Error Color */}
+            <SketchPicker
+              presetColors={['#ff4d4f']}
+              color={theme?.errorColor}
+              onChange={({ hex }) => {
+                onColorChange({
+                  errorColor: hex,
+                });
+              }}
+            />
 
-              <span style={{ color: 'var(--ant-error-color)' }}>var(`--ant-error-color`)</span>
+            <span style={{ color: 'var(--ant-error-color)' }}>var(`--ant-error-color`)</span>
 
-              {/* Warning Color */}
-              <SketchPicker
-                presetColors={['#faad14']}
-                color={state?.color?.warningColor}
-                onChange={({ hex }) => {
-                  onColorChange({
-                    warningColor: hex,
-                  });
-                }}
-              />
+            {/* Warning Color */}
+            <SketchPicker
+              presetColors={['#faad14']}
+              color={theme?.warningColor}
+              onChange={({ hex }) => {
+                onColorChange({
+                  warningColor: hex,
+                });
+              }}
+            />
 
-              <span style={{ color: 'var(--ant-warning-color)' }}>var(`--ant-warning-color`)</span>
+            <span style={{ color: 'var(--ant-warning-color)' }}>var(`--ant-warning-color`)</span>
 
-              {/* Success Color */}
-              <SketchPicker
-                presetColors={['#52c41a']}
-                color={state?.color?.successColor}
-                onChange={({ hex }) => {
-                  onColorChange({
-                    successColor: hex,
-                  });
-                }}
-              />
+            {/* Success Color */}
+            <SketchPicker
+              presetColors={['#52c41a']}
+              color={theme?.successColor}
+              onChange={({ hex }) => {
+                onColorChange({
+                  successColor: hex,
+                });
+              }}
+            />
 
-              <span style={{ color: 'var(--ant-success-color)' }}>var(`--ant-success-color`)</span>
+            <span style={{ color: 'var(--ant-success-color)' }}>var(`--ant-success-color`)</span>
 
-              {/* Info Color */}
-              <SketchPicker
-                presetColors={['#1890ff']}
-                color={state?.color?.infoColor}
-                onChange={({ hex }) => {
-                  onColorChange({
-                    infoColor: hex,
-                  });
-                }}
-              />
+            {/* Info Color */}
+            <SketchPicker
+              presetColors={['#1890ff']}
+              color={theme?.infoColor}
+              onChange={({ hex }) => {
+                onColorChange({
+                  infoColor: hex,
+                });
+              }}
+            />
 
-              <span style={{ color: 'var(--ant-info-color)' }}>var(`--ant-info-color`)</span>
-            </Space>
-          </Col>
+            <span style={{ color: 'var(--ant-info-color)' }}>var(`--ant-info-color`)</span>
+          </Space>
+        </Col>
 
-          <Col flex="auto">
-            <Space direction="vertical" split={<Divider />} style={{ width: '100%' }} size={0}>
-              {/* Primary Button */}
-              <SplitSpace>
-                <Button type="primary">Primary</Button>
-                <Button>Default</Button>
-                <Button type="dashed">Dashed</Button>
-                <Button type="text">Text</Button>
-                <Button type="link">Link</Button>
-              </SplitSpace>
+        <Col flex="auto">
+          <Space direction="vertical" split={<Divider />} style={{ width: '100%' }} size={0}>
+            {/* Primary Button */}
+            <SplitSpace>
+              <Button type="primary">Primary</Button>
+              <Button>Default</Button>
+              <Button type="dashed">Dashed</Button>
+              <Button type="text">Text</Button>
+              <Button type="link">Link</Button>
+            </SplitSpace>
 
-              {/* Danger Button */}
-              <SplitSpace>
-                <Button danger type="primary">
-                  Primary
-                </Button>
-                <Button danger>Default</Button>
-                <Button danger type="dashed">
-                  Dashed
-                </Button>
-                <Button danger type="text">
-                  Text
-                </Button>
-                <Button danger type="link">
-                  Link
-                </Button>
-              </SplitSpace>
+            {/* Danger Button */}
+            <SplitSpace>
+              <Button danger type="primary">
+                Primary
+              </Button>
+              <Button danger>Default</Button>
+              <Button danger type="dashed">
+                Dashed
+              </Button>
+              <Button danger type="text">
+                Text
+              </Button>
+              <Button danger type="link">
+                Link
+              </Button>
+            </SplitSpace>
 
-              {/* Ghost Button */}
-              <SplitSpace style={{ background: 'rgb(190, 200, 200)' }}>
-                <Button type="primary" ghost>
-                  Primary
-                </Button>
-                <Button ghost>Default</Button>
-                <Button type="dashed" ghost>
-                  Dashed
-                </Button>
-                <Button type="primary" ghost danger>
-                  Primary
-                </Button>
-                <Button ghost danger>
-                  Default
-                </Button>
-                <Button type="dashed" ghost danger>
-                  Dashed
-                </Button>
-              </SplitSpace>
+            {/* Ghost Button */}
+            <SplitSpace style={{ background: 'rgb(190, 200, 200)' }}>
+              <Button type="primary" ghost>
+                Primary
+              </Button>
+              <Button ghost>Default</Button>
+              <Button type="dashed" ghost>
+                Dashed
+              </Button>
+              <Button type="primary" ghost danger>
+                Primary
+              </Button>
+              <Button ghost danger>
+                Default
+              </Button>
+              <Button type="dashed" ghost danger>
+                Dashed
+              </Button>
+            </SplitSpace>
 
-              {/* Typography */}
-              <SplitSpace>
-                <Typography.Text type="success">Text (success)</Typography.Text>
-                <Typography.Text type="warning">Text(warning)</Typography.Text>
-                <Typography.Text type="danger">Text(danger)</Typography.Text>
-                <Typography.Link href="https://ant.design" target="_blank">
-                  Link
-                </Typography.Link>
-                <Typography.Text copyable>Text</Typography.Text>
+            {/* Typography */}
+            <SplitSpace>
+              <Typography.Text type="success">Text (success)</Typography.Text>
+              <Typography.Text type="warning">Text(warning)</Typography.Text>
+              <Typography.Text type="danger">Text(danger)</Typography.Text>
+              <Typography.Link href="https://ant.design" target="_blank">
+                Link
+              </Typography.Link>
+              <Typography.Text copyable>Text</Typography.Text>
 
-                {/* Dropdown */}
-                <Dropdown
-                  overlay={
-                    <Menu
-                      items={[
-                        {
-                          key: '1',
-                          label: '1st menu item',
-                        },
-                        {
-                          key: '2',
-                          label: 'a danger item',
-                          danger: true,
-                        },
-                      ]}
-                    />
-                  }
-                >
-                  <a onClick={e => e.preventDefault()}>
-                    <Space>
-                      Hover me
-                      <DownOutlined />
-                    </Space>
-                  </a>
-                </Dropdown>
-
-                {/* Spin */}
-                <Spin />
-              </SplitSpace>
-
-              {/* Menu - horizontal */}
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Menu mode="horizontal" defaultSelectedKeys={['mail']} items={menuItems} />
-                </Col>
-                <Col span={12}>
-                  <Menu mode="horizontal" theme="dark" defaultSelectedKeys={['mail']} items={menuItems} />
-                </Col>
-              </Row>
-
-              {/* Menu - vertical */}
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Menu mode="inline" defaultSelectedKeys={['mail']} items={menuItems} />
-                </Col>
-                <Col span={12}>
-                  <Menu mode="vertical" theme="dark" defaultSelectedKeys={['mail']} items={menuItems} />
-                </Col>
-              </Row>
-
-              {/* Pagination */}
-              <Pagination showQuickJumper defaultCurrent={2} total={500} />
-
-              {/* Steps */}
-              <Steps current={1} percent={60}>
-                <Steps.Step title="Finished" description="This is a description." />
-                <Steps.Step title="In Progress" subTitle="Left 00:00:08" description="This is a description." />
-                <Steps.Step title="Waiting" description="This is a description." />
-              </Steps>
-
-              {/* Steps - dot */}
-              <Steps current={2} status="error" progressDot>
-                <Steps.Step title="Finished" description="You can hover on the dot." />
-                <Steps.Step title="In Progress" description="You can hover on the dot." />
-                <Steps.Step title="Error" description="You can hover on the dot." />
-                <Steps.Step title="Waiting" description="You can hover on the dot." />
-              </Steps>
-
-              {/* Form - Input */}
-              <Form>
-                <SplitSpace>
-                  <Form.Item>
-                    <Input {...inputProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="success">
-                    <Input {...inputProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="warning">
-                    <Input {...inputProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="error">
-                    <Input {...inputProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="validating">
-                    <Input {...inputProps} />
-                  </Form.Item>
-                </SplitSpace>
-              </Form>
-
-              {/* Form - Select */}
-              <Form>
-                <SplitSpace>
-                  <Form.Item>
-                    <Select {...selectProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="success">
-                    <Select {...selectProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="warning">
-                    <Select {...selectProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="error">
-                    <Select {...selectProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="validating">
-                    <Select {...selectProps} />
-                  </Form.Item>
-                </SplitSpace>
-              </Form>
-
-              {/* Form - TreeSelect */}
-              <Form>
-                <SplitSpace>
-                  <Form.Item>
-                    <TreeSelect {...treeSelectProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="success">
-                    <TreeSelect {...treeSelectProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="warning">
-                    <TreeSelect {...treeSelectProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="error">
-                    <TreeSelect {...treeSelectProps} />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="validating">
-                    <TreeSelect {...treeSelectProps} />
-                  </Form.Item>
-                </SplitSpace>
-              </Form>
-
-              {/* Form - InputNumber */}
-              <Form>
-                <SplitSpace>
-                  <Form.Item>
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="success">
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="warning">
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="error">
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="validating">
-                    <InputNumber />
-                  </Form.Item>
-                </SplitSpace>
-              </Form>
-
-              {/* Form - DatePicker */}
-              <Form>
-                <SplitSpace>
-                  <Form.Item>
-                    <DatePicker />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="success">
-                    <DatePicker />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="warning">
-                    <DatePicker />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="error">
-                    <DatePicker />
-                  </Form.Item>
-                  <Form.Item hasFeedback validateStatus="validating">
-                    <DatePicker />
-                  </Form.Item>
-                </SplitSpace>
-              </Form>
-
-              <SplitSpace>
-                <Checkbox>Checkbox</Checkbox>
-
-                <Radio.Group defaultValue="bamboo">
-                  <Radio value="bamboo">Bamboo</Radio>
-                  <Radio value="light">Light</Radio>
-                  <Radio value="little">Little</Radio>
-                </Radio.Group>
-
-                <Mentions placeholder="Mention by @">
-                  <Mentions.Option value="afc163">afc163</Mentions.Option>
-                  <Mentions.Option value="zombieJ">zombieJ</Mentions.Option>
-                  <Mentions.Option value="yesmeck">yesmeck</Mentions.Option>
-                </Mentions>
-
-                <Slider defaultValue={30} style={{ width: 100 }} />
-
-                <Switch defaultChecked />
-              </SplitSpace>
-
-              <SplitSpace>
-                <DatePicker.RangePicker />
-                <TimePicker.RangePicker />
-              </SplitSpace>
-
-              <Row gutter={16}>
-                <Col span={8}>
-                  {/* Card */}
-                  <Card
-                    style={{ width: '100%' }}
-                    tabList={carTabListNoTitle}
-                    tabBarExtraContent={<a href="#">More</a>}
-                  />
-                </Col>
-                <Col span={8}>
-                  {/* Table */}
-                  <Table
-                    size="small"
-                    bordered
-                    rowSelection={{}}
-                    columns={[
+              {/* Dropdown */}
+              <Dropdown
+                overlay={
+                  <Menu
+                    items={[
                       {
-                        title: 'Key',
-                        dataIndex: 'key',
-                        filters: [
-                          {
-                            text: 'Little',
-                            value: 'little',
-                          },
-                        ],
-                        sorter: (a, b) => a.key.length - b.key.length,
-                      },
-                    ]}
-                    dataSource={[
-                      {
-                        key: 'Bamboo',
+                        key: '1',
+                        label: '1st menu item',
                       },
                       {
-                        key: 'Light',
-                      },
-                      {
-                        key: 'Little',
+                        key: '2',
+                        label: 'a danger item',
+                        danger: true,
                       },
                     ]}
                   />
-                </Col>
-                <Col span={8}>
-                  {/* Table */}
-                  <Tabs defaultActiveKey="1">
-                    <Tabs.TabPane tab="Tab 1" key="1">
-                      Content of Tab Pane 1
-                    </Tabs.TabPane>
-                    <Tabs.TabPane tab="Tab 2" key="2">
-                      Content of Tab Pane 2
-                    </Tabs.TabPane>
-                    <Tabs.TabPane tab="Tab 3" key="3">
-                      Content of Tab Pane 3
-                    </Tabs.TabPane>
-                  </Tabs>
-                </Col>
-              </Row>
+                }
+              >
+                <a onClick={e => e.preventDefault()}>
+                  <Space>
+                    Hover me
+                    <DownOutlined />
+                  </Space>
+                </a>
+              </Dropdown>
 
+              {/* Spin */}
+              <Spin />
+            </SplitSpace>
+
+            {/* Menu - horizontal */}
+            <Row gutter={16}>
+              <Col span={12}>
+                <Menu mode="horizontal" defaultSelectedKeys={['mail']} items={menuItems} />
+              </Col>
+              <Col span={12}>
+                <Menu mode="horizontal" theme="dark" defaultSelectedKeys={['mail']} items={menuItems} />
+              </Col>
+            </Row>
+
+            {/* Menu - vertical */}
+            <Row gutter={16}>
+              <Col span={12}>
+                <Menu mode="inline" defaultSelectedKeys={['mail']} items={menuItems} />
+              </Col>
+              <Col span={12}>
+                <Menu mode="vertical" theme="dark" defaultSelectedKeys={['mail']} items={menuItems} />
+              </Col>
+            </Row>
+
+            {/* Pagination */}
+            <Pagination showQuickJumper defaultCurrent={2} total={500} />
+
+            {/* Steps */}
+            <Steps current={1} percent={60}>
+              <Steps.Step title="Finished" description="This is a description." />
+              <Steps.Step title="In Progress" subTitle="Left 00:00:08" description="This is a description." />
+              <Steps.Step title="Waiting" description="This is a description." />
+            </Steps>
+
+            {/* Steps - dot */}
+            <Steps current={2} status="error" progressDot>
+              <Steps.Step title="Finished" description="You can hover on the dot." />
+              <Steps.Step title="In Progress" description="You can hover on the dot." />
+              <Steps.Step title="Error" description="You can hover on the dot." />
+              <Steps.Step title="Waiting" description="You can hover on the dot." />
+            </Steps>
+
+            {/* Form - Input */}
+            <Form>
               <SplitSpace>
-                <Tag color="success">success</Tag>
-                <Tag color="processing">processing</Tag>
-                <Tag color="error">error</Tag>
-                <Tag color="warning">warning</Tag>
-                <Tag color="default">default</Tag>
-                <Tag.CheckableTag checked>CheckableTag</Tag.CheckableTag>
+                <Form.Item>
+                  <Input {...inputProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="success">
+                  <Input {...inputProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="warning">
+                  <Input {...inputProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="error">
+                  <Input {...inputProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="validating">
+                  <Input {...inputProps} />
+                </Form.Item>
               </SplitSpace>
+            </Form>
 
-              <Row gutter={16}>
-                <Col span={16}>
-                  <Timeline mode="alternate">
-                    <Timeline.Item>Create a services site 2015-09-01</Timeline.Item>
-                    <Timeline.Item color="gray">Solve initial network problems 2015-09-01</Timeline.Item>
-                    <Timeline.Item dot={<ClockCircleOutlined style={{ fontSize: '16px' }} />}>
-                      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-                      totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
-                      dicta sunt explicabo.
-                    </Timeline.Item>
-                  </Timeline>
-                </Col>
+            {/* Form - Select */}
+            <Form>
+              <SplitSpace>
+                <Form.Item>
+                  <Select {...selectProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="success">
+                  <Select {...selectProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="warning">
+                  <Select {...selectProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="error">
+                  <Select {...selectProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="validating">
+                  <Select {...selectProps} />
+                </Form.Item>
+              </SplitSpace>
+            </Form>
 
-                <Col span={8}>
-                  <Tree treeData={treeData} height={200} defaultExpandAll checkable />
-                </Col>
-              </Row>
+            {/* Form - TreeSelect */}
+            <Form>
+              <SplitSpace>
+                <Form.Item>
+                  <TreeSelect {...treeSelectProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="success">
+                  <TreeSelect {...treeSelectProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="warning">
+                  <TreeSelect {...treeSelectProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="error">
+                  <TreeSelect {...treeSelectProps} />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="validating">
+                  <TreeSelect {...treeSelectProps} />
+                </Form.Item>
+              </SplitSpace>
+            </Form>
 
-              {/* Alert */}
-              <Row gutter={16}>
-                <Col span={6}>
-                  <Alert showIcon message="Success Text" type="success" />
-                </Col>
-                <Col span={6}>
-                  <Alert showIcon message="Info Text" type="info" />
-                </Col>
-                <Col span={6}>
-                  <Alert showIcon message="Warning Text" type="warning" />
-                </Col>
-                <Col span={6}>
-                  <Alert showIcon message="Error Text" type="error" />
-                </Col>
-              </Row>
+            {/* Form - InputNumber */}
+            <Form>
+              <SplitSpace>
+                <Form.Item>
+                  <InputNumber />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="success">
+                  <InputNumber />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="warning">
+                  <InputNumber />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="error">
+                  <InputNumber />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="validating">
+                  <InputNumber />
+                </Form.Item>
+              </SplitSpace>
+            </Form>
 
-              {/* Progress */}
-              <Row gutter={16}>
-                <Col flex="auto">
-                  <Progress percent={30} />
-                  <Progress percent={70} status="exception" />
-                  <Progress percent={100} />
-                </Col>
-                <Col flex="none">
-                  <Progress type="circle" percent={75} />
-                  <Progress type="circle" percent={70} status="exception" />
-                  <Progress type="circle" percent={100} />
-                </Col>
-              </Row>
+            {/* Form - DatePicker */}
+            <Form>
+              <SplitSpace>
+                <Form.Item>
+                  <DatePicker />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="success">
+                  <DatePicker />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="warning">
+                  <DatePicker />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="error">
+                  <DatePicker />
+                </Form.Item>
+                <Form.Item hasFeedback validateStatus="validating">
+                  <DatePicker />
+                </Form.Item>
+              </SplitSpace>
+            </Form>
 
-              <MyTransfer />
-            </Space>
-          </Col>
-        </Row>
-      </ConfigProvider>
+            <SplitSpace>
+              <Checkbox>Checkbox</Checkbox>
+
+              <Radio.Group defaultValue="bamboo">
+                <Radio value="bamboo">Bamboo</Radio>
+                <Radio value="light">Light</Radio>
+                <Radio value="little">Little</Radio>
+              </Radio.Group>
+
+              <Mentions placeholder="Mention by @">
+                <Mentions.Option value="afc163">afc163</Mentions.Option>
+                <Mentions.Option value="zombieJ">zombieJ</Mentions.Option>
+                <Mentions.Option value="yesmeck">yesmeck</Mentions.Option>
+              </Mentions>
+
+              <Slider defaultValue={30} style={{ width: 100 }} />
+
+              <Switch defaultChecked />
+            </SplitSpace>
+
+            <SplitSpace>
+              <DatePicker.RangePicker />
+              <TimePicker.RangePicker />
+            </SplitSpace>
+
+            <Row gutter={16}>
+              <Col span={8}>
+                {/* Card */}
+                <Card style={{ width: '100%' }} tabList={carTabListNoTitle} tabBarExtraContent={<a href="#">More</a>} />
+              </Col>
+              <Col span={8}>
+                {/* Table */}
+                <Table
+                  size="small"
+                  bordered
+                  rowSelection={{}}
+                  columns={[
+                    {
+                      title: 'Key',
+                      dataIndex: 'key',
+                      filters: [
+                        {
+                          text: 'Little',
+                          value: 'little',
+                        },
+                      ],
+                      sorter: (a, b) => a.key.length - b.key.length,
+                    },
+                  ]}
+                  dataSource={[
+                    {
+                      key: 'Bamboo',
+                    },
+                    {
+                      key: 'Light',
+                    },
+                    {
+                      key: 'Little',
+                    },
+                  ]}
+                />
+              </Col>
+              <Col span={8}>
+                {/* Table */}
+                <Tabs defaultActiveKey="1">
+                  <Tabs.TabPane tab="Tab 1" key="1">
+                    Content of Tab Pane 1
+                  </Tabs.TabPane>
+                  <Tabs.TabPane tab="Tab 2" key="2">
+                    Content of Tab Pane 2
+                  </Tabs.TabPane>
+                  <Tabs.TabPane tab="Tab 3" key="3">
+                    Content of Tab Pane 3
+                  </Tabs.TabPane>
+                </Tabs>
+              </Col>
+            </Row>
+
+            <SplitSpace>
+              <Tag color="success">success</Tag>
+              <Tag color="processing">processing</Tag>
+              <Tag color="error">error</Tag>
+              <Tag color="warning">warning</Tag>
+              <Tag color="default">default</Tag>
+              <Tag.CheckableTag checked>CheckableTag</Tag.CheckableTag>
+            </SplitSpace>
+
+            <Row gutter={16}>
+              <Col span={16}>
+                <Timeline mode="alternate">
+                  <Timeline.Item>Create a services site 2015-09-01</Timeline.Item>
+                  <Timeline.Item color="gray">Solve initial network problems 2015-09-01</Timeline.Item>
+                  <Timeline.Item dot={<ClockCircleOutlined style={{ fontSize: '16px' }} />}>
+                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+                    totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
+                    dicta sunt explicabo.
+                  </Timeline.Item>
+                </Timeline>
+              </Col>
+
+              <Col span={8}>
+                <Tree treeData={treeData} height={200} defaultExpandAll checkable />
+              </Col>
+            </Row>
+
+            {/* Alert */}
+            <Row gutter={16}>
+              <Col span={6}>
+                <Alert showIcon message="Success Text" type="success" />
+              </Col>
+              <Col span={6}>
+                <Alert showIcon message="Info Text" type="info" />
+              </Col>
+              <Col span={6}>
+                <Alert showIcon message="Warning Text" type="warning" />
+              </Col>
+              <Col span={6}>
+                <Alert showIcon message="Error Text" type="error" />
+              </Col>
+            </Row>
+
+            {/* Progress */}
+            <Row gutter={16}>
+              <Col flex="auto">
+                <Progress percent={30} />
+                <Progress percent={70} status="exception" />
+                <Progress percent={100} />
+              </Col>
+              <Col flex="none">
+                <Progress type="circle" percent={75} />
+                <Progress type="circle" percent={70} status="exception" />
+                <Progress type="circle" percent={100} />
+              </Col>
+            </Row>
+
+            <MyTransfer />
+          </Space>
+        </Col>
+      </Row>
     </Page>
   );
 };

@@ -11,7 +11,9 @@ export interface IThemeActionsContext {
   /* NEW_ACTION_ACTION_DECLARATIO_GOES_HERE */
 }
 
-export const THEME_CONTEXT_INITIAL_STATE: IThemeStateContext = {};
+export const THEME_CONTEXT_INITIAL_STATE: IThemeStateContext = {
+  theme: null,
+};
 
 export const UiStateContext = createContext<IThemeStateContext>(THEME_CONTEXT_INITIAL_STATE);
 

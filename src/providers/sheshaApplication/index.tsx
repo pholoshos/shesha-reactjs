@@ -51,6 +51,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
   toolboxComponentGroups = [],
   unauthorizedRedirectUrl,
   whitelistUrls,
+  themeProps,
 }) => {
   const [state, dispatch] = useReducer(appConfiguratorReducer, {
     ...SHESHA_APPLICATION_CONTEXT_INITIAL_STATE,
@@ -81,7 +82,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
           }}
         >
           <UiProvider>
-            <ThemeProvider>
+            <ThemeProvider {...(themeProps || {})}>
               <ShaRoutingProvider router={router}>
                 <AuthProvider
                   tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}

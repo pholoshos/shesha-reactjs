@@ -14,27 +14,23 @@ import { isEqual } from 'lodash';
 export interface ThemeProviderProps {
   prefixCls?: string;
   iconPrefixCls?: string;
+  themeConfigKey?: string;
 }
 
 const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
   iconPrefixCls,
+  themeConfigKey = THEME_CONFIG_KEY,
   prefixCls = 'custom',
 }) => {
   const [state, dispatch] = useReducer(uiReducer, THEME_CONTEXT_INITIAL_STATE);
 
-  const [persistedTheme, setPersistedTheme] = useLocalStorage<Theme>(THEME_CONFIG_KEY);
+  const [persistedTheme, setPersistedTheme] = useLocalStorage<Theme>(themeConfigKey);
 
   // Set the theme to the store if not set
   useEffect(() => {
     if (!state?.theme) {
       changeTheme(persistedTheme);
-
-      ConfigProvider.config({
-        prefixCls,
-        theme: state?.theme,
-        iconPrefixCls,
-      });
     }
   }, [persistedTheme]);
 
@@ -43,16 +39,20 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
     if (state && !isEqual(state?.theme, persistedTheme)) {
       setPersistedTheme(state?.theme);
     }
+
+    ConfigProvider.config({
+      prefixCls,
+      theme: state?.theme,
+      iconPrefixCls,
+    });
   }, [state?.theme]);
 
   // Make an API Call to fetch the theme
-
   const changeTheme = (theme: Theme) => {
     dispatch(setThemeAction(theme));
   };
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
-
   return (
     <UiStateContext.Provider value={state}>
       <UiActionsContext.Provider

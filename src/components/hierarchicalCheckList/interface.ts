@@ -37,7 +37,7 @@ export enum CheckListSelectionType {
   NotAvailable = 3,
 }
 
-export interface IEventDataNodeWithData extends EventDataNode {
+export interface IEventDataNodeWithData extends EventDataNode<any> {
   data: IExtendedCheckListItemModel;
 }
 
@@ -51,7 +51,7 @@ export interface IDataNode {
 }
 
 export interface IExpandProps {
-  node: EventDataNode;
+  node: EventDataNode<any>;
   expanded: boolean;
   nativeEvent: MouseEvent;
 }
@@ -59,7 +59,7 @@ export interface IExpandProps {
 export interface ISelectProps {
   event: 'select';
   selected: boolean;
-  node: EventDataNode | IEventDataNodeWithData;
+  node: EventDataNode<any> | IEventDataNodeWithData;
   selectedNodes: DataNode[];
   nativeEvent: MouseEvent;
 }
@@ -76,7 +76,7 @@ export interface ICheckProps {
 
 export interface ICheckInfo {
   event: 'check';
-  node: EventDataNode;
+  node: EventDataNode<any>;
   checked: boolean;
   nativeEvent: MouseEvent;
   checkedNodes: DataNode[];

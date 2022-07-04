@@ -14,3 +14,4 @@ export { default as EntityConfiguratorPage } from './pages/entity-config/configu
 export { default as DynamicPage } from './pages/dynamic';
 export { default as FormsIndexPage } from './pages/settings/form';
 export { default as EntityConfigurationsIndexPage } from './pages/entity-config/index';
+export { default as ConfigurableThemePage } from './pages/settings/dynamic-theme';

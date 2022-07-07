@@ -227,9 +227,9 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
 
   const additionalQueryParams = incomingQueryParams || {};
 
-  const doFetchItems = (term: string) => {
+  const doFetchItems = (term: string, ignoreSelectedValue = false) => {
     const selectedValue =
-      typeof value === 'string'
+      typeof value === 'string' && !ignoreSelectedValue
         ? value
         : /*: isStringArray(value)
         ? value*/
@@ -288,6 +288,11 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
     }
   };
 
+  // Refetch when clear because at this stage, only 1 item (which is the previsously selected item) is in the list of options
+  const onClear = () => {
+    doFetchItems(null, true);
+  };
+
   const debouncedFetchItems = useDebouncedCallback<(value: string) => void>(
     localValue => {
       doFetchItems(localValue);
@@ -325,6 +330,7 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
     });
 
     const selectedItem = wrapValue(value);
+
     // Remove items which are already exist in the fetched items.
     // Note: we shouldn't process full list and make it unique because by this way we'll hide duplicates received from the back-end
     const selectedItems = selectedItem
@@ -409,6 +415,7 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
       bordered={bordered}
       style={style}
       size={size}
+      onClear={onClear}
       mode={value ? mode : undefined} // When mode is multiple and value is null, the control shows an empty tag
     >
       {options?.map(({ value: localValue, label, data }) => (

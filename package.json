@@ -43,7 +43,6 @@
   },
   "peerDependencies": {
     "@microsoft/signalr": "^5.0.3",
-    "@use-it/interval": "^1.0.0",
     "axios": "^0.21.1",
     "classnames": "^2.3.1",
     "file-saver": "^2.0.5",
@@ -99,7 +98,6 @@
     "@types/redux-actions": "2.6.1",
     "@types/rollup-plugin-peer-deps-external": "^2.2.0",
     "@types/uuid": "^8.3.3",
-    "@use-it/interval": "^1.0.0",
     "antd": "^4.15.5",
     "axios": "^0.21.1",
     "babel-core": "6.26.3",

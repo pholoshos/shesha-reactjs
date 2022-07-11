@@ -1,7 +1,7 @@
-import useInterval from '@use-it/interval';
 import { Modal, Progress } from 'antd';
 import React, { FC, PropsWithChildren, useState } from 'react';
 import IdleTimer from 'react-idle-timer';
+import { useInterval } from 'react-use';
 import { useAuth } from '../../providers/auth';
 import { useAuthorizationSettings } from '../../providers/authorizationSettings';
 import { getPercentage, getStatus, getTimeFormat, MIN_TIME, ONE_SECOND, SIXTY } from './util';
@@ -37,9 +37,13 @@ export const IdleTimerRenderer: FC<PropsWithChildren<IIdleTimerRendererProps>> =
     }
   }, ONE_SECOND);
 
-  const onAction = (_event: Event) => { /*nop*/ };
+  const onAction = (_event: Event) => {
+    /*nop*/
+  };
 
-  const onActive = (_event: Event) => { /*nop*/ };
+  const onActive = (_event: Event) => {
+    /*nop*/
+  };
 
   const onIdle = (_event: Event) => setState(s => ({ ...s, isIdle: true }));
 

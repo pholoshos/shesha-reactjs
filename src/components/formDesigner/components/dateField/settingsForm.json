@@ -103,6 +103,14 @@
       "defaultValue": "DD/MM/YYYY"
     },
     {
+      "id": "aa619384-f071-4e6c-a472-77c16f55a0d9",
+      "type": "textField",
+      "name": "timeFormat",
+      "parentId": "root",
+      "label": "Time Format",
+      "defaultValue": "HH:mm:ss"
+    },
+    {
       "id": "13baec80-15ca-439d-98ab-a339a0952928",
       "type": "textField",
       "name": "yearFormat",
@@ -274,6 +282,16 @@
       "parentId": "root",
       "label": "Show Time",
       "defaultValue": false
+    },
+    {
+      "id": "cae2b4ed-c957-43e1-90b4-8ac491fb9a16",
+      "type": "checkbox",
+      "name": "defaultToMidnight",
+      "parentId": "root",
+      "label": "Default time to midnight",
+      "customVisibility": "return data.showTime",
+      "description": "If checked the default time will be '00:00:00', else it will be the current time on the machine",
+      "defaultValue": true
     },
     {
       "id": "88266ea0-4ba5-49d1-8f13-b34d684989c0",

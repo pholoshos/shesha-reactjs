@@ -91,8 +91,9 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
       dateTimeDynamic: DateTimeDynamicWidget,
       datetime: {
         ...InitialConfig.widgets.datetime,
+        timeFormat: 'HH:mm:ss',
         jsonLogic: (val, _, wgtDef) => {
-          return moment.utc(val, wgtDef.valueFormat).toDate(); // Ignore timezone
+          return moment(val, wgtDef.valueFormat).format();
         },
       },
     };

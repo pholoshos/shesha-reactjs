@@ -165,22 +165,9 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     },
   });
 
-  const fetchDataTableData = (payload: IGetDataPayload) => {
-    // save current user configuration to local storage
-    const userConfigToSave = {
-      pageSize: payload.pageSize,
-      currentPage: payload.currentPage,
-      quickSearch: payload.quickSearch,
-      columns: state.columns,
-      tableSorting: payload.sorting,
-      selectedStoredFilterIds: payload.selectedStoredFilterIds || state?.selectedStoredFilterIds,
-      tableFilter: payload.filter,
-    };
-
-    setUserDTSettings(userConfigToSave);
-
+  const expandFetchDataPayload = (payload: IGetDataPayload, providedState: IDataTableStateContext): IGetDataPayload => {
     // convert filters
-    const allFilters = [...(state.predefinedFilters || []), ...(state.storedFilters || [])];
+    const allFilters = [...(providedState?.predefinedFilters || []), ...(providedState?.storedFilters || [])];
 
     const filters = payload.selectedStoredFilterIds
       .map(id => allFilters.find(f => f.id === id))
@@ -189,8 +176,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     const expandedPayload: IGetDataPayload = { ...payload, selectedFilters: filters };
 
     // Check against state.selectedStoredFilterIds as well
-    if (filters?.length === 0 && state?.predefinedFilters?.length) {
-      const foundSelectedFilter = state?.predefinedFilters?.find(({ defaultSelected }) => defaultSelected);
+    if (filters?.length === 0 && providedState?.predefinedFilters?.length) {
+      const foundSelectedFilter = providedState?.predefinedFilters?.find(({ defaultSelected }) => defaultSelected);
 
       if (foundSelectedFilter) {
         expandedPayload.selectedStoredFilterIds = [foundSelectedFilter?.id];
@@ -221,6 +208,25 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
         expandedPayload.selectedFilters = [];
       }
     }
+
+    return expandedPayload;
+  }
+
+  const fetchDataTableData = (payload: IGetDataPayload) => {
+    // save current user configuration to local storage
+    const userConfigToSave = {
+      pageSize: payload.pageSize,
+      currentPage: payload.currentPage,
+      quickSearch: payload.quickSearch,
+      columns: state.columns,
+      tableSorting: payload.sorting,
+      selectedStoredFilterIds: payload.selectedStoredFilterIds || state?.selectedStoredFilterIds,
+      tableFilter: payload.filter,
+    };
+
+    setUserDTSettings(userConfigToSave);
+
+    const expandedPayload = expandFetchDataPayload(payload, state);
 
     return fetchDataTableDataInternal(expandedPayload);
   };
@@ -435,12 +441,15 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const exportToExcel = () => {
     dispatch((dispatchThunk, getState) => {
       dispatchThunk(exportToExcelRequestAction());
-      const payload = getFetchTableDataPayloadInternal(getState());
+      const currentState = getState();
+      const payload = getFetchTableDataPayloadInternal(currentState);
+      
+      const expandedPayload = expandFetchDataPayload(payload, currentState);
 
       axios({
         url: `${backendUrl}` + (getExportToExcelPath ?? `/api/DataTable/ExportToExcel`),
         method: 'POST',
-        data: payload,
+        data: expandedPayload,
         responseType: 'blob', // important
         headers,
       })

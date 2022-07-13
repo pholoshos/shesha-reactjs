@@ -215,12 +215,14 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       if (
         foundFilter &&
         (!foundFilter?.expression || // Filter has no expression
-          (foundFilter?.hasDynamicExpression && !foundFilter?.allFieldsEvaluatedSuccessfully)) // Filter has expression but not all expressions have been evaluated
+          foundFilter?.unevaluatedExpressions?.length) // Filter has expression but not all expressions have been evaluated
       ) {
         expandedPayload.selectedStoredFilterIds = [];
         expandedPayload.selectedFilters = [];
       }
     }
+
+    console.log('expandedPayload: ', expandedPayload);
 
     return fetchDataTableDataInternal(expandedPayload);
   };

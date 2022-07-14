@@ -59,3 +59,7 @@ export const getUrlWithoutQueryParams = (url: string) => {
 
   return `${urlObj?.host}${urlObj?.pathname}`;
 };
+
+export const isValidSubmitVerb = (submitVerb: string) => {
+  return ['POST', 'PUT', 'PATCH', 'DELETE']?.includes(submitVerb?.trim()?.toLocaleUpperCase());
+};

@@ -32,11 +32,6 @@ export interface DocgenInfo {
   props: Props;
 }
 
-export interface IFormMarkupWithSettings {
-  columns?: [];
-  settings: IFormSettings;
-}
-
 export interface IFormSettings {
   layout: string;
   colon: boolean;
@@ -49,6 +44,11 @@ export interface IFormSettings {
   modelType: string;
   postUrl: string;
   getUrl: string;
+}
+
+export interface IFormMarkupWithSettings {
+  columns?: [];
+  settings: IFormSettings;
 }
 
 export const useCreateForm = (

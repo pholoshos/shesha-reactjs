@@ -16,13 +16,15 @@ import { customDateEventHandler } from '../utils';
 import { axiosHttp } from '../../../../apis/axios';
 
 const DATE_TIME_FORMATS = {
-  time: 'HH:mm',
+  time: 'HH:mm:ss',
   week: 'YYYY-wo',
   date: 'DD/MM/YYYY',
   quarter: 'YYYY-\\QQ',
   month: 'YYYY-MM',
   year: 'YYYY',
 };
+
+const MIDNIGHT_MOMENT = moment('00:00:00', 'HH:mm:ss');
 
 const { RangePicker } = DatePicker;
 
@@ -43,6 +45,7 @@ export interface IDateFieldProps extends IConfigurableFormComponent {
   hideBorder?: boolean;
   showTime?: boolean;
   showNow?: boolean;
+  defaultToMidnight?: boolean;
   showToday?: boolean;
   timeFormat?: string;
   yearFormat?: string;
@@ -105,6 +108,7 @@ const DateField: IToolboxComponent<IDateFieldProps> = {
       showTime: false,
       dateFormat: DATE_TIME_FORMATS?.date,
       timeFormat: DATE_TIME_FORMATS.time,
+      defaultToMidnight: true,
     };
     return customModel;
   },
@@ -140,6 +144,7 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
     disabledDateFunc,
     readOnly,
     style,
+    defaultToMidnight,
     ...rest
   } = props;
   const { form, formMode, isComponentDisabled, formData } = useForm();
@@ -182,7 +187,7 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
       return;
     }
 
-    const newValue = isMoment(localValue) ? localValue.utc().format() : localValue;
+    const newValue = isMoment(localValue) ? localValue.format() : localValue;
 
     (onChange as TimePickerChangeEvent)(newValue, dateString);
   };
@@ -194,7 +199,7 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
     }
 
     const dates = (values as []).map((val: any) => {
-      if (isMoment(val)) return val.utc().format();
+      if (isMoment(val)) return val.format();
 
       return val;
     });
@@ -208,8 +213,8 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
 
     if (info?.range === 'end' && form) {
       form.setFieldsValue({
-        [`${name}Start`]: isMoment(startDate) ? startDate?.toISOString() : null,
-        [`${name}End`]: isMoment(endDate) ? endDate?.toISOString() : null,
+        [`${name}Start`]: isMoment(startDate) ? startDate?.format() : null,
+        [`${name}End`]: isMoment(endDate) ? endDate?.format() : null,
       });
     }
   };
@@ -240,7 +245,8 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
         defaultValue={getRangePickerValues(defaultValue)}
         {...rest}
         picker={picker}
-        showTime={showTime}
+        showTime={showTime ? (defaultToMidnight ? { defaultValue: [MIDNIGHT_MOMENT, MIDNIGHT_MOMENT] } : true) : false}
+        showSecond
         disabled={isDisabled}
         style={getStyle(style, formData)}
         allowClear
@@ -255,10 +261,10 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
       disabled={isDisabled}
       onChange={handleDatePickerChange}
       bordered={!hideBorder}
-      showTime={showTime}
+      showTime={showTime ? (defaultToMidnight ? { defaultValue: MIDNIGHT_MOMENT } : true) : false}
       showNow={showNow}
       showToday={showToday}
-      showSecond={false}
+      showSecond={true}
       picker={picker}
       format={pickerFormat}
       style={getStyle(style, formData)}

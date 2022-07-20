@@ -158,7 +158,7 @@
     },
     {
       "id": "db913b1b-3b25-46c9-afef-21854d917ba7",
-      "type": "textField",
+      "type": "numberField",
       "name": "filesCategory",
       "parentId": "root",
       "label": "Files Category"

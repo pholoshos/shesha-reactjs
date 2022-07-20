@@ -10,9 +10,9 @@ import includePaths from 'rollup-plugin-includepaths';
 import bundleScss from 'rollup-plugin-bundle-scss';
 import localResolve from 'rollup-plugin-local-resolve';
 import { terser } from 'rollup-plugin-terser';
-import pkg from './package.json';
 import json from 'rollup-plugin-json';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import pkg from './package.json';
 
 export default {
   input: ['src/index.tsx', 'src/providers/index.ts'],
@@ -47,7 +47,6 @@ export default {
     'os',
     'axios',
     'restful-react',
-    '@use-it/interval',
     '@microsoft/signalr',
     'react-beautiful-dnd',
     'react-sortablejs',

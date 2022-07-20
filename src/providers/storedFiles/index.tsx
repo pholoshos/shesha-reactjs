@@ -138,7 +138,7 @@ const StoredFilesProvider: FC<PropsWithChildren<IStoredFilesProviderProps>> = ({
     formData.append('ownerId', payload.ownerId || state.ownerId);
     formData.append('ownerType', payload.ownerType || state.ownerType);
     formData.append('file', file);
-    formData.append('filesCategory', '');
+    formData.append('filesCategory', `${filesCategory}`);
     formData.append('propertyName', '');
 
     // @ts-ignore

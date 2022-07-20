@@ -14,60 +14,9 @@ import { useGlobalState, useSheshaApplication } from '../../providers';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
 import { IFormDto } from '../../providers/form/models';
 import { evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
-import { getQueryParams } from '../../utils/url';
+import { getQueryParams, isValidSubmitVerb } from '../../utils/url';
+import { EntityAjaxResponse, IDynamicPageProps, IDynamicPageState } from './interfaces';
 import { DynamicFormPubSubConstants } from './pubSub';
-
-type FormMode = 'designer' | 'edit' | 'readonly';
-
-export interface IDynamicPageProps {
-  /**
-   * Form path. You can pass either this or `formId`. This is required if `formId` is not provided
-   */
-  path?: string;
-
-  /**
-   * Entity id. This should not be confused with the form id
-   */
-  id?: string;
-
-  /**
-   * Form id. You can pass either this or the `path`. This is required if `path` is not provided
-   */
-  formId?: string;
-
-  /**
-   * form mode.
-   */
-  mode?: FormMode;
-
-  /**
-   * This tells the dynamic page that the id should be passed as a path and not as a query parameter
-   * this is the id for fetching the entity
-   *
-   * Required if the id is not provided
-   */
-  entityPathId?: string;
-}
-
-export interface EntityAjaxResponse {
-  targetUrl?: string | null;
-  success?: boolean;
-  error?: unknown;
-  unAuthorizedRequest?: boolean;
-  __abp?: boolean;
-  result?: IEntity;
-}
-
-interface IEntity {
-  id: string;
-  [name: string]: unknown;
-}
-
-interface IDynamicPageState extends IDynamicPageProps {
-  formResponse?: IFormDto;
-  fetchedData?: IEntity;
-  mode?: FormMode;
-}
 
 const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const { backendUrl } = useSheshaApplication();
@@ -110,10 +59,10 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     }
 
     if (result) {
-      const formResponse: IFormDto = { ...(result as any) };
-      formResponse.markup = JSON.parse(result.markup);
+      const localFormResponse: IFormDto = { ...(result as any) };
+      localFormResponse.markup = JSON.parse(result.markup);
 
-      return formResponse;
+      return localFormResponse;
     }
 
     return null;
@@ -137,8 +86,20 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     lazy: true, // We wanna make sure we have both the id and the state?.markup?.formSettings?.getUrl before fetching data
   });
 
-  const putUrl = useMemo(() => {
-    const url = formResponse?.markup?.formSettings?.putUrl;
+  const submitVerb = useMemo(() => {
+    const verb = state?.submitVerb?.toUpperCase() as typeof state.submitVerb;
+
+    const defaultSubmitVerb = id || Boolean(state?.fetchedData) ? 'PUT' : 'POST';
+
+    return verb && isValidSubmitVerb(verb) ? verb : defaultSubmitVerb;
+  }, [state?.fetchedData]);
+
+  const submitUrl = useMemo(() => {
+    const url = formResponse?.markup?.formSettings[`${submitVerb?.toLocaleLowerCase()}Url`];
+
+    if (!url && formResponse?.markup?.formSettings) {
+      console.warn(`Please make sure you have specified the '${submitVerb}' URL`);
+    }
 
     return url
       ? evaluateComplexString(url, [
@@ -146,7 +107,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
           { match: 'globalState', data: globalState },
         ])
       : '';
-  }, [formResponse?.markup?.formSettings]);
+  }, [formResponse?.markup?.formSettings, submitVerb]);
 
   const onDataLoaded = formResponse?.markup?.formSettings?.onDataLoaded;
 
@@ -157,8 +118,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [onDataLoaded, state?.fetchedData]);
 
   const { mutate: postData, loading: isPostingData } = useMutate({
-    path: putUrl,
-    verb: id ? 'PUT' : 'POST',
+    path: submitUrl,
+    verb: submitVerb,
   });
 
   useEffect(() => {
@@ -181,8 +142,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     }
   }, [id, formResponse?.markup?.formSettings?.getUrl, entityPathId, fetchDataPath]);
 
-  const onChangeId = (id: string) => {
-    setState(prev => ({ ...prev, id }));
+  const onChangeId = (localId: string) => {
+    setState(prev => ({ ...prev, id: localId }));
   };
 
   const onChangeFormData = (payload: ISetFormDataPayload) => {
@@ -220,11 +181,11 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     }
 
     if (result) {
-      const formResponse: IFormDto = { ...(result as any) };
+      const localFormResponse: IFormDto = { ...(result as any) };
 
-      formResponse.markup = JSON.parse(result.markup);
+      localFormResponse.markup = JSON.parse(result.markup);
 
-      setState(prev => ({ ...prev, formResponse }));
+      setState(prev => ({ ...prev, formResponse: localFormResponse }));
     }
   }, [dataByPath, dataById]);
   //#endregion
@@ -233,8 +194,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     postData(values)
       .then(() => {
         message.success('Data saved successfully!');
-        
-        publish(DynamicFormPubSubConstants.DataSaved)
+
+        publish(DynamicFormPubSubConstants.DataSaved);
 
         formRef?.current?.setFormMode('readonly');
       })

@@ -68,7 +68,7 @@ const ConfigurableThemePage: FC<IConfigurableThemePageProps> = () => {
               }}
             />
 
-            <span style={{ color: 'var(--ant-primary-color)' }}>var(`--ant-primary-color`)</span>
+            <span style={{ color: 'var(--sha-primary-color)' }}>var(`--sha-primary-color`)</span>
 
             {/* Error Color */}
             <SketchPicker
@@ -81,7 +81,7 @@ const ConfigurableThemePage: FC<IConfigurableThemePageProps> = () => {
               }}
             />
 
-            <span style={{ color: 'var(--ant-error-color)' }}>var(`--ant-error-color`)</span>
+            <span style={{ color: 'var(--sha-error-color)' }}>var(`--sha-error-color`)</span>
 
             {/* Warning Color */}
             <SketchPicker
@@ -94,7 +94,7 @@ const ConfigurableThemePage: FC<IConfigurableThemePageProps> = () => {
               }}
             />
 
-            <span style={{ color: 'var(--ant-warning-color)' }}>var(`--ant-warning-color`)</span>
+            <span style={{ color: 'var(--sha-warning-color)' }}>var(`--sha-warning-color`)</span>
 
             {/* Success Color */}
             <SketchPicker
@@ -107,7 +107,7 @@ const ConfigurableThemePage: FC<IConfigurableThemePageProps> = () => {
               }}
             />
 
-            <span style={{ color: 'var(--ant-success-color)' }}>var(`--ant-success-color`)</span>
+            <span style={{ color: 'var(--sha-success-color)' }}>var(`--sha-success-color`)</span>
 
             {/* Info Color */}
             <SketchPicker
@@ -120,7 +120,7 @@ const ConfigurableThemePage: FC<IConfigurableThemePageProps> = () => {
               }}
             />
 
-            <span style={{ color: 'var(--ant-info-color)' }}>var(`--ant-info-color`)</span>
+            <span style={{ color: 'var(--sha-info-color)' }}>var(`--sha-info-color`)</span>
           </Space>
         </Col>
 

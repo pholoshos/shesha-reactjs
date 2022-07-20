@@ -1,6 +1,6 @@
 .highlightedSuggestion() {
   cursor: pointer;
-  background: @sha-primary-hover-color;
+  background: var(--sha-primary-3);
 }
 
 .location-search-input-wrapper {
@@ -19,11 +19,10 @@
     }
 
     .suggestion-container {
-
       padding: 2.5px 5px;
-      transition: all .2s ease-in;
+      transition: all 0.2s ease-in;
 
-      border-bottom: 1px solid #E8E8E8;
+      border-bottom: 1px solid #e8e8e8;
 
       &:hover {
         .highlightedSuggestion();

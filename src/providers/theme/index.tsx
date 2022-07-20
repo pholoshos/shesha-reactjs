@@ -21,7 +21,7 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
   iconPrefixCls,
   themeConfigKey = THEME_CONFIG_KEY,
-  prefixCls = 'custom',
+  prefixCls = 'sha',
 }) => {
   const [state, dispatch] = useReducer(uiReducer, THEME_CONTEXT_INITIAL_STATE);
 

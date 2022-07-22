@@ -21,7 +21,9 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
   iconPrefixCls,
   themeConfigKey = THEME_CONFIG_KEY,
-  prefixCls = 'sha',
+
+  // TODO: Later this to be configurable so that. Currently if you change it the layout fails because the styling references the `--ant prefixCls`
+  prefixCls = 'ant', 
 }) => {
   const [state, dispatch] = useReducer(uiReducer, THEME_CONTEXT_INITIAL_STATE);
 

@@ -1,6 +1,5 @@
-import '../src/styles/index.less';
-// import 'antd/dist/antd.less';
-import './themeVariables.css';
+import '../dist/styles/styles.css';
+import './compiled.antd.variable.css';
 
 import React from 'react';
 import { RestfulProvider } from 'restful-react';

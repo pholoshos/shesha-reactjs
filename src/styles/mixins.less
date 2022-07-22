@@ -1,5 +1,9 @@
 @import 'variables';
 
+.special-freaking-class {
+  background: var(--ant-primary-color);
+}
+
 // All the transitions in this app should be like this
 .transition(...) {
   transition: @sha-transition-all;
@@ -14,7 +18,7 @@
   .transition();
 
   &:hover {
-    color: var(--sha-primary-color) !important;
+    color: var(--ant-primary-color) !important;
   }
 
   cursor: pointer;
@@ -24,7 +28,7 @@
   .transition();
 
   &:hover {
-    color: var(--sha-warning-color) !important;
+    color: var(--ant-warning-color) !important;
   }
 
   cursor: pointer;

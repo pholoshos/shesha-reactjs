@@ -24,7 +24,7 @@ export interface IDataNode {
 
 export interface ICheckInfo {
   event: 'check';
-  node: EventDataNode<any>;
+  node: EventDataNode;
   checked: boolean;
   nativeEvent: MouseEvent;
   checkedNodes: DataNode[];

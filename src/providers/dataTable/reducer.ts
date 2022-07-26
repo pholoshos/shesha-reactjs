@@ -594,6 +594,26 @@ const reducer = handleActions<IDataTableStateContext, any>(
       };
     },
 
+    [DataTableActionEnums.ExportToExcelError]: (state: IDataTableStateContext, action: ReduxActions.Action<string>) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        exportToExcelError: payload,
+      };
+    },
+    [DataTableActionEnums.ExportToExcelWarning]: (
+      state: IDataTableStateContext,
+      action: ReduxActions.Action<string>
+    ) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        exportToExcelWarning: payload,
+      };
+    },
+
     [DataTableActionEnums.SetCrudConfig]: (
       state: IDataTableStateContext,
       action: ReduxActions.Action<ITableCrudConfig>

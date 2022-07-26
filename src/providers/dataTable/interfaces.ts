@@ -91,6 +91,14 @@ export interface IGetDataPayload {
   readonly parentEntityId?: string;
   selectedStoredFilterIds?: string[];
   selectedFilters?: IStoredFilter[];
+
+  /**
+   * If this is true, the data table will be cleared
+   *
+   * This is useful in a case where the payload has filters which have not been fully evaluated and `onlyFetchWhenFullyEvaluated` is `true`
+   * the wouldn't wat to fetch the data at this stage and they don't want any data to be displayed on the table view as that would be misleading
+   */
+  skipFetch?: boolean;
 }
 
 export interface ITableDataResponse {
@@ -147,6 +155,8 @@ export interface IStoredFilter {
 
   // use
   useExpression?: boolean;
+
+  onlyFetchWhenFullyEvaluated?: boolean;
 
   selected?: boolean;
 

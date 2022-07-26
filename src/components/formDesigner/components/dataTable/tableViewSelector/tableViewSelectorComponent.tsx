@@ -1,4 +1,4 @@
-import React, { FC, MutableRefObject } from 'react';
+import React, { FC, MutableRefObject, useEffect } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { SelectOutlined } from '@ant-design/icons';
 import TableViewSelectorSettings from './tableViewSelectorSettings';
@@ -8,7 +8,7 @@ import { useDataTableStore, useGlobalState } from '../../../../../providers';
 import { evaluateDynamicFilters } from '../../../../../providers/dataTable/utils';
 import camelCaseKeys from 'camelcase-keys';
 import _ from 'lodash';
-import { Alert } from 'antd';
+import { Alert, message } from 'antd';
 import { useDeepCompareEffect } from 'react-use';
 import TableViewSelectorRenderer from '../../../../tableViewSelectorRenderer';
 
@@ -47,6 +47,8 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
     setPredefinedFilters,
     predefinedFilters,
     changePersistedFiltersToggle,
+    exportToExcelError,
+    exportToExcelWarning,
   } = useDataTableStore();
   const { globalState } = useGlobalState();
   const { formData, formMode } = useForm();
@@ -60,6 +62,18 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
 
   const selectedFilterId =
     selectedStoredFilterIds && selectedStoredFilterIds.length > 0 ? selectedStoredFilterIds[0] : null;
+
+  useEffect(() => {
+    if (exportToExcelError) {
+      message.error(exportToExcelError);
+    }
+  }, [exportToExcelError]);
+
+  useEffect(() => {
+    if (exportToExcelWarning) {
+      message.warn(exportToExcelWarning);
+    }
+  }, [exportToExcelWarning]);
 
   //#region Filters
   const debounceEvaluateDynamicFiltersHelper = () => {

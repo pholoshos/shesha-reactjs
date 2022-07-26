@@ -76,6 +76,17 @@
       "validate": {}
     },
     {
+      "id": "a9531292-e566-4c96-b76d-0c2037364e0b",
+      "type": "checkbox",
+      "name": "onlyFetchWhenFullyEvaluated",
+      "label": "Only fetch data when fully evaluated",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {},
+      "description": "When checked, the data will only be fetched when this query has been fully evaluated"
+    },
+    {
       "id": "318927a4-3d05-4002-8a88-db2b616cba67",
       "type": "queryBuilder",
       "name": "expression",

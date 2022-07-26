@@ -59,6 +59,9 @@ export interface IDataTableStateContext
   extends IFlagsState<IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags> {
   title?: string;
 
+  exportToExcelError?: string;
+
+  exportToExcelWarning?: string;
   /**
    * Useful for entity picker as the column that has to be used to display when the entity has been selected
    */

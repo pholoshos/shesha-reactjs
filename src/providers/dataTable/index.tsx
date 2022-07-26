@@ -46,6 +46,7 @@ import {
   changeDisplayColumnAction,
   changeActionedRowAction,
   changePersistedFiltersToggleAction,
+  exportToExcelWarningAction,
 } from './actions';
 import {
   ITableDataResponse,
@@ -169,6 +170,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     // convert filters
     const allFilters = [...(providedState?.predefinedFilters || []), ...(providedState?.storedFilters || [])];
 
+    let skipFetch = false;
+
     const filters = payload.selectedStoredFilterIds
       .map(id => allFilters.find(f => f.id === id))
       .filter(f => Boolean(f));
@@ -204,15 +207,25 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
         (!foundFilter?.expression || // Filter has no expression
           foundFilter?.unevaluatedExpressions?.length) // Filter has expression but not all expressions have been evaluated
       ) {
+        if (foundFilter?.unevaluatedExpressions?.length && foundFilter?.onlyFetchWhenFullyEvaluated) {
+          // Do not fetch if this condition is true
+          skipFetch = true;
+        }
+
         expandedPayload.selectedStoredFilterIds = [];
         expandedPayload.selectedFilters = [];
       }
     }
 
-    return expandedPayload;
-  }
+    return { ...expandedPayload, skipFetch };
+  };
 
-  const fetchDataTableData = (payload: IGetDataPayload) => {
+  /**
+   * Returns the fetch data table data or null in a case where `skipFetch: true`
+   * @param payload
+   * @returns Promise<IResult<ITableDataResponse>> or null
+   */
+  const fetchDataTableData = (payload: IGetDataPayload): Promise<IResult<ITableDataResponse>> | null => {
     // save current user configuration to local storage
     const userConfigToSave = {
       pageSize: payload.pageSize,
@@ -227,6 +240,10 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     setUserDTSettings(userConfigToSave);
 
     const expandedPayload = expandFetchDataPayload(payload, state);
+
+    if (expandedPayload?.skipFetch) {
+      return null;
+    }
 
     return fetchDataTableDataInternal(expandedPayload);
   };
@@ -322,11 +339,31 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   const debouncedFetch = useDebouncedCallback(
     (payload: any) => {
-      fetchDataTableData(payload)
+      const fetchDataFunc = fetchDataTableData(payload);
+
+      const finishFetching = () => {
+        if (onFetchDataSuccess && typeof onFetchDataSuccess === 'function') {
+          onFetchDataSuccess();
+        }
+      };
+
+      if (fetchDataFunc === null) {
+        finishFetching();
+
+        dispatch(
+          fetchTableDataSuccessAction({
+            totalPages: 0,
+            totalRows: 0,
+            totalRowsBeforeFilter: 0,
+            rows: [],
+          })
+        );
+        return;
+      }
+
+      fetchDataFunc
         .then(data => {
-          if (onFetchDataSuccess && typeof onFetchDataSuccess === 'function') {
-            onFetchDataSuccess();
-          }
+          finishFetching();
           dispatch(fetchTableDataSuccessAction(data.result));
         })
         .catch(e => {
@@ -443,8 +480,18 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       dispatchThunk(exportToExcelRequestAction());
       const currentState = getState();
       const payload = getFetchTableDataPayloadInternal(currentState);
-      
+
       const expandedPayload = expandFetchDataPayload(payload, currentState);
+
+      dispatchThunk(exportToExcelWarningAction(null));
+
+      if (expandedPayload.skipFetch) {
+        dispatchThunk(
+          exportToExcelWarningAction('Could not export to excel because not all filters have been fully evaluated')
+        );
+
+        return;
+      }
 
       axios({
         url: `${backendUrl}` + (getExportToExcelPath ?? `/api/DataTable/ExportToExcel`),
@@ -458,7 +505,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           FileSaver.saveAs(new Blob([response.data]), 'Export.xlsx');
         })
         .catch(() => {
-          dispatchThunk(exportToExcelErrorAction());
+          dispatchThunk(exportToExcelErrorAction('There was an error exporting data to excel'));
         });
     });
   };

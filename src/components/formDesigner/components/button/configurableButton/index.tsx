@@ -141,7 +141,7 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       case 'executeFormAction':
       case 'customAction':
         if (props?.formAction) {
-          if (props?.formAction != 'CUSTOM_ACTION') {
+          if (props?.formAction !== 'CUSTOM_ACTION') {
             publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
           } else {
             if (props.customFormAction) {

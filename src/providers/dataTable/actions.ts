@@ -27,6 +27,7 @@ export enum DataTableActionEnums {
   ExportToExcelRequest = 'EXPORT_TO_EXCEL_REQUEST',
   ExportToExcelSuccess = 'EXPORT_TO_EXCEL_SUCCESS',
   ExportToExcelError = 'EXPORT_TO_EXCEL_ERROR',
+  ExportToExcelWarning = 'EXPORT_TO_EXCEL_WARNING',
 
   ChangePageSize = 'CHANGE_PAGE_SIZE',
   SetCurrentPage = 'SET_CURRENT_PAGE',
@@ -163,7 +164,11 @@ export const changeSelectedIdsAction = createAction<string[], string[]>(DataTabl
 
 export const exportToExcelRequestAction = createAction(DataTableActionEnums.ExportToExcelRequest);
 export const exportToExcelSuccessAction = createAction(DataTableActionEnums.ExportToExcelSuccess);
-export const exportToExcelErrorAction = createAction(DataTableActionEnums.ExportToExcelError);
+export const exportToExcelErrorAction = createAction<string, string>(DataTableActionEnums.ExportToExcelError, p => p);
+export const exportToExcelWarningAction = createAction<string, string>(
+  DataTableActionEnums.ExportToExcelWarning,
+  p => p
+);
 
 export const updateLocalTableDataAction = createAction(DataTableActionEnums.UpdateLocalTableData);
 

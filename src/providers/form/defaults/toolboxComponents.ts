@@ -62,6 +62,7 @@ import RichTextEditor from '../../../components/formDesigner/components/richText
 import PasswordCombo from '../../../components/formDesigner/components/passwordCombo';
 import PermissionsTree from '../../../components/formDesigner/components/permissions/permissionsTree/permissionsTree';
 import PermissionTagGroup from '../../../components/formDesigner/components/permissions/permissionTagGroup';
+import List from '../../../components/formDesigner/components/listControl';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -106,6 +107,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       EditableTagGroup,
       EntityPickerComponent,
       FileUpload,
+      List,
       Filter,
       HierarchicalChecklistComponent,
       KeyValueEditor,

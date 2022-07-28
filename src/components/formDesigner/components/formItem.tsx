@@ -22,6 +22,7 @@ export interface IConfigurableFormItemProps {
   customVisibility?: string;
   wrapperCol?: ColProps;
   labelCol?: ColProps;
+  listFormComponentIndex?: number;
 }
 
 const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
@@ -32,6 +33,7 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
   className,
   labelCol,
   wrapperCol,
+  listFormComponentIndex,
 }) => {
   const { isComponentHidden, formData } = useForm();
 
@@ -39,10 +41,25 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
 
   const style = model?.hidden ? { display: 'none' } : {};
 
+  const getPropName = () => {
+    const computedName = getFieldNameFromExpression(model.name);
+
+    if (listFormComponentIndex) {
+      return typeof computedName === 'string'
+        ? [listFormComponentIndex, computedName]
+        : [listFormComponentIndex, ...computedName];
+    }
+
+    return computedName;
+  };
+
+  console.log('getPropName: ', listFormComponentIndex, getPropName());
+
   return (
     <Form.Item
       className={classNames(className, { 'form-item-hidden': model.hideLabel })}
-      name={getFieldNameFromExpression(model.name)}
+      name={getPropName()}
+      // name={getFieldNameFromExpression(model.name)}
       label={model.hideLabel ? null : model.label}
       labelAlign={model.labelAlign}
       hidden={isHidden}

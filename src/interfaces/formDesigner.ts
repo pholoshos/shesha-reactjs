@@ -41,7 +41,8 @@ export interface IToolboxComponent<T = IConfigurableFormComponent> {
   factory?: (
     model: T,
     componentRef: MutableRefObject<any>,
-    form: FormInstance<any>
+    form: FormInstance<any>,
+    listFormComponentIndex: number
   ) => //settings: AuthorizationSettingsDto
   ReactNode;
   /**

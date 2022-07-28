@@ -6,7 +6,7 @@ import { ItemInterface, ReactSortable } from 'react-sortablejs';
 
 export type Direction = 'horizontal' | 'vertical';
 
-export interface IProps {
+export interface IComponentsContainerProps {
   containerId: string;
   direction?: Direction;
   justifyContent?: string;
@@ -14,8 +14,10 @@ export interface IProps {
   justifyItems?: string;
   className?: string;
   render?: (components: JSX.Element[]) => ReactNode;
+  itemsLimit?: number;
+  listFormComponentIndex?: number;
 }
-const ComponentsContainer: FC<IProps> = ({
+const ComponentsContainer: FC<IComponentsContainerProps> = ({
   containerId,
   children,
   direction = 'vertical',
@@ -24,6 +26,8 @@ const ComponentsContainer: FC<IProps> = ({
   justifyItems,
   className,
   render,
+  listFormComponentIndex,
+  itemsLimit = -1,
 }) => {
   const {
     getChildComponents,
@@ -48,6 +52,10 @@ const ComponentsContainer: FC<IProps> = ({
   }));
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
+    if (!isNaN(itemsLimit) && itemsLimit && newState?.length === Math.round(itemsLimit) + 1) {
+      return;
+    }
+
     // temporary commented out, the behavoiur of the sortablejs differs sometimes
     const listChanged = true; //!newState.some(item => item.chosen !== null && item.chosen !== undefined);
 
@@ -93,7 +101,7 @@ const ComponentsContainer: FC<IProps> = ({
 
   const renderComponents = () => {
     const renderedComponents = components.map((c, index) => (
-      <ConfigurableFormComponent id={c.id} index={index} key={c.id} />
+      <ConfigurableFormComponent id={c.id} index={index} key={c.id} listFormComponentIndex={listFormComponentIndex} />
     ));
 
     return typeof render === 'function' ? render(renderedComponents) : renderedComponents;

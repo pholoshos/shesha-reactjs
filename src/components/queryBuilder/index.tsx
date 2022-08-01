@@ -11,8 +11,6 @@ import {
   Widgets,
 } from 'react-awesome-query-builder';
 import classNames from 'classnames';
-// For AntDesign widgets only:
-import AntdConfig from 'react-awesome-query-builder/lib/config/antd';
 import { ITableColumn } from '../../interfaces';
 import { IProperty } from '../../providers/queryBuilder/models';
 import EntityAutocompleteWidget from './widgets/entityAutocomplete';
@@ -23,8 +21,7 @@ import { DataTypes } from '../../interfaces/dataTypes';
 import DateTimeDynamicWidget from './widgets/dateTimeDynamic';
 import DateTimeDynamicType from './types/dateTimeDynamic';
 import moment from 'moment';
-
-const InitialConfig = AntdConfig;
+import { config as InitialConfig } from './config';
 
 export interface IQueryBuilderColumn extends ITableColumn {
   fieldSettings?: FieldSettings;
@@ -170,13 +167,14 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
             break;
         }
 
+        const fieldPreferWidgets = preferWidgets || defaultPreferWidgets || [];
         conf.fields[propertyName] = {
           label,
           type,
           valueSources: ['value'],
           // @ts-ignore note: types are wrong in the library, they doesn't allow to extend
           fieldSettings,
-          preferWidgets: preferWidgets || defaultPreferWidgets,
+          preferWidgets: fieldPreferWidgets.length > 0 ? fieldPreferWidgets : undefined,
         };
       }
     });
@@ -206,7 +204,6 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
 
   const handleChange = (_tree: ImmutableTree, _config: Config) => {
     // Tip: for better performance you can apply `throttle` - see `examples/demo`
-
     setState({
       tree: _tree,
       config: _config,

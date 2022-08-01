@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useBoolean } from 'react-use';
-import { useDataTableGetData } from '../../apis/dataTable';
 import transformJS from 'js-to-json-logic';
 import { useDataTable } from '../../providers';
+import { useMutate } from 'restful-react';
 
 const UNIQUE_FILTER_ID = 'HjHi0UVD27o8Ub8zfz6dH';
 
 export const useSelectedTableRow = (selectedTableId: string) => {
   const [data, setData] = useState<object>();
   const [loading, setLoading] = useBoolean(false);
-  const { entityType, tableId, properties, tableData } = useDataTable();
-
-  const { mutate } = useDataTableGetData({});
+  const { entityType, properties, tableData } = useDataTable();
+  const { mutate } = useMutate({
+    verb: 'POST',
+    path: '', /* todo:restore */
+  });
 
   useEffect(() => {
     if (!selectedTableId) return;
@@ -21,9 +23,8 @@ export const useSelectedTableRow = (selectedTableId: string) => {
     }
 
     setLoading(true);
-
+    
     mutate({
-      id: tableId,
       entityType,
       properties,
       pageSize: 1,
@@ -46,7 +47,8 @@ export const useSelectedTableRow = (selectedTableId: string) => {
       .finally(() => {
         setLoading(false);
       });
+  
   }, [selectedTableId]);
-
+  
   return { loading, data };
 };

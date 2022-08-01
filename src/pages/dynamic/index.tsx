@@ -42,7 +42,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     data: dataById,
     loading: isFetchingFormById,
     error: fetchFormByIdError,
-  } = useFormGet({ id: formId, lazy: true });
+  } = useFormGet({ queryParams: { id: formId }, lazy: true });
 
   const formResponse: IFormDto = useMemo(() => {
     if (isFetchingFormByPath || isFetchingFormById) {

@@ -1,12 +1,13 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const camelcase = require('camelcase');
 
-const STORYBOOK_BASE_URL = 'https://shesha-mmsample-backend-dev.azurewebsites.net';
+const STORYBOOK_BASE_URL = 'http://localhost:21021';
 // const STORYBOOK_BASE_URL = process.env.STORYBOOK_BASE_URL;
 const ROOT_PATH = './src/apis';
 
 const API_LIST = [
-  //'Form',
+  'Form',
+  'DataTable',
   //'PermissionedObject'
   /*
   //'Applications',
@@ -16,7 +17,6 @@ const API_LIST = [
   'CheckList',
   'CheckListItem',
   'ConfigurableComponent',
-  //'DataTable',
   'Note',
   'Person',
   'ReferenceList',

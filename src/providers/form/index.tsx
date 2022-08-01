@@ -144,7 +144,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     future: [],
   });
 
-  const fetcherById = useFormGet({ lazy: true, id });
+  const fetcherById = useFormGet({ lazy: true, queryParams: { id } });
   const fetcherByPath = useFormGetByPath({ lazy: true });
   const { loading: isFetchingFormInfo, error: fetchingFormInfoError, data: fetchingFormInfoResponse } = path
     ? fetcherByPath
@@ -315,9 +315,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   };
 
   // todo: review usage of useFormUpdateMarkup after
-  const { mutate: saveFormHttp /*, loading: saveFormInProgress, error: saveFormError*/ } = useFormUpdateMarkup({
-    id: id || state?.present?.id,
-  });
+  const { mutate: saveFormHttp /*, loading: saveFormInProgress, error: saveFormError*/ } = useFormUpdateMarkup({});
 
   const saveForm = async (): Promise<void> => {
     if (!state.present.id) return Promise.reject();

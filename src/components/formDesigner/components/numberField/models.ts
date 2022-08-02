@@ -5,6 +5,6 @@ export interface INumberFieldProps extends IConfigurableFormComponent {
   min?: number;
   max?: number;
   highPrecision?: boolean;
-  stepNumeric: number;
-  stepString: string;
+  stepNumeric?: number;
+  stepString?: string;
 }

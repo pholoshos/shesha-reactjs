@@ -88,6 +88,7 @@ export const TableWrapper: FC<ITableComponentProps> = ({
     setCrudConfig,
     refreshTable,
     changeActionedRow,
+    tableData,
   } = useDataTableStore();
 
   useEffect(() => {
@@ -137,8 +138,9 @@ export const TableWrapper: FC<ITableComponentProps> = ({
     }
 
     // tslint:disable-next-line:function-constructor
-    return new Function('row, oldIndex, newIndex, globalState, http, message, data, refreshTable', expression)(
+    return new Function('row, routes, oldIndex, newIndex, globalState, http, message, data, refreshTable', expression)(
       row,
+      tableData,
       oldIndex,
       newIndex,
       globalState,

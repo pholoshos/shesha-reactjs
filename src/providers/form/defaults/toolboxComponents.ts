@@ -63,6 +63,7 @@ import PasswordCombo from '../../../components/formDesigner/components/passwordC
 import PermissionsTree from '../../../components/formDesigner/components/permissions/permissionsTree/permissionsTree';
 import PermissionTagGroup from '../../../components/formDesigner/components/permissions/permissionTagGroup';
 import List from '../../../components/formDesigner/components/listControl';
+import Progress from '../../../components/formDesigner/components/progress';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -120,6 +121,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       AutocompleteTagGroup,
       StatusTag,
       RichTextEditor,
+      Progress,
     ],
   },
   {

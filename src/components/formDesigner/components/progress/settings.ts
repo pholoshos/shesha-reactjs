@@ -131,7 +131,7 @@ export const alertSettingsForm = new DesignerToolbarSettings()
   .addContainer({
     id: 'fdb031ce-250f-4c7f-8ff9-b35ac59e1946',
     name: 'lineContainer',
-    direction: 'horizontal',
+    direction: 'vertical',
     customVisibility: "return data.progressType === 'line'",
     components: new DesignerToolbarSettings()
       .addNumberField({
@@ -153,7 +153,7 @@ export const alertSettingsForm = new DesignerToolbarSettings()
   .addContainer({
     id: '6a49b8af-da4f-4de4-b834-cab5d83541ce',
     name: 'circleContainer',
-    direction: 'horizontal',
+    direction: 'vertical',
     customVisibility: "return data.progressType === 'circle'",
     components: new DesignerToolbarSettings()
       .addCodeEditor({

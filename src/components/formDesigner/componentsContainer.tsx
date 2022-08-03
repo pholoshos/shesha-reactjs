@@ -3,6 +3,7 @@ import ConfigurableFormComponent from './configurableFormComponent';
 import { useForm } from '../../providers/form';
 import { TOOLBOX_COMPONENT_DROPPABLE_KEY, TOOLBOX_DATA_ITEM_DROPPABLE_KEY } from '../../providers/form/models';
 import { ItemInterface, ReactSortable } from 'react-sortablejs';
+import { joinStringValues } from '../../utils';
 
 export type Direction = 'horizontal' | 'vertical';
 
@@ -16,6 +17,7 @@ export interface IComponentsContainerProps {
   render?: (components: JSX.Element[]) => ReactNode;
   itemsLimit?: number;
   listFormComponentIndex?: number;
+  plainWrapper?: boolean;
 }
 const ComponentsContainer: FC<IComponentsContainerProps> = ({
   containerId,
@@ -28,6 +30,7 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
   render,
   listFormComponentIndex,
   itemsLimit = -1,
+  plainWrapper = false,
 }) => {
   const {
     getChildComponents,
@@ -114,8 +117,12 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
     style['justifyItems'] = justifyItems;
   }
 
+  if (plainWrapper && formMode !== 'designer') {
+    return <>{renderComponents()}</>;
+  }
+
   return (
-    <div className={`sha-components-container ${direction} ${className}`}>
+    <div className={joinStringValues(['sha-components-container', direction, className])}>
       {isDesignerMode ? (
         <>
           {components.length === 0 && <div className="sha-drop-hint">Drag and Drop form component</div>}

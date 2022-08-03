@@ -76,6 +76,12 @@ export const getSafelyTrimmedString = (value: string = '') => {
   return value.trim();
 };
 
+/**
+ * Joins string values, filtering out falsy values
+ * @param values values to join
+ * @param delimiter delimiter to use to join the values
+ * @returns joined string value
+ */
 export const joinStringValues = (values: string[], delimiter = ' ') => {
   return values?.filter(Boolean)?.join(delimiter);
 };

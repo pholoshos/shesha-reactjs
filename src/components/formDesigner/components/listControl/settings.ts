@@ -27,6 +27,120 @@ export const listSettingsForm = new DesignerToolbarSettings()
     parentId: 'root',
     label: 'Bordered',
   })
+  .addTextField({
+    id: '2d2c4546-6512-4e89-aca8-9f50568bcc25',
+    name: 'title',
+    label: 'Title',
+  })
+  .addTextField({
+    id: '5ea4dc3d-46ff-4cef-842f-ced7e6410a49',
+    name: 'footer',
+    label: 'Footer',
+  })
+  .addSectionSeparator({
+    id: '14a4ff65-25a1-487b-bb2a-af287f3b1293',
+    name: 'separatorData',
+    parentId: 'root',
+    label: 'Display',
+    sectionName: '',
+  })
+  .addDropdown({
+    id: 'f3d38650-475c-45fd-a748-3b336e6e9f77',
+    name: 'dataSource',
+    parentId: 'root',
+    hidden: false,
+    customVisibility: null,
+    description: 'The list data to be used can be the data that comes with the form of can be fetched from the API',
+    label: 'Size',
+    useRawValues: false,
+    dataSourceType: 'values',
+    values: [
+      { id: 'e98bd235-04c9-4acf-b4e2-d45ee7f64195', label: 'form', value: 'form' },
+      { id: 'f6f884b2-57f0-4246-83fa-0c12931b1320', label: 'api', value: 'api' },
+    ],
+    validate: { required: true },
+  })
+  .addDropdown({
+    id: 'c1ce809e-14f0-4a31-b914-6971d62ec532',
+    name: 'renderStrategy',
+    parentId: 'root',
+    hidden: false,
+    customVisibility: null,
+    description:
+      'Which form should be used to render the data? If current form, you can drag items, else specify form path',
+    label: 'Render Strategy',
+    useRawValues: false,
+    dataSourceType: 'values',
+    values: [
+      { id: '1b2cd084-11c3-4437-a681-672ed5ebb296', label: 'Drag And Drop', value: 'dragAndDrop' },
+      { id: 'bfb75690-d6f6-414e-b4de-4156d2038265', label: 'External Form', value: 'externalForm' },
+    ],
+    validate: { required: true },
+  })
+  .addAutocomplete({
+    id: 'f722680e-1ae6-4050-82ce-171f27e96d56',
+    name: 'formPath',
+    parentId: 'root',
+    hidden: false,
+    customVisibility: "return data.renderStrategy === 'externalForm'",
+    description: 'Specify the form that will be rendered on this list component',
+    label: 'Form Path',
+    useRawValues: false,
+    validate: { required: true },
+    dataSourceType: 'entitiesList',
+    dataSourceUrl: '/api/services/app/Metadata/EntityTypeAutocomplete',
+    queryParams: [],
+  })
+  .addCodeEditor({
+    name: 'dataSourceUrl',
+    id: 'b469c1f1-8c47-457b-a7d5-5f323b3bc4a6',
+    mode: 'inline',
+    customVisibility: "return data.dataSource ==='api'",
+    description: 'The API url that will be used to fetch the list data',
+    exposedVariables: [
+      {
+        id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+        name: 'data',
+        description: 'Form data',
+        type: 'object',
+      },
+      {
+        id: '65b71112-d412-401f-af15-1d3080f85319',
+        name: 'globalState',
+        description: 'The global state',
+        type: 'object',
+      },
+      {
+        id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+        name: 'queryParams',
+        description: 'Query parameters',
+        type: 'object',
+      },
+    ],
+  })
+  .addSectionSeparator({
+    id: 'd9f673f9-dd6c-4816-afe4-3a58849b528d',
+    name: 'separatorDateEnd',
+    parentId: 'root',
+    label: '',
+    sectionName: '',
+  })
+  .addDropdown({
+    id: '9ae0cf7c-17e9-4348-ba8b-706d30f92eb5',
+    name: 'size',
+    parentId: 'root',
+    hidden: false,
+    customVisibility: null,
+    label: 'Size',
+    useRawValues: false,
+    dataSourceType: 'values',
+    values: [
+      { id: 'df84fc42-6376-4545-9403-ee0389447047', label: 'small', value: 'small' },
+      { id: 'eaf35d30-28c5-41aa-9a33-cc2d183f6c5a', label: 'default', value: 'default' },
+      { id: '51623926-7377-4e91-b95e-ae2a3f836b92', label: 'large', value: 'large' },
+    ],
+    validate: { required: true },
+  })
   .addSectionSeparator({
     id: 'a6938bc7-d635-4f85-8773-709fe29cc614',
     name: 'separatorPagination',

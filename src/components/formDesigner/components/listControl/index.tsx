@@ -2,8 +2,8 @@ import React, { FC, Fragment, useEffect, useMemo } from 'react';
 import { IToolboxComponent, IValuable } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { OrderedListOutlined } from '@ant-design/icons';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm } from '../../../../providers';
+import { evaluateComplexString, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { useForm, useGlobalState } from '../../../../providers';
 import { listSettingsForm } from './settings';
 import ComponentsContainer from '../../componentsContainer';
 import { List } from 'antd';
@@ -11,13 +11,23 @@ import ConfigurableFormItem from '../formItem';
 import { useGet } from 'restful-react';
 import ValidationErrors from '../../../validationErrors';
 import { PaginationConfig, PaginationPosition } from 'antd/lib/pagination/Pagination';
+import { ListSize } from 'antd/lib/list';
+import { getQueryParams } from '../../../../utils/url';
 
 interface IListSettingsProps {
   dataSourceUrl?: string;
   queryParamsExpression?: string;
+  bordered?: boolean;
+  title?: string;
+  footer?: string;
+  size?: ListSize;
+  formPath?: string;
 }
 
-export interface IListComponentProps extends IListSettingsProps, IConfigurableFormComponent {
+export interface IListComponentProps extends IListSettingsProps, Omit<IConfigurableFormComponent, 'size'> {
+  /** the source of data for the list component */
+  dataSource?: 'form' | 'api';
+
   showPagination?: boolean;
   paginationShowQuickJumper: boolean;
   paginationResponsive?: boolean;
@@ -25,13 +35,14 @@ export interface IListComponentProps extends IListSettingsProps, IConfigurableFo
   paginationPosition?: PaginationPosition;
   paginationRole?: string;
   paginationTotalBoundaryShowSizeChanger?: number;
+  renderStrategy?: 'dragAndDrop' | 'externalForm';
 }
 
 const ListComponent: IToolboxComponent<IListComponentProps> = {
   type: 'list',
   name: 'List',
   icon: <OrderedListOutlined />,
-  factory: (model: IListComponentProps) => {
+  factory: ({ size, ...model }: IListComponentProps) => {
     const { isComponentHidden, formMode } = useForm();
 
     const isHidden = isComponentHidden(model);
@@ -54,6 +65,12 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
                   }
                 : false
             }
+            bordered={model?.bordered}
+            title={model?.title}
+            footer={model?.footer}
+            size={size}
+            dataSourceUrl={model?.dataSourceUrl}
+            formPath={model?.renderStrategy === 'externalForm' ? model?.formPath : null}
           />
         </ConfigurableFormItem>
       );
@@ -79,6 +96,9 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   containerId,
   dataSourceUrl,
   paginationConfig,
+  title,
+  footer,
+  formPath, // Render embedded form if this option is provided
   value = [
     {
       firstName: 'Phil',
@@ -94,15 +114,30 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     },
   ],
 }) => {
-  const { refetch, loading, data, error } = useGet({ path: dataSourceUrl || '/' });
+  const { refetch, loading, data, error } = useGet({ path: '/' });
+  const { formData } = useForm();
+  const { globalState } = useGlobalState();
 
-  useEffect(() => {
-    if (dataSourceUrl) {
-      refetch();
-    }
+  const evaluatedDataSourceUrl = useMemo(() => {
+    const getEvaluatedFormat = () => {
+      // tslint:disable-next-line:function-constructor
+      return new Function(dataSourceUrl)();
+    };
+
+    const rawString = getEvaluatedFormat();
+
+    return evaluateComplexString(rawString, [
+      { match: 'data', data: formData },
+      { match: 'globalState', data: globalState },
+      { match: 'query', data: getQueryParams() },
+    ]);
   }, [dataSourceUrl]);
 
-  const { formData } = useForm();
+  useEffect(() => {
+    if (evaluatedDataSourceUrl) {
+      refetch({ path: evaluatedDataSourceUrl });
+    }
+  }, [evaluatedDataSourceUrl]);
 
   console.log('LOGS:: ListComponentRender formData: ', formData, value);
 
@@ -119,8 +154,8 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
       <ValidationErrors error={error} />
       <List
         size="small"
-        header={<div>Header</div>}
-        footer={<div>Footer</div>}
+        header={<span>{title}</span>}
+        footer={<span>{footer}</span>}
         bordered
         loading={loading}
         dataSource={listItems}

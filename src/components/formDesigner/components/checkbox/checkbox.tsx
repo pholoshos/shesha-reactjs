@@ -29,12 +29,7 @@ const CheckboxComponent: IToolboxComponent<ICheckboxProps> = {
     console.log('CheckboxComponent rest: ', rest);
 
     return (
-      <ConfigurableFormItem
-        model={model}
-        valuePropName="checked"
-        initialValue={model?.defaultValue}
-        listFormComponentIndex={rest[2]}
-      >
+      <ConfigurableFormItem model={model} valuePropName="checked" initialValue={model?.defaultValue}>
         {isReadOnly ? (
           <ReadOnlyDisplayFormItem type="checkbox" disabled={disabled} />
         ) : (

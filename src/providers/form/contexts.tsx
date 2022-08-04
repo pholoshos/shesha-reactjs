@@ -255,7 +255,6 @@ export const FORM_CONTEXT_INITIAL_STATE: IFormStateContext = {
   context: null,
   formSettings: DEFAULT_FORM_SETTINGS,
   toolboxComponentGroups: defaultToolboxComponents,
-
   dataSources: [],
   activeDataSourceId: null,
 };

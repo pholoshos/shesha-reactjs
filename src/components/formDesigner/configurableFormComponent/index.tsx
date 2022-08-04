@@ -12,14 +12,9 @@ import CustomErrorBoundary from '../../customErrorBoundary';
 export interface IConfigurableFormComponentProps {
   id: string;
   index: number;
-  listFormComponentIndex: number;
 }
 
-const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({
-  id /*, index*/,
-  index,
-  listFormComponentIndex,
-}) => {
+const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*, index*/, index }) => {
   const {
     formMode,
     visibleComponentIds,
@@ -56,7 +51,7 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({
   const renderComponent = () => {
     return (
       <CustomErrorBoundary>
-        <FormComponent id={id} componentRef={componentRef} listFormComponentIndex={listFormComponentIndex} />
+        <FormComponent id={id} componentRef={componentRef} />
       </CustomErrorBoundary>
     );
   };

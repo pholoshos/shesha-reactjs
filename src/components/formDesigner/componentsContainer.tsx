@@ -16,7 +16,6 @@ export interface IComponentsContainerProps {
   className?: string;
   render?: (components: JSX.Element[]) => ReactNode;
   itemsLimit?: number;
-  listFormComponentIndex?: number;
   plainWrapper?: boolean;
 }
 const ComponentsContainer: FC<IComponentsContainerProps> = ({
@@ -28,7 +27,6 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
   justifyItems,
   className,
   render,
-  listFormComponentIndex,
   itemsLimit = -1,
   plainWrapper = false,
 }) => {
@@ -104,7 +102,7 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
 
   const renderComponents = () => {
     const renderedComponents = components.map((c, index) => (
-      <ConfigurableFormComponent id={c.id} index={index} key={c.id} listFormComponentIndex={listFormComponentIndex} />
+      <ConfigurableFormComponent id={c.id} index={index} key={c.id} />
     ));
 
     return typeof render === 'function' ? render(renderedComponents) : renderedComponents;

@@ -1,12 +1,12 @@
 import React, { FC, Fragment, useEffect, useMemo } from 'react';
-import { IToolboxComponent, IValuable } from '../../../../interfaces';
+import { IFormItem, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { OrderedListOutlined } from '@ant-design/icons';
 import { evaluateComplexString, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm, useGlobalState } from '../../../../providers';
+import { ListItemProvider, useForm, useGlobalState } from '../../../../providers';
 import { listSettingsForm } from './settings';
 import ComponentsContainer from '../../componentsContainer';
-import { List } from 'antd';
+import { Alert, Form, List } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import { useGet } from 'restful-react';
 import ValidationErrors from '../../../validationErrors';
@@ -27,7 +27,6 @@ interface IListSettingsProps {
 export interface IListComponentProps extends IListSettingsProps, Omit<IConfigurableFormComponent, 'size'> {
   /** the source of data for the list component */
   dataSource?: 'form' | 'api';
-
   showPagination?: boolean;
   paginationShowQuickJumper: boolean;
   paginationResponsive?: boolean;
@@ -43,7 +42,31 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
   name: 'List',
   icon: <OrderedListOutlined />,
   factory: ({ size, ...model }: IListComponentProps) => {
-    const { isComponentHidden, formMode } = useForm();
+    const { isComponentHidden, formMode, setFormData } = useForm();
+
+    useEffect(() => {
+      if (formMode !== 'designer') {
+        setFormData({
+          values: {
+            items: [
+              {
+                firstName: 'Phil',
+                lastName: 'Mashiane',
+              },
+              {
+                firstName: 'Mazi',
+                lastName: 'Muhlari',
+              },
+              {
+                firstName: 'Ian',
+                lastName: 'Houvet',
+              },
+            ],
+          },
+          mergeValues: true,
+        });
+      }
+    }, [formMode]);
 
     const isHidden = isComponentHidden(model);
 
@@ -65,11 +88,12 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
                   }
                 : false
             }
+            name={model?.name}
             bordered={model?.bordered}
             title={model?.title}
             footer={model?.footer}
             size={size}
-            dataSourceUrl={model?.dataSourceUrl}
+            // dataSourceUrl={model?.dataSourceUrl}
             formPath={model?.renderStrategy === 'externalForm' ? model?.formPath : null}
           />
         </ConfigurableFormItem>
@@ -78,7 +102,11 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
 
     return (
       <ConfigurableFormItem model={model}>
-        <ComponentsContainer containerId={model.id} itemsLimit={1} />
+        {model?.renderStrategy === 'externalForm' ? (
+          <Alert message="You can't drop items here if renderStrategy === 'externalForm'. Instead, specify form path" />
+        ) : (
+          <ComponentsContainer containerId={model.id} itemsLimit={1} />
+        )}
       </ConfigurableFormItem>
     );
   },
@@ -86,7 +114,7 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
   validateSettings: model => validateConfigurableComponentSettings(listSettingsForm, model),
 };
 
-interface IListComponentRenderProps extends IListSettingsProps, IValuable {
+interface IListComponentRenderProps extends IListSettingsProps, IFormItem {
   containerId: string;
   value?: any[];
   paginationConfig?: PaginationConfig | false;
@@ -99,26 +127,23 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   title,
   footer,
   formPath, // Render embedded form if this option is provided
-  value = [
-    {
-      firstName: 'Phil',
-      lastName: 'Mashiane',
-    },
-    {
-      firstName: 'Mazi',
-      lastName: 'Muhlari',
-    },
-    {
-      firstName: 'Ian',
-      lastName: 'Houvet',
-    },
-  ],
+  value: _value,
+  name,
+  onChange,
 }) => {
   const { refetch, loading, data, error } = useGet({ path: '/' });
   const { formData } = useForm();
   const { globalState } = useGlobalState();
 
+  const value = (formData || {})[name];
+
+  console.log('LOGS:: _value: ', _value);
+
+  const queryParams = useMemo(() => getQueryParams(), []);
+
   const evaluatedDataSourceUrl = useMemo(() => {
+    if (!dataSourceUrl) return '';
+
     const getEvaluatedFormat = () => {
       // tslint:disable-next-line:function-constructor
       return new Function(dataSourceUrl)();
@@ -129,7 +154,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     return evaluateComplexString(rawString, [
       { match: 'data', data: formData },
       { match: 'globalState', data: globalState },
-      { match: 'query', data: getQueryParams() },
+      { match: 'query', data: queryParams },
     ]);
   }, [dataSourceUrl]);
 
@@ -137,22 +162,48 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     if (evaluatedDataSourceUrl) {
       refetch({ path: evaluatedDataSourceUrl });
     }
-  }, [evaluatedDataSourceUrl]);
-
-  console.log('LOGS:: ListComponentRender formData: ', formData, value);
+  }, [evaluatedDataSourceUrl, queryParams, formData, globalState]);
 
   const listItems = useMemo<any[]>(() => {
-    if (dataSourceUrl && data) {
+    if (evaluatedDataSourceUrl && data) {
       return data?.result;
     }
 
-    return value;
-  }, [value, data]);
+    return Array.isArray(value) ? value : [];
+  }, [data, evaluatedDataSourceUrl]);
+
+  // useEffect(() => {
+  //   if (typeof onChange === 'function') {
+  //     onChange(data?.result);
+  //   }
+  // }, [data, evaluatedDataSourceUrl]);
+
+  console.log('LOGS:: ListComponentRender listItems, value: ', listItems, value, formData);
 
   return (
     <Fragment>
       <ValidationErrors error={error} />
-      <List
+      <Form.List name={name} initialValue={listItems}>
+        {(fields, { add, remove }) => {
+          return (
+            <div>
+              {fields.map((field, index) => (
+                <div key={field.key}>
+                  <ListItemProvider index={index} prefix={`${name}.`}>
+                    <ComponentsContainer
+                      containerId={containerId}
+                      plainWrapper
+                      direction="horizontal"
+                      alignItems="center"
+                    />
+                  </ListItemProvider>
+                </div>
+              ))}
+            </div>
+          );
+        }}
+      </Form.List>
+      {/* <List
         size="small"
         header={<span>{title}</span>}
         footer={<span>{footer}</span>}
@@ -161,21 +212,20 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
         dataSource={listItems}
         pagination={paginationConfig}
         renderItem={(_, index) => {
-          console.log('List renderItem, _, index', _, index);
-
           return (
-            <List.Item>
-              <ComponentsContainer
-                containerId={containerId}
-                listFormComponentIndex={index}
-                plainWrapper
-                direction="horizontal"
-                alignItems="center"
-              />
-            </List.Item>
+            <ListItemProvider index={index} prefix={`${name}.`}>
+              <List.Item>
+                <ComponentsContainer
+                  containerId={containerId}
+                  plainWrapper
+                  direction="horizontal"
+                  alignItems="center"
+                />
+              </List.Item>
+            </ListItemProvider>
           );
         }}
-      />
+      /> */}
     </Fragment>
   );
 };

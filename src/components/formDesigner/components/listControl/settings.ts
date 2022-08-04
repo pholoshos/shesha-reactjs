@@ -41,7 +41,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     id: '14a4ff65-25a1-487b-bb2a-af287f3b1293',
     name: 'separatorData',
     parentId: 'root',
-    label: 'Display',
+    label: 'Data',
     sectionName: '',
   })
   .addDropdown({
@@ -51,7 +51,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     hidden: false,
     customVisibility: null,
     description: 'The list data to be used can be the data that comes with the form of can be fetched from the API',
-    label: 'Size',
+    label: 'Data source',
     useRawValues: false,
     dataSourceType: 'values',
     values: [
@@ -60,43 +60,13 @@ export const listSettingsForm = new DesignerToolbarSettings()
     ],
     validate: { required: true },
   })
-  .addDropdown({
-    id: 'c1ce809e-14f0-4a31-b914-6971d62ec532',
-    name: 'renderStrategy',
-    parentId: 'root',
-    hidden: false,
-    customVisibility: null,
-    description:
-      'Which form should be used to render the data? If current form, you can drag items, else specify form path',
-    label: 'Render Strategy',
-    useRawValues: false,
-    dataSourceType: 'values',
-    values: [
-      { id: '1b2cd084-11c3-4437-a681-672ed5ebb296', label: 'Drag And Drop', value: 'dragAndDrop' },
-      { id: 'bfb75690-d6f6-414e-b4de-4156d2038265', label: 'External Form', value: 'externalForm' },
-    ],
-    validate: { required: true },
-  })
-  .addAutocomplete({
-    id: 'f722680e-1ae6-4050-82ce-171f27e96d56',
-    name: 'formPath',
-    parentId: 'root',
-    hidden: false,
-    customVisibility: "return data.renderStrategy === 'externalForm'",
-    description: 'Specify the form that will be rendered on this list component',
-    label: 'Form Path',
-    useRawValues: false,
-    validate: { required: true },
-    dataSourceType: 'entitiesList',
-    dataSourceUrl: '/api/services/app/Metadata/EntityTypeAutocomplete',
-    queryParams: [],
-  })
   .addCodeEditor({
     name: 'dataSourceUrl',
     id: 'b469c1f1-8c47-457b-a7d5-5f323b3bc4a6',
     mode: 'inline',
+    label: 'API Url',
     customVisibility: "return data.dataSource ==='api'",
-    description: 'The API url that will be used to fetch the list data',
+    description: 'The API url that will be used to fetch the list data. Write the code that returns the string',
     exposedVariables: [
       {
         id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
@@ -117,6 +87,46 @@ export const listSettingsForm = new DesignerToolbarSettings()
         type: 'object',
       },
     ],
+  })
+  .addSectionSeparator({
+    id: '059a3c08-2552-4587-bf6c-a75f98a551a3',
+    name: 'separatorRenderStrategy',
+    parentId: 'root',
+    label: 'Render',
+    sectionName: '',
+  })
+  .addDropdown({
+    id: 'c1ce809e-14f0-4a31-b914-6971d62ec532',
+    name: 'renderStrategy',
+    parentId: 'root',
+    hidden: false,
+    customVisibility: null,
+    description:
+      'Which form should be used to render the data? If current form, you can drag items, else specify form path',
+    label: 'Render Strategy',
+    useRawValues: false,
+    dataSourceType: 'values',
+    defaultValue: 'dragAndDrop',
+    values: [
+      { id: '1b2cd084-11c3-4437-a681-672ed5ebb296', label: 'Drag And Drop', value: 'dragAndDrop' },
+      { id: 'bfb75690-d6f6-414e-b4de-4156d2038265', label: 'External Form', value: 'externalForm' },
+    ],
+    validate: { required: true },
+  })
+  .addAutocomplete({
+    id: 'f722680e-1ae6-4050-82ce-171f27e96d56',
+    name: 'formPath',
+    parentId: 'root',
+    hidden: false,
+    customVisibility: "return data.renderStrategy === 'externalForm'",
+    description: 'Specify the form that will be rendered on this list component',
+    label: 'Form Path',
+    useRawValues: false,
+    validate: { required: true },
+    dataSourceType: 'entitiesList',
+    dataSourceUrl: '/api/services/app/Metadata/EntityTypeAutocomplete',
+    entityTypeShortAlias: 'Shesha.Framework.Form',
+    queryParams: [],
   })
   .addSectionSeparator({
     id: 'd9f673f9-dd6c-4816-afe4-3a58849b528d',
@@ -159,6 +169,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'paginationContainer',
     parentId: 'root',
     direction: 'vertical',
+    customVisibility: 'return data.showPagination',
     components: new DesignerToolbarSettings()
       .addCheckbox({
         id: '6d8d3c56-73b7-425b-85fe-5a1b6cb49350',
@@ -216,13 +227,6 @@ export const listSettingsForm = new DesignerToolbarSettings()
         parentId: 'b573b06d-a159-4d87-97ff-9fc0cfdc71ea',
       })
       .toJson(),
-  })
-  .addSectionSeparator({
-    id: '49372e55-a607-4c20-bbe4-48ca19a816bd',
-    name: 'separatorEndOfPagination',
-    parentId: 'root',
-    label: 'Pagination',
-    sectionName: '',
   })
   .addSectionSeparator({
     id: 'bc67960e-77e3-40f2-89cc-f18f94678cce',

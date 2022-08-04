@@ -5,6 +5,7 @@ import { useForm } from '../../../providers/form';
 import { getFieldNameFromExpression, getValidationRules } from '../../../providers/form/utils';
 import classNames from 'classnames';
 import './styles.less';
+import { useListItemIndex } from '../../../providers';
 
 export interface IConfigurableFormItemProps {
   model: IConfigurableFormComponent;
@@ -22,7 +23,6 @@ export interface IConfigurableFormItemProps {
   customVisibility?: string;
   wrapperCol?: ColProps;
   labelCol?: ColProps;
-  listFormComponentIndex?: number;
 }
 
 const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
@@ -33,27 +33,28 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
   className,
   labelCol,
   wrapperCol,
-  listFormComponentIndex,
 }) => {
   const { isComponentHidden, formData } = useForm();
+
+  const { index, prefix } = useListItemIndex();
 
   const isHidden = isComponentHidden(model);
 
   const style = model?.hidden ? { display: 'none' } : {};
 
   const getPropName = () => {
-    const computedName = getFieldNameFromExpression(model.name);
+    let name = model.name;
 
-    if (listFormComponentIndex) {
-      return typeof computedName === 'string'
-        ? [listFormComponentIndex, computedName]
-        : [listFormComponentIndex, ...computedName];
+    if (!isNaN(index) && prefix) {
+      if (name.startsWith(prefix)) {
+        name = name.replace(prefix, `${prefix}${index}.`);
+      } else {
+        console.warn(`Please make sure that the name for ${name} starts with ${prefix} List component`);
+      }
     }
 
-    return computedName;
+    return getFieldNameFromExpression(name);
   };
-
-  console.log('getPropName: ', listFormComponentIndex, getPropName());
 
   return (
     <Form.Item

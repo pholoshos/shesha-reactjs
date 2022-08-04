@@ -30,7 +30,7 @@ export enum FormActionEnums {
   ComponentUpdateSettingsValidation = 'COMPONENT_UPDATE_SETTINGS_VALIDATION',
 
   ComponentAddFromTemplate = 'COMPONENT_ADD_FROM_TEMPLATE',
-  
+
   SaveRequest = 'SAVE_REQUEST',
   SaveSuccess = 'SAVE_SUCCESS',
   SaveError = 'SAVE_ERROR',
@@ -71,10 +71,10 @@ export const componentAddAction = createAction<IComponentAddPayload, IComponentA
   p => p
 );
 
-export const componentAddFromTemplateAction = createAction<IComponentAddFromTemplatePayload, IComponentAddFromTemplatePayload>(
-  FormActionEnums.ComponentAddFromTemplate,
-  p => p
-);
+export const componentAddFromTemplateAction = createAction<
+  IComponentAddFromTemplatePayload,
+  IComponentAddFromTemplatePayload
+>(FormActionEnums.ComponentAddFromTemplate, p => p);
 
 export const componentDeleteAction = createAction<IComponentDeletePayload, IComponentDeletePayload>(
   FormActionEnums.ComponentDelete,

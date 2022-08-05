@@ -305,7 +305,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
           },
         };
       });
-debugger
+
     const allActionColumns = [...(actionColumns || []), ...(crud ? getAllowedCrudActions() : [])];
 
     // Now add a list of actions

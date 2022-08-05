@@ -1,6 +1,7 @@
 import { evaluateComplexStringWithResult } from './../form/utils';
-import { ColumnSorting, IStoredFilter, SortDirection } from './interfaces';
+import { ColumnSorting, IStoredFilter, ITableColumn, ITableFilter, SortDirection } from './interfaces';
 import { IMatchData } from '../form/utils';
+import moment, { Moment, isMoment, isDuration, Duration } from 'moment';
 
 // Filters should read properties as camelCase ?:(
 export const evaluateDynamicFilters = (filters: IStoredFilter[], mappings: IMatchData[]) => {
@@ -58,3 +59,100 @@ export const columnSorting2SortDirection = (value?: ColumnSorting): SortDirectio
       return null;
   }
 };
+
+const convertVilterValue = (value: any, column: ITableColumn): any => {
+  switch(column.dataType){
+    case "date":
+      return getMoment(value, ADVANCEDFILTER_DATE_FORMAT)?.format();
+    case "datetime":
+      return getMoment(value, ADVANCEDFILTER_DATETIME_FORMAT)?.format();
+    case "time":
+      return getDuration(value)?.asSeconds();
+  }
+  return value;
+}
+
+export const ADVANCEDFILTER_DATE_FORMAT = 'DD/MM/YYYY';
+export const ADVANCEDFILTER_DATETIME_FORMAT = 'DD/MM/YYYY HH:mm';
+export const ADVANCEDFILTER_TIME_FORMAT = 'HH:mm';
+
+export const getMoment = (value: any, format: string): Moment => {
+  if (value === null || value === undefined) return undefined;
+
+  if (isMoment(value)) return value;
+
+  return moment(value as string, format).isValid() ? moment.utc(value as string, format) : undefined;
+};
+
+export const getDuration = (value: any): Duration => {
+  if (value === null || value === undefined) return undefined;
+
+  if (isDuration(value)) return value;
+
+  const durationValue = moment.duration(value as string);
+  return durationValue.isValid()
+    ? durationValue
+    : undefined;
+};
+
+export const advancedFilter2JsonLogic = (advancedFilter: ITableFilter[], columns: ITableColumn[]): object[] => {
+  if (!advancedFilter || advancedFilter.length === 0)
+    return null;
+
+  const filterItems = advancedFilter.map(f => {
+    const property = { "var": f.columnId };
+    const column = columns.find(c => c.accessor == f.columnId);
+    
+    const filterValues = Array.isArray(f.filter)
+      ? f.filter.map(filterValue => convertVilterValue(filterValue, column))
+      : convertVilterValue(f.filter, column);
+    
+    switch (f.filterOption) {
+      case "equals":
+        return {
+          "==": [property, filterValues]
+        };
+      case "contains":
+        return {
+          "in": [filterValues, property] // note: arguments order inversed
+        };
+      case "greaterThan":
+        return {
+          ">": [property, filterValues]
+        };
+      case "after":
+        return {
+          ">": [property, filterValues]
+        };
+      case "lessThan":
+        return {
+          "<": [property, filterValues]
+        };
+      case "before":
+        return {
+          "<": [property, filterValues]
+        };
+      case "startsWith":
+        return {
+          "startsWith": [property, filterValues]
+        };
+      case "endsWith":
+        return {
+          "endsWith": [property, filterValues]
+        };
+      case "between":
+        if (Array.isArray(filterValues) && filterValues.length == 2) {
+          return {
+            "<=": [filterValues[0], property, filterValues[1]]
+          };
+        } else
+          console.error(`argument of the '${f.filterOption}' filter option must be an array with two values`);
+    }
+
+    console.error("operator is not supported: " + f.filterOption)
+
+    return null;
+  }).filter(f => Boolean(f));
+
+  return filterItems;
+}

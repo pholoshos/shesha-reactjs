@@ -13,14 +13,7 @@ import {
 import classNames from 'classnames';
 import { ITableColumn } from '../../interfaces';
 import { IProperty } from '../../providers/queryBuilder/models';
-import EntityAutocompleteWidget from './widgets/entityAutocomplete';
-import RefListDropdownWidget from './widgets/refListDropDown';
-import EntityReferenceType from './types/entityReference';
-import RefListType from './types/refList';
 import { DataTypes } from '../../interfaces/dataTypes';
-import DateTimeDynamicWidget from './widgets/dateTimeDynamic';
-import DateTimeDynamicType from './types/dateTimeDynamic';
-import moment from 'moment';
 import { config as InitialConfig } from './config';
 
 export interface IQueryBuilderColumn extends ITableColumn {
@@ -69,46 +62,10 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
   );
 
   const initialize = () => {
-    const operators = {
-      ...InitialConfig.operators,
-      starts_with: {
-        ...InitialConfig.operators.starts_with,
-        jsonLogic: 'startsWith',
-      },
-      ends_with: {
-        ...InitialConfig.operators.ends_with,
-        jsonLogic: 'endsWith',
-      },
-    };
-
-    const widgets = {
-      ...InitialConfig.widgets,
-      entityAutocomplete: EntityAutocompleteWidget,
-      refListDropdown: RefListDropdownWidget,
-      dateTimeDynamic: DateTimeDynamicWidget,
-      datetime: {
-        ...InitialConfig.widgets.datetime,
-        timeFormat: 'HH:mm:ss',
-        jsonLogic: (val, _, wgtDef) => {
-          return moment(val, wgtDef.valueFormat).format();
-        },
-      },
-    };
-
-    const types = {
-      ...InitialConfig.types,
-      entityReference: EntityReferenceType,
-      refList: RefListType,
-      dateTimeDynamic: DateTimeDynamicType,
-    };
 
     const conf: Config = {
       ...InitialConfig,
       fields: {},
-      // @ts-ignore
-      types,
-      operators,
-      widgets,
     };
 
     allFields?.forEach(({ dataType, visible, propertyName, label, fieldSettings, preferWidgets }) => {

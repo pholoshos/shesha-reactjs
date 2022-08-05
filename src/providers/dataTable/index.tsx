@@ -80,6 +80,7 @@ import { useGlobalState } from '../globalState';
 import camelCaseKeys from 'camelcase-keys';
 import { useShaRouting } from '../shaRouting';
 import qs from 'qs';
+import { advancedFilter2JsonLogic } from './utils';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Type of entity */
@@ -219,7 +220,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   };
 
   const convertFilters = (internalPayload: IGetDataPayloadInternal): string => {
-    const allFilters = [];
+    let allFilters = [];
     if (internalPayload.selectedFilters && internalPayload.selectedFilters.length > 0)
     {
       internalPayload.selectedFilters.forEach(f => {
@@ -232,6 +233,12 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
         }
       });
     }
+
+    const advancedFilter = advancedFilter2JsonLogic(internalPayload.advancedFilter, state.columns);
+    //console.log('converted advanced filter', advancedFilter);
+
+    if (advancedFilter && advancedFilter.length > 0)
+      allFilters = allFilters.concat(advancedFilter);
 
     if (allFilters.length === 0)
       return null;
@@ -260,7 +267,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   }
 
   const convertDataResponse = (response: IResult<ITableDataResponse>, pageSize: number): IResult<ITableDataInternalResponse> => {
-    debugger
     if (!response.result)
       return { ...response, result: null };
 
@@ -305,8 +311,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     }
 
     const fetchPayload = getFetchDataPayload(expandedPayload);
-    console.log('expandedPayload', expandedPayload)
-    console.log('fetchPayload', fetchPayload)
+    // console.log('expandedPayload', expandedPayload)
+    // console.log('fetchPayload', fetchPayload)
 
     return fetchDataTableDataInternal(fetchPayload).then(response => convertDataResponse(response, payload.pageSize));
   };
@@ -335,7 +341,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       refreshTable();
     }
   }, [
-    state.tableFilter?.length,
+    state.tableFilter/*?.length*/,
     state.currentPage,
     state.selectedStoredFilterIds,
     state.selectedPageSize,

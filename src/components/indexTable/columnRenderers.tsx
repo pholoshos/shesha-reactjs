@@ -41,6 +41,12 @@ export const renderers: ITableCustomTypesRender[] = [
     },
   },
   {
+    key: 'time',
+    render: props => {
+      return props.value ? moment.utc(props.value * 1000).format('HH:mm') : null;
+    },
+  },
+  {
     key: 'boolean',
     render: props => {
       return props.value ? 'Yes' : 'No';

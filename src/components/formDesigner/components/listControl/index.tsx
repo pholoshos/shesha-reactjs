@@ -1,18 +1,21 @@
 import React, { FC, Fragment, useEffect, useMemo } from 'react';
 import { IFormItem, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
-import { OrderedListOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, OrderedListOutlined, PlusOutlined } from '@ant-design/icons';
 import { evaluateComplexString, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { ListItemProvider, useForm, useGlobalState } from '../../../../providers';
 import { listSettingsForm } from './settings';
 import ComponentsContainer from '../../componentsContainer';
-import { Alert, Form, List } from 'antd';
+import { Alert, Button, Divider, Form, message, Space } from 'antd';
 import ConfigurableFormItem from '../formItem';
-import { useGet } from 'restful-react';
+import { useGet, useMutate } from 'restful-react';
 import ValidationErrors from '../../../validationErrors';
-import { PaginationConfig, PaginationPosition } from 'antd/lib/pagination/Pagination';
+import Pagination from 'antd/lib/pagination/Pagination';
 import { ListSize } from 'antd/lib/list';
 import { getQueryParams } from '../../../../utils/url';
+import './styles/index.less';
+import Show from '../../../show';
+import ShaSpin from '../../../shaSpin';
 
 interface IListSettingsProps {
   dataSourceUrl?: string;
@@ -22,19 +25,21 @@ interface IListSettingsProps {
   footer?: string;
   size?: ListSize;
   formPath?: string;
+  allowAddAndRemove?: boolean;
+  submitUrl?: string;
+  submitHttpVerb?: 'POST' | 'PUT';
+  onSubmit?: string;
+  paginationDefaultPageSize: number;
 }
 
 export interface IListComponentProps extends IListSettingsProps, Omit<IConfigurableFormComponent, 'size'> {
   /** the source of data for the list component */
+  labelCol?: number;
+  wrapperCol?: number;
   dataSource?: 'form' | 'api';
   showPagination?: boolean;
-  paginationShowQuickJumper: boolean;
-  paginationResponsive?: boolean;
-  paginationSize?: 'default' | 'small';
-  paginationPosition?: PaginationPosition;
-  paginationRole?: string;
-  paginationTotalBoundaryShowSizeChanger?: number;
   renderStrategy?: 'dragAndDrop' | 'externalForm';
+  allowSubmit?: boolean;
 }
 
 const ListComponent: IToolboxComponent<IListComponentProps> = {
@@ -42,66 +47,46 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
   name: 'List',
   icon: <OrderedListOutlined />,
   factory: ({ size, ...model }: IListComponentProps) => {
-    const { isComponentHidden, formMode, setFormData } = useForm();
-
-    useEffect(() => {
-      if (formMode !== 'designer') {
-        setFormData({
-          values: {
-            items: [
-              {
-                firstName: 'Phil',
-                lastName: 'Mashiane',
-              },
-              {
-                firstName: 'Mazi',
-                lastName: 'Muhlari',
-              },
-              {
-                firstName: 'Ian',
-                lastName: 'Houvet',
-              },
-            ],
-          },
-          mergeValues: true,
-        });
-      }
-    }, [formMode]);
+    const { isComponentHidden, formMode } = useForm();
 
     const isHidden = isComponentHidden(model);
 
     if (isHidden) return null;
 
     if (formMode !== 'designer') {
+      const submitProps = model?.allowSubmit
+        ? {
+            submitUrl: model?.submitUrl,
+            submitHttpVerb: model?.submitHttpVerb,
+          }
+        : {};
+
       return (
-        <ConfigurableFormItem model={model}>
+        <ConfigurableFormItem
+          model={model}
+          className="sha-list-component"
+          labelCol={{ span: model?.labelCol }}
+          wrapperCol={{ span: model?.wrapperCol }}
+        >
           <ListComponentRender
             containerId={model.id}
-            paginationConfig={
-              model?.showPagination
-                ? {
-                    responsive: model?.paginationResponsive,
-                    showQuickJumper: model?.paginationShowQuickJumper,
-                    size: model?.paginationSize,
-                    role: model?.paginationRole,
-                    position: model?.paginationPosition,
-                  }
-                : false
-            }
+            paginationDefaultPageSize={model?.showPagination ? model?.paginationDefaultPageSize : 5}
             name={model?.name}
             bordered={model?.bordered}
             title={model?.title}
             footer={model?.footer}
             size={size}
-            // dataSourceUrl={model?.dataSourceUrl}
+            allowAddAndRemove={model?.allowAddAndRemove}
+            dataSourceUrl={model?.dataSource === 'api' ? model?.dataSourceUrl : null}
             formPath={model?.renderStrategy === 'externalForm' ? model?.formPath : null}
+            {...submitProps}
           />
         </ConfigurableFormItem>
       );
     }
 
     return (
-      <ConfigurableFormItem model={model}>
+      <ConfigurableFormItem model={model} labelCol={{ span: model?.labelCol }} wrapperCol={{ span: model?.wrapperCol }}>
         {model?.renderStrategy === 'externalForm' ? (
           <Alert message="You can't drop items here if renderStrategy === 'externalForm'. Instead, specify form path" />
         ) : (
@@ -117,29 +102,40 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
 interface IListComponentRenderProps extends IListSettingsProps, IFormItem {
   containerId: string;
   value?: any[];
-  paginationConfig?: PaginationConfig | false;
 }
 
 const ListComponentRender: FC<IListComponentRenderProps> = ({
   containerId,
   dataSourceUrl,
-  paginationConfig,
-  title,
-  footer,
+  paginationDefaultPageSize = 5,
   formPath, // Render embedded form if this option is provided
-  value: _value,
+  value,
   name,
   onChange,
+  allowAddAndRemove,
+  submitUrl,
+  submitHttpVerb,
+  onSubmit,
 }) => {
-  const { refetch, loading, data, error } = useGet({ path: '/' });
-  const { formData } = useForm();
+  const queryParams = useMemo(() => getQueryParams(), []);
+  const { formData, formSettings } = useForm();
   const { globalState } = useGlobalState();
 
-  const value = (formData || {})[name];
+  const evaluatedSubmitUrl = useMemo(() => {
+    if (!submitUrl?.trim()) return '';
 
-  console.log('LOGS:: _value: ', _value);
+    return evaluateComplexString(submitUrl, [
+      { match: 'data', data: formData },
+      { match: 'globalState', data: globalState },
+      { match: 'query', data: queryParams },
+    ]);
+  }, [submitUrl, formData, globalState, queryParams]);
 
-  const queryParams = useMemo(() => getQueryParams(), []);
+  const { refetch, loading: fetchingData, data, error: fetchDataError } = useGet({ path: '/' });
+  const { mutate, loading: submitting, error: submitError } = useMutate({
+    path: evaluatedSubmitUrl,
+    verb: submitHttpVerb,
+  });
 
   const evaluatedDataSourceUrl = useMemo(() => {
     if (!dataSourceUrl) return '';
@@ -160,72 +156,120 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
 
   useEffect(() => {
     if (evaluatedDataSourceUrl) {
-      refetch({ path: evaluatedDataSourceUrl });
+      refetch({ path: evaluatedDataSourceUrl, queryParams: { maxResultCount: paginationDefaultPageSize } });
     }
-  }, [evaluatedDataSourceUrl, queryParams, formData, globalState]);
+  }, [evaluatedDataSourceUrl]);
 
-  const listItems = useMemo<any[]>(() => {
-    if (evaluatedDataSourceUrl && data) {
-      return data?.result;
+  useEffect(() => {
+    if (typeof onChange === 'function' && data && evaluatedDataSourceUrl) {
+      if (Array.isArray(data?.result)) {
+        onChange(data?.result);
+      } else if (Array.isArray(data?.result?.items)) {
+        onChange(data?.result?.items);
+      }
     }
-
-    return Array.isArray(value) ? value : [];
   }, [data, evaluatedDataSourceUrl]);
 
-  // useEffect(() => {
-  //   if (typeof onChange === 'function') {
-  //     onChange(data?.result);
-  //   }
-  // }, [data, evaluatedDataSourceUrl]);
+  useEffect(() => {
+    if (value && !Array.isArray(value) && !evaluatedDataSourceUrl && typeof onChange === 'function') {
+      onChange([]);
+    }
+  }, [value]);
 
-  console.log('LOGS:: ListComponentRender listItems, value: ', listItems, value, formData);
+  const handleSave = () => {
+    if (onSubmit) {
+      const getOnSubmitPayload = () => {
+        // tslint:disable-next-line:function-constructor
+        return new Function('data, query, globalState, items', onSubmit)(formData, queryParams, globalState, value); // Pass data, query, globalState
+      };
+
+      const payload = Boolean(onSubmit) ? getOnSubmitPayload() : value;
+
+      mutate(payload).then(() => {
+        message.success('Data saved successfully!');
+      });
+    }
+  };
+
+  const renderPagination = () => (
+    <span>
+      <Pagination
+        defaultCurrent={1}
+        total={data?.result?.totalCount || 50}
+        defaultPageSize={paginationDefaultPageSize}
+        pageSizeOptions={[5, 10, 15, 20]}
+        onChange={(page: number, pageSize) => {
+          refetch({
+            queryParams: { skipCount: pageSize * (page - 1), maxResultCount: pageSize },
+            path: evaluatedDataSourceUrl,
+          });
+        }}
+      />
+    </span>
+  );
 
   return (
     <Fragment>
-      <ValidationErrors error={error} />
-      <Form.List name={name} initialValue={listItems}>
-        {(fields, { add, remove }) => {
-          return (
-            <div>
-              {fields.map((field, index) => (
-                <div key={field.key}>
-                  <ListItemProvider index={index} prefix={`${name}.`}>
-                    <ComponentsContainer
-                      containerId={containerId}
-                      plainWrapper
-                      direction="horizontal"
-                      alignItems="center"
-                    />
-                  </ListItemProvider>
-                </div>
-              ))}
-            </div>
-          );
-        }}
-      </Form.List>
-      {/* <List
-        size="small"
-        header={<span>{title}</span>}
-        footer={<span>{footer}</span>}
-        bordered
-        loading={loading}
-        dataSource={listItems}
-        pagination={paginationConfig}
-        renderItem={(_, index) => {
-          return (
-            <ListItemProvider index={index} prefix={`${name}.`}>
-              <List.Item>
-                <ComponentsContainer
-                  containerId={containerId}
-                  plainWrapper
-                  direction="horizontal"
-                  alignItems="center"
-                />
-              </List.Item>
-            </ListItemProvider>
-          );
-        }}
-      /> */}
+      <ValidationErrors error={fetchDataError} />
+      <ValidationErrors error={submitError} />
+
+      <ShaSpin spinning={fetchingData || submitting} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
+        <Show when={Array.isArray(value)}>
+          <Form.List name={name} initialValue={[]}>
+            {(fields, { add, remove }) => {
+              return (
+                <>
+                  {fields.map((field, index) => (
+                    <ListItemProvider index={index} prefix={`${name}.`} formSettings={formSettings} key={field.key}>
+                      <ComponentsContainer
+                        containerId={containerId}
+                        plainWrapper
+                        direction="horizontal"
+                        alignItems="center"
+                      />
+
+                      <Show when={allowAddAndRemove}>
+                        <div className="sha-list-component-add-item-btn">
+                          <Button
+                            danger
+                            type="primary"
+                            size="small"
+                            className="dynamic-delete-button"
+                            onClick={() => remove(field.name)}
+                            icon={<MinusCircleOutlined />}
+                          >
+                            Remove Above Field
+                          </Button>
+                        </div>
+                      </Show>
+
+                      <Divider />
+                    </ListItemProvider>
+                  ))}
+
+                  <Show when={allowAddAndRemove}>
+                    <div className="sha-list-component-add-item-btn">
+                      <Space>
+                        <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} size="small">
+                          Add field
+                        </Button>
+
+                        <Show when={true || (Boolean(submitHttpVerb) && Boolean(submitUrl))}>
+                          <Button type="primary" onClick={handleSave} icon={<PlusOutlined />} size="small">
+                            Save Items
+                          </Button>
+                        </Show>
+
+                        {renderPagination()}
+                      </Space>
+                    </div>
+                  </Show>
+                </>
+              );
+            }}
+          </Form.List>
+        </Show>
+      </ShaSpin>
     </Fragment>
   );
 };

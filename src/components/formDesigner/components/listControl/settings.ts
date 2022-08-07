@@ -27,22 +27,18 @@ export const listSettingsForm = new DesignerToolbarSettings()
     parentId: 'root',
     label: 'Bordered',
   })
-  .addTextField({
-    id: '2d2c4546-6512-4e89-aca8-9f50568bcc25',
-    name: 'title',
-    label: 'Title',
-  })
-  .addTextField({
-    id: '5ea4dc3d-46ff-4cef-842f-ced7e6410a49',
-    name: 'footer',
-    label: 'Footer',
-  })
   .addSectionSeparator({
     id: '14a4ff65-25a1-487b-bb2a-af287f3b1293',
     name: 'separatorData',
     parentId: 'root',
     label: 'Data',
     sectionName: '',
+  })
+  .addCheckbox({
+    name: 'allowAddAndRemove',
+    label: 'Allow Add/Remove Items',
+    id: '5179483d-602e-47cd-9d98-383a35dbac58',
+    description: 'Whether a list should allow you to add to or remove from it',
   })
   .addDropdown({
     id: 'f3d38650-475c-45fd-a748-3b336e6e9f77',
@@ -62,7 +58,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
   })
   .addCodeEditor({
     name: 'dataSourceUrl',
-    id: 'b469c1f1-8c47-457b-a7d5-5f323b3bc4a6',
+    id: '6b4457b6-4127-4a2b-8902-f359ddd8c499',
     mode: 'inline',
     label: 'API Url',
     customVisibility: "return data.dataSource ==='api'",
@@ -129,6 +125,103 @@ export const listSettingsForm = new DesignerToolbarSettings()
     queryParams: [],
   })
   .addSectionSeparator({
+    id: 'f12b7eec-f0f2-4e2c-af9e-3494e767e2d8',
+    name: 'separatorData',
+    parentId: 'root',
+    label: 'Submit',
+    sectionName: '',
+  })
+  .addCheckbox({
+    id: '6a528a62-537a-4a89-a2f1-fc2ea6f5caf7',
+    name: 'allowSubmit',
+    label: 'Allow submit',
+    description: 'Whether you should be able to save the items individually on the server',
+  })
+  .addContainer({
+    id: '',
+    components: new DesignerToolbarSettings()
+      .addCodeEditor({
+        name: 'submitUrl',
+        id: 'b469c1f1-8c47-457b-a7d5-5f323b3bc4a6',
+        mode: 'dialog',
+        label: 'API Url',
+        exposedVariables: [
+          {
+            id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+            name: 'data',
+            description: 'Form data',
+            type: 'object',
+          },
+          {
+            id: '65b71112-d412-401f-af15-1d3080f85319',
+            name: 'globalState',
+            description: 'The global state',
+            type: 'object',
+          },
+          {
+            id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+            name: 'queryParams',
+            description: 'Query parameters',
+            type: 'object',
+          },
+        ],
+      })
+      .addDropdown({
+        id: '93faedae-f34c-438f-8eba-a2ce4a665b81',
+        name: 'submitHttpVerb',
+        parentId: '6a528a62-537a-4a89-a2f1-fc2ea6f5caf7',
+        hidden: false,
+        customVisibility: null,
+        label: 'Submit verb',
+        useRawValues: false,
+        defaultValue: 'POST',
+        dataSourceType: 'values',
+        description: 'Write  a code that returns the string that represent the url to be used to save the items',
+        values: [
+          { id: '567e3695-4fcb-4b6a-ac0f-d2f6178ab26a', label: 'POST', value: 'POST' },
+          { id: '65cbbb08-ac5a-4bff-96b9-7d8a6b35122a', label: 'PUT', value: 'PUT' },
+        ],
+        validate: { required: true },
+      })
+      .addCodeEditor({
+        name: 'onSubmit',
+        id: '7ac1ce68-52ff-4923-a89a-fc875784ec0d',
+        mode: 'dialog',
+        label: 'On Submit',
+        description: 'Write a code that return tha payload to be sent to the server when submitting this items',
+        exposedVariables: [
+          {
+            id: 'e964ed28-3c2c-4d02-b0b7-71faf243eb53',
+            name: 'items',
+            description: 'List of items',
+            type: 'array',
+          },
+          {
+            id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+            name: 'data',
+            description: 'Form data',
+            type: 'object',
+          },
+          {
+            id: '65b71112-d412-401f-af15-1d3080f85319',
+            name: 'globalState',
+            description: 'The global state',
+            type: 'object',
+          },
+          {
+            id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+            name: 'queryParams',
+            description: 'Query parameters',
+            type: 'object',
+          },
+        ],
+      })
+      .toJson(),
+    name: '',
+    direction: 'vertical',
+    customVisibility: 'return data.allowSubmit',
+  })
+  .addSectionSeparator({
     id: 'd9f673f9-dd6c-4816-afe4-3a58849b528d',
     name: 'separatorDateEnd',
     parentId: 'root',
@@ -152,6 +245,29 @@ export const listSettingsForm = new DesignerToolbarSettings()
     validate: { required: true },
   })
   .addSectionSeparator({
+    id: 'e9331f4e-8c39-4dd1-9cbc-fa4f3fba17d3',
+    name: 'separatorLayout',
+    parentId: 'root',
+    label: 'Layout',
+    sectionName: '',
+  })
+  .addNumberField({
+    id: '74e583ef-5c01-4353-ab6e-fff13b2cfbbc',
+    name: 'labelCol',
+    label: 'Label Col',
+    defaultValue: 5,
+    min: 1,
+    max: 24,
+  })
+  .addNumberField({
+    id: 'b7e60182-bb85-4389-bf75-72dda0d35383',
+    name: 'wrapperCol',
+    label: 'Wrapper Col',
+    defaultValue: 13,
+    min: 1,
+    max: 24,
+  })
+  .addSectionSeparator({
     id: 'a6938bc7-d635-4f85-8773-709fe29cc614',
     name: 'separatorPagination',
     parentId: 'root',
@@ -171,35 +287,8 @@ export const listSettingsForm = new DesignerToolbarSettings()
     direction: 'vertical',
     customVisibility: 'return data.showPagination',
     components: new DesignerToolbarSettings()
-      .addCheckbox({
-        id: '6d8d3c56-73b7-425b-85fe-5a1b6cb49350',
-        label: 'Show Quick Jumper',
-        name: 'paginationShowQuickJumper',
-        parentId: 'b573b06d-a159-4d87-97ff-9fc0cfdc71ea',
-      })
-      .addCheckbox({
-        id: '6d8d3c56-73b7-425b-85fe-5a1b6cb49350',
-        label: 'Responsive',
-        name: 'paginationResponsive',
-        parentId: 'b573b06d-a159-4d87-97ff-9fc0cfdc71ea',
-      })
       .addDropdown({
-        id: '9e8018a5-eb00-4a1c-a09b-19273e2ff602',
-        name: 'paginationSize',
-        parentId: 'b573b06d-a159-4d87-97ff-9fc0cfdc71ea',
-        hidden: false,
-        customVisibility: null,
-        label: 'Pagination size',
-        useRawValues: false,
-        dataSourceType: 'values',
-        values: [
-          { id: '357a0656-2faf-4623-bde3-0f3845377692', label: 'default', value: 'default' },
-          { id: 'd6cdf31f-d05f-4e8b-a9ab-643386d37e13', label: 'small', value: 'small' },
-        ],
-        validate: { required: true },
-      })
-      .addDropdown({
-        id: 'f6c3d710-8d98-47fc-9fe2-7c6312e9a03c',
+        id: '4866b3b4-bc1d-4ba6-8713-47bbeca672ee',
         name: 'paginationPosition',
         parentId: 'b573b06d-a159-4d87-97ff-9fc0cfdc71ea',
         hidden: false,
@@ -214,17 +303,23 @@ export const listSettingsForm = new DesignerToolbarSettings()
         ],
         validate: { required: true },
       })
-      .addTextField({
-        id: '77b65196-3f9b-4a54-b6ce-463767c51234',
-        name: 'paginationRole',
-        label: 'Role',
+      .addDropdown({
+        id: 'c6c23574-baa6-420d-b24b-9ef390851eae',
+        name: 'paginationDefaultPageSize',
         parentId: 'b573b06d-a159-4d87-97ff-9fc0cfdc71ea',
-      })
-      .addNumberField({
-        id: '90b73fb7-f400-4a33-8690-78602b8ef1c9',
-        name: 'paginationTotalBoundaryShowSizeChanger',
-        label: 'Total Boundary Show Size Changer',
-        parentId: 'b573b06d-a159-4d87-97ff-9fc0cfdc71ea',
+        hidden: false,
+        customVisibility: null,
+        label: 'Position',
+        useRawValues: false,
+        dataSourceType: 'values',
+        defaultValue: 5,
+        values: [
+          { id: 'e5aba6cf-0bb6-40b1-aff5-76b4c8ecfa36', label: '5', value: 5 },
+          { id: '12a70674-3627-4e27-9074-9adee0487942', label: '10', value: 10 },
+          { id: 'a9207a21-8625-406a-9fe3-3ed49d53dde5', label: '15', value: 15 },
+          { id: '2aede7b9-67bd-4fe5-ae88-d0a8c5d68edd', label: '20', value: 20 },
+        ],
+        validate: { required: true },
       })
       .toJson(),
   })

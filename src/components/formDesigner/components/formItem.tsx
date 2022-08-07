@@ -36,24 +36,20 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
 }) => {
   const { isComponentHidden, formData } = useForm();
 
-  const { index, prefix } = useListItemIndex();
+  const { index, formSettings } = useListItemIndex();
 
   const isHidden = isComponentHidden(model);
 
   const style = model?.hidden ? { display: 'none' } : {};
 
   const getPropName = () => {
-    let name = model.name;
+    const name = getFieldNameFromExpression(model.name);
 
-    if (!isNaN(index) && prefix) {
-      if (name.startsWith(prefix)) {
-        name = name.replace(prefix, `${prefix}${index}.`);
-      } else {
-        console.warn(`Please make sure that the name for ${name} starts with ${prefix} List component`);
-      }
+    if (!isNaN(index)) {
+      return typeof name === 'string' ? [index, name] : [index, ...name];
     }
 
-    return getFieldNameFromExpression(name);
+    return name;
   };
 
   return (
@@ -68,8 +64,8 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
       initialValue={initialValue}
       tooltip={model.description}
       rules={isHidden ? [] : getValidationRules(model, { formData })}
-      labelCol={labelCol}
-      wrapperCol={wrapperCol}
+      labelCol={labelCol || formSettings?.labelCol}
+      wrapperCol={wrapperCol || formSettings?.wrapperCol}
       style={style}
     >
       {children}

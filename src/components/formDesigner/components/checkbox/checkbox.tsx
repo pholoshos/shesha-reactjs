@@ -20,13 +20,11 @@ const CheckboxComponent: IToolboxComponent<ICheckboxProps> = {
   name: 'Checkbox',
   icon: <CheckSquareOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.boolean,
-  factory: (model: ICheckboxProps, ...rest) => {
+  factory: (model: ICheckboxProps) => {
     const { formMode, isComponentDisabled, formData } = useForm();
     const isReadOnly = model?.readOnly || formMode === 'readonly';
 
     const disabled = isComponentDisabled(model);
-
-    console.log('CheckboxComponent rest: ', rest);
 
     return (
       <ConfigurableFormItem model={model} valuePropName="checked" initialValue={model?.defaultValue}>

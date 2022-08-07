@@ -16,6 +16,7 @@ import { getQueryParams } from '../../../../utils/url';
 import './styles/index.less';
 import Show from '../../../show';
 import ShaSpin from '../../../shaSpin';
+import classNames from 'classnames';
 
 interface IListSettingsProps {
   dataSourceUrl?: string;
@@ -29,6 +30,7 @@ interface IListSettingsProps {
   submitUrl?: string;
   submitHttpVerb?: 'POST' | 'PUT';
   onSubmit?: string;
+  showPagination?: boolean;
   paginationDefaultPageSize: number;
 }
 
@@ -37,7 +39,6 @@ export interface IListComponentProps extends IListSettingsProps, Omit<IConfigura
   labelCol?: number;
   wrapperCol?: number;
   dataSource?: 'form' | 'api';
-  showPagination?: boolean;
   renderStrategy?: 'dragAndDrop' | 'externalForm';
   allowSubmit?: boolean;
 }
@@ -70,12 +71,15 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
         >
           <ListComponentRender
             containerId={model.id}
+            showPagination={model?.showPagination}
             paginationDefaultPageSize={model?.showPagination ? model?.paginationDefaultPageSize : 5}
             name={model?.name}
             bordered={model?.bordered}
             title={model?.title}
             footer={model?.footer}
             size={size}
+            submitHttpVerb={model?.submitHttpVerb}
+            submitUrl={model?.submitUrl}
             allowAddAndRemove={model?.allowAddAndRemove}
             dataSourceUrl={model?.dataSource === 'api' ? model?.dataSourceUrl : null}
             formPath={model?.renderStrategy === 'externalForm' ? model?.formPath : null}
@@ -107,6 +111,7 @@ interface IListComponentRenderProps extends IListSettingsProps, IFormItem {
 const ListComponentRender: FC<IListComponentRenderProps> = ({
   containerId,
   dataSourceUrl,
+  showPagination,
   paginationDefaultPageSize = 5,
   formPath, // Render embedded form if this option is provided
   value,
@@ -114,7 +119,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   onChange,
   allowAddAndRemove,
   submitUrl,
-  submitHttpVerb,
+  submitHttpVerb = 'POST',
   onSubmit,
 }) => {
   const queryParams = useMemo(() => getQueryParams(), []);
@@ -247,23 +252,23 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
                     </ListItemProvider>
                   ))}
 
-                  <Show when={allowAddAndRemove}>
-                    <div className="sha-list-component-add-item-btn">
-                      <Space>
+                  <div className={classNames('sha-list-pagination-container', { 'show-pagination': showPagination })}>
+                    <Space>
+                      <Show when={allowAddAndRemove}>
                         <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} size="small">
                           Add field
                         </Button>
+                      </Show>
 
-                        <Show when={true || (Boolean(submitHttpVerb) && Boolean(submitUrl))}>
-                          <Button type="primary" onClick={handleSave} icon={<PlusOutlined />} size="small">
-                            Save Items
-                          </Button>
-                        </Show>
+                      <Show when={Boolean(submitHttpVerb) && Boolean(submitUrl)}>
+                        <Button type="primary" onClick={handleSave} icon={<PlusOutlined />} size="small">
+                          Save Items
+                        </Button>
+                      </Show>
+                    </Space>
 
-                        {renderPagination()}
-                      </Space>
-                    </div>
-                  </Show>
+                    <Show when={showPagination}>{renderPagination()}</Show>
+                  </div>
                 </>
               );
             }}

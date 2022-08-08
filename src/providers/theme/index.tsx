@@ -10,7 +10,7 @@ import { THEME_CONFIG_ID } from '../../constants';
 import { Theme } from 'antd/lib/config-provider/context';
 import { isEqual } from 'lodash';
 import { useConfigurableComponentGet, useConfigurableComponentUpdateSettings } from '../../apis/configurableComponent';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 
 export interface ThemeProviderProps {
   prefixCls?: string;

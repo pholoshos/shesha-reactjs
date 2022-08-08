@@ -111,13 +111,13 @@ export const listSettingsForm = new DesignerToolbarSettings()
   })
   .addAutocomplete({
     id: 'f722680e-1ae6-4050-82ce-171f27e96d56',
-    name: 'formPath',
+    name: 'formId',
     parentId: 'root',
     hidden: false,
     customVisibility: "return data.renderStrategy === 'externalForm'",
     description: 'Specify the form that will be rendered on this list component',
     label: 'Form Path',
-    useRawValues: false,
+    useRawValues: true,
     validate: { required: true },
     dataSourceType: 'entitiesList',
     dataSourceUrl: '/api/services/app/Metadata/EntityTypeAutocomplete',

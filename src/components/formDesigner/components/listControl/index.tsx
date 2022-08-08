@@ -17,6 +17,8 @@ import './styles/index.less';
 import Show from '../../../show';
 import ShaSpin from '../../../shaSpin';
 import classNames from 'classnames';
+// import { useFormMarkup } from './useFormMarkup';
+import EmbeddedForm from '../../../configurableForm/embeddedForm';
 
 interface IListSettingsProps {
   dataSourceUrl?: string;
@@ -25,13 +27,14 @@ interface IListSettingsProps {
   title?: string;
   footer?: string;
   size?: ListSize;
-  formPath?: string;
+  formId?: string;
   allowAddAndRemove?: boolean;
   submitUrl?: string;
   submitHttpVerb?: 'POST' | 'PUT';
   onSubmit?: string;
   showPagination?: boolean;
   paginationDefaultPageSize: number;
+  allowSubmit?: boolean;
 }
 
 export interface IListComponentProps extends IListSettingsProps, Omit<IConfigurableFormComponent, 'size'> {
@@ -40,7 +43,6 @@ export interface IListComponentProps extends IListSettingsProps, Omit<IConfigura
   wrapperCol?: number;
   dataSource?: 'form' | 'api';
   renderStrategy?: 'dragAndDrop' | 'externalForm';
-  allowSubmit?: boolean;
 }
 
 const ListComponent: IToolboxComponent<IListComponentProps> = {
@@ -55,13 +57,6 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
     if (isHidden) return null;
 
     if (formMode !== 'designer') {
-      const submitProps = model?.allowSubmit
-        ? {
-            submitUrl: model?.submitUrl,
-            submitHttpVerb: model?.submitHttpVerb,
-          }
-        : {};
-
       return (
         <ConfigurableFormItem
           model={model}
@@ -71,6 +66,9 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
         >
           <ListComponentRender
             containerId={model.id}
+            allowSubmit={model?.allowSubmit}
+            submitUrl={model?.submitUrl}
+            submitHttpVerb={model?.submitHttpVerb}
             showPagination={model?.showPagination}
             paginationDefaultPageSize={model?.showPagination ? model?.paginationDefaultPageSize : 5}
             name={model?.name}
@@ -78,12 +76,9 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
             title={model?.title}
             footer={model?.footer}
             size={size}
-            submitHttpVerb={model?.submitHttpVerb}
-            submitUrl={model?.submitUrl}
             allowAddAndRemove={model?.allowAddAndRemove}
             dataSourceUrl={model?.dataSource === 'api' ? model?.dataSourceUrl : null}
-            formPath={model?.renderStrategy === 'externalForm' ? model?.formPath : null}
-            {...submitProps}
+            formId={model?.renderStrategy === 'externalForm' ? model?.formId : null}
           />
         </ConfigurableFormItem>
       );
@@ -113,7 +108,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   dataSourceUrl,
   showPagination,
   paginationDefaultPageSize = 5,
-  formPath, // Render embedded form if this option is provided
+  formId, // Render embedded form if this option is provided
   value,
   name,
   onChange,
@@ -121,7 +116,9 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   submitUrl,
   submitHttpVerb = 'POST',
   onSubmit,
+  allowSubmit,
 }) => {
+  // const { markup, loading: isFetchingForm, error: fetchformError } = useFormMarkup(formId);
   const queryParams = useMemo(() => getQueryParams(), []);
   const { formData, formSettings } = useForm();
   const { globalState } = useGlobalState();
@@ -217,6 +214,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     <Fragment>
       <ValidationErrors error={fetchDataError} />
       <ValidationErrors error={submitError} />
+      {/* <ValidationErrors error={fetchformError} /> */}
 
       <ShaSpin spinning={fetchingData || submitting} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
         <Show when={Array.isArray(value)}>
@@ -226,12 +224,18 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
                 <>
                   {fields.map((field, index) => (
                     <ListItemProvider index={index} prefix={`${name}.`} formSettings={formSettings} key={field.key}>
-                      <ComponentsContainer
-                        containerId={containerId}
-                        plainWrapper
-                        direction="horizontal"
-                        alignItems="center"
-                      />
+                      <Show when={Boolean(containerId)}>
+                        <ComponentsContainer
+                          containerId={containerId}
+                          plainWrapper
+                          direction="horizontal"
+                          alignItems="center"
+                        />
+                      </Show>
+
+                      {/* <Show when={false}>
+                        <EmbeddedForm markup={markup} containerId={containerId} />
+                      </Show> */}
 
                       <Show when={allowAddAndRemove}>
                         <div className="sha-list-component-add-item-btn">
@@ -260,7 +264,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
                         </Button>
                       </Show>
 
-                      <Show when={Boolean(submitHttpVerb) && Boolean(submitUrl)}>
+                      <Show when={allowSubmit && Boolean(submitHttpVerb) && Boolean(submitUrl?.trim())}>
                         <Button type="primary" onClick={handleSave} icon={<PlusOutlined />} size="small">
                           Save Items
                         </Button>

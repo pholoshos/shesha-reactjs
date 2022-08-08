@@ -37,8 +37,6 @@ export const hasDynamicFilter = (filters: IStoredFilter[]) => {
   return Boolean(found);
 };
 
-export const cleanPropertyName = (keyValue: string) => keyValue?.replace(/\./g, '_');
-
 export const sortDirection2ColumnSorting = (value?: SortDirection): ColumnSorting => {
   switch (value) {
     case 0:
@@ -60,8 +58,8 @@ export const columnSorting2SortDirection = (value?: ColumnSorting): SortDirectio
   }
 };
 
-const convertVilterValue = (value: any, column: ITableColumn): any => {
-  switch(column.dataType){
+const convertFilterValue = (value: any, column: ITableColumn): any => {
+  switch(column?.dataType){
     case "date":
       return getMoment(value, ADVANCEDFILTER_DATE_FORMAT)?.format();
     case "datetime":
@@ -101,11 +99,11 @@ export const advancedFilter2JsonLogic = (advancedFilter: ITableFilter[], columns
 
   const filterItems = advancedFilter.map(f => {
     const property = { "var": f.columnId };
-    const column = columns.find(c => c.accessor == f.columnId);
+    const column = columns.find(c => c.id == f.columnId);
     
     const filterValues = Array.isArray(f.filter)
-      ? f.filter.map(filterValue => convertVilterValue(filterValue, column))
-      : convertVilterValue(f.filter, column);
+      ? f.filter.map(filterValue => convertFilterValue(filterValue, column))
+      : convertFilterValue(f.filter, column);
     
     switch (f.filterOption) {
       case "equals":

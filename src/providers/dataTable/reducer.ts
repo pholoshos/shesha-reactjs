@@ -30,7 +30,8 @@ import {
   IDataColumnsProps,
 } from '../datatableColumnsConfigurator/models';
 import { getFilterOptions } from '../../components/columnItemFilter';
-import { cleanPropertyName, columnSorting2SortDirection } from './utils';
+import { columnSorting2SortDirection } from './utils';
+import { camelcaseDotNotation } from '../form/utils';
 
 /** get dirty filter if exists and fallback to current filter state */
 const getDirtyFilter = (state: IDataTableStateContext): ITableFilter[] => {
@@ -226,13 +227,13 @@ const reducer = handleActions<IDataTableStateContext, any>(
           switch (colProps.columnType) {
             case 'data': {
               const srvColumn = dataProps.propertyName
-                ? columns.find(c => cleanPropertyName(c.name) === cleanPropertyName(dataProps.propertyName))
+                ? columns.find(c => camelcaseDotNotation(c.propertyName) === camelcaseDotNotation(dataProps.propertyName))
                 : {};
 
               return {
                 id: dataProps?.propertyName,
                 columnId: column.id,
-                accessor: cleanPropertyName(dataProps?.propertyName),
+                accessor: camelcaseDotNotation(dataProps?.propertyName),
                 propertyName: dataProps?.propertyName,
                 minWidth: column.minWidth || MIN_COLUMN_WIDTH,
                 maxWidth: column.minWidth,
@@ -296,7 +297,6 @@ const reducer = handleActions<IDataTableStateContext, any>(
           ? userConfig.tableSorting
           : configuredTableSorting;
 
-      // TODO: Review the saving of selected filters
       const selectedStoredFilterIds = state?.selectedStoredFilterIds?.length
         ? state?.selectedStoredFilterIds
         : userConfig.selectedFilterIds ?? [];
@@ -309,8 +309,8 @@ const reducer = handleActions<IDataTableStateContext, any>(
         selectedPageSize: userConfig?.pageSize || DEFAULT_PAGE_SIZE_OPTIONS[1],
         quickSearch: userConfig?.quickSearch,
         tableFilter: userConfig?.advancedFilter,
-        selectedStoredFilterIds, // TODO: Review the saving of selected filters
-        // selectedStoredFilterIds: userConfig?.selectedStoredFilterIds || [],
+        tableFilterDirty: userConfig?.advancedFilter,
+        selectedStoredFilterIds,
         tableSorting: tableSorting,
       };
     },

@@ -25,7 +25,7 @@ import ReactTable from '../reactTable';
 import { removeUndefinedProperties } from '../../utils/array';
 import { ValidationErrors } from '..';
 import { useAuthState, useDataTableStore } from '../../providers';
-import { camelize } from '../../providers/form/utils';
+import { camelcaseDotNotation } from '../../providers/form/utils';
 import { IReactTableProps } from '../reactTable/interfaces';
 import { usePrevious } from 'react-use';
 
@@ -249,7 +249,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
       .map<Column<any>>(columnItem => {
         return {
           ...columnItem,
-          accessor: camelize(columnItem.accessor),
+          accessor: camelcaseDotNotation(columnItem.accessor),
           Header: columnItem.header,
           minWidth: columnItem.minWidth,
           maxWidth: columnItem.maxWidth,
@@ -416,7 +416,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
           },
         });
       });
-
+    
     setPreparedColumns(localPreparedColumns);
   }, [columns, newOrEditableRowData?.id, crud, overrideDefaultCrudBehavior]);
 

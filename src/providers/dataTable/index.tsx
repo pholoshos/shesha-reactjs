@@ -3,7 +3,6 @@ import useThunkReducer from 'react-hook-thunk-reducer';
 import { dataTableReducer } from './reducer';
 import axios from 'axios';
 import FileSaver from 'file-saver';
-import camelcase from 'camelcase';
 import {
   DataTableActionsContext,
   DataTableStateContext,
@@ -81,6 +80,7 @@ import camelCaseKeys from 'camelcase-keys';
 import { useShaRouting } from '../shaRouting';
 import qs from 'qs';
 import { advancedFilter2JsonLogic } from './utils';
+import { camelcaseDotNotation, convertDotNotationPropertiesToGraphQL } from '../form/utils';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Type of entity */
@@ -257,9 +257,9 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     const payload: IGetDataPayload = {
       maxResultCount: internalPayload.pageSize,
       skipCount: (internalPayload.currentPage - 1) * internalPayload.pageSize,
-      properties: internalPayload.properties.map(p => camelcase(p)).join(" "),
+      properties: convertDotNotationPropertiesToGraphQL(internalPayload.properties),
       quickSearch: internalPayload.quickSearch,
-      sorting: internalPayload.sorting.filter(s => Boolean(s.id)).map(s => camelcase(s.id) + (s.desc ? " desc" : "")).join(","),
+      sorting: internalPayload.sorting.filter(s => Boolean(s.id)).map(s => camelcaseDotNotation(s.id) + (s.desc ? " desc" : "")).join(","),
       filter: convertFilters(internalPayload)
     };
 
@@ -332,6 +332,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       ...settingsToReturn,
     };
   }, [defaultFilter, userDTSettingsInner]);
+  console.log('userDTSettings', userDTSettings)
 
   // fetch table data when config is ready or something changed (selected filter, changed current page etc.)
   useEffect(() => {
@@ -461,10 +462,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       });
     }
   }, [state?.columns]);
-
-  // useEffect(() => {
-  //   setUserDTSettings({ ...userDTSettingsInner });
-  // }, [state?.persistSelectedFilters]);
 
   const getFetchTableDataPayloadInternal = (localState: IDataTableStateContext): IGetDataPayloadInternal => {
     // Add default filter to table filter

@@ -180,6 +180,10 @@ export const FormsIndex = addStory(DesignerTemplate, {
   formPath: 'forms-new',
 });
 
+export const FormsIndexNew = addStory(DesignerTemplate, {
+  formPath: 'forms-new-refactored',
+});
+
 export const ModelItemProps = addStory(DesignerTemplate, {
   formPath:
     'D:\\Boxfusion\\Shesha3\\opensource\\metadata\\shesha-reactjs\\src\\components\\modelConfigurator\\propertiesEditor\\itemSettings.json',

@@ -288,6 +288,12 @@ function ColumnsSettings(props: IProps) {
                     type: 'object',
                   },
                   {
+                    id: '2d1232c8-b843-417d-aa69-7865b694347d',
+                    name: 'routes',
+                    description: 'All home url routes',
+                    type: 'array',
+                  },
+                  {
                     id: '5a2ca970-36de-400b-9534-6ce698b49dc0',
                     name: 'oldIndex',
                     description: 'Old index of the row',

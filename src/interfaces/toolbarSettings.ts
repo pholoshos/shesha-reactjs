@@ -11,6 +11,7 @@ import { INumberFieldProps } from '../components/formDesigner/components/numberF
 import { IQueryBuilderProps } from '../components/formDesigner/components/queryBuilder/queryBuilderComponent';
 import { ICodeEditorComponentProps } from '../components/formDesigner/components/codeEditor';
 import { IContainerComponentProps } from '../components/formDesigner/components/container/containerComponent';
+import { IPropertyAutocompleteProps } from '../components/formDesigner/components/propertyAutocomplete/propertyAutocomplete';
 
 interface ToolbarSettingsProp extends Omit<IConfigurableFormComponent, 'type'> {}
 
@@ -19,6 +20,8 @@ type DropdownType = ToolbarSettingsProp & Omit<IDropdownProps, 'type'>;
 type SectionSeparatorType = ToolbarSettingsProp & Omit<ISectionSeparatorProps, 'type'>;
 
 type TextFieldType = ToolbarSettingsProp & Omit<ITextFieldProps, 'type'>;
+
+type PropertyAutocompleteType = ToolbarSettingsProp & Omit<IPropertyAutocompleteProps, 'type'>;
 
 type TextAreaType = ToolbarSettingsProp & Omit<ITextAreaProps, 'type'>;
 
@@ -59,6 +62,12 @@ export class DesignerToolbarSettings {
 
   public addTextField(props: TextFieldType) {
     this.form.push({ ...props, type: 'textField' });
+
+    return this;
+  }
+
+  public addPropertyAutocomplete(props: PropertyAutocompleteType) {
+    this.form.push({ ...props, type: 'propertyAutocomplete' });
 
     return this;
   }

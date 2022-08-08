@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, PropsWithChildren, useEffect } from 'react';
+import React, { FC, useReducer, useContext, PropsWithChildren, useEffect, useMemo } from 'react';
 import { uiReducer } from './reducer';
 import {
   setThemeAction,
@@ -6,10 +6,11 @@ import {
 } from './actions';
 import { UiActionsContext, UiStateContext, THEME_CONTEXT_INITIAL_STATE } from './contexts';
 import { ConfigProvider } from 'antd';
-import { useLocalStorage } from 'react-use';
-import { THEME_CONFIG_KEY } from '../../constants';
+import { THEME_CONFIG_ID } from '../../constants';
 import { Theme } from 'antd/lib/config-provider/context';
 import { isEqual } from 'lodash';
+import { useConfigurableComponentGet, useConfigurableComponentUpdateSettings } from '../../apis/configurableComponent';
+import { useDebouncedCallback } from 'use-debounce/lib';
 
 export interface ThemeProviderProps {
   prefixCls?: string;
@@ -20,27 +21,35 @@ export interface ThemeProviderProps {
 const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
   iconPrefixCls,
-  themeConfigKey = THEME_CONFIG_KEY,
 
   // TODO: Later this to be configurable so that. Currently if you change it the layout fails because the styling references the `--ant prefixCls`
   prefixCls = 'ant', 
 }) => {
   const [state, dispatch] = useReducer(uiReducer, THEME_CONTEXT_INITIAL_STATE);
 
-  const [persistedTheme, setPersistedTheme] = useLocalStorage<Theme>(themeConfigKey);
+  const { data: loadedThemeResponse } = useConfigurableComponentGet({ id: THEME_CONFIG_ID });
+  const { mutate: saveTheme } = useConfigurableComponentUpdateSettings({ id: THEME_CONFIG_ID });
+  
+  const debouncedSave = useDebouncedCallback(themeToSave => {
+    saveTheme({ id: THEME_CONFIG_ID, settings: JSON.stringify(themeToSave) });
+  }, 300);
 
-  // Set the theme to the store if not set
+  const loadedTheme = useMemo(() => {
+    if (!loadedThemeResponse)
+      return null;
+    const themeJson = JSON.parse(loadedThemeResponse.result.settings) as Theme;
+    return themeJson;
+  }, [loadedThemeResponse]);
+
   useEffect(() => {
-    if (!state?.theme) {
-      changeTheme(persistedTheme);
-    }
-  }, [persistedTheme]);
-
+    changeTheme(loadedTheme);
+  }, [loadedTheme]);
+  
+  
   // Persist the theme
   useEffect(() => {
-    if (state && !isEqual(state?.theme, persistedTheme)) {
-      setPersistedTheme(state?.theme);
-    }
+    if(state && !isEqual(state?.theme, loadedTheme))
+      debouncedSave(state?.theme);
 
     ConfigProvider.config({
       prefixCls,

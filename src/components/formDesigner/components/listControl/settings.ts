@@ -228,22 +228,6 @@ export const listSettingsForm = new DesignerToolbarSettings()
     label: '',
     sectionName: '',
   })
-  .addDropdown({
-    id: '9ae0cf7c-17e9-4348-ba8b-706d30f92eb5',
-    name: 'size',
-    parentId: 'root',
-    hidden: false,
-    customVisibility: null,
-    label: 'Size',
-    useRawValues: false,
-    dataSourceType: 'values',
-    values: [
-      { id: 'df84fc42-6376-4545-9403-ee0389447047', label: 'small', value: 'small' },
-      { id: 'eaf35d30-28c5-41aa-9a33-cc2d183f6c5a', label: 'default', value: 'default' },
-      { id: '51623926-7377-4e91-b95e-ae2a3f836b92', label: 'large', value: 'large' },
-    ],
-    validate: { required: true },
-  })
   .addSectionSeparator({
     id: 'e9331f4e-8c39-4dd1-9cbc-fa4f3fba17d3',
     name: 'separatorLayout',

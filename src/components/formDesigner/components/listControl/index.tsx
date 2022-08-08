@@ -11,14 +11,12 @@ import ConfigurableFormItem from '../formItem';
 import { useGet, useMutate } from 'restful-react';
 import ValidationErrors from '../../../validationErrors';
 import Pagination from 'antd/lib/pagination/Pagination';
-import { ListSize } from 'antd/lib/list';
 import { getQueryParams } from '../../../../utils/url';
 import './styles/index.less';
 import Show from '../../../show';
 import ShaSpin from '../../../shaSpin';
 import classNames from 'classnames';
 // import { useFormMarkup } from './useFormMarkup';
-import EmbeddedForm from '../../../configurableForm/embeddedForm';
 
 interface IListSettingsProps {
   dataSourceUrl?: string;
@@ -26,7 +24,6 @@ interface IListSettingsProps {
   bordered?: boolean;
   title?: string;
   footer?: string;
-  size?: ListSize;
   formId?: string;
   allowAddAndRemove?: boolean;
   submitUrl?: string;
@@ -37,7 +34,7 @@ interface IListSettingsProps {
   allowSubmit?: boolean;
 }
 
-export interface IListComponentProps extends IListSettingsProps, Omit<IConfigurableFormComponent, 'size'> {
+export interface IListComponentProps extends IListSettingsProps, IConfigurableFormComponent {
   /** the source of data for the list component */
   labelCol?: number;
   wrapperCol?: number;
@@ -75,7 +72,6 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
             bordered={model?.bordered}
             title={model?.title}
             footer={model?.footer}
-            size={size}
             allowAddAndRemove={model?.allowAddAndRemove}
             dataSourceUrl={model?.dataSource === 'api' ? model?.dataSourceUrl : null}
             formId={model?.renderStrategy === 'externalForm' ? model?.formId : null}
@@ -108,7 +104,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   dataSourceUrl,
   showPagination,
   paginationDefaultPageSize = 5,
-  formId, // Render embedded form if this option is provided
+  // formId, // Render embedded form if this option is provided
   value,
   name,
   onChange,

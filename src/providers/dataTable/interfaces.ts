@@ -6,12 +6,12 @@ export type IndexColumnDataType =
   | 'string'
   | 'number'
   | 'date'
-  | 'datetime'
+  | 'date-time'
   | 'time'
   | 'boolean'
-  | 'refList'
+  | 'reference-list-item'
   | 'multiValueRefList'
-  | 'entityReference'
+  | 'entity'
   | 'action'
   | 'other';
 

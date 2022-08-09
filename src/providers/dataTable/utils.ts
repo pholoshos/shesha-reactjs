@@ -62,7 +62,7 @@ const convertFilterValue = (value: any, column: ITableColumn): any => {
   switch(column?.dataType){
     case "date":
       return getMoment(value, ADVANCEDFILTER_DATE_FORMAT)?.format();
-    case "datetime":
+    case "date-time":
       return getMoment(value, ADVANCEDFILTER_DATETIME_FORMAT)?.format();
     case "time":
       return getDuration(value)?.asSeconds();
@@ -105,15 +105,21 @@ export const advancedFilter2JsonLogic = (advancedFilter: ITableFilter[], columns
       ? f.filter.map(filterValue => convertFilterValue(filterValue, column))
       : convertFilterValue(f.filter, column);
     
-    switch (f.filterOption) {
+    let filterOption = f.filterOption;
+    if (!filterOption){
+      if (column.dataType === 'reference-list-item')
+        filterOption = "contains";
+    }
+
+    switch (filterOption) {
       case "equals":
         return {
           "==": [property, filterValues]
         };
       case "contains":
-        return {
-          "in": [filterValues, property] // note: arguments order inversed
-        };
+        return column.dataType === 'string'
+          ? { "in": [filterValues, property] /* for strings arguments are reversed */ }
+          : { "in": [property, filterValues] };
       case "greaterThan":
         return {
           ">": [property, filterValues]

@@ -630,10 +630,10 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
         case 'number':
           data[column.accessor] = 0;
           break;
-        case 'refList':
+        case 'reference-list-item':
           data[column.accessor] = { item: null, itemValue: null };
           break;
-        case 'entityReference':
+        case 'entity':
           data[column.accessor] = { id: null, displayText: null };
           break;
         case 'multiValueRefList':

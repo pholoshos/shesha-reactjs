@@ -335,7 +335,7 @@ export const ColumnItemFilter: FC<IColumnItemFilterProps> = ({
     );
   };
 
-  const hideFilterOptions = () => ['boolean', 'refList', 'multiValueRefList', 'entityReference'].includes(dataType);
+  const hideFilterOptions = () => ['boolean', 'reference-list-item', 'multiValueRefList', 'entity'].includes(dataType);
 
   return (
     <div
@@ -376,15 +376,15 @@ export const ColumnItemFilter: FC<IColumnItemFilterProps> = ({
 
         {dataType === 'date' && renderDateTimePicker(ADVANCEDFILTER_DATE_FORMAT, false)}
 
-        {dataType === 'datetime' && renderDateTimePicker(ADVANCEDFILTER_DATETIME_FORMAT, true)}        
+        {dataType === 'date-time' && renderDateTimePicker(ADVANCEDFILTER_DATETIME_FORMAT, true)}        
 
         {dataType === 'time' && renderTimeInput(ADVANCEDFILTER_TIME_FORMAT)}
 
         {dataType === 'boolean' && renderBooleanInput()}
 
-        {dataType === 'entityReference' && renderEntityDropdown()}
+        {dataType === 'entity' && renderEntityDropdown()}
 
-        {['refList', 'multiValueRefList'].includes(dataType) && renderRenderReflistDropdown()}
+        {['reference-list-item', 'multiValueRefList'].includes(dataType) && renderRenderReflistDropdown()}
       </div>
     </div>
   );

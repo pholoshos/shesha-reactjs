@@ -14,6 +14,7 @@ import { axiosHttp } from '../../apis/axios';
 import { DataTablePubsubConstants } from '../../providers/dataTable/pubSub';
 import { usePubSub } from '../../hooks';
 import { usePrevious } from 'react-use';
+import { useReferenceListItem } from '../../providers/referenceListDispatcher';
 
 export const renderers: ITableCustomTypesRender[] = [
   {
@@ -62,7 +63,10 @@ export const renderers: ITableCustomTypesRender[] = [
   {
     key: 'reference-list-item',
     render: props => {
-      return typeof props?.value === 'object' ? props?.value?.item : props?.value ?? null;
+      const { column: { referenceListName, referenceListNamespace }, value: colValue } = props;
+
+      const item = useReferenceListItem(referenceListNamespace, referenceListName, colValue);
+      return item?.data?.item;
     },
   },
   {

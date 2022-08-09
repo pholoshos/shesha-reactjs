@@ -332,8 +332,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       ...settingsToReturn,
     };
   }, [defaultFilter, userDTSettingsInner]);
-  console.log('userDTSettings', userDTSettings)
-
+  
   // fetch table data when config is ready or something changed (selected filter, changed current page etc.)
   useEffect(() => {
     if (entityType) {

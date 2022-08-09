@@ -22,9 +22,12 @@ export interface IDataNode {
   icon?: ReactNode;
 }
 
+// note: antd types were changed, CustomEventDataNode was added to fix build, to be reviewed later
+interface CustomEventDataNode extends EventDataNode<{}>{}
+
 export interface ICheckInfo {
   event: 'check';
-  node: EventDataNode;
+  node: CustomEventDataNode;
   checked: boolean;
   nativeEvent: MouseEvent;
   checkedNodes: DataNode[];

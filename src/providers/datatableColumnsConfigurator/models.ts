@@ -1,5 +1,4 @@
 import { FormMode } from './../form/models';
-import { ColumnSorting } from '../dataTable/interfaces';
 
 type ColumnsItemType = 'item' | 'group';
 
@@ -19,7 +18,6 @@ export interface IConfigurableColumnsBase {
   minWidth?: number;
   maxWidth?: number;
   isVisible: boolean;
-  defaultSorting?: ColumnSorting;
   permissions?: string[];
 }
 

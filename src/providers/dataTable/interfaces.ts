@@ -30,12 +30,11 @@ export type SortDirection = 0 /*asc*/ | 1 /*desc*/;
 export type ColumnSorting = 'asc' | 'desc';
 
 export interface ITableColumn {
-  customDataType?: string;
+  dataFormat?: string;
   id?: string;
   accessor: string;
   header: string;
   isVisible: boolean; // is visible in the table (including columns selector, filter etc.)
-  isHiddenByDefault: boolean;
   show?: boolean; // is visible on client
   dataType?: IndexColumnDataType;
   filterOption?: IndexColumnFilterOption;
@@ -46,7 +45,6 @@ export interface ITableColumn {
   defaultSorting?: SortDirection;
   columnId?: string;
   propertyName?: string;
-  filterCaption?: string;
   name?: string;
   caption?: string;
   allowShowHide?: boolean;
@@ -246,27 +244,18 @@ export type ListSortDirection = 0 | 1;
 
 export interface DataTableColumnDto {
   propertyName?: string | null;
-  filterCaption?: string | null;
   name?: string | null;
   caption?: string | null;
   description?: string | null;
-  allowShowHide?: boolean;
   dataType?: string | null;
-  customDataType?: string | null;
+  dataFormat?: string | null;
   referenceListName?: string | null;
   referenceListNamespace?: string | null;
   entityReferenceTypeShortAlias?: string | null;
   autocompleteUrl?: string | null;
   allowInherited?: boolean;
-  isVisible?: boolean;
   isFilterable?: boolean;
   isSortable?: boolean;
-  isEditable?: boolean;
-  width?: string | null;
-  defaultSorting?: ListSortDirection;
-  isHiddenByDefault?: boolean;
-  hiddenByDefault?: boolean;
-  visible?: boolean;
 }
 
 //#region todo: remove

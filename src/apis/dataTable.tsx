@@ -22,10 +22,6 @@ export interface DataTableColumnDto {
    */
   propertyName?: string | null;
   /**
-   * Filter caption
-   */
-  filterCaption?: string | null;
-  /**
    * Column name
    */
   name?: string | null;
@@ -87,14 +83,6 @@ export interface DataTableColumnDto {
    */
   width?: string | null;
   defaultSorting?: ListSortDirection;
-  /**
-   * Indicates is column hidden by default or not
-   */
-  isHiddenByDefault?: boolean;
-  /**
-   * Indicates is column hidden by default or not
-   */
-  hiddenByDefault?: boolean;
   /**
    * Indicates is column visible or not
    */

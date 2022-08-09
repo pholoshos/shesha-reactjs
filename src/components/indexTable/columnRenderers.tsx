@@ -35,7 +35,7 @@ export const renderers: ITableCustomTypesRender[] = [
     },
   },
   {
-    key: 'datetime',
+    key: 'date-time',
     render: props => {
       return props.value ? moment(props.value).format('DD/MM/YYYY HH:mm') : null;
     },
@@ -60,13 +60,13 @@ export const renderers: ITableCustomTypesRender[] = [
     },
   },
   {
-    key: 'refList',
+    key: 'reference-list-item',
     render: props => {
       return typeof props?.value === 'object' ? props?.value?.item : props?.value ?? null;
     },
   },
   {
-    key: 'entityReference',
+    key: 'entity',
     render: props => {
       return typeof props?.value === 'object' ? props?.value?.displayText : props?.value ?? null;
     },

@@ -30,7 +30,6 @@ import {
   IDataColumnsProps,
 } from '../datatableColumnsConfigurator/models';
 import { getFilterOptions } from '../../components/columnItemFilter';
-import { columnSorting2SortDirection } from './utils';
 import { camelcaseDotNotation } from '../form/utils';
 
 /** get dirty filter if exists and fallback to current filter state */
@@ -239,22 +238,21 @@ const reducer = handleActions<IDataTableStateContext, any>(
                 maxWidth: column.minWidth,
 
                 dataType: srvColumn?.dataType as IndexColumnDataType,
+                dataFormat: srvColumn?.dataFormat,
                 isSortable: srvColumn?.isSortable,
-                isHiddenByDefault: srvColumn?.isHiddenByDefault,
                 isFilterable: srvColumn?.isFilterable,
                 entityReferenceTypeShortAlias: srvColumn?.entityReferenceTypeShortAlias,
                 referenceListName: srvColumn?.referenceListName,
                 referenceListNamespace: srvColumn?.referenceListNamespace,
                 autocompleteUrl: srvColumn?.autocompleteUrl,
                 allowInherited: srvColumn?.allowInherited,
-                defaultSorting: columnSorting2SortDirection(column.defaultSorting),
 
                 caption: column.caption,
                 header: column.caption,
                 isVisible: column.isVisible,
                 allowShowHide: true,
 
-                show: srvColumn?.isVisible && colVisibility,
+                show: colVisibility,
               };
             }
             case 'action': {
@@ -272,7 +270,6 @@ const reducer = handleActions<IDataTableStateContext, any>(
                 actionProps, // todo: review and add to interface
 
                 isSortable: false,
-                isHiddenByDefault: false,
                 isFilterable: false,
 
                 caption: column.caption,

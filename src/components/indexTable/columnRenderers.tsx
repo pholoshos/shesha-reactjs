@@ -72,7 +72,9 @@ export const renderers: ITableCustomTypesRender[] = [
   {
     key: 'entity',
     render: props => {
-      return typeof props?.value === 'object' ? props?.value?.displayText : props?.value ?? null;
+      return typeof props?.value === 'object' 
+        ? props?.value?.displayText ?? props?.value?._displayName
+        : props?.value ?? null;
     },
   },
   {

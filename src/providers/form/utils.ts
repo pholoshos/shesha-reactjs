@@ -16,7 +16,7 @@ import {
   SILENT_KEY,
 } from './models';
 import Mustache from 'mustache';
-import { IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
+import { ITableColumn, IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
 import Schema, { Rules, ValidateSource } from 'async-validator';
 import { DEFAULT_FORM_SETTINGS, IFormSettings } from './contexts';
 import { formGet, formGetByPath } from '../../apis/form';
@@ -969,7 +969,7 @@ export const filterFormData = (data: any) => {
  * @param properties 
  * @returns 
  */
-export const convertDotNotationPropertiesToGraphQL = (properties: string[]): string => {
+export const convertDotNotationPropertiesToGraphQL = (properties: string[], columns: ITableColumn[]): string => {
   const tree = {};
   
   const makeProp = (container: object, name: string) => {
@@ -986,15 +986,34 @@ export const convertDotNotationPropertiesToGraphQL = (properties: string[]): str
           currentContainer[part] = {};
 
           currentContainer = currentContainer[part];
-      } else
-        currentContainer[part] = true; // scalar property
+      } else {
+        if (!Boolean(currentContainer[part]))
+          currentContainer[part] = true; // scalar property
+      }        
     } while (parts.length > 0);
   }
 
+  // special handling for entity references: expand properties list to include `id` and `_displayName`
+  const expandedProps = [...properties];
+  const entityColumns = columns.filter(c => c.dataType === 'entity');
+  entityColumns.forEach(c => {
+    const requiredProps = [`${c.propertyName}.Id`, `${c.propertyName}._displayName`];
+    requiredProps.forEach(rp => {
+      if (!expandedProps.includes(rp))
+        expandedProps.push(rp);
+    });
+  });
+
   // build properties tree
-  properties.forEach(p => {
+  expandedProps.forEach(p => {
     makeProp(tree, p);
   });
+
+  const preparePropertyName = (name: string): string => {
+    return name.startsWith('_')
+      ? name
+      : camelcase(name);
+  }
 
   const getNodes = (container: object): string => {
     let result = "";  
@@ -1003,9 +1022,9 @@ export const convertDotNotationPropertiesToGraphQL = (properties: string[]): str
         result += " ";
       const nodeValue = tree[node];
       if (typeof nodeValue === 'object')
-        result += `${camelcase(node)} { ${getNodes(nodeValue)} }`;
+        result += `${preparePropertyName(node)} { ${getNodes(nodeValue)} }`;
       else
-        result += camelcase(node);
+        result += preparePropertyName(node);
     }
     return result;
   }

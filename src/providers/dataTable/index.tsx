@@ -61,6 +61,7 @@ import {
   DataTableColumnDtoListAjaxResponse,
   GetColumnsInput,
   IGetDataPayload,
+  ITableColumn,
 } from './interfaces';
 import { isEmpty, isEqual, sortBy } from 'lodash';
 import { IResult } from '../../interfaces/result';
@@ -253,11 +254,11 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     return JSON.stringify(jsonLogicFilters);
   }
 
-  const getFetchDataPayload = (internalPayload: IGetDataPayloadInternal): IGetDataPayload => {
+  const getFetchDataPayload = (internalPayload: IGetDataPayloadInternal, columns: ITableColumn[]): IGetDataPayload => {
     const payload: IGetDataPayload = {
       maxResultCount: internalPayload.pageSize,
       skipCount: (internalPayload.currentPage - 1) * internalPayload.pageSize,
-      properties: convertDotNotationPropertiesToGraphQL(internalPayload.properties),
+      properties: convertDotNotationPropertiesToGraphQL(internalPayload.properties, columns),
       quickSearch: internalPayload.quickSearch,
       sorting: internalPayload.sorting.filter(s => Boolean(s.id)).map(s => camelcaseDotNotation(s.id) + (s.desc ? " desc" : "")).join(","),
       filter: convertFilters(internalPayload)
@@ -310,7 +311,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       return null;
     }
 
-    const fetchPayload = getFetchDataPayload(expandedPayload);
+    const fetchPayload = getFetchDataPayload(expandedPayload, state.columns);
     // console.log('expandedPayload', expandedPayload)
     // console.log('fetchPayload', fetchPayload)
 

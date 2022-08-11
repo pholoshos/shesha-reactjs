@@ -14,6 +14,7 @@ export interface ICollapsiblePanelProps extends CollapseProps {
   forceRender?: boolean;
   disabled?: boolean;
   extra?: React.ReactNode;
+  extraClass?: string;
   noContentPadding?: boolean;
   loading?: boolean;
 }
@@ -27,6 +28,7 @@ export const CollapsiblePanel: FC<ICollapsiblePanelProps> = ({
   noContentPadding,
   loading,
   className,
+  extraClass,
 }) => {
   const onClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event?.stopPropagation();
@@ -46,7 +48,11 @@ export const CollapsiblePanel: FC<ICollapsiblePanelProps> = ({
           </span>
         }
         key="1"
-        extra={<div onClick={onClick}>{extra}</div>}
+        extra={
+          <div onClick={onClick} className={extraClass}>
+            {extra}
+          </div>
+        }
       >
         <Skeleton loading={loading}>{children}</Skeleton>
       </Panel>

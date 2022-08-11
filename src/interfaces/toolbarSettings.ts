@@ -1,3 +1,4 @@
+import { IButtonsProps } from './../components/formDesigner/components/button/buttonGroup/buttonsComponent/index';
 import { IDropdownProps } from './../components/formDesigner/components/dropdown/models';
 import { ITextAreaProps } from './../components/formDesigner/components/textArea/textArea';
 import { ILabelValueEditorProps } from './../components/formDesigner/components/labelValueEditor/labelValueEditorComponent';
@@ -41,11 +42,19 @@ type CodeEditorType = ToolbarSettingsProp & Omit<ICodeEditorComponentProps, 'typ
 
 type ContainerType = ToolbarSettingsProp & Omit<IContainerComponentProps, 'type'>;
 
+type ButtonGroupType = ToolbarSettingsProp & Omit<IButtonsProps, 'type'>;
+
 export class DesignerToolbarSettings {
   protected form: IConfigurableFormComponent[];
 
   constructor() {
     this.form = [];
+  }
+
+  public addButtons(props: ButtonGroupType) {
+    this.form.push({ ...props, type: 'buttons' });
+
+    return this;
   }
 
   public addDropdown(props: DropdownType) {

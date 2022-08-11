@@ -1,5 +1,4 @@
-import React from 'react';
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { FormProvider } from '../../providers';
 import { FormMarkup } from '../../providers/form/models';
 import ComponentsContainer from '../formDesigner/componentsContainer';
@@ -10,6 +9,8 @@ export interface IEmbeddedFormProps {
 }
 
 const EmbeddedForm: FC<IEmbeddedFormProps> = ({ markup, containerId }) => {
+  console.log("LOGS:: EmbeddedForm markup, containerId", markup, containerId);
+  
   return (
     <FormProvider markup={(markup as unknown) as FormMarkup} mode="readonly">
       <ComponentsContainer containerId={containerId} />

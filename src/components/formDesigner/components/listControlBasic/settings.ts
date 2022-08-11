@@ -27,31 +27,6 @@ export const listSettingsForm = new DesignerToolbarSettings()
     parentId: 'root',
     label: 'Hide label?',
   })
-  .addTextField({
-    id: '2488beb9-ef4c-44de-b035-f88ccb0889e0',
-    name: 'title',
-    label: 'Title',
-    defaultValue: 'List title',
-  })
-  .addSectionSeparator({
-    id: 'a7673729-ffa1-43fd-8ba1-31506fac3e9d',
-    name: 'separatorData',
-    parentId: 'root',
-    label: 'Buttons',
-    sectionName: 'Buttons',
-  })
-  .addButtons({
-    id: 'f0eac108-728c-4861-922f-e22d4ff47df8',
-    name: 'buttons',
-    label: '',
-  })
-  .addSectionSeparator({
-    id: '6b995198-8f53-4c9a-8614-926c7f654928',
-    name: 'separatorData',
-    parentId: 'root',
-    label: '',
-    sectionName: '',
-  })
   .addCheckbox({
     id: '49b76c8f-c26f-48f9-8122-aa94dfe53b98',
     name: 'bordered',

@@ -64,6 +64,7 @@ import PermissionsTree from '../../../components/formDesigner/components/permiss
 import PermissionTagGroup from '../../../components/formDesigner/components/permissions/permissionTagGroup';
 import List from '../../../components/formDesigner/components/listControl';
 import Progress from '../../../components/formDesigner/components/progress';
+import Buttons from '../../../components/formDesigner/components/button/buttonGroup/buttonsComponent';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -72,6 +73,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
     components: [
       Autocomplete,
       Button,
+      Buttons,
       ButtonGroup,
       Checkbox,
       CheckboxGroup,

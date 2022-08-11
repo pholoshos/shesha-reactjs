@@ -18,8 +18,6 @@ import ShaSpin from '../../../shaSpin';
 import classNames from 'classnames';
 import { useFormMarkup } from './useFormMarkup';
 import EmbeddedForm from '../../../configurableForm/embeddedForm';
-import CollapsiblePanel from '../../../collapsiblePanel';
-import { ButtonGroup } from '../button/buttonGroup/buttonGroupComponent';
 
 interface IListSettingsProps {
   dataSourceUrl?: string;
@@ -35,7 +33,6 @@ interface IListSettingsProps {
   showPagination?: boolean;
   paginationDefaultPageSize: number;
   allowSubmit?: boolean;
-  buttons?: any[];
 }
 
 export interface IListComponentProps extends IListSettingsProps, IConfigurableFormComponent {
@@ -51,51 +48,48 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
   name: 'List',
   icon: <OrderedListOutlined />,
   factory: ({ ...model }: IListComponentProps) => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden, formMode } = useForm();
 
     const isHidden = isComponentHidden(model);
 
     if (isHidden) return null;
 
+    if (formMode !== 'designer') {
+      return (
+        <ConfigurableFormItem
+          model={model}
+          className="sha-list-component"
+          labelCol={{ span: model?.labelCol }}
+          wrapperCol={{ span: model?.wrapperCol }}
+        >
+          <ListComponentRender
+            containerId={model.id}
+            allowSubmit={model?.allowSubmit}
+            submitUrl={model?.submitUrl}
+            submitHttpVerb={model?.submitHttpVerb}
+            showPagination={model?.showPagination}
+            paginationDefaultPageSize={model?.showPagination ? model?.paginationDefaultPageSize : 5}
+            name={model?.name}
+            bordered={model?.bordered}
+            title={model?.title}
+            footer={model?.footer}
+            allowAddAndRemove={model?.allowAddAndRemove}
+            dataSourceUrl={model?.dataSource === 'api' ? model?.dataSourceUrl : null}
+            formId={model?.renderStrategy === 'externalForm' ? model?.formId : null}
+          />
+        </ConfigurableFormItem>
+      );
+    }
+
     return (
-      <ConfigurableFormItem
-        model={{ ...model, hideLabel: true }}
-        className="sha-list-component"
-        labelCol={{ span: model?.labelCol }}
-        wrapperCol={{ span: model?.wrapperCol }}
-      >
-        <ListComponentRender
-          containerId={model.id}
-          allowSubmit={model?.allowSubmit}
-          submitUrl={model?.submitUrl}
-          submitHttpVerb={model?.submitHttpVerb}
-          showPagination={model?.showPagination}
-          paginationDefaultPageSize={model?.showPagination ? model?.paginationDefaultPageSize : 5}
-          name={model?.name}
-          bordered={model?.bordered}
-          title={model?.title}
-          footer={model?.footer}
-          buttons={model?.buttons}
-          allowAddAndRemove={model?.allowAddAndRemove}
-          dataSourceUrl={model?.dataSource === 'api' ? model?.dataSourceUrl : null}
-          formId={model?.renderStrategy === 'externalForm' ? model?.formId : null}
-        />
+      <ConfigurableFormItem model={model} labelCol={{ span: model?.labelCol }} wrapperCol={{ span: model?.wrapperCol }}>
+        {model?.renderStrategy === 'externalForm' ? (
+          <Alert message="You can't drop items here if renderStrategy === 'externalForm'. Instead, specify form path" />
+        ) : (
+          <ComponentsContainer containerId={model.id} itemsLimit={1} />
+        )}
       </ConfigurableFormItem>
     );
-
-    // return (
-    //   <ConfigurableFormItem
-    //     model={{ ...model, hideLabel: true }}
-    //     labelCol={{ span: model?.labelCol }}
-    //     wrapperCol={{ span: model?.wrapperCol }}
-    //   >
-    //     {model?.renderStrategy === 'externalForm' ? (
-    //       <Alert message="You can't drop items here if renderStrategy === 'externalForm'. Instead, specify form path" />
-    //     ) : (
-    //       <ComponentsContainer containerId={model.id} itemsLimit={1} />
-    //     )}
-    //   </ConfigurableFormItem>
-    // );
   },
   settingsFormMarkup: listSettingsForm,
   validateSettings: model => validateConfigurableComponentSettings(listSettingsForm, model),
@@ -120,24 +114,21 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   submitHttpVerb = 'POST',
   onSubmit,
   allowSubmit,
-  buttons,
-  title,
 }) => {
-  const { markup, loading: isFetchingForm, error: fetchFormError } = useFormMarkup(formId);
+  const { markup, loading: isFetchingForm, error: fetchformError } = useFormMarkup(formId);
   const queryParams = useMemo(() => getQueryParams(), []);
-  const { formData, formSettings, formMode } = useForm();
+  const { formData, formSettings } = useForm();
   const { globalState } = useGlobalState();
-  const isInDesignerMode = formMode === 'designer';
 
   const evaluatedSubmitUrl = useMemo(() => {
-    if (!submitUrl?.trim() || isInDesignerMode) return '';
+    if (!submitUrl?.trim()) return '';
 
     return evaluateComplexString(submitUrl, [
       { match: 'data', data: formData },
       { match: 'globalState', data: globalState },
       { match: 'query', data: queryParams },
     ]);
-  }, [submitUrl, formData, globalState, queryParams, isInDesignerMode]);
+  }, [submitUrl, formData, globalState, queryParams]);
 
   const { refetch, loading: fetchingData, data, error: fetchDataError } = useGet({ path: '/' });
   const { mutate, loading: submitting, error: submitError } = useMutate({
@@ -163,16 +154,12 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   }, [dataSourceUrl]);
 
   useEffect(() => {
-    if (isInDesignerMode) return;
-
     if (evaluatedDataSourceUrl) {
       refetch({ path: evaluatedDataSourceUrl, queryParams: { maxResultCount: paginationDefaultPageSize } });
     }
-  }, [evaluatedDataSourceUrl, isInDesignerMode]);
+  }, [evaluatedDataSourceUrl]);
 
   useEffect(() => {
-    if (isInDesignerMode) return;
-
     if (typeof onChange === 'function' && data && evaluatedDataSourceUrl) {
       if (Array.isArray(data?.result)) {
         onChange(data?.result);
@@ -180,19 +167,13 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
         onChange(data?.result?.items);
       }
     }
-  }, [data, evaluatedDataSourceUrl, isInDesignerMode]);
+  }, [data, evaluatedDataSourceUrl]);
 
   useEffect(() => {
-    if (
-      value &&
-      !Array.isArray(value) &&
-      !evaluatedDataSourceUrl &&
-      typeof onChange === 'function' &&
-      !isInDesignerMode
-    ) {
+    if (value && !Array.isArray(value) && !evaluatedDataSourceUrl && typeof onChange === 'function') {
       onChange([]);
     }
-  }, [value, isInDesignerMode]);
+  }, [value]);
 
   const handleSave = () => {
     if (onSubmit) {
@@ -209,18 +190,13 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     }
   };
 
-  const renderPagination = () => {
-    if (!showPagination) return null;
-
-    return (
+  const renderPagination = () => (
+    <span>
       <Pagination
         defaultCurrent={1}
         total={data?.result?.totalCount || 50}
         defaultPageSize={paginationDefaultPageSize}
         pageSizeOptions={[5, 10, 15, 20]}
-        size="small"
-        showSizeChanger
-        showTitle
         onChange={(page: number, pageSize) => {
           refetch({
             queryParams: { skipCount: pageSize * (page - 1), maxResultCount: pageSize },
@@ -228,23 +204,14 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
           });
         }}
       />
-    );
-  };
+    </span>
+  );
 
   return (
-    <CollapsiblePanel
-      header={title}
-      extraClass="sha-list-component-extra"
-      extra={
-        <Space className="sha-list-component-extra-space">
-          {renderPagination()}
-          <ButtonGroup items={buttons || []} name={''} type={''} id={containerId} size="small" />
-        </Space>
-      }
-    >
+    <Fragment>
       <ValidationErrors error={fetchDataError} />
       <ValidationErrors error={submitError} />
-      <ValidationErrors error={fetchFormError} />
+      <ValidationErrors error={fetchformError} />
 
       <ShaSpin spinning={fetchingData || submitting} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
         <Show when={Array.isArray(value)}>
@@ -309,7 +276,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
           </Form.List>
         </Show>
       </ShaSpin>
-    </CollapsiblePanel>
+    </Fragment>
   );
 };
 

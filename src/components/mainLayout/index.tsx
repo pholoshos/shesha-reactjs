@@ -65,7 +65,7 @@ const DefaultLayout: FC<PropsWithChildren<IMainLayoutProps>> = props => {
     layoutBackgroundStyle,
     footer,
     footerStyle,
-    theme = 'dark',
+    theme = 'light',
     heading,
     fixHeading = false,
     showHeading = true,

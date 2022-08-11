@@ -4,11 +4,9 @@ import {
   setThemeAction,
   /* NEW_ACTION_IMPORT_GOES_HERE */
 } from './actions';
-import { UiActionsContext, UiStateContext, THEME_CONTEXT_INITIAL_STATE } from './contexts';
+import { UiActionsContext, UiStateContext, THEME_CONTEXT_INITIAL_STATE, IApplicationTheme } from './contexts';
 import { ConfigProvider } from 'antd';
 import { THEME_CONFIG_ID } from '../../constants';
-import { Theme } from 'antd/lib/config-provider/context';
-import { isEqual } from 'lodash';
 import { useConfigurableComponentGet, useConfigurableComponentUpdateSettings } from '../../apis/configurableComponent';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -23,44 +21,44 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   iconPrefixCls,
 
   // TODO: Later this to be configurable so that. Currently if you change it the layout fails because the styling references the `--ant prefixCls`
-  prefixCls = 'ant', 
+  prefixCls = 'ant',
 }) => {
   const [state, dispatch] = useReducer(uiReducer, THEME_CONTEXT_INITIAL_STATE);
 
   const { data: loadedThemeResponse } = useConfigurableComponentGet({ id: THEME_CONFIG_ID });
   const { mutate: saveTheme } = useConfigurableComponentUpdateSettings({ id: THEME_CONFIG_ID });
-  
+
   const debouncedSave = useDebouncedCallback(themeToSave => {
     saveTheme({ id: THEME_CONFIG_ID, settings: JSON.stringify(themeToSave) });
   }, 300);
 
   const loadedTheme = useMemo(() => {
-    if (!loadedThemeResponse)
-      return null;
-    const themeJson = JSON.parse(loadedThemeResponse.result.settings) as Theme;
+    if (!loadedThemeResponse) return {};
+    const themeJson = JSON.parse(loadedThemeResponse.result.settings) as IApplicationTheme;
+
     return themeJson;
   }, [loadedThemeResponse]);
 
   useEffect(() => {
     changeTheme(loadedTheme);
   }, [loadedTheme]);
-  
-  
+
   // Persist the theme
   useEffect(() => {
-    if(state && !isEqual(state?.theme, loadedTheme))
-      debouncedSave(state?.theme);
+    // if (state && !isEqual(state?.theme, loadedTheme)) debouncedSave(state?.theme);
 
     ConfigProvider.config({
       prefixCls,
-      theme: state?.theme,
+      theme: state?.theme?.application,
       iconPrefixCls,
     });
   }, [state?.theme]);
 
   // Make an API Call to fetch the theme
-  const changeTheme = (theme: Theme) => {
+  const changeTheme = (theme: IApplicationTheme) => {
     dispatch(setThemeAction(theme));
+
+    debouncedSave(theme);
   };
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */

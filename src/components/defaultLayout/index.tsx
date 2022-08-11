@@ -6,7 +6,7 @@ import DefaultLayoutHeader from './defaultLayoutHeader';
 import { MenuTheme } from 'antd/lib/menu/MenuContext';
 import { useSidebarMenuDefaults } from '../../providers/sidebarMenu';
 import ConfigurableSidebarMenu from '../configurableSidebarMenu';
-import { Show, useLocalStorage } from '../..';
+import { Show, useLocalStorage, useTheme } from '../..';
 import { SIDEBAR_MENU_ID } from '../../constants';
 import { useMediaQuery } from 'react-responsive';
 import { TABLET_MD_SIZE_QUERY } from '../../constants/media-queries';
@@ -33,12 +33,9 @@ export interface IDefaultLayoutProps {
 // TODO: Check if including props from the layout will
 // TODO not cause the app to misbehave, especially when navigating to other pages the layout
 
-export const DefaultLayout: FC<PropsWithChildren<IDefaultLayoutProps>> = ({
-  children,
-  theme = 'dark',
-  __hideHeader = false,
-}) => {
+export const DefaultLayout: FC<PropsWithChildren<IDefaultLayoutProps>> = ({ children, __hideHeader = false }) => {
   const sidebarDefaults = useSidebarMenuDefaults();
+  const { theme } = useTheme();
 
   const [collapsed, setCollapsed] = useLocalStorage('SIDEBAR_COLLAPSE', true);
 
@@ -62,9 +59,9 @@ export const DefaultLayout: FC<PropsWithChildren<IDefaultLayoutProps>> = ({
           paddingTop: '48px',
           left: 0,
         }}
-        theme={theme}
+        theme={theme?.sidebar}
       >
-        <ConfigurableSidebarMenu theme={theme} id={SIDEBAR_MENU_ID} defaultSettings={sidebarDefaults} />
+        <ConfigurableSidebarMenu theme={theme?.sidebar} id={SIDEBAR_MENU_ID} defaultSettings={sidebarDefaults} />
       </Sider>
       <Layout className="site-layout">
         <Header className="site-layout-background">

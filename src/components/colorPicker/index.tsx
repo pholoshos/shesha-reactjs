@@ -24,10 +24,6 @@ const ColorPicker: FC<IColorPickerProps> = ({ title, color, onChange, onChangeCo
     setState(prev => ({ ...prev, visible }));
   };
 
-  const handleClosePicker = () => {
-    setState(prev => ({ ...prev, visible: false }));
-  };
-
   const handleColorChange = (localColor: ColorResult, event: React.ChangeEvent<HTMLInputElement>) => {
     setState(prev => ({ ...prev, color: localColor?.hex }));
 

@@ -10,7 +10,7 @@ import LayoutHeading from '../layoutHeading';
 import { withAuth } from '../../hocs';
 import { useSidebarMenuDefaults } from '../../providers/sidebarMenu';
 import ConfigurableSidebarMenu from '../configurableSidebarMenu';
-import { useLocalStorage } from '../..';
+import { useLocalStorage, useTheme } from '../..';
 import { SIDEBAR_MENU_ID } from '../../constants';
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -32,6 +32,9 @@ export interface IMainLayoutProps extends IHtmlHeadProps {
   footerStyle?: CSSProperties;
   footer?: ReactNodeOrFunc;
   heading?: ReactNodeOrFunc;
+  /**
+   * @deprecated - if passed it will still be used, but the one from the ThemeProvider is the one being used
+   */
   theme?: MenuTheme;
   fixHeading?: boolean;
   showHeading?: boolean;
@@ -65,7 +68,6 @@ const DefaultLayout: FC<PropsWithChildren<IMainLayoutProps>> = props => {
     layoutBackgroundStyle,
     footer,
     footerStyle,
-    theme = 'light',
     heading,
     fixHeading = false,
     showHeading = true,
@@ -75,8 +77,11 @@ const DefaultLayout: FC<PropsWithChildren<IMainLayoutProps>> = props => {
     headerControls,
     customComponent,
   } = props;
+  const { theme: themeFromStorage } = useTheme();
   const sidebarDefaults = useSidebarMenuDefaults();
   const sidebarDefaultItems = sidebarDefaults?.items || [];
+
+  const sideMenuTheme = themeFromStorage?.sidebar;
 
   const [collapsed, setCollapsed] = useLocalStorage('SIDEBAR_COLLAPSE', true);
 
@@ -134,9 +139,13 @@ const DefaultLayout: FC<PropsWithChildren<IMainLayoutProps>> = props => {
           paddingTop: '48px',
           left: 0,
         }}
-        theme={theme}
+        theme={sideMenuTheme}
       >
-        <ConfigurableSidebarMenu theme={theme} id={SIDEBAR_MENU_ID} defaultSettings={{ items: sidebarDefaultItems }} />
+        <ConfigurableSidebarMenu
+          theme={sideMenuTheme}
+          id={SIDEBAR_MENU_ID}
+          defaultSettings={{ items: sidebarDefaultItems }}
+        />
       </Sider>
       <Layout className="site-layout">
         <Header className="site-layout-background" style={headerStyle}>

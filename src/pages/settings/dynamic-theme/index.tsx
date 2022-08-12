@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { Alert, Col, Divider, Form, Radio, Row, Space } from 'antd';
 import { CollapsiblePanel, Page, SectionSeparator } from '../../../components';
 import { useTheme } from '../../..';
@@ -21,26 +21,31 @@ const ConfigurableThemePage: FC<IConfigurableThemePageProps> = () => {
     });
   };
 
-  const renderColor = (colorName: 'primaryColor' | 'errorColor' | 'warningColor' | 'successColor' | 'infoColor') => {
-    const initialColor = theme?.application && theme?.application[colorName];
+  const renderColor = useCallback(
+    (colorName: 'primaryColor' | 'errorColor' | 'warningColor' | 'successColor' | 'infoColor') => {
+      const initialColor = theme?.application && theme?.application[colorName];
 
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-        <ColorPicker
-          title={humanizeString(colorName)}
-          presetColors={['#1890ff', '#25b864', '#ff6f00', '#ff4d4f', '#faad14', '#52c41a', '#1890ff']}
-          color={initialColor}
-          onChange={({ hex }) => {
-            onColorChange({
-              [colorName]: hex,
-            });
-          }}
-        />
+      console.log('LOGS:: renderColor theme: ', initialColor, colorName);
 
-        <span>{humanizeString(colorName)}</span>
-      </div>
-    );
-  };
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+          <ColorPicker
+            title={humanizeString(colorName)}
+            presetColors={['#1890ff', '#25b864', '#ff6f00', '#ff4d4f', '#faad14', '#52c41a', '#1890ff']}
+            color={initialColor}
+            onChange={({ hex }) => {
+              onColorChange({
+                [colorName]: hex,
+              });
+            }}
+          />
+
+          <span>{humanizeString(colorName)}</span>
+        </div>
+      );
+    },
+    [theme]
+  );
 
   return (
     <Page title="Customize theme">

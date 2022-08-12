@@ -6,6 +6,7 @@ import {
 } from '../../../../../providers/buttonGroupConfigurator';
 import { ButtonGroupConfigurator } from './configurator';
 import { ButtonGroupItemProps } from '../../../../../providers/buttonGroupConfigurator/models';
+import { useMedia } from 'react-use';
 
 export interface IToolbarSettingsModal {
   value?: object;
@@ -23,6 +24,7 @@ export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
   title = 'Configure Buttons',
   heading,
 }) => {
+  const isSmall = useMedia('(max-width: 480px)');
   const [showModal, setShowModal] = useState(false);
   const { items } = useButtonGroupConfigurator();
 
@@ -38,7 +40,7 @@ export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
       <Button onClick={toggleModalVisibility}>Customize Button Group</Button>
 
       <Modal
-        width="60%"
+        width={isSmall ? '90%' : '60%'}
         visible={showModal}
         title={title}
         okText="Save"

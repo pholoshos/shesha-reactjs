@@ -3,6 +3,7 @@ import { Modal } from 'antd';
 import { ToolbarConfiguratorProvider, useToolbarConfigurator } from '../../../../../providers/toolbarConfigurator';
 import { ToolbarConfigurator } from './toolbarConfigurator';
 import { ToolbarItemProps } from '../../../../../providers/toolbarConfigurator/models';
+import { useMedia } from 'react-use';
 
 export interface IToolbarSettingsModal {
   visible: boolean;
@@ -25,6 +26,7 @@ export const ToolbarSettingsModalInner: FC<IToolbarSettingsModal> = ({
   heading,
 }) => {
   const { items } = useToolbarConfigurator();
+  const isSmall = useMedia('(max-width: 480px)');
 
   const onOkClick = () => {
     if (typeof onChange === 'function') onChange(items);
@@ -32,7 +34,7 @@ export const ToolbarSettingsModalInner: FC<IToolbarSettingsModal> = ({
   };
 
   return (
-    <Modal width="60%" visible={visible} title={title} okText="Save" onCancel={hideModal} onOk={onOkClick}>
+    <Modal width={isSmall ? '90%' : '60%'} visible={visible} title={title} okText="Save" onCancel={hideModal} onOk={onOkClick}>
       <ToolbarConfigurator allowAddGroups={allowAddGroups} heading={heading} render={render} />
     </Modal>
   );

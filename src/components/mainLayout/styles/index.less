@@ -51,6 +51,13 @@
           align-items: center;
           margin-left: @padding-lg;
         }
+
+        .logo,
+        .search {
+          @media @tablet {
+            display: none;
+          }
+        }
       }
 
       .layout-header-right {
@@ -96,6 +103,10 @@
           .separator {
             border-left: 2px solid rgba(189, 189, 189, 0.37);
             margin-right: 5px;
+          }
+
+          @media @tablet {
+            display: none;
           }
         }
       }

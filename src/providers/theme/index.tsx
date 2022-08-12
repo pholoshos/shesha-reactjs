@@ -33,7 +33,7 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   }, 300);
 
   const loadedTheme = useMemo(() => {
-    if (!loadedThemeResponse) return {};
+    if (!loadedThemeResponse) return THEME_CONTEXT_INITIAL_STATE.theme;
     const themeJson = JSON.parse(loadedThemeResponse.result.settings) as IApplicationTheme;
 
     return themeJson;

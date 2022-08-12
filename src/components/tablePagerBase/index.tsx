@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Pagination } from 'antd';
+import { useMedia } from 'react-use';
 
 export interface ITablePagerBaseProps {
   /** Whether this component */
@@ -41,6 +42,8 @@ export const TablePagerBase: FC<ITablePagerBaseProps> = ({
   setCurrentPage,
   changePageSize,
 }) => {
+  const isWider = useMedia('(min-width: 1202px)');
+
   const onPageNumberChange = (page: number, pageSize?: number) => {
     setCurrentPage(page);
     changePageSize(pageSize);
@@ -58,6 +61,8 @@ export const TablePagerBase: FC<ITablePagerBaseProps> = ({
 
     return null;
   };
+
+  if (!isWider) return null;
 
   return (
     <Pagination

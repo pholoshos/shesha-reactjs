@@ -6,6 +6,7 @@ import { FormMode } from '../../providers/form/models';
 import { IModalProps } from '../../providers/dynamicModal/models';
 import { evaluateString, useShaRouting } from '../..';
 import _ from 'lodash';
+import { useMedia } from 'react-use';
 
 export interface IDynamicModalProps extends Omit<IModalProps, 'fetchUrl'> {
   id: string;
@@ -42,6 +43,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
   const [form] = Form.useForm();
   const { hide, removeModal } = useDynamicModals();
   const { router } = useShaRouting();
+  const isSmall = useMedia('(max-width: 480px)');
 
   const onOk = () => {
     if (showModalFooter) {
@@ -104,7 +106,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
       onCancel={hideForm} // not used
       {...footerProps}
       destroyOnClose
-      width={width} // Hardcoded for now. This will be configurable very shortly
+      width={isSmall ? width : '60%'}
     >
       <ConfigurableForm
         id={formId}

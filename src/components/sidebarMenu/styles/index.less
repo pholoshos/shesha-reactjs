@@ -1,21 +1,23 @@
-.ant-menu-item {
-  &:hover {
-    color: white;
-    background-color: var(--ant-primary-4) !important;
-  }
-}
-
-.ant-menu-submenu {
-  &:hover {
-    background-color: var(--ant-primary-5) !important;
-
-    .is-parent-menu {
-      color: white !important;
+.sha-sidebar-menu {
+  .ant-menu-item {
+    &:hover {
+      color: white;
+      background-color: var(--ant-primary-4) !important;
     }
   }
 
-  &.ant-menu-submenu-selected {
-    background-color: var(--ant-primary-color);
-    // background-color: @primary-color;
+  .ant-menu-submenu {
+    &:hover {
+      background-color: var(--ant-primary-5) !important;
+
+      .is-parent-menu {
+        color: white !important;
+      }
+    }
+
+    &.ant-menu-submenu-selected {
+      background-color: var(--ant-primary-color);
+      // background-color: @primary-color;
+    }
   }
 }

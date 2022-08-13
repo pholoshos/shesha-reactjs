@@ -43,7 +43,7 @@ export const SidebarMenu: FC<ISidebarMenuProps> = ({ theme = 'dark' }) => {
   return (
     <Menu
       mode="inline"
-      className="nav-links-renderer"
+      className="nav-links-renderer sha-sidebar-menu"
       defaultSelectedKeys={selectedKey ? [selectedKey] : []}
       defaultOpenKeys={keys}
       onOpenChange={onOpenChange}

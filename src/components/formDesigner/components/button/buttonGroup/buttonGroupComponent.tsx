@@ -3,20 +3,14 @@ import { IToolboxComponent } from '../../../../../interfaces';
 import { GroupOutlined } from '@ant-design/icons';
 import ToolbarSettings from './settings';
 import { IButtonGroupProps } from './models';
-import { Alert, Menu, Dropdown, Space } from 'antd';
-import {
-  IButtonGroup,
-  IButtonGroupButton,
-  ButtonGroupItemProps,
-} from '../../../../../providers/buttonGroupConfigurator/models';
+import { Alert, Menu } from 'antd';
+import { IButtonGroupButton, ButtonGroupItemProps } from '../../../../../providers/buttonGroupConfigurator/models';
 import { useForm } from '../../../../../providers/form';
 import { ConfigurableButton } from '../configurableButton';
-import { ShaIcon } from '../../../..';
-import { IconType } from '../../../../shaIcon';
 import { useAuth, useGlobalState } from '../../../../../providers';
-import { nanoid } from 'nanoid/non-secure';
 import moment from 'moment';
 import { getStyle } from '../../../../../providers/form/utils';
+import { getButtonGroupMenuItem } from './utils';
 
 const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
   type: 'buttonGroup',
@@ -44,7 +38,11 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
   },
 };
 
-export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize }) => {
+type MenuButton = ButtonGroupItemProps & {
+  childItems?: MenuButton[];
+};
+
+export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize = 'middle' }) => {
   const { formMode, formData, form } = useForm();
   const { anyOfPermissionsGranted } = useAuth();
   const { globalState } = useGlobalState();
@@ -90,78 +88,33 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
     return isVisibleByCondition && !hidden && granted;
   };
 
-  const renderItem = (item: ButtonGroupItemProps, uuid: string) => {
-    const isEnabledByCondition = executeExpression(item.customEnabled, true);
+  const renderMenuButton = (props: MenuButton, isChild = false) => {
+    const hasChildren = props?.childItems?.length > 0;
 
-    switch (item.itemType) {
-      case 'item':
-        const itemProps = item as IButtonGroupButton;
+    const disabled = !executeExpression(props.customEnabled, true);
 
-        switch (itemProps.itemSubType) {
-          case 'button':
-            return (
-              <ConfigurableButton
-                formComponentId={id}
-                key={uuid}
-                {...itemProps}
-                size={size}
-                style={getStyle(item?.style, formData)}
-                disabled={!isEnabledByCondition}
-              />
-            );
+    return getButtonGroupMenuItem(
+      renderButtonItem(props, props?.id, disabled),
+      props.id,
+      disabled,
+      hasChildren ? props?.childItems?.filter(getIsVisible)?.map(props => renderMenuButton(props, isChild)) : null
+    );
+  };
 
-          case 'separator':
-            return <div key={uuid} className="sha-toolbar-separator" />;
+  const renderButtonItem = (item: ButtonGroupItemProps, uuid: string, disabled = false, isChild = false) => {
+    const itemProps = item as IButtonGroupButton;
 
-          default:
-            return null;
-        }
-      case 'group':
-        const group = item as IButtonGroup;
-        switch (item?.groupType) {
-          case 'inline':
-            return (
-              <Space size={0}>
-                {group?.childItems?.filter(getIsVisible).map(localItem => renderItem(localItem, nanoid()))}
-              </Space>
-            );
-
-          default: {
-            // dropdown
-
-            const menu = (
-              <Menu>
-                {group.childItems?.filter(getIsVisible).map(childItem => {
-                  const localIsEnabledByCondition = executeExpression(childItem.customEnabled, true);
-
-                  return (
-                    <Menu.Item
-                      key={childItem?.id}
-                      title={childItem.tooltip}
-                      danger={childItem.danger}
-                      icon={childItem.icon ? <ShaIcon iconName={childItem.icon as IconType} /> : undefined}
-                      disabled={!localIsEnabledByCondition || childItem?.disabled}
-                    >
-                      {childItem.label}
-                    </Menu.Item>
-                  );
-                })}
-              </Menu>
-            );
-
-            return (
-              <Dropdown.Button
-                key={uuid}
-                overlay={menu}
-                icon={item.icon ? <ShaIcon iconName={item.icon as IconType} /> : undefined}
-                size={size}
-              >
-                {item.label}
-              </Dropdown.Button>
-            );
-          }
-        }
-    }
+    return (
+      <ConfigurableButton
+        formComponentId={id}
+        key={uuid}
+        {...itemProps}
+        size={size}
+        style={getStyle(item?.style, formData)}
+        disabled={disabled}
+        buttonType={isChild ? 'link' : item.buttonType}
+      />
+    );
   };
 
   if (items.length === 0 && isDesignMode)
@@ -175,11 +128,16 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
 
   return (
     <div style={{ minHeight: '30px' }}>
-      <Space size={spaceSize}>{items?.filter(getIsVisible).map(localItem => renderItem(localItem, nanoid()))}</Space>
+      <Menu
+        mode="horizontal"
+        items={items?.filter(getIsVisible)?.map(props => renderMenuButton(props))}
+        className={`sha-responsive-button-group space-${spaceSize}`}
+        onClick={event => {
+          console.log('LOGS:: event.key ', event.key);
+        }}
+      />
     </div>
   );
 };
 
 export default ButtonGroupComponent;
-
-//#region Page Toolbar

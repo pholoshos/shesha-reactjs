@@ -42,7 +42,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     data: dataById,
     loading: isFetchingFormById,
     error: fetchFormByIdError,
-  } = useFormGet({ id: formId, lazy: true });
+  } = useFormGet({ queryParams: { id: formId }, lazy: true });
 
   const formResponse: IFormDto = useMemo(() => {
     if (isFetchingFormByPath || isFetchingFormById) {
@@ -51,11 +51,11 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
     let result: FormDto;
     if (dataByPath) {
-      result = dataByPath.result;
+      result = dataByPath;
     }
 
     if (dataById) {
-      result = dataById.result;
+      result = dataById;
     }
 
     if (result) {
@@ -173,11 +173,11 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   useEffect(() => {
     let result: FormDto;
     if (dataByPath) {
-      result = dataByPath.result;
+      result = dataByPath;
     }
 
     if (dataById) {
-      result = dataById.result;
+      result = dataById;
     }
 
     if (result) {

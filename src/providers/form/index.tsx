@@ -144,7 +144,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     future: [],
   });
 
-  const fetcherById = useFormGet({ lazy: true, id });
+  const fetcherById = useFormGet({ lazy: true, queryParams: { id } });
   const fetcherByPath = useFormGetByPath({ lazy: true });
   const { loading: isFetchingFormInfo, error: fetchingFormInfoError, data: fetchingFormInfoResponse } = path
     ? fetcherByPath
@@ -208,7 +208,8 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     } else {
       if (!isFetchingFormInfo) {
         if (fetchingFormInfoResponse) {
-          const fetchedForm = fetchingFormInfoResponse?.result;
+          const fetchedForm = (fetchingFormInfoResponse as any).result;
+
           if (fetchedForm) {
             const parsedForm = parseForm(fetchedForm.markup);
 
@@ -224,6 +225,8 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
               formSettings: parsedForm.formSettings,
               ...newFlatComponents,
             };
+
+            console.log('LOG:: fetchingFormInfoResponse, fetchedForm: ', fetchingFormInfoResponse, fetchedForm);
 
             // parse json content
             dispatch((dispatchThunk, _getState) => {
@@ -316,7 +319,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   // todo: review usage of useFormUpdateMarkup after
   const { mutate: saveFormHttp /*, loading: saveFormInProgress, error: saveFormError*/ } = useFormUpdateMarkup({
-    id: id || state?.present?.id,
+    // id: id || state?.present?.id,
   });
 
   const saveForm = async (): Promise<void> => {

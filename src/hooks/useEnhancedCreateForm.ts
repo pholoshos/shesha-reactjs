@@ -1,5 +1,5 @@
 import { UseMutateReturn } from 'restful-react';
-import { AjaxResponseBase, FormDto, FormDtoAjaxResponse, useFormCreate, UseFormCreateProps } from '../apis/form';
+import { FormDto, useFormCreate, UseFormCreateProps } from '../apis/form';
 import { ViewType } from '../providers/form/models';
 import { getDefaultFormMarkup } from '../providers/form/utils';
 
@@ -8,9 +8,7 @@ import { getDefaultFormMarkup } from '../providers/form/utils';
  * @param props form create props
  * @returns a promise
  */
-export const useEnhancedCreateForm = (
-  props: UseFormCreateProps
-): UseMutateReturn<FormDtoAjaxResponse, AjaxResponseBase, FormDto, any, void> => {
+export const useEnhancedCreateForm = (props: UseFormCreateProps): UseMutateReturn<any, any, FormDto, any, void> => {
   const hook = useFormCreate(props);
 
   const mutate = (data: FormDto) =>

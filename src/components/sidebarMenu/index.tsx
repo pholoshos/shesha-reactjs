@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { Menu } from 'antd';
-import renderSidebarMenuItem from './sidebarMenuItem';
 import { MenuTheme } from 'antd/lib/menu/MenuContext';
 import { useLocalStorage } from '../../hooks';
 import { ISidebarMenuItem, useSidebarMenu } from '../../providers/sidebarMenu';
 import { getCurrentUrl, normalizeUrl } from '../../utils/url';
+import { renderSidebarMenuItem } from './utils';
 
 export interface ISidebarMenuProps {
   isCollapsed?: boolean;
@@ -13,16 +13,14 @@ export interface ISidebarMenuProps {
 
 const findItem = (target: string, array: ISidebarMenuItem[]): ISidebarMenuItem => {
   for (const item of array) {
-    if (item.target === target) 
-      return item;
+    if (item.target === target) return item;
     if (item.childItems) {
       const child = findItem(target, item.childItems);
-      if (child) 
-        return child;
+      if (child) return child;
     }
   }
   return null;
-}
+};
 
 export const SidebarMenu: FC<ISidebarMenuProps> = ({ theme = 'dark' }) => {
   const [openedKeys, setOpenedKeys] = useLocalStorage('openedSidebarKeys', null);
@@ -45,14 +43,13 @@ export const SidebarMenu: FC<ISidebarMenuProps> = ({ theme = 'dark' }) => {
   return (
     <Menu
       mode="inline"
-      className="nav-links-renderer"
+      className="nav-links-renderer sha-sidebar-menu"
       defaultSelectedKeys={selectedKey ? [selectedKey] : []}
       defaultOpenKeys={keys}
       onOpenChange={onOpenChange}
       theme={theme}
-    >
-      {items.map(item => renderSidebarMenuItem({ ...item, isItemVisible }))}
-    </Menu>
+      items={items.map(item => renderSidebarMenuItem({ ...item, isItemVisible }))}
+    />
   );
 };
 

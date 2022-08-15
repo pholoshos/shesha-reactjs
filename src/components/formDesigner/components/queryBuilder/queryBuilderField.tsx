@@ -5,6 +5,7 @@ import { IProperty } from '../../../../providers/queryBuilder/models';
 import QueryBuilder from '../../../queryBuilder';
 import { CodeEditor } from '../../..';
 import { CaretRightOutlined } from '@ant-design/icons';
+import { useMedia } from 'react-use';
 
 export interface IQueryBuilderFieldProps {
   jsonExpanded?: boolean;
@@ -18,6 +19,7 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
   const [modalVisible, setModalVisible] = useState(false);
   const [jsonLogicResult, setJsonLogicResult] = useState<JsonLogicResult>(undefined);
   const [jsonExpanded, setJsonExpanded] = useState(props.jsonExpanded ?? false);
+  const isSmall = useMedia('(max-width: 480px)');
 
   const onOkClick = () => {
     if (jsonLogicResult) {
@@ -95,7 +97,7 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
       </Collapse>
       <Modal
         visible={modalVisible}
-        width="60%"
+        width={isSmall ? '90%' : '60%'}
         title="Quick Filter Query Builder"
         onCancel={() => setModalVisible(false)}
         onOk={onOkClick}

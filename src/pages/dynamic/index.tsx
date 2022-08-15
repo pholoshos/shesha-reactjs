@@ -42,20 +42,22 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     data: dataById,
     loading: isFetchingFormById,
     error: fetchFormByIdError,
-  } = useFormGet({ id: formId, lazy: true });
+  } = useFormGet({ queryParams: { id: formId }, lazy: true });
 
   const formResponse: IFormDto = useMemo(() => {
     if (isFetchingFormByPath || isFetchingFormById) {
       return null;
     }
 
+    console.log('[dataByPath, dataById, props], ', [dataByPath, dataById, props]);
+
     let result: FormDto;
     if (dataByPath) {
-      result = dataByPath.result;
+      result = (dataByPath as any).result;
     }
 
     if (dataById) {
-      result = dataById.result;
+      result = (dataById as any).result;
     }
 
     if (result) {
@@ -173,11 +175,11 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   useEffect(() => {
     let result: FormDto;
     if (dataByPath) {
-      result = dataByPath.result;
+      result = (dataByPath as any)?.result;
     }
 
     if (dataById) {
-      result = dataById.result;
+      result = (dataById as any)?.result;
     }
 
     if (result) {
@@ -274,6 +276,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   //#endregion
 
   const isLoading = isFetchingData || isFetchingFormByPath || isFetchingFormById || isPostingData;
+
+  console.log('formResponse?.markup', props, formResponse);
 
   if (state && !formResponse?.markup && !isLoading) {
     return (

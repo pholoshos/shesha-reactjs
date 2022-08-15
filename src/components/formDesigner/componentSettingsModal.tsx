@@ -1,5 +1,6 @@
 import { Modal, Spin, Form, Input, Tabs, Checkbox } from 'antd';
 import React from 'react';
+import { useMedia } from 'react-use';
 import { IConfigurableFormComponent } from '../../providers/form/models';
 
 const { TabPane } = Tabs;
@@ -18,6 +19,7 @@ function ComponentSettingsModal<T extends IConfigurableFormComponent>({
   onCancel,
   model,
 }: IProps<T>) {
+  const isSmall = useMedia('(max-width: 480px)');
   const [form] = Form.useForm();
   const formLayout = {
     labelCol: { span: 5 },
@@ -39,7 +41,7 @@ function ComponentSettingsModal<T extends IConfigurableFormComponent>({
 
   return (
     <Modal
-      width="60%"
+      width={isSmall ? '90%' : '60%'}
       visible={isVisible}
       title="Settings"
       okText="Save"

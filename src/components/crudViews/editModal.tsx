@@ -5,6 +5,7 @@ import { FormInstance } from 'antd/lib/form';
 import { useUi } from '../../providers';
 import { UseGenericGetProps, IDataFetcher, IDataMutator } from './models';
 import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
+import { useMedia } from 'react-use';
 
 export interface IGenericEditModalProps {
   id: string;
@@ -44,6 +45,7 @@ const GenericEditModal: FC<IGenericEditModalProps> = ({
   const { loading: loadingInProgress, refetch: doFetch, error: fetchError, data: fetchedData } = fetcher({
     lazy: true,
   });
+  const isSmall = useMedia('(max-width: 480px)');
 
   const fetchData = async () => {
     await doFetch({ queryParams: { id } });
@@ -81,7 +83,7 @@ const GenericEditModal: FC<IGenericEditModalProps> = ({
 
   return (
     <Modal
-      width="60%"
+      width={isSmall ? '90%' : '60%'}
       visible={visible}
       title={title ? title(model) : 'Edit'}
       okText="Save"

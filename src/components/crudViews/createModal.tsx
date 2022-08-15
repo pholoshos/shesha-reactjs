@@ -5,6 +5,7 @@ import { FormInstance } from 'antd/lib/form';
 import { useShaRouting, useUi } from '../../providers';
 import { IDataMutator } from './models';
 import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
+import { useMedia } from 'react-use';
 
 export enum OnSuccessActionType {
   Return = 'RETURN',
@@ -103,6 +104,7 @@ const GenericCreateModal: FC<IGenericCreateModalProps> = ({
   destroyOnClose = true,
   formMarkup,
 }) => {
+  const isSmall = useMedia('(max-width: 480px)');
   const { mutate: save, error, loading } = updater({});
   const { router } = useShaRouting();
 
@@ -163,7 +165,7 @@ const GenericCreateModal: FC<IGenericCreateModalProps> = ({
 
   return (
     <Modal
-      width="60%"
+      width={isSmall ? '90%' : '60%'}
       visible={visible}
       title={title}
       confirmLoading={loading}

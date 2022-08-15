@@ -6,6 +6,7 @@ import {
 } from '../../../../../../providers/datatableColumnsConfigurator';
 import { ColumnsConfigurator } from './columnsConfigurator';
 import { IConfigurableColumnsBase } from '../../../../../../providers/datatableColumnsConfigurator/models';
+import { useMedia } from 'react-use';
 
 export interface IColumnsEditorModal {
   visible: boolean;
@@ -15,6 +16,7 @@ export interface IColumnsEditorModal {
 }
 
 export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onChange, hideModal }) => {
+  const isSmall = useMedia('(max-width: 480px)');
   const { items } = useColumnsConfigurator();
 
   const onOkClick = () => {
@@ -23,7 +25,7 @@ export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onCh
   };
 
   return (
-    <Modal width="60%" visible={visible} title="Configure Columns" okText="Save" onCancel={hideModal} onOk={onOkClick}>
+    <Modal width={isSmall ? '90%' : '60%'} visible={visible} title="Configure Columns" okText="Save" onCancel={hideModal} onOk={onOkClick}>
       <ColumnsConfigurator />
     </Modal>
   );

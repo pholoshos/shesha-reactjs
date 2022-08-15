@@ -1,5 +1,4 @@
 import { FormMode } from './../form/models';
-import { CSSProperties } from 'react';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ButtonType } from 'antd/lib/button';
 

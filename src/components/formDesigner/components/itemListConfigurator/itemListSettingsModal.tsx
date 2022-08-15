@@ -4,6 +4,7 @@ import { ItemListConfigurator } from './configurator';
 import { ItemListConfiguratorProvider, useItemListConfigurator } from '../../../..';
 import { IConfigurableItemBase, IItemsOptions } from '../../../../providers/itemListConfigurator/contexts';
 import { FormMarkup } from '../../../../providers/form/models';
+import { useMedia } from 'react-use';
 
 export interface IItemListSettingsModalProps {
   value?: object;
@@ -24,6 +25,7 @@ export const ItemListSettingsModalInner: FC<Omit<
 >> = ({ onChange, allowAddGroups, render, title = 'Configure Item', heading, callToAction = 'Customize items' }) => {
   const [showModal, setShowModal] = useState(false);
   const { items } = useItemListConfigurator();
+  const isSmall = useMedia('(max-width: 480px)');
 
   const toggleModalVisibility = () => setShowModal(prev => !prev);
 
@@ -37,7 +39,7 @@ export const ItemListSettingsModalInner: FC<Omit<
       <Button onClick={toggleModalVisibility}>{callToAction}</Button>
 
       <Modal
-        width="60%"
+        width={isSmall ? '90%' : '60%'}
         visible={showModal}
         title={title}
         okText="Save"

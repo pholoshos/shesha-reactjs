@@ -15,6 +15,7 @@ import { useSelectedTableRow } from './useSelectedTableRow';
 import { usePublish } from '../../hooks';
 import Show from '../show';
 import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
+import { useMedia } from 'react-use';
 
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
 
@@ -88,7 +89,8 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   const [state, setState] = useState<IEntityPickerState>({
     showModal: false,
   });
-
+  const isSmall = useMedia('(max-width: 480px)');
+  
   const {
     registerConfigurableColumns,
     tableData,
@@ -290,7 +292,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
         visible={state?.showModal}
         onOk={onModalOk}
         onCancel={handleCancel}
-        width="60%"
+        width={isSmall ? '90%' : '60%'}
         okText="Select"
         footer={footer}
       >

@@ -127,7 +127,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
     );
 
   return (
-    <div style={{ minHeight: '30px' }}>
+    <div className="sha-responsive-button-group-container">
       <Menu
         mode="horizontal"
         items={items?.filter(getIsVisible)?.map(props => renderMenuButton(props))}

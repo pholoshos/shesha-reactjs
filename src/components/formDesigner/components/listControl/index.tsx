@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useEffect, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { IFormItem, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { MinusCircleOutlined, OrderedListOutlined, PlusOutlined } from '@ant-design/icons';
@@ -6,7 +6,7 @@ import { evaluateComplexString, validateConfigurableComponentSettings } from '..
 import { ListItemProvider, useForm, useGlobalState } from '../../../../providers';
 import { listSettingsForm } from './settings';
 import ComponentsContainer from '../../componentsContainer';
-import { Alert, Button, Divider, Form, message, Space } from 'antd';
+import { Button, Divider, Form, message, Space } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import { useGet, useMutate } from 'restful-react';
 import ValidationErrors from '../../../validationErrors';
@@ -36,6 +36,7 @@ interface IListSettingsProps {
   paginationDefaultPageSize: number;
   allowSubmit?: boolean;
   buttons?: any[];
+  maxHeight?: number;
 }
 
 export interface IListComponentProps extends IListSettingsProps, IConfigurableFormComponent {
@@ -61,8 +62,8 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
       <ConfigurableFormItem
         model={{ ...model, hideLabel: true }}
         className="sha-list-component"
-        labelCol={{ span: model?.labelCol }}
-        wrapperCol={{ span: model?.wrapperCol }}
+        labelCol={{ span: model?.hideLabel ? 0 : model?.labelCol }}
+        wrapperCol={{ span: model?.hideLabel ? 24 : model?.wrapperCol }}
       >
         <ListComponentRender
           containerId={model.id}
@@ -76,28 +77,23 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
           title={model?.title}
           footer={model?.footer}
           buttons={model?.buttons}
+          maxHeight={model?.maxHeight}
           allowAddAndRemove={model?.allowAddAndRemove}
           dataSourceUrl={model?.dataSource === 'api' ? model?.dataSourceUrl : null}
           formId={model?.renderStrategy === 'externalForm' ? model?.formId : null}
         />
       </ConfigurableFormItem>
     );
-
-    // return (
-    //   <ConfigurableFormItem
-    //     model={{ ...model, hideLabel: true }}
-    //     labelCol={{ span: model?.labelCol }}
-    //     wrapperCol={{ span: model?.wrapperCol }}
-    //   >
-    //     {model?.renderStrategy === 'externalForm' ? (
-    //       <Alert message="You can't drop items here if renderStrategy === 'externalForm'. Instead, specify form path" />
-    //     ) : (
-    //       <ComponentsContainer containerId={model.id} itemsLimit={1} />
-    //     )}
-    //   </ConfigurableFormItem>
-    // );
   },
   settingsFormMarkup: listSettingsForm,
+  initModel: model => {
+    const customProps: IListComponentProps = {
+      ...model,
+      showPagination: true,
+      hideLabel: true,
+    };
+    return customProps;
+  },
   validateSettings: model => validateConfigurableComponentSettings(listSettingsForm, model),
 };
 
@@ -122,8 +118,9 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   allowSubmit,
   buttons,
   title,
+  maxHeight,
 }) => {
-  const { markup, loading: isFetchingForm, error: fetchFormError } = useFormMarkup(formId);
+  const { markup, error: fetchFormError } = useFormMarkup(formId);
   const queryParams = useMemo(() => getQueryParams(), []);
   const { formData, formSettings, formMode } = useForm();
   const { globalState } = useGlobalState();
@@ -166,7 +163,10 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     if (isInDesignerMode) return;
 
     if (evaluatedDataSourceUrl) {
-      refetch({ path: evaluatedDataSourceUrl, queryParams: { maxResultCount: paginationDefaultPageSize } });
+      refetch({
+        path: evaluatedDataSourceUrl,
+        queryParams: { maxResultCount: showPagination ? paginationDefaultPageSize : 1000_000 },
+      });
     }
   }, [evaluatedDataSourceUrl, isInDesignerMode]);
 
@@ -236,79 +236,86 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
       header={title}
       extraClass="sha-list-component-extra"
       extra={
-        <Space className="sha-list-component-extra-space">
+        <div className="sha-list-component-extra-space">
           {renderPagination()}
           <ButtonGroup items={buttons || []} name={''} type={''} id={containerId} size="small" />
-        </Space>
+        </div>
       }
     >
-      <ValidationErrors error={fetchDataError} />
-      <ValidationErrors error={submitError} />
-      <ValidationErrors error={fetchFormError} />
+      <Show when={isInDesignerMode}>
+        <ComponentsContainer containerId={containerId} />
+      </Show>
 
-      <ShaSpin spinning={fetchingData || submitting} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
-        <Show when={Array.isArray(value)}>
-          <Form.List name={name} initialValue={[]}>
-            {(fields, { add, remove }) => {
-              return (
-                <>
-                  {fields.map((field, index) => (
-                    <ListItemProvider index={index} prefix={`${name}.`} formSettings={formSettings} key={field.key}>
-                      <Show when={Boolean(containerId)}>
-                        <ComponentsContainer
-                          containerId={containerId}
-                          plainWrapper
-                          direction="horizontal"
-                          alignItems="center"
-                        />
-                      </Show>
+      <Show when={!isInDesignerMode}>
+        <ValidationErrors error={fetchDataError} />
+        <ValidationErrors error={submitError} />
+        <ValidationErrors error={fetchFormError} />
+        <ShaSpin spinning={fetchingData || submitting} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
+          <Show when={Array.isArray(value)}>
+            <div className="sha-list-component-body" style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}>
+              <Form.List name={name} initialValue={[]}>
+                {(fields, { add, remove }) => {
+                  return (
+                    <>
+                      {fields.map((field, index) => (
+                        <ListItemProvider index={index} prefix={`${name}.`} formSettings={formSettings} key={field.key}>
+                          <Show when={Boolean(containerId)}>
+                            <ComponentsContainer
+                              containerId={containerId}
+                              plainWrapper
+                              direction="horizontal"
+                              alignItems="center"
+                            />
+                          </Show>
 
-                      <Show when={Boolean(formId)}>
-                        <EmbeddedForm markup={markup} containerId={containerId} />
-                      </Show>
+                          <Show when={Boolean(formId)}>
+                            <EmbeddedForm markup={markup} containerId={containerId} />
+                          </Show>
 
-                      <Show when={allowAddAndRemove}>
-                        <div className="sha-list-component-add-item-btn">
-                          <Button
-                            danger
-                            type="primary"
-                            size="small"
-                            className="dynamic-delete-button"
-                            onClick={() => remove(field.name)}
-                            icon={<MinusCircleOutlined />}
-                          >
-                            Remove Above Field
-                          </Button>
-                        </div>
-                      </Show>
+                          <Show when={allowAddAndRemove}>
+                            <div className="sha-list-component-add-item-btn">
+                              <Button
+                                danger
+                                type="primary"
+                                size="small"
+                                className="dynamic-delete-button"
+                                onClick={() => remove(field.name)}
+                                icon={<MinusCircleOutlined />}
+                              >
+                                Remove Above Field
+                              </Button>
+                            </div>
+                          </Show>
 
-                      <Divider />
-                    </ListItemProvider>
-                  ))}
+                          <Divider />
+                        </ListItemProvider>
+                      ))}
 
-                  <div className={classNames('sha-list-pagination-container', { 'show-pagination': showPagination })}>
-                    <Space>
-                      <Show when={allowAddAndRemove}>
-                        <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} size="small">
-                          Add field
-                        </Button>
-                      </Show>
+                      <div
+                        className={classNames('sha-list-pagination-container', { 'show-pagination': showPagination })}
+                      >
+                        <Space>
+                          <Show when={allowAddAndRemove}>
+                            <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} size="small">
+                              Add field
+                            </Button>
+                          </Show>
 
-                      <Show when={allowSubmit && Boolean(submitHttpVerb) && Boolean(submitUrl?.trim())}>
-                        <Button type="primary" onClick={handleSave} icon={<PlusOutlined />} size="small">
-                          Save Items
-                        </Button>
-                      </Show>
-                    </Space>
-
-                    <Show when={showPagination}>{renderPagination()}</Show>
-                  </div>
-                </>
-              );
-            }}
-          </Form.List>
-        </Show>
-      </ShaSpin>
+                          <Show when={allowSubmit && Boolean(submitHttpVerb) && Boolean(submitUrl?.trim())}>
+                            <Button type="primary" onClick={handleSave} icon={<PlusOutlined />} size="small">
+                              Save Items
+                            </Button>
+                          </Show>
+                        </Space>
+                      </div>
+                    </>
+                  );
+                }}
+              </Form.List>
+            </div>
+          </Show>
+        </ShaSpin>
+      </Show>
     </CollapsiblePanel>
   );
 };

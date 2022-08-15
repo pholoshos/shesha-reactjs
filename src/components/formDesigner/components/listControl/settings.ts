@@ -26,12 +26,12 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'hideLabel',
     parentId: 'root',
     label: 'Hide label?',
+    defaultValue: true,
   })
   .addTextField({
     id: '2488beb9-ef4c-44de-b035-f88ccb0889e0',
     name: 'title',
     label: 'Title',
-    defaultValue: 'List title',
   })
   .addSectionSeparator({
     id: 'a7673729-ffa1-43fd-8ba1-31506fac3e9d',
@@ -85,7 +85,6 @@ export const listSettingsForm = new DesignerToolbarSettings()
       { id: 'e98bd235-04c9-4acf-b4e2-d45ee7f64195', label: 'form', value: 'form' },
       { id: 'f6f884b2-57f0-4246-83fa-0c12931b1320', label: 'api', value: 'api' },
     ],
-    validate: { required: true },
   })
   .addCodeEditor({
     name: 'dataSourceUrl',
@@ -138,7 +137,6 @@ export const listSettingsForm = new DesignerToolbarSettings()
       { id: '1b2cd084-11c3-4437-a681-672ed5ebb296', label: 'Drag And Drop', value: 'dragAndDrop' },
       { id: 'bfb75690-d6f6-414e-b4de-4156d2038265', label: 'External Form', value: 'externalForm' },
     ],
-    validate: { required: true },
   })
   .addAutocomplete({
     id: 'f722680e-1ae6-4050-82ce-171f27e96d56',
@@ -293,49 +291,25 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'showPagination',
     parentId: 'root',
     label: 'Show pagination',
+    defaultValue: true,
   })
-  .addContainer({
-    id: 'b573b06d-a159-4d87-97ff-9fc0cfdc71ea',
-    name: 'paginationContainer',
-    parentId: 'root',
-    direction: 'vertical',
-    customVisibility: 'return data.showPagination',
-    components: new DesignerToolbarSettings()
-      .addDropdown({
-        id: '4866b3b4-bc1d-4ba6-8713-47bbeca672ee',
-        name: 'paginationPosition',
-        parentId: 'b573b06d-a159-4d87-97ff-9fc0cfdc71ea',
-        hidden: false,
-        customVisibility: null,
-        label: 'Position',
-        useRawValues: false,
-        dataSourceType: 'values',
-        values: [
-          { id: '6678b10f-ffd6-4c01-943a-c6b6b30e7f6e', label: 'top', value: 'top' },
-          { id: '73ec0fbc-4e5b-4d8d-971e-4bc0af3848c9', label: 'bottom', value: 'bottom' },
-          { id: '7631b842-7f18-4e29-b03f-b37caed5901b', label: 'both', value: 'both' },
-        ],
-        validate: { required: true },
-      })
-      .addDropdown({
-        id: 'c6c23574-baa6-420d-b24b-9ef390851eae',
-        name: 'paginationDefaultPageSize',
-        parentId: 'b573b06d-a159-4d87-97ff-9fc0cfdc71ea',
-        hidden: false,
-        customVisibility: null,
-        label: 'Position',
-        useRawValues: false,
-        dataSourceType: 'values',
-        defaultValue: 5,
-        values: [
-          { id: 'e5aba6cf-0bb6-40b1-aff5-76b4c8ecfa36', label: '5', value: 5 },
-          { id: '12a70674-3627-4e27-9074-9adee0487942', label: '10', value: 10 },
-          { id: 'a9207a21-8625-406a-9fe3-3ed49d53dde5', label: '15', value: 15 },
-          { id: '2aede7b9-67bd-4fe5-ae88-d0a8c5d68edd', label: '20', value: 20 },
-        ],
-        validate: { required: true },
-      })
-      .toJson(),
+  .addNumberField({
+    id: '88d20d79-0880-4f0c-80ba-b61d5bea6060',
+    name: 'paginationDefaultPageSize',
+    label: 'Default page size',
+    defaultValue: 5,
+    min: 5,
+    stepNumeric: 5,
+    max: 50,
+    customVisibility: 'return data.showPagination;',
+  })
+  .addNumberField({
+    id: 'a4f29344-e5e1-4051-8262-07ef3f7a0af6',
+    name: 'maxHeight',
+    label: 'Max height',
+    defaultValue: 400,
+    min: 200,
+    customVisibility: 'return !data.showPagination;',
   })
   .addSectionSeparator({
     id: 'bc67960e-77e3-40f2-89cc-f18f94678cce',
@@ -344,15 +318,13 @@ export const listSettingsForm = new DesignerToolbarSettings()
     label: 'Visibility',
     sectionName: 'Visibility',
   })
-  .addTextArea({
+  .addCodeEditor({
     id: '03959ffd-cadb-496c-bf6d-b742f7f6edc6',
     name: 'customVisibility',
     parentId: 'root',
     label: 'Custom Visibility',
-    autoSize: false,
-    showCount: false,
-    allowClear: false,
     description:
       'Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.',
+    mode: 'inline',
   })
   .toJson();

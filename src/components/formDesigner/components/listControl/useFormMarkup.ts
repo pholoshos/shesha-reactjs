@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useFormGet } from '../../../../apis/form';
 
 export const useFormMarkup = (formId: string) => {
-  const { refetch, loading, error, data } = useFormGet({ lazy: true, id: formId });
+  const { refetch, loading, error, data } = useFormGet({ lazy: true, queryParams: { id: formId } });
 
   useEffect(() => {
     if (formId) {
@@ -10,5 +10,5 @@ export const useFormMarkup = (formId: string) => {
     }
   }, [formId]);
 
-  return { markup: data?.result?.markup, loading, error };
+  return { markup: (data as any)?.result?.markup, loading, error };
 };

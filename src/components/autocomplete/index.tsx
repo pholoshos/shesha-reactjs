@@ -501,4 +501,6 @@ const AutocompleteInterface = Autocomplete as IInternalAutocompleteInterface;
 AutocompleteInterface.Raw = RawAutocomplete;
 AutocompleteInterface.EntityDto = EntityDtoAutocomplete;
 
+export { RawAutocomplete as AutocompleteRaw, EntityDtoAutocomplete as AutocompleteDto };
+
 export default AutocompleteInterface;

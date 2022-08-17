@@ -1,3 +1,4 @@
+import { IStoredFilter } from './../../../../../dist/providers/dataTable/interfaces.d';
 export interface IListItemsProps {
   dataSourceUrl?: string;
   queryParamsExpression?: string;
@@ -19,7 +20,9 @@ export interface IListItemsProps {
   dataSource?: 'form' | 'api';
   renderStrategy?: 'dragAndDrop' | 'externalForm';
   entityType?: string;
+  useExpression?: boolean;
   properties?: string[];
+  filters?: IStoredFilter;
 }
 
 export interface IProperty {

@@ -80,7 +80,14 @@ export const FilterSettingsModalInner: FC<IFilterSettingsModal> = ({ visible, on
   };
 
   return (
-    <Modal width={isSmall ? '90%' : '60%'} visible={visible} title="Configure Filters" okText="Save" onCancel={hideModal} onOk={onOkClick}>
+    <Modal
+      width={isSmall ? '90%' : '60%'}
+      visible={visible}
+      title="Configure Filters"
+      okText="Save"
+      onCancel={hideModal}
+      onOk={onOkClick}
+    >
       <FilterConfigurator />
     </Modal>
   );

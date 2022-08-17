@@ -1,4 +1,4 @@
-import { Checkbox, Form, Input, InputNumber, Select } from 'antd';
+import { Checkbox, Form, Input, InputNumber, Select, SelectProps } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import SectionSeparator from '../../../sectionSeparator';
 import ButtonGroupSettingsModal from '../button/buttonGroup/buttonGroupSettingsModal';
@@ -8,6 +8,7 @@ import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
 import { MetadataProvider, useMetadata } from '../../../../providers';
 import { AutocompleteRaw } from '../../../autocomplete';
+import { QueryBuilderWithModelType } from './queryBuilder';
 
 const Option = Select.Option;
 
@@ -20,24 +21,54 @@ export interface IListControlSettingsProps {
   onValuesChange?: (changedValues: any, values: IListItemsProps) => void;
 }
 
-interface IListSettingsState
-  extends Pick<IListItemsProps, 'renderStrategy' | 'allowSubmit' | 'showPagination' | 'entityType'> {}
+interface IListSettingsState extends IListItemsProps {}
 
 export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, model, onValuesChange }) => {
   const [state, setState] = useState<IListSettingsState>(model);
   const [form] = Form.useForm();
 
-  const initialValues = model;
+  const initialValues: IListItemsProps = {
+    dataSourceUrl: model?.dataSourceUrl,
+    queryParamsExpression: model?.queryParamsExpression,
+    bordered: model?.bordered,
+    title: model?.title,
+    footer: model?.footer,
+    formId: model?.formId,
+    allowAddAndRemove: model?.allowAddAndRemove,
+    submitUrl: model?.submitUrl,
+    submitHttpVerb: model?.submitHttpVerb,
+    onSubmit: model?.onSubmit,
+    showPagination: model?.showPagination,
+    paginationDefaultPageSize: model?.paginationDefaultPageSize,
+    allowSubmit: model?.allowSubmit,
+    buttons: model?.buttons,
+    maxHeight: model?.maxHeight,
+    labelCol: model?.labelCol,
+    wrapperCol: model?.wrapperCol,
+    dataSource: model?.dataSource,
+    renderStrategy: model?.renderStrategy,
+    entityType: model?.entityType,
+    properties: model?.properties,
+    filters: model?.filters,
+    useExpression: model?.useExpression,
+  };
 
   return (
     <Form
       form={form}
       onFinish={onSave}
       layout="vertical"
-      onValuesChange={(changedValues, values) => {
-        setState(prev => ({ ...prev, ...values }));
+      onValuesChange={(changedValues, values: IListItemsProps) => {
+        const incomingState = { ...values };
 
-        onValuesChange(changedValues, values);
+        if (!values?.entityType) {
+          incomingState.filters = null;
+          incomingState.properties = null;
+        }
+
+        setState(prev => ({ ...prev, ...incomingState }));
+
+        onValuesChange(changedValues, incomingState);
       }}
       initialValues={initialValues}
     >
@@ -79,7 +110,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         name="dataSource"
         label="Data source"
         valuePropName="checked"
-        help="The list data to be used can be the data that comes with the form of can be fetched from the API"
+        tooltip="The list data to be used can be the data that comes with the form of can be fetched from the API"
       >
         <Select>
           <Option value="form">form</Option>
@@ -128,7 +159,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         name="renderStrategy"
         label="Render Strategy"
         valuePropName="checked"
-        help="Which form should be used to render the data? If current form, you can drag items, else specify form path"
+        tooltip="Which form should be used to render the data? If current form, you can drag items, else specify form path"
       >
         <Select>
           <Option value="dragAndDrop">Drag And Drop</Option>
@@ -194,7 +225,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
           name="submitHttpVerb"
           label="Submit verb"
           valuePropName="checked"
-          help="Write  a code that returns the string that represent the url to be used to save the items"
+          tooltip="Write  a code that returns the string that represent the url to be used to save the items"
         >
           <Select>
             <Option value="POST">POST</Option>
@@ -209,15 +240,29 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" />
       </FormItem>
 
-      <FormItem name="properties" label="Properties">
-        <PropertiesWrapper modelType={state?.entityType}>
-          <PropertiesEditor />
-        </PropertiesWrapper>
-      </FormItem>
+      <Show when={Boolean(state?.entityType)}>
+        <FormItem name="properties" label="Properties">
+          <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} />
+        </FormItem>
+
+        <SectionSeparator sectionName="Query builder" />
+
+        <FormItem name="useExpression" label="Use Expression" valuePropName="checked">
+          <Checkbox />
+        </FormItem>
+
+        <FormItem label="Query builder" name="filters">
+          <QueryBuilderWithModelType
+            modelType={state?.entityType}
+            useExpression={state?.useExpression}
+            value={state?.filters}
+          />
+        </FormItem>
+      </Show>
 
       <SectionSeparator sectionName="Layout" />
 
-      <FormItem name="labelCol" label="Label Col">
+      <FormItem name="labelCol" label="">
         <InputNumber min={1} max={24} defaultValue={5} />
       </FormItem>
 
@@ -233,7 +278,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
       <Show when={state?.showPagination}>
         <FormItem name="paginationDefaultPageSize" label="Default page size">
-          <InputNumber min={5} max={50} step={5} defaultValue={13} />
+          <InputNumber min={5} max={50} step={5} defaultValue={10} />
         </FormItem>
       </Show>
 
@@ -283,15 +328,24 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
   );
 };
 
-const PropertiesWrapper: FC<{ modelType: string }> = ({ modelType, children }) => {
-  return <MetadataProvider modelType={modelType}>{children}</MetadataProvider>;
-};
-
-interface PropertiesEditorProps {
+interface IPropertiesWrapperProps extends SelectProps {
+  modelType: string;
   mode?: 'multiple' | 'tags';
 }
 
-const PropertiesEditor: FC<PropertiesEditorProps> = ({ mode = 'multiple' }) => {
+const Properties: FC<IPropertiesWrapperProps> = ({ modelType, children, ...props }) => {
+  return (
+    <MetadataProvider modelType={modelType}>
+      <PropertiesEditor {...props}>{children}</PropertiesEditor>
+    </MetadataProvider>
+  );
+};
+
+interface PropertiesEditorProps extends SelectProps {
+  mode?: 'multiple' | 'tags';
+}
+
+const PropertiesEditor: FC<PropertiesEditorProps> = ({ mode, ...props }) => {
   const metadata = useMetadata(false);
 
   const fields = useMemo<IProperty[]>(() => {
@@ -308,7 +362,7 @@ const PropertiesEditor: FC<PropertiesEditorProps> = ({ mode = 'multiple' }) => {
   }, [metadata, metadata?.metadata]);
 
   return (
-    <Select mode={mode} showSearch allowClear>
+    <Select mode={mode} showSearch allowClear {...props}>
       {fields?.map(({ label, propertyName }) => (
         <Option value={propertyName} key={propertyName}>
           {label}

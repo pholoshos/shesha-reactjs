@@ -226,8 +226,6 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
               ...newFlatComponents,
             };
 
-            console.log('LOG:: fetchingFormInfoResponse, fetchedForm: ', fetchingFormInfoResponse, fetchedForm);
-
             // parse json content
             dispatch((dispatchThunk, _getState) => {
               dispatchThunk(loadSuccessAction(formContent));

@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
 import { JsonLogicResult } from 'react-awesome-query-builder';
-import { Modal, Button, Collapse } from 'antd';
+import { Modal, Button, Collapse, Space } from 'antd';
 import { IProperty } from '../../../../providers/queryBuilder/models';
 import QueryBuilder from '../../../queryBuilder';
-import { CodeEditor } from '../../..';
+import { CodeEditor, Show } from '../../..';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { useMedia } from 'react-use';
 
@@ -44,6 +44,8 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
     setJsonExpanded(!jsonExpanded);
   };
 
+  const hasValue = Boolean(props?.value);
+
   return (
     <>
       <Collapse
@@ -66,9 +68,24 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
       >
         <Collapse.Panel
           header={
-            <Button type="primary" onClick={() => setModalVisible(true)}>
-              Query Builder
-            </Button>
+            <Space>
+              <Button type="primary" onClick={() => setModalVisible(true)} size="small">
+                {`Query Builder ${hasValue ? '(applied)' : ''}`.trim()}
+              </Button>
+
+              <Show when={hasValue}>
+                <Button
+                  type="primary"
+                  size="small"
+                  danger
+                  onClick={() => {
+                    if (props?.onChange) props.onChange(null);
+                  }}
+                >
+                  Clear
+                </Button>
+              </Show>
+            </Space>
           }
           key="1"
         >

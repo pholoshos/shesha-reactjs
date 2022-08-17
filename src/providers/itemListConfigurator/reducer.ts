@@ -12,10 +12,12 @@ import { getItemById, getItemPositionById } from './utils';
 
 const itemListConfiguratorReducer = handleActions<IItemListConfiguratorStateContext, any>(
   {
+  
     [ItemListConfiguratorActionEnums.AddItem]: (
       state: IItemListConfiguratorStateContext,
       action: ReduxActions.Action<IConfigurableItemBase>
     ) => {
+      console.log('using this reducer')
       const itemProps = action.payload;
       itemProps.itemType = 'item'; // Make sure we use the correct `itemType`
 
@@ -69,7 +71,7 @@ const itemListConfiguratorReducer = handleActions<IItemListConfiguratorStateCont
     ) => {
       const { payload } = action;
 
-      const newItems = [...state.items];
+      const newItems = [...state.items].map(item=>({...item,label:item?.title}));
 
       const position = getItemPositionById(newItems, payload.id);
 
@@ -82,6 +84,7 @@ const itemListConfiguratorReducer = handleActions<IItemListConfiguratorStateCont
         ...payload.settings,
       };
 
+
       return {
         ...state,
         items: newItems,
@@ -92,11 +95,11 @@ const itemListConfiguratorReducer = handleActions<IItemListConfiguratorStateCont
       state: IItemListConfiguratorStateContext,
       action: ReduxActions.Action<IUpdateChildItemsPayload>
     ) => {
-      // console.log('[SidebarMenuActionEnums.UpdateChildItems]');
+      
       const {
         payload: { index, children: childIds },
       } = action;
-
+      
       if (!Boolean(index) || index.length === 0) {
         return {
           ...state,
@@ -104,7 +107,8 @@ const itemListConfiguratorReducer = handleActions<IItemListConfiguratorStateCont
         };
       }
       // copy all items
-      const newItems = [...state.items];
+      //minor modifications to allow autocomplete of the label
+      const newItems = [...state.items].map(item=>({...item,label:item?.title}));
       // blockIndex - full index of the current container
       const blockIndex = [...index];
       // lastIndex - index of the current element in its' parent

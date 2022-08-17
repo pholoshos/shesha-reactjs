@@ -65,6 +65,8 @@ import PermissionTagGroup from '../../../components/formDesigner/components/perm
 import List from '../../../components/formDesigner/components/listControl';
 import Progress from '../../../components/formDesigner/components/progress';
 import Buttons from '../../../components/formDesigner/components/button/buttonGroup/buttonsComponent';
+import Link from '../../../components/formDesigner/components/link';
+
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -91,7 +93,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
     name: 'Static',
     visible: true,
-    components: [Alert, DisplayFormItem, Section, ValidationErrors],
+    components: [Alert,Link, DisplayFormItem, Section, ValidationErrors],
   },
   {
     name: 'Layout',

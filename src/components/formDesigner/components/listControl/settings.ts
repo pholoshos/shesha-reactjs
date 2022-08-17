@@ -251,10 +251,15 @@ export const listSettingsForm = new DesignerToolbarSettings()
   })
   .addSectionSeparator({
     id: 'd9f673f9-dd6c-4816-afe4-3a58849b528d',
-    name: 'separatorDateEnd',
+    name: 'separatorFilters',
     parentId: 'root',
-    label: '',
+    label: 'Customize filters',
     sectionName: '',
+  })
+  .addQueryBuilder({
+    id: '564a68ae-1ec6-47ee-a2e1-90ca0346bf6d',
+    name: 'filter',
+    label: 'Query Builder',
   })
   .addSectionSeparator({
     id: 'e9331f4e-8c39-4dd1-9cbc-fa4f3fba17d3',

@@ -20,26 +20,10 @@ import { useFormMarkup } from './useFormMarkup';
 import EmbeddedForm from '../../../configurableForm/embeddedForm';
 import CollapsiblePanel from '../../../collapsiblePanel';
 import { ButtonGroup } from '../button/buttonGroup/buttonGroupComponent';
+import { ListControlSettings } from './settingsv2';
+import { IListItemsProps } from './models';
 
-interface IListSettingsProps {
-  dataSourceUrl?: string;
-  queryParamsExpression?: string;
-  bordered?: boolean;
-  title?: string;
-  footer?: string;
-  formId?: string;
-  allowAddAndRemove?: boolean;
-  submitUrl?: string;
-  submitHttpVerb?: 'POST' | 'PUT';
-  onSubmit?: string;
-  showPagination?: boolean;
-  paginationDefaultPageSize: number;
-  allowSubmit?: boolean;
-  buttons?: any[];
-  maxHeight?: number;
-}
-
-export interface IListComponentProps extends IListSettingsProps, IConfigurableFormComponent {
+export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {
   /** the source of data for the list component */
   labelCol?: number;
   wrapperCol?: number;
@@ -85,7 +69,17 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
       </ConfigurableFormItem>
     );
   },
-  settingsFormMarkup: listSettingsForm,
+  // settingsFormMarkup: listSettingsForm,
+  settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
+    return (
+      <ListControlSettings
+        model={(model as unknown) as IListItemsProps}
+        onSave={onSave as any}
+        onCancel={onCancel}
+        onValuesChange={onValuesChange as any}
+      />
+    );
+  },
   initModel: model => {
     const customProps: IListComponentProps = {
       ...model,
@@ -97,7 +91,7 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
   validateSettings: model => validateConfigurableComponentSettings(listSettingsForm, model),
 };
 
-interface IListComponentRenderProps extends IListSettingsProps, IFormItem {
+interface IListComponentRenderProps extends IListItemsProps, IFormItem {
   containerId: string;
   value?: any[];
 }

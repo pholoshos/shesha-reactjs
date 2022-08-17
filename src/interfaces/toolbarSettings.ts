@@ -13,6 +13,7 @@ import { IQueryBuilderProps } from '../components/formDesigner/components/queryB
 import { ICodeEditorComponentProps } from '../components/formDesigner/components/codeEditor';
 import { IContainerComponentProps } from '../components/formDesigner/components/container/containerComponent';
 import { IPropertyAutocompleteProps } from '../components/formDesigner/components/propertyAutocomplete/propertyAutocomplete';
+import { ICustomFilterProps } from '../components/formDesigner/components/dataTable/filter/models';
 
 interface ToolbarSettingsProp extends Omit<IConfigurableFormComponent, 'type'> {}
 
@@ -43,6 +44,8 @@ type CodeEditorType = ToolbarSettingsProp & Omit<ICodeEditorComponentProps, 'typ
 type ContainerType = ToolbarSettingsProp & Omit<IContainerComponentProps, 'type'>;
 
 type ButtonGroupType = ToolbarSettingsProp & Omit<IButtonsProps, 'type'>;
+
+type CustomFilterType = ToolbarSettingsProp & Omit<ICustomFilterProps, 'type'>;
 
 export class DesignerToolbarSettings {
   protected form: IConfigurableFormComponent[];
@@ -131,6 +134,12 @@ export class DesignerToolbarSettings {
 
   public addQueryBuilder(props: QueryBuilderType) {
     this.form.push({ ...props, type: 'queryBuilder' });
+
+    return this;
+  }
+
+  public addCustomFilter(props: CustomFilterType) {
+    this.form.push({ ...props, type: 'filter' });
 
     return this;
   }

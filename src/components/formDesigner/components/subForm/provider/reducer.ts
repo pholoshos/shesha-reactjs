@@ -11,7 +11,7 @@ export function uiReducer(
   //#endregion
 
   switch (type) {
-    case ThemeActionEnums.SetTheme:
+    case ThemeActionEnums.SetComponents:
       /* NEW_ACTION_ENUM_GOES_HERE */
 
       return {

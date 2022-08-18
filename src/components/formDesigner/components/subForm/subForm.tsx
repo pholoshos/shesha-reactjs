@@ -1,17 +1,32 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
+import ShaSpin from '../../../shaSpin';
+import ValidationErrors from '../../../validationErrors';
+import { useSubForm } from './provider';
 
 interface ISubFormProps {
   name: string;
-  formId: string;
+  containerId;
   dataMode: 'parent' | 'api';
-  properties: string[];
-  onCreated: string;
-  onUpdated: string;
 }
 
-const SubForm: FC<ISubFormProps> = () => {
-  
-  return <div></div>;
+const SubForm: FC<ISubFormProps> = ({}) => {
+  const { errors, loading } = useSubForm();
+
+  const isLoading = useMemo(() => {
+    return Object.values(loading).find(l => Boolean(l));
+  }, [loading]);
+
+  return (
+    <ShaSpin spinning={isLoading}>
+      <div>
+        {Object.keys(errors).map(error => (
+          <ValidationErrors error={errors[error]} />
+        ))}
+
+        <div></div>
+      </div>
+    </ShaSpin>
+  );
 };
 
 SubForm.displayName = 'SubForm';

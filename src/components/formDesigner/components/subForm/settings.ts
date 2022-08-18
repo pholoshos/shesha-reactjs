@@ -2,107 +2,127 @@ import { DesignerToolbarSettings } from '../../../../interfaces/toolbarSettings'
 
 export const alertSettingsForm = new DesignerToolbarSettings()
   .addSectionSeparator({
-    id: 'b8954bf6-f76d-4139-a850-c99bf06c8b69',
+    id: 'c367c411-e7cb-4cc4-b728-b21a51074920',
     name: 'separator1',
     parentId: 'root',
     label: 'Display',
     sectionName: '',
   })
-  .addTextField({
-    id: '5c813b1a-04c5-4658-ac0f-cbcbae6b3bd4',
+  .addPropertyAutocomplete({
+    id: 'e602b791-2352-4858-98c2-b4eb7377e1c9',
     name: 'name',
     parentId: 'root',
     label: 'Name',
     validate: { required: true },
   })
+  .addAutocomplete({
+    id: '8ca1a702-861d-45a8-826f-71c21ae7e3fb',
+    name: 'formId',
+    parentId: 'root',
+    hidden: false,
+    customVisibility: "return data.renderStrategy === 'externalForm'",
+    description: 'Specify the form that will be rendered on this list component',
+    label: 'Form Path',
+    useRawValues: true,
+    dataSourceType: 'entitiesList',
+    dataSourceUrl: '/api/services/app/Metadata/EntityTypeAutocomplete',
+    entityTypeShortAlias: 'Shesha.Framework.Form',
+    queryParams: [],
+  })
   .addDropdown({
-    id: 'f6c3d710-8d98-47fc-9fe2-7c6312e9a03c',
-    name: 'alertType',
+    id: '4453863e-43ac-4d3a-b9d5-2b54c269a233',
+    name: 'dataSource',
     parentId: 'root',
     hidden: false,
     customVisibility: null,
-    label: 'Type',
+    description: 'The list data to be used can be the data that comes with the form of can be fetched from the API',
+    label: 'Data source',
     useRawValues: false,
     dataSourceType: 'values',
     values: [
-      { id: '17a865b3-8e28-41de-ab40-1fc49a56b31d', label: 'Success', value: 'success' },
-      { id: 'edeb7d32-f942-41cc-a941-07b8882d8faa', label: 'Info', value: 'info' },
-      { id: 'df342c95-4dae-49a5-beff-259d0f2ebcb3', label: 'Warning', value: 'warning' },
-      { id: '21fc57e5-5e5d-4ae8-83c4-080a15b55176', label: 'Error', value: 'error' },
+      { id: 'e98bd235-04c9-4acf-b4e2-d45ee7f64195', label: 'form', value: 'form' },
+      { id: 'f6f884b2-57f0-4246-83fa-0c12931b1320', label: 'api', value: 'api' },
     ],
-    validate: { required: true },
-  })
-  .addTextArea({
-    id: '277b7ffe-d023-4543-a4b4-ff7f76052867',
-    name: 'text',
-    parentId: 'root',
-    hidden: false,
-    customVisibility: null,
-    label: 'Text',
-    autoSize: false,
-    showCount: false,
-    allowClear: false,
-    validate: { required: true },
-  })
-  .addTextArea({
-    id: '8340f638-c466-448e-99cd-fb8c544fe02a',
-    name: 'description',
-    parentId: 'root',
-    hidden: false,
-    customVisibility: null,
-    label: 'Description',
-    autoSize: false,
-    showCount: false,
-    allowClear: true,
-  })
-  .addCheckbox({
-    id: '65aef83a-ea37-480a-9d77-ee4f4e229a70',
-    name: 'showIcon',
-    parentId: 'root',
-    label: 'Show Icon',
-  })
-  .addCheckbox({
-    id: '148e12c0-41a0-4fa2-8c64-8f6dd5213a3e',
-    name: 'closable',
-    label: 'Closable',
-    parentId: 'root',
-  })
-  .addIconPicker({
-    id: '152f3d72-68fb-43ab-adf6-8cf7d11fe6e1',
-    name: 'icon',
-    label: 'Icon',
-    parentId: 'root',
-  })
-  .addSectionSeparator({
-    id: '516d72e1-3dfd-433f-8459-8b1610c3c9cb',
-    name: 'separatorStyle',
-    parentId: 'root',
-    label: 'Style',
-    sectionName: '',
   })
   .addCodeEditor({
-    id: '987c3de1-b959-4670-96f6-9b1747189a6e',
-    name: 'style',
-    label: 'Style',
-    parentId: 'root',
+    name: 'beforeGet',
+    id: 'e33ac7e2-ccde-4e73-9525-012dcf605742',
     mode: 'dialog',
+    label: 'On Submit',
+    description: '',
+    exposedVariables: [
+      {
+        id: '31fa28f1-9d44-4023-b822-aca9fe6155c3',
+        name: 'data',
+        description: 'Form data',
+        type: 'object',
+      },
+      {
+        id: 'd58b9841-0cb6-4ed1-b371-b5c1835abdc7',
+        name: 'globalState',
+        description: 'The global state',
+        type: 'object',
+      },
+      {
+        id: 'd76ba132-7c9b-422b-8c42-2fecce08ed0f',
+        name: 'queryParams',
+        description: 'Query parameters',
+        type: 'object',
+      },
+    ],
   })
-  .addSectionSeparator({
-    id: 'bc67960e-77e3-40f2-89cc-f18f94678cce',
-    name: 'separatorVisibility',
-    parentId: 'root',
-    label: 'Visibility',
-    sectionName: 'Visibility',
+  .addCodeEditor({
+    name: 'onCreated',
+    id: 'a066e195-e192-46fc-a05d-28b5088c3679',
+    mode: 'dialog',
+    label: 'On Submit',
+    description: '',
+    exposedVariables: [
+      {
+        id: '31fa28f1-9d44-4023-b822-aca9fe6155c3',
+        name: 'data',
+        description: 'Form data',
+        type: 'object',
+      },
+      {
+        id: 'd58b9841-0cb6-4ed1-b371-b5c1835abdc7',
+        name: 'globalState',
+        description: 'The global state',
+        type: 'object',
+      },
+      {
+        id: 'd76ba132-7c9b-422b-8c42-2fecce08ed0f',
+        name: 'queryParams',
+        description: 'Query parameters',
+        type: 'object',
+      },
+    ],
   })
-  .addTextArea({
-    id: '03959ffd-cadb-496c-bf6d-b742f7f6edc6',
-    name: 'customVisibility',
-    parentId: 'root',
-    label: 'Custom Visibility',
-    autoSize: false,
-    showCount: false,
-    allowClear: false,
-    description:
-      'Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.',
+  .addCodeEditor({
+    name: 'beforeGet',
+    id: 'onUpdated',
+    mode: 'dialog',
+    label: 'On Submit',
+    description: '',
+    exposedVariables: [
+      {
+        id: '31fa28f1-9d44-4023-b822-aca9fe6155c3',
+        name: 'data',
+        description: 'Form data',
+        type: 'object',
+      },
+      {
+        id: 'd58b9841-0cb6-4ed1-b371-b5c1835abdc7',
+        name: 'globalState',
+        description: 'The global state',
+        type: 'object',
+      },
+      {
+        id: 'd76ba132-7c9b-422b-8c42-2fecce08ed0f',
+        name: 'queryParams',
+        description: 'Query parameters',
+        type: 'object',
+      },
+    ],
   })
   .toJson();

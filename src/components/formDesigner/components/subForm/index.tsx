@@ -1,31 +1,52 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { FormOutlined } from '@ant-design/icons';
-import { Alert } from 'antd';
-import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
 import { alertSettingsForm } from './settings';
-import ShaIcon from '../../../shaIcon';
 import SubForm from './subForm';
+import { SubFormProvider, SubFormProviderProps } from './provider';
+import ConfigurableFormItem from '../formItem';
+import { SubFormProps } from './provider/interfaces';
+import ComponentsContainer from '../../componentsContainer';
 
-export interface ISubFormProps extends IConfigurableFormComponent {}
+export interface ISubFormProps extends SubFormProviderProps, IConfigurableFormComponent {
+  uniqueStateId?: string;
+}
 
 const SubFormComponent: IToolboxComponent<ISubFormProps> = {
   type: 'subForm',
   name: 'Sub Form',
   icon: <FormOutlined />,
   factory: (model: ISubFormProps) => {
-    const { isComponentHidden, formData } = useForm();
+    const { isComponentHidden } = useForm();
 
     const isHidden = isComponentHidden(model);
 
     if (isHidden) return null;
 
-    return <SubForm />;
+    return (
+      <ConfigurableFormItem model={model}>
+        <SubFormWrapper {...model} />
+      </ConfigurableFormItem>
+    );
   },
   settingsFormMarkup: alertSettingsForm,
   validateSettings: model => validateConfigurableComponentSettings(alertSettingsForm, model),
+};
+
+interface ISubFormWrapperProps extends SubFormProps {
+  id: string;
+}
+
+const SubFormWrapper: FC<ISubFormWrapperProps> = ({ id, name, ...props }) => {
+  return (
+    <SubFormProvider name={name} containerId={id} {...props}>
+      <SubForm name={name} dataMode={'parent'} containerId={id} />
+      {/* <ComponentsContainer containerId={id} /> */}
+    </SubFormProvider>
+  );
 };
 
 export default SubFormComponent;

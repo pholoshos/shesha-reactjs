@@ -65,6 +65,7 @@ import PermissionTagGroup from '../../../components/formDesigner/components/perm
 import List from '../../../components/formDesigner/components/listControl';
 import Progress from '../../../components/formDesigner/components/progress';
 import Buttons from '../../../components/formDesigner/components/button/buttonGroup/buttonsComponent';
+import SubForm from '../../../components/formDesigner/components/subForm';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -112,6 +113,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       FileUpload,
       List,
       Filter,
+      SubForm,
       HierarchicalChecklistComponent,
       KeyValueEditor,
       Notes,

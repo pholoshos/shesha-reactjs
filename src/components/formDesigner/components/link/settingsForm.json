@@ -36,7 +36,7 @@
     {
       "id": "277b7ffe-d023-4543-a4b4-ff7f76052860",
       "type": "textField",
-      "name": "href",
+      "name": "content",
       "parentId": "root",
       "label": "Href",
       "allowClear": true,
@@ -88,11 +88,14 @@
       "label": "Hidden"
     },
     {
-      "id": "53a91e4d-e24e-457d-ad8b-25a10021d2dd",
-      "type": "checkbox",
-      "name": "hasChildren",
+      "id": "7cc78b95-e8bc-4544-83e2-9a0bd82ca926",
+      "type": "iconPicker",
+      "name": "icon",
+      "label": "Icon",
+      "labelAlign": "right",
       "parentId": "root",
-      "label": "Has Children"
+      "hidden": false,
+      "settingsValidationErrors": []
     },
     {
       "id": "45b51033-4803-46f7-96fa-10bb277426c7",

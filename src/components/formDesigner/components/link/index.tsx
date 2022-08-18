@@ -1,11 +1,11 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, ReactNode } from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
-import { LinkOutlined } from '@ant-design/icons';
-import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import  { LinkOutlined } from '@ant-design/icons';
+import { evaluateString, getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
 import settingsFormJson from './settingsForm.json';
-import ComponentsContainer, { Direction } from '../../componentsContainer';
+import  { Direction } from '../../componentsContainer';
 import { AlignItems, JustifyContent, JustifyItems } from '../container/containerComponent';
 
 export interface IAlertProps extends IConfigurableFormComponent {
@@ -15,16 +15,16 @@ export interface IAlertProps extends IConfigurableFormComponent {
   icon?: string;
 }
 export interface ILinkProps extends IConfigurableFormComponent {
-  href?: string;
+  content?: string;
   text?: string;
   target?: string;
   download?: string;
   direction?: Direction;
-  hasChildren?: boolean;
   justifyContent?: JustifyContent | string;
   alignItems?: AlignItems | string;
   justifyItems?: JustifyItems | string;
   className?: string;
+  icon?: ReactNode;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -36,12 +36,11 @@ const LinkComponent: IToolboxComponent<ILinkProps> = {
     const { isComponentHidden, formData, formMode } = useForm();
     const {
       text,
-      href = '',
+      content= '',
       style,
       target,
       direction,
-      hasChildren,
-      id,
+      icon,
       justifyContent,
       alignItems,
       justifyItems,
@@ -54,37 +53,24 @@ const LinkComponent: IToolboxComponent<ILinkProps> = {
       linkStyle['justifyItems'] = justifyItems;
     }
     const isDesignerMode = formMode === 'designer';
+   console.log('raw content ::',content);
+    const href = evaluateString(content, formData);
+    console.log('Href ::',icon,typeof(icon))
+
     const isHidden = isComponentHidden(model);
 
     if (isHidden) return null;
     console.log('isDesignerMode', isDesignerMode);
 
-    if (!hasChildren) {
+  
       return (
         <a href={href} target={target} className="sha-link" style={{ ...linkStyle, ...getStyle(style, formData) }}>
-          {text}
+           {icon}{text}
+          
         </a>
       );
-    }
-    const containerHolder = () => (
-      <ComponentsContainer
-        containerId={id}
-        direction={direction}
-        justifyContent={model.direction === 'horizontal' ? model?.justifyContent : null}
-        alignItems={model.direction === 'horizontal' ? model?.alignItems : null}
-        justifyItems={model.direction === 'horizontal' ? model?.justifyItems : null}
-        className={model.className}
-        itemsLimit={1}
-      />
-    );
-    if (isDesignerMode) {
-      return containerHolder();
-    }
-    return (
-      <a href={href} target={target} style={getStyle(style, formData)}>
-        {containerHolder()}
-      </a>
-    );
+    
+  
   },
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),

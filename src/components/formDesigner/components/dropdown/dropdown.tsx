@@ -38,7 +38,6 @@ const DropdownComponent: IToolboxComponent<IDropdownProps> = {
       moment,
     };
 
-
     return (
       <ConfigurableFormItem model={model}>
         <Dropdown {...model} {...customDropDownEventHandler(eventProps)} />
@@ -72,7 +71,7 @@ export const Dropdown: FC<IDropdownProps> = ({
   dataSourceType,
   values,
   onChange,
-  value ,
+  value,
   hideBorder,
   disabled,
   referenceListNamespace,
@@ -102,7 +101,7 @@ export const Dropdown: FC<IDropdownProps> = ({
 
   const localStyle = getStyle(style, formData);
   //quick fix not to default to empty string or null while working with multi-mode
-  const defaultValue = evaluateString(defaultVal, { formData, formMode, globalState })||undefined;
+  const defaultValue = evaluateString(defaultVal, { formData, formMode, globalState }) || undefined;
 
   if (dataSourceType === 'referenceList') {
     return useRawValues ? (

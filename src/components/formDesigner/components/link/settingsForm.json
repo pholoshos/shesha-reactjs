@@ -25,7 +25,7 @@
       "type": "textField",
       "name": "text",
       "parentId": "root",
-      "label": "Text",
+      "label": "Label",
       "allowClear": true,
       "autoSize":false,
       "customVisibility": null,
@@ -86,16 +86,6 @@
       "name": "hidden",
       "parentId": "root",
       "label": "Hidden"
-    },
-    {
-      "id": "7cc78b95-e8bc-4544-83e2-9a0bd82ca926",
-      "type": "iconPicker",
-      "name": "icon",
-      "label": "Icon",
-      "labelAlign": "right",
-      "parentId": "root",
-      "hidden": false,
-      "settingsValidationErrors": []
     },
     {
       "id": "45b51033-4803-46f7-96fa-10bb277426c7",

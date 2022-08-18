@@ -1,11 +1,11 @@
 import React, { CSSProperties, ReactNode } from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
-import  { LinkOutlined } from '@ant-design/icons';
+import { LinkOutlined } from '@ant-design/icons';
 import { evaluateString, getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
 import settingsFormJson from './settingsForm.json';
-import  { Direction } from '../../componentsContainer';
+import { Direction } from '../../componentsContainer';
 import { AlignItems, JustifyContent, JustifyItems } from '../container/containerComponent';
 
 export interface IAlertProps extends IConfigurableFormComponent {
@@ -33,18 +33,8 @@ const LinkComponent: IToolboxComponent<ILinkProps> = {
   name: 'link',
   icon: <LinkOutlined />,
   factory: (model: ILinkProps) => {
-    const { isComponentHidden, formData, formMode } = useForm();
-    const {
-      text,
-      content= '',
-      style,
-      target,
-      direction,
-      icon,
-      justifyContent,
-      alignItems,
-      justifyItems,
-    } = model;
+    const { isComponentHidden, formData } = useForm();
+    const { text, content = '', style, target, direction, justifyContent, alignItems, justifyItems } = model;
 
     const linkStyle: CSSProperties = {};
     if (direction === 'horizontal' && justifyContent) {
@@ -52,25 +42,18 @@ const LinkComponent: IToolboxComponent<ILinkProps> = {
       linkStyle['alignItems'] = alignItems;
       linkStyle['justifyItems'] = justifyItems;
     }
-    const isDesignerMode = formMode === 'designer';
-   console.log('raw content ::',content);
+
     const href = evaluateString(content, formData);
-    console.log('Href ::',icon,typeof(icon))
 
     const isHidden = isComponentHidden(model);
 
     if (isHidden) return null;
-    console.log('isDesignerMode', isDesignerMode);
 
-  
-      return (
-        <a href={href} target={target} className="sha-link" style={{ ...linkStyle, ...getStyle(style, formData) }}>
-           {icon}{text}
-          
-        </a>
-      );
-    
-  
+    return (
+      <a href={href} target={target} className="sha-link" style={{ ...linkStyle, ...getStyle(style, formData) }}>
+        {text}
+      </a>
+    );
   },
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
@@ -80,6 +63,7 @@ const LinkComponent: IToolboxComponent<ILinkProps> = {
       direction: 'vertical',
       justifyContent: 'left',
       text: 'linkTextName',
+      style: 'return ({})',
     };
 
     return customProps;

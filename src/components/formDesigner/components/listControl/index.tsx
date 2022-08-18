@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import { IFormItem, IToolboxComponent } from '../../../../interfaces';
+import { IAnyObject, IFormItem, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { MinusCircleOutlined, OrderedListOutlined, PlusOutlined } from '@ant-design/icons';
 import { evaluateComplexString, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
@@ -22,6 +22,9 @@ import CollapsiblePanel from '../../../collapsiblePanel';
 import { ButtonGroup } from '../button/buttonGroup/buttonGroupComponent';
 import { ListControlSettings } from './settingsv2';
 import { IListItemsProps } from './models';
+import { camelCase, isEmpty } from 'lodash';
+import camelCaseKeys from 'camelcase-keys';
+import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {
   /** the source of data for the list component */
@@ -61,6 +64,8 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
           title={model?.title}
           footer={model?.footer}
           buttons={model?.buttons}
+          filters={model?.filters}
+          properties={model?.properties}
           maxHeight={model?.maxHeight}
           allowAddAndRemove={model?.allowAddAndRemove}
           dataSourceUrl={model?.dataSource === 'api' ? model?.dataSourceUrl : null}
@@ -113,9 +118,11 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   buttons,
   title,
   maxHeight,
+  filters,
+  properties,
 }) => {
   const { markup, error: fetchFormError } = useFormMarkup(formId);
-  const queryParams = useMemo(() => getQueryParams(), []);
+  const queryParamsFromBrowser = useMemo(() => getQueryParams(), []);
   const { formData, formSettings, formMode } = useForm();
   const { globalState } = useGlobalState();
   const isInDesignerMode = formMode === 'designer';
@@ -126,9 +133,9 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     return evaluateComplexString(submitUrl, [
       { match: 'data', data: formData },
       { match: 'globalState', data: globalState },
-      { match: 'query', data: queryParams },
+      { match: 'query', data: queryParamsFromBrowser },
     ]);
-  }, [submitUrl, formData, globalState, queryParams, isInDesignerMode]);
+  }, [submitUrl, formData, globalState, queryParamsFromBrowser, isInDesignerMode]);
 
   const { refetch, loading: fetchingData, data, error: fetchDataError } = useGet({ path: '/' });
   const { mutate, loading: submitting, error: submitError } = useMutate({
@@ -149,9 +156,48 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     return evaluateComplexString(rawString, [
       { match: 'data', data: formData },
       { match: 'globalState', data: globalState },
-      { match: 'query', data: queryParams },
+      { match: 'query', data: queryParamsFromBrowser },
     ]);
   }, [dataSourceUrl]);
+
+  const getFilters = () => {
+    if (!filters) return '';
+
+    const localFormData = !isEmpty(formData) ? camelCaseKeys(formData, { deep: true, pascalCase: true }) : formData;
+
+    const evaluatedFilters = evaluateDynamicFilters(
+      [filters],
+      [
+        {
+          match: 'data',
+          data: localFormData,
+        },
+        {
+          match: 'globalState',
+          data: globalState,
+        },
+      ]
+    );
+
+    if (evaluatedFilters.find(f => f?.unevaluatedExpressions?.length)) return '';
+
+    return JSON.stringify(evaluatedFilters[0]) || '';
+  };
+
+  const queryParams = useMemo(() => {
+    const _queryParms: IAnyObject = {
+      maxResultCount: showPagination ? paginationDefaultPageSize : 1000_000,
+    };
+    if (properties?.length) {
+      _queryParms.properties = properties?.map(p => camelCase(p)).join();
+    }
+
+    if (filters && getFilters()) {
+      _queryParms.filter = getFilters();
+    }
+
+    return _queryParms;
+  }, [formData, globalState, properties, showPagination, paginationDefaultPageSize]);
 
   useEffect(() => {
     if (isInDesignerMode) return;
@@ -159,7 +205,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     if (evaluatedDataSourceUrl) {
       refetch({
         path: evaluatedDataSourceUrl,
-        queryParams: { maxResultCount: showPagination ? paginationDefaultPageSize : 1000_000 },
+        queryParams,
       });
     }
   }, [evaluatedDataSourceUrl, isInDesignerMode]);
@@ -192,7 +238,12 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     if (onSubmit) {
       const getOnSubmitPayload = () => {
         // tslint:disable-next-line:function-constructor
-        return new Function('data, query, globalState, items', onSubmit)(formData, queryParams, globalState, value); // Pass data, query, globalState
+        return new Function('data, query, globalState, items', onSubmit)(
+          formData,
+          queryParamsFromBrowser,
+          globalState,
+          value
+        ); // Pass data, query, globalState
       };
 
       const payload = Boolean(onSubmit) ? getOnSubmitPayload() : value;
@@ -217,7 +268,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
         showTitle
         onChange={(page: number, pageSize) => {
           refetch({
-            queryParams: { skipCount: pageSize * (page - 1), maxResultCount: pageSize },
+            queryParams: { ...queryParams, skipCount: pageSize * (page - 1), maxResultCount: pageSize },
             path: evaluatedDataSourceUrl,
           });
         }}
@@ -244,6 +295,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
         <ValidationErrors error={fetchDataError} />
         <ValidationErrors error={submitError} />
         <ValidationErrors error={fetchFormError} />
+
         <ShaSpin spinning={fetchingData || submitting} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
           <Show when={Array.isArray(value)}>
             <div className="sha-list-component-body" style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}>

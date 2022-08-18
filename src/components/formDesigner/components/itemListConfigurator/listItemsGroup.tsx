@@ -12,7 +12,7 @@ export interface IItemsGroupProps extends IConfigurableItemGroup {
   index: number[];
 }
 
-export const ListItemsGroup: FC<IItemsGroupProps> = ({ id, label, name, childItems, index, icon }) => {
+export const ListItemsGroup: FC<IItemsGroupProps> = ({ id, label, title, name, childItems, index, icon }) => {
   const { deleteGroup, selectedItemId } = useItemListConfigurator();
 
   const onDeleteClick = () => {
@@ -26,7 +26,7 @@ export const ListItemsGroup: FC<IItemsGroupProps> = ({ id, label, name, childIte
 
         {icon && <ShaIcon iconName={icon as IconType} />}
 
-        <span className="sha-button-group-item-name">{label || name}</span>
+        <span className="sha-button-group-item-name">{title || label || name}</span>
 
         <div className="sha-button-group-item-controls">
           <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />

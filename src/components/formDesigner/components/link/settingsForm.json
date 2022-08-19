@@ -21,19 +21,6 @@
 
     },
     {
-      "id": "277b7ffe-d023-4543-a4b4-ff7f76052867",
-      "type": "textField",
-      "name": "text",
-      "parentId": "root",
-      "label": "Label",
-      "allowClear": true,
-      "autoSize":false,
-      "customVisibility": null,
-      "validate": {
-        "required": true
-      }
-    },
-    {
       "id": "277b7ffe-d023-4543-a4b4-ff7f76052860",
       "type": "textField",
       "name": "content",
@@ -86,6 +73,13 @@
       "name": "hidden",
       "parentId": "root",
       "label": "Hidden"
+    },
+    {
+      "id": "53a91e4d-e24e-457d-ad8b-25a10021d2dd",
+      "type": "checkbox",
+      "name": "hasChildren",
+      "parentId": "root",
+      "label": "Has Children"
     },
     {
       "id": "45b51033-4803-46f7-96fa-10bb277426c7",

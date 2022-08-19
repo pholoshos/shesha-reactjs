@@ -5,7 +5,7 @@ import { LinkOutlined } from '@ant-design/icons';
 import { evaluateString, getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
 import settingsFormJson from './settingsForm.json';
-import { Direction } from '../../componentsContainer';
+import ComponentsContainer, { Direction } from '../../componentsContainer';
 import { AlignItems, JustifyContent, JustifyItems } from '../container/containerComponent';
 
 export interface IAlertProps extends IConfigurableFormComponent {
@@ -16,10 +16,11 @@ export interface IAlertProps extends IConfigurableFormComponent {
 }
 export interface ILinkProps extends IConfigurableFormComponent {
   content?: string;
-  text?: string;
+  name: string;
   target?: string;
   download?: string;
   direction?: Direction;
+  hasChildren?: boolean;
   justifyContent?: JustifyContent | string;
   alignItems?: AlignItems | string;
   justifyItems?: JustifyItems | string;
@@ -33,8 +34,19 @@ const LinkComponent: IToolboxComponent<ILinkProps> = {
   name: 'link',
   icon: <LinkOutlined />,
   factory: (model: ILinkProps) => {
-    const { isComponentHidden, formData } = useForm();
-    const { text, content = '', style, target, direction, justifyContent, alignItems, justifyItems } = model;
+    const { isComponentHidden, formData, formMode } = useForm();
+    const {
+      name,
+      content = '',
+      style,
+      target,
+      direction,
+      justifyContent,
+      id,
+      alignItems,
+      justifyItems,
+      hasChildren,
+    } = model;
 
     const linkStyle: CSSProperties = {};
     if (direction === 'horizontal' && justifyContent) {
@@ -46,12 +58,35 @@ const LinkComponent: IToolboxComponent<ILinkProps> = {
     const href = evaluateString(content, formData);
 
     const isHidden = isComponentHidden(model);
+    const isDesignerMode = formMode === 'designer';
 
     if (isHidden) return null;
 
+    if (!hasChildren) {
+      return (
+        <a href={href} target={target} className="sha-link" style={{ ...linkStyle, ...getStyle(style, formData) }}>
+          {name}
+        </a>
+      );
+    }
+
+    const containerHolder = () => (
+      <ComponentsContainer
+        containerId={id}
+        direction={direction}
+        justifyContent={model.direction === 'horizontal' ? model?.justifyContent : null}
+        alignItems={model.direction === 'horizontal' ? model?.alignItems : null}
+        justifyItems={model.direction === 'horizontal' ? model?.justifyItems : null}
+        className={model.className}
+        itemsLimit={1}
+      />
+    );
+    if (isDesignerMode) {
+      return containerHolder();
+    }
     return (
-      <a href={href} target={target} className="sha-link" style={{ ...linkStyle, ...getStyle(style, formData) }}>
-        {text}
+      <a href={href} target={target} style={getStyle(style, formData)}>
+        {containerHolder()}
       </a>
     );
   },
@@ -62,8 +97,6 @@ const LinkComponent: IToolboxComponent<ILinkProps> = {
       ...model,
       direction: 'vertical',
       justifyContent: 'left',
-      text: 'linkTextName',
-      style: 'return ({})',
     };
 
     return customProps;

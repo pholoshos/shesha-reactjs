@@ -11,7 +11,7 @@ export interface IListItemProps extends IConfigurableItemBase {
   index: number[];
 }
 
-export const ListItem: FC<IListItemProps> = ({ id, label, name, tooltip, icon }) => {
+export const ListItem: FC<IListItemProps> = ({ id, label, title, name, tooltip, icon }) => {
   const { deleteItem, selectedItemId } = useItemListConfigurator();
 
   const onDeleteClick = () => {
@@ -25,7 +25,7 @@ export const ListItem: FC<IListItemProps> = ({ id, label, name, tooltip, icon })
 
         {icon && <ShaIcon iconName={icon as IconType} />}
 
-        <span className="sha-button-group-item-name">{label || name}</span>
+        <span className="sha-button-group-item-name">{title || label || name}</span>
 
         {tooltip && (
           <Tooltip title={tooltip}>

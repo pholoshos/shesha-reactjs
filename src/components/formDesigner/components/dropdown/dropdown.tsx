@@ -100,8 +100,8 @@ export const Dropdown: FC<IDropdownProps> = ({
   const isDisabled = isComponentDisabled({ id, isDynamic, disabled });
 
   const localStyle = getStyle(style, formData);
-
-  const defaultValue = evaluateString(defaultVal, { formData, formMode, globalState });
+  //quick fix not to default to empty string or null while working with multi-mode
+  const defaultValue = evaluateString(defaultVal, { formData, formMode, globalState }) || undefined;
 
   if (dataSourceType === 'referenceList') {
     return useRawValues ? (
@@ -157,7 +157,7 @@ export const Dropdown: FC<IDropdownProps> = ({
     <Select
       allowClear
       onChange={onChange}
-      value={options.length > 0 ? value || defaultValue : null}
+      value={options.length > 0 ? value || defaultValue : undefined}
       defaultValue={defaultValue}
       bordered={!hideBorder}
       disabled={isDisabled}

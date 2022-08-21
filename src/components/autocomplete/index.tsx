@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, ReactNode, Key } from 'react';
+import React, { useState, useEffect, useMemo, ReactNode, Key, useRef } from 'react';
 import { Select, Tag } from 'antd';
 import { AjaxResponseBase, AutocompleteItemDto, useAutocompleteList } from '../../apis/autocomplete';
 import { useGet } from 'restful-react';
@@ -221,6 +221,8 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
     }
   );
 
+  const selectRef=useRef(null);
+
   const itemsFetcher = dataSourceType === 'entitiesList' ? entityFetcher : dataSourceType === 'url' ? urlFetcher : null;
 
   const [autocompleteText, setAutocompleteText] = useState(null);
@@ -289,10 +291,15 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
   };
 
   // Refetch when clear because at this stage, only 1 item (which is the previsously selected item) is in the list of options
-  const onClear = () => {
+ 
+  const onFocus = () => {
     doFetchItems(null, true);
   };
 
+const handleSelect=()=>{
+  selectRef.current.blur();
+}
+ 
   const debouncedFetchItems = useDebouncedCallback<(value: string) => void>(
     localValue => {
       doFetchItems(localValue);
@@ -361,6 +368,7 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
     if (mode === 'multiple' || mode === 'tags') {
       onChange(Array.isArray(selectedValue) ? selectedValue : [selectedValue]);
     } else onChange(selectedValue);
+
   };
 
   if (readOnly) {
@@ -405,17 +413,19 @@ export const Autocomplete = <TValue,>(props: IAutocompleteProps<TValue>) => {
       showArrow={true}
       filterOption={false}
       onSearch={handleSearch}
-      value={autocompleteValue}
       defaultValue={wrapValue(defaultValue)}
+      value={autocompleteValue}
       onChange={handleChange}
       allowClear={true}
+      onFocus={onFocus}
       loading={itemsFetcher?.loading}
       placeholder={placeHolder}
       disabled={disabled}
       bordered={bordered}
+      onSelect={handleSelect}
       style={style}
       size={size}
-      onClear={onClear}
+      ref={selectRef}
       mode={value ? mode : undefined} // When mode is multiple and value is null, the control shows an empty tag
     >
       {options?.map(({ value: localValue, label, data }) => (

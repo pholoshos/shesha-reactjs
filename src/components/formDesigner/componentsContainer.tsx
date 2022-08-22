@@ -48,6 +48,11 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
 
   const components = getChildComponents(containerId);
 
+  if (containerId === '4M-aYa7aFRgpYvGOx2pKg') {
+    console.log('4M-aYa7aFRgpYvGOx2pKg components', components);
+  }
+
+  console.log('Other Ids components ::', components);
   const componentsMapped = components.map<ItemInterface>(c => ({
     id: c.id,
   }));

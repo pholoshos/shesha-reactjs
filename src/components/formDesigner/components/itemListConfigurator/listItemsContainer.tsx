@@ -16,8 +16,11 @@ export const ItemListContainer: FC<IItemListContainerProps> = ({ index, id, item
 
   const renderItem = (item: IConfigurableItemBase, localIndex: number) => {
     switch (item?.itemType) {
+
+      
       case 'item':
         const itemProps = item as IConfigurableItemBase;
+        console.log('rendering only title)',itemProps);
         return <ListItem title={''} key={localIndex} index={[...index, localIndex]} {...itemProps} />;
 
       case 'group':

@@ -66,6 +66,7 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
           buttons={model?.buttons}
           filters={model?.filters}
           properties={model?.properties}
+          uniqueStateId={model?.uniqueStateId}
           maxHeight={model?.maxHeight}
           allowAddAndRemove={model?.allowAddAndRemove}
           dataSourceUrl={model?.dataSource === 'api' ? model?.dataSourceUrl : null}
@@ -185,18 +186,18 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   };
 
   const queryParams = useMemo(() => {
-    const _queryParms: IAnyObject = {
+    const _queryParams: IAnyObject = {
       maxResultCount: showPagination ? paginationDefaultPageSize : 1000_000,
     };
     if (properties?.length) {
-      _queryParms.properties = properties?.map(p => camelCase(p)).join();
+      _queryParams.properties = properties?.map(p => camelCase(p)).join();
     }
 
     if (filters && getFilters()) {
-      _queryParms.filter = getFilters();
+      _queryParams.filter = getFilters();
     }
 
-    return _queryParms;
+    return _queryParams;
   }, [formData, globalState, properties, showPagination, paginationDefaultPageSize]);
 
   useEffect(() => {
@@ -303,43 +304,48 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
                 {(fields, { add, remove }) => {
                   return (
                     <>
-                      {fields.map((field, index) => (
-                        <ListItemProvider index={index} prefix={`${name}.`} formSettings={formSettings} key={field.key}>
-                          <Show when={Boolean(containerId)}>
-                            <ComponentsContainer
-                              containerId={containerId}
-                              plainWrapper
-                              direction="horizontal"
-                              alignItems="center"
-                            />
-                          </Show>
+                      {fields?.map((field, index) => (
+                        <div className="sha-list-component-item">
+                          <ListItemProvider
+                            index={index}
+                            prefix={`${name}.`}
+                            formSettings={formSettings}
+                            key={field.key}
+                          >
+                            <Show when={Boolean(containerId)}>
+                              <ComponentsContainer
+                                containerId={containerId}
+                                plainWrapper
+                                direction="horizontal"
+                                alignItems="center"
+                              />
+                            </Show>
 
-                          <Show when={Boolean(formId)}>
-                            <EmbeddedForm markup={markup} containerId={containerId} />
-                          </Show>
+                            <Show when={Boolean(formId)}>
+                              <EmbeddedForm markup={markup} containerId={containerId} />
+                            </Show>
 
-                          <Show when={allowAddAndRemove}>
-                            <div className="sha-list-component-add-item-btn">
-                              <Button
-                                danger
-                                type="primary"
-                                size="small"
-                                className="dynamic-delete-button"
-                                onClick={() => remove(field.name)}
-                                icon={<MinusCircleOutlined />}
-                              >
-                                Remove Above Field
-                              </Button>
-                            </div>
-                          </Show>
+                            <Show when={allowAddAndRemove}>
+                              <div className="sha-list-component-add-item-btn">
+                                <Button
+                                  danger
+                                  type="primary"
+                                  size="small"
+                                  className="dynamic-delete-button"
+                                  onClick={() => remove(field.name)}
+                                  icon={<MinusCircleOutlined />}
+                                >
+                                  Remove
+                                </Button>
+                              </div>
+                            </Show>
 
-                          <Divider />
-                        </ListItemProvider>
+                            <Divider />
+                          </ListItemProvider>
+                        </div>
                       ))}
 
-                      <div
-                        className={classNames('sha-list-pagination-container', { 'show-pagination': showPagination })}
-                      >
+                      <div className={classNames('sha-list-pagination-container')}>
                         <Space>
                           <Show when={allowAddAndRemove}>
                             <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} size="small">

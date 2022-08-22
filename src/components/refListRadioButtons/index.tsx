@@ -1,9 +1,9 @@
-import React, { CSSProperties, FC, Key, useEffect, useState } from 'react';
+import React, { CSSProperties, FC, Key } from 'react';
 import { Radio, RadioChangeEvent, RadioGroupProps } from 'antd';
 import { nanoid } from 'nanoid/non-secure';
-import { ReferenceListItemDto, useReferenceListGetItems } from '../../apis/referenceList';
+import { ReferenceListItemDto } from '../../apis/referenceList';
 import classNames from 'classnames';
-import { getCachedItems, saveListItems } from '../refListDropDown/utils';
+import { useReferenceList } from '../../providers/referenceListDispatcher';
 
 const RadioButton = Radio.Button;
 
@@ -48,27 +48,8 @@ const RefListRadioButtons: FC<IRefListRadioButtonsProps> = ({
   onSelectionChange,
   ...rest
 }) => {
-  const { refetch: fetchItems, data: listItemsResult } = useReferenceListGetItems({ lazy: true });
-  const [cachedListItems, setCachedListItems] = useState<ReferenceListItemDto[]>([]);
-
-  useEffect(() => {
-    if (listName && listNamespace) {
-      const cachedItems = getCachedItems(listName, listNamespace);
-
-      if (cachedItems?.length) {
-        setCachedListItems(cachedItems);
-      } else {
-        fetchItems({ queryParams: { name: listName, namespace: listNamespace } });
-      }
-    }
-  }, [listName, listNamespace]);
-
-  useEffect(() => {
-    if (listItemsResult?.result) {
-      saveListItems(listName, listNamespace, listItemsResult?.result);
-    }
-  }, [listItemsResult]);
-
+  const { data: refList } = useReferenceList(listNamespace, listName);
+  
   const filter = ({ itemValue }: ReferenceListItemDto) => {
     const localFilter = filters?.includes(itemValue);
 
@@ -77,9 +58,7 @@ const RefListRadioButtons: FC<IRefListRadioButtonsProps> = ({
 
   const numericValue = typeof value === 'number' ? value : value?.itemValue;
 
-  const listItems = cachedListItems?.length ? cachedListItems : listItemsResult?.result;
-
-  const options = filters?.length ? listItems?.filter(filter) : listItems;
+  const options = filters?.length ? refList?.items?.filter(filter) : refList?.items;
 
   const radioProps = { ...rest, value: options ? numericValue : null };
 

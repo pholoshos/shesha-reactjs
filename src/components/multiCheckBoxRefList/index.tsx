@@ -1,8 +1,8 @@
 import { Checkbox, Col, Row } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useReferenceListGetItems } from '../../apis/referenceList';
 import { ShaSpin } from '../../';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
+import { useReferenceList } from '../../providers/referenceListDispatcher';
 
 export interface IMultiCheckBoxRefListProps {
   readonly listName: string;
@@ -17,20 +17,12 @@ export const MultiCheckBoxRefList: FC<IMultiCheckBoxRefListProps> = ({
   onChange,
   columns = 3,
 }) => {
-  const { data, refetch, loading } = useReferenceListGetItems({
-    lazy: true,
-  });
-
-  useEffect(() => {
-    if (listName && listNamespace) {
-      refetch({ queryParams: { name: listName, namespace: listNamespace } });
-    }
-  }, [listName, listNamespace]);
+  const { data: refList, loading: refListLoading } = useReferenceList(listNamespace, listName);
 
   return (
-    <ShaSpin spinning={loading}>
+    <ShaSpin spinning={refListLoading}>
       <Row>
-        {data?.result.map(({ item, itemValue }) => (
+        {refList?.items?.map(({ item, itemValue }) => (
           <Col key={itemValue} span={24 / columns}>
             <Checkbox key={itemValue} onChange={e => onChange(e, itemValue)}>
               {item}

@@ -1,4 +1,4 @@
-import React, { FC, useContext, PropsWithChildren, useRef, useState } from 'react';
+import React, { FC, useContext, PropsWithChildren, useRef, useState, useEffect } from 'react';
 import metadataReducer from './reducer';
 import {
   ReferenceListDispatcherActionsContext,
@@ -16,7 +16,7 @@ import { getReferenceListFullName } from './utils';
 import { referenceListGetItems } from '../../apis/referenceList';
 import { MakePromiseWithState, PromisedValue } from '../../utils/promises';
 
-export interface IReferenceListDispatcherProviderProps {}
+export interface IReferenceListDispatcherProviderProps { }
 
 const ReferenceListDispatcherProvider: FC<PropsWithChildren<IReferenceListDispatcherProviderProps>> = ({ children }) => {
   const initial: IReferenceListDispatcherStateContext = {
@@ -32,6 +32,10 @@ const ReferenceListDispatcherProvider: FC<PropsWithChildren<IReferenceListDispat
 
   const getReferenceList = (payload: IGetReferenceListPayload): PromisedValue<IReferenceList> => {
     const { moduleName, name } = payload;
+
+    if (!moduleName || !name)
+      return MakePromiseWithState(Promise.reject("Reference list name or module not specified"));
+
     const refListKey = getReferenceListFullName(moduleName, name);
     const loadedRefList = refLists.current[refListKey];
     if (loadedRefList) return loadedRefList;
@@ -45,15 +49,15 @@ const ReferenceListDispatcherProvider: FC<PropsWithChildren<IReferenceListDispat
 
           const refList: IReferenceList = {
             name: name,
-            items: response.result.map<IReferenceListItem>(i => ({ 
+            items: response.result.map<IReferenceListItem>(i => ({
               id: i.id,
               item: i.item,
               itemValue: i.itemValue,
               description: i.description,
               orderIndex: i.orderIndex,
-             })),
+            })),
           };
-          
+
           resolve(refList);
         })
         .catch(e => {
@@ -126,23 +130,38 @@ const getRefListItemByValue = (list: IReferenceList, itemValue?: number): IRefer
 }
 
 const useReferenceList = (moduleName: string, listName: string): ILoadingState<IReferenceList> => {
-  if (!(moduleName && listName))
-    return null;
-
   const { getReferenceList } = useReferenceListDispatcher();
   const refListPromise = getReferenceList({ moduleName, name: listName });
 
-  const [data, setData] = useState<IReferenceList>(refListPromise.isResolved ? refListPromise.value : null);
+  const [data, setData] = useState<IReferenceList>(refListPromise.value);
 
-  if (refListPromise.isPending)
-    refListPromise.promise.then(list => setData(list));
-  
-    const result: ILoadingState<IReferenceList> = {
-      data,
-      loading: refListPromise.isPending,
-      error: refListPromise.error
-    };
-    return result;
+  useEffect(() => {
+    // if the reflist is not loaded on first rendering - use promise to return data
+    if (!refListPromise.isResolved)
+      refListPromise.promise.then(list => {
+        if (data !== refListPromise.value) {
+          setData(list);
+        }
+      });
+  }, []);
+
+  useEffect(() => {
+    // if the loaded list changed after first loading - return actual value
+    if (data !== refListPromise.value) {
+      setData(refListPromise.value);
+    }
+  }, [refListPromise.value]);
+
+  if (!(moduleName && listName))
+    return { loading: false, data: null };
+
+  const result: ILoadingState<IReferenceList> = {
+    data,
+    loading: refListPromise.isPending,
+    error: refListPromise.error
+  };
+  return result;
+
 }
 
 const useReferenceListItem = (moduleName: string, listName: string, itemValue?: number): ILoadingState<IReferenceListItem> => {
@@ -151,7 +170,7 @@ const useReferenceListItem = (moduleName: string, listName: string, itemValue?: 
 
   const { getReferenceList } = useReferenceListDispatcher();
   const refListPromise = getReferenceList({ moduleName, name: listName });
-  const loadedItem = refListPromise.isResolved 
+  const loadedItem = refListPromise.isResolved
     ? getRefListItemByValue(refListPromise.value, itemValue)
     : null;
 
@@ -162,7 +181,7 @@ const useReferenceListItem = (moduleName: string, listName: string, itemValue?: 
       const item = getRefListItemByValue(list, itemValue);
       setData(item);
     });
-  
+
   const result: ILoadingState<IReferenceListItem> = {
     data,
     loading: refListPromise.isPending,
@@ -171,8 +190,9 @@ const useReferenceListItem = (moduleName: string, listName: string, itemValue?: 
   return result;
 }
 
-export { 
-  ReferenceListDispatcherProvider, 
-  useReferenceListDispatcher, 
+export {
+  ReferenceListDispatcherProvider,
+  useReferenceListDispatcher,
   useReferenceListItem,
-  useReferenceList };
+  useReferenceList
+};

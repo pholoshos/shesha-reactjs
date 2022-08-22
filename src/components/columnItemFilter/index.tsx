@@ -1,14 +1,14 @@
 import React, { FC, ChangeEvent, useState, Fragment, useEffect, useMemo } from 'react';
 import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
-import { Input, DatePicker, TimePicker, InputNumber, Checkbox, Menu, Dropdown, Select } from 'antd';
+import { Input, DatePicker, TimePicker, InputNumber, Checkbox, Menu, Dropdown, Select, Spin } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { Moment } from 'moment';
-import { useGet } from 'restful-react';
 import { ColumnFilter, IndexColumnDataType, IndexColumnFilterOption } from '../../providers/dataTable/interfaces';
-import { AutocompleteItemDto, useAutocompleteList } from '../../apis/autocomplete';
 import { humanizeString } from '../../utils/string';
 import { ADVANCEDFILTER_DATE_FORMAT, ADVANCEDFILTER_DATETIME_FORMAT, getMoment, ADVANCEDFILTER_TIME_FORMAT } from '../../providers/dataTable/utils';
 import { useReferenceList } from '../../providers/referenceListDispatcher';
+import { useEntityAutocomplete } from '../../utils/autocomplete';
+import { EntityData } from '../../interfaces/gql';
 
 const { RangePicker: DateRangePicker } = DatePicker;
 const { RangePicker: TimeRangePicker } = TimePicker;
@@ -80,8 +80,8 @@ export const ColumnItemFilter: FC<IColumnItemFilterProps> = ({
   }, []);
 
   const handleStringFilter = (changeValue: ChangeEvent<HTMLInputElement>) => {
-      const value = (changeValue as ChangeEvent<HTMLInputElement>).target.value;
-      onChangeFilter(id, value);
+    const value = (changeValue as ChangeEvent<HTMLInputElement>).target.value;
+    onChangeFilter(id, value);
   };
 
   const handleRawFilter = (changeValue: ColumnFilter) => {
@@ -161,62 +161,6 @@ export const ColumnItemFilter: FC<IColumnItemFilterProps> = ({
     );
   };
 
-  const urlFetcher = useGet(autocompleteUrl || '', { lazy: true });
-  const standardFetcher = useAutocompleteList({ lazy: true });
-  const itemsFetcher = autocompleteUrl ? urlFetcher : standardFetcher;
-
-  //#region Moved useEffect to the top level
-  const fetchDefaultList = () => {
-    if (entityReferenceTypeShortAlias) {
-      itemsFetcher.refetch({
-        queryParams: { term: '', typeShortAlias: entityReferenceTypeShortAlias, selectedValue: filter as string },
-      });
-    }
-  };
-
-  useEffect(() => {
-    fetchDefaultList();
-  }, []);
-  //#endregion
-
-  const renderEntityDropdown = () => {
-    const handleSearch = (value: any) => {
-      if (value) {
-        itemsFetcher.refetch({
-          queryParams: { term: value, typeShortAlias: entityReferenceTypeShortAlias, selectedValue: filter as string },
-        });
-      }
-    };
-
-    const onChange = (value: any) => {
-      onChangeFilter(id, value);
-    };
-
-    return (
-      <Select
-        size="small"
-        // mode="default"
-        style={{ width: '100%' }}
-        onChange={onChange}
-        showSearch
-        defaultActiveFirstOption={false}
-        filterOption={false}
-        onSearch={handleSearch}
-        onSelect={fetchDefaultList}
-        allowClear={true}
-        placeholder="Type to search"
-        loading={itemsFetcher.loading}
-        value={filter as string}
-      >
-        {itemsFetcher.data?.result?.map((d: AutocompleteItemDto) => (
-          <Select.Option value={d.value} key={d.value}>
-            {d.displayText}
-          </Select.Option>
-        ))}
-      </Select>
-    );
-  };
-
   const hideFilterOptions = () => ['boolean', 'reference-list-item', 'multiValueRefList', 'entity'].includes(dataType);
 
   return (
@@ -289,14 +233,22 @@ export const ColumnItemFilter: FC<IColumnItemFilterProps> = ({
 
         {dataType === 'boolean' && renderBooleanInput()}
 
-        {dataType === 'entity' && renderEntityDropdown()}
+        {dataType === 'entity' && (
+          <EntityFilter
+            onChange={handleRawFilter}
+            onPressEnter={handlePressEnter}
+            value={filter as string}
+            entityType={entityReferenceTypeShortAlias}
+            autocompleteUrl={autocompleteUrl}
+          />
+        )}
 
         {['reference-list-item', 'multiValueRefList'].includes(dataType) && (
-          <RefListFilter 
+          <RefListFilter
             onChange={handleRawFilter}
             onPressEnter={handlePressEnter}
             placeholder={`Filter ${filterName}`}
-            value={filter as number[]}
+            value={filter as number[] || []}
             referenceListNamespace={referenceListNamespace}
             referenceListName={referenceListName}
           />
@@ -306,7 +258,6 @@ export const ColumnItemFilter: FC<IColumnItemFilterProps> = ({
   );
 };
 
-// placeholder: string = `Filter ${filterName}`
 interface IFilterBaseProps {
   placeholder?: string;
   onPressEnter: () => void;
@@ -401,7 +352,7 @@ const NumberRangeFilter: FC<INumberRangeFilterProps> = (props) => {
 interface IRefListFilterProps extends IFilterBaseProps {
   referenceListNamespace: string;
   referenceListName: string;
-  value: number[];
+  value?: number[];
   onChange: (changeValue: number[] | undefined) => void;
 }
 
@@ -411,7 +362,6 @@ const RefListFilter: FC<IRefListFilterProps> = (props) => {
   return (
     <Select
       size="small"
-      //mode={dataType === 'refList' ? null : 'multiple'}
       allowClear
       mode="multiple"
       style={{ width: '100%' }}
@@ -428,33 +378,46 @@ const RefListFilter: FC<IRefListFilterProps> = (props) => {
   );
 }
 
-/*
-  const renderRenderReflistDropdown = () => {
-    const onChange = (value: any) => {
-      onChangeFilter(id, value);
-    };
+interface IEntityFilterProps extends IFilterBaseProps {
+  value: string;
+  onChange: (changeValue: string | undefined) => void;
+  autocompleteUrl?: string;
+  entityType: string;
+}
+const EntityFilter: FC<IEntityFilterProps> = (props) => {
+  const { data, loading, search } = useEntityAutocomplete({ entityType: props.entityType, value: props.value });
 
-    const filterValue = (filter as string[]) || [];
+  const dataLoaded = data && data.length > 0;
+  const selectValue =  props.value && dataLoaded
+    ? props.value
+    : undefined;
+  const selectPlaceholder = props.value && !dataLoaded ? "Loading..." : "Type to search";
 
-    return (
-      <Select
-        size="small"
-        //mode={dataType === 'refList' ? null : 'multiple'}
-        allowClear
-        mode="multiple"
-        style={{ width: '100%' }}
-        onChange={onChange}
-        value={filterValue}
-        loading={refListLoading}
-      >
-        {refListItems && refListItems.items.map(({ id: _id, itemValue, item }) => (
-          <Select.Option key={_id} value={itemValue}>
-            {item}
-          </Select.Option>
-        ))}
-      </Select>
-    );
-  };
-*/
+  return (
+    <Select
+      size="small"
+      style={{ width: '100%' }}
+      onChange={props.onChange}
+      showSearch
+      defaultActiveFirstOption={false}
+      filterOption={false}
+      onSearch={search}
+      onSelect={() => search("")}
+      allowClear={true}
+      placeholder={selectPlaceholder}
+      loading={loading}
+      value={selectValue}
+      notFoundContent={loading ? <Spin size="small" /> : null}
+    >
+      {dataLoaded &&
+        data.map((d: EntityData) => (
+            <Select.Option value={d.id} key={d.id}>
+              {d._displayName}
+            </Select.Option>
+          ))
+      }
+    </Select>
+  );
+}
 
 export default ColumnItemFilter;

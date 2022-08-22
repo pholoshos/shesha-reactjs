@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Select } from 'antd';
-import { ReferenceListItemDto, useReferenceListGetItems } from '../../apis/referenceList';
-import { getCachedItems, saveListItems } from './utils';
+import { ReferenceListItemDto } from '../../apis/referenceList';
 import { CustomLabeledValue, IGenericRefListDropDownProps, ISelectOption } from './models';
 import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
+import { useReferenceList } from '../../providers/referenceListDispatcher';
 
 // tslint:disable-next-line:whitespace
 export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownProps<TValue>) => {
@@ -25,32 +25,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
     style,
     ...rest
   } = props;
-
-  // todo: implement referencelist provider with cache support and promise result
-  const { refetch: fetchItems, loading, data: listItemsResult } = useReferenceListGetItems({
-    lazy: true,
-    base,
-  });
-
-  const [cachedListItems, setCachedListItems] = useState<ReferenceListItemDto[]>([]);
-
-  useEffect(() => {
-    if (listName && listNamespace) {
-      const cachedItems = getCachedItems(listName, listNamespace);
-
-      if (cachedItems?.length) {
-        setCachedListItems(cachedItems);
-      } else {
-        fetchItems({ queryParams: { name: listName, namespace: listNamespace } });
-      }
-    }
-  }, [listName, listNamespace]);
-
-  useEffect(() => {
-    if (listItemsResult?.result) {
-      saveListItems(listName, listNamespace, listItemsResult?.result);
-    }
-  }, [listItemsResult]);
+  const { data: refList, loading: refListLoading } = useReferenceList(listNamespace, listName);
 
   const filter = ({ itemValue }: ReferenceListItemDto) => {
     if (!filters?.length) {
@@ -61,8 +36,6 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
 
     return includeFilters ? filtered : !filtered;
   };
-
-  const listItems = cachedListItems?.length ? cachedListItems : listItemsResult?.result;
 
   const wrapValue = (localValue: TValue | TValue[]): CustomLabeledValue<TValue> | CustomLabeledValue<TValue>[] => {
     if (localValue === undefined) return undefined;
@@ -76,7 +49,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
   };
 
   const options = useMemo<ISelectOption<TValue>[]>(() => {
-    const fetchedData = (listItems || []).filter(filter);
+    const fetchedData = (refList?.items || []).filter(filter);
 
     const fetchedItems = fetchedData.map<ISelectOption<TValue>>(item => {
       const option = Boolean(getOptionFromFetchedItem)
@@ -97,7 +70,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
 
     const result = [...fetchedItems, ...selectedItems];
     return result;
-  }, [listItems]);
+  }, [refList]);
 
   const handleChange = (_: CustomLabeledValue<TValue>, option: any) => {
     if (!Boolean(onChange)) return;
@@ -131,7 +104,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
       showArrow={showArrow}
       notFoundContent={null}
       allowClear={true}
-      loading={loading}
+      loading={refListLoading}
       disabled={disabled}
       filterOption={(input, option) => {
         if (typeof option?.children === 'string' && typeof input === 'string') {

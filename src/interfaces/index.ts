@@ -29,6 +29,7 @@ export { IChildTableProps } from '../components/childTable';
 export { IValuable } from './valuable';
 export { IChangeable } from './changeable';
 export { IFormItem } from './formItem';
+export { INamed } from './named';
 export { ITableColumn, ICustomFilter, IDataTableInstance } from '../providers/dataTable/interfaces';
 export type { PageWithLayout } from './pageWithLayout';
 export * from './formDesigner';

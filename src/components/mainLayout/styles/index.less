@@ -51,6 +51,13 @@
           align-items: center;
           margin-left: @padding-lg;
         }
+
+        .logo,
+        .search {
+          @media @tablet {
+            display: none;
+          }
+        }
       }
 
       .layout-header-right {
@@ -63,13 +70,13 @@
           margin-right: @padding-lg;
           border-radius: 8px;
           padding: 0px 10px 0px 10px;
-          // color: var(--ant-primary-color);
-          color: @primary-color;
+          color: var(--ant-primary-color);
+          // color: @primary-color;
 
           &:hover {
             color: white;
-            // background-color: var(--ant-primary-3);
-            background-color: @primary-3;
+            background-color: var(--ant-primary-3);
+            // background-color: @primary-3;
           }
 
           .action-icon {
@@ -88,14 +95,18 @@
             color: black;
 
             &:hover {
-              // color: var(--ant-primary-color);
-              color: @primary-color;
+              color: var(--ant-primary-color);
+              // color: @primary-color;
             }
           }
 
           .separator {
             border-left: 2px solid rgba(189, 189, 189, 0.37);
             margin-right: 5px;
+          }
+
+          @media @tablet {
+            display: none;
           }
         }
       }

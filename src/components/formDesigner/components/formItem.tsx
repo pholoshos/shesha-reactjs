@@ -5,6 +5,7 @@ import { useForm } from '../../../providers/form';
 import { getFieldNameFromExpression, getValidationRules } from '../../../providers/form/utils';
 import classNames from 'classnames';
 import './styles.less';
+import { useListItemIndex } from '../../../providers';
 
 export interface IConfigurableFormItemProps {
   model: IConfigurableFormComponent;
@@ -35,14 +36,27 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
 }) => {
   const { isComponentHidden, formData } = useForm();
 
+  const { index, formSettings } = useListItemIndex();
+
   const isHidden = isComponentHidden(model);
 
   const style = model?.hidden ? { display: 'none' } : {};
 
+  const getPropName = () => {
+    const name = getFieldNameFromExpression(model.name);
+
+    if (!isNaN(index)) {
+      return typeof name === 'string' ? [index, name] : [index, ...name];
+    }
+
+    return name;
+  };
+
   return (
     <Form.Item
       className={classNames(className, { 'form-item-hidden': model.hideLabel })}
-      name={getFieldNameFromExpression(model.name)}
+      name={getPropName()}
+      // name={getFieldNameFromExpression(model.name)}
       label={model.hideLabel ? null : model.label}
       labelAlign={model.labelAlign}
       hidden={isHidden}
@@ -50,8 +64,8 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
       initialValue={initialValue}
       tooltip={model.description}
       rules={isHidden ? [] : getValidationRules(model, { formData })}
-      labelCol={labelCol}
-      wrapperCol={wrapperCol}
+      labelCol={labelCol || formSettings?.labelCol}
+      wrapperCol={wrapperCol || formSettings?.wrapperCol}
       style={style}
     >
       {children}

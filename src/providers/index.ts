@@ -26,3 +26,4 @@ export * from './modelConfigurator';
 export * from './globalState';
 export * from './tableViewSelectorConfigurator';
 export * from './theme';
+export * from './listItem';

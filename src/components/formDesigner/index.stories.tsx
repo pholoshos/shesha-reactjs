@@ -69,7 +69,7 @@ const ActionsTemplateContent: FC<IActionsTemplateProps> = props => {
     formGetByPath({ path: props.formPath }, { base: backendUrl, headers: httpHeaders })
       .then(response => {
         console.log({ msg: 'loaded', response });
-        setForm(response.result);
+        setForm((response as any).result);
       })
       .catch(error => {
         console.log({ msg: 'failed to load', error });
@@ -82,6 +82,7 @@ const ActionsTemplateContent: FC<IActionsTemplateProps> = props => {
       return;
     }
 
+    // @ts-ignore
     formUpdateMarkup(form, { id: form.id, base: backendUrl, headers: httpHeaders })
       .then(response => {
         console.log({ msg: 'form saved', response });
@@ -205,6 +206,10 @@ export const DynamicViewProps = addStory(DesignerTemplate, {
 
 export const Empty = addStory(DesignerTemplate, {
   formPath: 'empty',
+});
+
+export const Playground = addStory(DesignerTemplate, {
+  formPath: 'playground-form',
 });
 
 interface FormInfo {

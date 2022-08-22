@@ -1,10 +1,11 @@
 import React, { FC, useState } from 'react';
 import { JsonLogicResult } from 'react-awesome-query-builder';
-import { Modal, Button, Collapse } from 'antd';
+import { Modal, Button, Collapse, Space } from 'antd';
 import { IProperty } from '../../../../providers/queryBuilder/models';
 import QueryBuilder from '../../../queryBuilder';
-import { CodeEditor } from '../../..';
+import { CodeEditor, Show } from '../../..';
 import { CaretRightOutlined } from '@ant-design/icons';
+import { useMedia } from 'react-use';
 
 export interface IQueryBuilderFieldProps {
   jsonExpanded?: boolean;
@@ -18,6 +19,7 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
   const [modalVisible, setModalVisible] = useState(false);
   const [jsonLogicResult, setJsonLogicResult] = useState<JsonLogicResult>(undefined);
   const [jsonExpanded, setJsonExpanded] = useState(props.jsonExpanded ?? false);
+  const isSmall = useMedia('(max-width: 480px)');
 
   const onOkClick = () => {
     if (jsonLogicResult) {
@@ -42,6 +44,8 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
     setJsonExpanded(!jsonExpanded);
   };
 
+  const hasValue = Boolean(props?.value);
+
   return (
     <>
       <Collapse
@@ -64,9 +68,24 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
       >
         <Collapse.Panel
           header={
-            <Button type="primary" onClick={() => setModalVisible(true)}>
-              Query Builder
-            </Button>
+            <Space>
+              <Button type="primary" onClick={() => setModalVisible(true)} size="small">
+                {`Query Builder ${hasValue ? '(applied)' : ''}`.trim()}
+              </Button>
+
+              <Show when={hasValue}>
+                <Button
+                  type="primary"
+                  size="small"
+                  danger
+                  onClick={() => {
+                    if (props?.onChange) props.onChange(null);
+                  }}
+                >
+                  Clear
+                </Button>
+              </Show>
+            </Space>
           }
           key="1"
         >
@@ -95,7 +114,7 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
       </Collapse>
       <Modal
         visible={modalVisible}
-        width="60%"
+        width={isSmall ? '90%' : '60%'}
         title="Quick Filter Query Builder"
         onCancel={() => setModalVisible(false)}
         onOk={onOkClick}

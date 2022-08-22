@@ -1,0 +1,40 @@
+.sha-list-component {
+  .ant-collapse-extra {
+    margin: unset !important;
+  }
+
+  .sha-list-component-extra-space {
+    display: flex;
+    align-content: space-between;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    align-items: flex-start;
+
+    .sha-responsive-button-group-container {
+      line-height: unset;
+      max-width: 200px;
+      margin-left: 12px;
+    }
+  }
+
+  .sha-list-component-body {
+    overflow-y: scroll;
+  }
+
+  .sha-list-component-add-item-btn {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .sha-list-pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+
+    &.show-pagination {
+      justify-content: space-between;
+    }
+  }
+}

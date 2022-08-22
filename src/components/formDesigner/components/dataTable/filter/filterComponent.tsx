@@ -9,6 +9,7 @@ import { QueryBuilderModelWrapper } from '../../queryBuilder/queryBuilderModelWr
 import { TableViewSelectorConfiguratorProvider, useTableViewSelectorConfigurator } from '../../../../../providers';
 import FilterConfigurator from './filterConfigurator';
 import { ITableViewProps } from '../../../../../providers/tableViewSelectorConfigurator/models';
+import { useMedia } from 'react-use';
 
 const CustomFilterComponent: IToolboxComponent<ICustomFilterProps> = {
   type: 'filter',
@@ -71,6 +72,7 @@ export interface IFilterSettingsModal {
 
 export const FilterSettingsModalInner: FC<IFilterSettingsModal> = ({ visible, onChange, hideModal }) => {
   const { items } = useTableViewSelectorConfigurator();
+  const isSmall = useMedia('(max-width: 480px)');
 
   const onOkClick = () => {
     if (typeof onChange === 'function') onChange(items);
@@ -78,7 +80,14 @@ export const FilterSettingsModalInner: FC<IFilterSettingsModal> = ({ visible, on
   };
 
   return (
-    <Modal width="60%" visible={visible} title="Configure Filters" okText="Save" onCancel={hideModal} onOk={onOkClick}>
+    <Modal
+      width={isSmall ? '90%' : '60%'}
+      visible={visible}
+      title="Configure Filters"
+      okText="Save"
+      onCancel={hideModal}
+      onOk={onOkClick}
+    >
       <FilterConfigurator />
     </Modal>
   );

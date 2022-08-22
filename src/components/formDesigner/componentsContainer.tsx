@@ -3,10 +3,11 @@ import ConfigurableFormComponent from './configurableFormComponent';
 import { useForm } from '../../providers/form';
 import { TOOLBOX_COMPONENT_DROPPABLE_KEY, TOOLBOX_DATA_ITEM_DROPPABLE_KEY } from '../../providers/form/models';
 import { ItemInterface, ReactSortable } from 'react-sortablejs';
+import { joinStringValues } from '../../utils';
 
 export type Direction = 'horizontal' | 'vertical';
 
-export interface IProps {
+export interface IComponentsContainerProps {
   containerId: string;
   direction?: Direction;
   justifyContent?: string;
@@ -14,8 +15,10 @@ export interface IProps {
   justifyItems?: string;
   className?: string;
   render?: (components: JSX.Element[]) => ReactNode;
+  itemsLimit?: number;
+  plainWrapper?: boolean;
 }
-const ComponentsContainer: FC<IProps> = ({
+const ComponentsContainer: FC<IComponentsContainerProps> = ({
   containerId,
   children,
   direction = 'vertical',
@@ -24,6 +27,8 @@ const ComponentsContainer: FC<IProps> = ({
   justifyItems,
   className,
   render,
+  itemsLimit = -1,
+  plainWrapper = false,
 }) => {
   const {
     getChildComponents,
@@ -43,11 +48,20 @@ const ComponentsContainer: FC<IProps> = ({
 
   const components = getChildComponents(containerId);
 
+  if (containerId === '4M-aYa7aFRgpYvGOx2pKg') {
+    console.log('4M-aYa7aFRgpYvGOx2pKg components', components);
+  }
+
+  console.log('Other Ids components ::', components);
   const componentsMapped = components.map<ItemInterface>(c => ({
     id: c.id,
   }));
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
+    if (!isNaN(itemsLimit) && itemsLimit && newState?.length === Math.round(itemsLimit) + 1) {
+      return;
+    }
+
     // temporary commented out, the behavoiur of the sortablejs differs sometimes
     const listChanged = true; //!newState.some(item => item.chosen !== null && item.chosen !== undefined);
 
@@ -106,8 +120,12 @@ const ComponentsContainer: FC<IProps> = ({
     style['justifyItems'] = justifyItems;
   }
 
+  if (plainWrapper && formMode !== 'designer') {
+    return <>{renderComponents()}</>;
+  }
+
   return (
-    <div className={`sha-components-container ${direction} ${className}`}>
+    <div className={joinStringValues(['sha-components-container', direction, className])}>
       {isDesignerMode ? (
         <>
           {components.length === 0 && <div className="sha-drop-hint">Drag and Drop form component</div>}

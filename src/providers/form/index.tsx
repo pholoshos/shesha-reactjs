@@ -208,7 +208,8 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     } else {
       if (!isFetchingFormInfo) {
         if (fetchingFormInfoResponse) {
-          const fetchedForm = fetchingFormInfoResponse?.result;
+          const fetchedForm = (fetchingFormInfoResponse as any).result;
+
           if (fetchedForm) {
             const parsedForm = parseForm(fetchedForm.markup);
 

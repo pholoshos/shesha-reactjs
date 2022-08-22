@@ -28,7 +28,6 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
   const { getAction, form, setFormMode, formData, formMode } = useForm();
   const { router } = useShaRouting();
   const { globalState } = useGlobalState();
-  // const { pubSub, globalStateId } = useGlobalState();
   const { publish } = usePubSub();
 
   const executeExpression = (expression: string, result?: any) => {

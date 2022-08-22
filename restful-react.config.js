@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const camelcase = require('camelcase');
 
-const STORYBOOK_BASE_URL = 'http://localhost:21021';
+const STORYBOOK_BASE_URL = 'https://mpdoh-his-be-test.azurewebsites.net';
 // const STORYBOOK_BASE_URL = process.env.STORYBOOK_BASE_URL;
 const ROOT_PATH = './src/apis';
 
@@ -31,6 +31,12 @@ const API_LIST = [
   // 'EntityProperty',
   // 'ModelConfigurations',
   // 'PersonTest',
+  // 'ImportResult',
+  // 'Module',
+  // 'NHibernate',
+  'Form',
+  // 'ConfigurationItem',
+  // 'FrontEndApp',
 ];
 
 const defaultConfiguration = {

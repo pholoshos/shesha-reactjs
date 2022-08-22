@@ -62,7 +62,11 @@ import RichTextEditor from '../../../components/formDesigner/components/richText
 import PasswordCombo from '../../../components/formDesigner/components/passwordCombo';
 import PermissionsTree from '../../../components/formDesigner/components/permissions/permissionsTree/permissionsTree';
 import PermissionTagGroup from '../../../components/formDesigner/components/permissions/permissionTagGroup';
+import List from '../../../components/formDesigner/components/listControl';
 import Progress from '../../../components/formDesigner/components/progress';
+import Buttons from '../../../components/formDesigner/components/button/buttonGroup/buttonsComponent';
+import Link from '../../../components/formDesigner/components/link';
+
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -71,6 +75,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
     components: [
       Autocomplete,
       Button,
+      Buttons,
       ButtonGroup,
       Checkbox,
       CheckboxGroup,
@@ -88,7 +93,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
     name: 'Static',
     visible: true,
-    components: [Alert, DisplayFormItem, Section, ValidationErrors],
+    components: [Alert,Link, DisplayFormItem, Section, ValidationErrors],
   },
   {
     name: 'Layout',
@@ -107,6 +112,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       EditableTagGroup,
       EntityPickerComponent,
       FileUpload,
+      List,
       Filter,
       HierarchicalChecklistComponent,
       KeyValueEditor,

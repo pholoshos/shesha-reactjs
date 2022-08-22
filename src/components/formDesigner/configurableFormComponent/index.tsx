@@ -86,7 +86,11 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*,
       <div className="sha-component-controls">
         <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
       </div>
-      <div>
+      <div
+        onKeyUp={event => {
+          console.log('LOGS:: event.key ', event.key);
+        }}
+      >
         <DragHandle componentId={id} componentRef={componentRef} />
         <div style={{ paddingLeft: '15px' }}>{renderComponent()}</div>
       </div>

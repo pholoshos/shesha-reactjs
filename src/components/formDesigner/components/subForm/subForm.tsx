@@ -2,6 +2,7 @@ import React, { FC, useMemo } from 'react';
 import ShaSpin from '../../../shaSpin';
 import ValidationErrors from '../../../validationErrors';
 import { useSubForm } from './provider';
+import { SubFormContainer } from './subFormContainer';
 
 interface ISubFormProps {
   name: string;
@@ -10,7 +11,7 @@ interface ISubFormProps {
 }
 
 const SubForm: FC<ISubFormProps> = ({}) => {
-  const { errors, loading } = useSubForm();
+  const { errors, loading, components } = useSubForm();
 
   const isLoading = useMemo(() => {
     return Object.values(loading).find(l => Boolean(l));
@@ -23,7 +24,9 @@ const SubForm: FC<ISubFormProps> = ({}) => {
           <ValidationErrors error={errors[error]} />
         ))}
 
-        <div></div>
+        <div>
+          <SubFormContainer components={components} />
+        </div>
       </div>
     </ShaSpin>
   );

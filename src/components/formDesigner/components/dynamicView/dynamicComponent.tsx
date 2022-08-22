@@ -11,6 +11,9 @@ const DynamicComponent: FC<IConfigurableFormComponentProps> = ({ model }) => {
   const { form, getToolboxComponent } = useForm();
   const componentRef = useRef();
   const toolboxComponent = getToolboxComponent(model.type);
+
+  console.log('LOGS:: DynamicComponent toolboxComponent, model', toolboxComponent, model);
+
   if (!toolboxComponent) return null;
   const renderComponent = () => {
     return <CustomErrorBoundary>{toolboxComponent.factory(model, componentRef, form)}</CustomErrorBoundary>;

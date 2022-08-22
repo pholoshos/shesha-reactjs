@@ -23,18 +23,24 @@
   }
 
   .sha-list-component-add-item-btn {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 12px;
+    display: none;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+  }
+
+  .sha-list-component-item {
+    position: relative;
+    &:hover {
+      > .sha-list-component-add-item-btn {
+        display: block;
+      }
+    }
   }
 
   .sha-list-pagination-container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     margin-bottom: 12px;
-
-    &.show-pagination {
-      justify-content: space-between;
-    }
   }
 }

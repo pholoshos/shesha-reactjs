@@ -251,7 +251,7 @@
             },
             {
               "id": "18fa8cc0-a327-466d-9513-52c53218d39d",
-              "label": "Execute form action",
+              "label": "Execute Form Action",
               "value": "executeFormAction"
             }
           ],
@@ -642,6 +642,31 @@
               "label": "downloadLogFile",
               "value": "DOWNLOAD_LOG_FILE",
               "id": "3580449c-b124-4531-bc0d-b56d939a09d8"
+            },
+            {
+              "id": "b125e199-80d0-4d41-896f-5bcd0744e18f",
+              "label": "Add Form Item",
+              "value": "addFormItem"
+            },
+            {
+              "id": "cf5dc61f-1647-484b-8705-ac1a19bc92f6",
+              "label": "Get Sub-Form Data",
+              "value": "getSubFormData"
+            },
+            {
+              "id": "bca2dae0-77da-4752-9507-1c04bc55169e",
+              "label": "Submit Sub-Form Data",
+              "value": "postSubFormData"
+            },
+            {
+              "id": "f3b69148-eca1-483e-8df2-11052e9e9afa",
+              "label": "Update Sub-Form Data",
+              "value": "putSubFormData"
+            },
+            {
+              "id": "68be013d-897d-48b5-9499-d4581c706849",
+              "label": "Delete Sub-Form Data",
+              "value": "deleteSubFormData"
             },
             {
               "label": "(enter custom action)",

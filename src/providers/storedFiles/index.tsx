@@ -71,12 +71,11 @@ const StoredFilesProvider: FC<PropsWithChildren<IStoredFilesProviderProps>> = ({
   const { headers } = useAuth();
 
   const { config } = useApplicationConfiguration();
-
+ 
   const { loading: isFetchingFileList, refetch: fetchFileListHttp, data: fileListResponse } = useStoredFileFilesList({
     queryParams: {
       ownerId,
       ownerType,
-      filesCategory,
       propertyName,
       allCategories,
     },

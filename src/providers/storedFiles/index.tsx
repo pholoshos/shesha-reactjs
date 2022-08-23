@@ -76,6 +76,7 @@ const StoredFilesProvider: FC<PropsWithChildren<IStoredFilesProviderProps>> = ({
     queryParams: {
       ownerId,
       ownerType,
+      filesCategory,
       propertyName,
       allCategories,
     },

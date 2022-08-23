@@ -54,7 +54,7 @@ export interface IStoredFileProviderProps {
   fileId?: string;
   baseUrl?: string;
   uploadMode?: FileUploadMode;
-
+  onUploadSuccess?:(value: IStoredFile) => void;
   value?: any;
   onChange?: (value: any) => void;
 }
@@ -69,6 +69,7 @@ const StoredFileProvider: FC<PropsWithChildren<IStoredFileProviderProps>> = prop
     baseUrl = 'http://sheshabackend.boxfusion.co.za',
     uploadMode = 'async',
     onChange,
+    onUploadSuccess,
     value,
   } = props;
 
@@ -230,6 +231,9 @@ const StoredFileProvider: FC<PropsWithChildren<IStoredFileProviderProps>> = prop
         responseFile.uid = newFile.uid;
 
         dispatch(uploadFileSuccessAction({ ...responseFile }));
+        if(onUploadSuccess){
+          onUploadSuccess(responseFile);
+        }
         if (callback) callback(responseFile);
       })
       .catch(e => {

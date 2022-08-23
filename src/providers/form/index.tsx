@@ -411,8 +411,10 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   //#endregion
 
   const setFormData = (payload: ISetFormDataPayload) => {
+    
     dispatch((dispatchThunk, getState) => {
       dispatchThunk(setFormDataAction(payload));
+      console.log('payload::',payload);
       const newState = getState().present;
 
       // Update visible components. Note: debounced version is used to improve performance and prevent unneeded re-rendering

@@ -52,6 +52,7 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
       theme: state?.theme?.application,
       iconPrefixCls,
     });
+
   }, [state?.theme]);
 
   // Make an API Call to fetch the theme

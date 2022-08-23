@@ -18,6 +18,10 @@ export interface IFileUploadProps extends IConfigurableFormComponent {
   allowDelete?: boolean;
   list?: boolean;
 }
+interface IUpdateFormData{
+  propertyName: string;
+  id: string;
+}
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -29,9 +33,17 @@ const FileUploadComponent: IToolboxComponent<IFileUploadProps> = {
     const { backendUrl } = useSheshaApplication();
 
     // todo: refactor and implement a generic way for values evaluation
-    const { formData } = useForm();
+    const { formData} = useForm();
     const ownerId = evaluateValue(model.ownerId, { data: formData });
 
+
+
+
+    const upDateFormdata=({propertyName,id}:IUpdateFormData)=>{ 
+      let docName= Object.keys(formData).find(key=>key?.toLowerCase()==propertyName?.toLowerCase());
+      formData[docName]=id;  
+    }
+ 
     return (
       <ConfigurableFormItem model={model}>
         {model?.list ? (
@@ -41,7 +53,9 @@ const FileUploadComponent: IToolboxComponent<IFileUploadProps> = {
               uploadBtnProps={{ icon: null, type: 'link' }}
               disabled={model?.disabled}
               noFilesCaption={null}
+
             />
+
           </StoredFilesProvider>
         ) : (
           <StoredFileProvider
@@ -50,12 +64,19 @@ const FileUploadComponent: IToolboxComponent<IFileUploadProps> = {
             ownerType={model.ownerType}
             propertyName={model.propertyName}
             uploadMode={ownerId ? 'async' : 'sync'}
+            onUploadSuccess={({id})=>{
+              upDateFormdata({id:id,propertyName:model.propertyName})
+            }
+            }
           >
+
             <FileUpload
               allowUpload={!model.disabled && model.allowUpload}
               allowDelete={!model.disabled && model.allowDelete}
               allowReplace={!model.disabled && model.allowReplace}
             />
+     
+            
           </StoredFileProvider>
         )}
       </ConfigurableFormItem>

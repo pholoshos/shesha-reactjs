@@ -12,11 +12,9 @@ export function uiReducer(
 
   switch (type) {
     case ThemeActionEnums.SetComponents:
-      /* NEW_ACTION_ENUM_GOES_HERE */
-
       return {
         ...state,
-        ...payload,
+        components: payload?.components,
       };
 
     default: {

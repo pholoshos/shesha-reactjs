@@ -15,6 +15,7 @@ export interface ITableContextComponentProps extends IConfigurableFormComponent 
   tableConfigId?: string;
   entityType?: string;
   uniqueStateId?: string;
+  components?: IConfigurableFormComponent[]; // If isDynamic we wanna
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -102,7 +103,7 @@ export const TableContextInner: FC<ITableContextComponentProps> = props => {
   );
 };
 
-const TableContextAccessor: FC<ITableContextComponentProps> = ({ id, tableConfigId }) => {
+const TableContextAccessor: FC<ITableContextComponentProps> = ({ id, tableConfigId, components, isDynamic }) => {
   const { registerActions } = useForm();
   const { refreshTable, exportToExcel, tableConfigLoaded, setIsInProgressFlag } = useDataTableStore();
   const { selectedRow } = useDataTableSelection();
@@ -135,7 +136,12 @@ const TableContextAccessor: FC<ITableContextComponentProps> = ({ id, tableConfig
     [tableConfigLoaded, tableConfigId, selectedRow]
   );
 
-  return <ComponentsContainer containerId={id} />;
+  return (
+    <ComponentsContainer
+      containerId={id}
+      // dynamicComponents={isDynamic ? components : []}
+    />
+  );
 };
 
 export default TableContextComponent;

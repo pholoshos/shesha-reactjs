@@ -9,7 +9,6 @@ import SubForm from './subForm';
 import { SubFormProvider, SubFormProviderProps } from './provider';
 import ConfigurableFormItem from '../formItem';
 import { SubFormProps } from './provider/interfaces';
-import ComponentsContainer from '../../componentsContainer';
 
 export interface ISubFormProps extends SubFormProviderProps, IConfigurableFormComponent {
   uniqueStateId?: string;
@@ -44,7 +43,6 @@ const SubFormWrapper: FC<ISubFormWrapperProps> = ({ id, name, ...props }) => {
   return (
     <SubFormProvider name={name} containerId={id} {...props}>
       <SubForm name={name} dataMode={'parent'} containerId={id} />
-      {/* <ComponentsContainer containerId={id} /> */}
     </SubFormProvider>
   );
 };

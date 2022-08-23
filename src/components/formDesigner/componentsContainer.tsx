@@ -1,9 +1,14 @@
-import React, { CSSProperties, FC, ReactNode } from 'react';
+import React, { CSSProperties, FC, Fragment, ReactNode } from 'react';
 import ConfigurableFormComponent from './configurableFormComponent';
 import { useForm } from '../../providers/form';
-import { TOOLBOX_COMPONENT_DROPPABLE_KEY, TOOLBOX_DATA_ITEM_DROPPABLE_KEY } from '../../providers/form/models';
+import {
+  IConfigurableFormComponent,
+  TOOLBOX_COMPONENT_DROPPABLE_KEY,
+  TOOLBOX_DATA_ITEM_DROPPABLE_KEY,
+} from '../../providers/form/models';
 import { ItemInterface, ReactSortable } from 'react-sortablejs';
 import { joinStringValues } from '../../utils';
+import DynamicComponent from './components/dynamicView/dynamicComponent';
 
 export type Direction = 'horizontal' | 'vertical';
 
@@ -17,6 +22,7 @@ export interface IComponentsContainerProps {
   render?: (components: JSX.Element[]) => ReactNode;
   itemsLimit?: number;
   plainWrapper?: boolean;
+  dynamicComponents?: IConfigurableFormComponent[];
 }
 const ComponentsContainer: FC<IComponentsContainerProps> = ({
   containerId,
@@ -29,6 +35,7 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
   render,
   itemsLimit = -1,
   plainWrapper = false,
+  // dynamicComponents = [],
 }) => {
   const {
     getChildComponents,
@@ -43,19 +50,23 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
 
   const isDesignerMode = formMode === 'designer';
 
-  // const isViewTemplateComponent =
-  //   type === 'dashboard' || type === 'details' || type === 'masterDetails' || type === 'table' || type === 'menu';
-
   const components = getChildComponents(containerId);
 
-  if (containerId === '4M-aYa7aFRgpYvGOx2pKg') {
-    console.log('4M-aYa7aFRgpYvGOx2pKg components', components);
-  }
-
-  console.log('Other Ids components ::', components);
   const componentsMapped = components.map<ItemInterface>(c => ({
     id: c.id,
   }));
+
+  // console.log('ComponentsContainer dynamicComponents, itemsLimit', dynamicComponents, itemsLimit);
+
+  // if (dynamicComponents?.length) {
+  //   return (
+  //     <Fragment>
+  //       {dynamicComponents?.map(m => (
+  //         <DynamicComponent model={{ ...m, isDynamic: true }} />
+  //       ))}
+  //     </Fragment>
+  //   );
+  // }
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
     if (!isNaN(itemsLimit) && itemsLimit && newState?.length === Math.round(itemsLimit) + 1) {
@@ -105,6 +116,8 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
     endDragging();
   };
 
+  // const computedChildren = dynamicComponents?.map(c => <DynamicComponent model={c} />);
+
   const renderComponents = () => {
     const renderedComponents = components.map((c, index) => (
       <ConfigurableFormComponent id={c.id} index={index} key={c.id} />
@@ -120,9 +133,11 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
     style['justifyItems'] = justifyItems;
   }
 
-  if (plainWrapper && formMode !== 'designer') {
+  if ((plainWrapper && formMode !== 'designer') || components?.length) {
     return <>{renderComponents()}</>;
   }
+
+  console.log('LOGS:: ComponentsContainer components?.length', components?.length);
 
   return (
     <div className={joinStringValues(['sha-components-container', direction, className])}>

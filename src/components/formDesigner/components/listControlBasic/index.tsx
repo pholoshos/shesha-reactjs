@@ -17,7 +17,6 @@ import Show from '../../../show';
 import ShaSpin from '../../../shaSpin';
 import classNames from 'classnames';
 import { useFormMarkup } from './useFormMarkup';
-import EmbeddedForm from '../../../configurableForm/embeddedForm';
 
 interface IListSettingsProps {
   dataSourceUrl?: string;
@@ -231,7 +230,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
                       </Show>
 
                       <Show when={Boolean(formId)}>
-                        <EmbeddedForm markup={markup} containerId={containerId} />
+                        {/* <EmbeddedForm markup={markup} containerId={containerId} /> */}
                       </Show>
 
                       <Show when={allowAddAndRemove}>

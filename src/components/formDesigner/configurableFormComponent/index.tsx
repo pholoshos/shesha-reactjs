@@ -22,7 +22,6 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*,
     deleteComponent,
     getComponentModel,
     selectedComponentId,
-    type: viewType,
   } = useForm();
   const componentRef = useRef(null);
 
@@ -36,18 +35,6 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*,
   const hiddenByCondition = visibleComponentIds && !visibleComponentIds.includes(componentModel.id);
   const disabledByCondition = enabledComponentIds && !enabledComponentIds.includes(componentModel.id);
 
-  const isViewTemplateComponent =
-    (viewType === 'dashboard' ||
-      viewType === 'details' ||
-      viewType === 'masterDetails' ||
-      viewType === 'table' ||
-      viewType === 'menu') &&
-    index === 0;
-
-  if (isViewTemplateComponent && index === 0) {
-    console.log('ConfigurableFormComponent isViewTemplateComponent, index :>> ', isViewTemplateComponent, index);
-  }
-
   const renderComponent = () => {
     return (
       <CustomErrorBoundary>
@@ -56,7 +43,7 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*,
     );
   };
 
-  if (!isDesignMode) return renderComponent();
+  if (!isDesignMode || componentModel?.isDynamic) return renderComponent();
 
   const invalidConfiguration =
     componentModel.settingsValidationErrors && componentModel.settingsValidationErrors.length > 0;

@@ -26,6 +26,7 @@ export interface ILinkProps extends IConfigurableFormComponent {
   justifyItems?: JustifyItems | string;
   className?: string;
   icon?: ReactNode;
+  components?: IConfigurableFormComponent[];
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -79,6 +80,7 @@ const LinkComponent: IToolboxComponent<ILinkProps> = {
         justifyItems={model.direction === 'horizontal' ? model?.justifyItems : null}
         className={model.className}
         itemsLimit={1}
+        // dynamicComponents={model?.isDynamic ? model?.components : []}
       />
     );
     if (isDesignerMode) {

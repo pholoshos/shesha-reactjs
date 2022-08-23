@@ -8,6 +8,11 @@ import { SubFormProps } from './interfaces';
 import { useFormGet } from '../../../../../apis/form';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
+import { useGlobalState } from '../../../../../providers';
+import { evaluateComplexString } from '../../../../../formDesignerUtils';
+import { getQueryParams } from '../../../../../utils/url';
+import { IFormDto } from '../../../../../providers/form/models';
+import { setComponentsActions } from './actions';
 
 export interface SubFormProviderProps extends SubFormProps {
   uniqueStateId?: string;
@@ -31,13 +36,20 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
   dataSource,
 }) => {
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
-  const { formMode } = useForm();
+  const { formMode, formData } = useForm();
+  const { globalState } = useGlobalState();
   const { refetch: fetchForm, loading: isFetchingForm, data: fetchFormResponse, error: fetchFormError } = useFormGet({
     queryParams: { id: formId },
   });
 
   const getEvaluatedUrl = (url: string) => {
-    return '';
+    if (!url) return '';
+
+    return evaluateComplexString(url, [
+      { match: 'data', data: formData },
+      { match: 'globalState', data: globalState },
+      { match: 'query', data: getQueryParams() },
+    ]);
   };
 
   const { refetch: fetchFormData, loading: isFetchingData, error: fetchDataError, data: fetchedFormData } = useGet({
@@ -59,25 +71,55 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
   });
 
   const getData = () => {
-    postHttp(value).then(() => {
-      if (beforeGet) {
-        // Execute beforeGet expression
+    postHttp(value).then(submittedValue => {
+      if (onCreated) {
+        const evaluateOnCreated = () => {
+          // tslint:disable-next-line:function-constructor
+          return new Function('data, globalState, submittedValue', onCreated)(
+            formData,
+            globalState,
+            submittedValue?.result,
+            value
+          );
+        };
+
+        evaluateOnCreated();
       }
     });
   };
 
   const postData = () => {
-    postHttp(value).then(() => {
+    postHttp(value).then(submittedValue => {
       if (onCreated) {
-        // Execute onCreated expression
+        const evaluateOnCreated = () => {
+          // tslint:disable-next-line:function-constructor
+          return new Function('data, globalState, submittedValue', onCreated)(
+            formData,
+            globalState,
+            submittedValue?.result,
+            value
+          );
+        };
+
+        evaluateOnCreated();
       }
     });
   };
 
   const putData = () => {
-    putHttp(value).then(() => {
+    putHttp(value).then(submittedValue => {
       if (onUpdated) {
-        // Execute onUpdated expression
+        const evaluateOnUpdated = () => {
+          // tslint:disable-next-line:function-constructor
+          return new Function('data, globalState, submittedValue', onCreated)(
+            formData,
+            globalState,
+            submittedValue?.result,
+            value
+          );
+        };
+
+        evaluateOnUpdated();
       }
     });
   };
@@ -99,7 +141,15 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
 
   useEffect(() => {
     if (!isFetchingForm && fetchFormResponse) {
-      // Update the main form
+      const result = (fetchFormResponse as any)?.result;
+
+      const markup = result?.markup;
+
+      const formDto = result as IFormDto;
+
+      if (markup) formDto.markup = JSON.parse(markup);
+
+      dispatch(setComponentsActions({ components: formDto?.markup?.components }));
     }
   }, [fetchFormResponse, isFetchingForm]);
   //#endregion

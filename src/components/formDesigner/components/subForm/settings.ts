@@ -20,7 +20,6 @@ export const alertSettingsForm = new DesignerToolbarSettings()
     name: 'formId',
     parentId: 'root',
     hidden: false,
-    customVisibility: "return data.renderStrategy === 'externalForm'",
     description: 'Specify the form that will be rendered on this list component',
     label: 'Form Path',
     useRawValues: true,

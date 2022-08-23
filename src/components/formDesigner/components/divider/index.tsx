@@ -14,6 +14,7 @@ export interface IDividerProps extends IConfigurableFormComponent {
   orientationMargin?: string | number;
   dashed?: boolean;
   plain?: boolean;
+  components?: IConfigurableFormComponent[];
 }
 
 const settingsForm = settingsFormJson as FormMarkup;

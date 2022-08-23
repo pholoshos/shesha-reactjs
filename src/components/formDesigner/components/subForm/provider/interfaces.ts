@@ -1,3 +1,5 @@
+import { IConfigurableFormComponent } from '../../../../../interfaces';
+
 export interface SubFormProps {
   formId: string;
   value: any;
@@ -11,4 +13,8 @@ export interface SubFormProps {
   beforeGet?: string;
   onCreated?: string;
   onUpdated?: string;
+}
+
+export interface ISetComponentsPayload {
+  components?: IConfigurableFormComponent[];
 }

@@ -2,7 +2,7 @@ name: shesha-reactjs-0.x.x
 
 on:
   push:
-    branches: [ shesha_legacy ]
+    branches: [ main ]
 
 env:
   NODE_VERSION: '14.x'
@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           clean: true
-          ref: shesha_legacy
+          ref: main
       # setup node
       - name: Setup Node ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
@@ -51,9 +51,9 @@ jobs:
         uses: iilyichev/github-tag-action@v6.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          release_branches: shesha_legacy
+          release_branches: main
           tag_prefix: ""
-          tag_filter: "^0."
+          tag_filter: "^3."
       # update package.json tag
       - name: Update package.json
         uses: reedyuk/npm-version@1.1.1

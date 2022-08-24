@@ -72,7 +72,7 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
           current={current}>
           {steps?.map(
             ({
-              id,
+              // id,
               key,
               title,
               subTitle,

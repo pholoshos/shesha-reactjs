@@ -28,6 +28,7 @@ import SubForm from '../subForm/subForm';
 import { ListControlEvents } from './constants';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { useSubscribe } from '../../../../hooks';
+import { nanoid } from 'nanoid';
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {
   /** the source of data for the list component */
@@ -71,10 +72,30 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
     );
   },
   initModel: model => {
+    const uniqueStateId = `FORM_LIST_${nanoid()}`;
+
     const customProps: IListComponentProps = {
       ...model,
       showPagination: true,
       hideLabel: true,
+      uniqueStateId,
+      buttons: [
+        {
+          id: 'PWrW0k2WXPweNfHnZgbsj',
+          itemType: 'item',
+          sortOrder: 0,
+          name: 'button1',
+          label: ' ',
+          itemSubType: 'button',
+          uniqueStateId,
+          buttonAction: 'executeFormAction',
+          chosen: false,
+          selected: false,
+          formAction: 'refreshListItems',
+          icon: 'ReloadOutlined',
+          buttonType: 'link',
+        },
+      ],
     };
     return customProps;
   },

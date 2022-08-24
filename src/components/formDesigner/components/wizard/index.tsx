@@ -1,10 +1,10 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IFormComponentContainer } from '../../../../providers/form/models';
 import { FolderOutlined } from '@ant-design/icons';
-import { Steps } from 'antd';
+import { Steps, Button } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useAuth, useForm, useGlobalState } from '../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
@@ -25,8 +25,9 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
     const { anyOfPermissionsGranted } = useAuth();
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState } = useGlobalState();
+    const [ currentStep, setCurrentStep] = useState(0);
 
-    const { steps, /*defaultActiveKey,*/ wizardType = 'default', /*size, position = 'top'*/ } = model as IWizardComponentProps;
+    const { steps, wizardType = 'default', current = currentStep } = model as IWizardComponentProps;
 
     if (isComponentHidden(model)) return null;
 
@@ -55,55 +56,89 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
       return typeof evaluated === 'boolean' ? evaluated : true;
     };
 
+    const next = () => {
+      setCurrentStep(current + 1);
+    };
+
+    const prev = () => {
+      setCurrentStep(current - 1);
+    };
+
     return (
-      <Steps /*defaultActiveKey={actionKey} size={size}*/ type={wizardType}>
-        {steps?.map(
-          ({
-            id,
-            key,
-            title,
-            subTitle,
-            description,
-            icon,
-            className,
-            permissions,
-            customVisibility,
-            customEnabled,
-          }) => {
-            const granted = anyOfPermissionsGranted(permissions || []);
+      <>
+        <Steps
+          /*defaultActiveKey={actionKey} size={size}*/
+          type={wizardType}
+          current={current}>
+          {steps?.map(
+            ({
+              id,
+              key,
+              title,
+              subTitle,
+              description,
+              icon,
+              className,
+              permissions,
+              customVisibility,
+              customEnabled,
+            }) => {
+              const granted = anyOfPermissionsGranted(permissions || []);
 
-            const isVisibleByCondition = executeExpression(customVisibility, true);
+              const isVisibleByCondition = executeExpression(customVisibility, true);
 
-            const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
+              const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
 
-            if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
+              if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
 
-            return (
-              <Step
-                key={key}
-                className={className}
-                disabled={isDisabledByCondition}
-                title={title}
-                subTitle={subTitle}
-                description={description}
-                icon={
-                  icon ? (
-                    <Fragment>
-                      <ShaIcon iconName={icon as any} />
-                    </Fragment>
-                  ) : (
-                    <Fragment>
-                      {icon}
-                    </Fragment>
-                  )
-                }
-              >
-                <ComponentsContainer containerId={id} />
-              </Step>
-            );
-          }
-        )}
-      </Steps>
+              return (
+                <>
+                  <Step
+                    key={key}
+                    className={className}
+                    disabled={isDisabledByCondition}
+                    title={title}
+                    subTitle={subTitle}
+                    description={description}
+                    icon={
+                      icon ? (
+                        <Fragment>
+                          <ShaIcon iconName={icon as any} />
+                        </Fragment>
+                      ) : (
+                        <Fragment>
+                          {icon}
+                        </Fragment>
+                      )
+                    }
+                  />
+
+                </>
+              );
+            }
+          )}
+        </Steps>
+        {/* <div className="wizard-content">
+          <ComponentsContainer containerId={id} />
+        </div> */}
+        <div className="wizard-action">
+          {current < steps.length - 1 && (
+            <Button type="primary" onClick={() => next()}>
+              Next
+            </Button>
+          )}
+          {current === steps.length - 1 && (
+            <Button type="primary">
+              Done
+            </Button>
+          )}
+          {current > 0 && (
+            <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+              Previous
+            </Button>
+          )}
+        </div>
+      </>
     );
   },
   initModel: model => {

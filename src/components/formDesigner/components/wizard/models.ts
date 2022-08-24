@@ -23,6 +23,7 @@ export interface IWizardComponentProps extends IConfigurableFormComponent {
   // defaultActiveKey?: string;
   wizardType?: 'default' | 'navigation';
   visibility?: 'Yes' | 'No' | 'Removed';
+  current: number;
   permissions?: string[];
   hidden?: boolean;
   customVisibility?: string;

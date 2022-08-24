@@ -1,6 +1,6 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IFormComponentContainer } from '../../../../providers/form/models';
-import { FolderOutlined } from '@ant-design/icons';
+import { DoubleRightOutlined } from '@ant-design/icons';
 import { Steps, Button } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
@@ -20,7 +20,7 @@ const settingsForm = settingsFormJson as FormMarkup;
 const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
   type: 'wizard',
   name: 'Wizard',
-  icon: <FolderOutlined />,
+  icon: <DoubleRightOutlined />,
   factory: model => {
     const { anyOfPermissionsGranted } = useAuth();
     const { isComponentHidden, formMode, formData } = useForm();

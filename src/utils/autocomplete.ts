@@ -23,6 +23,7 @@ export interface IAutocompleteProps {
     maxResultCount?: number;
     displayProperty?: string;
     value?: string;
+    lazy?: boolean;
 }
 
 const GENERIC_ENTITIES_ENDPOINT = "/api/services/app/Entities";
@@ -41,14 +42,20 @@ export const useEntityAutocomplete = (props: IAutocompleteProps): AutocompleteRe
             entityType: props.entityType,
             properties: properties,
             quickSearch: term,
+            sorting: displayProperty,
         };
     }
 
     // current value can be already loaded as part of list! check it and skip fetching
 
+    /* todo: change loading of the selected value to support multiple selection. It should use `GetAll` with JsonLogic filter by Id
+    const selectedIds = props.value
+        ? Array.isArray(props.value)
+        : [];
+    */
     const preselectedFetcher = useGet<IAbpWrappedGetEntityResponse, any, IGetEntityPayload>(`${GENERIC_ENTITIES_ENDPOINT}/Get`, { lazy: !props.value, queryParams: { entityType: props.entityType, id: props.value, properties } });
 
-    const listFetcher = useGet<IAbpWrappedGetEntityListResponse, any, IAutocompletePayload>(`${GENERIC_ENTITIES_ENDPOINT}/GetAll`, { lazy: true, queryParams: getListFetcherQueryParams(null) });
+    const listFetcher = useGet<IAbpWrappedGetEntityListResponse, any, IAutocompletePayload>(`${GENERIC_ENTITIES_ENDPOINT}/GetAll`, { lazy: props.lazy ?? true, queryParams: getListFetcherQueryParams(null) });
 
     const search = (term: string) => {
         listFetcher.refetch({ queryParams: getListFetcherQueryParams(term) });
@@ -58,7 +65,7 @@ export const useEntityAutocomplete = (props: IAutocompleteProps): AutocompleteRe
 
     return {
         data: items,
-        error: listFetcher.error,
+        error: listFetcher.error ?? preselectedFetcher.error,
         search,
         loading: listFetcher.loading || preselectedFetcher.loading,
     };

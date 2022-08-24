@@ -177,4 +177,5 @@ IndexPage.args = {
 export const PersonEditTest = addStory(BasicTemplate, {
   ...configurableFormProps,
   path: '/persons/edit',
+  id: 'F85C437A-BF62-4922-9193-0EE14DB89D0D'
 });

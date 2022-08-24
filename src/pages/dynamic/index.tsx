@@ -49,7 +49,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
       return null;
     }
 
-    console.log('[dataByPath, dataById, props], ', [dataByPath, dataById, props]);
+    //console.log('[dataByPath, dataById, props], ', [dataByPath, dataById, props]);
 
     let result: FormDto;
     if (dataByPath) {
@@ -277,7 +277,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   const isLoading = isFetchingData || isFetchingFormByPath || isFetchingFormById || isPostingData;
 
-  console.log('formResponse?.markup', props, formResponse);
+  //console.log('formResponse?.markup', props, formResponse);
 
   if (state && !formResponse?.markup && !isLoading) {
     return (

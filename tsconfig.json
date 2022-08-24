@@ -20,7 +20,7 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitAny": false, // todo: change to true after first successfull build
+    "noImplicitAny": true, // todo: change to true after first successfull build
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

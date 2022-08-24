@@ -28,6 +28,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
   const [form] = Form.useForm();
 
   const initialValues: IListItemsProps = {
+    name: model?.name,
     dataSourceUrl: model?.dataSourceUrl,
     queryParamsExpression: model?.queryParamsExpression,
     bordered: model?.bordered,
@@ -51,6 +52,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
     properties: model?.properties,
     filters: model?.filters,
     useExpression: model?.useExpression,
+    uniqueStateId: model?.uniqueStateId,
   };
 
   return (
@@ -177,6 +179,10 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
       <FormItem name="allowSubmit" label="Allow submit" valuePropName="checked">
         <Checkbox />
+      </FormItem>
+
+      <FormItem name="uniqueStateId" label="Unique State ID">
+        <Input />
       </FormItem>
 
       <Show when={state?.allowSubmit}>

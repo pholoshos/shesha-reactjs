@@ -1,6 +1,8 @@
 import { IStoredFilter } from './../../../../../dist/providers/dataTable/interfaces.d';
 export interface IListItemsProps {
   dataSourceUrl?: string;
+  name: string;
+  uniqueStateId?: string;
   queryParamsExpression?: string;
   bordered?: boolean;
   title?: string;

@@ -41,7 +41,6 @@ const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
 export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, componentRef, persistSelectedFilters }) => {
   const {
     columns,
-    getDataSourceType,
     changeSelectedStoredFilterIds,
     selectedStoredFilterIds,
     setPredefinedFilters,
@@ -53,11 +52,8 @@ export const TableViewSelector: FC<ITableViewSelectorProps> = ({ filters, compon
   const { globalState } = useGlobalState();
   const { formData, formMode } = useForm();
 
-  const dataSourceType = getDataSourceType();
-
   componentRef.current = {
     columns,
-    dataSourceType,
   };
 
   const selectedFilterId =

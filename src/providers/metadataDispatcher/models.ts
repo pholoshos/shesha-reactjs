@@ -8,7 +8,7 @@ export interface IProperty {
 }
 
 export interface IModelsDictionary {
-  [key: string]: IModelMetadata;
+  [key: string]: Promise<IModelMetadata>;
 }
 
 export interface IProvidersDictionary {

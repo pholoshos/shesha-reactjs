@@ -33,4 +33,10 @@ export const OtpSettings = addStory(Template, {
   mode: 'edit',
 });
 
+export const PersonEdit = addStory(Template, {
+  path: '/persons/edit',
+  id: 'F85C437A-BF62-4922-9193-0EE14DB89D0D',
+  mode: 'edit',
+});
+
 Basic.args = DEFAULT_ARGS;

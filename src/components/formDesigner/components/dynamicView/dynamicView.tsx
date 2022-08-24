@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import { IConfigurableFormComponent } from '../../../../interfaces/formDesigner';
 import { IPropertyMetadata } from '../../../../interfaces/metadata';
 import { useForm } from '../../../../providers/form';
-import { camelize, createComponentModelForDataProperty } from '../../../../providers/form/utils';
+import { camelcaseDotNotation, createComponentModelForDataProperty } from '../../../../providers/form/utils';
 import { useMetadata } from '../../../../providers/metadata';
 import DynamicContainer from './dynamicContainer';
 
@@ -26,14 +26,14 @@ export const DynamicView: FC<DynamicViewProps> = (model) => {
     }, [allComponents]);
 
     const staticComponentBindings = useMemo(() => {
-        const names = staticComponents.filter(c => Boolean(c.name)).map(component => camelize(component.name));
+        const names = staticComponents.filter(c => Boolean(c.name)).map(component => camelcaseDotNotation(component.name));
         return names;
     }, [staticComponents]);
 
     const propsToRender = useMemo<IPropertyMetadata[]>(() => {
         if (!currentMeta)
             return [];
-        const propertiesToMap = currentMeta.properties.filter(property => property.isVisible && !property.isFrameworkRelated && !staticComponentBindings.includes(camelize(property.path)))
+        const propertiesToMap = currentMeta.properties.filter(property => property.isVisible && !property.isFrameworkRelated && !staticComponentBindings.includes(camelcaseDotNotation(property.path)))
         return propertiesToMap;
     }, [staticComponents, currentMeta]);
 

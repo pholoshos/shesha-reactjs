@@ -26,17 +26,14 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
   icon: <TableOutlined />,
   factory: (model: IChildTableComponentProps, componentRef: MutableRefObject<any>) => {
     const { formData, formMode, isComponentHidden } = useForm();
-    const { columns, getDataSourceType, setPredefinedFilters } = useDataTable();
+    const { columns, setPredefinedFilters } = useDataTable();
 
     const { globalState } = useGlobalState();
 
     const { defaultSelectedFilterId, filters } = model;
 
-    const dataSourceType = getDataSourceType();
-
     componentRef.current = {
       columns,
-      dataSourceType,
     };
 
     //#region Filters

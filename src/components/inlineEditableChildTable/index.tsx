@@ -56,7 +56,7 @@ export const InlineEditableChildTable: FC<IInlineEditableChildTableProps> = ({
 
   return (
     <Fragment>
-      <DataTableProvider tableId={tableProps?.id} parentEntityId={parentEntityId}>
+      <DataTableProvider parentEntityId={parentEntityId}>
         <ChildTable
           tableRef={tableRef}
           {...tableProps}

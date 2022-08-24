@@ -13,7 +13,6 @@ export const IndexViewSelector: FC<IIndexViewSelectorProps> = ({ header }) => {
   const {
     title,
     changeSelectedStoredFilterIds,
-    storedFilters,
     predefinedFilters,
     selectedStoredFilterIds,
   } = useDataTable();
@@ -22,7 +21,7 @@ export const IndexViewSelector: FC<IIndexViewSelectorProps> = ({ header }) => {
     changeSelectedStoredFilterIds(id ? [id] : []);
   };
 
-  const allFilters = [...(predefinedFilters || []), ...(storedFilters || [])];
+  const allFilters = [...(predefinedFilters || [])];
 
   return (
     <IndexViewSelectorRenderer

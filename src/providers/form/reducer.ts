@@ -28,7 +28,7 @@ import {
 import { FormActionEnums } from './actions';
 import { handleActions } from 'redux-actions';
 import {
-  camelize,
+  camelcaseDotNotation,
   cloneComponents,
   convertActions,
   createComponentModelForDataProperty,
@@ -134,7 +134,7 @@ const reducer = handleActions<IFormStateContext, any>(
         let formComponent: IConfigurableFormComponent = {
           id: nanoid(),
           type: toolboxComponent.type,
-          name: camelize(componentName),
+          name: camelcaseDotNotation(componentName),
           label: componentName,
           labelAlign: 'right',
           parentId: containerId,

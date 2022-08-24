@@ -31,12 +31,11 @@ export const TableViewSelectorConfigurator = forwardRef<
   const selectedItem = useMemo(() => items?.find(({ id }) => id === selectedItemId), [items, selectedItemId]);
 
   const onQueryBuilderValueChange = () => {
-    if (localQueryExpression) {
-      updateItem({
-        id: selectedItemId,
-        settings: { ...selectedItem, expression: localQueryExpression },
-      });
-    }
+    // NOTE: we must save even empty filter
+    updateItem({
+      id: selectedItemId,
+      settings: { ...selectedItem, expression: localQueryExpression },
+    });
   };
 
   const queryBuilderValue = useMemo(() => {

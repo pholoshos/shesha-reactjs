@@ -3,6 +3,7 @@ import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
 import RefListRadioButtons, { IRefListRadioButtonsProps } from './';
 import { Form } from 'antd';
+import StoryApp from '../storyBookApp';
 
 export default {
   title: 'Components/RefListRadioButtons',
@@ -34,24 +35,26 @@ const autocompleteProps: IRefListRadioButtonsProps = {
 const Template: Story<IRefListRadioButtonsProps> = args => {
   const [value, setValue] = useState<number>();
   return (
-    <Form
-      {...{
-        labelCol: {
-          xs: { span: 24 },
-          md: { span: 8 },
-          sm: { span: 8 },
-        },
-        wrapperCol: {
-          xs: { span: 24 },
-          md: { span: 16 },
-          sm: { span: 16 },
-        },
-      }}
-    >
-      <Form.Item label="RefListRadioButtons">
-        <RefListRadioButtons value={value} {...args} onSelectionChange={setValue} />
-      </Form.Item>
-    </Form>
+    <StoryApp>
+      <Form
+        {...{
+          labelCol: {
+            xs: { span: 24 },
+            md: { span: 8 },
+            sm: { span: 8 },
+          },
+          wrapperCol: {
+            xs: { span: 24 },
+            md: { span: 16 },
+            sm: { span: 16 },
+          },
+        }}
+      >
+        <Form.Item label="RefListRadioButtons">
+          <RefListRadioButtons value={value} {...args} onSelectionChange={setValue} />
+        </Form.Item>
+      </Form>
+    </StoryApp>
   );
 };
 

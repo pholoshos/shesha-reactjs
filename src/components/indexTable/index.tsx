@@ -25,6 +25,7 @@ import ReactTable from '../reactTable';
 import { removeUndefinedProperties } from '../../utils/array';
 import { ValidationErrors } from '..';
 import { useAuthState, useDataTableStore } from '../../providers';
+import { camelcaseDotNotation } from '../../providers/form/utils';
 import { IReactTableProps } from '../reactTable/interfaces';
 import { usePrevious } from 'react-use';
 
@@ -248,6 +249,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
       .map<Column<any>>(columnItem => {
         return {
           ...columnItem,
+          accessor: camelcaseDotNotation(columnItem.accessor),
           Header: columnItem.header,
           minWidth: columnItem.minWidth,
           maxWidth: columnItem.maxWidth,
@@ -293,7 +295,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
               for (const customRender of allRenderers) {
                 const { key, render } = customRender;
 
-                if (columnItem.dataType === key || columnItem.customDataType === key) {
+                if (columnItem.dataType === key || columnItem.dataFormat === key) {
                   return render(props, router) || null;
                 }
               }
@@ -414,7 +416,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
           },
         });
       });
-
+    
     setPreparedColumns(localPreparedColumns);
   }, [columns, newOrEditableRowData?.id, crud, overrideDefaultCrudBehavior]);
 
@@ -547,7 +549,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
       : tableData;
 
   const memoizedColumns = useMemo(() => {
-    return columns?.filter(({ isVisible, isHiddenByDefault }) => isVisible && !isHiddenByDefault);
+    return columns?.filter(({ isVisible }) => isVisible);
   }, [columns]);
 
   const tableProps: IReactTableProps = {

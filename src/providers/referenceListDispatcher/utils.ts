@@ -1,0 +1,1 @@
+export const getReferenceListFullName = (moduleName: string, name: string): string => `${moduleName}.${name}`;

@@ -11,20 +11,10 @@ import {
   Widgets,
 } from 'react-awesome-query-builder';
 import classNames from 'classnames';
-// For AntDesign widgets only:
-import AntdConfig from 'react-awesome-query-builder/lib/config/antd';
 import { ITableColumn } from '../../interfaces';
 import { IProperty } from '../../providers/queryBuilder/models';
-import EntityAutocompleteWidget from './widgets/entityAutocomplete';
-import RefListDropdownWidget from './widgets/refListDropDown';
-import EntityReferenceType from './types/entityReference';
-import RefListType from './types/refList';
 import { DataTypes } from '../../interfaces/dataTypes';
-import DateTimeDynamicWidget from './widgets/dateTimeDynamic';
-import DateTimeDynamicType from './types/dateTimeDynamic';
-import moment from 'moment';
-
-const InitialConfig = AntdConfig;
+import { config as InitialConfig } from './config';
 
 export interface IQueryBuilderColumn extends ITableColumn {
   fieldSettings?: FieldSettings;
@@ -72,46 +62,10 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
   );
 
   const initialize = () => {
-    const operators = {
-      ...InitialConfig.operators,
-      starts_with: {
-        ...InitialConfig.operators.starts_with,
-        jsonLogic: 'startsWith',
-      },
-      ends_with: {
-        ...InitialConfig.operators.ends_with,
-        jsonLogic: 'endsWith',
-      },
-    };
-
-    const widgets = {
-      ...InitialConfig.widgets,
-      entityAutocomplete: EntityAutocompleteWidget,
-      refListDropdown: RefListDropdownWidget,
-      dateTimeDynamic: DateTimeDynamicWidget,
-      datetime: {
-        ...InitialConfig.widgets.datetime,
-        timeFormat: 'HH:mm:ss',
-        jsonLogic: (val, _, wgtDef) => {
-          return moment(val, wgtDef.valueFormat).format();
-        },
-      },
-    };
-
-    const types = {
-      ...InitialConfig.types,
-      entityReference: EntityReferenceType,
-      refList: RefListType,
-      dateTimeDynamic: DateTimeDynamicType,
-    };
 
     const conf: Config = {
       ...InitialConfig,
       fields: {},
-      // @ts-ignore
-      types,
-      operators,
-      widgets,
     };
 
     allFields?.forEach(({ dataType, visible, propertyName, label, fieldSettings, preferWidgets }) => {
@@ -170,13 +124,14 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
             break;
         }
 
+        const fieldPreferWidgets = preferWidgets || defaultPreferWidgets || [];
         conf.fields[propertyName] = {
           label,
           type,
           valueSources: ['value'],
           // @ts-ignore note: types are wrong in the library, they doesn't allow to extend
           fieldSettings,
-          preferWidgets: preferWidgets || defaultPreferWidgets,
+          preferWidgets: fieldPreferWidgets.length > 0 ? fieldPreferWidgets : undefined,
         };
       }
     });
@@ -206,7 +161,6 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
 
   const handleChange = (_tree: ImmutableTree, _config: Config) => {
     // Tip: for better performance you can apply `throttle` - see `examples/demo`
-
     setState({
       tree: _tree,
       config: _config,

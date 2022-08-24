@@ -2,6 +2,7 @@ import TextField from '../../../components/formDesigner/components/textField/tex
 import NumberField from '../../../components/formDesigner/components/numberField/numberField';
 import DateField from '../../../components/formDesigner/components/dateField/dateField';
 import Tabs from '../../../components/formDesigner/components/tabs';
+import Wizard from '../../../components/formDesigner/components/wizard';
 import Columns from '../../../components/formDesigner/components/columns/columns';
 import SectionSeprator from '../../../components/formDesigner/components/sectionSeprator/sectionSeprator';
 import TextArea from '../../../components/formDesigner/components/textArea/textArea';
@@ -98,7 +99,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
     name: 'Layout',
     visible: true,
-    components: [CollapsiblePanel, Columns, ContainerComponent, Divider, SectionSeprator, Space, Tabs],
+    components: [CollapsiblePanel, Columns, ContainerComponent, Divider, SectionSeprator, Space, Tabs, Wizard],
   },
   {
     name: 'Custom',

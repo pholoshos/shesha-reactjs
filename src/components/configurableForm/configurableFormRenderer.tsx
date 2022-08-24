@@ -146,7 +146,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
   }, [getUrl, formData, globalState, parentFormValues, skipFetchData]);
 
-  const fetchedFormEntity = fetchedEntity?.result;
+  const fetchedFormEntity = fetchedEntity?.result as object;
 
   useEffect(() => {
     if (fetchedFormEntity && onDataLoaded) {

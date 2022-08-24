@@ -16,14 +16,13 @@ import { message } from 'antd';
 
 export interface SubFormProviderProps extends ISubFormProps {
   uniqueStateId?: string;
-  containerId: string;
   markup?: IFormDto['markup'];
 }
 
 const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
   children,
   value,
-  formId,
+  formPath,
   getUrl,
   postUrl,
   putUrl,
@@ -35,13 +34,14 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
   uniqueStateId,
   dataSource,
   markup,
+  properties,
   onChange,
 }) => {
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
   const { formData } = useForm();
   const { globalState } = useGlobalState();
   const { refetch: fetchForm, loading: isFetchingForm, data: fetchFormResponse, error: fetchFormError } = useFormGet({
-    queryParams: { id: formId },
+    queryParams: { id: formPath?.id },
     lazy: true,
   });
   const { initialValues } = useSubForm();
@@ -59,7 +59,14 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
   const { refetch: fetchFormData, loading: isFetchingData, error: fetchDataError, data: fetchedFormData } = useGet({
     path: getEvaluatedUrl(getUrl),
     lazy: true,
+    queryParams: properties?.length ? { properties: properties?.join(' ') } : {},
   });
+
+  useEffect(() => {
+    if (dataSource === 'api' && getUrl) {
+      getData();
+    }
+  }, [properties, getUrl, dataSource]);
 
   const { mutate: postHttp, loading: isPosting, error: postError } = useMutate({
     path: getEvaluatedUrl(postUrl),
@@ -70,6 +77,7 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
     path: getEvaluatedUrl(deleteUrl),
     verb: 'DELETE',
   });
+
   const { mutate: putHttp, loading: isUpdating, error: updateError } = useMutate({
     path: getEvaluatedUrl(putUrl),
     verb: 'PUT',
@@ -156,10 +164,14 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
 
   //#region Fetch Form
   useEffect(() => {
-    if (formId && !markup) {
+    if (formPath?.id && !markup) {
       fetchForm();
     }
-  }, [formId, markup]);
+
+    if (!formPath?.id && !markup) {
+      dispatch(setComponentsActions({ components: [] }));
+    }
+  }, [formPath?.id, markup]);
 
   useEffect(() => {
     if (!isFetchingForm && fetchFormResponse) {

@@ -34,9 +34,9 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
   labelCol,
   wrapperCol,
 }) => {
-  const { isComponentHidden, formData } = useForm();
+  const { isComponentHidden, formData, formSettings } = useForm();
 
-  const { index, formSettings } = useListItemIndex();
+  const { index } = useListItemIndex();
 
   const isHidden = isComponentHidden(model);
 

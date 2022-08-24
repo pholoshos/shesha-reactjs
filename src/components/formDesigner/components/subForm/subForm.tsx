@@ -1,11 +1,10 @@
 import React, { FC, useMemo } from 'react';
-import { ISubFormProps } from '.';
 import ShaSpin from '../../../shaSpin';
 import ValidationErrors from '../../../validationErrors';
 import { useSubForm } from './provider';
 import { SubFormContainer } from './subFormContainer';
 
-const SubForm: FC<ISubFormProps> = ({}) => {
+const SubForm: FC = () => {
   const { errors, loading, components } = useSubForm();
 
   const isLoading = useMemo(() => {

@@ -14,6 +14,7 @@ import { usePubSub } from '../../../../../hooks';
 import { DataTablePubsubConstants } from '../../../../../providers/dataTable/pubSub';
 import { DynamicFormPubSubConstants } from '../../../../../pages/dynamic/pubSub';
 import { CSSProperties } from 'react';
+import { ListControlEvents } from '../../listControl/constants';
 
 export interface IConfigurableButtonProps extends Omit<IButtonGroupButton, 'style'> {
   formComponentId: string;
@@ -81,6 +82,10 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
 
         if (props?.refreshTableOnSuccess) {
           publish(DataTablePubsubConstants.refreshTable, { stateId: props?.uniqueStateId });
+        }
+
+        if (props?.refreshListOnSuccess) {
+          publish(ListControlEvents.refreshListItems, { stateId: props?.uniqueStateId });
         }
       },
       onFailed: onErrorScriptExecutor,

@@ -6,7 +6,7 @@ import PropertyAutocomplete from '../propertyAutocomplete/propertyAutocomplete';
 import { IListItemsProps } from './models';
 import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
-import { AutocompleteRaw } from '../../../autocomplete';
+import { AutocompleteDto, AutocompleteRaw } from '../../../autocomplete';
 import { QueryBuilderWithModelType } from './queryBuilder';
 import Properties from '../../../properties';
 
@@ -27,34 +27,6 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
   const [state, setState] = useState<IListSettingsState>(model);
   const [form] = Form.useForm();
 
-  const initialValues: IListItemsProps = {
-    name: model?.name,
-    dataSourceUrl: model?.dataSourceUrl,
-    queryParamsExpression: model?.queryParamsExpression,
-    bordered: model?.bordered,
-    title: model?.title,
-    footer: model?.footer,
-    formId: model?.formId,
-    allowAddAndRemove: model?.allowAddAndRemove,
-    submitUrl: model?.submitUrl,
-    submitHttpVerb: model?.submitHttpVerb,
-    onSubmit: model?.onSubmit,
-    showPagination: model?.showPagination,
-    paginationDefaultPageSize: model?.paginationDefaultPageSize,
-    allowSubmit: model?.allowSubmit,
-    buttons: model?.buttons,
-    maxHeight: model?.maxHeight,
-    labelCol: model?.labelCol,
-    wrapperCol: model?.wrapperCol,
-    dataSource: model?.dataSource,
-    renderStrategy: model?.renderStrategy,
-    entityType: model?.entityType,
-    properties: model?.properties,
-    filters: model?.filters,
-    useExpression: model?.useExpression,
-    uniqueStateId: model?.uniqueStateId,
-  };
-
   return (
     <Form
       form={form}
@@ -72,7 +44,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
         onValuesChange(changedValues, incomingState);
       }}
-      initialValues={initialValues}
+      initialValues={model}
     >
       <SectionSeparator sectionName="Display" />
 
@@ -100,18 +72,49 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
       <SectionSeparator sectionName="" />
 
-      <FormItem name="bordered" label="Bordered" valuePropName="checked">
+      <FormItem name="allowRemoveItems" label="Allow Delete Items" valuePropName="checked">
         <Checkbox />
       </FormItem>
 
-      <FormItem name="allowAddAndRemove" label="Allow Add/Remove Items" valuePropName="checked">
-        <Checkbox />
-      </FormItem>
+      <Show when={state?.allowRemoveItems}>
+        <FormItem
+          name="deleteUrl"
+          tooltip="The API url that will be used delete the list item. Write the code that returns the string"
+        >
+          <CodeEditor
+            mode="dialog"
+            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+            name="deleteUrl"
+            type={''}
+            id={''}
+            description="The API url that will be used delete the list item. Write the code that returns the string"
+            exposedVariables={[
+              {
+                id: '5c82e997-f50f-4591-8112-31b58ac381f0',
+                name: 'data',
+                description: 'Form data',
+                type: 'object',
+              },
+              {
+                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                name: 'item',
+                description: 'Item to delete',
+                type: 'object',
+              },
+              {
+                id: '65b71112-d412-401f-af15-1d3080f85319',
+                name: 'globalState',
+                description: 'The global state',
+                type: 'object',
+              },
+            ]}
+          />
+        </FormItem>
+      </Show>
 
       <FormItem
         name="dataSource"
         label="Data source"
-        valuePropName="checked"
         tooltip="The list data to be used can be the data that comes with the form of can be fetched from the API"
       >
         <Select>
@@ -128,7 +131,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         <CodeEditor
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-          name="customVisibility"
+          name="dataSourceUrl"
           type={''}
           id={''}
           description="The API url that will be used to fetch the list data. Write the code that returns the string"
@@ -160,7 +163,6 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
       <FormItem
         name="renderStrategy"
         label="Render Strategy"
-        valuePropName="checked"
         tooltip="Which form should be used to render the data? If current form, you can drag items, else specify form path"
       >
         <Select>
@@ -170,8 +172,8 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
       </FormItem>
 
       <Show when={state?.renderStrategy === 'externalForm'}>
-        <FormItem name="formId" label="Form Path">
-          <AutocompleteRaw
+        <FormItem name="formPath" label="Form Path">
+          <AutocompleteDto
             dataSourceType="entitiesList"
             dataSourceUrl="/api/Autocomplete/List"
             typeShortAlias="Shesha.Framework.Form"
@@ -181,68 +183,9 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
       <SectionSeparator sectionName="Submit" />
 
-      <FormItem name="allowSubmit" label="Allow submit" valuePropName="checked">
-        <Checkbox />
-      </FormItem>
-
       <FormItem name="uniqueStateId" label="Unique State ID">
         <Input />
       </FormItem>
-
-      <Show when={state?.allowSubmit}>
-        <FormItem
-          label="On Submit"
-          name="onSubmit"
-          tooltip="Write a code that return tha payload to be sent to the server when submitting this items"
-        >
-          <CodeEditor
-            mode="dialog"
-            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-            name="onSubmit"
-            type={''}
-            id={''}
-            description="Write a code that return tha payload to be sent to the server when submitting this items"
-            exposedVariables={[
-              {
-                id: 'e964ed28-3c2c-4d02-b0b7-71faf243eb53',
-                name: 'items',
-                description: 'List of items',
-                type: 'array',
-              },
-              {
-                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-                name: 'data',
-                description: 'Form data',
-                type: 'object',
-              },
-              {
-                id: '65b71112-d412-401f-af15-1d3080f85319',
-                name: 'globalState',
-                description: 'The global state',
-                type: 'object',
-              },
-              {
-                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-                name: 'queryParams',
-                description: 'Query parameters',
-                type: 'object',
-              },
-            ]}
-          />
-        </FormItem>
-
-        <FormItem
-          name="submitHttpVerb"
-          label="Submit verb"
-          valuePropName="checked"
-          tooltip="Write  a code that returns the string that represent the url to be used to save the items"
-        >
-          <Select>
-            <Option value="POST">POST</Option>
-            <Option value="PUT">PUT</Option>
-          </Select>
-        </FormItem>
-      </Show>
 
       <SectionSeparator sectionName="Filters" />
 

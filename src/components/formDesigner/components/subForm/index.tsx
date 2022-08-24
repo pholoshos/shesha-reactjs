@@ -9,7 +9,6 @@ import SubForm from './subForm';
 import { SubFormProvider, SubFormProviderProps } from './provider';
 import ConfigurableFormItem from '../formItem';
 import { SubFormSettings } from './settingsv2';
-import ComponentsContainer from '../../componentsContainer';
 
 export interface ISubFormProps extends SubFormProviderProps, IConfigurableFormComponent {
   uniqueStateId?: string;
@@ -29,8 +28,6 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
     return (
       <ConfigurableFormItem model={model}>
         <SubFormWrapper {...model} />
-
-        {/* <ComponentsContainer containerId={model?.id} /> */}
       </ConfigurableFormItem>
     );
   },
@@ -55,14 +52,14 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
   validateSettings: model => validateConfigurableComponentSettings(alertSettingsForm, model),
 };
 
-interface ISubFormWrapperProps extends ISubFormProps {
+interface ISubFormWrapperProps extends Omit<ISubFormProps, 'id' | 'type'> {
   id: string;
 }
 
-const SubFormWrapper: FC<ISubFormWrapperProps> = ({ id, name, ...props }) => {
+const SubFormWrapper: FC<ISubFormWrapperProps> = props => {
   return (
-    <SubFormProvider name={name} containerId={id} {...props}>
-      <SubForm name={name} containerId={id} paginationDefaultPageSize={0} properties={[]} type={''} id={''} />
+    <SubFormProvider {...props}>
+      <SubForm />
     </SubFormProvider>
   );
 };

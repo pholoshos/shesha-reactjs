@@ -1,20 +1,20 @@
+import { IGuidNullableEntityWithDisplayNameDto } from '../../../../interfaces';
 import { IStoredFilter } from './../../../../../dist/providers/dataTable/interfaces.d';
 export interface IListItemsProps {
   dataSourceUrl?: string;
   name: string;
   uniqueStateId?: string;
   queryParamsExpression?: string;
-  bordered?: boolean;
   title?: string;
   footer?: string;
-  formId?: string;
-  allowAddAndRemove?: boolean;
+  formPath?: IGuidNullableEntityWithDisplayNameDto;
+  allowRemoveItems?: boolean;
+  deleteUrl?: string;
   submitUrl?: string;
   submitHttpVerb?: 'POST' | 'PUT';
   onSubmit?: string;
   showPagination?: boolean;
   paginationDefaultPageSize: number;
-  allowSubmit?: boolean;
   buttons?: any[];
   maxHeight?: number;
   labelCol?: number;

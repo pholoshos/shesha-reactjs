@@ -1,12 +1,12 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { IAnyObject, IFormItem, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
-import { MinusCircleOutlined, OrderedListOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteFilled, OrderedListOutlined } from '@ant-design/icons';
 import { evaluateComplexString, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { ListItemProvider, useForm, useGlobalState } from '../../../../providers';
 import { listSettingsForm } from './settings';
 import ComponentsContainer from '../../componentsContainer';
-import { Button, Divider, Form, message, Space } from 'antd';
+import { Button, Divider, Form } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import { useGet, useMutate } from 'restful-react';
 import ValidationErrors from '../../../validationErrors';
@@ -15,8 +15,6 @@ import { getQueryParams } from '../../../../utils/url';
 import './styles/index.less';
 import Show from '../../../show';
 import ShaSpin from '../../../shaSpin';
-import classNames from 'classnames';
-import { useFormMarkup } from './useFormMarkup';
 import CollapsiblePanel from '../../../collapsiblePanel';
 import { ButtonGroup } from '../button/buttonGroup/buttonGroupComponent';
 import { ListControlSettings } from './settingsv2';
@@ -24,6 +22,12 @@ import { IListItemsProps } from './models';
 import { camelCase, isEmpty } from 'lodash';
 import camelCaseKeys from 'camelcase-keys';
 import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
+import { useFormMarkup } from '../../../../providers/form/hooks';
+import { SubFormProvider } from '../subForm/provider';
+import SubForm from '../subForm/subForm';
+import { useSubscribe } from '../../../../../dist';
+import { ListControlEvents } from './constants';
+import { useDebouncedCallback } from 'use-debounce/lib';
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {
   /** the source of data for the list component */
@@ -46,31 +50,12 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
 
     return (
       <ConfigurableFormItem
-        model={{ ...model, hideLabel: true }}
+        model={{ ...model }}
         className="sha-list-component"
         labelCol={{ span: model?.hideLabel ? 0 : model?.labelCol }}
         wrapperCol={{ span: model?.hideLabel ? 24 : model?.wrapperCol }}
       >
-        <ListComponentRender
-          containerId={model.id}
-          allowSubmit={model?.allowSubmit}
-          submitUrl={model?.submitUrl}
-          submitHttpVerb={model?.submitHttpVerb}
-          showPagination={model?.showPagination}
-          paginationDefaultPageSize={model?.showPagination ? model?.paginationDefaultPageSize : 5}
-          name={model?.name}
-          bordered={model?.bordered}
-          title={model?.title}
-          footer={model?.footer}
-          buttons={model?.buttons}
-          filters={model?.filters}
-          properties={model?.properties}
-          uniqueStateId={model?.uniqueStateId}
-          maxHeight={model?.maxHeight}
-          allowAddAndRemove={model?.allowAddAndRemove}
-          dataSourceUrl={model?.dataSource === 'api' ? model?.dataSourceUrl : null}
-          formId={model?.renderStrategy === 'externalForm' ? model?.formId : null}
-        />
+        <ListComponentRender {...model} containerId={model?.id} />
       </ConfigurableFormItem>
     );
   },
@@ -106,42 +91,41 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   dataSourceUrl,
   showPagination,
   paginationDefaultPageSize = 5,
-  formId, // Render embedded form if this option is provided
+  formPath, // Render embedded form if this option is provided
   value,
   name,
   onChange,
-  allowAddAndRemove,
-  submitUrl,
-  submitHttpVerb = 'POST',
-  onSubmit,
-  allowSubmit,
+  allowRemoveItems,
+  deleteUrl,
   buttons,
   title,
   maxHeight,
   filters,
   properties,
+  renderStrategy,
+  uniqueStateId,
 }) => {
-  const { markup, error: fetchFormError } = useFormMarkup(formId);
+  const { markup, error: fetchFormError } = useFormMarkup(formPath?.id);
   const queryParamsFromBrowser = useMemo(() => getQueryParams(), []);
-  const { formData, formSettings, formMode } = useForm();
+  const { formData, formMode } = useForm();
   const { globalState } = useGlobalState();
   const isInDesignerMode = formMode === 'designer';
 
-  const evaluatedSubmitUrl = useMemo(() => {
-    if (!submitUrl?.trim() || isInDesignerMode) return '';
+  const getEvaluatedUrl = (url: string) => {
+    if (!url) return '';
 
-    return evaluateComplexString(submitUrl, [
+    return evaluateComplexString(url, [
       { match: 'data', data: formData },
       { match: 'globalState', data: globalState },
-      { match: 'query', data: queryParamsFromBrowser },
+      { match: 'query', data: getQueryParams() },
     ]);
-  }, [submitUrl, formData, globalState, queryParamsFromBrowser, isInDesignerMode]);
+  };
 
-  const { refetch, loading: fetchingData, data, error: fetchDataError } = useGet({ path: '/' });
-  const { mutate, loading: submitting, error: submitError } = useMutate({
-    path: evaluatedSubmitUrl,
-    verb: submitHttpVerb,
+  const { mutate: deleteHttp, loading: isDeleting, error: deleteError } = useMutate({
+    path: getEvaluatedUrl(deleteUrl),
+    verb: 'DELETE',
   });
+  const { refetch, loading: fetchingData, data, error: fetchDataError } = useGet({ path: '/' });
 
   const evaluatedDataSourceUrl = useMemo(() => {
     if (!dataSourceUrl) return '';
@@ -199,14 +183,22 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     return _queryParams;
   }, [formData, globalState, properties, showPagination, paginationDefaultPageSize]);
 
-  useEffect(() => {
-    if (isInDesignerMode) return;
-
-    if (evaluatedDataSourceUrl) {
+  const debouncedRefresh = useDebouncedCallback(
+    () => {
       refetch({
         path: evaluatedDataSourceUrl,
         queryParams,
       });
+    },
+    // delay in ms
+    300
+  );
+
+  useEffect(() => {
+    if (isInDesignerMode) return;
+
+    if (evaluatedDataSourceUrl) {
+      debouncedRefresh();
     }
   }, [evaluatedDataSourceUrl, isInDesignerMode]);
 
@@ -234,25 +226,11 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     }
   }, [value, isInDesignerMode]);
 
-  const handleSave = () => {
-    if (onSubmit) {
-      const getOnSubmitPayload = () => {
-        // tslint:disable-next-line:function-constructor
-        return new Function('data, query, globalState, items', onSubmit)(
-          formData,
-          queryParamsFromBrowser,
-          globalState,
-          value
-        ); // Pass data, query, globalState
-      };
-
-      const payload = Boolean(onSubmit) ? getOnSubmitPayload() : value;
-
-      mutate(payload).then(() => {
-        message.success('Data saved successfully!');
-      });
+  useSubscribe(ListControlEvents.refreshListItems, ({ stateId }) => {
+    if (stateId === uniqueStateId) {
+      debouncedRefresh();
     }
-  };
+  });
 
   const renderPagination = () => {
     if (!showPagination) return null;
@@ -276,6 +254,26 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     );
   };
 
+  const renderSubForm = () => {
+    // TODO: Pass the correct name in the loop
+    return (
+      <SubFormProvider name={name} markup={markup} properties={[]}>
+        <SubForm />
+      </SubFormProvider>
+    );
+  };
+
+  const deleteItem = useCallback(
+    (index: number) => {
+      const item = value[index];
+
+      deleteHttp('', { queryParams: { id: item?.id || item.Id } }).then(() => {
+        debouncedRefresh();
+      });
+    },
+    [value]
+  );
+
   return (
     <CollapsiblePanel
       header={title}
@@ -287,31 +285,29 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
         </div>
       }
     >
-      <Show when={isInDesignerMode}>
+      <Show when={isInDesignerMode && renderStrategy === 'dragAndDrop'}>
         <ComponentsContainer containerId={containerId} />
+      </Show>
+      <Show when={isInDesignerMode && renderStrategy === 'externalForm' && Boolean(formPath?.id)}>
+        {renderSubForm()}
       </Show>
 
       <Show when={!isInDesignerMode}>
         <ValidationErrors error={fetchDataError} />
-        <ValidationErrors error={submitError} />
         <ValidationErrors error={fetchFormError} />
+        <ValidationErrors error={deleteError} />
 
-        <ShaSpin spinning={fetchingData || submitting} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
+        <ShaSpin spinning={fetchingData || isDeleting} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
           <Show when={Array.isArray(value)}>
             <div className="sha-list-component-body" style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}>
               <Form.List name={name} initialValue={[]}>
-                {(fields, { add, remove }) => {
+                {(fields, { remove }) => {
                   return (
                     <>
                       {fields?.map((field, index) => (
                         <div className="sha-list-component-item">
-                          <ListItemProvider
-                            index={index}
-                            prefix={`${name}.`}
-                            formSettings={formSettings}
-                            key={field.key}
-                          >
-                            <Show when={Boolean(containerId)}>
+                          <ListItemProvider index={index} prefix={`${name}.`} key={field.key}>
+                            <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
                               <ComponentsContainer
                                 containerId={containerId}
                                 plainWrapper
@@ -320,45 +316,30 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
                               />
                             </Show>
 
-                            <Show when={Boolean(formId)}>
-                              {/* <EmbeddedForm markup={markup} containerId={containerId} /> */}
+                            <Show when={Boolean(formPath?.id) && Boolean(markup) && renderStrategy === 'externalForm'}>
+                              {renderSubForm()}
                             </Show>
 
-                            <Show when={allowAddAndRemove}>
+                            <Show when={allowRemoveItems}>
                               <div className="sha-list-component-add-item-btn">
                                 <Button
                                   danger
-                                  type="primary"
+                                  type="ghost"
                                   size="small"
                                   className="dynamic-delete-button"
-                                  onClick={() => remove(field.name)}
-                                  icon={<MinusCircleOutlined />}
-                                >
-                                  Remove
-                                </Button>
+                                  onClick={() => {
+                                    remove(field.name);
+                                    deleteItem(field.name);
+                                  }}
+                                  icon={<DeleteFilled />}
+                                />
                               </div>
                             </Show>
 
-                            <Divider />
+                            <Divider className="sha-list-component-divider" />
                           </ListItemProvider>
                         </div>
                       ))}
-
-                      <div className={classNames('sha-list-pagination-container')}>
-                        <Space>
-                          <Show when={allowAddAndRemove}>
-                            <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} size="small">
-                              Add field
-                            </Button>
-                          </Show>
-
-                          <Show when={allowSubmit && Boolean(submitHttpVerb) && Boolean(submitUrl?.trim())}>
-                            <Button type="primary" onClick={handleSave} icon={<PlusOutlined />} size="small">
-                              Save Items
-                            </Button>
-                          </Show>
-                        </Space>
-                      </div>
                     </>
                   );
                 }}

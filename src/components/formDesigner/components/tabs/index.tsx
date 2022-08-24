@@ -12,7 +12,6 @@ import TabSettings from './settings';
 import { ITabsComponentProps } from './models';
 import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
-import DynamicComponent from '../dynamicView/dynamicComponent';
 
 const { TabPane } = Tabs;
 
@@ -22,7 +21,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
   type: 'tabs',
   name: 'Tabs',
   icon: <FolderOutlined />,
-  factory: (model, _, __, children) => {
+  factory: model => {
     const { anyOfPermissionsGranted } = useAuth();
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState } = useGlobalState();

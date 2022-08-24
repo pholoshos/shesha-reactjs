@@ -4,7 +4,7 @@ import SectionSeparator from '../../../sectionSeparator';
 import PropertyAutocomplete from '../propertyAutocomplete/propertyAutocomplete';
 import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
-import { AutocompleteRaw } from '../../../autocomplete';
+import { AutocompleteDto, AutocompleteRaw } from '../../../autocomplete';
 import { ISubFormProps } from './provider/interfaces';
 import Properties from '../../../properties';
 
@@ -59,8 +59,8 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         <Checkbox />
       </Form.Item>
 
-      <FormItem name="formId" label="Form Path">
-        <AutocompleteRaw
+      <FormItem name="formPath" label="Form Path">
+        <AutocompleteDto
           dataSourceType="entitiesList"
           dataSourceUrl="/api/Autocomplete/List"
           typeShortAlias="Shesha.Framework.Form"

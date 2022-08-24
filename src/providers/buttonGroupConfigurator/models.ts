@@ -45,7 +45,8 @@ export interface IButtonGroupItemBase {
 export interface IButtonGroupButton extends IButtonGroupItemBase {
   itemSubType: ToolbarItemSubType;
   buttonAction?: ButtonActionType;
-  refreshTableOnSuccess?: boolean;
+  refreshTableOnSuccess?: boolean; // TODO: Remove this and make this logic more generic
+  refreshListOnSuccess?: boolean; // TODO: Remove this and make this logic more generic
   targetUrl?: string;
 
   /**

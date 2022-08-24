@@ -146,7 +146,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
   }, [getUrl, formData, globalState, parentFormValues, skipFetchData]);
 
-  const fetchedFormEntity = typeof fetchedEntity?.result === 'object' ? fetchedEntity?.result : {};
+  const fetchedFormEntity = fetchedEntity?.result;
 
   useEffect(() => {
     if (fetchedFormEntity && onDataLoaded) {
@@ -176,7 +176,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     // If you want only `fetchedFormEntity`, don't pass `initialValuesFromSettings`
     if (!_.isEmpty(initialValuesFromSettings)) {
       incomingInitialValues = fetchedFormEntity
-        ? { ...(typeof fetchedFormEntity === 'object' ? fetchedFormEntity : {}), ...initialValuesFromSettings }
+      ? { ...(fetchedFormEntity as object), ...initialValuesFromSettings }
         : initialValuesFromSettings;
     } else if (!_.isEmpty(fetchedFormEntity) || !_.isEmpty(lastTruthyPersistedValue)) {
       // `fetchedFormEntity` will always be merged with persisted values from local storage

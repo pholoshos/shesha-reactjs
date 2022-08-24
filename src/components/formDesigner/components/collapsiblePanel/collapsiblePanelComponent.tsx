@@ -29,7 +29,7 @@ const ColapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelProps> = {
       <CollapsiblePanel header={label} expandIconPosition={expandIconPosition}>
         <ComponentsContainer
           containerId={model.id}
-          // dynamicComponents={model?.isDynamic ? (model as any)?.components : []}
+          dynamicComponents={model?.isDynamic ? (model as any)?.components : []}
         />
       </CollapsiblePanel>
     );

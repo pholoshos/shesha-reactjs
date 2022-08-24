@@ -35,7 +35,7 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
   render,
   itemsLimit = -1,
   plainWrapper = false,
-  // dynamicComponents = [],
+  dynamicComponents = [],
 }) => {
   const {
     getChildComponents,
@@ -56,17 +56,15 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
     id: c.id,
   }));
 
-  // console.log('ComponentsContainer dynamicComponents, itemsLimit', dynamicComponents, itemsLimit);
-
-  // if (dynamicComponents?.length) {
-  //   return (
-  //     <Fragment>
-  //       {dynamicComponents?.map(m => (
-  //         <DynamicComponent model={{ ...m, isDynamic: true }} />
-  //       ))}
-  //     </Fragment>
-  //   );
-  // }
+  if (dynamicComponents?.length) {
+    return (
+      <Fragment>
+        {dynamicComponents?.map(m => (
+          <DynamicComponent model={{ ...m, isDynamic: true }} />
+        ))}
+      </Fragment>
+    );
+  }
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
     if (!isNaN(itemsLimit) && itemsLimit && newState?.length === Math.round(itemsLimit) + 1) {
@@ -116,8 +114,6 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
     endDragging();
   };
 
-  // const computedChildren = dynamicComponents?.map(c => <DynamicComponent model={c} />);
-
   const renderComponents = () => {
     const renderedComponents = components.map((c, index) => (
       <ConfigurableFormComponent id={c.id} index={index} key={c.id} />
@@ -133,11 +129,9 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
     style['justifyItems'] = justifyItems;
   }
 
-  if ((plainWrapper && formMode !== 'designer') || components?.length) {
+  if (plainWrapper && formMode !== 'designer') {
     return <>{renderComponents()}</>;
   }
-
-  console.log('LOGS:: ComponentsContainer components?.length', components?.length);
 
   return (
     <div className={joinStringValues(['sha-components-container', direction, className])}>

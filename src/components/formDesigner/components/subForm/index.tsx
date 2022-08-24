@@ -30,7 +30,7 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
       <ConfigurableFormItem model={model}>
         <SubFormWrapper {...model} />
 
-        <ComponentsContainer containerId={model?.id} />
+        {/* <ComponentsContainer containerId={model?.id} /> */}
       </ConfigurableFormItem>
     );
   },

@@ -105,10 +105,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
                   )
                 }
               >
-                <ComponentsContainer
-                  containerId={id}
-                  //  dynamicComponents={components}
-                />
+                <ComponentsContainer containerId={id} dynamicComponents={model?.isDynamic ? components : []} />
               </TabPane>
             );
           }

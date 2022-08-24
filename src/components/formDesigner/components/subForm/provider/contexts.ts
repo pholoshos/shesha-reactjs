@@ -3,6 +3,7 @@ import { GetDataError } from 'restful-react';
 import { IConfigurableFormComponent } from '../../../../../interfaces';
 
 export interface ISubFormStateContext {
+  initialValues?: any;
   components?: IConfigurableFormComponent[];
   errors?: {
     getData?: GetDataError<unknown>;

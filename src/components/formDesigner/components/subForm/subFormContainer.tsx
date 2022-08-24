@@ -14,7 +14,7 @@ export const SubFormContainer: FC<ISubFormContainerProps> = ({ components }) => 
   return (
     <Fragment>
       {components?.map(model => {
-        return <DynamicComponent model={{ ...model, isDynamic: true }} />;
+        return <DynamicComponent model={{ ...model, isDynamic: true }} key={model?.id} />;
       })}
     </Fragment>
   );

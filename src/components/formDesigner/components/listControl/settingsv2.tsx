@@ -1,14 +1,14 @@
-import { Checkbox, Form, Input, InputNumber, Select, SelectProps } from 'antd';
-import React, { FC, useMemo, useState } from 'react';
+import { Checkbox, Form, Input, InputNumber, Select } from 'antd';
+import React, { FC, useState } from 'react';
 import SectionSeparator from '../../../sectionSeparator';
 import ButtonGroupSettingsModal from '../button/buttonGroup/buttonGroupSettingsModal';
 import PropertyAutocomplete from '../propertyAutocomplete/propertyAutocomplete';
-import { IListItemsProps, IProperty } from './models';
+import { IListItemsProps } from './models';
 import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
-import { MetadataProvider, useMetadata } from '../../../../providers';
 import { AutocompleteRaw } from '../../../autocomplete';
 import { QueryBuilderWithModelType } from './queryBuilder';
+import Properties from '../../../properties';
 
 const Option = Select.Option;
 
@@ -171,7 +171,11 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
       <Show when={state?.renderStrategy === 'externalForm'}>
         <FormItem name="formId" label="Form Path">
-          <AutocompleteRaw dataSourceType={'url'} />
+          <AutocompleteRaw
+            dataSourceType="entitiesList"
+            dataSourceUrl="/api/Autocomplete/List"
+            typeShortAlias="Shesha.Framework.Form"
+          />
         </FormItem>
       </Show>
 
@@ -331,49 +335,5 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         />
       </FormItem>
     </Form>
-  );
-};
-
-interface IPropertiesWrapperProps extends SelectProps {
-  modelType: string;
-  mode?: 'multiple' | 'tags';
-}
-
-const Properties: FC<IPropertiesWrapperProps> = ({ modelType, children, ...props }) => {
-  return (
-    <MetadataProvider modelType={modelType}>
-      <PropertiesEditor {...props}>{children}</PropertiesEditor>
-    </MetadataProvider>
-  );
-};
-
-interface PropertiesEditorProps extends SelectProps {
-  mode?: 'multiple' | 'tags';
-}
-
-const PropertiesEditor: FC<PropertiesEditorProps> = ({ mode, ...props }) => {
-  const metadata = useMetadata(false);
-
-  const fields = useMemo<IProperty[]>(() => {
-    if (metadata) {
-      const properties = metadata?.metadata?.properties || [];
-      if (Boolean(properties))
-        return properties.map<IProperty>(property => ({
-          label: property.label,
-          propertyName: property.path,
-          dataType: property.dataType,
-        }));
-    }
-    return null;
-  }, [metadata, metadata?.metadata]);
-
-  return (
-    <Select mode={mode} showSearch allowClear {...props}>
-      {fields?.map(({ label, propertyName }) => (
-        <Option value={propertyName} key={propertyName}>
-          {label}
-        </Option>
-      ))}
-    </Select>
   );
 };

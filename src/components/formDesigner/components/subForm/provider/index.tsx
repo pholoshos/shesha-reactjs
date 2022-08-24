@@ -1,10 +1,8 @@
-import React, { FC, useReducer, useContext, PropsWithChildren, useEffect, useMemo } from 'react';
-
-import Get, { Mutate, useGet, useMutate } from 'restful-react';
+import React, { FC, useReducer, useContext, PropsWithChildren, useEffect } from 'react';
+import { useGet, useMutate } from 'restful-react';
 import { useForm } from '../../../../../providers/form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
 import { useSubscribe } from '../../../../../hooks';
-import { SubFormProps } from './interfaces';
 import { useFormGet } from '../../../../../apis/form';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
@@ -13,34 +11,40 @@ import { evaluateComplexString } from '../../../../../formDesignerUtils';
 import { getQueryParams } from '../../../../../utils/url';
 import { IFormDto } from '../../../../../providers/form/models';
 import { setComponentsActions } from './actions';
+import { ISubFormProps } from './interfaces';
+import { message } from 'antd';
 
-export interface SubFormProviderProps extends SubFormProps {
+export interface SubFormProviderProps extends ISubFormProps {
   uniqueStateId?: string;
   containerId: string;
+  markup?: IFormDto['markup'];
 }
 
 const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
   children,
   value,
-  name,
   formId,
   getUrl,
   postUrl,
   putUrl,
   deleteUrl,
-  containerId,
   beforeGet,
   onCreated,
   onUpdated,
+  onDeleted,
   uniqueStateId,
   dataSource,
+  markup,
+  onChange,
 }) => {
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
-  const { formMode, formData } = useForm();
+  const { formData } = useForm();
   const { globalState } = useGlobalState();
   const { refetch: fetchForm, loading: isFetchingForm, data: fetchFormResponse, error: fetchFormError } = useFormGet({
     queryParams: { id: formId },
+    lazy: true,
   });
+  const { initialValues } = useSubForm();
 
   const getEvaluatedUrl = (url: string) => {
     if (!url) return '';
@@ -54,6 +58,7 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
 
   const { refetch: fetchFormData, loading: isFetchingData, error: fetchDataError, data: fetchedFormData } = useGet({
     path: getEvaluatedUrl(getUrl),
+    lazy: true,
   });
 
   const { mutate: postHttp, loading: isPosting, error: postError } = useMutate({
@@ -70,34 +75,46 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
     verb: 'PUT',
   });
 
+  //#region get data
   const getData = () => {
-    postHttp(value).then(submittedValue => {
-      if (onCreated) {
-        const evaluateOnCreated = () => {
+    if (getUrl && dataSource === 'api') {
+      if (beforeGet) {
+        const evaluateBeforeGet = () => {
           // tslint:disable-next-line:function-constructor
-          return new Function('data, globalState, submittedValue', onCreated)(
+          return new Function('data, value, initialValues, globalState', onCreated)(
             formData,
-            globalState,
-            submittedValue?.result,
-            value
+            value,
+            initialValues,
+            globalState
           );
         };
 
-        evaluateOnCreated();
+        const evaluatedData = evaluateBeforeGet();
+
+        onChange(evaluatedData);
       }
-    });
+
+      fetchFormData();
+    }
   };
+
+  useEffect(() => {
+    if (!isFetchingData && fetchedFormData) {
+      onChange(fetchedFormData?.result);
+    }
+  }, [isFetchingData, fetchedFormData]);
+  //#endregion
 
   const postData = () => {
     postHttp(value).then(submittedValue => {
       if (onCreated) {
         const evaluateOnCreated = () => {
           // tslint:disable-next-line:function-constructor
-          return new Function('data, globalState, submittedValue', onCreated)(
+          return new Function('data, globalState, submittedValue, message', onCreated)(
             formData,
             globalState,
             submittedValue?.result,
-            value
+            message
           );
         };
 
@@ -111,11 +128,11 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
       if (onUpdated) {
         const evaluateOnUpdated = () => {
           // tslint:disable-next-line:function-constructor
-          return new Function('data, globalState, submittedValue', onCreated)(
+          return new Function('data, globalState, submittedValue, message', onUpdated)(
             formData,
             globalState,
             submittedValue?.result,
-            value
+            message
           );
         };
 
@@ -125,19 +142,24 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
   };
 
   const deleteData = () => {
-    deleteHttp(value).then(() => {
-      if (onUpdated) {
-        // Execute onUpdated expression
+    deleteHttp('', { queryParams: { id: value?.id } }).then(() => {
+      if (onDeleted) {
+        const evaluateOnUpdated = () => {
+          // tslint:disable-next-line:function-constructor
+          return new Function('data, globalState, message', onDeleted)(formData, globalState, message);
+        };
+
+        evaluateOnUpdated();
       }
     });
   };
 
   //#region Fetch Form
   useEffect(() => {
-    if (formId) {
+    if (formId && !markup) {
       fetchForm();
     }
-  }, [formId]);
+  }, [formId, markup]);
 
   useEffect(() => {
     if (!isFetchingForm && fetchFormResponse) {
@@ -152,6 +174,10 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
       dispatch(setComponentsActions({ components: formDto?.markup?.components }));
     }
   }, [fetchFormResponse, isFetchingForm]);
+
+  useEffect(() => {
+    dispatch(setComponentsActions({ components: markup?.components }));
+  }, [markup]);
   //#endregion
 
   useSubscribe(SUB_FORM_EVENT_NAMES.getFormData, ({ stateId }) => {
@@ -181,6 +207,7 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
   return (
     <SubFormContext.Provider
       value={{
+        initialValues: value,
         errors: {
           getForm: fetchFormError,
           postData: postError,
@@ -215,18 +242,19 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
 function useSubFormState() {
   const context = useContext(SubFormContext);
 
-  if (context === undefined) {
-    throw new Error('useSubFormState must be used within a SubFormProvider');
-  }
+  // if (context === undefined) {
+  //   throw new Error('useSubFormState must be used within a SubFormProvider');
+  // }
+
   return context;
 }
 
 function useSubFormActions() {
   const context = useContext(SubFormActionsContext);
 
-  if (context === undefined) {
-    throw new Error('useSubFormActions must be used within a SubFormProvider');
-  }
+  // if (context === undefined) {
+  //   throw new Error('useSubFormActions must be used within a SubFormProvider');
+  // }
 
   return context;
 }

@@ -26,9 +26,3 @@ export interface IListItemsProps {
   properties?: string[];
   filters?: IStoredFilter;
 }
-
-export interface IProperty {
-  label: string;
-  propertyName: string;
-  dataType: string;
-}

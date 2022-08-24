@@ -110,8 +110,6 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
       )
       : [];
 
-    console.log({ fetchedItems, selectedItems })
-
     const result = [...fetchedItems, ...selectedItems];
     return result;
   }, [value, autocompleteText, fetchedData]);

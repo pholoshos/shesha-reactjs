@@ -2,7 +2,7 @@ import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IFormComponentContainer } from '../../../../providers/form/models';
 import { FolderOutlined } from '@ant-design/icons';
 import { Steps, Button } from 'antd';
-// import ComponentsContainer from '../../componentsContainer';
+import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
 import React, { Fragment, useState } from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
@@ -118,9 +118,9 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
             }
           )}
         </Steps>
-        {/* <div className="wizard-content">
-          <ComponentsContainer containerId={id} />
-        </div> */}
+        <div className="wizard-content">
+          <ComponentsContainer containerId={steps[current].id} />
+        </div>
         <div className="wizard-action">
           {current < steps.length - 1 && (
             <Button type="primary" onClick={() => next()}>

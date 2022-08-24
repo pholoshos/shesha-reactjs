@@ -103,7 +103,7 @@ export const TableContextInner: FC<ITableContextComponentProps> = props => {
   );
 };
 
-const TableContextAccessor: FC<ITableContextComponentProps> = ({ id, tableConfigId, components, isDynamic }) => {
+const TableContextAccessor: FC<ITableContextComponentProps> = ({ id, tableConfigId }) => {
   const { registerActions } = useForm();
   const { refreshTable, exportToExcel, tableConfigLoaded, setIsInProgressFlag } = useDataTableStore();
   const { selectedRow } = useDataTableSelection();

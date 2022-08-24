@@ -14,7 +14,7 @@ export interface IConfigurableFormComponentProps {
   index: number;
 }
 
-const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*, index*/, index }) => {
+const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*, index*/ }) => {
   const {
     formMode,
     visibleComponentIds,

@@ -25,9 +25,9 @@ import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
 import { useFormMarkup } from '../../../../providers/form/hooks';
 import { SubFormProvider } from '../subForm/provider';
 import SubForm from '../subForm/subForm';
-import { useSubscribe } from '../../../../../dist';
 import { ListControlEvents } from './constants';
 import { useDebouncedCallback } from 'use-debounce/lib';
+import { useSubscribe } from '../../../../hooks';
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {
   /** the source of data for the list component */

@@ -86,7 +86,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const previousUrl = usePrevious(getUrl);
 
   const initialValuesFromSettings = useMemo(() => {
-    const computedInitialValues = {};
+    const computedInitialValues = {} as object;
 
     formSettings?.initialValues?.forEach(({ key, value }) => {
       const evaluatedValue = value?.includes('{{')
@@ -146,7 +146,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
   }, [getUrl, formData, globalState, parentFormValues, skipFetchData]);
 
-  const fetchedFormEntity = fetchedEntity?.result as object;
+  const fetchedFormEntity = fetchedEntity?.result;
 
   useEffect(() => {
     if (fetchedFormEntity && onDataLoaded) {

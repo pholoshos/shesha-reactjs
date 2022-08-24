@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
 import { Select } from 'antd';
 import { SelectProps } from 'antd/lib/select';
-import { useAutocompleteList } from '../../apis/autocomplete';
 import classNames from 'classnames';
+import { useEntityAutocomplete } from '../../utils/autocomplete';
+import { EntityData } from '../../interfaces/gql';
 
 export interface IAutocompleteResultItem {
   value: string;
@@ -23,18 +24,15 @@ export const EntityDropdown: FC<IEntityDropdownProps> = ({
   lazy = false,
   ...rest
 }) => {
-  const { loading, data, refetch } = useAutocompleteList({
-    lazy,
-    queryParams: { term: '', typeShortAlias, selectedValue },
-  });
+  const { data, loading, search } = useEntityAutocomplete({ entityType: typeShortAlias, value: selectedValue, lazy: lazy });
 
   const handleSearch = (term: string) => {
     if (term) {
-      refetch({
-        queryParams: { term, typeShortAlias, selectedValue },
-      });
+      search(term);
     }
   };
+
+  const dataLoaded = data && data.length > 0;
 
   return (
     <Select
@@ -50,9 +48,9 @@ export const EntityDropdown: FC<IEntityDropdownProps> = ({
       className={classNames(className, 'sha-entity-dropdown')}
       {...rest}
     >
-      {data?.result?.map(d => (
-        <Select.Option value={d.value} key={d.value}>
-          {d.displayText}
+      {dataLoaded && data.map((d: EntityData) => (
+        <Select.Option value={d.id} key={d.id}>
+          {d._displayName}
         </Select.Option>
       ))}
     </Select>

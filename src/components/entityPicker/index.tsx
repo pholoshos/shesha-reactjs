@@ -319,9 +319,9 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
 };
 
 export const EntityPicker: FC<IEntityPickerProps> = props => {
-  const { tableId, parentEntityId, entityType } = props;
+  const { parentEntityId, entityType } = props;
   return (
-    <DataTableProvider tableId={tableId} parentEntityId={parentEntityId} entityType={entityType}>
+    <DataTableProvider parentEntityId={parentEntityId} entityType={entityType}>
       <EntityPickerInner {...props} />
     </DataTableProvider>
   );

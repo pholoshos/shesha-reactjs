@@ -10,12 +10,9 @@ import {
   IDataTableStateContext,
   IDataTableUserConfig,
   DEFAULT_DT_USER_CONFIG,
-  DEFAULT_TABLE_CONFIG_RESULT,
 } from './contexts';
 import { getFlagSetters } from '../utils/flagsSetters';
 import {
-  fetchTableConfigAction,
-  fetchTableConfigSuccessAction,
   fetchTableDataAction,
   fetchTableDataSuccessAction,
   fetchTableDataErrorAction,
@@ -49,9 +46,10 @@ import {
   exportToExcelWarningAction,
 } from './actions';
 import {
+  ITableDataInternalResponse,
   ITableDataResponse,
   IndexColumnFilterOption,
-  IGetDataPayload,
+  IGetDataPayloadInternal,
   ColumnFilter,
   IFilterItem,
   IEditableRowState,
@@ -60,10 +58,12 @@ import {
   ITableFilter,
   ITableCrudConfig,
   IColumnSorting,
+  DataTableColumnDtoListAjaxResponse,
+  GetColumnsInput,
+  IGetDataPayload,
+  ITableColumn,
 } from './interfaces';
-import { useMutate, useGet } from 'restful-react';
 import { isEmpty, isEqual, sortBy } from 'lodash';
-import { GetColumnsInput, DataTableColumnDtoListAjaxResponse } from '../../apis/dataTable';
 import { IResult } from '../../interfaces/result';
 import { useLocalStorage, usePubSub, useSubscribe } from '../../hooks';
 import { useAuth } from '../auth';
@@ -79,15 +79,15 @@ import { DataTablePubsubConstants } from './pubSub';
 import { useGlobalState } from '../globalState';
 import camelCaseKeys from 'camelcase-keys';
 import { useShaRouting } from '../shaRouting';
+import qs from 'qs';
+import { advancedFilter2JsonLogic } from './utils';
+import { camelcaseDotNotation, convertDotNotationPropertiesToGraphQL } from '../form/utils';
 
 interface IDataTableProviderProps extends ICrudProps {
-  /** Table configuration Id */
-  tableId?: string;
-
   /** Type of entity */
   entityType?: string;
 
-  /** Id of the user config, is used for saving of the user settings (sorting, paging etc) to the local storage. `tableId` is used if missing  */
+  /** Id of the user config, is used for saving of the user settings (sorting, paging etc) to the local storage. */
   userConfigId?: string;
 
   /**
@@ -128,7 +128,6 @@ interface IDataTableProviderProps extends ICrudProps {
 
 const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   children,
-  tableId,
   userConfigId,
   title,
   parentEntityId,
@@ -144,7 +143,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 }) => {
   const [state, dispatch] = useThunkReducer(dataTableReducer, {
     ...DATA_TABLE_CONTEXT_INITIAL_STATE,
-    tableId,
     entityType,
     title,
     parentEntityId,
@@ -158,39 +156,40 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   const { router } = useShaRouting();
 
-  const { mutate: fetchDataTableDataInternal } = useMutate<IResult<ITableDataResponse>>({
-    verb: 'POST',
-    path: getDataPath ?? '/api/DataTable/GetData',
-    requestOptions: {
-      headers,
-    },
-  });
+  const fetchDataTableDataInternal = (getDataPayload) => {
+    const getDataUrl = `${backendUrl}${getDataPath ?? '/api/DataTable/GetData'}?${qs.stringify(getDataPayload)}`;
 
-  const expandFetchDataPayload = (payload: IGetDataPayload, providedState: IDataTableStateContext): IGetDataPayload => {
+    return axios({
+      url: getDataUrl,
+      method: 'GET',
+    }).then(response => response.data as IResult<ITableDataResponse>)
+  }; 
+
+  const expandFetchDataPayload = (payload: IGetDataPayloadInternal, providedState: IDataTableStateContext): IGetDataPayloadInternal => {
     // convert filters
-    const allFilters = [...(providedState?.predefinedFilters || []), ...(providedState?.storedFilters || [])];
+    const allFilters = providedState?.predefinedFilters || [];
 
     let skipFetch = false;
 
-    const filters = payload.selectedStoredFilterIds
+    const filters = payload.selectedFilterIds
       .map(id => allFilters.find(f => f.id === id))
       .filter(f => Boolean(f));
 
-    const expandedPayload: IGetDataPayload = { ...payload, selectedFilters: filters };
+    const expandedPayload: IGetDataPayloadInternal = { ...payload, selectedFilters: filters };
 
     // Check against state.selectedStoredFilterIds as well
     if (filters?.length === 0 && providedState?.predefinedFilters?.length) {
       const foundSelectedFilter = providedState?.predefinedFilters?.find(({ defaultSelected }) => defaultSelected);
 
       if (foundSelectedFilter) {
-        expandedPayload.selectedStoredFilterIds = [foundSelectedFilter?.id];
+        expandedPayload.selectedFilterIds = [foundSelectedFilter?.id];
         expandedPayload.selectedFilters = [foundSelectedFilter];
       }
     }
 
     //Make sure you don't query the data for a selected filter that has no expression
-    const outgoingSelectedFilterId = expandedPayload?.selectedStoredFilterIds?.length
-      ? expandedPayload?.selectedStoredFilterIds[0]
+    const outgoingSelectedFilterId = expandedPayload?.selectedFilterIds?.length
+      ? expandedPayload?.selectedFilterIds[0]
       : null;
 
     if (outgoingSelectedFilterId) {
@@ -212,29 +211,96 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           skipFetch = true;
         }
 
-        expandedPayload.selectedStoredFilterIds = [];
+        expandedPayload.selectedFilterIds = [];
         expandedPayload.selectedFilters = [];
       }
     }
 
     return { ...expandedPayload, skipFetch };
+
   };
+
+  const convertFilters = (internalPayload: IGetDataPayloadInternal): string => {
+    let allFilters = [];
+    if (internalPayload.selectedFilters && internalPayload.selectedFilters.length > 0)
+    {
+      internalPayload.selectedFilters.forEach(f => {
+        if (f.expression){
+          const jsonLogic = typeof(f.expression) === 'string'
+            ? JSON.parse(f.expression)
+            : f.expression;
+
+          allFilters.push(jsonLogic);
+        }
+      });
+    }
+
+    const advancedFilter = advancedFilter2JsonLogic(internalPayload.advancedFilter, state.columns);
+    //console.log('converted advanced filter', advancedFilter);
+
+    if (advancedFilter && advancedFilter.length > 0)
+      allFilters = allFilters.concat(advancedFilter);
+
+    if (allFilters.length === 0)
+      return null;
+
+    const jsonLogicFilters = allFilters.length === 1
+        ? allFilters[0]
+        : { and: allFilters };
+
+    // console.log('allFilters', allFilters);
+    // console.log('jsonLogicFilters', jsonLogicFilters);
+
+    return JSON.stringify(jsonLogicFilters);
+  }
+
+  const getFetchDataPayload = (internalPayload: IGetDataPayloadInternal, columns: ITableColumn[]): IGetDataPayload => {
+    const payload: IGetDataPayload = {
+      maxResultCount: internalPayload.pageSize,
+      skipCount: (internalPayload.currentPage - 1) * internalPayload.pageSize,
+      properties: convertDotNotationPropertiesToGraphQL(internalPayload.properties, columns),
+      quickSearch: internalPayload.quickSearch,
+      sorting: internalPayload.sorting.filter(s => Boolean(s.id)).map(s => camelcaseDotNotation(s.id) + (s.desc ? " desc" : "")).join(","),
+      filter: convertFilters(internalPayload)
+    };
+
+    return payload;
+  }
+
+  const convertDataResponse = (response: IResult<ITableDataResponse>, pageSize: number): IResult<ITableDataInternalResponse> => {
+    if (!response.result)
+      return { ...response, result: null };
+
+    const internalResult: ITableDataInternalResponse =
+    {
+      totalRows: response.result.totalCount,
+      totalPages: Math.ceil(response.result.totalCount / pageSize),
+      rows: response.result.items,
+      totalRowsBeforeFilter: 0,
+    };
+
+    const internalResponse: IResult<ITableDataInternalResponse> = {
+      ...response,
+      result: internalResult
+    };
+
+    return internalResponse;
+  }
 
   /**
    * Returns the fetch data table data or null in a case where `skipFetch: true`
    * @param payload
    * @returns Promise<IResult<ITableDataResponse>> or null
    */
-  const fetchDataTableData = (payload: IGetDataPayload): Promise<IResult<ITableDataResponse>> | null => {
+  const fetchDataTableData = (payload: IGetDataPayloadInternal): Promise<IResult<ITableDataInternalResponse>> | null => {
     // save current user configuration to local storage
-    const userConfigToSave = {
+    const userConfigToSave: IDataTableUserConfig = {
       pageSize: payload.pageSize,
       currentPage: payload.currentPage,
       quickSearch: payload.quickSearch,
       columns: state.columns,
       tableSorting: payload.sorting,
-      selectedStoredFilterIds: payload.selectedStoredFilterIds || state?.selectedStoredFilterIds,
-      tableFilter: payload.filter,
+      advancedFilter: payload.advancedFilter,
     };
 
     setUserDTSettings(userConfigToSave);
@@ -245,59 +311,41 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       return null;
     }
 
-    return fetchDataTableDataInternal(expandedPayload);
+    const fetchPayload = getFetchDataPayload(expandedPayload, state.columns);
+    // console.log('expandedPayload', expandedPayload)
+    // console.log('fetchPayload', fetchPayload)
+
+    return fetchDataTableDataInternal(fetchPayload).then(response => convertDataResponse(response, payload.pageSize));
   };
 
-  const { loading: isFetchingTableConfig, data: tableConfig, refetch: fetTableConfig } = useGet({
-    lazy: true,
-    queryParams: {
-      id: tableId,
-    },
-    requestOptions: {
-      headers,
-    },
-    path: '/api/DataTable/GetConfiguration',
-  });
-
   const [userDTSettingsInner, setUserDTSettings] = useLocalStorage<IDataTableUserConfig>(
-    userConfigId || tableId,
+    userConfigId,
     null
     // ['selectedStoredFilterIds'] // TODO: Review the saving of selected filters
   );
 
   const userDTSettings = useMemo(() => {
     const settingsToReturn: IDataTableUserConfig = defaultFilter
-      ? { ...DEFAULT_DT_USER_CONFIG, tableFilter: defaultFilter }
+      ? { ...DEFAULT_DT_USER_CONFIG, advancedFilter: defaultFilter }
       : userDTSettingsInner;
 
     return {
       ...settingsToReturn,
-      selectedStoredFilterIds: settingsToReturn?.selectedStoredFilterIds,
     };
   }, [defaultFilter, userDTSettingsInner]);
-
-  const configIsReady =
-    tableId && !isFetchingTableConfig && state.tableConfigLoaded && tableConfig && (state?.columns?.length || 0) > 0;
-
+  
   // fetch table data when config is ready or something changed (selected filter, changed current page etc.)
   useEffect(() => {
-    if (tableId) {
-      // fetch using table config
-      if (configIsReady) {
-        tableIsReady.current = true; // is used to prevent unneeded data fetch by the ReactTable. Any data fetch requests before this line should be skipped
-        refreshTable();
-      }
-    } else if (entityType) {
+    if (entityType) {
       // fecth using entity type
       tableIsReady.current = true; // is used to prevent unneeded data fetch by the ReactTable. Any data fetch requests before this line should be skipped
       refreshTable();
     }
   }, [
-    state.tableFilter?.length,
+    state.tableFilter/*?.length*/,
     state.currentPage,
     state.selectedStoredFilterIds,
     state.selectedPageSize,
-    isFetchingTableConfig,
     state.tableConfigLoaded,
     state.entityType,
     state.columns?.length,
@@ -306,13 +354,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   // fetch table data when config is ready or something changed (selected filter, changed current page etc.)
   const refreshTableWhenAppropriate = () => {
-    if (tableId) {
-      // fetch using table config
-      if (configIsReady) {
-        tableIsReady.current = true; // is used to prevent unneeded data fetch by the ReactTable. Any data fetch requests before this line should be skipped
-        refreshTable();
-      }
-    } else if (entityType) {
+    if (entityType) {
       // fecth using entity type
       tableIsReady.current = true; // is used to prevent unneeded data fetch by the ReactTable. Any data fetch requests before this line should be skipped
       refreshTable();
@@ -332,13 +374,13 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   }, [state.predefinedFilters]);
 
   const refreshTable = () => {
-    if ((configIsReady || columnsAreReady) && tableIsReady.current === true) {
+    if (columnsAreReady && tableIsReady.current === true) {
       fetchTableData();
     }
   };
 
   const debouncedFetch = useDebouncedCallback(
-    (payload: any) => {
+    (payload: IGetDataPayloadInternal) => {
       const fetchDataFunc = fetchDataTableData(payload);
 
       const finishFetching = () => {
@@ -364,6 +406,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       fetchDataFunc
         .then(data => {
           finishFetching();
+
           dispatch(fetchTableDataSuccessAction(data.result));
         })
         .catch(e => {
@@ -391,9 +434,9 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     300
   );
 
-  const columnsAreReady = !tableId && entityType && state?.columns?.length > 0;
+  const columnsAreReady = entityType && state?.columns?.length > 0;
 
-  const fetchTableData = (payload?: IGetDataPayload) => {
+  const fetchTableData = (payload?: IGetDataPayloadInternal) => {
     const internalPayload = {
       ...getFetchTableDataPayload(),
       ...(payload ?? {}),
@@ -404,74 +447,43 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     // so we have to save the payload on every fetch request but skip data fetch in some cases
     dispatch(fetchTableDataAction(internalPayload)); // todo: remove this line, it's needed just to save the Id
 
-    if ((configIsReady || columnsAreReady) && tableIsReady.current === true) {
+    if (columnsAreReady && tableIsReady.current === true) {
       debouncedFetch(internalPayload);
     }
   };
-
-  // fetch table data when configuration is available
-  useEffect(() => {
-    if (!isFetchingTableConfig && tableConfig) {
-      dispatch(
-        fetchTableConfigSuccessAction({
-          tableConfig: tableConfig.result ?? {
-            id: tableId,
-            ...DEFAULT_TABLE_CONFIG_RESULT,
-          },
-          userConfig: userDTSettings,
-        })
-      );
-
-      //#region HACK - the value is not populated. I need to investigate why and remove this manual setting
-      defaultFilter?.forEach(element => {
-        changeFilter(element?.columnId, element?.filter);
-      });
-      //#endregion
-    }
-  }, [isFetchingTableConfig, tableConfig]);
-
-  // fetch table config on first render
-  useEffect(() => {
-    if (tableId) fetTableConfig();
-  }, [tableId]);
 
   useEffect(() => {
     // Save the settings whenever the columns change
     if (!isEmpty(userDTSettings) && state?.columns?.length > 0) {
       setUserDTSettings({
         ...userDTSettings,
-        selectedStoredFilterIds: state?.selectedStoredFilterIds,
+        selectedFilterIds: state?.selectedStoredFilterIds,
         columns: state?.columns,
       });
     }
   }, [state?.columns]);
 
-  // useEffect(() => {
-  //   setUserDTSettings({ ...userDTSettingsInner });
-  // }, [state?.persistSelectedFilters]);
-
-  const getFetchTableDataPayloadInternal = (localState: IDataTableStateContext): IGetDataPayload => {
+  const getFetchTableDataPayloadInternal = (localState: IDataTableStateContext): IGetDataPayloadInternal => {
     // Add default filter to table filter
     const filter = localState?.tableFilter || [];
 
     const localProperties = getDataProperties(localState.configurableColumns);
 
-    const payload: IGetDataPayload = {
-      id: tableId,
+    const payload: IGetDataPayloadInternal = {
       entityType,
       properties: localProperties,
       pageSize: localState.selectedPageSize,
       currentPage: localState.currentPage,
       sorting: localState.tableSorting,
       quickSearch: localState.quickSearch,
-      filter, //state.tableFilter,
+      advancedFilter: filter, //state.tableFilter,
       parentEntityId,
-      selectedStoredFilterIds: localState.selectedStoredFilterIds || [],
+      selectedFilterIds: localState.selectedStoredFilterIds || [],
     };
     return payload;
   };
 
-  const getFetchTableDataPayload = (): IGetDataPayload => {
+  const getFetchTableDataPayload = (): IGetDataPayloadInternal => {
     return getFetchTableDataPayloadInternal(state);
   };
 
@@ -509,8 +521,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
         });
     });
   };
-
-  const fetchTableConfig = (id: string) => dispatch(fetchTableConfigAction(id));
 
   const setCurrentPage = (val: number) => {
     dispatch(setCurrentPageAction(val));
@@ -563,7 +573,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       delete newUserSTSettings.pageSize;
       delete newUserSTSettings.currentPage;
       delete newUserSTSettings.quickSearch;
-      delete newUserSTSettings.tableFilter;
+      delete newUserSTSettings.advancedFilter;
 
       setUserDTSettings(newUserSTSettings);
     }
@@ -621,10 +631,10 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
         case 'number':
           data[column.accessor] = 0;
           break;
-        case 'refList':
+        case 'reference-list-item':
           data[column.accessor] = { item: null, itemValue: null };
           break;
-        case 'entityReference':
+        case 'entity':
           data[column.accessor] = { id: null, displayText: null };
           break;
         case 'multiValueRefList':
@@ -710,7 +720,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
     axios({
       method: 'POST',
-      url: `${backendUrl}/api/DataTable/GetColumns`,
+      url: `${backendUrl}/api/services/app/DataTable/GetColumns`,
       data: getColumnsPayload,
       headers,
     })
@@ -729,7 +739,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       })
       .catch(e => {
         console.log(e);
-        //dispatch(exportToExcelErrorAction());
       });
   }, [state.configurableColumns, state.entityType]);
 
@@ -739,10 +748,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   const getCurrentFilter = (): ITableFilter[] => {
     return state.tableFilterDirty || state.tableFilter || [];
-  };
-
-  const getDataSourceType = () => {
-    return !tableId && entityType ? 'entity' : 'tableConfig';
   };
 
   const setCrudConfig = (config: ITableCrudConfig) => {
@@ -852,7 +857,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
         value={{
           onSort,
           ...flagSetters,
-          fetchTableConfig,
           changeDisplayColumn,
           fetchTableData,
           setCurrentPage,
@@ -880,7 +884,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           deleteRowItem,
           registerConfigurableColumns,
           getCurrentFilter,
-          getDataSourceType,
           setCrudConfig,
           changePersistedFiltersToggle,
           /* NEW_ACTION_GOES_HERE */

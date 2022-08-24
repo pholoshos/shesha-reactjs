@@ -46,9 +46,9 @@ const MetadataDispatcherProvider: FC<PropsWithChildren<IMetadataDispatcherProvid
   const getMetadata = (payload: IGetMetadataPayload) => {
     const { modelType } = payload;
     const loadedModel = models.current[payload.modelType];
-    if (loadedModel) return Promise.resolve(loadedModel);
+    if (loadedModel) return loadedModel;
 
-    const result = new Promise<IModelMetadata>((resolve, reject) => {
+    const metaPromise = new Promise<IModelMetadata>((resolve, reject) => {
       metadataGetProperties({ container: modelType }, { base: backendUrl, headers: httpHeaders })
         .then(response => {
           if (!response.success) {
@@ -63,15 +63,15 @@ const MetadataDispatcherProvider: FC<PropsWithChildren<IMetadataDispatcherProvid
             properties,
           };
 
-          models.current[payload.modelType] = meta;
           resolve(meta);
         })
         .catch(e => {
           reject(e);
         });
     });
+    models.current[payload.modelType] = metaPromise;
 
-    return result;
+    return metaPromise;
   };
 
   const registerProvider = (payload: IRegisterProviderPayload) => {

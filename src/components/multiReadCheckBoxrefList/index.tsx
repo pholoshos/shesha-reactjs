@@ -1,7 +1,7 @@
 import { CheckCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { useReferenceListGetItems } from '../../apis/referenceList';
 import { DisplayFormItem, ShaSpin } from '../../';
 import React, { FC } from 'react';
+import { useReferenceList } from '../../providers/referenceListDispatcher';
 
 export interface IMultiReadCheckBoxRefListProps {
   readonly listName: string;
@@ -29,13 +29,11 @@ export const MultiReadCheckBoxRefList: FC<IMultiReadCheckBoxRefListProps> = ({
   value,
   display = 'component',
 }) => {
-  const { data, loading } = useReferenceListGetItems({
-    queryParams: { name: listName, namespace: listNamespace },
-  });
+  const { data: refList, loading: refListLoading } = useReferenceList(listNamespace, listName);
 
   const list = binaryToList(value);
 
-  const result = data?.result?.map(i => ({ ...i, checked: list.includes(i?.itemValue) }));
+  const result = refList?.items?.map(i => ({ ...i, checked: list.includes(i?.itemValue) }));
 
   const displayText = (checked: boolean) => {
     switch (display) {
@@ -54,7 +52,7 @@ export const MultiReadCheckBoxRefList: FC<IMultiReadCheckBoxRefListProps> = ({
   };
 
   return (
-    <ShaSpin spinning={loading}>
+    <ShaSpin spinning={refListLoading}>
       {result?.map(({ item, checked }) => (
         <DisplayFormItem label={item}>{displayText(checked)}</DisplayFormItem>
       ))}

@@ -3,7 +3,6 @@ import { IToolboxComponent } from '../../../../../interfaces';
 import { LayoutOutlined } from '@ant-design/icons';
 import { Alert } from 'antd';
 import settingsFormJson from './settingsForm.json';
-import { IShaDataTableProps } from '../../../../../';
 import { DataTableSelectionProvider, useDataTableSelection } from '../../../../../providers/dataTableSelection';
 import ComponentsContainer from '../../../componentsContainer';
 import { validateConfigurableComponentSettings } from '../../../../../providers/form/utils';
@@ -12,8 +11,8 @@ import DataTableProvider from '../../../../../providers/dataTable';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../../providers/form/models';
 
 export interface ITableContextComponentProps extends IConfigurableFormComponent {
-  tableConfigId?: string;
   entityType?: string;
+  endpoint?: string;
   uniqueStateId?: string;
 }
 
@@ -41,9 +40,9 @@ export const TableContext: FC<ITableContextComponentProps> = props => {
   const { entityType } = props;
 
   useEffect(() => {
-    const uniqueKey = `${props.tableConfigId ?? 'empty'}_${props.entityType ?? 'empty'}`; // is used just for re-rendering
+    const uniqueKey = `${props.entityType ?? 'empty'}`; // is used just for re-rendering
     setTable(<TableContextInner key={uniqueKey} {...props} />);
-  }, [props.tableConfigId, props.entityType]);
+  }, [props.entityType]);
 
   return entityType ? (
     <MetadataProvider id={props.id} modelType={entityType}>
@@ -55,12 +54,12 @@ export const TableContext: FC<ITableContextComponentProps> = props => {
 };
 
 export const TableContextInner: FC<ITableContextComponentProps> = props => {
-  const { tableConfigId, entityType, label, uniqueStateId } = props;
+  const { entityType, endpoint, label, uniqueStateId } = props;
   const { formMode } = useForm();
   const [selectedRow, setSelectedRow] = useState(-1);
   const isDesignMode = formMode === 'designer';
 
-  if (isDesignMode && !tableConfigId && !entityType)
+  if (isDesignMode && !entityType)
     return (
       <Alert
         className="sha-designer-warning"
@@ -71,16 +70,6 @@ export const TableContextInner: FC<ITableContextComponentProps> = props => {
       />
     );
 
-  const tableProps: IShaDataTableProps = {
-    id: tableConfigId,
-    header: label,
-    // actionColumns: [
-    //   { icon: <ToolOutlined />, onClick: id => `/settings/forms/designer?id=${id}` },
-    //   { icon: <EditOutlined />, onClick: id => `/settings/forms/edit?id=${id}` },
-    // ],
-    //disableCustomFilters: true,
-  };
-
   const onSelectRow = index => {
     setSelectedRow(index);
   };
@@ -89,8 +78,8 @@ export const TableContextInner: FC<ITableContextComponentProps> = props => {
     <DataTableSelectionProvider>
       <DataTableProvider
         userConfigId={props.id}
-        tableId={tableProps.id}
         entityType={entityType}
+        getDataPath={endpoint}
         title={label}
         selectedRow={selectedRow}
         onSelectRow={onSelectRow}
@@ -102,7 +91,7 @@ export const TableContextInner: FC<ITableContextComponentProps> = props => {
   );
 };
 
-const TableContextAccessor: FC<ITableContextComponentProps> = ({ id, tableConfigId }) => {
+const TableContextAccessor: FC<ITableContextComponentProps> = ({ id }) => {
   const { registerActions } = useForm();
   const { refreshTable, exportToExcel, tableConfigLoaded, setIsInProgressFlag } = useDataTableStore();
   const { selectedRow } = useDataTableSelection();
@@ -132,7 +121,7 @@ const TableContextAccessor: FC<ITableContextComponentProps> = ({ id, tableConfig
         deleteRow,
         setToEditMode,
       }),
-    [tableConfigLoaded, tableConfigId, selectedRow]
+    [tableConfigLoaded, selectedRow]
   );
 
   return <ComponentsContainer containerId={id} />;

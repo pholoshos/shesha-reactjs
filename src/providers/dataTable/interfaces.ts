@@ -2,18 +2,16 @@ import { Moment } from 'moment';
 import { IPublicDataTableActions } from './contexts';
 export type ColumnFilter = string[] | number[] | Moment[] | Date[] | string | number | Moment | Date | boolean;
 
-export type TableDataSourceType = 'entity' | 'tableConfig';
-
 export type IndexColumnDataType =
   | 'string'
   | 'number'
   | 'date'
-  | 'datetime'
+  | 'date-time'
   | 'time'
   | 'boolean'
-  | 'refList'
+  | 'reference-list-item'
   | 'multiValueRefList'
-  | 'entityReference'
+  | 'entity'
   | 'action'
   | 'other';
 
@@ -32,12 +30,11 @@ export type SortDirection = 0 /*asc*/ | 1 /*desc*/;
 export type ColumnSorting = 'asc' | 'desc';
 
 export interface ITableColumn {
-  customDataType?: string;
+  dataFormat?: string;
   id?: string;
   accessor: string;
   header: string;
   isVisible: boolean; // is visible in the table (including columns selector, filter etc.)
-  isHiddenByDefault: boolean;
   show?: boolean; // is visible on client
   dataType?: IndexColumnDataType;
   filterOption?: IndexColumnFilterOption;
@@ -48,7 +45,6 @@ export interface ITableColumn {
   defaultSorting?: SortDirection;
   columnId?: string;
   propertyName?: string;
-  filterCaption?: string;
   name?: string;
   caption?: string;
   allowShowHide?: boolean;
@@ -80,16 +76,25 @@ export interface IColumnSorting {
 }
 
 export interface IGetDataPayload {
-  readonly id: string;
+  readonly maxResultCount: number;
+  readonly skipCount: number;
+  readonly properties: string;
+  readonly sorting?: string;
+  readonly filter?: string;
+  readonly quickSearch?: string;
+}
+
+
+export interface IGetDataPayloadInternal {
   readonly entityType: string;
   readonly properties: string[];
   readonly pageSize: number;
   readonly currentPage: number;
   readonly sorting: IColumnSorting[];
   readonly quickSearch: string;
-  readonly filter?: IFilterItem[];
+  readonly advancedFilter?: IFilterItem[];
   readonly parentEntityId?: string;
-  selectedStoredFilterIds?: string[];
+  selectedFilterIds?: string[];
   selectedFilters?: IStoredFilter[];
 
   /**
@@ -99,13 +104,6 @@ export interface IGetDataPayload {
    * the wouldn't wat to fetch the data at this stage and they don't want any data to be displayed on the table view as that would be misleading
    */
   skipFetch?: boolean;
-}
-
-export interface ITableDataResponse {
-  readonly totalPages: number;
-  readonly totalRows: number;
-  readonly totalRowsBeforeFilter: number;
-  readonly rows: object[];
 }
 
 export interface ITableConfigResponse {
@@ -172,13 +170,19 @@ export interface IStoredFilter {
 }
 
 export interface ITableDataResponse {
+  readonly totalCount: number;
+  //readonly totalRowsBeforeFilter: number;
+  readonly items: object[];
+}
+
+export interface ITableDataInternalResponse {
   readonly totalPages: number;
   readonly totalRows: number;
   readonly totalRowsBeforeFilter: number;
   readonly rows: object[];
 }
 
-export interface IDataTableInstance extends IPublicDataTableActions {}
+export interface IDataTableInstance extends IPublicDataTableActions { }
 
 export interface ITableCrudConfig {
   createUrl?: string;
@@ -235,3 +239,49 @@ export interface IFormDataPayload {
 export interface IFormDataPayload {
   crudSettings?: any;
 }
+
+export type ListSortDirection = 0 | 1;
+
+export interface DataTableColumnDto {
+  propertyName?: string | null;
+  name?: string | null;
+  caption?: string | null;
+  description?: string | null;
+  dataType?: string | null;
+  dataFormat?: string | null;
+  referenceListName?: string | null;
+  referenceListNamespace?: string | null;
+  entityReferenceTypeShortAlias?: string | null;
+  autocompleteUrl?: string | null;
+  allowInherited?: boolean;
+  isFilterable?: boolean;
+  isSortable?: boolean;
+}
+
+//#region todo: remove
+export interface GetColumnsInput {
+  entityType: string;
+  properties?: string[] | null;
+}
+
+export interface DataTableColumnDtoListAjaxResponse {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+  result?: DataTableColumnDto[] | null;
+}
+
+export interface ValidationErrorInfo {
+  message?: string | null;
+  members?: string[] | null;
+}
+
+export interface ErrorInfo {
+  code?: number;
+  message?: string | null;
+  details?: string | null;
+  validationErrors?: ValidationErrorInfo[] | null;
+}
+//#endregion

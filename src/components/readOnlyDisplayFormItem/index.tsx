@@ -54,7 +54,7 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
   quickviewGetEntityUrl,
   quickviewWidth,
 }) => {
-  const { formSettings, setFormMode, formMode } = useForm();
+  const { formSettings, setFormMode, formMode } = useForm(false) ?? { formSettings: null, setFormMode: () => {}, formMode: 'readonly' };
 
   const setFormModeToEdit = () => setFormMode('edit');
 

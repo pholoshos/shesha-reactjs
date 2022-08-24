@@ -7,9 +7,7 @@ export {
   default as GenericDualEditDetailsPage,
   IGenericDualEditDetailsPageProps,
 } from './crudViews/dualEditDetailsPage';
-export { default as SimpleIndexPage, ISimpleIndexPageProps } from './crudViews/simpleIndexPage';
 export { default as GenericEditPage, IGenericEditPageProps } from './crudViews/editPage';
-export { default as GenericIndexPage, IGenericIndexPageProps } from './crudViews/indexPage';
 export { default as GenericCreatePage, IGenericCreatePageProps } from './crudViews/createPage';
 export { default as FileUpload, IFileUploadProps } from './fileUpload';
 export { default as ConfigurableFormRenderer } from './configurableForm/configurableFormRenderer';
@@ -132,8 +130,6 @@ export {
 export { default as GenericCreatePageDefault } from './crudViews/plainCreatePage';
 export { default as GenericDetailsPageDefault } from './crudViews/plainDetailsPage';
 export { default as GenericEditPageDefault } from './crudViews/plainEditPage';
-export { default as GenericIndexPageDefault } from './crudViews/plainIndexPage';
-export { default as SimpleIndexPageDefault } from './crudViews/plainSimpleIndexPage';
 export { default as Page } from './page';
 export { default as DefaultLayout, getDefaultLayout } from './defaultLayout';
 export { default as EditableTagGroup, IEditableTagGroupProps } from './editableTagGroup';

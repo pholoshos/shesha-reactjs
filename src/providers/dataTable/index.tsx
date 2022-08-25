@@ -82,10 +82,13 @@ import { useShaRouting } from '../shaRouting';
 import qs from 'qs';
 import { advancedFilter2JsonLogic } from './utils';
 import { camelcaseDotNotation, convertDotNotationPropertiesToGraphQL } from '../form/utils';
+import { GENERIC_ENTITIES_ENDPOINT } from '../../constants';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Type of entity */
-  entityType?: string;
+  entityType: string;
+  /** Configurable columns. Is used in pair with entityType  */
+  configurableColumns?: IConfigurableColumnsBase[];
 
   /** Id of the user config, is used for saving of the user settings (sorting, paging etc) to the local storage. */
   userConfigId?: string;
@@ -138,12 +141,14 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   getExportToExcelPath,
   defaultFilter,
   entityType,
+  configurableColumns,
   uniqueStateId,
   onFetchDataSuccess,
 }) => {
   const [state, dispatch] = useThunkReducer(dataTableReducer, {
     ...DATA_TABLE_CONTEXT_INITIAL_STATE,
     entityType,
+    configurableColumns,
     title,
     parentEntityId,
   });
@@ -157,11 +162,13 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const { router } = useShaRouting();
 
   const fetchDataTableDataInternal = (getDataPayload) => {
-    const getDataUrl = `${backendUrl}${getDataPath ?? '/api/DataTable/GetData'}?${qs.stringify(getDataPayload)}`;
+    const payload = { ...getDataPayload, entityType };
+    const getDataUrl = `${backendUrl}${getDataPath ?? `${GENERIC_ENTITIES_ENDPOINT}/GetAll`}?${qs.stringify(payload)}`;
 
     return axios({
       url: getDataUrl,
       method: 'GET',
+      headers,
     }).then(response => response.data as IResult<ITableDataResponse>)
   }; 
 
@@ -786,6 +793,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       url: `${backendUrl}/api/services/Scheduler/ScheduledJobExecution/DownloadLogFile?id=${router?.query?.id}`,
       method: 'GET',
       responseType: 'blob',
+      headers,
     })
       .then(response => {
         const fileName = response.headers['content-disposition']?.split('filename=')[1] ?? 'logfile.log';

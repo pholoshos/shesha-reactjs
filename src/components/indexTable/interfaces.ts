@@ -43,7 +43,6 @@ export interface IColumnEditFieldProps {
 }
 
 export interface IShaDataTableProps extends ICrudProps, ITableRowDragProps {
-  id: string;
   useMultiselect?: boolean;
   disableCustomFilters?: boolean;
   actionColumns?: ITableActionColumns[];

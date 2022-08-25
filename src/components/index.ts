@@ -130,6 +130,9 @@ export {
 export { default as GenericCreatePageDefault } from './crudViews/plainCreatePage';
 export { default as GenericDetailsPageDefault } from './crudViews/plainDetailsPage';
 export { default as GenericEditPageDefault } from './crudViews/plainEditPage';
+export { default as GenericIndexPageDefault } from './crudViews/plainIndexPage';
+export { default as SimpleIndexPageDefault } from './crudViews/plainSimpleIndexPage';
+
 export { default as Page } from './page';
 export { default as DefaultLayout, getDefaultLayout } from './defaultLayout';
 export { default as EditableTagGroup, IEditableTagGroupProps } from './editableTagGroup';

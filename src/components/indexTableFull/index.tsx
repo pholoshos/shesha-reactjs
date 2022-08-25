@@ -19,7 +19,6 @@ export interface IIndexTableFullProps extends IShaDataTableProps {
 }
 
 export const IndexTableFull: FC<IIndexTableFullProps> = ({
-  id,
   useMultiselect,
   actionColumns,
   deleteConfirmationMessage,
@@ -103,7 +102,6 @@ export const IndexTableFull: FC<IIndexTableFullProps> = ({
         allowFullCollapse
       >
         <IndexTable
-          id={id}
           useMultiselect={useMultiselect}
           actionColumns={actionColumns}
           deleteConfirmationMessage={deleteConfirmationMessage}

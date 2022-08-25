@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useGet } from "restful-react";
+import { GENERIC_ENTITIES_ENDPOINT } from '../constants';
 import { IAbpWrappedGetEntityListResponse, EntityData, IGetAllPayload } from "../interfaces/gql";
 
 interface AutocompleteReturn {
@@ -22,8 +23,6 @@ export interface IAutocompleteProps {
     value?: AutocompleteValueType;
     lazy?: boolean;
 }
-
-const GENERIC_ENTITIES_ENDPOINT = "/api/services/app/Entities";
 
 const buildFilterById = (value: AutocompleteValueType): string => {
     if (!value)

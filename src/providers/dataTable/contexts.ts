@@ -66,8 +66,6 @@ export interface IDataTableStateContext
   displayColumnName?: string;
 
   formData?: any;
-  /** Id of the table configuration */
-  tableId?: string; // todo: move all table-specific properties to a separate sub-store
   /** Type of entity */
   entityType?: string;
   /** Configurable columns. Is used in pair with entityType  */
@@ -210,7 +208,6 @@ export const DATA_TABLE_CONTEXT_INITIAL_STATE: IDataTableStateContext = {
   isInProgress: {},
   error: {},
   actioned: {},
-  tableId: null,
   columns: [],
   tableData: [],
   isFetchingTableData: false,

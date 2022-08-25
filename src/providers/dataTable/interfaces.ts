@@ -1,4 +1,5 @@
 import { Moment } from 'moment';
+import { IDataColumnsProps } from '../datatableColumnsConfigurator/models';
 import { IPublicDataTableActions } from './contexts';
 export type ColumnFilter = string[] | number[] | Moment[] | Date[] | string | number | Moment | Date | boolean;
 
@@ -285,3 +286,10 @@ export interface ErrorInfo {
   validationErrors?: ValidationErrorInfo[] | null;
 }
 //#endregion
+
+export interface ITableColumnsBuilder {
+  columns: IDataColumnsProps[];
+  addProperty: (name: string, caption: string) => ITableColumnsBuilder;
+}
+
+export type TableColumnsFluentSyntax = (builder: ITableColumnsBuilder) => void;

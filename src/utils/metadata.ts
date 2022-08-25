@@ -1,7 +1,7 @@
 import { IconType } from "../components/shaIcon";
 import { DataTypes } from "../interfaces/dataTypes";
 import { IPropertyMetadata } from "../interfaces/metadata";
-import { camelize } from "../providers/form/utils";
+import { camelcaseDotNotation } from "../providers/form/utils";
 
 export const getIconByDataType = (dataType: string): IconType => {
   switch (dataType) {
@@ -22,10 +22,10 @@ export const getIconByDataType = (dataType: string): IconType => {
 }
 
 export const getFullPath = (property: IPropertyMetadata) => {
-  const name = camelize(property.path);
-  const prefix = property.prefix ? camelize(property.prefix) : null;
+  const name = camelcaseDotNotation(property.path);
+  const prefix = property.prefix ? camelcaseDotNotation(property.prefix) : null;
 
   return (prefix ?? '') === ''
-    ? camelize(name)
+    ? camelcaseDotNotation(name)
     : `${prefix}.${name}`;
 }

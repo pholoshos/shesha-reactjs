@@ -5,8 +5,8 @@ import { ITableCustomTypeEditor } from '../../components/indexTable/interfaces';
 import DataTableProvider from '../../providers/dataTable';
 
 export interface IInlineEditableChildTableProps {
+  entityType: string;
   parentEntityId: string;
-  tableId: string;
   saveLocally?: boolean;
   showTotal?: boolean;
   header: string;
@@ -16,8 +16,8 @@ export interface IInlineEditableChildTableProps {
 }
 
 export const InlineEditableChildTable: FC<IInlineEditableChildTableProps> = ({
+  entityType,
   parentEntityId,
-  tableId,
   saveLocally = false,
   showTotal = false,
   header,
@@ -30,7 +30,6 @@ export const InlineEditableChildTable: FC<IInlineEditableChildTableProps> = ({
   const tableRef = useRef<DataTableFullInstance>(null);
 
   const tableProps: IChildTableProps = {
-    id: tableId,
     header,
     crud,
     saveLocally,
@@ -56,7 +55,7 @@ export const InlineEditableChildTable: FC<IInlineEditableChildTableProps> = ({
 
   return (
     <Fragment>
-      <DataTableProvider tableId={tableProps?.id} parentEntityId={parentEntityId}>
+      <DataTableProvider entityType={entityType} parentEntityId={parentEntityId}>
         <ChildTable
           tableRef={tableRef}
           {...tableProps}

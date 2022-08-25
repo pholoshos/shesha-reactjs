@@ -5,12 +5,7 @@ import { GenericCreateModal, SimpleIndexPageDefault } from '../../../components'
 import { IShaDataTableProps, IToolbarItem, PageWithLayout } from '../../../interfaces';
 import createEntityConfigMarkup from './createEntityConfigMarkup.json';
 
-export interface IReportingReportProps {
-  /**
-   * Report designer child table id
-   */
-  tableConfigId?: string;
-
+export interface IEntityConfigurationsIndexPageProps {
   /**
    * Entity configuration details page
    *
@@ -31,8 +26,7 @@ export interface IReportingReportProps {
   useFormPath?: boolean;
 }
 
-const EntityConfigurationsIndexPage: PageWithLayout<IReportingReportProps> = ({
-  tableConfigId = 'EntityConfigs_Index',
+const EntityConfigurationsIndexPage: PageWithLayout<IEntityConfigurationsIndexPageProps> = ({
   entityConfigDetailsPageUrl = '/settings/entity-configs/details',
   //entityConfigEditPageUrl = '/settings/entity-configs/edit',
   useFormPath = false,
@@ -49,7 +43,6 @@ const EntityConfigurationsIndexPage: PageWithLayout<IReportingReportProps> = ({
   };
 
   const tableProps: IShaDataTableProps = {
-    id: tableConfigId,
     header: 'Entities',
     actionColumns: [
       {
@@ -79,9 +72,20 @@ const EntityConfigurationsIndexPage: PageWithLayout<IReportingReportProps> = ({
   return (
     <>
       <SimpleIndexPageDefault
+        entityType="Shesha.Framework.EntityConfig"
+        columns={t => t
+          .addProperty("Namespace", "Namespace")
+          .addProperty("ClassName", "Class Name")
+          .addProperty("FriendlyName", "Friendly Name")
+          .addProperty("TypeShortAlias", "Alias")
+          .addProperty("TableName", "Table Name")
+          .addProperty("DiscriminatorValue", "Discriminator Value")
+          .addProperty("Source", "Source")
+          .addProperty("CreationTime", "Created On")
+          .addProperty("LastModificationTime", "Updated On")
+        }
         tableRef={tableRef}
         title="All entities"
-        tableConfigId={tableConfigId}
         toolbarItems={toolbarItems}
         {...tableProps}
       />

@@ -80,7 +80,6 @@ export const TableWrapper: FC<ITableComponentProps> = ({
   const isDesignMode = formMode === 'designer';
 
   const {
-    tableId,
     entityType,
     isInProgress: { isFiltering, isSelectingColumns },
     setIsInProgressFlag,
@@ -203,7 +202,7 @@ export const TableWrapper: FC<ITableComponentProps> = ({
       : setIsInProgressFlag({ isFiltering: false, isSelectingColumns: false });
   };
 
-  if (isDesignMode && !tableId && !entityType) return <NotConfiguredWarning />;
+  if (isDesignMode && !entityType) return <NotConfiguredWarning />;
 
   const onSelectRow = (index: number, row: any) => {
     if (row) {
@@ -224,7 +223,6 @@ export const TableWrapper: FC<ITableComponentProps> = ({
       flexibleHeight={flexibleHeight}
     >
       <IndexTable
-        id={tableId}
         onSelectRow={onSelectRow}
         selectedRowIndex={selectedRow?.index}
         useMultiselect={useMultiselect}

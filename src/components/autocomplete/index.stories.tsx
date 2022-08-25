@@ -1,10 +1,11 @@
 import React, { FC, useState } from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
-import Autocomplete, { IAutocompleteProps } from './';
+import Autocomplete from './';
 import { Button, Form } from 'antd';
 import { addStory } from '../../stories/utils';
 import StoryApp from '../storyBookApp';
+import { AutocompleteDataSourceType, IAutocompleteProps } from './models';
 
 export default {
   title: 'Components/Autocomplete',
@@ -112,11 +113,21 @@ const EntityDtoTemplate: Story<IStoryArgs> = args => {
   );
 };
 
-const singleEntityDtoBaseProps: IStoryArgs = {
+interface IHasDataSourceType {
+  dataSourceType: AutocompleteDataSourceType;
+}
+interface IUrlDataSourceProps extends IHasDataSourceType {
+  dataSourceUrl: string;
+}
+const urlDataSourceProps: IUrlDataSourceProps = {
   dataSourceType: 'url',
   dataSourceUrl: '/api/v1/BursMan/ScheduleVisits/MembersAutocomplete',
+};
+
+const singleEntityDtoBaseProps: IStoryArgs = {
+  ...urlDataSourceProps,
   testValue: {
-    id: '291B86BE-27F1-41A0-8BFD-F867A3B38E32',
+    id: '291b86be-27f1-41a0-8bfd-f867a3b38e32',
     displayText: 'Friday Green',
   },
 };
@@ -130,7 +141,7 @@ export const SingleEntityDto = addStory(EntityDtoTemplate, {
 export const SingleEntityDtoWithInitialValue = addStory(EntityDtoTemplate, {
   ...singleEntityDtoBaseProps,
   initialValue: {
-    id: '6FB28E47-591E-46ED-90B5-13A88C69C759',
+    id: '6fb28e47-591e-46ed-90b5-13a88c69c759',
     displayText: 'Dimakatso Masetlane',
   },
 });
@@ -141,23 +152,22 @@ export const SingleEntityDtoWithInitialValueReadOnly = addStory(EntityDtoTemplat
   ...singleEntityDtoBaseProps,
   readOnly: true,
   initialValue: {
-    id: '6FB28E47-591E-46ED-90B5-13A88C69C759',
+    id: '6fb28e47-591e-46ed-90b5-13a88c69c759',
     displayText: 'Dimakatso Masetlane',
   },
 });
 //#endregion
 
 const multipleEntityDtoBaseProps: IStoryArgs = {
-  dataSourceType: 'url',
-  dataSourceUrl: '/api/v1/BursMan/ScheduleVisits/MembersAutocomplete',
+  ...urlDataSourceProps,
   mode: 'multiple',
   testValue: [
     {
-      id: '7F3076A1-E766-41A4-A05B-90E70A01D8AE',
+      id: '7f3076a1-e766-41a4-a05b-90e70a01d8ae',
       displayText: 'Cinisile Mathonsi',
     },
     {
-      id: '291B86BE-27F1-41A0-8BFD-F867A3B38E32',
+      id: '291b86be-27f1-41a0-8bfd-f867a3b38e32',
       displayText: 'Friday Green',
     },
   ],
@@ -174,11 +184,11 @@ export const MultipleEntityDtoWithInitialValue = addStory(EntityDtoTemplate, {
   ...multipleEntityDtoBaseProps,
   initialValue: [
     {
-      id: '42756BFC-0789-4AA3-91AC-68FEF3B8D5F1',
+      id: '42756bfc-0789-4aa3-91ac-68fef3b8d5f1',
       displayText: 'DJ Khaled',
     },
     {
-      id: '8DA3928A-6E03-4260-8961-C3D0B5A33C42',
+      id: '8da3928a-6e03-4260-8961-c3d0b5a33c42',
       displayText: 'Jane Smith',
     },
   ],
@@ -191,11 +201,11 @@ export const MultipleEntityDtoWithInitialValueReadOnly = addStory(EntityDtoTempl
   readOnly: true,
   initialValue: [
     {
-      id: '42756BFC-0789-4AA3-91AC-68FEF3B8D5F1',
+      id: '42756bfc-0789-4aa3-91ac-68fef3b8d5f1',
       displayText: 'DJ Khaled',
     },
     {
-      id: '8DA3928A-6E03-4260-8961-C3D0B5A33C42',
+      id: '8da3928a-6e03-4260-8961-c3d0b5a33c42',
       displayText: 'Jane Smith',
     },
   ],
@@ -204,16 +214,15 @@ export const MultipleEntityDtoWithInitialValueReadOnly = addStory(EntityDtoTempl
 
 //#region Tags Entity DTO
 export const TagsEntityDto = addStory(EntityDtoTemplate, {
-  dataSourceType: 'url',
-  dataSourceUrl: '/api/v1/BursMan/ScheduleVisits/MembersAutocomplete',
+  ...urlDataSourceProps,
   mode: 'tags',
   testValue: [
     {
-      id: '7F3076A1-E766-41A4-A05B-90E70A01D8AE',
+      id: '7f3076a1-e766-41a4-a05b-90e70a01d8ae',
       displayText: 'Cinisile Mathonsi',
     },
     {
-      id: '291B86BE-27F1-41A0-8BFD-F867A3B38E32',
+      id: '291b86be-27f1-41a0-8bfd-f867a3b38e32',
       displayText: 'Friday Green',
     },
   ],
@@ -222,35 +231,49 @@ export const TagsEntityDto = addStory(EntityDtoTemplate, {
 
 //#region Single Raw
 export const SingleRaw = addStory(RawTemplate, {
-  dataSourceType: 'url',
-  dataSourceUrl: '/api/v1/BursMan/ScheduleVisits/MembersAutocomplete',
-  testValue: '7F3076A1-E766-41A4-A05B-90E70A01D8AE',
+  ...urlDataSourceProps,
+  testValue: '7f3076a1-e766-41a4-a05b-90e70a01d8ae',
 });
 //#endregion
 
 //#region Single Raw with initial value
 export const SingleRawWithInitialValue = addStory(RawTemplate, {
-  dataSourceType: 'url',
-  dataSourceUrl: '/api/v1/BursMan/ScheduleVisits/MembersAutocomplete',
-  testValue: '7F3076A1-E766-41A4-A05B-90E70A01D8AE',
-  initialValue: '42756BFC-0789-4AA3-91AC-68FEF3B8D5F1',
+  ...urlDataSourceProps,
+  testValue: '7f3076a1-e766-41a4-a05b-90e70a01d8ae',
+  initialValue: '42756bfc-0789-4aa3-91ac-68fef3b8d5f1',
 });
 //#endregion
 
 //#region Multiple Raw
 export const MultipleRaw = addStory(RawTemplate, {
-  dataSourceType: 'url',
-  dataSourceUrl: '/api/v1/BursMan/ScheduleVisits/MembersAutocomplete',
+  ...urlDataSourceProps,
   mode: 'multiple',
-  testValue: ['7F3076A1-E766-41A4-A05B-90E70A01D8AE', '42756BFC-0789-4AA3-91AC-68FEF3B8D5F1'],
+  testValue: ['7f3076a1-e766-41a4-a05b-90e70a01d8ae', '42756bfc-0789-4aa3-91ac-68fef3b8d5f1'],
 });
 //#endregion
 
 //#region Multiple Raw with initial value
 export const MultipleRawWithInitialValue = addStory(RawTemplate, {
-  dataSourceType: 'url',
-  dataSourceUrl: '/api/v1/BursMan/ScheduleVisits/MembersAutocomplete',
+  ...urlDataSourceProps,
   mode: 'multiple',
-  initialValue: ['7F3076A1-E766-41A4-A05B-90E70A01D8AE', '42756BFC-0789-4AA3-91AC-68FEF3B8D5F1'],
+  initialValue: ['7f3076a1-e766-41a4-a05b-90e70a01d8ae', '42756bfc-0789-4aa3-91ac-68fef3b8d5f1'],
+});
+//#endregion
+
+//#region Single Raw with initial value (entity)
+export const SingleEntityRawWithInitialValue = addStory(RawTemplate, {
+  dataSourceType: 'entitiesList',
+  typeShortAlias: 'Shesha.Core.Person',
+  testValue: 'd257e62d-2521-4930-8022-151efeeb0034',
+  initialValue: 'f84056e6-73fb-4609-a286-07c2244e4c7b',
+});
+//#endregion
+
+//#region Multiple Raw with initial value (entity)
+export const MultipleEntityRawWithInitialValue = addStory(RawTemplate, {
+  dataSourceType: 'entitiesList',
+  typeShortAlias: 'Shesha.Core.Person',
+  mode: 'multiple',
+  initialValue: ['f84056e6-73fb-4609-a286-07c2244e4c7b', '8caef933-0c50-42ac-afc8-0e9be0ffd6f4'],
 });
 //#endregion

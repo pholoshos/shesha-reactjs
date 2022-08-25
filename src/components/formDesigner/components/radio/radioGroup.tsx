@@ -1,43 +1,18 @@
 import { Radio, Space } from 'antd';
-import React, { FC, useEffect, useState } from 'react';
-import { ReferenceListItemDto, useReferenceListGetItems } from '../../../../apis/referenceList';
+import React, { FC } from 'react';
 import { useForm } from '../../../../providers/form';
+import { useReferenceList } from '../../../../providers/referenceListDispatcher';
 import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
-import { getCachedItems, saveListItems } from '../../../refListDropDown/utils';
 import { getDataSourceList, IRadioProps } from './utils';
 
 const RadioGroup: FC<IRadioProps> = model => {
   const { referenceListName, referenceListNamespace, items = [], value, onChange } = model;
 
+  const { data: refListItems } = useReferenceList(referenceListNamespace, referenceListName);
+
   const { formMode, isComponentDisabled } = useForm();
 
-  const { refetch: fetchItems, data: listItemsResult } = useReferenceListGetItems({
-    lazy: true,
-  });
-
-  const [cachedListItems, setCachedListItems] = useState<ReferenceListItemDto[]>([]);
-
-  useEffect(() => {
-    if (referenceListName && referenceListNamespace) {
-      const cachedItems = getCachedItems(referenceListName, referenceListNamespace);
-
-      if (cachedItems?.length) {
-        setCachedListItems(cachedItems);
-      } else {
-        fetchItems({ queryParams: { name: referenceListName, namespace: referenceListNamespace } });
-      }
-    }
-  }, [referenceListName, referenceListNamespace]);
-
-  useEffect(() => {
-    if (listItemsResult?.result) {
-      saveListItems(referenceListName, referenceListNamespace, listItemsResult?.result);
-    }
-  }, [listItemsResult]);
-
-  const listItems = cachedListItems?.length ? cachedListItems : listItemsResult?.result;
-
-  const options = getDataSourceList(model?.dataSourceType, items, listItems);
+  const options = getDataSourceList(model?.dataSourceType, items, refListItems?.items);
 
   const isReadOnly = model?.readOnly || formMode === 'readonly';
 

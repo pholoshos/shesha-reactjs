@@ -7,6 +7,8 @@ import { IToolbarItem } from '../../interfaces';
 import DataTableProvider from '../../providers/dataTable';
 import { useDataTableStore } from '../../providers';
 import { notification } from 'antd';
+import { TableColumnsFluentSyntax } from '../../providers/dataTable/interfaces';
+import { useDataTableFluentColumns } from '../../hooks';
 
 export interface IGenericIndexPageProps {
   /**
@@ -14,10 +16,14 @@ export interface IGenericIndexPageProps {
    */
   title: string;
 
-  /**
-   * The id for the table
+  /** 
+   * Type of entity 
    */
-  tableConfigId: string;
+  entityType: string;
+  /**
+   * Columns fluent syntax
+   */
+  columns: TableColumnsFluentSyntax;
 
   /**
    * A callback for redirecting the user to the details page of the modal
@@ -82,7 +88,8 @@ const TableWithControls: FC<IGenericIndexPageProps> = props => {
   return (
     <Page noPadding>
       <IndexTableFull
-        id={props.tableConfigId}
+        // entityType={props.entityType}
+        // configurableColumns={configurableColumns}
         header={props.title}
         actionColumns={[
           { icon: <SearchOutlined />, onClick: props.detailsUrl },
@@ -106,10 +113,16 @@ const TableWithControls: FC<IGenericIndexPageProps> = props => {
   );
 };
 
-const GenericIndexPagePlain: FC<IGenericIndexPageProps> = props => (
-  <DataTableProvider tableId={props.tableConfigId}>
-    <TableWithControls {...props} />
-  </DataTableProvider>
-);
+const GenericIndexPagePlain: FC<IGenericIndexPageProps> = props => {
+  const configurableColumns = useDataTableFluentColumns(props.columns);
+  return (
+    <DataTableProvider
+      entityType={props.entityType}
+      configurableColumns={configurableColumns}
+    >
+      <TableWithControls {...props} />
+    </DataTableProvider>
+  );
+};
 
 export default GenericIndexPagePlain;

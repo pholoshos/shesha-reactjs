@@ -1,6 +1,6 @@
 {
   "name": "@shesha/reactjs",
-  "version": "0.45.5",
+  "version": "3.0.0",
   "description": "The reactjs frontend application and ui for the shesha framework.",
   "license": "GPL-3.0",
   "homepage": "https://Boxfusion.github.io/shesha-reactjs",
@@ -15,7 +15,7 @@
   "scripts": {
     "test": "cross-env CI=1 jest --runInBand",
     "test:watch": "jest --watch",
-    "build": "rimraf dist && npm run lint && npm run build:less && rollup -c",
+    "build": "rimraf dist && npm run build:less && rollup -c",
     "start": "npm run build:less && npm run build:css && rollup -c -w",
     "build:stylesheets": "npm run build:less && npm run build:css",
     "build:less": "node less-bundle.js",
@@ -41,8 +41,7 @@
     "@types/react": "17.0.2",
     "@types/react-dom": "17.0.2",
     "react-sortablejs": "6.0.0",
-    "sortablejs": "1.14.0",
-    "rc-tree": "5.6.3"
+    "sortablejs": "1.14.0"
   },
   "peerDependencies": {
     "@microsoft/signalr": "^5.0.3",
@@ -102,7 +101,7 @@
     "@types/redux-actions": "2.6.1",
     "@types/rollup-plugin-peer-deps-external": "^2.2.0",
     "@types/uuid": "^8.3.3",
-    "antd": "^4.21.7",
+    "antd": "^4.22.7",
     "axios": "^0.21.1",
     "babel-core": "6.26.3",
     "babel-loader": "^7.1.5",

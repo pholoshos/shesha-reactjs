@@ -1,23 +1,19 @@
 import { createAction } from 'redux-actions';
-import { DataTableColumnDto, DataTableConfigDto } from '../../apis/dataTable';
 import { IConfigurableColumnsBase } from '../datatableColumnsConfigurator/models';
 import { IDataTableUserConfig } from './contexts';
 import {
   IndexColumnFilterOption,
   ITableFilter,
   IStoredFilter,
-  ITableDataResponse,
-  IGetDataPayload,
+  IGetDataPayloadInternal,
   IEditableRowState,
   ITableCrudConfig,
   IColumnSorting,
+  DataTableColumnDto,
+  ITableDataInternalResponse,
 } from './interfaces';
 
 export enum DataTableActionEnums {
-  FetchTableConfig = 'FETCH_TABLE_CONFIG',
-  FetchTableConfigSuccess = 'FETCH_TABLE_CONFIG_SUCCESS',
-  FetchTableConfigError = 'FETCH_TABLE_CONFIG_ERROR',
-
   FetchColumnsSuccess = 'FETCH_COLUMNS_SUCCESS',
 
   FetchTableData = 'FETCH_TABLE_DATA',
@@ -58,12 +54,12 @@ export enum DataTableActionEnums {
   /* NEW_ACTION_TYPE_GOES_HERE */
 }
 
-export const fetchTableDataAction = createAction<IGetDataPayload, IGetDataPayload>(
+export const fetchTableDataAction = createAction<IGetDataPayloadInternal, IGetDataPayloadInternal>(
   DataTableActionEnums.FetchTableData,
   p => p
 );
 
-export const fetchTableDataSuccessAction = createAction<ITableDataResponse, ITableDataResponse>(
+export const fetchTableDataSuccessAction = createAction<ITableDataInternalResponse, ITableDataInternalResponse>(
   DataTableActionEnums.FetchTableDataSuccess,
   p => p
 );
@@ -71,13 +67,6 @@ export const fetchTableDataSuccessAction = createAction<ITableDataResponse, ITab
 export const fetchTableDataErrorAction = createAction(DataTableActionEnums.FetchTableDataError, () => {
   /*nop*/
 });
-
-export const fetchTableConfigAction = createAction<string, string>(DataTableActionEnums.FetchTableConfig, p => p);
-
-export const fetchTableConfigSuccessAction = createAction<
-  IFetchTableConfigSuccessPayload,
-  IFetchTableConfigSuccessPayload
->(DataTableActionEnums.FetchTableConfigSuccess, p => p);
 
 export interface IFetchColumnsSuccessSuccessPayload {
   columns: DataTableColumnDto[];
@@ -89,20 +78,10 @@ export const fetchColumnsSuccessSuccessAction = createAction<
   IFetchColumnsSuccessSuccessPayload
 >(DataTableActionEnums.FetchColumnsSuccess, p => p);
 
-export const fetchTableConfigErrorAction = createAction<boolean, boolean>(
-  DataTableActionEnums.FetchTableConfigError,
-  p => p
-);
-
 export const setCreateOrEditRowDataAction = createAction<IEditableRowState, IEditableRowState>(
   DataTableActionEnums.SetCrudRowData,
   p => p
 );
-
-export interface IFetchTableConfigSuccessPayload {
-  tableConfig: DataTableConfigDto;
-  userConfig: IDataTableUserConfig;
-}
 
 export const changePageSizeAction = createAction<number, number>(DataTableActionEnums.ChangePageSize, p => p);
 

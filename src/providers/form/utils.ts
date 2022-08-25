@@ -16,7 +16,7 @@ import {
   SILENT_KEY,
 } from './models';
 import Mustache from 'mustache';
-import { IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
+import { ITableColumn, IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
 import Schema, { Rules, ValidateSource } from 'async-validator';
 import { DEFAULT_FORM_SETTINGS, IFormSettings } from './contexts';
 import { formGet, formGetByPath } from '../../apis/form';
@@ -34,6 +34,7 @@ import menuViewMarkup from './defaults/markups/menuView.json';
 import tableViewMarkup from './defaults/markups/tableView.json';
 import { useSheshaApplication } from '..';
 import { CSSProperties } from 'react';
+import camelcase from 'camelcase';
 
 /**
  * Convert components tree to flat structure.
@@ -501,13 +502,7 @@ export const getValidationRules = (component: IConfigurableFormComponent, option
 };
 
 /* Convert string to camelCase */
-export const camelize = str => {
-  return str
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
-      return index === 0 ? word?.toLowerCase() : word?.toUpperCase();
-    })
-    .replace(/\s+/g, '');
-};
+export const camelcaseDotNotation = str => str.split('.').map(s => camelcase(s)).join('.')
 
 const DICTIONARY_ACCESSOR_REGEX = /(^[\s]*\{(?<key>[\w]+)\.(?<accessor>[^\}]+)\}[\s]*$)/;
 const NESTED_ACCESSOR_REGEX = /((?<key>[\w]+)\.(?<accessor>[^\}]+))/;
@@ -968,3 +963,72 @@ export const filterFormData = (data: any) => {
 
   return data;
 };
+
+/**
+ * Convert list of properties in dot notation to a list of properties for fetching using GraphQL syntax
+ * @param properties 
+ * @returns 
+ */
+export const convertDotNotationPropertiesToGraphQL = (properties: string[], columns: ITableColumn[]): string => {
+  const tree = {};
+  
+  const makeProp = (container: object, name: string) => {
+    let parts = name.split('.');
+    let currentContainer = container;
+
+    do {
+      const part = parts.shift();
+      if (parts.length > 0){
+        // current property is a container
+        const existingContainer = currentContainer[part];
+        // reuse if already exists, it already contains some properties
+        if (typeof existingContainer !== 'object')
+          currentContainer[part] = {};
+
+          currentContainer = currentContainer[part];
+      } else {
+        if (!Boolean(currentContainer[part]))
+          currentContainer[part] = true; // scalar property
+      }        
+    } while (parts.length > 0);
+  }
+
+  // special handling for entity references: expand properties list to include `id` and `_displayName`
+  const expandedProps = [...properties];
+  const entityColumns = columns.filter(c => c.dataType === 'entity');
+  entityColumns.forEach(c => {
+    const requiredProps = [`${c.propertyName}.Id`, `${c.propertyName}._displayName`];
+    requiredProps.forEach(rp => {
+      if (!expandedProps.includes(rp))
+        expandedProps.push(rp);
+    });
+  });
+
+  // build properties tree
+  expandedProps.forEach(p => {
+    makeProp(tree, p);
+  });
+
+  const preparePropertyName = (name: string): string => {
+    return name.startsWith('_')
+      ? name
+      : camelcase(name);
+  }
+
+  const getNodes = (container: object): string => {
+    let result = "";  
+    for (const node in container){
+      if (result !== "")
+        result += " ";
+      const nodeValue = tree[node];
+      if (typeof nodeValue === 'object')
+        result += `${preparePropertyName(node)} { ${getNodes(nodeValue)} }`;
+      else
+        result += preparePropertyName(node);
+    }
+    return result;
+  }
+
+  // convert tree to a GQL syntax
+  return getNodes(tree);
+}

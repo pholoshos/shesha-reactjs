@@ -6,8 +6,9 @@ const STORYBOOK_BASE_URL = 'https://mpdoh-his-be-test.azurewebsites.net';
 const ROOT_PATH = './src/apis';
 
 const API_LIST = [
-  // 'Form',
-  // 'PermissionedObject'
+  'Form',
+  'DataTable',
+  //'PermissionedObject'
   /*
   //'Applications',
   'Area',
@@ -16,7 +17,6 @@ const API_LIST = [
   'CheckList',
   'CheckListItem',
   'ConfigurableComponent',
-  //'DataTable',
   'Note',
   'Person',
   'ReferenceList',

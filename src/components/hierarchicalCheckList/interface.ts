@@ -37,7 +37,10 @@ export enum CheckListSelectionType {
   NotAvailable = 3,
 }
 
-export interface IEventDataNodeWithData extends EventDataNode {
+// note: antd types were changed, CustomEventDataNode was added to fix build, to be reviewed later
+interface CustomEventDataNode extends EventDataNode<{}>{}
+
+export interface IEventDataNodeWithData extends CustomEventDataNode {
   data: IExtendedCheckListItemModel;
 }
 
@@ -51,7 +54,7 @@ export interface IDataNode {
 }
 
 export interface IExpandProps {
-  node: EventDataNode;
+  node: CustomEventDataNode;
   expanded: boolean;
   nativeEvent: MouseEvent;
 }
@@ -59,7 +62,7 @@ export interface IExpandProps {
 export interface ISelectProps {
   event: 'select';
   selected: boolean;
-  node: EventDataNode | IEventDataNodeWithData;
+  node: CustomEventDataNode | IEventDataNodeWithData;
   selectedNodes: DataNode[];
   nativeEvent: MouseEvent;
 }
@@ -76,7 +79,7 @@ export interface ICheckProps {
 
 export interface ICheckInfo {
   event: 'check';
-  node: EventDataNode;
+  node: CustomEventDataNode;
   checked: boolean;
   nativeEvent: MouseEvent;
   checkedNodes: DataNode[];

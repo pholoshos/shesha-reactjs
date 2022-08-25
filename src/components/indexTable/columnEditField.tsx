@@ -25,12 +25,11 @@ export const ColumnEditField: FC<IColumnEditFieldProps> = props => {
   } = props;
 
   const placeholder = [
-    'entityReference',
+    'entity',
     'date',
-    'datetime',
-    'refList',
+    'date-time',
+    'reference-list-item',
     'multiValueRefList',
-    'entityReference',
   ].includes(dataType)
     ? `Select ${caption}`
     : `Enter ${caption}`;
@@ -160,13 +159,13 @@ export const ColumnEditField: FC<IColumnEditFieldProps> = props => {
 
         {dataType === 'number' && renderFilterInput('number')}
 
-        {['date', 'datetime'].includes(dataType) && renderDateInput()}
+        {['date', 'date-time'].includes(dataType) && renderDateInput()}
 
         {dataType === 'boolean' && renderBooleanInput()}
 
-        {dataType === 'entityReference' && renderEntityDropdown()}
+        {dataType === 'entity' && renderEntityDropdown()}
 
-        {['refList', 'multiValueRefList'].includes(dataType) && renderRenderReflistDropdown()}
+        {['reference-list-item', 'multiValueRefList'].includes(dataType) && renderRenderReflistDropdown()}
       </FormItem>
     </div>
   );

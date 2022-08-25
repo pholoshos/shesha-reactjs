@@ -15,7 +15,7 @@ const MAX_CRUD_OPTIONS = 3; // create | update | delete
 const ALL_CRUD_OPTIONS = ["create", "update", "delete"];
 
 export interface IChildDataTableProps extends IConfigurableFormComponent {
-  tableConfigId?: string;
+  entityType: string;
   parentEntityId?: string;
   crud?: boolean;
   enableAllCrudOptions?: boolean;
@@ -31,8 +31,8 @@ const ChildDataTableComponent: IToolboxComponent<IChildDataTableProps> = {
   icon: <TableOutlined />,
   factory: (model: IChildDataTableProps) => {
     const {
+      entityType,
       parentEntityId,
-      tableConfigId,
       label,
       crud,
       crudOptions,
@@ -67,7 +67,6 @@ const ChildDataTableComponent: IToolboxComponent<IChildDataTableProps> = {
     }
     
     const tableProps: IChildTableProps = {
-      id: tableConfigId,
       header: label,
       crud: crud
         ? enableAllCrudOptions || (crudOptions?.length === MAX_CRUD_OPTIONS ? true : selectedOptions)
@@ -77,14 +76,17 @@ const ChildDataTableComponent: IToolboxComponent<IChildDataTableProps> = {
 
     const { parentEntityId: currentParentEntityId } = useDataTableState();
 
-    if (!tableProps.id) return <Alert message="Child DataTable is not configured properly" type="warning" showIcon />;
+    if (!entityType) return <Alert message="Child DataTable is not configured properly" type="warning" showIcon />;
 
     const evaluatedParentEntityId = evaluateValue(parentEntityId, { data: formData });
 
     if (isComponentHidden(model)) return null;
 
     return (
-      <DataTableProvider tableId={tableProps.id} parentEntityId={currentParentEntityId || evaluatedParentEntityId}>
+      <DataTableProvider 
+        entityType={entityType}
+        parentEntityId={currentParentEntityId || evaluatedParentEntityId}
+      >
         <ChildTable {...tableProps} tableRef={tableRef} />
       </DataTableProvider>
     );

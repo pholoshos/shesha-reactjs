@@ -11,7 +11,7 @@ import { Alert, Drawer } from 'antd';
 import { IToolbarItem } from '../../interfaces';
 
 export interface IChildTableProps extends ICrudProps {
-  id: string;
+  //entityType: string;
   toolbarItems?: IToolbarItem[];
   header?: string;
   actionColumns?: ITableActionColumns[];
@@ -39,7 +39,6 @@ export interface IChildTableProps extends ICrudProps {
 }
 
 export const ChildDataTable: FC<IChildTableProps> = ({
-  id,
   header,
   actionColumns,
   crud,
@@ -101,7 +100,6 @@ export const ChildDataTable: FC<IChildTableProps> = ({
         {alert && <Alert type="info" message={alert} />}
 
         <IndexTable
-          id={id}
           actionColumns={actionColumns}
           crud={crud}
           saveLocally={saveLocally}

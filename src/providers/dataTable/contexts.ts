@@ -1,5 +1,4 @@
 import { createContext } from 'react';
-import { DataTableConfigDto } from '../../apis/dataTable';
 import { IFlagsSetters, IFlagsState } from '../../interfaces';
 import { IConfigurableColumnsBase } from '../datatableColumnsConfigurator/models';
 import {
@@ -9,10 +8,9 @@ import {
   IColumnSorting,
   IndexColumnFilterOption,
   ColumnFilter,
-  IGetDataPayload,
+  IGetDataPayloadInternal,
   ITableCrudConfig,
   IEditableRowState,
-  TableDataSourceType,
 } from './interfaces';
 
 export type IFlagProgressFlags =
@@ -36,8 +34,8 @@ export interface IDataTableUserConfig {
   columns?: ITableColumn[];
   tableSorting: IColumnSorting[];
 
-  selectedStoredFilterIds?: string[];
-  tableFilter?: ITableFilter[];
+  selectedFilterIds?: string[];
+  advancedFilter?: ITableFilter[];
 }
 
 export const DEFAULT_DT_USER_CONFIG: IDataTableUserConfig = {
@@ -47,7 +45,7 @@ export const DEFAULT_DT_USER_CONFIG: IDataTableUserConfig = {
   tableSorting: undefined,
 };
 
-export interface IDataTableStoredConfig extends IGetDataPayload {
+export interface IDataTableStoredConfig extends IGetDataPayloadInternal {
   columns?: ITableColumn[];
   tableFilter?: ITableFilter[];
   // stored filters must also be restored from the local storage after page refresh or navigating away.
@@ -68,8 +66,6 @@ export interface IDataTableStateContext
   displayColumnName?: string;
 
   formData?: any;
-  /** Id of the table configuration */
-  tableId?: string; // todo: move all table-specific properties to a separate sub-store
   /** Type of entity */
   entityType?: string;
   /** Configurable columns. Is used in pair with entityType  */
@@ -79,8 +75,6 @@ export interface IDataTableStateContext
 
   /** table columns */
   columns?: ITableColumn[];
-  /** stored filters */
-  storedFilters?: IStoredFilter[];
 
   /** Id of the parent entity. Is used for child tables */
   parentEntityId?: string;
@@ -160,7 +154,7 @@ export interface IPublicDataTableActions {
 export interface IDataTableActionsContext
   extends IFlagsSetters<IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags>,
     IPublicDataTableActions {
-  fetchTableData?: (payload: IGetDataPayload) => void;
+  fetchTableData?: (payload: IGetDataPayloadInternal) => void;
   fetchTableConfig?: (id: string) => void;
   toggleColumnVisibility?: (val: string) => void;
   setCurrentPage?: (page: number) => void;
@@ -171,7 +165,7 @@ export interface IDataTableActionsContext
   changeFilter?: (filterColumnId: string, filterValue: ColumnFilter) => void;
   applyFilters?: () => void;
   clearFilters?: () => void; // to be removed
-  getDataPayload?: () => IGetDataPayload;
+  getDataPayload?: () => IGetDataPayloadInternal;
   /** change quick search text without refreshing of the table data */
   changeQuickSearch?: (val: string) => void;
   /** change quick search and refresh table data */
@@ -196,7 +190,6 @@ export interface IDataTableActionsContext
   updateLocalTableData?: () => void;
   deleteRowItem?: (idOfItemToDeleteOrUpdate: string) => void;
   getCurrentFilter: () => ITableFilter[];
-  getDataSourceType: () => TableDataSourceType; // todo: mode to component settings, provide backward compatibility
 
   /**
    * Register columns in the table context. Is used for configurable tables
@@ -215,9 +208,7 @@ export const DATA_TABLE_CONTEXT_INITIAL_STATE: IDataTableStateContext = {
   isInProgress: {},
   error: {},
   actioned: {},
-  tableId: null,
   columns: [],
-  storedFilters: [],
   tableData: [],
   isFetchingTableData: false,
   hasFetchTableDataError: null,
@@ -244,13 +235,3 @@ export interface DataTableFullInstance extends IDataTableStateContext, IDataTabl
 export const DataTableStateContext = createContext<IDataTableStateContext>(DATA_TABLE_CONTEXT_INITIAL_STATE);
 
 export const DataTableActionsContext = createContext<IDataTableActionsContext>(undefined);
-
-export const DEFAULT_TABLE_CONFIG_RESULT: DataTableConfigDto = {
-  pageSize: 10,
-  columns: [],
-  storedFilters: [],
-  createUrl: null,
-  detailsUrl: null,
-  updateUrl: null,
-  deleteUrl: null,
-};

@@ -177,8 +177,12 @@ export const PersonDetails = addStory(DesignerTemplate, {
   formPath: '/persons/details',
 });
 
-export const OtpSettings = addStory(DesignerTemplate, {
-  formPath: 'settings/otp',
+export const FormsIndex = addStory(DesignerTemplate, {
+  formPath: 'forms-new',
+});
+
+export const FormsIndexNew = addStory(DesignerTemplate, {
+  formPath: 'forms-new-refactored',
 });
 
 export const ModelItemProps = addStory(DesignerTemplate, {

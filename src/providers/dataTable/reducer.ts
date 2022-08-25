@@ -9,21 +9,19 @@ import {
   IChangeFilterAction,
   IChangeFilterOptionPayload,
   IFetchColumnsSuccessSuccessPayload,
-  IFetchTableConfigSuccessPayload,
   IRegisterConfigurableColumnsPayload,
 } from './actions';
 import flagsReducer from '../utils/flagsReducer';
 import {
   IColumnSorting,
   IEditableRowState,
-  IGetDataPayload,
+  IGetDataPayloadInternal,
   IndexColumnDataType,
   IStoredFilter,
   ITableColumn,
   ITableCrudConfig,
-  ITableDataResponse,
+  ITableDataInternalResponse,
   ITableFilter,
-  SortDirection,
 } from './interfaces';
 import { handleActions } from 'redux-actions';
 import {
@@ -32,7 +30,7 @@ import {
   IDataColumnsProps,
 } from '../datatableColumnsConfigurator/models';
 import { getFilterOptions } from '../../components/columnItemFilter';
-import { cleanPropertyName, columnSorting2SortDirection } from './utils';
+import { camelcaseDotNotation } from '../form/utils';
 
 /** get dirty filter if exists and fallback to current filter state */
 const getDirtyFilter = (state: IDataTableStateContext): ITableFilter[] => {
@@ -163,18 +161,17 @@ const reducer = handleActions<IDataTableStateContext, any>(
 
     [DataTableActionEnums.FetchTableData]: (
       state: IDataTableStateContext,
-      action: ReduxActions.Action<IGetDataPayload>
+      action: ReduxActions.Action<IGetDataPayloadInternal>
     ) => {
       const { payload } = action;
 
       const selectedStoredFilterIds = state?.selectedStoredFilterIds?.length
         ? state?.selectedStoredFilterIds
-        : payload.selectedStoredFilterIds ?? [];
+        : payload.selectedFilterIds ?? [];
 
       return {
         ...state,
         isFetchingTableData: true,
-        tableId: payload.id, // todo: isolate all table properties including id, for now we just pass the id from the fetch aciton
         tableSorting: payload.sorting,
         currentPage: payload.currentPage,
         selectedPageSize: payload.pageSize,
@@ -194,7 +191,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
 
     [DataTableActionEnums.FetchTableDataSuccess]: (
       state: IDataTableStateContext,
-      action: ReduxActions.Action<ITableDataResponse>
+      action: ReduxActions.Action<ITableDataInternalResponse>
     ) => {
       const {
         payload: { rows, totalPages, totalRows, totalRowsBeforeFilter },
@@ -207,100 +204,6 @@ const reducer = handleActions<IDataTableStateContext, any>(
         totalRows,
         totalRowsBeforeFilter,
         isFetchingTableData: false,
-      };
-    },
-
-    [DataTableActionEnums.FetchTableConfig]: (state: IDataTableStateContext, action: ReduxActions.Action<string>) => {
-      const { payload } = action;
-
-      return {
-        ...state,
-        tableId: payload,
-      };
-    },
-
-    [DataTableActionEnums.FetchTableConfigError]: (
-      state: IDataTableStateContext,
-      action: ReduxActions.Action<boolean>
-    ) => {
-      const { payload } = action;
-
-      return {
-        ...state,
-        isFetchingTableData: false,
-        hasFetchTableDataError: payload,
-      };
-    },
-
-    [DataTableActionEnums.FetchTableConfigSuccess]: (
-      state: IDataTableStateContext,
-      action: ReduxActions.Action<IFetchTableConfigSuccessPayload>
-    ) => {
-      const {
-        payload: { tableConfig, userConfig },
-      } = action;
-      const { columns, storedFilters, createUrl, updateUrl, deleteUrl, detailsUrl } = tableConfig;
-
-      const cols = columns.map<ITableColumn>(column => {
-        const userColumn = userConfig?.columns?.find(c => c.id === column.name);
-
-        const colVisibility =
-          userColumn?.show === null || userColumn?.show === undefined ? !column.isHiddenByDefault : userColumn?.show;
-
-        return {
-          id: column.name,
-          columnId: column.name,
-          caption: column.caption,
-          accessor: column.name,
-          propertyName: column.propertyName,
-          header: column.caption,
-          isVisible: column.isVisible,
-          isSortable: column.isSortable,
-          isEditable: column.isEditable,
-          isHiddenByDefault: column.isHiddenByDefault,
-          isFilterable: column.isFilterable,
-          entityReferenceTypeShortAlias: column.entityReferenceTypeShortAlias,
-          referenceListName: column.referenceListName,
-          referenceListNamespace: column.referenceListNamespace,
-          autocompleteUrl: column.autocompleteUrl,
-          allowInherited: column.allowInherited,
-          dataType: column.dataType as IndexColumnDataType,
-          defaultSorting: column.defaultSorting as SortDirection,
-
-          show: column.isVisible && colVisibility,
-          allowShowHide: column.allowShowHide ?? true,
-        };
-      });
-
-      const filteredFilters = storedFilters
-        ?.filter(f => Boolean(f.id))
-        .map<IStoredFilter>(filter => ({ ...filter }));
-
-      const selectedStoredFilterIds = state?.selectedStoredFilterIds?.length
-        ? state?.selectedStoredFilterIds
-        : userConfig.selectedStoredFilterIds ?? [];
-
-      return {
-        ...state,
-
-        isFetchingTableData: false,
-        tableConfigLoaded: true,
-        columns: cols,
-        storedFilters: [...(state.storedFilters || []), ...filteredFilters],
-        crudConfig: {
-          createUrl,
-          updateUrl,
-          deleteUrl,
-          detailsUrl,
-        },
-        // user config
-        currentPage: userConfig?.currentPage || 1,
-        selectedPageSize: userConfig?.pageSize || DEFAULT_PAGE_SIZE_OPTIONS[1],
-        quickSearch: userConfig?.quickSearch,
-        tableFilter: userConfig?.tableFilter,
-        selectedStoredFilterIds, // TODO: Review the persisting of selectedStoredFilterIds
-        // selectedStoredFilterIds: userConfig?.selectedStoredFilterIds || [],
-        tableSorting: userConfig?.tableSorting,
       };
     },
 
@@ -323,34 +226,33 @@ const reducer = handleActions<IDataTableStateContext, any>(
           switch (colProps.columnType) {
             case 'data': {
               const srvColumn = dataProps.propertyName
-                ? columns.find(c => cleanPropertyName(c.name) === cleanPropertyName(dataProps.propertyName))
+                ? columns.find(c => camelcaseDotNotation(c.propertyName) === camelcaseDotNotation(dataProps.propertyName))
                 : {};
 
               return {
                 id: dataProps?.propertyName,
                 columnId: column.id,
-                accessor: cleanPropertyName(dataProps?.propertyName),
+                accessor: camelcaseDotNotation(dataProps?.propertyName),
                 propertyName: dataProps?.propertyName,
                 minWidth: column.minWidth || MIN_COLUMN_WIDTH,
                 maxWidth: column.minWidth,
 
                 dataType: srvColumn?.dataType as IndexColumnDataType,
+                dataFormat: srvColumn?.dataFormat,
                 isSortable: srvColumn?.isSortable,
-                isHiddenByDefault: srvColumn?.isHiddenByDefault,
                 isFilterable: srvColumn?.isFilterable,
                 entityReferenceTypeShortAlias: srvColumn?.entityReferenceTypeShortAlias,
                 referenceListName: srvColumn?.referenceListName,
                 referenceListNamespace: srvColumn?.referenceListNamespace,
                 autocompleteUrl: srvColumn?.autocompleteUrl,
                 allowInherited: srvColumn?.allowInherited,
-                defaultSorting: columnSorting2SortDirection(column.defaultSorting),
 
                 caption: column.caption,
                 header: column.caption,
                 isVisible: column.isVisible,
                 allowShowHide: true,
 
-                show: srvColumn?.isVisible && colVisibility,
+                show: colVisibility,
               };
             }
             case 'action': {
@@ -368,7 +270,6 @@ const reducer = handleActions<IDataTableStateContext, any>(
                 actionProps, // todo: review and add to interface
 
                 isSortable: false,
-                isHiddenByDefault: false,
                 isFilterable: false,
 
                 caption: column.caption,
@@ -393,10 +294,9 @@ const reducer = handleActions<IDataTableStateContext, any>(
           ? userConfig.tableSorting
           : configuredTableSorting;
 
-      // TODO: Review the saving of selected filters
       const selectedStoredFilterIds = state?.selectedStoredFilterIds?.length
         ? state?.selectedStoredFilterIds
-        : userConfig.selectedStoredFilterIds ?? [];
+        : userConfig.selectedFilterIds ?? [];
 
       return {
         ...state,
@@ -405,9 +305,9 @@ const reducer = handleActions<IDataTableStateContext, any>(
         currentPage: userConfig?.currentPage || 1,
         selectedPageSize: userConfig?.pageSize || DEFAULT_PAGE_SIZE_OPTIONS[1],
         quickSearch: userConfig?.quickSearch,
-        tableFilter: userConfig?.tableFilter,
-        selectedStoredFilterIds, // TODO: Review the saving of selected filters
-        // selectedStoredFilterIds: userConfig?.selectedStoredFilterIds || [],
+        tableFilter: userConfig?.advancedFilter,
+        tableFilterDirty: userConfig?.advancedFilter,
+        selectedStoredFilterIds,
         tableSorting: tableSorting,
       };
     },
@@ -476,24 +376,6 @@ const reducer = handleActions<IDataTableStateContext, any>(
       action: ReduxActions.Action<string>
     ) => {
       const { payload: columnIdToToggle } = action;
-
-      const incomingColumns = state.columns.map(({ id, show, ...rest }) => {
-        if (id === columnIdToToggle) {
-          return {
-            id,
-            ...rest,
-            show: !show,
-          };
-        }
-        return { id, show, ...rest };
-      });
-
-      console.log(
-        'state.columns, columnIdToToggle, incomingColumns: ',
-        state.columns,
-        columnIdToToggle,
-        incomingColumns
-      );
 
       return {
         ...state,

@@ -20,7 +20,6 @@ interface IExtendedChildTableProps extends IChildTableProps {
 
 const simpleTableProps: IExtendedChildTableProps = {
   parentEntityId: '20BCF7E3-783A-494E-A0EA-B0DB08F89B61',
-  id: 'SourcesOfFundings_Index',
   header: 'List of Staff',
   crud: true,
   actionColumns: [
@@ -35,7 +34,6 @@ const simpleTableProps: IExtendedChildTableProps = {
 };
 
 const inlineEditingWithCustomEditorsTableProps: IExtendedChildTableProps = {
-  id: 'Achievements_Index',
   parentEntityId: '20BCF7E3-783A-494E-A0EA-B0DB08F89B61',
   header: 'Staff Meeting Custom Editor',
   crud: true,
@@ -58,7 +56,7 @@ const Template: Story<IExtendedChildTableProps> = args => {
 
   return (
     <StoryApp>
-      <DataTableProvider tableId={args?.id} parentEntityId={args?.parentEntityId}>
+      <DataTableProvider parentEntityId={args?.parentEntityId}>
         <ChildTable
           {...args}
           tableRef={tableRef}

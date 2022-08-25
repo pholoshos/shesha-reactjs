@@ -19,17 +19,7 @@ import { DynamicModalProvider } from '../dynamicModal';
 import { UiProvider } from '../ui';
 import { MetadataDispatcherProvider } from '../metadataDispatcher';
 import { IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
-
-/*
-import { 
-  AppConfiguratorProvider,
-  DynamicModalProvider,
-  UiProvider,
-  MetadataDispatcherProvider,
-  ShaRoutingProvider,
-  AuthProvider,
-  AuthorizationSettingsProvider } from '..';
-*/
+import { ReferenceListDispatcherProvider } from '../referenceListDispatcher';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -92,9 +82,11 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
                 >
                   <AuthorizationSettingsProvider>
                     <AppConfiguratorProvider>
-                      <MetadataDispatcherProvider>
-                        <DynamicModalProvider>{children}</DynamicModalProvider>
-                      </MetadataDispatcherProvider>
+                      <ReferenceListDispatcherProvider>
+                        <MetadataDispatcherProvider>
+                          <DynamicModalProvider>{children}</DynamicModalProvider>
+                        </MetadataDispatcherProvider>
+                      </ReferenceListDispatcherProvider>
                     </AppConfiguratorProvider>
                   </AuthorizationSettingsProvider>
                 </AuthProvider>

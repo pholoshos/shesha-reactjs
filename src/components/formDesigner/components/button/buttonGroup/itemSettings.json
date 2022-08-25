@@ -462,6 +462,11 @@
               "exposedVariables": [
                 { "name": "data", "description": "The form data", "type": "object" },
                 { "name": "moment", "description": "The moment.js object", "type": "object" },
+                {
+                  "name": "setFormData",
+                  "description": "The function for updating the form state. The state will be merged",
+                  "type": "function"
+                },
                 { "name": "form", "description": "Form instance", "type": "FormInstance" },
                 { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
                 { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
@@ -509,6 +514,15 @@
               "label": "Show Modal Buttons",
               "defaultChecked": false,
               "description": "By default the modal does not show the buttons. Check this box if you wish to see the buttons"
+            },
+            {
+              "id": "186cce2e-3c6d-434c-b33e-923289d7484d",
+              "type": "checkbox",
+              "name": "submitLocally",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "label": "Submit Locally",
+              "defaultChecked": false,
+              "description": "If this is checked, instead of submitting the form to the back-end, the data will be returned and can be accessed under onSuccess script"
             },
             {
               "id": "ae69ab38-65fa-4b34-a701-3b46aff045f5",

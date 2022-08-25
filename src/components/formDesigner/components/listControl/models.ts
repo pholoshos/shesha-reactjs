@@ -9,11 +9,13 @@ export interface IListItemsProps {
   footer?: string;
   formPath?: IGuidNullableEntityWithDisplayNameDto;
   allowRemoveItems?: boolean;
+  allowSubmit?: boolean;
   deleteUrl?: string;
   submitUrl?: string;
   submitHttpVerb?: 'POST' | 'PUT';
   onSubmit?: string;
   showPagination?: boolean;
+  showQuickSearch?: boolean;
   paginationDefaultPageSize: number;
   buttons?: any[];
   maxHeight?: number;

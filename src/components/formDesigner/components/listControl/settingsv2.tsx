@@ -112,6 +112,65 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         </FormItem>
       </Show>
 
+      <FormItem name="allowSubmit" label="Allow submit" valuePropName="checked">
+        <Checkbox />
+      </FormItem>
+
+      <Show when={state?.allowSubmit}>
+        <FormItem
+          label="On Submit"
+          name="onSubmit"
+          tooltip="Write a code that return tha payload to be sent to the server when submitting this items"
+        >
+          <CodeEditor
+            mode="dialog"
+            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+            name="onSubmit"
+            type={''}
+            id={''}
+            description="Write a code that return tha payload to be sent to the server when submitting this items"
+            exposedVariables={[
+              {
+                id: 'e964ed28-3c2c-4d02-b0b7-71faf243eb53',
+                name: 'items',
+                description: 'List of items',
+                type: 'array',
+              },
+              {
+                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                name: 'data',
+                description: 'Form data',
+                type: 'object',
+              },
+              {
+                id: '65b71112-d412-401f-af15-1d3080f85319',
+                name: 'globalState',
+                description: 'The global state',
+                type: 'object',
+              },
+              {
+                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+                name: 'queryParams',
+                description: 'Query parameters',
+                type: 'object',
+              },
+            ]}
+          />
+        </FormItem>
+
+        <FormItem
+          name="submitHttpVerb"
+          label="Submit verb"
+          valuePropName="checked"
+          tooltip="Write  a code that returns the string that represent the url to be used to save the items"
+        >
+          <Select>
+            <Option value="POST">POST</Option>
+            <Option value="PUT">PUT</Option>
+          </Select>
+        </FormItem>
+      </Show>
+
       <FormItem
         name="dataSource"
         label="Data source"
@@ -224,6 +283,10 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
       </FormItem>
 
       <SectionSeparator sectionName="Pagination" />
+
+      <FormItem name="showQuickSearch" label="Show Quick Search" valuePropName="checked">
+        <Checkbox />
+      </FormItem>
 
       <FormItem name="showPagination" label="Show pagination" valuePropName="checked">
         <Checkbox />

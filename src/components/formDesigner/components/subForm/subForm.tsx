@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import ShaSpin from '../../../shaSpin';
 import ValidationErrors from '../../../validationErrors';
-import { useSubForm } from './provider';
+import { useSubForm } from '../../../../providers/subForm';
 import { SubFormContainer } from './subFormContainer';
 
 const SubForm: FC = () => {

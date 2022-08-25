@@ -41,16 +41,19 @@ interface IAutoCompletePlacesFieldProps extends IAddressCompomentProps {
 const AutoCompletePlacesField: FC<IAutoCompletePlacesFieldProps> = props => {
   const { formMode, formData } = useForm();
 
-  const completeModel = props;
-  completeModel.readOnly = props?.readOnly || formMode === 'readonly';
+  const completeModel = { ...(props || {}) };
+
+  if (typeof completeModel === 'object') {
+    completeModel.readOnly = props?.readOnly || formMode === 'readonly';
+  }
 
   const inputProps: InputProps = {
-    placeholder: props.placeholder,
-    prefix: props.prefix,
-    suffix: props.suffix,
-    disabled: props.disabled,
-    bordered: !props.hideBorder,
-    readOnly: props.readOnly,
+    placeholder: props?.placeholder,
+    prefix: props?.prefix,
+    suffix: props?.suffix,
+    disabled: props?.disabled,
+    bordered: !props?.hideBorder,
+    readOnly: props?.readOnly,
     style: getStyle(props?.style, formData),
     size: props?.size,
   };

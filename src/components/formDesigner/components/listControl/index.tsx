@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { IAnyObject, IFormItem, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { DeleteFilled, OrderedListOutlined } from '@ant-design/icons';
@@ -6,7 +6,7 @@ import { evaluateComplexString, validateConfigurableComponentSettings } from '..
 import { ListItemProvider, useForm, useGlobalState } from '../../../../providers';
 import { listSettingsForm } from './settings';
 import ComponentsContainer from '../../componentsContainer';
-import { Button, Divider, Form } from 'antd';
+import { Button, Divider, Form, Input, message, Space } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import { useGet, useMutate } from 'restful-react';
 import ValidationErrors from '../../../validationErrors';
@@ -19,16 +19,19 @@ import CollapsiblePanel from '../../../collapsiblePanel';
 import { ButtonGroup } from '../button/buttonGroup/buttonGroupComponent';
 import { ListControlSettings } from './settingsv2';
 import { IListItemsProps } from './models';
-import { camelCase, isEmpty } from 'lodash';
+import { camelCase, isEmpty, isEqual } from 'lodash';
 import camelCaseKeys from 'camelcase-keys';
 import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
 import { useFormMarkup } from '../../../../providers/form/hooks';
-import { SubFormProvider } from '../subForm/provider';
+import { SubFormProvider } from '../../../../providers/subForm';
 import SubForm from '../subForm/subForm';
 import { ListControlEvents } from './constants';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { useSubscribe } from '../../../../hooks';
 import { nanoid } from 'nanoid';
+import { useEntitiesGetAll } from '../../../../apis/entities';
+
+const MAX_RESULT_COUNT = 1_000_000;
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {
   /** the source of data for the list component */
@@ -107,6 +110,10 @@ interface IListComponentRenderProps extends IListItemsProps, IFormItem {
   value?: any[];
 }
 
+interface IListComponentRenderState {
+  quickSearch?: string;
+}
+
 const ListComponentRender: FC<IListComponentRenderProps> = ({
   containerId,
   dataSourceUrl,
@@ -125,11 +132,31 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   properties,
   renderStrategy,
   uniqueStateId,
+  allowSubmit,
+  submitHttpVerb,
+  onSubmit,
+  submitUrl,
+  entityType,
+  showQuickSearch,
+  labelCol,
+  wrapperCol,
 }) => {
   const { markup, error: fetchFormError } = useFormMarkup(formPath?.id);
+  const [state, setState] = useState<IListComponentRenderState>();
   const queryParamsFromBrowser = useMemo(() => getQueryParams(), []);
-  const { formData, formMode } = useForm();
+  const { formData, formMode, form } = useForm();
   const { globalState } = useGlobalState();
+  const {} = useEntitiesGetAll({
+    queryParams: {
+      entityType,
+      filter: '',
+      properties: '',
+      quickSearch: state?.quickSearch,
+      sorting: '',
+      skipCount: 0,
+      maxResultCount: 1_000_000,
+    },
+  });
   const isInDesignerMode = formMode === 'designer';
 
   const getEvaluatedUrl = (url: string) => {
@@ -146,6 +173,12 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     path: getEvaluatedUrl(deleteUrl),
     verb: 'DELETE',
   });
+
+  const { mutate: submitHttp, loading: submitting, error: submitError } = useMutate({
+    path: getEvaluatedUrl(submitUrl),
+    verb: submitHttpVerb,
+  });
+
   const { refetch, loading: fetchingData, data, error: fetchDataError } = useGet({ path: '/' });
 
   const evaluatedDataSourceUrl = useMemo(() => {
@@ -247,9 +280,32 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     }
   }, [value, isInDesignerMode]);
 
+  // useEffect(() => {
+  //   if (formData && name) {
+  //     if (formData[name] && !isEqual(value, formData[name])) {
+  //       onChange(formData[name]);
+  //     }
+  //   }
+  // }, [formData]);
+
+  console.log(
+    'LOGS:: name, value, formData, form, form?.getFieldsValue()',
+    name,
+    value,
+    formData,
+    form,
+    form?.getFieldsValue()
+  );
+
   useSubscribe(ListControlEvents.refreshListItems, ({ stateId }) => {
     if (stateId === uniqueStateId) {
       debouncedRefresh();
+    }
+  });
+
+  useSubscribe(ListControlEvents.saveListItems, ({ stateId }) => {
+    if (stateId === uniqueStateId) {
+      submitListItems();
     }
   });
 
@@ -275,8 +331,8 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     );
   };
 
-  const renderSubForm = () => {
-    // TODO: Pass the correct name in the loop
+  const renderSubForm = (name?: string) => {
+    // Note we do not pass the name. The name will be provided by the List component
     return (
       <SubFormProvider name={name} markup={markup} properties={[]}>
         <SubForm />
@@ -295,14 +351,47 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     [value]
   );
 
+  const setQuickSearch = useDebouncedCallback((text: string) => {
+    setState(prev => ({ ...prev, quickSearch: text }));
+  }, 200);
+
+  const submitListItems = () => {
+    if (onSubmit) {
+      const getOnSubmitPayload = () => {
+        // tslint:disable-next-line:function-constructor
+        return new Function('data, query, globalState, items', onSubmit)(
+          formData,
+          queryParamsFromBrowser,
+          globalState,
+          value
+        ); // Pass data, query, globalState
+      };
+
+      const payload = Boolean(onSubmit) ? getOnSubmitPayload() : value;
+
+      submitHttp(payload).then(() => {
+        message.success('Data saved successfully!');
+      });
+    }
+  };
+
+  const isSpinning = submitting || fetchingData || isDeleting;
+
   return (
     <CollapsiblePanel
       header={title}
       extraClass="sha-list-component-extra"
       extra={
         <div className="sha-list-component-extra-space">
-          {renderPagination()}
-          <ButtonGroup items={buttons || []} name={''} type={''} id={containerId} size="small" />
+          <Space size="small">
+            {renderPagination()}
+
+            <Show when={showQuickSearch}>
+              <Input.Search onSearch={setQuickSearch} size="small" />
+            </Show>
+
+            <ButtonGroup items={buttons || []} name={''} type={''} id={containerId} size="small" />
+          </Space>
         </div>
       }
     >
@@ -310,15 +399,16 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
         <ComponentsContainer containerId={containerId} />
       </Show>
       <Show when={isInDesignerMode && renderStrategy === 'externalForm' && Boolean(formPath?.id)}>
-        {renderSubForm()}
+        {renderSubForm('__IGNORE__')}
       </Show>
 
       <Show when={!isInDesignerMode}>
         <ValidationErrors error={fetchDataError} />
         <ValidationErrors error={fetchFormError} />
         <ValidationErrors error={deleteError} />
+        <ValidationErrors error={submitError} />
 
-        <ShaSpin spinning={fetchingData || isDeleting} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
+        <ShaSpin spinning={isSpinning} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
           <Show when={Array.isArray(value)}>
             <div className="sha-list-component-body" style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}>
               <Form.List name={name} initialValue={[]}>
@@ -327,7 +417,12 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
                     <>
                       {fields?.map((field, index) => (
                         <div className="sha-list-component-item">
-                          <ListItemProvider index={index} prefix={`${name}.`} key={field.key}>
+                          <ListItemProvider
+                            index={index}
+                            prefix={`${name}.`}
+                            key={field.key}
+                            layout={{ wrapperCol: { span: wrapperCol }, labelCol: { span: labelCol } }}
+                          >
                             <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
                               <ComponentsContainer
                                 containerId={containerId}

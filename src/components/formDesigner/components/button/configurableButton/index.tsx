@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { Button, message, Modal } from 'antd';
 import { useShaRouting, useForm, useModal, useGlobalState, useSheshaApplication } from '../../../../../providers';
 import { ISelectionProps } from '../../../../../providers/dataTableSelection/models';
@@ -26,10 +26,25 @@ export interface IConfigurableButtonProps extends Omit<IButtonGroupButton, 'styl
 
 export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
   const { backendUrl } = useSheshaApplication();
-  const { getAction, form, setFormMode, formData, formMode } = useForm();
+  const { getAction, form, setFormMode, formData, formMode, setFormData } = useForm();
   const { router } = useShaRouting();
   const { globalState } = useGlobalState();
   const { publish } = usePubSub();
+
+  const setData = (data: any) => {
+    setFormData({
+      values: data,
+      mergeValues: true,
+    });
+
+    console.log('LOGS:: ConfigurableButton data', data, form, form?.getFieldsValue());
+
+    form?.setFieldsValue(data);
+
+    setTimeout(() => {
+      console.log('LOGS:: ConfigurableButton data after 3 secs', form?.getFieldsValue());
+    }, 3000);
+  };
 
   const executeExpression = (expression: string, result?: any) => {
     if (!expression) {
@@ -39,10 +54,11 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
     }
 
     // tslint:disable-next-line:function-constructor
-    return new Function('data, moment, form, formMode, http, result, message, globalState', expression)(
+    return new Function('data, moment, form, setFormData, formMode, http, result, message, globalState', expression)(
       formData,
       moment,
       form,
+      setData,
       formMode,
       axiosHttp(backendUrl),
       result,
@@ -73,6 +89,7 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       onSuccessRedirectUrl: convertedProps?.onSuccessRedirectUrl,
       destroyOnClose: true,
       skipFetchData: props.skipFetchData,
+      submitLocally: props?.submitLocally,
       width: props?.modalWidth,
       initialValues: evaluateKeyValuesToObject(convertedProps?.additionalProperties, formData),
       parentFormValues: formData,

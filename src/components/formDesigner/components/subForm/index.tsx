@@ -3,14 +3,14 @@ import { IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { FormOutlined } from '@ant-design/icons';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm } from '../../../../providers';
+import { useForm, SubFormProvider, SubFormProviderProps } from '../../../../providers';
 import { alertSettingsForm } from './settings';
 import SubForm from './subForm';
-import { SubFormProvider, SubFormProviderProps } from './provider';
 import ConfigurableFormItem from '../formItem';
 import { SubFormSettings } from './settingsv2';
 
 export interface ISubFormProps extends SubFormProviderProps, IConfigurableFormComponent {
+  name: string;
   uniqueStateId?: string;
 }
 

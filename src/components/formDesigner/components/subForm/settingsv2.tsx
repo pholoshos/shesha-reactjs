@@ -5,7 +5,7 @@ import PropertyAutocomplete from '../propertyAutocomplete/propertyAutocomplete';
 import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
 import { AutocompleteDto, AutocompleteRaw } from '../../../autocomplete';
-import { ISubFormProps } from './provider/interfaces';
+import { ISubFormProps } from '../../../../providers/subForm/interfaces';
 import Properties from '../../../properties';
 
 const Option = Select.Option;

@@ -1,25 +1,26 @@
 import React, { FC, useReducer, useContext, PropsWithChildren, useEffect } from 'react';
 import { useGet, useMutate } from 'restful-react';
-import { useForm } from '../../../../../providers/form';
+import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
-import { useSubscribe } from '../../../../../hooks';
-import { useFormGet } from '../../../../../apis/form';
+import { useSubscribe } from '../../hooks';
+import { useFormGet } from '../../apis/form';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
-import { useGlobalState } from '../../../../../providers';
-import { evaluateComplexString } from '../../../../../formDesignerUtils';
-import { getQueryParams } from '../../../../../utils/url';
-import { IFormDto } from '../../../../../providers/form/models';
+import { evaluateComplexString } from '../../formDesignerUtils';
+import { getQueryParams } from '../../utils/url';
+import { IFormDto } from '../form/models';
 import { setComponentsActions } from './actions';
 import { ISubFormProps } from './interfaces';
 import { message } from 'antd';
+import { useGlobalState } from '../globalState';
 
-export interface SubFormProviderProps extends ISubFormProps {
+export interface SubFormProviderProps extends Omit<ISubFormProps, 'name'> {
   uniqueStateId?: string;
+  name?: string;
   markup?: IFormDto['markup'];
 }
 
-const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
+const SubFormProvider: FC<SubFormProviderProps> = ({
   children,
   value,
   formPath,
@@ -35,6 +36,9 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
   dataSource,
   markup,
   properties,
+  name,
+  labelCol,
+  wrapperCol,
   onChange,
 }) => {
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
@@ -219,6 +223,7 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
   return (
     <SubFormContext.Provider
       value={{
+        prefixName: name,
         initialValues: value,
         errors: {
           getForm: fetchFormError,
@@ -235,6 +240,7 @@ const SubFormProvider: FC<PropsWithChildren<SubFormProviderProps>> = ({
           putData: isUpdating,
         },
         components: state?.components,
+        layout: { labelCol: { span: labelCol }, wrapperCol: { span: labelCol } },
       }}
     >
       <SubFormActionsContext.Provider

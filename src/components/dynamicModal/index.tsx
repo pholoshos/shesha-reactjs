@@ -37,6 +37,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     prepareInitialValues,
     mode = 'edit',
     skipFetchData,
+    submitLocally,
     onCancel,
   } = props;
 
@@ -46,10 +47,16 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
   const isSmall = useMedia('(max-width: 480px)');
 
   const onOk = () => {
-    if (showModalFooter) {
-      form?.submit();
+    if (submitLocally) {
+      const formValues = form?.getFieldsValue();
+
+      onSubmitted(null, formValues);
     } else {
-      hideForm();
+      if (showModalFooter) {
+        form?.submit();
+      } else {
+        hideForm();
+      }
     }
   };
 

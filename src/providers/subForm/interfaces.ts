@@ -1,6 +1,6 @@
-import { IGuidNullableEntityWithDisplayNameDto } from './../../../../../interfaces/shesha';
-import { IChangeable, IConfigurableFormComponent, IValuable } from '../../../../../interfaces';
-import { IStoredFilter } from '../../../../../providers/dataTable/interfaces';
+import { IGuidNullableEntityWithDisplayNameDto } from '../../interfaces/shesha';
+import { IChangeable, IConfigurableFormComponent, IValuable } from '../../interfaces';
+import { IStoredFilter } from '../dataTable/interfaces';
 
 export interface ISetComponentsPayload {
   components?: IConfigurableFormComponent[];

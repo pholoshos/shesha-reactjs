@@ -148,7 +148,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const [state, dispatch] = useThunkReducer(dataTableReducer, {
     ...DATA_TABLE_CONTEXT_INITIAL_STATE,
     entityType,
-    configurableColumns,
+    configurableColumns: configurableColumns ?? [],
     title,
     parentEntityId,
   });

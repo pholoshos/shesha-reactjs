@@ -79,6 +79,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
       <Show when={state?.allowRemoveItems}>
         <FormItem
           name="deleteUrl"
+          label="Delete URL"
           tooltip="The API url that will be used delete the list item. Write the code that returns the string"
         >
           <CodeEditor
@@ -123,6 +124,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
           tooltip="Write a code that return tha payload to be sent to the server when submitting this items"
         >
           <CodeEditor
+            label="On Submit"
             mode="dialog"
             setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
             name="onSubmit"
@@ -136,6 +138,43 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
                 description: 'List of items',
                 type: 'array',
               },
+              {
+                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                name: 'data',
+                description: 'Form data',
+                type: 'object',
+              },
+              {
+                id: '65b71112-d412-401f-af15-1d3080f85319',
+                name: 'globalState',
+                description: 'The global state',
+                type: 'object',
+              },
+              {
+                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+                name: 'queryParams',
+                description: 'Query parameters',
+                type: 'object',
+              },
+            ]}
+          />
+        </FormItem>
+
+        <FormItem
+          label="Submit URL"
+          name="submitUrl"
+          tooltip="The URL to submit the list items to. This is required"
+          rules={[{ required: true }]}
+        >
+          <CodeEditor
+            mode="dialog"
+            label="Submit URL"
+            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+            name="submitUrl"
+            type={''}
+            id={''}
+            description="The URL to submit the list items to"
+            exposedVariables={[
               {
                 id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
                 name: 'data',
@@ -274,7 +313,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
       <SectionSeparator sectionName="Layout" />
 
-      <FormItem name="labelCol" label="">
+      <FormItem name="labelCol" label="Label Col">
         <InputNumber min={1} max={24} defaultValue={5} />
       </FormItem>
 

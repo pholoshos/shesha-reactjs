@@ -31,21 +31,6 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
   const { globalState } = useGlobalState();
   const { publish } = usePubSub();
 
-  const setData = (data: any) => {
-    setFormData({
-      values: data,
-      mergeValues: true,
-    });
-
-    console.log('LOGS:: ConfigurableButton data', data, form, form?.getFieldsValue());
-
-    form?.setFieldsValue(data);
-
-    setTimeout(() => {
-      console.log('LOGS:: ConfigurableButton data after 3 secs', form?.getFieldsValue());
-    }, 3000);
-  };
-
   const executeExpression = (expression: string, result?: any) => {
     if (!expression) {
       console.error('Expected expression to be defined but it was found to be empty.');
@@ -54,11 +39,10 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
     }
 
     // tslint:disable-next-line:function-constructor
-    return new Function('data, moment, form, setFormData, formMode, http, result, message, globalState', expression)(
+    return new Function('data, moment, form, formMode, http, result, message, globalState', expression)(
       formData,
       moment,
       form,
-      setData,
       formMode,
       axiosHttp(backendUrl),
       result,
@@ -95,15 +79,15 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       parentFormValues: formData,
       modalConfirmDialogMessage: convertedProps?.modalConfirmDialogMessage,
       onSubmitted: values => {
-        onSuccessScriptExecutor(values);
+        if (props?.onSubmitEvent) {
+          publish(props?.onSubmitEvent, { stateId: props?.uniqueStateId, state: values });
+        }
 
         if (props?.refreshTableOnSuccess) {
           publish(DataTablePubsubConstants.refreshTable, { stateId: props?.uniqueStateId });
         }
 
-        if (props?.refreshListOnSuccess) {
-          publish(ListControlEvents.refreshListItems, { stateId: props?.uniqueStateId });
-        }
+        onSuccessScriptExecutor(values);
       },
       onFailed: onErrorScriptExecutor,
     };
@@ -159,11 +143,22 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       case 'reset':
         form?.resetFields();
         break;
+      case 'dispatchAnEvent': {
+        const eventName =
+          props?.eventName === 'CUSTOM_EVENT' && props?.customEventNameToDispatch
+            ? props?.customEventNameToDispatch
+            : props?.eventName;
+
+        publish(eventName, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
+        break;
+      }
       case 'executeFormAction':
       case 'customAction':
         if (props?.formAction) {
-          if (props?.formAction !== 'CUSTOM_ACTION') {
-            publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
+          if (props?.formAction === 'CUSTOM_ACTION') {
+            console.log('props?.formAction: ', props);
+
+            publish(props?.customFormAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
           } else {
             if (props.customFormAction) {
               const actionBody = getAction(props.formComponentId, props.customFormAction);

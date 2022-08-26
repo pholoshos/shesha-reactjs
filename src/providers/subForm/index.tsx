@@ -240,7 +240,10 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
           putData: isUpdating,
         },
         components: state?.components,
-        layout: { labelCol: { span: labelCol }, wrapperCol: { span: labelCol } },
+        layout: {
+          labelCol: markup?.formSettings?.labelCol || labelCol,
+          wrapperCol: markup?.formSettings?.wrapperCol || wrapperCol,
+        },
       }}
     >
       <SubFormActionsContext.Provider

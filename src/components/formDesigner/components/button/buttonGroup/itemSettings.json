@@ -253,6 +253,11 @@
               "id": "18fa8cc0-a327-466d-9513-52c53218d39d",
               "label": "Execute Form Action",
               "value": "executeFormAction"
+            },
+            {
+              "id": "b4952ca2-c648-4c79-bf3c-e2683bf3d509",
+              "label": "Dispatch an Event",
+              "value": "dispatchAnEvent"
             }
           ],
           "validate": {}
@@ -282,28 +287,6 @@
                 "required": false
               },
               "dataSourceType": "values",
-              "values": [
-                {
-                  "id": "5c717647-2ecd-434d-8d74-6c6805303007",
-                  "label": "Navigate",
-                  "value": "navigate"
-                },
-                {
-                  "id": "c025760d-b99b-4c44-89cf-1edb2a6cd014",
-                  "label": "Dialogue",
-                  "value": "dialogue"
-                },
-                {
-                  "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae",
-                  "label": "Execute Script",
-                  "value": "executeScript"
-                },
-                {
-                  "id": "18fa8cc0-a327-466d-9513-52c53218d39d",
-                  "label": "Execute form action",
-                  "value": "executeFormAction"
-                }
-              ],
               "direction": "horizontal",
               "justifyContent": "left",
               "components": []
@@ -312,29 +295,7 @@
           "validate": {
             "required": false
           },
-          "dataSourceType": "values",
-          "values": [
-            {
-              "id": "5c717647-2ecd-434d-8d74-6c6805303007",
-              "label": "Navigate",
-              "value": "navigate"
-            },
-            {
-              "id": "c025760d-b99b-4c44-89cf-1edb2a6cd014",
-              "label": "Dialogue",
-              "value": "dialogue"
-            },
-            {
-              "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae",
-              "label": "Execute Script",
-              "value": "executeScript"
-            },
-            {
-              "id": "18fa8cc0-a327-466d-9513-52c53218d39d",
-              "label": "Execute form action",
-              "value": "executeFormAction"
-            }
-          ]
+          "dataSourceType": "values"
         },
         {
           "id": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
@@ -462,11 +423,6 @@
               "exposedVariables": [
                 { "name": "data", "description": "The form data", "type": "object" },
                 { "name": "moment", "description": "The moment.js object", "type": "object" },
-                {
-                  "name": "setFormData",
-                  "description": "The function for updating the form state. The state will be merged",
-                  "type": "function"
-                },
                 { "name": "form", "description": "Form instance", "type": "FormInstance" },
                 { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
                 { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
@@ -525,21 +481,74 @@
               "description": "If this is checked, instead of submitting the form to the back-end, the data will be returned and can be accessed under onSuccess script"
             },
             {
+              "id": "22e6bfe5-b6cc-40a4-8fe2-815174e5a60d",
+              "type": "dropdown",
+              "name": "onSubmitEvent",
+              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+              "label": "On Submit Event",
+              "description": "After submitting this event will be triggered and the submitted data will be passed",
+              "values": [
+                {
+                  "label": "refreshListItems",
+                  "value": "refreshListItems",
+                  "id": "b3583e80-408c-46cd-83b1-23b1e41b807b"
+                },
+                {
+                  "label": "saveListItems",
+                  "value": "saveListItems",
+                  "id": "9827a4f5-1e7b-4c9d-b6c0-74db793a686e"
+                },
+                {
+                  "label": "addListItems",
+                  "value": "addListItems",
+                  "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
+                },
+                {
+                  "label": "refreshTable",
+                  "value": "REFRESH_TABLE",
+                  "id": "a89e2856-a42a-4332-b83e-ca7dd093ab21"
+                },
+                {
+                  "label": "toggleColumnsSelector",
+                  "value": "TOGGLE_COLUMNS_SELECTOR",
+                  "id": "589fda88-48d7-4aa6-bbc6-f7e5acd5b894"
+                },
+                {
+                  "label": "toggleAdvancedFilter",
+                  "value": "TOGGLE_ADVANCED_FILTER",
+                  "id": "9a42a289-65dc-444f-a9f8-e77efc4e4a00"
+                },
+                {
+                  "label": "exportToExcel",
+                  "value": "EXPORT_TO_EXCEL",
+                  "id": "0d2a3fd7-bb6c-4a65-bba8-cc6f4a94ea76"
+                },
+                {
+                  "label": "deleteRow",
+                  "value": "DELETE_ROW",
+                  "id": "5d7b2890-7ca2-4d12-b1a5-5eb45ad83639"
+                },
+                {
+                  "label": "stateChanged",
+                  "value": "STATE_CHANGED",
+                  "id": "02279fdc-3973-4eea-a032-79e79d6a68bc"
+                },
+                {
+                  "label": "downloadLogFile",
+                  "value": "DOWNLOAD_LOG_FILE",
+                  "id": "211255af-966a-44c6-bafe-0e695925b32b"
+                }
+              ],
+              "dataSourceType": "values",
+              "customVisibility": "return data.showModalFooter === true"
+            },
+            {
               "id": "ae69ab38-65fa-4b34-a701-3b46aff045f5",
               "type": "checkbox",
               "name": "refreshTableOnSuccess",
               "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
               "label": "Refresh table on success?",
               "description": "For this option to work, please make sure the Button is rendered within a DataTableContext",
-              "defaultChecked": false
-            },
-            {
-              "id": "01c700ba-0084-43e2-a365-ebb0d8fdfaca",
-              "type": "checkbox",
-              "name": "refreshListOnSuccess",
-              "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
-              "label": "Refresh list on success?",
-              "description": "For this option to work, please make sure you specify the uniqueStateId of the List",
               "defaultChecked": false
             },
             {
@@ -596,29 +605,7 @@
               "customVisibility": "return data.showModalFooter === true"
             }
           ],
-          "dataSourceType": "values",
-          "values": [
-            {
-              "id": "5c717647-2ecd-434d-8d74-6c6805303007",
-              "label": "Navigate",
-              "value": "navigate"
-            },
-            {
-              "id": "c025760d-b99b-4c44-89cf-1edb2a6cd014",
-              "label": "Dialogue",
-              "value": "dialogue"
-            },
-            {
-              "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae",
-              "label": "Execute Script",
-              "value": "executeScript"
-            },
-            {
-              "id": "18fa8cc0-a327-466d-9513-52c53218d39d",
-              "label": "Execute form action",
-              "value": "executeFormAction"
-            }
-          ]
+          "dataSourceType": "values"
         },
         {
           "id": "8786d976-3822-4f8b-a532-ccac0b0130e3",
@@ -698,6 +685,75 @@
             }
           ],
           "dataSourceType": "values"
+        },
+        {
+          "id": "22e6bfe5-b6cc-40a4-8fe2-815174e5a60d",
+          "type": "dropdown",
+          "name": "eventName",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+          "label": "Event name",
+          "description": "This is the event that will be published when the button is dispatched",
+          "values": [
+            {
+              "label": "refreshListItems",
+              "value": "refreshListItems",
+              "id": "b3583e80-408c-46cd-83b1-23b1e41b807b"
+            },
+            {
+              "label": "saveListItems",
+              "value": "saveListItems",
+              "id": "9827a4f5-1e7b-4c9d-b6c0-74db793a686e"
+            },
+            {
+              "label": "addListItems",
+              "value": "addListItems",
+              "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
+            },
+            {
+              "label": "refreshTable",
+              "value": "REFRESH_TABLE",
+              "id": "a89e2856-a42a-4332-b83e-ca7dd093ab21"
+            },
+            {
+              "label": "toggleColumnsSelector",
+              "value": "TOGGLE_COLUMNS_SELECTOR",
+              "id": "589fda88-48d7-4aa6-bbc6-f7e5acd5b894"
+            },
+            {
+              "label": "toggleAdvancedFilter",
+              "value": "TOGGLE_ADVANCED_FILTER",
+              "id": "9a42a289-65dc-444f-a9f8-e77efc4e4a00"
+            },
+            {
+              "label": "exportToExcel",
+              "value": "EXPORT_TO_EXCEL",
+              "id": "0d2a3fd7-bb6c-4a65-bba8-cc6f4a94ea76"
+            },
+            {
+              "label": "downloadLogFile",
+              "value": "DOWNLOAD_LOG_FILE",
+              "id": "211255af-966a-44c6-bafe-0e695925b32b"
+            },
+            {
+              "label": "(enter custom event)",
+              "value": "CUSTOM_EVENT",
+              "id": "4200ed02-8ba0-499e-9a48-4f6644e1037c"
+            }
+          ],
+          "dataSourceType": "values",
+          "customVisibility": "return data.buttonAction === 'dispatchAnEvent'"
+        },
+        {
+          "id": "adaab7e3-c5c8-4701-aef2-96fe80bc5d5a",
+          "type": "textField",
+          "name": "customEventNameToDispatch",
+          "label": "Custom Event",
+          "labelAlign": "right",
+          "parentId": "0bfa869c-57a8-4abc-93b1-d36d5215a004",
+          "hidden": false,
+          "customVisibility": "return data.eventName === 'CUSTOM_EVENT'",
+          "description": "This is the custom event that will be published when the button is clicked",
+          "validate": {}
         },
         {
           "id": "adaab7e3-c5c8-4701-aef2-96fe80bc5d5a",

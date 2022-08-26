@@ -82,6 +82,8 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
       showPagination: true,
       hideLabel: true,
       uniqueStateId,
+      labelCol: 5,
+      wrapperCol: 5,
       buttons: [
         {
           id: 'PWrW0k2WXPweNfHnZgbsj',
@@ -132,8 +134,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   properties,
   renderStrategy,
   uniqueStateId,
-  allowSubmit,
-  submitHttpVerb,
+  submitHttpVerb = 'POST',
   onSubmit,
   submitUrl,
   entityType,
@@ -280,22 +281,11 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     }
   }, [value, isInDesignerMode]);
 
-  // useEffect(() => {
-  //   if (formData && name) {
-  //     if (formData[name] && !isEqual(value, formData[name])) {
-  //       onChange(formData[name]);
-  //     }
-  //   }
-  // }, [formData]);
-
-  console.log(
-    'LOGS:: name, value, formData, form, form?.getFieldsValue()',
-    name,
-    value,
-    formData,
-    form,
-    form?.getFieldsValue()
-  );
+  useEffect(() => {
+    if (!value) {
+      onChange([]); // Make sure the form is not undefined
+    }
+  }, [value]);
 
   useSubscribe(ListControlEvents.refreshListItems, ({ stateId }) => {
     if (stateId === uniqueStateId) {
@@ -306,6 +296,16 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   useSubscribe(ListControlEvents.saveListItems, ({ stateId }) => {
     if (stateId === uniqueStateId) {
       submitListItems();
+    }
+  });
+
+  const debouncedAddItems = useDebouncedCallback(data => {
+    onChange(Array.isArray(value) ? [...value, data] : [data]);
+  }, 300);
+
+  useSubscribe(ListControlEvents.addListItems, ({ stateId, state }) => {
+    if (stateId === uniqueStateId) {
+      debouncedAddItems(state);
     }
   });
 
@@ -334,7 +334,12 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   const renderSubForm = (name?: string) => {
     // Note we do not pass the name. The name will be provided by the List component
     return (
-      <SubFormProvider name={name} markup={markup} properties={[]}>
+      <SubFormProvider
+        name={name}
+        markup={markup}
+        properties={[]}
+        {...{ wrapperCol: { span: 16 }, labelCol: { span: 8 } }}
+      >
         <SubForm />
       </SubFormProvider>
     );
@@ -342,11 +347,13 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
 
   const deleteItem = useCallback(
     (index: number) => {
-      const item = value[index];
+      if (deleteUrl) {
+        const item = value[index];
 
-      deleteHttp('', { queryParams: { id: item?.id || item.Id } }).then(() => {
-        debouncedRefresh();
-      });
+        deleteHttp('', { queryParams: { id: item?.id || item.Id } }).then(() => {
+          debouncedRefresh();
+        });
+      }
     },
     [value]
   );
@@ -355,7 +362,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     setState(prev => ({ ...prev, quickSearch: text }));
   }, 200);
 
-  const submitListItems = () => {
+  const submitListItems = useDebouncedCallback(() => {
     if (onSubmit) {
       const getOnSubmitPayload = () => {
         // tslint:disable-next-line:function-constructor
@@ -373,7 +380,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
         message.success('Data saved successfully!');
       });
     }
-  };
+  }, 350);
 
   const isSpinning = submitting || fetchingData || isDeleting;
 
@@ -396,7 +403,9 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
       }
     >
       <Show when={isInDesignerMode && renderStrategy === 'dragAndDrop'}>
-        <ComponentsContainer containerId={containerId} />
+        <SubFormProvider properties={[]} {...{ wrapperCol: { span: 5 }, labelCol: { span: 24 } }}>
+          <ComponentsContainer containerId={containerId} />
+        </SubFormProvider>
       </Show>
       <Show when={isInDesignerMode && renderStrategy === 'externalForm' && Boolean(formPath?.id)}>
         {renderSubForm('__IGNORE__')}

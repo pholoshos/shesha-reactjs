@@ -76,8 +76,7 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
       initialValue={initialValue}
       tooltip={model.description}
       rules={isHidden ? [] : getValidationRules(model, { formData })}
-      labelCol={labelCol}
-      wrapperCol={wrapperCol}
+      {...getLayout()}
       style={style}
     >
       {children}

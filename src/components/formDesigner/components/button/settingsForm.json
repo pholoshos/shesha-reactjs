@@ -479,15 +479,6 @@
           "defaultChecked": false
         },
         {
-          "id": "01c700ba-0084-43e2-a365-ebb0d8fdfaca",
-          "type": "checkbox",
-          "name": "refreshListOnSuccess",
-          "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
-          "label": "Refresh list on success?",
-          "description": "For this option to work, please make sure you specify the uniqueStateId of the List",
-          "defaultChecked": false
-        },
-        {
           "id": "f15848e8-87fa-4d76-b5a4-8548b8c2dd8b",
           "type": "dropdown",
           "name": "submitHttpVerb",

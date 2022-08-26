@@ -1,3 +1,4 @@
+import { ColProps } from 'antd';
 import { IGuidNullableEntityWithDisplayNameDto } from '../../interfaces/shesha';
 import { IChangeable, IConfigurableFormComponent, IValuable } from '../../interfaces';
 import { IStoredFilter } from '../dataTable/interfaces';
@@ -14,8 +15,8 @@ export interface ISubFormProps extends IValuable, IChangeable {
   submitUrl?: string;
   onSubmit?: string;
   buttons?: any[];
-  labelCol?: number;
-  wrapperCol?: number;
+  labelCol?: ColProps;
+  wrapperCol?: ColProps;
   dataSource?: 'form' | 'api';
   entityType?: string;
   useExpression?: boolean;

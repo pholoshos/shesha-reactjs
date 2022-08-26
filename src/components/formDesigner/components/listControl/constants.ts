@@ -1,4 +1,5 @@
 export const ListControlEvents = {
   refreshListItems: 'refreshListItems',
-  saveListItems: 'refreshListItems',
+  saveListItems: 'saveListItems',
+  addListItems: 'addListItems',
 };

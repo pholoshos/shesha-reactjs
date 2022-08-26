@@ -14,9 +14,11 @@ import { evaluateDynamicFilters, hasDynamicFilter } from '../../../../../provide
 import './styles/index.less';
 import { ButtonGroup } from '../../button/buttonGroup/buttonGroupComponent';
 import camelCaseKeys from 'camelcase-keys';
-import _ from 'lodash';
+import _, { isEmpty } from 'lodash';
 
-export interface IChildTableComponentProps extends IChildTableSettingsProps, IConfigurableFormComponent {}
+export interface IChildTableComponentProps extends IChildTableSettingsProps, IConfigurableFormComponent {
+  components?: IConfigurableFormComponent[];
+}
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -43,11 +45,11 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
 
     const hasManyFiltersButNoSelected = hasFilters && !defaultSelectedFilterId;
 
-    const hasFormData = !_.isEmpty(formData);
-    const hasGlobalState = !_.isEmpty(formData);
+    const hasFormData = !isEmpty(formData);
+    const hasGlobalState = !isEmpty(formData);
 
     const evaluateDynamicFiltersHelper = () => {
-      const data = !_.isEmpty(formData) ? camelCaseKeys(formData, { deep: true, pascalCase: true }) : formData;
+      const data = !isEmpty(formData) ? camelCaseKeys(formData, { deep: true, pascalCase: true }) : formData;
 
       const evaluatedFilters = evaluateDynamicFilters(filters, [
         {
@@ -148,7 +150,10 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
             noContentPadding
             className="sha-form-designer-child-table"
           >
-            <ComponentsContainer containerId={model.id} />
+            <ComponentsContainer
+              containerId={model.id}
+              // dynamicComponents={model?.isDynamic ? model?.components : []}
+            />
           </CollapsiblePanel>
         </Show>
       </Fragment>

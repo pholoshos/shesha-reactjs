@@ -72,16 +72,21 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       onSuccessRedirectUrl: convertedProps?.onSuccessRedirectUrl,
       destroyOnClose: true,
       skipFetchData: props.skipFetchData,
+      submitLocally: props?.submitLocally,
       width: props?.modalWidth,
       initialValues: evaluateKeyValuesToObject(convertedProps?.additionalProperties, formData),
       parentFormValues: formData,
       modalConfirmDialogMessage: convertedProps?.modalConfirmDialogMessage,
       onSubmitted: values => {
-        onSuccessScriptExecutor(values);
+        if (props?.onSubmitEvent) {
+          publish(props?.onSubmitEvent, { stateId: props?.uniqueStateId, state: values });
+        }
 
         if (props?.refreshTableOnSuccess) {
           publish(DataTablePubsubConstants.refreshTable, { stateId: props?.uniqueStateId });
         }
+
+        onSuccessScriptExecutor(values);
       },
       onFailed: onErrorScriptExecutor,
     };
@@ -137,11 +142,22 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       case 'reset':
         form?.resetFields();
         break;
+      case 'dispatchAnEvent': {
+        const eventName =
+          props?.eventName === 'CUSTOM_EVENT' && props?.customEventNameToDispatch
+            ? props?.customEventNameToDispatch
+            : props?.eventName;
+
+        publish(eventName, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
+        break;
+      }
       case 'executeFormAction':
       case 'customAction':
         if (props?.formAction) {
-          if (props?.formAction !== 'CUSTOM_ACTION') {
-            publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
+          if (props?.formAction === 'CUSTOM_ACTION') {
+            console.log('props?.formAction: ', props);
+
+            publish(props?.customFormAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
           } else {
             if (props.customFormAction) {
               const actionBody = getAction(props.formComponentId, props.customFormAction);

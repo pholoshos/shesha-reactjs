@@ -1,23 +1,20 @@
-import React, { FC, useEffect, useMemo } from 'react';
-import { IAnyObject, IFormItem, IToolboxComponent } from '../../../../interfaces';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { IFormItem, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
-import { MinusCircleOutlined, OrderedListOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteFilled, OrderedListOutlined } from '@ant-design/icons';
 import { evaluateComplexString, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { ListItemProvider, useForm, useGlobalState } from '../../../../providers';
 import { listSettingsForm } from './settings';
 import ComponentsContainer from '../../componentsContainer';
-import { Button, Divider, Form, message, Space } from 'antd';
+import { Button, Divider, Form, Input, message, Space } from 'antd';
 import ConfigurableFormItem from '../formItem';
-import { useGet, useMutate } from 'restful-react';
+import { useMutate } from 'restful-react';
 import ValidationErrors from '../../../validationErrors';
 import Pagination from 'antd/lib/pagination/Pagination';
 import { getQueryParams } from '../../../../utils/url';
 import './styles/index.less';
 import Show from '../../../show';
 import ShaSpin from '../../../shaSpin';
-import classNames from 'classnames';
-import { useFormMarkup } from './useFormMarkup';
-import EmbeddedForm from '../../../configurableForm/embeddedForm';
 import CollapsiblePanel from '../../../collapsiblePanel';
 import { ButtonGroup } from '../button/buttonGroup/buttonGroupComponent';
 import { ListControlSettings } from './settingsv2';
@@ -25,6 +22,16 @@ import { IListItemsProps } from './models';
 import { camelCase, isEmpty } from 'lodash';
 import camelCaseKeys from 'camelcase-keys';
 import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
+import { useFormMarkup } from '../../../../providers/form/hooks';
+import { SubFormProvider } from '../../../../providers/subForm';
+import SubForm from '../subForm/subForm';
+import { ListControlEvents } from './constants';
+import { useDebouncedCallback } from 'use-debounce/lib';
+import { useSubscribe } from '../../../../hooks';
+import { nanoid } from 'nanoid';
+import { EntitiesGetAllQueryParams, useEntitiesGetAll } from '../../../../apis/entities';
+
+const MAX_RESULT_COUNT = 1_000_000;
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {
   /** the source of data for the list component */
@@ -45,33 +52,16 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
 
     if (isHidden) return null;
 
+    console.log('ListComponent model: ', model);
+
     return (
       <ConfigurableFormItem
-        model={{ ...model, hideLabel: true }}
+        model={{ ...model }}
         className="sha-list-component"
         labelCol={{ span: model?.hideLabel ? 0 : model?.labelCol }}
         wrapperCol={{ span: model?.hideLabel ? 24 : model?.wrapperCol }}
       >
-        <ListComponentRender
-          containerId={model.id}
-          allowSubmit={model?.allowSubmit}
-          submitUrl={model?.submitUrl}
-          submitHttpVerb={model?.submitHttpVerb}
-          showPagination={model?.showPagination}
-          paginationDefaultPageSize={model?.showPagination ? model?.paginationDefaultPageSize : 5}
-          name={model?.name}
-          bordered={model?.bordered}
-          title={model?.title}
-          footer={model?.footer}
-          buttons={model?.buttons}
-          filters={model?.filters}
-          properties={model?.properties}
-          uniqueStateId={model?.uniqueStateId}
-          maxHeight={model?.maxHeight}
-          allowAddAndRemove={model?.allowAddAndRemove}
-          dataSourceUrl={model?.dataSource === 'api' ? model?.dataSourceUrl : null}
-          formId={model?.renderStrategy === 'externalForm' ? model?.formId : null}
-        />
+        <ListComponentRender {...model} containerId={model?.id} />
       </ConfigurableFormItem>
     );
   },
@@ -87,10 +77,32 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
     );
   },
   initModel: model => {
+    const uniqueStateId = `FORM_LIST_${nanoid()}`;
+
     const customProps: IListComponentProps = {
       ...model,
       showPagination: true,
       hideLabel: true,
+      uniqueStateId,
+      labelCol: 5,
+      wrapperCol: 5,
+      buttons: [
+        {
+          id: nanoid(),
+          itemType: 'item',
+          sortOrder: 0,
+          name: 'button1',
+          label: ' ',
+          itemSubType: 'button',
+          uniqueStateId,
+          buttonAction: 'dispatchAnEvent',
+          eventName: 'refreshListItems',
+          chosen: false,
+          selected: false,
+          icon: 'ReloadOutlined',
+          buttonType: 'link',
+        },
+      ],
     };
     return customProps;
   },
@@ -102,64 +114,67 @@ interface IListComponentRenderProps extends IListItemsProps, IFormItem {
   value?: any[];
 }
 
+interface IListComponentRenderState {
+  quickSearch?: string;
+  skipCount?: number;
+  maxResultCount?: number;
+}
+
 const ListComponentRender: FC<IListComponentRenderProps> = ({
   containerId,
-  dataSourceUrl,
+  dataSource,
   showPagination,
   paginationDefaultPageSize = 5,
-  formId, // Render embedded form if this option is provided
+  formPath, // Render embedded form if this option is provided
   value,
   name,
   onChange,
-  allowAddAndRemove,
-  submitUrl,
-  submitHttpVerb = 'POST',
-  onSubmit,
-  allowSubmit,
+  allowRemoveItems,
+  deleteUrl,
   buttons,
   title,
   maxHeight,
   filters,
   properties,
+  renderStrategy,
+  uniqueStateId,
+  submitHttpVerb = 'POST',
+  onSubmit,
+  submitUrl,
+  entityType,
+  showQuickSearch,
+  labelCol,
+  wrapperCol,
 }) => {
-  const { markup, error: fetchFormError } = useFormMarkup(formId);
+  const { markup, error: fetchFormError } = useFormMarkup(formPath?.id);
+  const [state, setState] = useState<IListComponentRenderState>({ maxResultCount: paginationDefaultPageSize });
   const queryParamsFromBrowser = useMemo(() => getQueryParams(), []);
-  const { formData, formSettings, formMode } = useForm();
+  const { formData, formMode } = useForm();
   const { globalState } = useGlobalState();
+  const { refetch: fetchEntities, loading: isFetchingEntities, data, error: fetchEntitiesError } = useEntitiesGetAll({
+    lazy: true,
+  });
   const isInDesignerMode = formMode === 'designer';
 
-  const evaluatedSubmitUrl = useMemo(() => {
-    if (!submitUrl?.trim() || isInDesignerMode) return '';
+  const getEvaluatedUrl = (url: string) => {
+    if (!url) return '';
 
-    return evaluateComplexString(submitUrl, [
+    return evaluateComplexString(url, [
       { match: 'data', data: formData },
       { match: 'globalState', data: globalState },
-      { match: 'query', data: queryParamsFromBrowser },
+      { match: 'query', data: getQueryParams() },
     ]);
-  }, [submitUrl, formData, globalState, queryParamsFromBrowser, isInDesignerMode]);
+  };
 
-  const { refetch, loading: fetchingData, data, error: fetchDataError } = useGet({ path: '/' });
-  const { mutate, loading: submitting, error: submitError } = useMutate({
-    path: evaluatedSubmitUrl,
-    verb: submitHttpVerb,
+  const { mutate: deleteHttp, loading: isDeleting, error: deleteError } = useMutate({
+    path: getEvaluatedUrl(deleteUrl),
+    verb: 'DELETE',
   });
 
-  const evaluatedDataSourceUrl = useMemo(() => {
-    if (!dataSourceUrl) return '';
-
-    const getEvaluatedFormat = () => {
-      // tslint:disable-next-line:function-constructor
-      return new Function(dataSourceUrl)();
-    };
-
-    const rawString = getEvaluatedFormat();
-
-    return evaluateComplexString(rawString, [
-      { match: 'data', data: formData },
-      { match: 'globalState', data: globalState },
-      { match: 'query', data: queryParamsFromBrowser },
-    ]);
-  }, [dataSourceUrl]);
+  const { mutate: submitHttp, loading: submitting, error: submitError } = useMutate({
+    path: getEvaluatedUrl(submitUrl),
+    verb: submitHttpVerb,
+  });
 
   const getFilters = () => {
     if (!filters) return '';
@@ -186,11 +201,15 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   };
 
   const queryParams = useMemo(() => {
-    const _queryParams: IAnyObject = {
-      maxResultCount: showPagination ? paginationDefaultPageSize : 1000_000,
+    const _queryParams: EntitiesGetAllQueryParams = {
+      entityType,
+      maxResultCount: showPagination ? state?.maxResultCount : MAX_RESULT_COUNT,
+      skipCount: state?.skipCount,
+      quickSearch: state?.quickSearch,
     };
+
     if (properties?.length) {
-      _queryParams.properties = properties?.map(p => camelCase(p)).join();
+      _queryParams.properties = properties?.map(p => camelCase(p)).join(' ');
     }
 
     if (filters && getFilters()) {
@@ -198,62 +217,71 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     }
 
     return _queryParams;
-  }, [formData, globalState, properties, showPagination, paginationDefaultPageSize]);
+  }, [properties, showPagination, paginationDefaultPageSize, state]);
+
+  const debouncedRefresh = useDebouncedCallback(
+    () => {
+      fetchEntities({ queryParams });
+    },
+    // delay in ms
+    300
+  );
 
   useEffect(() => {
     if (isInDesignerMode) return;
 
-    if (evaluatedDataSourceUrl) {
-      refetch({
-        path: evaluatedDataSourceUrl,
-        queryParams,
-      });
+    if (dataSource === 'api') {
+      debouncedRefresh();
     }
-  }, [evaluatedDataSourceUrl, isInDesignerMode]);
+  }, [isInDesignerMode, dataSource]);
 
   useEffect(() => {
     if (isInDesignerMode) return;
 
-    if (typeof onChange === 'function' && data && evaluatedDataSourceUrl) {
+    if (!isFetchingEntities && typeof onChange === 'function' && data && dataSource === 'api') {
       if (Array.isArray(data?.result)) {
         onChange(data?.result);
       } else if (Array.isArray(data?.result?.items)) {
         onChange(data?.result?.items);
       }
     }
-  }, [data, evaluatedDataSourceUrl, isInDesignerMode]);
+  }, [data, isInDesignerMode, isFetchingEntities]);
 
   useEffect(() => {
-    if (
-      value &&
-      !Array.isArray(value) &&
-      !evaluatedDataSourceUrl &&
-      typeof onChange === 'function' &&
-      !isInDesignerMode
-    ) {
+    if (value && !Array.isArray(value) && typeof onChange === 'function' && !isInDesignerMode) {
       onChange([]);
     }
   }, [value, isInDesignerMode]);
 
-  const handleSave = () => {
-    if (onSubmit) {
-      const getOnSubmitPayload = () => {
-        // tslint:disable-next-line:function-constructor
-        return new Function('data, query, globalState, items', onSubmit)(
-          formData,
-          queryParamsFromBrowser,
-          globalState,
-          value
-        ); // Pass data, query, globalState
-      };
-
-      const payload = Boolean(onSubmit) ? getOnSubmitPayload() : value;
-
-      mutate(payload).then(() => {
-        message.success('Data saved successfully!');
-      });
+  useEffect(() => {
+    if (!value) {
+      onChange([]); // Make sure the form is not undefined
     }
-  };
+  }, [value]);
+
+  //#region Events
+  useSubscribe(ListControlEvents.refreshListItems, ({ stateId }) => {
+    if (stateId === uniqueStateId) {
+      debouncedRefresh();
+    }
+  });
+
+  useSubscribe(ListControlEvents.saveListItems, ({ stateId }) => {
+    if (stateId === uniqueStateId) {
+      submitListItems();
+    }
+  });
+
+  useSubscribe(ListControlEvents.addListItems, ({ stateId, state }) => {
+    if (stateId === uniqueStateId) {
+      debouncedAddItems(state);
+    }
+  });
+  //#endregion
+
+  const debouncedAddItems = useDebouncedCallback(data => {
+    onChange(Array.isArray(value) ? [...value, data] : [data]);
+  }, 300);
 
   const renderPagination = () => {
     if (!showPagination) return null;
@@ -268,14 +296,68 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
         showSizeChanger
         showTitle
         onChange={(page: number, pageSize) => {
-          refetch({
-            queryParams: { ...queryParams, skipCount: pageSize * (page - 1), maxResultCount: pageSize },
-            path: evaluatedDataSourceUrl,
-          });
+          const skipCount = pageSize * (page - 1);
+
+          setState(prev => ({ ...prev, skipCount, maxResultCount: pageSize }));
+
+          fetchEntities({ queryParams: { ...queryParams, skipCount: skipCount, maxResultCount: pageSize } });
         }}
       />
     );
   };
+
+  const deleteItem = useCallback(
+    (index: number) => {
+      if (deleteUrl) {
+        const item = value[index];
+
+        deleteHttp('', { queryParams: { id: item?.id || item.Id } }).then(() => {
+          debouncedRefresh();
+        });
+      }
+    },
+    [value]
+  );
+
+  const setQuickSearch = useDebouncedCallback((text: string) => {
+    setState(prev => ({ ...prev, quickSearch: text }));
+  }, 200);
+
+  const submitListItems = useDebouncedCallback(() => {
+    if (onSubmit) {
+      const getOnSubmitPayload = () => {
+        // tslint:disable-next-line:function-constructor
+        return new Function('data, query, globalState, items', onSubmit)(
+          formData,
+          queryParamsFromBrowser,
+          globalState,
+          value
+        ); // Pass data, query, globalState
+      };
+
+      const payload = Boolean(onSubmit) ? getOnSubmitPayload() : value;
+
+      submitHttp(payload).then(() => {
+        message.success('Data saved successfully!');
+      });
+    }
+  }, 350);
+
+  const renderSubForm = (name?: string) => {
+    // Note we do not pass the name. The name will be provided by the List component
+    return (
+      <SubFormProvider
+        name={name}
+        markup={markup}
+        properties={[]}
+        {...{ wrapperCol: { span: 16 }, labelCol: { span: 8 } }}
+      >
+        <SubForm />
+      </SubFormProvider>
+    );
+  };
+
+  const isSpinning = submitting || isDeleting || isFetchingEntities;
 
   return (
     <CollapsiblePanel
@@ -283,25 +365,38 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
       extraClass="sha-list-component-extra"
       extra={
         <div className="sha-list-component-extra-space">
-          {renderPagination()}
-          <ButtonGroup items={buttons || []} name={''} type={''} id={containerId} size="small" />
+          <Space size="small">
+            {renderPagination()}
+
+            <Show when={showQuickSearch}>
+              <Input.Search onSearch={setQuickSearch} size="small" />
+            </Show>
+
+            <ButtonGroup items={buttons || []} name={''} type={''} id={containerId} size="small" />
+          </Space>
         </div>
       }
     >
-      <Show when={isInDesignerMode}>
-        <ComponentsContainer containerId={containerId} />
+      <Show when={isInDesignerMode && renderStrategy === 'dragAndDrop'}>
+        <SubFormProvider properties={[]} {...{ wrapperCol: { span: 5 }, labelCol: { span: 24 } }}>
+          <ComponentsContainer containerId={containerId} />
+        </SubFormProvider>
+      </Show>
+      <Show when={isInDesignerMode && renderStrategy === 'externalForm' && Boolean(formPath?.id)}>
+        {renderSubForm('__IGNORE__')}
       </Show>
 
       <Show when={!isInDesignerMode}>
-        <ValidationErrors error={fetchDataError} />
-        <ValidationErrors error={submitError} />
         <ValidationErrors error={fetchFormError} />
+        <ValidationErrors error={deleteError} />
+        <ValidationErrors error={submitError} />
+        <ValidationErrors error={fetchEntitiesError} />
 
-        <ShaSpin spinning={fetchingData || submitting} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
+        <ShaSpin spinning={isSpinning} tip={isFetchingEntities ? 'Fetching data...' : 'Submitting'}>
           <Show when={Array.isArray(value)}>
             <div className="sha-list-component-body" style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}>
               <Form.List name={name} initialValue={[]}>
-                {(fields, { add, remove }) => {
+                {(fields, { remove }) => {
                   return (
                     <>
                       {fields?.map((field, index) => (
@@ -309,10 +404,10 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
                           <ListItemProvider
                             index={index}
                             prefix={`${name}.`}
-                            formSettings={formSettings}
                             key={field.key}
+                            layout={{ wrapperCol: { span: wrapperCol }, labelCol: { span: labelCol } }}
                           >
-                            <Show when={Boolean(containerId)}>
+                            <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
                               <ComponentsContainer
                                 containerId={containerId}
                                 plainWrapper
@@ -321,45 +416,30 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
                               />
                             </Show>
 
-                            <Show when={Boolean(formId)}>
-                              <EmbeddedForm markup={markup} containerId={containerId} />
+                            <Show when={Boolean(formPath?.id) && Boolean(markup) && renderStrategy === 'externalForm'}>
+                              {renderSubForm()}
                             </Show>
 
-                            <Show when={allowAddAndRemove}>
+                            <Show when={allowRemoveItems}>
                               <div className="sha-list-component-add-item-btn">
                                 <Button
                                   danger
-                                  type="primary"
+                                  type="ghost"
                                   size="small"
                                   className="dynamic-delete-button"
-                                  onClick={() => remove(field.name)}
-                                  icon={<MinusCircleOutlined />}
-                                >
-                                  Remove
-                                </Button>
+                                  onClick={() => {
+                                    remove(field.name);
+                                    deleteItem(field.name);
+                                  }}
+                                  icon={<DeleteFilled />}
+                                />
                               </div>
                             </Show>
 
-                            <Divider />
+                            <Divider className="sha-list-component-divider" />
                           </ListItemProvider>
                         </div>
                       ))}
-
-                      <div className={classNames('sha-list-pagination-container')}>
-                        <Space>
-                          <Show when={allowAddAndRemove}>
-                            <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} size="small">
-                              Add field
-                            </Button>
-                          </Show>
-
-                          <Show when={allowSubmit && Boolean(submitHttpVerb) && Boolean(submitUrl?.trim())}>
-                            <Button type="primary" onClick={handleSave} icon={<PlusOutlined />} size="small">
-                              Save Items
-                            </Button>
-                          </Show>
-                        </Space>
-                      </div>
                     </>
                   );
                 }}

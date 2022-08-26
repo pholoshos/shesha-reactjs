@@ -1,20 +1,21 @@
-import { IStoredFilter } from './../../../../../dist/providers/dataTable/interfaces.d';
+import { IStoredFilter } from './../../../../providers/dataTable/interfaces';
+import { IGuidNullableEntityWithDisplayNameDto } from '../../../../interfaces';
 export interface IListItemsProps {
-  dataSourceUrl?: string;
   name: string;
   uniqueStateId?: string;
   queryParamsExpression?: string;
-  bordered?: boolean;
   title?: string;
   footer?: string;
-  formId?: string;
-  allowAddAndRemove?: boolean;
+  formPath?: IGuidNullableEntityWithDisplayNameDto;
+  allowRemoveItems?: boolean;
+  allowSubmit?: boolean;
+  deleteUrl?: string;
   submitUrl?: string;
   submitHttpVerb?: 'POST' | 'PUT';
   onSubmit?: string;
   showPagination?: boolean;
+  showQuickSearch?: boolean;
   paginationDefaultPageSize: number;
-  allowSubmit?: boolean;
   buttons?: any[];
   maxHeight?: number;
   labelCol?: number;
@@ -25,10 +26,4 @@ export interface IListItemsProps {
   useExpression?: boolean;
   properties?: string[];
   filters?: IStoredFilter;
-}
-
-export interface IProperty {
-  label: string;
-  propertyName: string;
-  dataType: string;
 }

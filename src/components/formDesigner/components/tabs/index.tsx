@@ -72,6 +72,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
             permissions,
             customVisibility,
             customEnabled,
+            components,
           }) => {
             const granted = anyOfPermissionsGranted(permissions || []);
 
@@ -103,7 +104,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
                   )
                 }
               >
-                <ComponentsContainer containerId={id} />
+                <ComponentsContainer containerId={id} dynamicComponents={model?.isDynamic ? components : []} />
               </TabPane>
             );
           }

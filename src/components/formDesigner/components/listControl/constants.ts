@@ -1,3 +1,5 @@
-export const LIST_CONTROL_EVENTS = {
-  addFormItem: 'addFormItem',
+export const ListControlEvents = {
+  refreshListItems: 'refreshListItems',
+  saveListItems: 'saveListItems',
+  addListItems: 'addListItems',
 };

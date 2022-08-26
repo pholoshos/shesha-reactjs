@@ -19,7 +19,8 @@ export type ButtonActionType =
   | 'submit'
   | 'reset'
   | 'startFormEdit'
-  | 'cancelFormEdit';
+  | 'cancelFormEdit'
+  | 'dispatchAnEvent';
 
 export interface IButtonGroupItemBase {
   id: string;
@@ -45,7 +46,7 @@ export interface IButtonGroupItemBase {
 export interface IButtonGroupButton extends IButtonGroupItemBase {
   itemSubType: ToolbarItemSubType;
   buttonAction?: ButtonActionType;
-  refreshTableOnSuccess?: boolean;
+  refreshTableOnSuccess?: boolean; // TODO: Remove this and make this logic more generic
   targetUrl?: string;
 
   /**
@@ -66,6 +67,19 @@ export interface IButtonGroupButton extends IButtonGroupItemBase {
   modalTitle?: string;
   modalFormMode?: FormMode;
   skipFetchData?: boolean;
+  submitLocally?: boolean;
+
+  // This is the event that will be triggered once the form has been submitted. The event will be passed this data
+  onSubmitEvent?: string;
+
+  /** An event name to dispatch on the click of a button */
+  eventName?: string;
+
+  /** The string representing a custom event name to dispatch when the button has been dispatched
+   * in case we forgot to include it in the `eventName` dropdown
+   */
+  customEventNameToDispatch?: string;
+
   modalWidth?: number;
   modalActionOnSuccess?: 'keepOpen' | 'navigateToUrl' | 'close' | undefined;
   showConfirmDialogBeforeSubmit?: boolean;

@@ -45,7 +45,10 @@ const ColumnsComponent: IToolboxComponent<IColumnsComponentProps> = {
               push={col.push}
               className="sha-designer-column"
             >
-              <ComponentsContainer containerId={col.id} />
+              <ComponentsContainer
+                containerId={col.id}
+                // dynamicComponents={model?.isDynamic ? col?.components : []}
+              />
             </Col>
           ))}
       </Row>

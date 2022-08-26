@@ -76,6 +76,8 @@ export interface IModalProps {
    */
   skipFetchData?: boolean;
 
+  submitLocally?: boolean;
+
   width?: number;
 
   modalConfirmDialogMessage?: string;

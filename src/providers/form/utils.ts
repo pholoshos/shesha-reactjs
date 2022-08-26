@@ -993,8 +993,12 @@ export const convertDotNotationPropertiesToGraphQL = (properties: string[], colu
     } while (parts.length > 0);
   }
 
-  // special handling for entity references: expand properties list to include `id` and `_displayName`
   const expandedProps = [...properties];
+  // add id if missing
+  if (!expandedProps.includes('id'))
+    expandedProps.push('id');
+    
+  // special handling for entity references: expand properties list to include `id` and `_displayName`
   const entityColumns = columns.filter(c => c.dataType === 'entity');
   entityColumns.forEach(c => {
     const requiredProps = [`${c.propertyName}.Id`, `${c.propertyName}._displayName`];

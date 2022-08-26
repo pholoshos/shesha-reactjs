@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { IAnyObject, IFormItem, IToolboxComponent } from '../../../../interfaces';
+import { IFormItem, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { DeleteFilled, OrderedListOutlined } from '@ant-design/icons';
 import { evaluateComplexString, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
@@ -8,7 +8,7 @@ import { listSettingsForm } from './settings';
 import ComponentsContainer from '../../componentsContainer';
 import { Button, Divider, Form, Input, message, Space } from 'antd';
 import ConfigurableFormItem from '../formItem';
-import { useGet, useMutate } from 'restful-react';
+import { useMutate } from 'restful-react';
 import ValidationErrors from '../../../validationErrors';
 import Pagination from 'antd/lib/pagination/Pagination';
 import { getQueryParams } from '../../../../utils/url';
@@ -19,7 +19,7 @@ import CollapsiblePanel from '../../../collapsiblePanel';
 import { ButtonGroup } from '../button/buttonGroup/buttonGroupComponent';
 import { ListControlSettings } from './settingsv2';
 import { IListItemsProps } from './models';
-import { camelCase, isEmpty, isEqual } from 'lodash';
+import { camelCase, isEmpty } from 'lodash';
 import camelCaseKeys from 'camelcase-keys';
 import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
 import { useFormMarkup } from '../../../../providers/form/hooks';
@@ -29,7 +29,7 @@ import { ListControlEvents } from './constants';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { useSubscribe } from '../../../../hooks';
 import { nanoid } from 'nanoid';
-import { useEntitiesGetAll } from '../../../../apis/entities';
+import { EntitiesGetAllQueryParams, useEntitiesGetAll } from '../../../../apis/entities';
 
 const MAX_RESULT_COUNT = 1_000_000;
 
@@ -51,6 +51,8 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
     const isHidden = isComponentHidden(model);
 
     if (isHidden) return null;
+
+    console.log('ListComponent model: ', model);
 
     return (
       <ConfigurableFormItem
@@ -86,17 +88,17 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
       wrapperCol: 5,
       buttons: [
         {
-          id: 'PWrW0k2WXPweNfHnZgbsj',
+          id: nanoid(),
           itemType: 'item',
           sortOrder: 0,
           name: 'button1',
           label: ' ',
           itemSubType: 'button',
           uniqueStateId,
-          buttonAction: 'executeFormAction',
+          buttonAction: 'dispatchAnEvent',
+          eventName: 'refreshListItems',
           chosen: false,
           selected: false,
-          formAction: 'refreshListItems',
           icon: 'ReloadOutlined',
           buttonType: 'link',
         },
@@ -114,11 +116,13 @@ interface IListComponentRenderProps extends IListItemsProps, IFormItem {
 
 interface IListComponentRenderState {
   quickSearch?: string;
+  skipCount?: number;
+  maxResultCount?: number;
 }
 
 const ListComponentRender: FC<IListComponentRenderProps> = ({
   containerId,
-  dataSourceUrl,
+  dataSource,
   showPagination,
   paginationDefaultPageSize = 5,
   formPath, // Render embedded form if this option is provided
@@ -143,20 +147,12 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   wrapperCol,
 }) => {
   const { markup, error: fetchFormError } = useFormMarkup(formPath?.id);
-  const [state, setState] = useState<IListComponentRenderState>();
+  const [state, setState] = useState<IListComponentRenderState>({ maxResultCount: paginationDefaultPageSize });
   const queryParamsFromBrowser = useMemo(() => getQueryParams(), []);
-  const { formData, formMode, form } = useForm();
+  const { formData, formMode } = useForm();
   const { globalState } = useGlobalState();
-  const {} = useEntitiesGetAll({
-    queryParams: {
-      entityType,
-      filter: '',
-      properties: '',
-      quickSearch: state?.quickSearch,
-      sorting: '',
-      skipCount: 0,
-      maxResultCount: 1_000_000,
-    },
+  const { refetch: fetchEntities, loading: isFetchingEntities, data, error: fetchEntitiesError } = useEntitiesGetAll({
+    lazy: true,
   });
   const isInDesignerMode = formMode === 'designer';
 
@@ -179,25 +175,6 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     path: getEvaluatedUrl(submitUrl),
     verb: submitHttpVerb,
   });
-
-  const { refetch, loading: fetchingData, data, error: fetchDataError } = useGet({ path: '/' });
-
-  const evaluatedDataSourceUrl = useMemo(() => {
-    if (!dataSourceUrl) return '';
-
-    const getEvaluatedFormat = () => {
-      // tslint:disable-next-line:function-constructor
-      return new Function(dataSourceUrl)();
-    };
-
-    const rawString = getEvaluatedFormat();
-
-    return evaluateComplexString(rawString, [
-      { match: 'data', data: formData },
-      { match: 'globalState', data: globalState },
-      { match: 'query', data: queryParamsFromBrowser },
-    ]);
-  }, [dataSourceUrl]);
 
   const getFilters = () => {
     if (!filters) return '';
@@ -224,11 +201,15 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   };
 
   const queryParams = useMemo(() => {
-    const _queryParams: IAnyObject = {
-      maxResultCount: showPagination ? paginationDefaultPageSize : 1000_000,
+    const _queryParams: EntitiesGetAllQueryParams = {
+      entityType,
+      maxResultCount: showPagination ? state?.maxResultCount : MAX_RESULT_COUNT,
+      skipCount: state?.skipCount,
+      quickSearch: state?.quickSearch,
     };
+
     if (properties?.length) {
-      _queryParams.properties = properties?.map(p => camelCase(p)).join();
+      _queryParams.properties = properties?.map(p => camelCase(p)).join(' ');
     }
 
     if (filters && getFilters()) {
@@ -236,14 +217,11 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     }
 
     return _queryParams;
-  }, [formData, globalState, properties, showPagination, paginationDefaultPageSize]);
+  }, [properties, showPagination, paginationDefaultPageSize, state]);
 
   const debouncedRefresh = useDebouncedCallback(
     () => {
-      refetch({
-        path: evaluatedDataSourceUrl,
-        queryParams,
-      });
+      fetchEntities({ queryParams });
     },
     // delay in ms
     300
@@ -252,31 +230,25 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   useEffect(() => {
     if (isInDesignerMode) return;
 
-    if (evaluatedDataSourceUrl) {
+    if (dataSource === 'api') {
       debouncedRefresh();
     }
-  }, [evaluatedDataSourceUrl, isInDesignerMode]);
+  }, [isInDesignerMode, dataSource]);
 
   useEffect(() => {
     if (isInDesignerMode) return;
 
-    if (typeof onChange === 'function' && data && evaluatedDataSourceUrl) {
+    if (!isFetchingEntities && typeof onChange === 'function' && data && dataSource === 'api') {
       if (Array.isArray(data?.result)) {
         onChange(data?.result);
       } else if (Array.isArray(data?.result?.items)) {
         onChange(data?.result?.items);
       }
     }
-  }, [data, evaluatedDataSourceUrl, isInDesignerMode]);
+  }, [data, isInDesignerMode, isFetchingEntities]);
 
   useEffect(() => {
-    if (
-      value &&
-      !Array.isArray(value) &&
-      !evaluatedDataSourceUrl &&
-      typeof onChange === 'function' &&
-      !isInDesignerMode
-    ) {
+    if (value && !Array.isArray(value) && typeof onChange === 'function' && !isInDesignerMode) {
       onChange([]);
     }
   }, [value, isInDesignerMode]);
@@ -287,6 +259,7 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     }
   }, [value]);
 
+  //#region Events
   useSubscribe(ListControlEvents.refreshListItems, ({ stateId }) => {
     if (stateId === uniqueStateId) {
       debouncedRefresh();
@@ -299,15 +272,16 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     }
   });
 
-  const debouncedAddItems = useDebouncedCallback(data => {
-    onChange(Array.isArray(value) ? [...value, data] : [data]);
-  }, 300);
-
   useSubscribe(ListControlEvents.addListItems, ({ stateId, state }) => {
     if (stateId === uniqueStateId) {
       debouncedAddItems(state);
     }
   });
+  //#endregion
+
+  const debouncedAddItems = useDebouncedCallback(data => {
+    onChange(Array.isArray(value) ? [...value, data] : [data]);
+  }, 300);
 
   const renderPagination = () => {
     if (!showPagination) return null;
@@ -322,26 +296,13 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
         showSizeChanger
         showTitle
         onChange={(page: number, pageSize) => {
-          refetch({
-            queryParams: { ...queryParams, skipCount: pageSize * (page - 1), maxResultCount: pageSize },
-            path: evaluatedDataSourceUrl,
-          });
+          const skipCount = pageSize * (page - 1);
+
+          setState(prev => ({ ...prev, skipCount, maxResultCount: pageSize }));
+
+          fetchEntities({ queryParams: { ...queryParams, skipCount: skipCount, maxResultCount: pageSize } });
         }}
       />
-    );
-  };
-
-  const renderSubForm = (name?: string) => {
-    // Note we do not pass the name. The name will be provided by the List component
-    return (
-      <SubFormProvider
-        name={name}
-        markup={markup}
-        properties={[]}
-        {...{ wrapperCol: { span: 16 }, labelCol: { span: 8 } }}
-      >
-        <SubForm />
-      </SubFormProvider>
     );
   };
 
@@ -382,7 +343,21 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     }
   }, 350);
 
-  const isSpinning = submitting || fetchingData || isDeleting;
+  const renderSubForm = (name?: string) => {
+    // Note we do not pass the name. The name will be provided by the List component
+    return (
+      <SubFormProvider
+        name={name}
+        markup={markup}
+        properties={[]}
+        {...{ wrapperCol: { span: 16 }, labelCol: { span: 8 } }}
+      >
+        <SubForm />
+      </SubFormProvider>
+    );
+  };
+
+  const isSpinning = submitting || isDeleting || isFetchingEntities;
 
   return (
     <CollapsiblePanel
@@ -412,12 +387,12 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
       </Show>
 
       <Show when={!isInDesignerMode}>
-        <ValidationErrors error={fetchDataError} />
         <ValidationErrors error={fetchFormError} />
         <ValidationErrors error={deleteError} />
         <ValidationErrors error={submitError} />
+        <ValidationErrors error={fetchEntitiesError} />
 
-        <ShaSpin spinning={isSpinning} tip={fetchingData ? 'Fetching data...' : 'Submitting'}>
+        <ShaSpin spinning={isSpinning} tip={isFetchingEntities ? 'Fetching data...' : 'Submitting'}>
           <Show when={Array.isArray(value)}>
             <div className="sha-list-component-body" style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}>
               <Form.List name={name} initialValue={[]}>

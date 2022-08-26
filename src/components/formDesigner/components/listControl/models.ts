@@ -1,7 +1,6 @@
 import { IStoredFilter } from './../../../../providers/dataTable/interfaces';
 import { IGuidNullableEntityWithDisplayNameDto } from '../../../../interfaces';
 export interface IListItemsProps {
-  dataSourceUrl?: string;
   name: string;
   uniqueStateId?: string;
   queryParamsExpression?: string;

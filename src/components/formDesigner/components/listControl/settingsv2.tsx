@@ -210,10 +210,13 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         </FormItem>
       </Show>
 
+      <SectionSeparator sectionName="Data" />
+
       <FormItem
         name="dataSource"
         label="Data source"
         tooltip="The list data to be used can be the data that comes with the form of can be fetched from the API"
+        initialValue={['form']}
       >
         <Select>
           <Option value="form">form</Option>
@@ -221,40 +224,30 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         </Select>
       </FormItem>
 
-      <FormItem
-        label="API Url"
-        name="dataSourceUrl"
-        tooltip="The API url that will be used to fetch the list data. Write the code that returns the string"
-      >
-        <CodeEditor
-          mode="dialog"
-          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-          name="dataSourceUrl"
-          type={''}
-          id={''}
-          description="The API url that will be used to fetch the list data. Write the code that returns the string"
-          exposedVariables={[
-            {
-              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-              name: 'data',
-              description: 'Form data',
-              type: 'object',
-            },
-            {
-              id: '65b71112-d412-401f-af15-1d3080f85319',
-              name: 'globalState',
-              description: 'The global state',
-              type: 'object',
-            },
-            {
-              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-              name: 'queryParams',
-              description: 'Query parameters',
-              type: 'object',
-            },
-          ]}
-        />
-      </FormItem>
+      <Show when={state?.dataSource === 'api'}>
+        <FormItem name="entityType" label="Entity type">
+          <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" />
+        </FormItem>
+        <Show when={Boolean(state?.entityType)}>
+          <FormItem name="properties" label="Properties">
+            <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} />
+          </FormItem>
+
+          <SectionSeparator sectionName="Query builder" />
+
+          <FormItem name="useExpression" label="Use Expression" valuePropName="checked">
+            <Checkbox />
+          </FormItem>
+
+          <FormItem label="Query builder" name="filters">
+            <QueryBuilderWithModelType
+              modelType={state?.entityType}
+              useExpression={state?.useExpression}
+              value={state?.filters}
+            />
+          </FormItem>
+        </Show>
+      </Show>
 
       <SectionSeparator sectionName="Render" />
 
@@ -285,40 +278,14 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         <Input />
       </FormItem>
 
-      <SectionSeparator sectionName="Filters" />
-
-      <FormItem name="entityType" label="Entity type">
-        <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" />
-      </FormItem>
-
-      <Show when={Boolean(state?.entityType)}>
-        <FormItem name="properties" label="Properties">
-          <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} />
-        </FormItem>
-
-        <SectionSeparator sectionName="Query builder" />
-
-        <FormItem name="useExpression" label="Use Expression" valuePropName="checked">
-          <Checkbox />
-        </FormItem>
-
-        <FormItem label="Query builder" name="filters">
-          <QueryBuilderWithModelType
-            modelType={state?.entityType}
-            useExpression={state?.useExpression}
-            value={state?.filters}
-          />
-        </FormItem>
-      </Show>
-
       <SectionSeparator sectionName="Layout" />
 
       <FormItem name="labelCol" label="Label Col">
-        <InputNumber min={1} max={24} defaultValue={5} />
+        <InputNumber min={1} max={24} defaultValue={5} step={1} />
       </FormItem>
 
       <FormItem name="wrapperCol" label="Wrapper Col">
-        <InputNumber min={1} max={24} defaultValue={13} />
+        <InputNumber min={1} max={24} defaultValue={13} step={1} />
       </FormItem>
 
       <SectionSeparator sectionName="Pagination" />

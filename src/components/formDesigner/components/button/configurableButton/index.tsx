@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC } from 'react';
 import { Button, message, Modal } from 'antd';
 import { useShaRouting, useForm, useModal, useGlobalState, useSheshaApplication } from '../../../../../providers';
 import { ISelectionProps } from '../../../../../providers/dataTableSelection/models';
@@ -14,7 +14,6 @@ import { usePubSub } from '../../../../../hooks';
 import { DataTablePubsubConstants } from '../../../../../providers/dataTable/pubSub';
 import { DynamicFormPubSubConstants } from '../../../../../pages/dynamic/pubSub';
 import { CSSProperties } from 'react';
-import { ListControlEvents } from '../../listControl/constants';
 
 export interface IConfigurableButtonProps extends Omit<IButtonGroupButton, 'style'> {
   formComponentId: string;
@@ -26,7 +25,7 @@ export interface IConfigurableButtonProps extends Omit<IButtonGroupButton, 'styl
 
 export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
   const { backendUrl } = useSheshaApplication();
-  const { getAction, form, setFormMode, formData, formMode, setFormData } = useForm();
+  const { getAction, form, setFormMode, formData, formMode } = useForm();
   const { router } = useShaRouting();
   const { globalState } = useGlobalState();
   const { publish } = usePubSub();

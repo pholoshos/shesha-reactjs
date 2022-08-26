@@ -20,8 +20,8 @@ export interface ISubFormProps extends IValuable, IChangeable {
   dataSource?: 'form' | 'api';
   entityType?: string;
   useExpression?: boolean;
-  filters?: IStoredFilter;
   properties: string[];
+  queryParams?: string;
 
   //#region Actions
   beforeGet?: string;
@@ -31,6 +31,7 @@ export interface ISubFormProps extends IValuable, IChangeable {
   //#endregion
 
   //#region URLs
+  /** Optional */
   getUrl?: string;
   postUrl?: string;
   putUrl?: string;

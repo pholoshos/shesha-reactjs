@@ -85,7 +85,7 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
       hideLabel: true,
       uniqueStateId,
       labelCol: 5,
-      wrapperCol: 5,
+      wrapperCol: 13,
       buttons: [
         {
           id: nanoid(),

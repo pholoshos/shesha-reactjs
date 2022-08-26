@@ -44,9 +44,9 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
   const style = model?.hidden ? { display: 'none' } : {};
 
   const getLayout = () => {
-    if (listItemLayout?.labelCol || listItemLayout?.wrapperCol) {
+    if (listItemLayout?.labelCol?.span || listItemLayout?.wrapperCol?.span) {
       return listItemLayout;
-    } else if (subFormLayout?.labelCol || subFormLayout?.wrapperCol) {
+    } else if (subFormLayout?.labelCol?.span || subFormLayout?.wrapperCol?.span) {
       return subFormLayout;
     }
     return { labelCol, wrapperCol };

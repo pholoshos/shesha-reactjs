@@ -34,7 +34,6 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         const incomingState = { ...values };
 
         if (!values?.entityType) {
-          incomingState.filters = null;
           incomingState.properties = null;
         }
 
@@ -71,7 +70,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         <Input />
       </FormItem>
 
-      <SectionSeparator sectionName="" />
+      <SectionSeparator sectionName="Data" />
 
       <FormItem
         name="dataSource"
@@ -83,6 +82,52 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           <Option value="form">form</Option>
           <Option value="api">api</Option>
         </Select>
+      </FormItem>
+
+      <Show when={state?.dataSource === 'api'}>
+        <FormItem name="entityType" label="Entity type">
+          <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" />
+        </FormItem>
+        <Show when={Boolean(state?.entityType)}>
+          <FormItem name="properties" label="Properties">
+            <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} />
+          </FormItem>
+        </Show>
+      </Show>
+
+      <FormItem
+        label="Query Params"
+        name="queryParams"
+        tooltip="The code that returns the query parameters to be used to fetch the data. Ideally this should be a function that returns an object with the entity id"
+      >
+        <CodeEditor
+          mode="dialog"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="getUrl"
+          type={''}
+          id={''}
+          description="The code that returns the query parameters to be used to fetch the data. Ideally this should be a function that returns an object with the entity id"
+          exposedVariables={[
+            {
+              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+              name: 'data',
+              description: 'Form data',
+              type: 'object',
+            },
+            {
+              id: '65b71112-d412-401f-af15-1d3080f85319',
+              name: 'globalState',
+              description: 'The global state',
+              type: 'object',
+            },
+            {
+              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+              name: 'queryParams',
+              description: 'Query parameters',
+              type: 'object',
+            },
+          ]}
+        />
       </FormItem>
 
       <SectionSeparator sectionName="URLs" />
@@ -367,12 +412,12 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
 
       <SectionSeparator sectionName="Layout" />
 
-      <FormItem name="labelCol" label="">
-        <InputNumber min={1} max={24} defaultValue={5} />
+      <FormItem name="labelCol" label="Label Col">
+        <InputNumber min={1} max={24} defaultValue={5} step={1} />
       </FormItem>
 
       <FormItem name="wrapperCol" label="Wrapper Col">
-        <InputNumber min={1} max={24} defaultValue={13} />
+        <InputNumber min={1} max={24} defaultValue={13} step={1} />
       </FormItem>
 
       <SectionSeparator sectionName="Visibility" />

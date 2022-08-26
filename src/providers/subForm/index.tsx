@@ -1,5 +1,5 @@
-import React, { FC, useReducer, useContext, useEffect } from 'react';
-import { useGet, useMutate } from 'restful-react';
+import React, { FC, useReducer, useContext, useEffect, useMemo } from 'react';
+import { useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
 import { useSubscribe } from '../../hooks';
@@ -13,6 +13,8 @@ import { setComponentsActions } from './actions';
 import { ISubFormProps } from './interfaces';
 import { message } from 'antd';
 import { useGlobalState } from '../globalState';
+import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
+import { useDebouncedCallback } from 'use-debounce';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name'> {
   uniqueStateId?: string;
@@ -39,15 +41,23 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   name,
   labelCol,
   wrapperCol,
+  queryParams,
+  entityType,
   onChange,
 }) => {
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
-  const { formData } = useForm();
+  const { formData, formMode } = useForm();
   const { globalState } = useGlobalState();
   const { refetch: fetchForm, loading: isFetchingForm, data: fetchFormResponse, error: fetchFormError } = useFormGet({
     queryParams: { id: formPath?.id },
     lazy: true,
   });
+  const {
+    refetch: fetchEntity,
+    data: fetchEntityResponse,
+    loading: isFetchingEntity,
+    error: fetchEntityError,
+  } = useEntitiesGet({ lazy: true });
   const { initialValues } = useSubForm();
 
   const getEvaluatedUrl = (url: string) => {
@@ -60,11 +70,34 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     ]);
   };
 
-  const { refetch: fetchFormData, loading: isFetchingData, error: fetchDataError, data: fetchedFormData } = useGet({
-    path: getEvaluatedUrl(getUrl),
-    lazy: true,
-    queryParams: properties?.length ? { properties: properties?.join(' ') } : {},
-  });
+  const evaluatedQueryParams = useMemo(() => {
+    if (formMode === 'designer') return {};
+
+    let params: EntitiesGetQueryParams = {
+      entityType,
+    };
+
+    if (properties) {
+      params.properties = properties?.join(' ');
+    }
+
+    if (queryParams) {
+      const getOnSubmitPayload = () => {
+        // tslint:disable-next-line:function-constructor
+        return new Function('data, query, globalState', queryParams)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+      };
+
+      params = { ...params, ...(typeof getOnSubmitPayload() === 'object' ? getOnSubmitPayload() : {}) };
+    }
+
+    return params;
+  }, [queryParams, formMode]);
+
+  useEffect(() => {
+    if (queryParams && formMode !== 'designer') {
+      fetchEntity({ queryParams: evaluatedQueryParams });
+    }
+  }, [queryParams, evaluatedQueryParams]);
 
   useEffect(() => {
     if (dataSource === 'api' && getUrl) {
@@ -88,7 +121,15 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   });
 
   //#region get data
-  const getData = () => {
+  useEffect(() => {
+    if (!isFetchingEntity && fetchEntityResponse) {
+      onChange(fetchEntityResponse?.result);
+    }
+  }, [isFetchingEntity, fetchEntityResponse]);
+  //#endregion
+
+  //#region CRUD functions
+  const getData = useDebouncedCallback(() => {
     if (getUrl && dataSource === 'api') {
       if (beforeGet) {
         const evaluateBeforeGet = () => {
@@ -106,18 +147,11 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         onChange(evaluatedData);
       }
 
-      fetchFormData();
+      fetchEntity();
     }
-  };
+  }, 300);
 
-  useEffect(() => {
-    if (!isFetchingData && fetchedFormData) {
-      onChange(fetchedFormData?.result);
-    }
-  }, [isFetchingData, fetchedFormData]);
-  //#endregion
-
-  const postData = () => {
+  const postData = useDebouncedCallback(() => {
     postHttp(value).then(submittedValue => {
       if (onCreated) {
         const evaluateOnCreated = () => {
@@ -133,9 +167,9 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         evaluateOnCreated();
       }
     });
-  };
+  }, 300);
 
-  const putData = () => {
+  const putData = useDebouncedCallback(() => {
     putHttp(value).then(submittedValue => {
       if (onUpdated) {
         const evaluateOnUpdated = () => {
@@ -151,9 +185,9 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         evaluateOnUpdated();
       }
     });
-  };
+  }, 300);
 
-  const deleteData = () => {
+  const deleteData = useDebouncedCallback(() => {
     deleteHttp('', { queryParams: { id: value?.id } }).then(() => {
       if (onDeleted) {
         const evaluateOnUpdated = () => {
@@ -164,7 +198,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         evaluateOnUpdated();
       }
     });
-  };
+  }, 300);
+  //#endregion
 
   //#region Fetch Form
   useEffect(() => {
@@ -198,27 +233,36 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   useSubscribe(SUB_FORM_EVENT_NAMES.getFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {
+      console.log('LOG:: stateId SUB_FORM_EVENT_NAMES.getFormData', stateId);
+
       getData();
     }
   });
 
+  //#region Events
   useSubscribe(SUB_FORM_EVENT_NAMES.postFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {
+      console.log('LOG:: stateId SUB_FORM_EVENT_NAMES.postFormData', stateId);
       postData();
     }
   });
 
   useSubscribe(SUB_FORM_EVENT_NAMES.updateFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {
+      console.log('LOG:: stateId SUB_FORM_EVENT_NAMES.updateFormData', stateId);
       putData();
     }
   });
 
   useSubscribe(SUB_FORM_EVENT_NAMES.deleteFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {
+      console.log('LOG:: stateId SUB_FORM_EVENT_NAMES.deleteFormData', stateId);
       deleteData();
     }
   });
+  //#endregion
+
+  // console.log('LOGS formSettings, labelCol, wrapperCol ', markup?.formSettings, labelCol, wrapperCol);
 
   return (
     <SubFormContext.Provider
@@ -229,20 +273,20 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
           getForm: fetchFormError,
           postData: postError,
           deleteData: deleteError,
-          getData: fetchDataError,
+          getData: fetchEntityError,
           putData: updateError,
         },
         loading: {
           getForm: isFetchingForm,
           postData: isPosting,
           deleteData: isDeleting,
-          getData: isFetchingData,
+          getData: isFetchingEntity,
           putData: isUpdating,
         },
         components: state?.components,
         layout: {
-          labelCol: markup?.formSettings?.labelCol || labelCol,
-          wrapperCol: markup?.formSettings?.wrapperCol || wrapperCol,
+          labelCol: labelCol || markup?.formSettings?.labelCol,
+          wrapperCol: wrapperCol || markup?.formSettings?.wrapperCol,
         },
       }}
     >

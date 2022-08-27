@@ -3,9 +3,7 @@ import { IGuidNullableEntityWithDisplayNameDto } from '../../interfaces/shesha';
 import { IChangeable, IConfigurableFormComponent, IValuable } from '../../interfaces';
 import { IStoredFilter } from '../dataTable/interfaces';
 
-export interface ISetComponentsPayload {
-  components?: IConfigurableFormComponent[];
-}
+
 
 export interface ISubFormProps extends IValuable, IChangeable {
   dataSourceUrl?: string;

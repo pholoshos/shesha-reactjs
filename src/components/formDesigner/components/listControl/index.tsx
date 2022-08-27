@@ -3,10 +3,10 @@ import { IFormItem, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { DeleteFilled, OrderedListOutlined } from '@ant-design/icons';
 import { evaluateComplexString, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { ListItemProvider, useForm, useGlobalState } from '../../../../providers';
+import { FormItemProvider, ListItemProvider, useForm, useGlobalState } from '../../../../providers';
 import { listSettingsForm } from './settings';
 import ComponentsContainer from '../../componentsContainer';
-import { Button, Divider, Form, Input, message, Space } from 'antd';
+import { Button, ColProps, Divider, Form, Input, message, Space } from 'antd';
 import ConfigurableFormItem from '../formItem';
 import { useMutate } from 'restful-react';
 import ValidationErrors from '../../../validationErrors';
@@ -51,8 +51,6 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
     const isHidden = isComponentHidden(model);
 
     if (isHidden) return null;
-
-    console.log('ListComponent model: ', model);
 
     return (
       <ConfigurableFormItem
@@ -343,14 +341,15 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
     }
   }, 350);
 
-  const renderSubForm = (name?: string) => {
+  const renderSubForm = (name?: string, localLabelCol?: ColProps, localWrapperCol?: ColProps) => {
     // Note we do not pass the name. The name will be provided by the List component
     return (
       <SubFormProvider
         name={name}
         markup={markup}
         properties={[]}
-        {...{ wrapperCol: { span: 16 }, labelCol: { span: 8 } }}
+        labelCol={localLabelCol}
+        wrapperCol={localWrapperCol}
       >
         <SubForm />
       </SubFormProvider>
@@ -358,6 +357,8 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
   };
 
   const isSpinning = submitting || isDeleting || isFetchingEntities;
+
+  console.log('LOGS:: value, data: ', value, data);
 
   return (
     <CollapsiblePanel
@@ -378,9 +379,9 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
       }
     >
       <Show when={isInDesignerMode && renderStrategy === 'dragAndDrop'}>
-        <SubFormProvider properties={[]} {...{ wrapperCol: { span: 5 }, labelCol: { span: 24 } }}>
+        <FormItemProvider labelCol={{ span: labelCol }} wrapperCol={{ span: wrapperCol }}>
           <ComponentsContainer containerId={containerId} />
-        </SubFormProvider>
+        </FormItemProvider>
       </Show>
       <Show when={isInDesignerMode && renderStrategy === 'externalForm' && Boolean(formPath?.id)}>
         {renderSubForm('__IGNORE__')}
@@ -397,47 +398,52 @@ const ListComponentRender: FC<IListComponentRenderProps> = ({
             <div className="sha-list-component-body" style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}>
               <Form.List name={name} initialValue={[]}>
                 {(fields, { remove }) => {
+                  console.log('LOGS:: fields, value, name, formData: ', fields, value, name, formData);
+
                   return (
                     <>
                       {fields?.map((field, index) => (
                         <div className="sha-list-component-item">
-                          <ListItemProvider
-                            index={index}
-                            prefix={`${name}.`}
-                            key={field.key}
-                            layout={{ wrapperCol: { span: wrapperCol }, labelCol: { span: labelCol } }}
-                          >
-                            <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
+                          <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
+                            <FormItemProvider
+                              namePrefix={`${index}`}
+                              wrapperCol={{ span: wrapperCol }}
+                              labelCol={{ span: labelCol }}
+                            >
                               <ComponentsContainer
                                 containerId={containerId}
                                 plainWrapper
                                 direction="horizontal"
                                 alignItems="center"
+                              />{' '}
+                            </FormItemProvider>
+                          </Show>
+
+                          <Show when={Boolean(formPath?.id) && Boolean(markup) && renderStrategy === 'externalForm'}>
+                            {renderSubForm(
+                              `${index}`,
+                              labelCol && { span: labelCol },
+                              wrapperCol && { span: wrapperCol }
+                            )}
+                          </Show>
+
+                          <Show when={allowRemoveItems}>
+                            <div className="sha-list-component-add-item-btn">
+                              <Button
+                                danger
+                                type="ghost"
+                                size="small"
+                                className="dynamic-delete-button"
+                                onClick={() => {
+                                  remove(field.name);
+                                  deleteItem(field.name);
+                                }}
+                                icon={<DeleteFilled />}
                               />
-                            </Show>
+                            </div>
+                          </Show>
 
-                            <Show when={Boolean(formPath?.id) && Boolean(markup) && renderStrategy === 'externalForm'}>
-                              {renderSubForm()}
-                            </Show>
-
-                            <Show when={allowRemoveItems}>
-                              <div className="sha-list-component-add-item-btn">
-                                <Button
-                                  danger
-                                  type="ghost"
-                                  size="small"
-                                  className="dynamic-delete-button"
-                                  onClick={() => {
-                                    remove(field.name);
-                                    deleteItem(field.name);
-                                  }}
-                                  icon={<DeleteFilled />}
-                                />
-                              </div>
-                            </Show>
-
-                            <Divider className="sha-list-component-divider" />
-                          </ListItemProvider>
+                          <Divider className="sha-list-component-divider" />
                         </div>
                       ))}
                     </>

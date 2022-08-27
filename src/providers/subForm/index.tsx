@@ -9,7 +9,7 @@ import { uiReducer } from './reducer';
 import { evaluateComplexString } from '../../formDesignerUtils';
 import { getQueryParams } from '../../utils/url';
 import { IFormDto } from '../form/models';
-import { setComponentsActions } from './actions';
+import { setMarkupWithSettingsAction } from './actions';
 import { ISubFormProps } from './interfaces';
 import { message } from 'antd';
 import { useGlobalState } from '../globalState';
@@ -207,10 +207,10 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       fetchForm();
     }
 
-    if (!formPath?.id && !markup) {
-      dispatch(setComponentsActions({ components: [] }));
+    if (!formPath?.id && markup) {
+      dispatch(setMarkupWithSettingsAction(markup));
     }
-  }, [formPath?.id, markup]);
+  }, [formPath?.id, markup]); //
 
   useEffect(() => {
     if (!isFetchingForm && fetchFormResponse) {
@@ -222,12 +222,14 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
       if (markup) formDto.markup = JSON.parse(markup);
 
-      dispatch(setComponentsActions({ components: formDto?.markup?.components }));
+      dispatch(setMarkupWithSettingsAction(formDto?.markup));
     }
   }, [fetchFormResponse, isFetchingForm]);
 
   useEffect(() => {
-    dispatch(setComponentsActions({ components: markup?.components }));
+    if (markup) {
+      dispatch(setMarkupWithSettingsAction(markup));
+    }
   }, [markup]);
   //#endregion
 
@@ -262,12 +264,9 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   });
   //#endregion
 
-  // console.log('LOGS formSettings, labelCol, wrapperCol ', markup?.formSettings, labelCol, wrapperCol);
-
   return (
     <SubFormContext.Provider
       value={{
-        prefixName: name,
         initialValues: value,
         errors: {
           getForm: fetchFormError,
@@ -284,10 +283,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
           putData: isUpdating,
         },
         components: state?.components,
-        layout: {
-          labelCol: labelCol || markup?.formSettings?.labelCol,
-          wrapperCol: wrapperCol || markup?.formSettings?.wrapperCol,
+        formSettings: {
+          ...state?.formSettings,
+          labelCol: labelCol || (state?.formSettings?.labelCol as any), // Override with the incoming one
+          wrapperCol: wrapperCol || (state?.formSettings?.wrapperCol as any), // Override with the incoming one
         },
+        name,
       }}
     >
       <SubFormActionsContext.Provider

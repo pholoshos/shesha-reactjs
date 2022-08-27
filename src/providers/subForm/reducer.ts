@@ -1,5 +1,5 @@
 import { ISubFormStateContext } from './contexts';
-import { ThemeActionEnums } from './actions';
+import { SubFormActionEnums } from './actions';
 
 export function uiReducer(
   state: ISubFormStateContext,
@@ -11,10 +11,13 @@ export function uiReducer(
   //#endregion
 
   switch (type) {
-    case ThemeActionEnums.SetComponents:
+    case SubFormActionEnums.SetMarkupWithSettings:
+      const { components, formSettings } = payload || {};
+
       return {
         ...state,
-        components: payload?.components,
+        components,
+        formSettings,
       };
 
     default: {

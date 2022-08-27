@@ -1,14 +1,14 @@
 import { createAction } from 'redux-actions';
-import { ISetComponentsPayload } from './interfaces';
+import { FormMarkupWithSettings } from '../form/models';
 
-export enum ThemeActionEnums {
-  SetComponents = 'SET_COMPONENTS',
+export enum SubFormActionEnums {
+  SetMarkupWithSettings = 'SET_MARKUP_WITH_SETTINGS',
   /* NEW_ACTION_TYPE_GOES_HERE */
 }
 
-export const setComponentsActions = createAction<ISetComponentsPayload, ISetComponentsPayload>(
-  ThemeActionEnums.SetComponents,
-  components => components
+export const setMarkupWithSettingsAction = createAction<FormMarkupWithSettings, FormMarkupWithSettings>(
+  SubFormActionEnums.SetMarkupWithSettings,
+  p => p
 );
 
 /* NEW_ACTION_GOES_HERE */

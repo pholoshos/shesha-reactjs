@@ -481,7 +481,7 @@
               "description": "If this is checked, instead of submitting the form to the back-end, the data will be returned and can be accessed under onSuccess script"
             },
             {
-              "id": "22e6bfe5-b6cc-40a4-8fe2-815174e5a60d",
+              "id": "3747d8a2-51b1-429d-bf56-c5d44291f4ec",
               "type": "dropdown",
               "name": "onSubmitEvent",
               "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",

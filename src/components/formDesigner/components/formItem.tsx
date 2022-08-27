@@ -5,7 +5,7 @@ import { useForm } from '../../../providers/form';
 import { getFieldNameFromExpression, getValidationRules } from '../../../providers/form/utils';
 import classNames from 'classnames';
 import './styles.less';
-import { useListItemIndex, useSubForm } from '../../../providers';
+import { useFormItem } from '../../../providers';
 
 export interface IConfigurableFormItemProps {
   model: IConfigurableFormComponent;
@@ -36,29 +36,22 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
 }) => {
   const { isComponentHidden, formData } = useForm();
 
-  const { index, layout: listItemLayout } = useListItemIndex();
-  const { prefixName, layout: subFormLayout } = useSubForm();
+  const { namePrefix, wrapperCol: _wrapperCol, labelCol: _labelCol } = useFormItem();
 
   const isHidden = isComponentHidden(model);
 
   const style = model?.hidden ? { display: 'none' } : {};
 
   const getLayout = () => {
-    if (listItemLayout?.labelCol?.span || listItemLayout?.wrapperCol?.span) {
-      return listItemLayout;
-    } else if (subFormLayout?.labelCol?.span || subFormLayout?.wrapperCol?.span) {
-      return subFormLayout;
-    }
-    return { labelCol, wrapperCol };
+    // Make sure the `wrapperCol` and `labelCol` from `FormItemProver` override the ones from the main form
+    return { labelCol: _labelCol || labelCol, wrapperCol: _wrapperCol || wrapperCol };
   };
 
   const getPropName = () => {
     const name = getFieldNameFromExpression(model.name);
 
-    if (!isNaN(index)) {
-      return typeof name === 'string' ? [index, name] : [index, ...name];
-    } else if (prefixName) {
-      return typeof name === 'string' ? [prefixName, name] : [prefixName, ...name];
+    if (namePrefix) {
+      return typeof name === 'string' ? [namePrefix, name] : [namePrefix, ...name];
     }
 
     return name;

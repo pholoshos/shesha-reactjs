@@ -1,12 +1,13 @@
-import { ColProps } from 'antd';
 import { createContext } from 'react';
 import { GetDataError } from 'restful-react';
 import { IConfigurableFormComponent } from '../../interfaces';
+import { IFormSettings } from '../form/contexts';
 
 export interface ISubFormStateContext {
   initialValues?: any;
-  prefixName?: string;
   components?: IConfigurableFormComponent[];
+  formSettings?: IFormSettings;
+  name?: string;
   errors?: {
     getData?: GetDataError<unknown>;
     getForm?: GetDataError<unknown>;
@@ -21,10 +22,6 @@ export interface ISubFormStateContext {
     putData?: boolean;
     deleteData?: boolean;
   };
-  layout?: {
-    labelCol?: ColProps;
-    wrapperCol?: ColProps;
-  };
 }
 
 export interface ISubFormActionsContext {
@@ -36,6 +33,7 @@ export interface ISubFormActionsContext {
 
 export const SUB_FORM_CONTEXT_INITIAL_STATE: ISubFormStateContext = {
   components: [],
+  formSettings: null,
 };
 
 export const SubFormContext = createContext<ISubFormStateContext>(SUB_FORM_CONTEXT_INITIAL_STATE);

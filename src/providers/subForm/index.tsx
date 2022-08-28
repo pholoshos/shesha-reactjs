@@ -1,18 +1,19 @@
-import React, { FC, useReducer, useContext, useEffect } from 'react';
-import { useGet, useMutate } from 'restful-react';
+import React, { FC, useReducer, useContext, useEffect, useMemo } from 'react';
+import { useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
 import { useSubscribe } from '../../hooks';
 import { useFormGet } from '../../apis/form';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
-import { evaluateComplexString } from '../../formDesignerUtils';
 import { getQueryParams } from '../../utils/url';
 import { IFormDto } from '../form/models';
-import { setComponentsActions } from './actions';
+import { setMarkupWithSettingsAction } from './actions';
 import { ISubFormProps } from './interfaces';
-import { message } from 'antd';
+import { message, notification } from 'antd';
 import { useGlobalState } from '../globalState';
+import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
+import { useDebouncedCallback } from 'use-debounce';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name'> {
   uniqueStateId?: string;
@@ -39,32 +40,69 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   name,
   labelCol,
   wrapperCol,
+  queryParams,
+  entityType,
   onChange,
 }) => {
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
-  const { formData } = useForm();
+  const { formData, formMode } = useForm();
   const { globalState } = useGlobalState();
   const { refetch: fetchForm, loading: isFetchingForm, data: fetchFormResponse, error: fetchFormError } = useFormGet({
     queryParams: { id: formPath?.id },
     lazy: true,
   });
+  const {
+    refetch: fetchEntity,
+    data: fetchEntityResponse,
+    loading: isFetchingEntity,
+    error: fetchEntityError,
+  } = useEntitiesGet({ lazy: true });
   const { initialValues } = useSubForm();
 
   const getEvaluatedUrl = (url: string) => {
     if (!url) return '';
 
-    return evaluateComplexString(url, [
-      { match: 'data', data: formData },
-      { match: 'globalState', data: globalState },
-      { match: 'query', data: getQueryParams() },
-    ]);
+    return (() => {
+      // tslint:disable-next-line:function-constructor
+      return new Function('data, query, globalState', url)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+    })();
   };
 
-  const { refetch: fetchFormData, loading: isFetchingData, error: fetchDataError, data: fetchedFormData } = useGet({
-    path: getEvaluatedUrl(getUrl),
-    lazy: true,
-    queryParams: properties?.length ? { properties: properties?.join(' ') } : {},
-  });
+  const evaluatedQueryParams = useMemo(() => {
+    if (formMode === 'designer') return {};
+
+    let params: EntitiesGetQueryParams = {
+      entityType,
+    };
+
+    if (properties) {
+      params.properties = properties?.join(' ');
+    }
+
+    if (queryParams) {
+      const getOnSubmitPayload = () => {
+        // tslint:disable-next-line:function-constructor
+        return new Function('data, query, globalState, value', queryParams)(
+          formData,
+          getQueryParams(),
+          globalState,
+          value
+        ); // Pass data, query, globalState
+      };
+
+      params = { ...params, ...(typeof getOnSubmitPayload() === 'object' ? getOnSubmitPayload() : {}) };
+    }
+
+    return params;
+  }, [queryParams, formMode]);
+
+  const handleFetchData = () => fetchEntity({ queryParams: evaluatedQueryParams });
+
+  useEffect(() => {
+    if (queryParams && formMode !== 'designer' && dataSource === 'api') {
+      handleFetchData();
+    }
+  }, [queryParams, evaluatedQueryParams]);
 
   useEffect(() => {
     if (dataSource === 'api' && getUrl) {
@@ -88,12 +126,20 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   });
 
   //#region get data
-  const getData = () => {
-    if (getUrl && dataSource === 'api') {
+  useEffect(() => {
+    if (!isFetchingEntity && fetchEntityResponse) {
+      onChange(fetchEntityResponse?.result);
+    }
+  }, [isFetchingEntity, fetchEntityResponse]);
+  //#endregion
+
+  //#region CRUD functions
+  const getData = useDebouncedCallback(() => {
+    if (dataSource === 'api') {
       if (beforeGet) {
         const evaluateBeforeGet = () => {
           // tslint:disable-next-line:function-constructor
-          return new Function('data, value, initialValues, globalState', onCreated)(
+          return new Function('data, value, initialValues, globalState', beforeGet)(
             formData,
             value,
             initialValues,
@@ -106,65 +152,83 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         onChange(evaluatedData);
       }
 
-      fetchFormData();
+      handleFetchData();
     }
-  };
+  }, 300);
 
-  useEffect(() => {
-    if (!isFetchingData && fetchedFormData) {
-      onChange(fetchedFormData?.result);
+  const postData = useDebouncedCallback(() => {
+    if (!postUrl) {
+      notification.error({
+        placement: 'top',
+        message: 'postUrl missing',
+        description: 'Please make sure you have specified the POST URL',
+      });
+    } else {
+      postHttp(value).then(submittedValue => {
+        if (onCreated) {
+          const evaluateOnCreated = () => {
+            // tslint:disable-next-line:function-constructor
+            return new Function('data, globalState, submittedValue, message', onCreated)(
+              formData,
+              globalState,
+              submittedValue?.result,
+              message
+            );
+          };
+
+          evaluateOnCreated();
+        }
+      });
     }
-  }, [isFetchingData, fetchedFormData]);
+  }, 300);
+
+  const putData = useDebouncedCallback(() => {
+    if (!putUrl) {
+      notification.error({
+        placement: 'top',
+        message: 'putUrl missing',
+        description: 'Please make sure you have specified the PUT URL',
+      });
+    } else {
+      putHttp(value).then(submittedValue => {
+        if (onUpdated) {
+          const evaluateOnUpdated = () => {
+            // tslint:disable-next-line:function-constructor
+            return new Function('data, globalState, submittedValue, message', onUpdated)(
+              formData,
+              globalState,
+              submittedValue?.result,
+              message
+            );
+          };
+
+          evaluateOnUpdated();
+        }
+      });
+    }
+  }, 300);
+
+  const deleteData = useDebouncedCallback(() => {
+    if (!deleteUrl) {
+      notification.error({
+        placement: 'top',
+        message: 'deleteUrl missing',
+        description: 'Please make sure you have specified the Delete URL',
+      });
+    } else {
+      deleteHttp('', { queryParams: { id: value?.id || value?.Id } }).then(() => {
+        if (onDeleted) {
+          const evaluateOnUpdated = () => {
+            // tslint:disable-next-line:function-constructor
+            return new Function('data, globalState, message', onDeleted)(formData, globalState, message);
+          };
+
+          evaluateOnUpdated();
+        }
+      });
+    }
+  }, 300);
   //#endregion
-
-  const postData = () => {
-    postHttp(value).then(submittedValue => {
-      if (onCreated) {
-        const evaluateOnCreated = () => {
-          // tslint:disable-next-line:function-constructor
-          return new Function('data, globalState, submittedValue, message', onCreated)(
-            formData,
-            globalState,
-            submittedValue?.result,
-            message
-          );
-        };
-
-        evaluateOnCreated();
-      }
-    });
-  };
-
-  const putData = () => {
-    putHttp(value).then(submittedValue => {
-      if (onUpdated) {
-        const evaluateOnUpdated = () => {
-          // tslint:disable-next-line:function-constructor
-          return new Function('data, globalState, submittedValue, message', onUpdated)(
-            formData,
-            globalState,
-            submittedValue?.result,
-            message
-          );
-        };
-
-        evaluateOnUpdated();
-      }
-    });
-  };
-
-  const deleteData = () => {
-    deleteHttp('', { queryParams: { id: value?.id } }).then(() => {
-      if (onDeleted) {
-        const evaluateOnUpdated = () => {
-          // tslint:disable-next-line:function-constructor
-          return new Function('data, globalState, message', onDeleted)(formData, globalState, message);
-        };
-
-        evaluateOnUpdated();
-      }
-    });
-  };
 
   //#region Fetch Form
   useEffect(() => {
@@ -172,10 +236,10 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       fetchForm();
     }
 
-    if (!formPath?.id && !markup) {
-      dispatch(setComponentsActions({ components: [] }));
+    if (!formPath?.id && markup) {
+      dispatch(setMarkupWithSettingsAction(markup));
     }
-  }, [formPath?.id, markup]);
+  }, [formPath?.id, markup]); //
 
   useEffect(() => {
     if (!isFetchingForm && fetchFormResponse) {
@@ -187,12 +251,14 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
       if (markup) formDto.markup = JSON.parse(markup);
 
-      dispatch(setComponentsActions({ components: formDto?.markup?.components }));
+      dispatch(setMarkupWithSettingsAction(formDto?.markup));
     }
   }, [fetchFormResponse, isFetchingForm]);
 
   useEffect(() => {
-    dispatch(setComponentsActions({ components: markup?.components }));
+    if (markup) {
+      dispatch(setMarkupWithSettingsAction(markup));
+    }
   }, [markup]);
   //#endregion
 
@@ -202,6 +268,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     }
   });
 
+  //#region Events
   useSubscribe(SUB_FORM_EVENT_NAMES.postFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {
       postData();
@@ -219,31 +286,33 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       deleteData();
     }
   });
+  //#endregion
 
   return (
     <SubFormContext.Provider
       value={{
-        prefixName: name,
         initialValues: value,
         errors: {
           getForm: fetchFormError,
           postData: postError,
           deleteData: deleteError,
-          getData: fetchDataError,
+          getData: fetchEntityError,
           putData: updateError,
         },
         loading: {
           getForm: isFetchingForm,
           postData: isPosting,
           deleteData: isDeleting,
-          getData: isFetchingData,
+          getData: isFetchingEntity,
           putData: isUpdating,
         },
         components: state?.components,
-        layout: {
-          labelCol: markup?.formSettings?.labelCol || labelCol,
-          wrapperCol: markup?.formSettings?.wrapperCol || wrapperCol,
+        formSettings: {
+          ...state?.formSettings,
+          labelCol: labelCol || (state?.formSettings?.labelCol as any), // Override with the incoming one
+          wrapperCol: wrapperCol || (state?.formSettings?.wrapperCol as any), // Override with the incoming one
         },
+        name,
       }}
     >
       <SubFormActionsContext.Provider

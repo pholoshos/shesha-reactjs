@@ -3,9 +3,10 @@ import ShaSpin from '../../../shaSpin';
 import ValidationErrors from '../../../validationErrors';
 import { useSubForm } from '../../../../providers/subForm';
 import { SubFormContainer } from './subFormContainer';
+import { FormItemProvider } from '../../../../providers';
 
 const SubForm: FC = () => {
-  const { errors, loading, components } = useSubForm();
+  const { errors, loading, components, formSettings, name } = useSubForm();
 
   const isLoading = useMemo(() => {
     return Object.values(loading).find(l => Boolean(l));
@@ -19,7 +20,9 @@ const SubForm: FC = () => {
         ))}
 
         <div>
-          <SubFormContainer components={components} />
+          <FormItemProvider namePrefix={name} labelCol={formSettings?.labelCol} wrapperCol={formSettings?.wrapperCol}>
+            <SubFormContainer components={components} />
+          </FormItemProvider>
         </div>
       </div>
     </ShaSpin>

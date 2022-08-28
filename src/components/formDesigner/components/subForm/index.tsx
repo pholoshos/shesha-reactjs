@@ -9,9 +9,13 @@ import SubForm from './subForm';
 import ConfigurableFormItem from '../formItem';
 import { SubFormSettings } from './settingsv2';
 
-export interface ISubFormProps extends SubFormProviderProps, IConfigurableFormComponent {
+export interface ISubFormProps
+  extends Omit<SubFormProviderProps, 'labelCol' | 'wrapperCol'>,
+    IConfigurableFormComponent {
   name: string;
   uniqueStateId?: string;
+  labelCol?: number;
+  wrapperCol?: number;
 }
 
 const SubFormComponent: IToolboxComponent<ISubFormProps> = {
@@ -26,7 +30,11 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
     if (isHidden) return null;
 
     return (
-      <ConfigurableFormItem model={model}>
+      <ConfigurableFormItem
+        model={model}
+        labelCol={{ span: model?.hideLabel ? 0 : model?.labelCol }}
+        wrapperCol={{ span: model?.hideLabel ? 24 : model?.wrapperCol }}
+      >
         <SubFormWrapper {...model} />
       </ConfigurableFormItem>
     );
@@ -35,7 +43,7 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
   settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
     return (
       <SubFormSettings
-        model={(model as unknown) as ISubFormProps}
+        model={model as any}
         onSave={onSave as any}
         onCancel={onCancel}
         onValuesChange={onValuesChange as any}
@@ -46,6 +54,8 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
     const customProps: ISubFormProps = {
       ...model,
       dataSource: 'form',
+      labelCol: 5,
+      wrapperCol: 13,
     };
     return customProps;
   },

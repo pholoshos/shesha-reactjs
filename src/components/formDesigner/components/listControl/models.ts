@@ -1,5 +1,6 @@
 import { IStoredFilter } from './../../../../providers/dataTable/interfaces';
-import { IGuidNullableEntityWithDisplayNameDto } from '../../../../interfaces';
+import { IConfigurableFormComponent, IFormItem, IGuidNullableEntityWithDisplayNameDto } from '../../../../interfaces';
+
 export interface IListItemsProps {
   name: string;
   uniqueStateId?: string;
@@ -7,8 +8,8 @@ export interface IListItemsProps {
   title?: string;
   footer?: string;
   formPath?: IGuidNullableEntityWithDisplayNameDto;
-  allowRemoveItems?: boolean;
-  allowSubmit?: boolean;
+  allowDeleteItems?: boolean;
+  allowRemoteDelete?: boolean;
   deleteUrl?: string;
   submitUrl?: string;
   submitHttpVerb?: 'POST' | 'PUT';
@@ -26,4 +27,23 @@ export interface IListItemsProps {
   useExpression?: boolean;
   properties?: string[];
   filters?: IStoredFilter;
+}
+
+export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {
+  /** the source of data for the list component */
+  labelCol?: number;
+  wrapperCol?: number;
+  dataSource?: 'form' | 'api';
+  renderStrategy?: 'dragAndDrop' | 'externalForm';
+}
+
+export interface IListControlProps extends IListItemsProps, IFormItem {
+  containerId: string;
+  value?: any[];
+}
+
+export interface IListComponentRenderState {
+  quickSearch?: string;
+  skipCount?: number;
+  maxResultCount?: number;
 }

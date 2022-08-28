@@ -504,6 +504,26 @@
                   "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
                 },
                 {
+                  "label": "getFormData",
+                  "value": "getFormDataems",
+                  "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
+                },
+                {
+                  "label": "postFormData",
+                  "value": "postFormDatams",
+                  "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
+                },
+                {
+                  "label": "updateFormData",
+                  "value": "updateFormData",
+                  "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
+                },
+                {
+                  "label": "deleteFormData",
+                  "value": "deleteFormData",
+                  "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
+                },
+                {
                   "label": "refreshTable",
                   "value": "REFRESH_TABLE",
                   "id": "a89e2856-a42a-4332-b83e-ca7dd093ab21"
@@ -688,59 +708,11 @@
         },
         {
           "id": "22e6bfe5-b6cc-40a4-8fe2-815174e5a60d",
-          "type": "dropdown",
+          "type": "eventNames",
           "name": "eventName",
           "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
           "label": "Event name",
           "description": "This is the event that will be published when the button is dispatched",
-          "values": [
-            {
-              "label": "refreshListItems",
-              "value": "refreshListItems",
-              "id": "b3583e80-408c-46cd-83b1-23b1e41b807b"
-            },
-            {
-              "label": "saveListItems",
-              "value": "saveListItems",
-              "id": "9827a4f5-1e7b-4c9d-b6c0-74db793a686e"
-            },
-            {
-              "label": "addListItems",
-              "value": "addListItems",
-              "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
-            },
-            {
-              "label": "refreshTable",
-              "value": "REFRESH_TABLE",
-              "id": "a89e2856-a42a-4332-b83e-ca7dd093ab21"
-            },
-            {
-              "label": "toggleColumnsSelector",
-              "value": "TOGGLE_COLUMNS_SELECTOR",
-              "id": "589fda88-48d7-4aa6-bbc6-f7e5acd5b894"
-            },
-            {
-              "label": "toggleAdvancedFilter",
-              "value": "TOGGLE_ADVANCED_FILTER",
-              "id": "9a42a289-65dc-444f-a9f8-e77efc4e4a00"
-            },
-            {
-              "label": "exportToExcel",
-              "value": "EXPORT_TO_EXCEL",
-              "id": "0d2a3fd7-bb6c-4a65-bba8-cc6f4a94ea76"
-            },
-            {
-              "label": "downloadLogFile",
-              "value": "DOWNLOAD_LOG_FILE",
-              "id": "211255af-966a-44c6-bafe-0e695925b32b"
-            },
-            {
-              "label": "(enter custom event)",
-              "value": "CUSTOM_EVENT",
-              "id": "4200ed02-8ba0-499e-9a48-4f6644e1037c"
-            }
-          ],
-          "dataSourceType": "values",
           "customVisibility": "return data.buttonAction === 'dispatchAnEvent'"
         },
         {

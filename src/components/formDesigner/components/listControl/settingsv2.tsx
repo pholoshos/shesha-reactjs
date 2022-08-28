@@ -64,153 +64,21 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         <Input />
       </FormItem>
 
+      <FormItem
+        name="uniqueStateId"
+        label="Unique State ID"
+        tooltip="This is important for when you want to dispatch events that are related to the list component. In a case where you have more than one List component, you\'ll need to specify which you want to target. This ID helps identify the correct component"
+      >
+        <Input />
+      </FormItem>
+
       <SectionSeparator sectionName="Buttons" />
 
       <FormItem name="buttons" label="Buttons">
         <ButtonGroupSettingsModal />
       </FormItem>
 
-      <SectionSeparator sectionName="" />
-
-      <FormItem name="allowRemoveItems" label="Allow Delete Items" valuePropName="checked">
-        <Checkbox />
-      </FormItem>
-
-      <Show when={state?.allowRemoveItems}>
-        <FormItem
-          name="deleteUrl"
-          label="Delete URL"
-          tooltip="The API url that will be used delete the list item. Write the code that returns the string"
-        >
-          <CodeEditor
-            mode="dialog"
-            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-            name="deleteUrl"
-            type={''}
-            id={''}
-            description="The API url that will be used delete the list item. Write the code that returns the string"
-            exposedVariables={[
-              {
-                id: '5c82e997-f50f-4591-8112-31b58ac381f0',
-                name: 'data',
-                description: 'Form data',
-                type: 'object',
-              },
-              {
-                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-                name: 'item',
-                description: 'Item to delete',
-                type: 'object',
-              },
-              {
-                id: '65b71112-d412-401f-af15-1d3080f85319',
-                name: 'globalState',
-                description: 'The global state',
-                type: 'object',
-              },
-            ]}
-          />
-        </FormItem>
-      </Show>
-
-      <FormItem name="allowSubmit" label="Allow submit" valuePropName="checked">
-        <Checkbox />
-      </FormItem>
-
-      <Show when={state?.allowSubmit}>
-        <FormItem
-          label="On Submit"
-          name="onSubmit"
-          tooltip="Write a code that return tha payload to be sent to the server when submitting this items"
-        >
-          <CodeEditor
-            label="On Submit"
-            mode="dialog"
-            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-            name="onSubmit"
-            type={''}
-            id={''}
-            description="Write a code that return tha payload to be sent to the server when submitting this items"
-            exposedVariables={[
-              {
-                id: 'e964ed28-3c2c-4d02-b0b7-71faf243eb53',
-                name: 'items',
-                description: 'List of items',
-                type: 'array',
-              },
-              {
-                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-                name: 'data',
-                description: 'Form data',
-                type: 'object',
-              },
-              {
-                id: '65b71112-d412-401f-af15-1d3080f85319',
-                name: 'globalState',
-                description: 'The global state',
-                type: 'object',
-              },
-              {
-                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-                name: 'queryParams',
-                description: 'Query parameters',
-                type: 'object',
-              },
-            ]}
-          />
-        </FormItem>
-
-        <FormItem
-          label="Submit URL"
-          name="submitUrl"
-          tooltip="The URL to submit the list items to. This is required"
-          rules={[{ required: true }]}
-        >
-          <CodeEditor
-            mode="dialog"
-            label="Submit URL"
-            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-            name="submitUrl"
-            type={''}
-            id={''}
-            description="The URL to submit the list items to"
-            exposedVariables={[
-              {
-                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-                name: 'data',
-                description: 'Form data',
-                type: 'object',
-              },
-              {
-                id: '65b71112-d412-401f-af15-1d3080f85319',
-                name: 'globalState',
-                description: 'The global state',
-                type: 'object',
-              },
-              {
-                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-                name: 'queryParams',
-                description: 'Query parameters',
-                type: 'object',
-              },
-            ]}
-          />
-        </FormItem>
-
-        <FormItem
-          name="submitHttpVerb"
-          label="Submit verb"
-          valuePropName="checked"
-          tooltip="Write  a code that returns the string that represent the url to be used to save the items"
-        >
-          <Select>
-            <Option value="POST">POST</Option>
-            <Option value="PUT">PUT</Option>
-          </Select>
-        </FormItem>
-      </Show>
-
-      <SectionSeparator sectionName="Data" />
+      <SectionSeparator sectionName="Data Source" />
 
       <FormItem
         name="dataSource"
@@ -272,10 +140,146 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         </FormItem>
       </Show>
 
+      <SectionSeparator sectionName="Delete/Remove Items" />
+
+      <FormItem name="allowDeleteItems" label="Allow Delete Items" valuePropName="checked">
+        <Checkbox />
+      </FormItem>
+
+      <Show when={state?.allowDeleteItems}>
+        <FormItem
+          name="allowRemoteDelete"
+          label="Allow Remote Delete"
+          valuePropName="checked"
+          tooltip="Whether items should also be deleted remotely. If this option is selected, you need to specify the deleteUrl and also make sure the returned data has an Id property to delete against"
+        >
+          <Checkbox />
+        </FormItem>
+
+        <Show when={state?.allowDeleteItems && state?.allowRemoteDelete}>
+          <FormItem
+            name="deleteUrl"
+            label="Delete URL"
+            tooltip="The API url that will be used delete the list item. Write the code that returns the string"
+          >
+            <CodeEditor
+              mode="dialog"
+              setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+              name="deleteUrl"
+              type={''}
+              id={''}
+              description="The API url that will be used delete the list item. Write the code that returns the string"
+              exposedVariables={[
+                {
+                  id: '5c82e997-f50f-4591-8112-31b58ac381f0',
+                  name: 'data',
+                  description: 'Form data',
+                  type: 'object',
+                },
+                {
+                  id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                  name: 'item',
+                  description: 'Item to delete',
+                  type: 'object',
+                },
+                {
+                  id: '65b71112-d412-401f-af15-1d3080f85319',
+                  name: 'globalState',
+                  description: 'The global state',
+                  type: 'object',
+                },
+              ]}
+            />
+          </FormItem>
+        </Show>
+      </Show>
+
       <SectionSeparator sectionName="Submit" />
 
-      <FormItem name="uniqueStateId" label="Unique State ID">
-        <Input />
+      <FormItem
+        label="On Submit"
+        name="onSubmit"
+        tooltip="Write a code that return tha payload to be sent to the server when submitting this items"
+      >
+        <CodeEditor
+          label="On Submit"
+          mode="dialog"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="onSubmit"
+          type={''}
+          id={''}
+          description="Write a code that return tha payload to be sent to the server when submitting this items"
+          exposedVariables={[
+            {
+              id: 'e964ed28-3c2c-4d02-b0b7-71faf243eb53',
+              name: 'items',
+              description: 'List of items',
+              type: 'array',
+            },
+            {
+              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+              name: 'data',
+              description: 'Form data',
+              type: 'object',
+            },
+            {
+              id: '65b71112-d412-401f-af15-1d3080f85319',
+              name: 'globalState',
+              description: 'The global state',
+              type: 'object',
+            },
+            {
+              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+              name: 'queryParams',
+              description: 'Query parameters',
+              type: 'object',
+            },
+          ]}
+        />
+      </FormItem>
+
+      <FormItem label="Submit URL" name="submitUrl" tooltip="The URL to submit the list items to. This is required">
+        <CodeEditor
+          mode="dialog"
+          label="Submit URL"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="submitUrl"
+          type={''}
+          id={''}
+          description="The URL to submit the list items to"
+          exposedVariables={[
+            {
+              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+              name: 'data',
+              description: 'Form data',
+              type: 'object',
+            },
+            {
+              id: '65b71112-d412-401f-af15-1d3080f85319',
+              name: 'globalState',
+              description: 'The global state',
+              type: 'object',
+            },
+            {
+              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+              name: 'queryParams',
+              description: 'Query parameters',
+              type: 'object',
+            },
+          ]}
+        />
+      </FormItem>
+
+      <FormItem
+        name="submitHttpVerb"
+        label="Submit verb"
+        valuePropName="checked"
+        tooltip="Write  a code that returns the string that represent the url to be used to save the items"
+      >
+        <Select>
+          <Option value="POST">POST</Option>
+          <Option value="PUT">PUT</Option>
+        </Select>
       </FormItem>
 
       <SectionSeparator sectionName="Layout" />

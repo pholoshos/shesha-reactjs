@@ -63,11 +63,10 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   const getEvaluatedUrl = (url: string) => {
     if (!url) return '';
 
-    return evaluateComplexString(url, [
-      { match: 'data', data: formData },
-      { match: 'globalState', data: globalState },
-      { match: 'query', data: getQueryParams() },
-    ]);
+    return (() => {
+      // tslint:disable-next-line:function-constructor
+      return new Function('data, query, globalState', url)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+    })();
   };
 
   const evaluatedQueryParams = useMemo(() => {

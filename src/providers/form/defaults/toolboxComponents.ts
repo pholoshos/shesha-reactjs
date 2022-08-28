@@ -68,7 +68,7 @@ import Progress from '../../../components/formDesigner/components/progress';
 import Buttons from '../../../components/formDesigner/components/button/buttonGroup/buttonsComponent';
 import SubForm from '../../../components/formDesigner/components/subForm';
 import Link from '../../../components/formDesigner/components/link';
-
+import EventNames from '../../../components/formDesigner/components/eventNamesList';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -95,7 +95,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
     name: 'Static',
     visible: true,
-    components: [Alert,Link, DisplayFormItem, Section, ValidationErrors],
+    components: [Alert, Link, DisplayFormItem, Section, ValidationErrors],
   },
   {
     name: 'Layout',
@@ -129,6 +129,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       StatusTag,
       RichTextEditor,
       Progress,
+      EventNames,
     ],
   },
   {

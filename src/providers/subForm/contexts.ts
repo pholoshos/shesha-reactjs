@@ -1,4 +1,3 @@
-import { ColProps } from 'antd';
 import { createContext } from 'react';
 import { GetDataError } from 'restful-react';
 import { IConfigurableFormComponent } from '../../interfaces';

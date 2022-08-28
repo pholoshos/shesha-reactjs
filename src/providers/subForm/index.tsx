@@ -6,12 +6,11 @@ import { useSubscribe } from '../../hooks';
 import { useFormGet } from '../../apis/form';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
-import { evaluateComplexString } from '../../formDesignerUtils';
 import { getQueryParams } from '../../utils/url';
 import { IFormDto } from '../form/models';
 import { setMarkupWithSettingsAction } from './actions';
 import { ISubFormProps } from './interfaces';
-import { message } from 'antd';
+import { message, notification } from 'antd';
 import { useGlobalState } from '../globalState';
 import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
@@ -83,7 +82,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     if (queryParams) {
       const getOnSubmitPayload = () => {
         // tslint:disable-next-line:function-constructor
-        return new Function('data, query, globalState', queryParams)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+        return new Function('data, query, globalState, value', queryParams)(
+          formData,
+          getQueryParams(),
+          globalState,
+          value
+        ); // Pass data, query, globalState
       };
 
       params = { ...params, ...(typeof getOnSubmitPayload() === 'object' ? getOnSubmitPayload() : {}) };
@@ -92,9 +96,11 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     return params;
   }, [queryParams, formMode]);
 
+  const handleFetchData = () => fetchEntity({ queryParams: evaluatedQueryParams });
+
   useEffect(() => {
-    if (queryParams && formMode !== 'designer') {
-      fetchEntity({ queryParams: evaluatedQueryParams });
+    if (queryParams && formMode !== 'designer' && dataSource === 'api') {
+      handleFetchData();
     }
   }, [queryParams, evaluatedQueryParams]);
 
@@ -129,11 +135,11 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   //#region CRUD functions
   const getData = useDebouncedCallback(() => {
-    if (getUrl && dataSource === 'api') {
+    if (dataSource === 'api') {
       if (beforeGet) {
         const evaluateBeforeGet = () => {
           // tslint:disable-next-line:function-constructor
-          return new Function('data, value, initialValues, globalState', onCreated)(
+          return new Function('data, value, initialValues, globalState', beforeGet)(
             formData,
             value,
             initialValues,
@@ -146,57 +152,81 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         onChange(evaluatedData);
       }
 
-      fetchEntity();
+      handleFetchData();
     }
   }, 300);
 
   const postData = useDebouncedCallback(() => {
-    postHttp(value).then(submittedValue => {
-      if (onCreated) {
-        const evaluateOnCreated = () => {
-          // tslint:disable-next-line:function-constructor
-          return new Function('data, globalState, submittedValue, message', onCreated)(
-            formData,
-            globalState,
-            submittedValue?.result,
-            message
-          );
-        };
+    if (!postUrl) {
+      notification.error({
+        placement: 'top',
+        message: 'postUrl missing',
+        description: 'Please make sure you have specified the POST URL',
+      });
+    } else {
+      postHttp(value).then(submittedValue => {
+        if (onCreated) {
+          const evaluateOnCreated = () => {
+            // tslint:disable-next-line:function-constructor
+            return new Function('data, globalState, submittedValue, message', onCreated)(
+              formData,
+              globalState,
+              submittedValue?.result,
+              message
+            );
+          };
 
-        evaluateOnCreated();
-      }
-    });
+          evaluateOnCreated();
+        }
+      });
+    }
   }, 300);
 
   const putData = useDebouncedCallback(() => {
-    putHttp(value).then(submittedValue => {
-      if (onUpdated) {
-        const evaluateOnUpdated = () => {
-          // tslint:disable-next-line:function-constructor
-          return new Function('data, globalState, submittedValue, message', onUpdated)(
-            formData,
-            globalState,
-            submittedValue?.result,
-            message
-          );
-        };
+    if (!putUrl) {
+      notification.error({
+        placement: 'top',
+        message: 'putUrl missing',
+        description: 'Please make sure you have specified the PUT URL',
+      });
+    } else {
+      putHttp(value).then(submittedValue => {
+        if (onUpdated) {
+          const evaluateOnUpdated = () => {
+            // tslint:disable-next-line:function-constructor
+            return new Function('data, globalState, submittedValue, message', onUpdated)(
+              formData,
+              globalState,
+              submittedValue?.result,
+              message
+            );
+          };
 
-        evaluateOnUpdated();
-      }
-    });
+          evaluateOnUpdated();
+        }
+      });
+    }
   }, 300);
 
   const deleteData = useDebouncedCallback(() => {
-    deleteHttp('', { queryParams: { id: value?.id } }).then(() => {
-      if (onDeleted) {
-        const evaluateOnUpdated = () => {
-          // tslint:disable-next-line:function-constructor
-          return new Function('data, globalState, message', onDeleted)(formData, globalState, message);
-        };
+    if (!deleteUrl) {
+      notification.error({
+        placement: 'top',
+        message: 'deleteUrl missing',
+        description: 'Please make sure you have specified the Delete URL',
+      });
+    } else {
+      deleteHttp('', { queryParams: { id: value?.id || value?.Id } }).then(() => {
+        if (onDeleted) {
+          const evaluateOnUpdated = () => {
+            // tslint:disable-next-line:function-constructor
+            return new Function('data, globalState, message', onDeleted)(formData, globalState, message);
+          };
 
-        evaluateOnUpdated();
-      }
-    });
+          evaluateOnUpdated();
+        }
+      });
+    }
   }, 300);
   //#endregion
 
@@ -234,8 +264,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   useSubscribe(SUB_FORM_EVENT_NAMES.getFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {
-      console.log('LOG:: stateId SUB_FORM_EVENT_NAMES.getFormData', stateId);
-
       getData();
     }
   });
@@ -243,21 +271,18 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   //#region Events
   useSubscribe(SUB_FORM_EVENT_NAMES.postFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {
-      console.log('LOG:: stateId SUB_FORM_EVENT_NAMES.postFormData', stateId);
       postData();
     }
   });
 
   useSubscribe(SUB_FORM_EVENT_NAMES.updateFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {
-      console.log('LOG:: stateId SUB_FORM_EVENT_NAMES.updateFormData', stateId);
-      // putData();
+      putData();
     }
   });
 
   useSubscribe(SUB_FORM_EVENT_NAMES.deleteFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {
-      console.log('LOG:: stateId SUB_FORM_EVENT_NAMES.deleteFormData', stateId);
       deleteData();
     }
   });

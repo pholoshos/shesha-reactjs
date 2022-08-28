@@ -126,6 +126,12 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
               description: 'Query parameters',
               type: 'object',
             },
+            {
+              id: 'bb3f8b7a-fada-43ab-bb83-acf557b77013',
+              name: 'value',
+              description: 'The form value',
+              type: 'object',
+            },
           ]}
         />
       </FormItem>

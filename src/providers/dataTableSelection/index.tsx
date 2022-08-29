@@ -18,7 +18,7 @@ const DataTableSelectionProvider: FC<PropsWithChildren<IDataTableSelectionProvid
   });
 
   const setSelectedRow = (index: number, row: any) => {
-    dispatch(setSelectedRowAction({ index, row, id: row?.Id }));
+    dispatch(setSelectedRowAction({ index, row, id: row?.id }));
   };
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */

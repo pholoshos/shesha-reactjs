@@ -34,9 +34,9 @@ const API_LIST = [
   // 'ImportResult',
   // 'Module',
   // 'NHibernate',
-  'Form',
+  // 'Form',
   // 'ConfigurationItem',
-  // 'FrontEndApp',
+  'Entities',
 ];
 
 const defaultConfiguration = {

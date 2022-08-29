@@ -54,7 +54,6 @@ export interface IStoredFileProviderProps {
   fileId?: string;
   baseUrl?: string;
   uploadMode?: FileUploadMode;
-
   value?: any;
   onChange?: (value: any) => void;
 }
@@ -230,6 +229,7 @@ const StoredFileProvider: FC<PropsWithChildren<IStoredFileProviderProps>> = prop
         responseFile.uid = newFile.uid;
 
         dispatch(uploadFileSuccessAction({ ...responseFile }));
+        onChange(responseFile?.id);
         if (callback) callback(responseFile);
       })
       .catch(e => {

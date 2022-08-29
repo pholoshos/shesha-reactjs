@@ -45,8 +45,10 @@ export const DefaultLayout: FC<PropsWithChildren<IDefaultLayoutProps>> = ({ chil
 
   useEffect(() => (showCollapsed ? setCollapsed(showCollapsed) : null), [showCollapsed]);
 
+
   return (
     <Layout>
+     
       <Sider
         collapsible
         collapsed={collapsed}
@@ -72,6 +74,7 @@ export const DefaultLayout: FC<PropsWithChildren<IDefaultLayoutProps>> = ({ chil
 
         <Content className={classNames({ collapsed })}>{children}</Content>
       </Layout>
+    
     </Layout>
   );
 };

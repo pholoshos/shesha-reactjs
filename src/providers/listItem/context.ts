@@ -1,10 +1,13 @@
-import { IFormSettings } from './../form/contexts';
+import { ColProps } from 'antd';
 import React from 'react';
 
 export interface IListItemState {
   index?: number;
   prefix?: string;
-  formSettings?: IFormSettings;
+  layout?: {
+    labelCol?: ColProps;
+    wrapperCol?: ColProps;
+  };
 }
 
 export const ListItemContext = React.createContext<IListItemState>({

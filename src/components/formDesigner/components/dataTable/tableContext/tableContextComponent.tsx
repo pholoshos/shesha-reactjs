@@ -14,6 +14,7 @@ export interface ITableContextComponentProps extends IConfigurableFormComponent 
   entityType?: string;
   endpoint?: string;
   uniqueStateId?: string;
+  components?: IConfigurableFormComponent[]; // If isDynamic we wanna
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -124,7 +125,12 @@ const TableContextAccessor: FC<ITableContextComponentProps> = ({ id }) => {
     [tableConfigLoaded, selectedRow]
   );
 
-  return <ComponentsContainer containerId={id} />;
+  return (
+    <ComponentsContainer
+      containerId={id}
+      // dynamicComponents={isDynamic ? components : []}
+    />
+  );
 };
 
 export default TableContextComponent;

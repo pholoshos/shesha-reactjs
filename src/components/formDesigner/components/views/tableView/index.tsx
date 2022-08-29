@@ -7,7 +7,9 @@ import ComponentsContainer from '../../../componentsContainer';
 import { useForm } from '../../../../../providers/form';
 import { validateConfigurableComponentSettings } from '../../../../../providers/form/utils';
 
-export interface ITableViewComponentProps extends IConfigurableFormComponent {}
+export interface ITableViewComponentProps extends IConfigurableFormComponent {
+  components?: IConfigurableFormComponent[];
+}
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -25,7 +27,10 @@ const TableViewComponent: IToolboxComponent<ITableViewComponentProps> = {
 
     return (
       <Fragment>
-        <ComponentsContainer containerId={model.id} />
+        <ComponentsContainer
+          containerId={model.id}
+          //  dynamicComponents={model?.isDynamic ? model?.components : []}
+        />
       </Fragment>
     );
   },

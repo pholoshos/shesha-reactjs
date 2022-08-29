@@ -82,6 +82,7 @@ const ContainerComponent: IToolboxComponent<IContainerComponentProps> = {
         alignItems={model.direction === 'horizontal' ? model?.alignItems : null}
         justifyItems={model.direction === 'horizontal' ? model?.justifyItems : null}
         className={model.className}
+        // dynamicComponents={model?.isDynamic ? model?.components : []}
       />
     );
   },

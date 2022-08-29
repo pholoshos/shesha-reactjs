@@ -1,14 +1,14 @@
-import { Checkbox, Form, Input, InputNumber, Select, SelectProps } from 'antd';
-import React, { FC, useMemo, useState } from 'react';
+import { Checkbox, Form, Input, InputNumber, Select } from 'antd';
+import React, { FC, useState } from 'react';
 import SectionSeparator from '../../../sectionSeparator';
 import ButtonGroupSettingsModal from '../button/buttonGroup/buttonGroupSettingsModal';
 import PropertyAutocomplete from '../propertyAutocomplete/propertyAutocomplete';
-import { IListItemsProps, IProperty } from './models';
+import { IListItemsProps } from './models';
 import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
-import { MetadataProvider, useMetadata } from '../../../../providers';
-import { AutocompleteRaw } from '../../../autocomplete';
+import { AutocompleteDto, AutocompleteRaw } from '../../../autocomplete';
 import { QueryBuilderWithModelType } from './queryBuilder';
+import Properties from '../../../properties';
 
 const Option = Select.Option;
 
@@ -27,34 +27,6 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
   const [state, setState] = useState<IListSettingsState>(model);
   const [form] = Form.useForm();
 
-  const initialValues: IListItemsProps = {
-    name: model?.name,
-    dataSourceUrl: model?.dataSourceUrl,
-    queryParamsExpression: model?.queryParamsExpression,
-    bordered: model?.bordered,
-    title: model?.title,
-    footer: model?.footer,
-    formId: model?.formId,
-    allowAddAndRemove: model?.allowAddAndRemove,
-    submitUrl: model?.submitUrl,
-    submitHttpVerb: model?.submitHttpVerb,
-    onSubmit: model?.onSubmit,
-    showPagination: model?.showPagination,
-    paginationDefaultPageSize: model?.paginationDefaultPageSize,
-    allowSubmit: model?.allowSubmit,
-    buttons: model?.buttons,
-    maxHeight: model?.maxHeight,
-    labelCol: model?.labelCol,
-    wrapperCol: model?.wrapperCol,
-    dataSource: model?.dataSource,
-    renderStrategy: model?.renderStrategy,
-    entityType: model?.entityType,
-    properties: model?.properties,
-    filters: model?.filters,
-    useExpression: model?.useExpression,
-    uniqueStateId: model?.uniqueStateId,
-  };
-
   return (
     <Form
       form={form}
@@ -72,7 +44,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
         onValuesChange(changedValues, incomingState);
       }}
-      initialValues={initialValues}
+      initialValues={model}
     >
       <SectionSeparator sectionName="Display" />
 
@@ -92,27 +64,27 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         <Input />
       </FormItem>
 
+      <FormItem
+        name="uniqueStateId"
+        label="Unique State ID"
+        tooltip="This is important for when you want to dispatch events that are related to the list component. In a case where you have more than one List component, you\'ll need to specify which you want to target. This ID helps identify the correct component"
+      >
+        <Input />
+      </FormItem>
+
       <SectionSeparator sectionName="Buttons" />
 
       <FormItem name="buttons" label="Buttons">
         <ButtonGroupSettingsModal />
       </FormItem>
 
-      <SectionSeparator sectionName="" />
-
-      <FormItem name="bordered" label="Bordered" valuePropName="checked">
-        <Checkbox />
-      </FormItem>
-
-      <FormItem name="allowAddAndRemove" label="Allow Add/Remove Items" valuePropName="checked">
-        <Checkbox />
-      </FormItem>
+      <SectionSeparator sectionName="Data Source" />
 
       <FormItem
         name="dataSource"
         label="Data source"
-        valuePropName="checked"
         tooltip="The list data to be used can be the data that comes with the form of can be fetched from the API"
+        initialValue={['form']}
       >
         <Select>
           <Option value="form">form</Option>
@@ -120,18 +92,161 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         </Select>
       </FormItem>
 
+      <Show when={state?.dataSource === 'api'}>
+        <FormItem name="entityType" label="Entity type">
+          <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" />
+        </FormItem>
+        <Show when={Boolean(state?.entityType)}>
+          <FormItem name="properties" label="Properties">
+            <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} />
+          </FormItem>
+
+          <SectionSeparator sectionName="Query builder" />
+
+          <FormItem name="useExpression" label="Use Expression" valuePropName="checked">
+            <Checkbox />
+          </FormItem>
+
+          <FormItem label="Query builder" name="filters">
+            <QueryBuilderWithModelType
+              modelType={state?.entityType}
+              useExpression={state?.useExpression}
+              value={state?.filters}
+            />
+          </FormItem>
+        </Show>
+      </Show>
+
+      <SectionSeparator sectionName="Render" />
+
       <FormItem
-        label="API Url"
-        name="dataSourceUrl"
-        tooltip="The API url that will be used to fetch the list data. Write the code that returns the string"
+        name="renderStrategy"
+        label="Render Strategy"
+        tooltip="Which form should be used to render the data? If current form, you can drag items, else specify form path"
+      >
+        <Select>
+          <Option value="dragAndDrop">Drag And Drop</Option>
+          <Option value="externalForm">External Form</Option>
+        </Select>
+      </FormItem>
+
+      <Show when={state?.renderStrategy === 'externalForm'}>
+        <FormItem name="formPath" label="Form Path">
+          <AutocompleteDto
+            dataSourceType="entitiesList"
+            dataSourceUrl="/api/Autocomplete/List"
+            typeShortAlias="Shesha.Framework.Form"
+          />
+        </FormItem>
+      </Show>
+
+      <SectionSeparator sectionName="Delete/Remove Items" />
+
+      <FormItem name="allowDeleteItems" label="Allow Delete Items" valuePropName="checked">
+        <Checkbox />
+      </FormItem>
+
+      <Show when={state?.allowDeleteItems}>
+        <FormItem
+          name="allowRemoteDelete"
+          label="Allow Remote Delete"
+          valuePropName="checked"
+          tooltip="Whether items should also be deleted remotely. If this option is selected, you need to specify the deleteUrl and also make sure the returned data has an Id property to delete against"
+        >
+          <Checkbox />
+        </FormItem>
+
+        <Show when={state?.allowDeleteItems && state?.allowRemoteDelete}>
+          <FormItem
+            name="deleteUrl"
+            label="Delete URL"
+            tooltip="The API url that will be used delete the list item. Write the code that returns the string"
+          >
+            <CodeEditor
+              mode="dialog"
+              setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+              name="deleteUrl"
+              type={''}
+              id={''}
+              description="The API url that will be used delete the list item. Write the code that returns the string"
+              exposedVariables={[
+                {
+                  id: '5c82e997-f50f-4591-8112-31b58ac381f0',
+                  name: 'data',
+                  description: 'Form data',
+                  type: 'object',
+                },
+                {
+                  id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                  name: 'item',
+                  description: 'Item to delete',
+                  type: 'object',
+                },
+                {
+                  id: '65b71112-d412-401f-af15-1d3080f85319',
+                  name: 'globalState',
+                  description: 'The global state',
+                  type: 'object',
+                },
+              ]}
+            />
+          </FormItem>
+        </Show>
+      </Show>
+
+      <SectionSeparator sectionName="Submit" />
+
+      <FormItem
+        label="On Submit"
+        name="onSubmit"
+        tooltip="Write a code that return tha payload to be sent to the server when submitting this items"
       >
         <CodeEditor
+          label="On Submit"
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-          name="customVisibility"
+          name="onSubmit"
           type={''}
           id={''}
-          description="The API url that will be used to fetch the list data. Write the code that returns the string"
+          description="Write a code that return tha payload to be sent to the server when submitting this items"
+          exposedVariables={[
+            {
+              id: 'e964ed28-3c2c-4d02-b0b7-71faf243eb53',
+              name: 'items',
+              description: 'List of items',
+              type: 'array',
+            },
+            {
+              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+              name: 'data',
+              description: 'Form data',
+              type: 'object',
+            },
+            {
+              id: '65b71112-d412-401f-af15-1d3080f85319',
+              name: 'globalState',
+              description: 'The global state',
+              type: 'object',
+            },
+            {
+              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+              name: 'queryParams',
+              description: 'Query parameters',
+              type: 'object',
+            },
+          ]}
+        />
+      </FormItem>
+
+      <FormItem label="Submit URL" name="submitUrl" tooltip="The URL to submit the list items to. This is required">
+        <CodeEditor
+          mode="dialog"
+          label="Submit URL"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="submitUrl"
+          type={''}
+          id={''}
+          description="The URL to submit the list items to"
           exposedVariables={[
             {
               id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
@@ -155,128 +270,33 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         />
       </FormItem>
 
-      <SectionSeparator sectionName="Render" />
-
       <FormItem
-        name="renderStrategy"
-        label="Render Strategy"
+        name="submitHttpVerb"
+        label="Submit verb"
         valuePropName="checked"
-        tooltip="Which form should be used to render the data? If current form, you can drag items, else specify form path"
+        tooltip="Write  a code that returns the string that represent the url to be used to save the items"
       >
         <Select>
-          <Option value="dragAndDrop">Drag And Drop</Option>
-          <Option value="externalForm">External Form</Option>
+          <Option value="POST">POST</Option>
+          <Option value="PUT">PUT</Option>
         </Select>
       </FormItem>
 
-      <Show when={state?.renderStrategy === 'externalForm'}>
-        <FormItem name="formId" label="Form Path">
-          <AutocompleteRaw dataSourceType={'url'} />
-        </FormItem>
-      </Show>
-
-      <SectionSeparator sectionName="Submit" />
-
-      <FormItem name="allowSubmit" label="Allow submit" valuePropName="checked">
-        <Checkbox />
-      </FormItem>
-
-      <FormItem name="uniqueStateId" label="Unique State ID">
-        <Input />
-      </FormItem>
-
-      <Show when={state?.allowSubmit}>
-        <FormItem
-          label="On Submit"
-          name="onSubmit"
-          tooltip="Write a code that return tha payload to be sent to the server when submitting this items"
-        >
-          <CodeEditor
-            mode="dialog"
-            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-            name="onSubmit"
-            type={''}
-            id={''}
-            description="Write a code that return tha payload to be sent to the server when submitting this items"
-            exposedVariables={[
-              {
-                id: 'e964ed28-3c2c-4d02-b0b7-71faf243eb53',
-                name: 'items',
-                description: 'List of items',
-                type: 'array',
-              },
-              {
-                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-                name: 'data',
-                description: 'Form data',
-                type: 'object',
-              },
-              {
-                id: '65b71112-d412-401f-af15-1d3080f85319',
-                name: 'globalState',
-                description: 'The global state',
-                type: 'object',
-              },
-              {
-                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-                name: 'queryParams',
-                description: 'Query parameters',
-                type: 'object',
-              },
-            ]}
-          />
-        </FormItem>
-
-        <FormItem
-          name="submitHttpVerb"
-          label="Submit verb"
-          valuePropName="checked"
-          tooltip="Write  a code that returns the string that represent the url to be used to save the items"
-        >
-          <Select>
-            <Option value="POST">POST</Option>
-            <Option value="PUT">PUT</Option>
-          </Select>
-        </FormItem>
-      </Show>
-
-      <SectionSeparator sectionName="Filters" />
-
-      <FormItem name="entityType" label="Entity type">
-        <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" />
-      </FormItem>
-
-      <Show when={Boolean(state?.entityType)}>
-        <FormItem name="properties" label="Properties">
-          <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} />
-        </FormItem>
-
-        <SectionSeparator sectionName="Query builder" />
-
-        <FormItem name="useExpression" label="Use Expression" valuePropName="checked">
-          <Checkbox />
-        </FormItem>
-
-        <FormItem label="Query builder" name="filters">
-          <QueryBuilderWithModelType
-            modelType={state?.entityType}
-            useExpression={state?.useExpression}
-            value={state?.filters}
-          />
-        </FormItem>
-      </Show>
-
       <SectionSeparator sectionName="Layout" />
 
-      <FormItem name="labelCol" label="">
-        <InputNumber min={1} max={24} defaultValue={5} />
+      <FormItem name="labelCol" label="Label Col">
+        <InputNumber min={1} max={24} defaultValue={5} step={1} />
       </FormItem>
 
       <FormItem name="wrapperCol" label="Wrapper Col">
-        <InputNumber min={1} max={24} defaultValue={13} />
+        <InputNumber min={1} max={24} defaultValue={13} step={1} />
       </FormItem>
 
       <SectionSeparator sectionName="Pagination" />
+
+      <FormItem name="showQuickSearch" label="Show Quick Search" valuePropName="checked">
+        <Checkbox />
+      </FormItem>
 
       <FormItem name="showPagination" label="Show pagination" valuePropName="checked">
         <Checkbox />
@@ -331,49 +351,5 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         />
       </FormItem>
     </Form>
-  );
-};
-
-interface IPropertiesWrapperProps extends SelectProps {
-  modelType: string;
-  mode?: 'multiple' | 'tags';
-}
-
-const Properties: FC<IPropertiesWrapperProps> = ({ modelType, children, ...props }) => {
-  return (
-    <MetadataProvider modelType={modelType}>
-      <PropertiesEditor {...props}>{children}</PropertiesEditor>
-    </MetadataProvider>
-  );
-};
-
-interface PropertiesEditorProps extends SelectProps {
-  mode?: 'multiple' | 'tags';
-}
-
-const PropertiesEditor: FC<PropertiesEditorProps> = ({ mode, ...props }) => {
-  const metadata = useMetadata(false);
-
-  const fields = useMemo<IProperty[]>(() => {
-    if (metadata) {
-      const properties = metadata?.metadata?.properties || [];
-      if (Boolean(properties))
-        return properties.map<IProperty>(property => ({
-          label: property.label,
-          propertyName: property.path,
-          dataType: property.dataType,
-        }));
-    }
-    return null;
-  }, [metadata, metadata?.metadata]);
-
-  return (
-    <Select mode={mode} showSearch allowClear {...props}>
-      {fields?.map(({ label, propertyName }) => (
-        <Option value={propertyName} key={propertyName}>
-          {label}
-        </Option>
-      ))}
-    </Select>
   );
 };

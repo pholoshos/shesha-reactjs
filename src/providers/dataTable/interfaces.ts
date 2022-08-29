@@ -77,6 +77,7 @@ export interface IColumnSorting {
 }
 
 export interface IGetDataPayload {
+  readonly entityType: string;
   readonly maxResultCount: number;
   readonly skipCount: number;
   readonly properties: string;
@@ -85,6 +86,14 @@ export interface IGetDataPayload {
   readonly quickSearch?: string;
 }
 
+export interface IExcelColumn {
+  readonly propertyName: string;
+  readonly label: string;
+}
+
+export interface IExportExcelPayload extends IGetDataPayload {
+  columns: IExcelColumn[];
+}
 
 export interface IGetDataPayloadInternal {
   readonly entityType: string;

@@ -124,9 +124,9 @@ function useReferenceListDispatcher(require: boolean = true) {
 }
 
 const getRefListItemByValue = (list: IReferenceList, itemValue?: number): IReferenceListItem => {
-  return itemValue
-    ? list.items.find(i => i.itemValue == itemValue)
-    : null;
+  return itemValue === null || itemValue === undefined
+    ? null
+    : list.items.find(i => i.itemValue == itemValue);
 }
 
 const useReferenceList = (moduleName: string, listName: string): ILoadingState<IReferenceList> => {
@@ -165,7 +165,7 @@ const useReferenceList = (moduleName: string, listName: string): ILoadingState<I
 }
 
 const useReferenceListItem = (moduleName: string, listName: string, itemValue?: number): ILoadingState<IReferenceListItem> => {
-  if (!itemValue)
+  if (itemValue === null || itemValue === undefined)
     return null;
 
   const { getReferenceList } = useReferenceListDispatcher();

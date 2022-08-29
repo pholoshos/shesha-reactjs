@@ -64,7 +64,6 @@ export const renderers: ITableCustomTypesRender[] = [
     key: 'reference-list-item',
     render: props => {
       const { column: { referenceListName, referenceListNamespace }, value: colValue } = props;
-
       const item = useReferenceListItem(referenceListNamespace, referenceListName, colValue);
       return item?.data?.item;
     },

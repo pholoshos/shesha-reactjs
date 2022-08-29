@@ -62,6 +62,8 @@ import {
   GetColumnsInput,
   IGetDataPayload,
   ITableColumn,
+  IExportExcelPayload,
+  IExcelColumn,
 } from './interfaces';
 import { isEmpty, isEqual, sortBy } from 'lodash';
 import { IResult } from '../../interfaces/result';
@@ -161,9 +163,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   const { router } = useShaRouting();
 
-  const fetchDataTableDataInternal = (getDataPayload) => {
-    const payload = { ...getDataPayload, entityType };
-    const getDataUrl = `${backendUrl}${getDataPath ?? `${GENERIC_ENTITIES_ENDPOINT}/GetAll`}?${qs.stringify(payload)}`;
+  const fetchDataTableDataInternal = (getDataPayload: IGetDataPayload) => {
+    const getDataUrl = `${backendUrl}${getDataPath ?? `${GENERIC_ENTITIES_ENDPOINT}/GetAll`}?${qs.stringify(getDataPayload)}`;
 
     return axios({
       url: getDataUrl,
@@ -263,6 +264,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   const getFetchDataPayload = (internalPayload: IGetDataPayloadInternal, columns: ITableColumn[]): IGetDataPayload => {
     const payload: IGetDataPayload = {
+      entityType: entityType,
       maxResultCount: internalPayload.pageSize,
       skipCount: (internalPayload.currentPage - 1) * internalPayload.pageSize,
       properties: convertDotNotationPropertiesToGraphQL(internalPayload.properties, columns),
@@ -319,8 +321,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     }
 
     const fetchPayload = getFetchDataPayload(expandedPayload, state.columns);
-    // console.log('expandedPayload', expandedPayload)
-    // console.log('fetchPayload', fetchPayload)
 
     return fetchDataTableDataInternal(fetchPayload).then(response => convertDataResponse(response, payload.pageSize));
   };
@@ -511,11 +511,29 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
         return;
       }
+      const getDataPayload = getFetchDataPayload(expandedPayload, currentState.columns);
+      let excelColumns = currentState.columns
+        .filter(c => c.dataType !== 'action')
+        .map<IExcelColumn>(c => ({ propertyName: c.propertyName, label: c.caption }));
+
+      if (excelColumns.findIndex(c => c.propertyName == "id") === -1)
+      {
+        excelColumns = [{propertyName: 'id', label: 'Id'}, ...excelColumns];
+      }      
+
+      const excelPayload: IExportExcelPayload = {
+        ...getDataPayload,
+        maxResultCount: 2147483647,
+        columns: excelColumns
+      };
+      
+      const excelEndpoint = getExportToExcelPath ?? `${GENERIC_ENTITIES_ENDPOINT}/ExportToExcel`;
+      const excelDataUrl =  `${backendUrl}${excelEndpoint}`;
 
       axios({
-        url: `${backendUrl}` + (getExportToExcelPath ?? `/api/DataTable/ExportToExcel`),
+        url: excelDataUrl,
         method: 'POST',
-        data: expandedPayload,
+        data: excelPayload,
         responseType: 'blob', // important
         headers,
       })

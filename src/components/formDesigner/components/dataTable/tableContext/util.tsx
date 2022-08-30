@@ -36,3 +36,8 @@ export const onMessageDisplay = (type: keyof MessageApi, content: ArgsProps | an
   const duration = type === 'loading' ? 0 : 3;
   message[type](content, duration);
 };
+
+export const CONFIRM_BODY = [
+  { title: 'Delete Configs', content: 'Are you sure you want to delete? This action cannot be undone.' },
+  { title: 'Duplicate Config', content: 'Are you sure you want to duplicate this config?' },
+];

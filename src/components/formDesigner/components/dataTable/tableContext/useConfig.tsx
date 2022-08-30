@@ -1,5 +1,5 @@
 import { useMutate } from 'restful-react';
-import { getRowIds, onMessageDisplay } from './util';
+import { confirm, CONFIRM_BODY, getRowIds, onMessageDisplay } from './util';
 
 export interface IConfigureModalProps {
   onRefresh: () => void;
@@ -25,7 +25,10 @@ export const useConfig = (selectedRow: any, onRefresh: () => void) => {
     path: `/api/services/Forms/Export`,
   });
 
-  const deleteConfigs = () => {
+  const confirmer = (key: number, callback: (args) => void) => () =>
+    confirm(callback, CONFIRM_BODY[key].title, CONFIRM_BODY[key].content);
+
+  const deleteConfigs = confirmer(0, () => {
     onMessageDisplay('loading', 'Deleting in progress..');
 
     deleteConfigsAsync({ components: selectedRowIds })
@@ -34,9 +37,9 @@ export const useConfig = (selectedRow: any, onRefresh: () => void) => {
         onRefresh();
       })
       .catch(e => onMessageDisplay('error', 'An error occurred. Message:' + e));
-  };
+  });
 
-  const duplicateConfigs = () => {
+  const duplicateConfigs = confirmer(1, () => {
     onMessageDisplay('loading', 'Duplication in progress..');
 
     duplicateConfigsAsync({ id: selectedRowIds.at(0) })
@@ -46,7 +49,7 @@ export const useConfig = (selectedRow: any, onRefresh: () => void) => {
         console.log(response?.result);
       })
       .catch(e => onMessageDisplay('error', 'An error occurred. Message:' + e));
-  };
+  });
 
   const exportConfigs = () => {
     exportJsonConfigs({ components: selectedRowIds }).then(response => {

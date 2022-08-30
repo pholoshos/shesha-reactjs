@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useCallback, useState, useRef } from 'react';
+import React, { FC, useEffect, useMemo, useCallback, useState, useRef, ChangeEvent } from 'react';
 import classNames from 'classnames';
 import {
   useResizeColumns,
@@ -22,6 +22,7 @@ import { SortableContainer } from './sortableContainer';
 import { arrayMove } from 'react-sortable-hoc';
 import { IndeterminateCheckbox } from './indeterminateCheckbox';
 import camelCaseKeys from 'camelcase-keys';
+import { getPlainValue } from '../../utils';
 
 interface IReactTableState {
   allRows: any[];
@@ -48,6 +49,7 @@ const ReactTable: FC<IReactTableProps> = ({
   onRowDoubleClick,
   onResizedChange,
   onSelectedIdsChanged,
+  onMultiRowSelect,
   onSort,
   scrollBodyHorizontally = false,
   height = 250,
@@ -119,6 +121,23 @@ const ReactTable: FC<IReactTableProps> = ({
     allRowsRef.current = allRows;
   }, [allRows]);
 
+  const onChangeHeader = (callback: (...args: any) => void, rows: Row<any>[] | Row) => (e: ChangeEvent) => {
+    callback(e);
+
+    if (onMultiRowSelect) {
+      const isSelected = !!(e.target as any)?.checked;
+      let selectedRows: Row<any>[] | Row;
+
+      if (Array.isArray(rows)) {
+        selectedRows = getPlainValue(rows).map(i => ({ ...i, isSelected }));
+      } else {
+        selectedRows = { ...getPlainValue(rows), isSelected };
+      }
+
+      onMultiRowSelect(selectedRows);
+    }
+  };
+
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state } = useTable(
     {
       columns: preparedColumns,
@@ -158,16 +177,19 @@ const ReactTable: FC<IReactTableProps> = ({
             disableSortBy: true,
             // The header can use the table's getToggleAllRowsSelectedProps method
             // to render a checkbox
-            Header: ({ getToggleAllRowsSelectedProps }) => (
+            Header: ({ getToggleAllRowsSelectedProps: toggleProps, rows }) => (
               <span>
-                <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+                <IndeterminateCheckbox {...toggleProps()} onChange={onChangeHeader(toggleProps().onChange, rows)} />
               </span>
             ),
             // The cell can use the individual row's getToggleRowSelectedProps method
             // to the render a checkbox
             Cell: ({ row }) => (
               <span>
-                <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                <IndeterminateCheckbox
+                  {...row.getToggleRowSelectedProps()}
+                  onChange={onChangeHeader(row.getToggleRowSelectedProps().onChange, row)}
+                />
               </span>
             ),
           },

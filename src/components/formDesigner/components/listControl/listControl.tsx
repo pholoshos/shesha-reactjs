@@ -2,13 +2,7 @@ import { camelCase, isEmpty } from 'lodash';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutate } from 'restful-react';
 import { EntitiesGetAllQueryParams, useEntitiesGetAll } from '../../../../apis/entities';
-import {
-  FormItemProvider,
-  SubFormProvider,
-  useForm,
-  useGlobalState,
-  useSheshaApplication,
-} from '../../../../providers';
+import { FormItemProvider, SubFormProvider, useForm, useGlobalState } from '../../../../providers';
 import { useFormMarkup } from '../../../../providers/form/hooks';
 import { getQueryParams } from '../../../../utils/url';
 import camelCaseKeys from 'camelcase-keys';
@@ -61,7 +55,6 @@ const ListControl: FC<IListControlProps> = ({
   const queryParamsFromBrowser = useMemo(() => getQueryParams(), []);
   const { formData, formMode } = useForm();
   const { globalState } = useGlobalState();
-  const { backendUrl } = useSheshaApplication();
   const { refetch: fetchEntities, loading: isFetchingEntities, data, error: fetchEntitiesError } = useEntitiesGetAll({
     lazy: true,
   });

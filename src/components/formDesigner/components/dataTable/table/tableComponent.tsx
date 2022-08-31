@@ -109,7 +109,7 @@ export const TableWrapper: FC<ITableComponentProps> = ({
     }
   }, [state]);
 
-  const { selectedRow, setSelectedRow } = useDataTableSelection();
+  const { selectedRow, setSelectedRow, setMultiSelectedRow } = useDataTableSelection();
 
   const renderSidebarContent = () => {
     if (isFiltering) {
@@ -224,6 +224,7 @@ export const TableWrapper: FC<ITableComponentProps> = ({
     >
       <IndexTable
         onSelectRow={onSelectRow}
+        onMultiRowSelect={setMultiSelectedRow}
         selectedRowIndex={selectedRow?.index}
         useMultiselect={useMultiselect}
         crud={crud}

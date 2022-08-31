@@ -48,7 +48,7 @@ export const ColumnProperties: FC<IProps> = () => {
       const newValues: IDataColumnsProps = {
         ...values,
         columnType: 'data',
-        caption: metadata.label,
+        caption: metadata.label || metadata.path,
         description: metadata.description,
       };
       form.setFieldsValue(newValues);

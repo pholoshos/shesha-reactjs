@@ -1,14 +1,16 @@
-import React, { FC, useEffect, useState } from 'react';
-import { IToolboxComponent } from '../../../../../interfaces';
 import { LayoutOutlined } from '@ant-design/icons';
 import { Alert } from 'antd';
-import settingsFormJson from './settingsForm.json';
-import { DataTableSelectionProvider, useDataTableSelection } from '../../../../../providers/dataTableSelection';
-import ComponentsContainer from '../../../componentsContainer';
-import { validateConfigurableComponentSettings } from '../../../../../providers/form/utils';
+import React, { FC, Fragment, useEffect, useState } from 'react';
+import { IToolboxComponent } from '../../../../../interfaces';
 import { MetadataProvider, useDataTableStore, useForm } from '../../../../../providers';
 import DataTableProvider from '../../../../../providers/dataTable';
+import { DataTableSelectionProvider, useDataTableSelection } from '../../../../../providers/dataTableSelection';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../../providers/form/models';
+import { validateConfigurableComponentSettings } from '../../../../../providers/form/utils';
+import ComponentsContainer from '../../../componentsContainer';
+import ImportConfigModal from './modal/importConfigModal';
+import settingsFormJson from './settingsForm.json';
+import { useConfig } from './useConfig';
 
 export interface ITableContextComponentProps extends IConfigurableFormComponent {
   entityType?: string;
@@ -95,7 +97,10 @@ export const TableContextInner: FC<ITableContextComponentProps> = props => {
 const TableContextAccessor: FC<ITableContextComponentProps> = ({ id }) => {
   const { registerActions } = useForm();
   const { refreshTable, exportToExcel, tableConfigLoaded, setIsInProgressFlag } = useDataTableStore();
-  const { selectedRow } = useDataTableSelection();
+  const { selectedRow, selectedRows } = useDataTableSelection();
+  const { deleteConfigs, duplicateConfigs, exportConfigs } = useConfig(selectedRows, refreshTable);
+
+  const [{ visible }, setState] = useState({ visible: false });
 
   const deleteRow = () => {
     console.log(`deleteRow ${selectedRow.id}`);
@@ -111,6 +116,8 @@ const TableContextAccessor: FC<ITableContextComponentProps> = ({ id }) => {
 
   const setToEditMode = () => {};
 
+  const importConfigs = () => setState(s => ({ ...s, visible: true }));
+
   // register available actions, refresh on every table configuration loading or change of the table Id
   useEffect(
     () =>
@@ -121,15 +128,27 @@ const TableContextAccessor: FC<ITableContextComponentProps> = ({ id }) => {
         exportToExcel,
         deleteRow,
         setToEditMode,
+        deleteConfigs,
+        duplicateConfigs,
+        exportConfigs,
+        importConfigs,
       }),
     [tableConfigLoaded, selectedRow]
   );
 
   return (
-    <ComponentsContainer
-      containerId={id}
-      // dynamicComponents={isDynamic ? components : []}
-    />
+    <Fragment>
+      <ComponentsContainer
+        containerId={id}
+        // dynamicComponents={isDynamic ? components : []}
+      />
+
+      <ImportConfigModal
+        visible={visible}
+        onRefresh={refreshTable}
+        onCancel={() => setState(s => ({ ...s, visible: false }))}
+      />
+    </Fragment>
   );
 };
 

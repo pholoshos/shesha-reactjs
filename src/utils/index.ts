@@ -85,3 +85,24 @@ export const getSafelyTrimmedString = (value: string = '') => {
 export const joinStringValues = (values: string[], delimiter = ' ') => {
   return values?.filter(Boolean)?.join(delimiter);
 };
+
+export const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  return (_key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        return;
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+};
+
+export const getPlainValue = <T = object | any[]>(value: T): T => {
+  try {
+    return JSON.parse(JSON.stringify(value, getCircularReplacer()));
+  } catch (_e) {
+    return value;
+  }
+};

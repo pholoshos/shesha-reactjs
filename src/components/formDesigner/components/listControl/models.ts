@@ -26,7 +26,7 @@ export interface IListItemsProps {
   entityType?: string;
   useExpression?: boolean;
   properties?: string[];
-  filters?: IStoredFilter;
+  filters?: object;
 }
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {

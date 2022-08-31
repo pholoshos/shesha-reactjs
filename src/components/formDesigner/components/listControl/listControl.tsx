@@ -11,7 +11,7 @@ import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
 import { ListControlEvents, MAX_RESULT_COUNT } from './constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { useSubscribe } from '../../../../hooks';
-import { Button, ColProps, Divider, Form, Input, message, notification, Pagination, Space } from 'antd';
+import { Button, ColProps, Divider, Empty, Form, Input, message, notification, Pagination, Space } from 'antd';
 import SubForm from '../subForm/subForm';
 import CollapsiblePanel from '../../../collapsiblePanel';
 import Show from '../../../show';
@@ -20,6 +20,7 @@ import ComponentsContainer from '../../componentsContainer';
 import ValidationErrors from '../../../validationErrors';
 import ShaSpin from '../../../shaSpin';
 import { DeleteFilled } from '@ant-design/icons';
+import classNames from 'classnames';
 
 const ListControl: FC<IListControlProps> = ({
   containerId,
@@ -77,13 +78,13 @@ const ListControl: FC<IListControlProps> = ({
     verb: submitHttpVerb,
   });
 
-  const getFilters = () => {
+  const evaluatedFilters = useMemo(() => {
     if (!filters) return '';
 
     const localFormData = !isEmpty(formData) ? camelCaseKeys(formData, { deep: true, pascalCase: true }) : formData;
 
-    const evaluatedFilters = evaluateDynamicFilters(
-      [filters],
+    const _response = evaluateDynamicFilters(
+      [{ expression: filters } as any],
       [
         {
           match: 'data',
@@ -96,10 +97,10 @@ const ListControl: FC<IListControlProps> = ({
       ]
     );
 
-    if (evaluatedFilters.find(f => f?.unevaluatedExpressions?.length)) return '';
+    if (_response.find(f => f?.unevaluatedExpressions?.length)) return '';
 
-    return JSON.stringify(evaluatedFilters[0]) || '';
-  };
+    return JSON.stringify(_response[0]?.expression) || '';
+  }, [filters, formData, globalState]);
 
   const queryParams = useMemo(() => {
     const _queryParams: EntitiesGetAllQueryParams = {
@@ -113,12 +114,12 @@ const ListControl: FC<IListControlProps> = ({
       _queryParams.properties = properties?.map(p => camelCase(p)).join(' ');
     }
 
-    if (filters && getFilters()) {
-      _queryParams.filter = getFilters();
+    if (filters && evaluatedFilters) {
+      _queryParams.filter = evaluatedFilters;
     }
 
     return _queryParams;
-  }, [properties, showPagination, paginationDefaultPageSize, state]);
+  }, [properties, showPagination, paginationDefaultPageSize, state, filters, evaluatedFilters]);
 
   const debouncedRefresh = useDebouncedCallback(
     () => {
@@ -134,7 +135,7 @@ const ListControl: FC<IListControlProps> = ({
     if (dataSource === 'api') {
       debouncedRefresh();
     }
-  }, [isInDesignerMode, dataSource]);
+  }, [isInDesignerMode, dataSource, evaluatedFilters]);
 
   useEffect(() => {
     if (isInDesignerMode) return;
@@ -295,10 +296,13 @@ const ListControl: FC<IListControlProps> = ({
 
   const isSpinning = submitting || isDeleting || isFetchingEntities;
 
+  const hasNoData = value?.length === 0 && !isFetchingEntities;
+
   return (
     <CollapsiblePanel
       header={title}
       extraClass="sha-list-component-extra"
+      className="sha-list-component-panel"
       extra={
         <div className="sha-list-component-extra-space">
           <Space size="small">
@@ -330,7 +334,10 @@ const ListControl: FC<IListControlProps> = ({
 
         <ShaSpin spinning={isSpinning} tip={isFetchingEntities ? 'Fetching data...' : 'Submitting'}>
           <Show when={Array.isArray(value)}>
-            <div className="sha-list-component-body" style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}>
+            <div
+              className={classNames('sha-list-component-body', { loading: isFetchingEntities && value?.length === 0 })}
+              style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}
+            >
               <Form.List name={name} initialValue={[]}>
                 {(fields, { remove }) => {
                   return (
@@ -382,6 +389,10 @@ const ListControl: FC<IListControlProps> = ({
                   );
                 }}
               </Form.List>
+
+              <Show when={hasNoData}>
+                <Empty description="There are no items found." />
+              </Show>
             </div>
           </Show>
         </ShaSpin>

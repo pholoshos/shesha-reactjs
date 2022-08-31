@@ -78,7 +78,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
   }
 
   useEffect(() => {
-    if (!metadata.properties)
+    if (!metadata?.properties)
       return;
 
     if (containerPath){

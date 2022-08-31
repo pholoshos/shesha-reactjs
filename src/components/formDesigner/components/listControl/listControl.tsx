@@ -2,7 +2,13 @@ import { camelCase, isEmpty } from 'lodash';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutate } from 'restful-react';
 import { EntitiesGetAllQueryParams, useEntitiesGetAll } from '../../../../apis/entities';
-import { FormItemProvider, SubFormProvider, useForm, useGlobalState } from '../../../../providers';
+import {
+  FormItemProvider,
+  SubFormProvider,
+  useForm,
+  useGlobalState,
+  useSheshaApplication,
+} from '../../../../providers';
 import { useFormMarkup } from '../../../../providers/form/hooks';
 import { getQueryParams } from '../../../../utils/url';
 import camelCaseKeys from 'camelcase-keys';
@@ -10,8 +16,8 @@ import { IListControlProps, IListComponentRenderState } from './models';
 import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
 import { ListControlEvents, MAX_RESULT_COUNT } from './constants';
 import { useDebouncedCallback } from 'use-debounce';
-import { useSubscribe } from '../../../../hooks';
-import { Button, ColProps, Divider, Empty, Form, Input, message, notification, Pagination, Space } from 'antd';
+import { useDelete, useSubscribe } from '../../../../hooks';
+import { Button, ColProps, Divider, Empty, Form, Input, message, Modal, notification, Pagination, Space } from 'antd';
 import SubForm from '../subForm/subForm';
 import CollapsiblePanel from '../../../collapsiblePanel';
 import Show from '../../../show';
@@ -33,6 +39,7 @@ const ListControl: FC<IListControlProps> = ({
   onChange,
   allowDeleteItems,
   deleteUrl,
+  deleteConfirmMessage,
   buttons,
   title,
   maxHeight,
@@ -54,6 +61,7 @@ const ListControl: FC<IListControlProps> = ({
   const queryParamsFromBrowser = useMemo(() => getQueryParams(), []);
   const { formData, formMode } = useForm();
   const { globalState } = useGlobalState();
+  const { backendUrl } = useSheshaApplication();
   const { refetch: fetchEntities, loading: isFetchingEntities, data, error: fetchEntitiesError } = useEntitiesGetAll({
     lazy: true,
   });
@@ -68,10 +76,7 @@ const ListControl: FC<IListControlProps> = ({
     })();
   };
 
-  const { mutate: deleteHttp, loading: isDeleting, error: deleteError } = useMutate({
-    path: getEvaluatedUrl(deleteUrl),
-    verb: 'DELETE',
-  });
+  const { mutate: deleteHttp, loading: isDeleting, error: deleteError } = useDelete();
 
   const { mutate: submitHttp, loading: submitting, error: submitError } = useMutate({
     path: getEvaluatedUrl(submitUrl),
@@ -231,18 +236,39 @@ const ListControl: FC<IListControlProps> = ({
             });
           }
 
-          deleteHttp('', { queryParams: { id: item?.id || item.Id } }).then(() => {
-            if (remove) {
-              remove(index);
-            }
-            debouncedRefresh();
-          });
+          let confirmMessage = deleteConfirmMessage;
+
+          if (deleteConfirmMessage) {
+            // tslint:disable-next-line:function-constructor
+            confirmMessage = new Function('data, item, globalState', deleteConfirmMessage)(formData, item, globalState);
+          }
+
+          const evaluatedDeleteUrl = new Function('data, item, globalState', deleteUrl)(formData, item, globalState);
+
+          const doDelete = () => {
+            deleteHttp(evaluatedDeleteUrl).then(() => {
+              if (remove) {
+                remove(index);
+              }
+              debouncedRefresh();
+            });
+          };
+
+          if (confirmMessage) {
+            Modal.confirm({
+              title: 'Delete this item?',
+              content: confirmMessage,
+              onOk: doDelete,
+            });
+          } else {
+            doDelete();
+          }
         }
       } else if (remove) {
         remove(index);
       }
     },
-    [value, deleteUrl, allowRemoteDelete, allowDeleteItems]
+    [value, deleteUrl, allowRemoteDelete, allowDeleteItems, deleteConfirmMessage]
   );
 
   const setQuickSearch = useDebouncedCallback((text: string) => {

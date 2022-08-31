@@ -191,6 +191,41 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
               ]}
             />
           </FormItem>
+
+          <FormItem
+            name="deleteConfirmMessage"
+            label="Delete Confirm Message"
+            tooltip="The confirm message that will be displayed before you delete an item. Write the code that returns the string"
+          >
+            <CodeEditor
+              mode="dialog"
+              setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+              name="deleteConfirmMessage"
+              type={''}
+              id={''}
+              description="The confirm message that will be displayed before you delete an item. Write the code that returns the string"
+              exposedVariables={[
+                {
+                  id: '5c82e997-f50f-4591-8112-31b58ac381f0',
+                  name: 'data',
+                  description: 'Form data',
+                  type: 'object',
+                },
+                {
+                  id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                  name: 'item',
+                  description: 'Item to delete',
+                  type: 'object',
+                },
+                {
+                  id: '65b71112-d412-401f-af15-1d3080f85319',
+                  name: 'globalState',
+                  description: 'The global state',
+                  type: 'object',
+                },
+              ]}
+            />
+          </FormItem>
         </Show>
       </Show>
 

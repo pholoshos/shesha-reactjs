@@ -63,3 +63,10 @@ export const getUrlWithoutQueryParams = (url: string) => {
 export const isValidSubmitVerb = (submitVerb: string) => {
   return ['POST', 'PUT', 'PATCH', 'DELETE']?.includes(submitVerb?.trim()?.toLocaleUpperCase());
 };
+
+export const joinUrlAndPath = (baseUrl: string, path: string) => {
+  const newBase = baseUrl?.endsWith('/') ? baseUrl : baseUrl?.substring(0, baseUrl?.length - 2); // Remove the end forward slash
+  const newPath = path?.startsWith('/') ? path : `/${path}`;
+
+  return `${newBase}${newPath}`;
+};

@@ -1,4 +1,3 @@
-import { IStoredFilter } from './../../../../providers/dataTable/interfaces';
 import { IConfigurableFormComponent, IFormItem, IGuidNullableEntityWithDisplayNameDto } from '../../../../interfaces';
 
 export interface IListItemsProps {
@@ -11,6 +10,7 @@ export interface IListItemsProps {
   allowDeleteItems?: boolean;
   allowRemoteDelete?: boolean;
   deleteUrl?: string;
+  deleteConfirmMessage?: string;
   submitUrl?: string;
   submitHttpVerb?: 'POST' | 'PUT';
   onSubmit?: string;
@@ -46,4 +46,5 @@ export interface IListComponentRenderState {
   quickSearch?: string;
   skipCount?: number;
   maxResultCount?: number;
+  selectedItem?: number;
 }

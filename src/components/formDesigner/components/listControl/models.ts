@@ -7,6 +7,7 @@ export interface IListItemsProps {
   title?: string;
   footer?: string;
   formPath?: IGuidNullableEntityWithDisplayNameDto;
+  allowSelection?: boolean;
   allowDeleteItems?: boolean;
   allowRemoteDelete?: boolean;
   deleteUrl?: string;
@@ -46,5 +47,5 @@ export interface IListComponentRenderState {
   quickSearch?: string;
   skipCount?: number;
   maxResultCount?: number;
-  selectedItem?: number;
+  selectedItemIndexes?: number[];
 }

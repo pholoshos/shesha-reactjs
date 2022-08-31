@@ -34,6 +34,11 @@
 
   .sha-list-component-item {
     position: relative;
+    padding-top: 5px;
+
+    &.selected {
+      background-color: var(--ant-primary-1);
+    }
     &:hover {
       > .sha-list-component-add-item-btn {
         display: block;
@@ -49,6 +54,6 @@
   .sha-list-pagination-container {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 12px;
+    // margin-bottom: 12px;
   }
 }

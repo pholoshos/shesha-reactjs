@@ -11,7 +11,20 @@ import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
 import { ListControlEvents, MAX_RESULT_COUNT } from './constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDelete, useSubscribe } from '../../../../hooks';
-import { Button, ColProps, Divider, Empty, Form, Input, message, Modal, notification, Pagination, Space } from 'antd';
+import {
+  Button,
+  Checkbox,
+  ColProps,
+  Divider,
+  Empty,
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Pagination,
+  Space,
+} from 'antd';
 import SubForm from '../subForm/subForm';
 import CollapsiblePanel from '../../../collapsiblePanel';
 import Show from '../../../show';
@@ -21,6 +34,8 @@ import ValidationErrors from '../../../validationErrors';
 import ShaSpin from '../../../shaSpin';
 import { DeleteFilled } from '@ant-design/icons';
 import classNames from 'classnames';
+import SectionSeparator from '../../../sectionSeparator';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 const ListControl: FC<IListControlProps> = ({
   containerId,
@@ -49,12 +64,16 @@ const ListControl: FC<IListControlProps> = ({
   labelCol,
   wrapperCol,
   allowRemoteDelete,
+  allowSelection,
 }) => {
   const { markup, error: fetchFormError } = useFormMarkup(formPath?.id);
-  const [state, setState] = useState<IListComponentRenderState>({ maxResultCount: paginationDefaultPageSize });
+  const [state, setState] = useState<IListComponentRenderState>({
+    maxResultCount: paginationDefaultPageSize,
+    selectedItemIndexes: [],
+  });
   const queryParamsFromBrowser = useMemo(() => getQueryParams(), []);
   const { formData, formMode } = useForm();
-  const { globalState } = useGlobalState();
+  const { globalState, setState: setGlobalStateState } = useGlobalState();
   const { refetch: fetchEntities, loading: isFetchingEntities, data, error: fetchEntitiesError } = useEntitiesGetAll({
     lazy: true,
   });
@@ -134,6 +153,29 @@ const ListControl: FC<IListControlProps> = ({
       debouncedRefresh();
     }
   }, [isInDesignerMode, dataSource, evaluatedFilters]);
+
+  useEffect(() => {
+    if (uniqueStateId) {
+      setGlobalStateState({
+        key: uniqueStateId,
+        data: {
+          selectedItemIndexes: state?.selectedItemIndexes,
+          selectedItems: value?.filter((_, index) => state?.selectedItemIndexes?.includes(index)),
+        },
+      });
+    }
+
+    return () => {
+      setGlobalStateState({
+        key: uniqueStateId,
+        data: undefined,
+      });
+    };
+  }, [state, uniqueStateId, value]);
+
+  useEffect(() => {
+    setState(prev => ({ ...prev, selectedItemIndexes: [] }));
+  }, [value]);
 
   useEffect(() => {
     if (isInDesignerMode) return;
@@ -317,6 +359,23 @@ const ListControl: FC<IListControlProps> = ({
 
   const hasNoData = value?.length === 0 && !isFetchingEntities;
 
+  const onSelect = useCallback(
+    index => {
+      if (allowDeleteItems) {
+        const selectedItemIndexes = state?.selectedItemIndexes?.includes(index)
+          ? state?.selectedItemIndexes?.filter(item => item !== index)
+          : [...state?.selectedItemIndexes, index];
+
+        setState(prev => ({ ...prev, selectedItemIndexes }));
+      }
+    },
+    [state, allowDeleteItems]
+  );
+
+  const onSelectAll = (e: CheckboxChangeEvent) => {
+    setState(prev => ({ ...prev, selectedItemIndexes: e?.target?.checked ? value?.map((_, index) => index) : [] }));
+  };
+
   return (
     <CollapsiblePanel
       header={title}
@@ -336,6 +395,17 @@ const ListControl: FC<IListControlProps> = ({
         </div>
       }
     >
+      <Show when={allowSelection}>
+        <Checkbox
+          onChange={onSelectAll}
+          checked={state?.selectedItemIndexes?.length === value?.length}
+          indeterminate={state?.selectedItemIndexes?.length > 0 && state?.selectedItemIndexes?.length !== value?.length}
+        >
+          Select All
+        </Checkbox>
+        <SectionSeparator sectionName="" />
+      </Show>
+
       <Show when={isInDesignerMode && renderStrategy === 'dragAndDrop'}>
         <FormItemProvider labelCol={{ span: labelCol }} wrapperCol={{ span: wrapperCol }}>
           <ComponentsContainer containerId={containerId} />
@@ -362,7 +432,14 @@ const ListControl: FC<IListControlProps> = ({
                   return (
                     <>
                       {fields?.map((field, index) => (
-                        <div className="sha-list-component-item">
+                        <div
+                          className={classNames('sha-list-component-item', {
+                            selected: state?.selectedItemIndexes?.includes(index),
+                          })}
+                          onClick={() => {
+                            onSelect(index);
+                          }}
+                        >
                           <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
                             <FormItemProvider
                               namePrefix={`${index}`}

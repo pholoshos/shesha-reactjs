@@ -140,6 +140,12 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         </FormItem>
       </Show>
 
+      <SectionSeparator sectionName="Selection" />
+
+      <FormItem name="allowSelection" label="Allow Selections" valuePropName="checked">
+        <Checkbox />
+      </FormItem>
+
       <SectionSeparator sectionName="Delete/Remove Items" />
 
       <FormItem name="allowDeleteItems" label="Allow Delete Items" valuePropName="checked">

@@ -7,6 +7,8 @@ import {
 import { ColumnsConfigurator } from './columnsConfigurator';
 import { IConfigurableColumnsBase } from '../../../../../../providers/datatableColumnsConfigurator/models';
 import { useMedia } from 'react-use';
+import { MetadataProvider, useForm } from '../../../../../../providers';
+import { IEntityPickerComponentProps } from '../../../entityPicker';
 
 export interface IColumnsEditorModal {
   visible: boolean;
@@ -25,16 +27,27 @@ export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onCh
   };
 
   return (
-    <Modal width={isSmall ? '90%' : '60%'} visible={visible} title="Configure Columns" okText="Save" onCancel={hideModal} onOk={onOkClick}>
+    <Modal
+      width={isSmall ? '90%' : '60%'}
+      visible={visible}
+      title="Configure Columns"
+      okText="Save"
+      onCancel={hideModal}
+      onOk={onOkClick}
+    >
       <ColumnsConfigurator />
     </Modal>
   );
 };
 
 export const ColumnsEditorModal: FC<IColumnsEditorModal> = props => {
+  const { formData } = useForm();
+  let modelType = (formData as IEntityPickerComponentProps)?.entityType;
   return (
     <ColumnsConfiguratorProvider items={(props.value as IConfigurableColumnsBase[]) || []}>
-      <ColumnsEditorModalInner {...props} />
+      <MetadataProvider modelType={modelType}>
+        <ColumnsEditorModalInner {...props} />
+      </MetadataProvider>
     </ColumnsConfiguratorProvider>
   );
 };

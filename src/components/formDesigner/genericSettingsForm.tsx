@@ -39,7 +39,7 @@ function Settings<TModel extends IConfigurableFormComponent>({
 
     const newModel: TModel = wrapper({
       ...currentModel,
-      label: metadata.label,
+      label: metadata.label || metadata.path,
       description: metadata.description,
     });
 

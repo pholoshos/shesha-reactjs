@@ -1,4 +1,3 @@
-import { IStoredFilter } from './../../../../providers/dataTable/interfaces';
 import { IConfigurableFormComponent, IFormItem, IGuidNullableEntityWithDisplayNameDto } from '../../../../interfaces';
 
 export interface IListItemsProps {
@@ -8,9 +7,11 @@ export interface IListItemsProps {
   title?: string;
   footer?: string;
   formPath?: IGuidNullableEntityWithDisplayNameDto;
+  allowSelection?: boolean;
   allowDeleteItems?: boolean;
   allowRemoteDelete?: boolean;
   deleteUrl?: string;
+  deleteConfirmMessage?: string;
   submitUrl?: string;
   submitHttpVerb?: 'POST' | 'PUT';
   onSubmit?: string;
@@ -26,7 +27,7 @@ export interface IListItemsProps {
   entityType?: string;
   useExpression?: boolean;
   properties?: string[];
-  filters?: IStoredFilter;
+  filters?: object;
 }
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {
@@ -46,4 +47,5 @@ export interface IListComponentRenderState {
   quickSearch?: string;
   skipCount?: number;
   maxResultCount?: number;
+  selectedItemIndexes?: number[];
 }

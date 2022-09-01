@@ -36,20 +36,23 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
     quickviewGetEntityUrl,
     quickviewWidth,
     subscribedEventNames,
+    filter,
   } = props;
 
-  const rawValue = typeof value === 'string'
-      ? value
-      : undefined;
-      /* todo: uncomment and test with arrays and numbers
+  const rawValue = typeof value === 'string' ? value : undefined;
+  /* todo: uncomment and test with arrays and numbers
       : Array.isArray(value)
         ? value
         : undefined;
       */
 
   // todo: move part of logic to the `useEntityAutocomplete`, implement support of multiple mode (it was not supported before because of wrong loading of provided value)
-  const { data: fetchedData, loading, error: fetchError, search: searchEntity } = useEntityAutocomplete({ entityType: typeShortAlias, value: rawValue });
-  
+  const { data: fetchedData, loading, error: fetchError, search: searchEntity } = useEntityAutocomplete({
+    entityType: typeShortAlias,
+    value: rawValue,
+    filter,
+  });
+
   const selectRef = useRef(null);
 
   const [autocompleteText, setAutocompleteText] = useState(null);
@@ -57,12 +60,12 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
   useSubscribe(subscribedEventNames, () => debouncedClear(autocompleteText));
 
   const getFetchedItems = (): AutocompleteItemDto[] => {
-    return fetchedData.map<AutocompleteItemDto>(e => ({ value: e.id.toString(), displayText: e["_displayName"] }));
+    return fetchedData.map<AutocompleteItemDto>(e => ({ value: e.id.toString(), displayText: e['_displayName'] }));
   };
 
   const handleSelect = () => {
     selectRef.current.blur();
-  }
+  };
 
   const debouncedFetchItems = useDebouncedCallback<(value: string) => void>(
     localValue => {
@@ -83,8 +86,8 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
     if (mode === 'multiple' || mode === 'tags') {
       return Array.isArray(localValue)
         ? (localValue as TValue[]).map<CustomLabeledValue<TValue>>(o => {
-          return getLabeledValue(o, options);
-        })
+            return getLabeledValue(o, options);
+          })
         : [getLabeledValue(localValue as TValue, options)];
     } else return getLabeledValue(localValue as TValue, options);
   };
@@ -106,8 +109,8 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
     // Note: we shouldn't process full list and make it unique because by this way we'll hide duplicates received from the back-end
     const selectedItems = selectedItem
       ? (Array.isArray(selectedItem) ? selectedItem : [selectedItem]).filter(
-        i => fetchedItems.findIndex(fi => fi.value === i.value) === -1
-      )
+          i => fetchedItems.findIndex(fi => fi.value === i.value) === -1
+        )
       : [];
 
     const result = [...fetchedItems, ...selectedItems];
@@ -132,7 +135,6 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
     if (mode === 'multiple' || mode === 'tags') {
       onChange(Array.isArray(selectedValue) ? selectedValue : [selectedValue]);
     } else onChange(selectedValue);
-
   };
 
   if (readOnly) {
@@ -152,12 +154,8 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
   }
 
   const dataLoaded = fetchedData && fetchedData.length > 0;
-  const autocompleteValue = value && (dataLoaded || fetchError)
-    ? wrapValue(value)
-    : undefined;
-  const selectPlaceholder = value && !dataLoaded && loading
-    ? "Loading..."
-    : (placeHolder ?? "Type to search");
+  const autocompleteValue = value && (dataLoaded || fetchError) ? wrapValue(value) : undefined;
+  const selectPlaceholder = value && !dataLoaded && loading ? 'Loading...' : placeHolder ?? 'Type to search';
 
   if (readOnly || disabled) {
     return (
@@ -176,8 +174,7 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
 
   const onFocus = () => {
     // fetch default items on focus if value is empty
-    if (!autocompleteText)
-      debouncedFetchItems(null);
+    if (!autocompleteText) debouncedFetchItems(null);
   };
 
   return (

@@ -14,6 +14,7 @@ export interface IEntityDropdownProps extends SelectProps<any> {
   typeShortAlias: string;
   allowInherited?: boolean;
   selectedValue?: string;
+  filter?: string;
   lazy?: boolean;
 }
 
@@ -22,9 +23,15 @@ export const EntityDropdown: FC<IEntityDropdownProps> = ({
   typeShortAlias,
   className,
   lazy = false,
+  filter,
   ...rest
 }) => {
-  const { data, loading, search } = useEntityAutocomplete({ entityType: typeShortAlias, value: selectedValue, lazy: lazy });
+  const { data, loading, search } = useEntityAutocomplete({
+    entityType: typeShortAlias,
+    value: selectedValue,
+    filter,
+    lazy,
+  });
 
   const handleSearch = (term: string) => {
     if (term) {
@@ -48,11 +55,12 @@ export const EntityDropdown: FC<IEntityDropdownProps> = ({
       className={classNames(className, 'sha-entity-dropdown')}
       {...rest}
     >
-      {dataLoaded && data.map((d: EntityData) => (
-        <Select.Option value={d.id} key={d.id}>
-          {d._displayName}
-        </Select.Option>
-      ))}
+      {dataLoaded &&
+        data.map((d: EntityData) => (
+          <Select.Option value={d.id} key={d.id}>
+            {d._displayName}
+          </Select.Option>
+        ))}
     </Select>
   );
 };

@@ -58,13 +58,14 @@ const DataSourceTree: FC<IProps> = ({ items, defaultExpandAll, searchText }) => 
   }, [defaultExpandAll]);
 
   const getTitle = (prop: IPropertyMetadata) => {
-    const { label } = prop;
-    const index = label?.toLowerCase()?.indexOf(searchText);
-    if (index === -1) return <span>{label}</span>;
+    const { label, path } = prop;
+    const displayName = label ?? path;
+    const index = displayName?.toLowerCase()?.indexOf(searchText);
+    if (index === -1) return <span>{displayName}</span>;
 
-    const beforeStr = label?.substring(0, index);
-    const str = label?.substring(index, index + searchText.length);
-    const afterStr = label?.substring(index + searchText.length, label.length);
+    const beforeStr = displayName?.substring(0, index);
+    const str = displayName?.substring(index, index + searchText.length);
+    const afterStr = displayName?.substring(index + searchText.length, displayName.length);
     return (
       <span>
         {beforeStr}

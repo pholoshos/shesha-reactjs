@@ -489,72 +489,72 @@
               "description": "After submitting this event will be triggered and the submitted data will be passed",
               "values": [
                 {
-                  "label": "refreshListItems",
+                  "label": "refreshListItems (List)",
                   "value": "refreshListItems",
                   "id": "b3583e80-408c-46cd-83b1-23b1e41b807b"
                 },
                 {
-                  "label": "saveListItems",
+                  "label": "saveListItems (List)",
                   "value": "saveListItems",
                   "id": "9827a4f5-1e7b-4c9d-b6c0-74db793a686e"
                 },
                 {
-                  "label": "addListItems",
+                  "label": "addListItems (List)",
                   "value": "addListItems",
                   "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
                 },
                 {
-                  "label": "getFormData",
-                  "value": "getFormDataems",
+                  "label": "getFormData (SubForm)",
+                  "value": "getFormData",
                   "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
                 },
                 {
-                  "label": "postFormData",
-                  "value": "postFormDatams",
+                  "label": "postFormData (SubForm)",
+                  "value": "postFormData",
                   "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
                 },
                 {
-                  "label": "updateFormData",
+                  "label": "updateFormData (SubForm)",
                   "value": "updateFormData",
                   "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
                 },
                 {
-                  "label": "deleteFormData",
+                  "label": "deleteFormData (SubForm)",
                   "value": "deleteFormData",
                   "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
                 },
                 {
-                  "label": "refreshTable",
+                  "label": "refreshTable (DataTable)",
                   "value": "REFRESH_TABLE",
                   "id": "a89e2856-a42a-4332-b83e-ca7dd093ab21"
                 },
                 {
-                  "label": "toggleColumnsSelector",
+                  "label": "toggleColumnsSelector (DataTable)",
                   "value": "TOGGLE_COLUMNS_SELECTOR",
                   "id": "589fda88-48d7-4aa6-bbc6-f7e5acd5b894"
                 },
                 {
-                  "label": "toggleAdvancedFilter",
+                  "label": "toggleAdvancedFilter (DataTable)",
                   "value": "TOGGLE_ADVANCED_FILTER",
                   "id": "9a42a289-65dc-444f-a9f8-e77efc4e4a00"
                 },
                 {
-                  "label": "exportToExcel",
+                  "label": "exportToExcel (DataTable)",
                   "value": "EXPORT_TO_EXCEL",
                   "id": "0d2a3fd7-bb6c-4a65-bba8-cc6f4a94ea76"
                 },
                 {
-                  "label": "deleteRow",
+                  "label": "deleteRow (DataTable)",
                   "value": "DELETE_ROW",
                   "id": "5d7b2890-7ca2-4d12-b1a5-5eb45ad83639"
                 },
                 {
-                  "label": "stateChanged",
+                  "label": "stateChanged (DataTable)",
                   "value": "STATE_CHANGED",
                   "id": "02279fdc-3973-4eea-a032-79e79d6a68bc"
                 },
                 {
-                  "label": "downloadLogFile",
+                  "label": "downloadLogFile (DataTable)",
                   "value": "DOWNLOAD_LOG_FILE",
                   "id": "211255af-966a-44c6-bafe-0e695925b32b"
                 }
@@ -674,31 +674,6 @@
               "id": "3580449c-b124-4531-bc0d-b56d939a09d8"
             },
             {
-              "id": "b125e199-80d0-4d41-896f-5bcd0744e18f",
-              "label": "refreshListItems",
-              "value": "refreshListItems"
-            },
-            {
-              "id": "cf5dc61f-1647-484b-8705-ac1a19bc92f6",
-              "label": "Get Sub-Form Data",
-              "value": "getSubFormData"
-            },
-            {
-              "id": "bca2dae0-77da-4752-9507-1c04bc55169e",
-              "label": "Submit Sub-Form Data",
-              "value": "postSubFormData"
-            },
-            {
-              "id": "f3b69148-eca1-483e-8df2-11052e9e9afa",
-              "label": "Update Sub-Form Data",
-              "value": "putSubFormData"
-            },
-            {
-              "id": "68be013d-897d-48b5-9499-d4581c706849",
-              "label": "Delete Sub-Form Data",
-              "value": "deleteSubFormData"
-            },
-            {
               "label": "(enter custom action)",
               "value": "CUSTOM_ACTION",
               "id": "b4224f35-1b69-43f5-99e8-8119be85a940"
@@ -728,7 +703,7 @@
           "validate": {}
         },
         {
-          "id": "adaab7e3-c5c8-4701-aef2-96fe80bc5d5a",
+          "id": "3186e0b2-0f56-4dba-bdb2-48fddf7d4613",
           "type": "textField",
           "name": "customFormAction",
           "label": "Custom Form Action",

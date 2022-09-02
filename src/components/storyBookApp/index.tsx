@@ -34,7 +34,7 @@ export const StoryApp: FC<PropsWithChildren<{ layout?: boolean }>> = ({ children
 
   return (
     <GlobalStateProvider>
-      <ShaApplicationProvider backendUrl={process.env.STORYBOOK_BASE_URL || ''} router={DEFAULT_ROUTER as any}>
+      <ShaApplicationProvider backendUrl={process.env.STORYBOOK_BASE_URL ||'https://houghtonh-his-api-test.azurewebsites.net'} router={DEFAULT_ROUTER as any}>
         <AuthContainer layout={layout}>
           <SidebarMenuDefaultsProvider items={[]}>{renderChildren()}</SidebarMenuDefaultsProvider>
         </AuthContainer>

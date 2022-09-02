@@ -53,6 +53,8 @@ import StatusTag from '../../../components/formDesigner/components/statusTag';
 import DynamicView from '../../../components/formDesigner/components/dynamicView';
 import ChildTable from '../../../components/formDesigner/components/dataTable/childTable';
 import ColumnsEditor from '../../../components/formDesigner/components/dataTable/table/columnsEditor/columnsEditorComponent';
+import EntityPickerColumnsEditor from '../../../components/formDesigner/components/dataTable/table/entityPickerColumnsEditor/entityPickerColumnsEditorComponent';
+
 import ButtonGroup from '../../../components/formDesigner/components/button/buttonGroup/buttonGroupComponent';
 import ColumnsSelector from '../../../components/formDesigner/components/entityPicker/columnsSelector';
 import Filter from '../../../components/formDesigner/components/dataTable/filter/filterComponent';
@@ -144,6 +146,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       AdvancedFilterButton,
       ChildTable,
       ColumnsEditor, // Hidden
+      EntityPickerColumnsEditor,
       ColumnsSelector, // Hidden
       DataTable,
       TableTemplate,

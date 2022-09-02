@@ -154,10 +154,13 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       case 'executeFormAction':
       case 'customAction':
         if (props?.formAction) {
-          if (props?.formAction === 'CUSTOM_ACTION') {
-            console.log('props?.formAction: ', props);
-
-            publish(props?.customFormAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
+          // Temp backward compatibility for data table actions
+          // TODO: This code should be removed very soon
+          if (Object.values(DataTablePubsubConstants).includes(props?.formAction)) {
+            // props?.formAction will contain any of these, but these are events and should not have been under `formAction` in the first place
+            // they are not moved under `dispatchAnEvent` condition
+            // Anything other than this is a custom action
+            publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
           } else {
             if (props.customFormAction) {
               const actionBody = getAction(props.formComponentId, props.customFormAction);

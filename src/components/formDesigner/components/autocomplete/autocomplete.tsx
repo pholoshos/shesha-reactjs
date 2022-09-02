@@ -1,6 +1,6 @@
 import { FileSearchOutlined } from '@ant-design/icons';
 import { message } from 'antd';
-import React, { Key } from 'react';
+import React, { Key, useMemo } from 'react';
 import { axiosHttp } from '../../../../apis/axios';
 import { IToolboxComponent } from '../../../../interfaces';
 import { DataTypes } from '../../../../interfaces/dataTypes';
@@ -19,6 +19,9 @@ import ConfigurableFormItem from '../formItem';
 import { customDropDownEventHandler } from '../utils';
 import settingsFormJson from './settingsForm.json';
 import moment from 'moment';
+import { isEmpty } from 'lodash';
+import camelCaseKeys from 'camelcase-keys';
+import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
 
 interface IQueryParamProp {
   id: string;
@@ -73,6 +76,30 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
 
     const disabled = isComponentDisabled(model);
 
+    const evaluatedFilters = useMemo(() => {
+      if (!filter) return '';
+
+      const localFormData = !isEmpty(formData) ? camelCaseKeys(formData, { deep: true, pascalCase: true }) : formData;
+
+      const _response = evaluateDynamicFilters(
+        [{ expression: filter } as any],
+        [
+          {
+            match: 'data',
+            data: localFormData,
+          },
+          {
+            match: 'globalState',
+            data: globalState,
+          },
+        ]
+      );
+
+      if (_response.find(f => f?.unevaluatedExpressions?.length)) return '';
+
+      return JSON.stringify(_response[0]?.expression) || '';
+    }, [filter, formData, globalState]);
+
     const getQueryParams = (): IQueryParams => {
       const queryParamObj: IQueryParams = {};
 
@@ -87,13 +114,13 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
         });
       }
 
-      if (filter)
-        queryParamObj['filter'] = typeof(filter) === 'string'
-          ? filter
-          : JSON.stringify(filter);
+      if (filter) queryParamObj['filter'] = typeof filter === 'string' ? filter : evaluatedFilters;
+      // if (filter) queryParamObj['filter'] = typeof filter === 'string' ? filter : JSON.stringify(filter);
 
       return queryParamObj;
     };
+
+    console.log('LOGS:: filter, evaluatedFilters, getQueryParams(): ', filter, evaluatedFilters, getQueryParams());
 
     const getFetchedItemData = (
       item: object,
@@ -104,9 +131,9 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       useRawValues
         ? item[value]
         : {
-          id: item[value],
-          displayText: item[displayText],
-        };
+            id: item[value],
+            displayText: item[displayText],
+          };
 
     const getOptionFromFetchedItem = (item: object): ISelectOption => {
       const { dataSourceType, keyPropName, useRawValues, valuePropName } = model;
@@ -150,7 +177,7 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       defaultValue: evaluateString(model?.defaultValue, { formData, formMode, globalState }) as any,
       getOptionFromFetchedItem,
       disableSearch: model?.disableSearch,
-
+      filter: evaluatedFilters,
       quickviewEnabled: model?.quickviewEnabled,
       quickviewFormPath: model?.quickviewFormPath,
       quickviewDisplayPropertyName: model?.quickviewDisplayPropertyName,

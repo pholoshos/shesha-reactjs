@@ -59,16 +59,16 @@ export const columnSorting2SortDirection = (value?: ColumnSorting): SortDirectio
 };
 
 const convertFilterValue = (value: any, column: ITableColumn): any => {
-  switch(column?.dataType){
-    case "date":
+  switch (column?.dataType) {
+    case 'date':
       return getMoment(value, ADVANCEDFILTER_DATE_FORMAT)?.format();
-    case "date-time":
+    case 'date-time':
       return getMoment(value, ADVANCEDFILTER_DATETIME_FORMAT)?.format();
-    case "time":
+    case 'time':
       return getDuration(value)?.asSeconds();
   }
   return value;
-}
+};
 
 export const ADVANCEDFILTER_DATE_FORMAT = 'DD/MM/YYYY';
 export const ADVANCEDFILTER_DATETIME_FORMAT = 'DD/MM/YYYY HH:mm';
@@ -88,77 +88,73 @@ export const getDuration = (value: any): Duration => {
   if (isDuration(value)) return value;
 
   const durationValue = moment.duration(value as string);
-  return durationValue.isValid()
-    ? durationValue
-    : undefined;
+  return durationValue.isValid() ? durationValue : undefined;
 };
 
 export const advancedFilter2JsonLogic = (advancedFilter: ITableFilter[], columns: ITableColumn[]): object[] => {
-  if (!advancedFilter || advancedFilter.length === 0)
-    return null;
+  if (!advancedFilter || advancedFilter.length === 0) return null;
 
-  const filterItems = advancedFilter.map(f => {
-    const property = { "var": f.columnId };
-    const column = columns.find(c => c.id == f.columnId);
-    
-    const filterValues = Array.isArray(f.filter)
-      ? f.filter.map(filterValue => convertFilterValue(filterValue, column))
-      : convertFilterValue(f.filter, column);
-    
-    let filterOption = f.filterOption;
-    if (!filterOption){
-      if (column.dataType === 'reference-list-item')
-        filterOption = "contains";
-      if (column.dataType === 'entity')
-        filterOption = "equals";
-    }
+  const filterItems = advancedFilter
+    .map(f => {
+      const property = { var: f.columnId };
+      const column = columns.find(c => c.id == f.columnId);
 
-    switch (filterOption) {
-      case "equals":
-        return {
-          "==": [property, filterValues]
-        };
-      case "contains":
-        return column.dataType === 'string'
-          ? { "in": [filterValues, property] /* for strings arguments are reversed */ }
-          : { "in": [property, filterValues] };
-      case "greaterThan":
-        return {
-          ">": [property, filterValues]
-        };
-      case "after":
-        return {
-          ">": [property, filterValues]
-        };
-      case "lessThan":
-        return {
-          "<": [property, filterValues]
-        };
-      case "before":
-        return {
-          "<": [property, filterValues]
-        };
-      case "startsWith":
-        return {
-          "startsWith": [property, filterValues]
-        };
-      case "endsWith":
-        return {
-          "endsWith": [property, filterValues]
-        };
-      case "between":
-        if (Array.isArray(filterValues) && filterValues.length == 2) {
+      const filterValues = Array.isArray(f.filter)
+        ? f.filter.map(filterValue => convertFilterValue(filterValue, column))
+        : convertFilterValue(f.filter, column);
+
+      let filterOption = f.filterOption;
+      if (!filterOption) {
+        if (column.dataType === 'reference-list-item') filterOption = 'contains';
+        if (column.dataType === 'entity') filterOption = 'equals';
+      }
+
+      switch (filterOption) {
+        case 'equals':
           return {
-            "<=": [filterValues[0], property, filterValues[1]]
+            '==': [property, filterValues],
           };
-        } else
-          console.error(`argument of the '${f.filterOption}' filter option must be an array with two values`);
-    }
+        case 'contains':
+          return column.dataType === 'string'
+            ? { in: [filterValues, property] /* for strings arguments are reversed */ }
+            : { in: [property, filterValues] };
+        case 'greaterThan':
+          return {
+            '>': [property, filterValues],
+          };
+        case 'after':
+          return {
+            '>': [property, filterValues],
+          };
+        case 'lessThan':
+          return {
+            '<': [property, filterValues],
+          };
+        case 'before':
+          return {
+            '<': [property, filterValues],
+          };
+        case 'startsWith':
+          return {
+            startsWith: [property, filterValues],
+          };
+        case 'endsWith':
+          return {
+            endsWith: [property, filterValues],
+          };
+        case 'between':
+          if (Array.isArray(filterValues) && filterValues.length == 2) {
+            return {
+              '<=': [filterValues[0], property, filterValues[1]],
+            };
+          } else console.error(`argument of the '${f.filterOption}' filter option must be an array with two values`);
+      }
 
-    console.error("operator is not supported: " + f.filterOption)
+      console.error('operator is not supported: ' + f.filterOption);
 
-    return null;
-  }).filter(f => Boolean(f));
+      return null;
+    })
+    .filter(f => Boolean(f));
 
   return filterItems;
-}
+};

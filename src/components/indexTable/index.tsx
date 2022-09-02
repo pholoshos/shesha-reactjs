@@ -56,6 +56,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
   selectedRowIndex,
   onSelectRow,
   onDblClick,
+  onMultiRowSelect,
   customTypeRenders,
   customTypeEditors,
   tableRef,
@@ -416,7 +417,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
           },
         });
       });
-    
+
     setPreparedColumns(localPreparedColumns);
   }, [columns, newOrEditableRowData?.id, crud, overrideDefaultCrudBehavior]);
 
@@ -563,6 +564,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
     onSelectRow: onSelectRowLocal,
     onRowDoubleClick: dblClickHandler,
     onSelectedIdsChanged: changeSelectedIds,
+    onMultiRowSelect,
     onSort, // Update it so that you can pass it as param. Quick fix for now
     columns: preparedColumns?.map(column => {
       const cleanedColumn = removeUndefinedProperties(column);

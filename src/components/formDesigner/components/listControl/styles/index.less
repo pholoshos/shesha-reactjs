@@ -3,6 +3,24 @@
     margin: unset !important;
   }
 
+  .sha-list-component-item-checkbox {
+    display: flex;
+    align-items: center;
+    padding: unset;
+    margin: unset;
+    padding-left: 5px;
+
+    &.selected {
+      background-color: var(--ant-primary-1);
+    }
+
+    span {
+      &:last-child {
+        flex-grow: 1;
+      }
+    }
+  }
+
   .sha-list-component-extra-space {
     display: flex;
     align-content: space-between;
@@ -19,6 +37,9 @@
   }
 
   .sha-list-component-body {
+    &.loading {
+      height: 300px;
+    }
     overflow-y: scroll;
   }
 
@@ -31,6 +52,11 @@
 
   .sha-list-component-item {
     position: relative;
+    padding-top: 5px;
+
+    &.selected {
+      background-color: var(--ant-primary-1);
+    }
     &:hover {
       > .sha-list-component-add-item-btn {
         display: block;
@@ -46,6 +72,6 @@
   .sha-list-pagination-container {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 12px;
+    // margin-bottom: 12px;
   }
 }

@@ -13,3 +13,4 @@ export { useDeepCompareMemoize } from './useDeepCompareMemoize';
 export { useEnhancedCreateForm } from './useEnhancedCreateForm';
 export { usePubSub, useSubscribe, useSubscribedValue, usePublish } from './usePubSub';
 export { useDataTableFluentColumns } from './useDataTableFluentColumns';
+export { useDelete } from './useDelete';

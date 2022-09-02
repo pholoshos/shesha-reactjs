@@ -7,8 +7,10 @@ import {
 } from './contexts';
 import {
   setSelectedRowAction,
+  setMultiSelectedRowAction,
   /* NEW_ACTION_IMPORT_GOES_HERE */
 } from './actions';
+import { Row } from 'react-table';
 
 export interface IDataTableSelectionProviderProps {}
 
@@ -18,7 +20,11 @@ const DataTableSelectionProvider: FC<PropsWithChildren<IDataTableSelectionProvid
   });
 
   const setSelectedRow = (index: number, row: any) => {
-    dispatch(setSelectedRowAction({ index, row, id: row?.Id }));
+    dispatch(setSelectedRowAction({ index, row, id: row?.id }));
+  };
+
+  const setMultiSelectedRow = (rows: Row[] | Row) => {
+    dispatch(setMultiSelectedRowAction(rows));
   };
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
@@ -28,6 +34,7 @@ const DataTableSelectionProvider: FC<PropsWithChildren<IDataTableSelectionProvid
       <DataTableSelectionActionsContext.Provider
         value={{
           setSelectedRow,
+          setMultiSelectedRow,
           /* NEW_ACTION_GOES_HERE */
         }}
       >

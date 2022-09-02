@@ -20,6 +20,8 @@ import { Alert, Typography } from 'antd';
 
 export interface IQueryBuilderProps extends IConfigurableFormComponent {
   jsonExpanded?: boolean;
+  allowUseExpression?: boolean;
+  useExpression?: string;
   modelType?: string;
   fieldsUnavailableHint?: string;
 }
@@ -95,14 +97,16 @@ const QueryBuilderWithMetadata: FC<IQueryBuilderProps> = props => {
 };
 
 const QueryBuilderComponentRenderer: FC<IQueryBuilderProps> = props => {
-  const { fieldsUnavailableHint } = props;
+  const { formMode, formData } = useForm();
+  const { fieldsUnavailableHint, allowUseExpression, useExpression: _useExpression } = props;
   const { selectedItemId, items } = useTableViewSelectorConfigurator(false) ?? {}; // note: it should be outside the QueryBuilder component!
 
   // TODO: implement combined components which support both expressions/functions and custom values like date/datetime and remove the `useExpression` property
-  const useExpression = items?.find(({ id }) => id === selectedItemId)?.useExpression;
+  const useExpression = allowUseExpression
+    ? evaluateString(_useExpression, { data: formData }) === 'true'
+    : items?.find(({ id }) => id === selectedItemId)?.useExpression;
 
   const queryBuilder = useQueryBuilder(false);
-  const { formMode } = useForm();
 
   const fieldsAvailable = Boolean(queryBuilder);
 

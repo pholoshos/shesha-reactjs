@@ -64,7 +64,7 @@ const modelReducer = handleActions<IPropertiesEditorStateContext, any>(
         : null;
 
       if (parent) {
-        parent.properties = [...parent.properties, itemProps];
+        parent.properties = [...(parent.properties ?? []), itemProps];
       } else newItems.push(itemProps);
 
       return {

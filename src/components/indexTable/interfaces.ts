@@ -4,6 +4,7 @@ import { MutableRefObject, ReactNode } from 'react';
 import { ICrudProps, IDataTableInstance } from '../../providers/dataTable/interfaces';
 import { DataTableFullInstance } from '../../providers/dataTable/contexts';
 import { IAnyObject } from '../../interfaces';
+import { Row } from 'react-table';
 
 export type TableActionColumnType = 'create' | 'read' | 'update' | 'delete' | 'cancel'; // CRUD and cancel
 
@@ -56,6 +57,7 @@ export interface IShaDataTableProps extends ICrudProps, ITableRowDragProps {
   onSelectRow?: (index: number, row: any) => void;
   onSelectedIdsChanged?: (selectedRowIds: string[]) => void;
   onDblClick?: (data: any, index?: number) => void;
+  onMultiRowSelect?: (rows: Array<Row> | Row) => void;
   customTypeRenders?: ITableCustomTypesRender[];
   customTypeEditors?: ITableCustomTypeEditor[];
   onRowsChanged?: (rows: object[]) => void;

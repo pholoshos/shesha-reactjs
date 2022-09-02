@@ -164,7 +164,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const { router } = useShaRouting();
 
   const fetchDataTableDataInternal = (getDataPayload: IGetDataPayload) => {
-    const getDataUrl = `${backendUrl}${getDataPath ?? `${GENERIC_ENTITIES_ENDPOINT}/GetAll`}?${qs.stringify(getDataPayload)}`;
+    const getDataUrl = `${backendUrl}${getDataPath || `${GENERIC_ENTITIES_ENDPOINT}/GetAll`}?${qs.stringify(getDataPayload)}`;
 
     return axios({
       url: getDataUrl,
@@ -527,7 +527,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
         columns: excelColumns
       };
       
-      const excelEndpoint = getExportToExcelPath ?? `${GENERIC_ENTITIES_ENDPOINT}/ExportToExcel`;
+      const excelEndpoint = getExportToExcelPath || `${GENERIC_ENTITIES_ENDPOINT}/ExportToExcel`;
       const excelDataUrl =  `${backendUrl}${excelEndpoint}`;
 
       axios({

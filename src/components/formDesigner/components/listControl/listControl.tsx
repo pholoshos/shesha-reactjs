@@ -10,8 +10,21 @@ import { IListControlProps, IListComponentRenderState } from './models';
 import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
 import { ListControlEvents, MAX_RESULT_COUNT } from './constants';
 import { useDebouncedCallback } from 'use-debounce';
-import { useSubscribe } from '../../../../hooks';
-import { Button, ColProps, Divider, Form, Input, message, notification, Pagination, Space } from 'antd';
+import { useDelete, useSubscribe } from '../../../../hooks';
+import {
+  Button,
+  Checkbox,
+  ColProps,
+  Divider,
+  Empty,
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Pagination,
+  Space,
+} from 'antd';
 import SubForm from '../subForm/subForm';
 import CollapsiblePanel from '../../../collapsiblePanel';
 import Show from '../../../show';
@@ -20,6 +33,9 @@ import ComponentsContainer from '../../componentsContainer';
 import ValidationErrors from '../../../validationErrors';
 import ShaSpin from '../../../shaSpin';
 import { DeleteFilled } from '@ant-design/icons';
+import classNames from 'classnames';
+import SectionSeparator from '../../../sectionSeparator';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 const ListControl: FC<IListControlProps> = ({
   containerId,
@@ -32,6 +48,7 @@ const ListControl: FC<IListControlProps> = ({
   onChange,
   allowDeleteItems,
   deleteUrl,
+  deleteConfirmMessage,
   buttons,
   title,
   maxHeight,
@@ -47,12 +64,16 @@ const ListControl: FC<IListControlProps> = ({
   labelCol,
   wrapperCol,
   allowRemoteDelete,
+  selectionMode,
 }) => {
   const { markup, error: fetchFormError } = useFormMarkup(formPath?.id);
-  const [state, setState] = useState<IListComponentRenderState>({ maxResultCount: paginationDefaultPageSize });
+  const [state, setState] = useState<IListComponentRenderState>({
+    maxResultCount: paginationDefaultPageSize,
+    selectedItemIndexes: [],
+  });
   const queryParamsFromBrowser = useMemo(() => getQueryParams(), []);
   const { formData, formMode } = useForm();
-  const { globalState } = useGlobalState();
+  const { globalState, setState: setGlobalStateState } = useGlobalState();
   const { refetch: fetchEntities, loading: isFetchingEntities, data, error: fetchEntitiesError } = useEntitiesGetAll({
     lazy: true,
   });
@@ -67,23 +88,20 @@ const ListControl: FC<IListControlProps> = ({
     })();
   };
 
-  const { mutate: deleteHttp, loading: isDeleting, error: deleteError } = useMutate({
-    path: getEvaluatedUrl(deleteUrl),
-    verb: 'DELETE',
-  });
+  const { mutate: deleteHttp, loading: isDeleting, error: deleteError } = useDelete();
 
   const { mutate: submitHttp, loading: submitting, error: submitError } = useMutate({
     path: getEvaluatedUrl(submitUrl),
     verb: submitHttpVerb,
   });
 
-  const getFilters = () => {
+  const evaluatedFilters = useMemo(() => {
     if (!filters) return '';
 
     const localFormData = !isEmpty(formData) ? camelCaseKeys(formData, { deep: true, pascalCase: true }) : formData;
 
-    const evaluatedFilters = evaluateDynamicFilters(
-      [filters],
+    const _response = evaluateDynamicFilters(
+      [{ expression: filters } as any],
       [
         {
           match: 'data',
@@ -96,10 +114,10 @@ const ListControl: FC<IListControlProps> = ({
       ]
     );
 
-    if (evaluatedFilters.find(f => f?.unevaluatedExpressions?.length)) return '';
+    if (_response.find(f => f?.unevaluatedExpressions?.length)) return '';
 
-    return JSON.stringify(evaluatedFilters[0]) || '';
-  };
+    return JSON.stringify(_response[0]?.expression) || '';
+  }, [filters, formData, globalState]);
 
   const queryParams = useMemo(() => {
     const _queryParams: EntitiesGetAllQueryParams = {
@@ -109,16 +127,14 @@ const ListControl: FC<IListControlProps> = ({
       quickSearch: state?.quickSearch,
     };
 
-    if (properties?.length) {
-      _queryParams.properties = properties?.map(p => camelCase(p)).join(' ');
-    }
+    _queryParams.properties = Array.from(new Set(['id', properties?.map(p => camelCase(p))])).join(' ');
 
-    if (filters && getFilters()) {
-      _queryParams.filter = getFilters();
+    if (filters && evaluatedFilters) {
+      _queryParams.filter = evaluatedFilters;
     }
 
     return _queryParams;
-  }, [properties, showPagination, paginationDefaultPageSize, state]);
+  }, [properties, showPagination, paginationDefaultPageSize, state, filters, evaluatedFilters]);
 
   const debouncedRefresh = useDebouncedCallback(
     () => {
@@ -134,7 +150,34 @@ const ListControl: FC<IListControlProps> = ({
     if (dataSource === 'api') {
       debouncedRefresh();
     }
-  }, [isInDesignerMode, dataSource]);
+  }, [isInDesignerMode, dataSource, evaluatedFilters]);
+
+  useEffect(() => {
+    if (uniqueStateId && Array.isArray(value) && value.length) {
+      setGlobalStateState({
+        key: uniqueStateId,
+        data: {
+          selectedItemIndexes: state?.selectedItemIndexes,
+          selectedItems:
+            selectionMode === 'multiple'
+              ? value?.filter((_, index) => state?.selectedItemIndexes?.includes(index))
+              : null,
+          selectedItem: selectionMode === 'single' ? value[state?.selectedItemIndex] : null,
+        },
+      });
+    }
+
+    return () => {
+      setGlobalStateState({
+        key: uniqueStateId,
+        data: undefined,
+      });
+    };
+  }, [state, uniqueStateId, value]);
+
+  useEffect(() => {
+    setState(prev => ({ ...prev, selectedItemIndexes: [] }));
+  }, [value]);
 
   useEffect(() => {
     if (isInDesignerMode) return;
@@ -230,18 +273,39 @@ const ListControl: FC<IListControlProps> = ({
             });
           }
 
-          deleteHttp('', { queryParams: { id: item?.id || item.Id } }).then(() => {
-            if (remove) {
-              remove(index);
-            }
-            debouncedRefresh();
-          });
+          let confirmMessage = deleteConfirmMessage;
+
+          if (deleteConfirmMessage) {
+            // tslint:disable-next-line:function-constructor
+            confirmMessage = new Function('data, item, globalState', deleteConfirmMessage)(formData, item, globalState);
+          }
+
+          const evaluatedDeleteUrl = new Function('data, item, globalState', deleteUrl)(formData, item, globalState);
+
+          const doDelete = () => {
+            deleteHttp(evaluatedDeleteUrl).then(() => {
+              if (remove) {
+                remove(index);
+              }
+              debouncedRefresh();
+            });
+          };
+
+          if (confirmMessage) {
+            Modal.confirm({
+              title: 'Delete this item?',
+              content: confirmMessage,
+              onOk: doDelete,
+            });
+          } else {
+            doDelete();
+          }
         }
       } else if (remove) {
         remove(index);
       }
     },
-    [value, deleteUrl, allowRemoteDelete, allowDeleteItems]
+    [value, deleteUrl, allowRemoteDelete, allowDeleteItems, deleteConfirmMessage]
   );
 
   const setQuickSearch = useDebouncedCallback((text: string) => {
@@ -295,10 +359,34 @@ const ListControl: FC<IListControlProps> = ({
 
   const isSpinning = submitting || isDeleting || isFetchingEntities;
 
+  const hasNoData = value?.length === 0 && !isFetchingEntities;
+
+  const onSelect = useCallback(
+    index => {
+      if (selectionMode === 'multiple') {
+        const selectedItemIndexes = state?.selectedItemIndexes?.includes(index)
+          ? state?.selectedItemIndexes?.filter(item => item !== index)
+          : [...state?.selectedItemIndexes, index];
+
+        setState(prev => ({ ...prev, selectedItemIndexes, selectedItemIndex: -1 }));
+      } else if (selectionMode === 'single') {
+        if (state?.selectedItemIndex === index) {
+          setState(prev => ({ ...prev, selectedItemIndex: -1, selectedItemIndexes: [] }));
+        } else setState(prev => ({ ...prev, selectedItemIndex: index, selectedItemIndexes: [index] }));
+      }
+    },
+    [state, selectionMode]
+  );
+
+  const onSelectAll = (e: CheckboxChangeEvent) => {
+    setState(prev => ({ ...prev, selectedItemIndexes: e?.target?.checked ? value?.map((_, index) => index) : [] }));
+  };
+
   return (
     <CollapsiblePanel
       header={title}
       extraClass="sha-list-component-extra"
+      className="sha-list-component-panel"
       extra={
         <div className="sha-list-component-extra-space">
           <Space size="small">
@@ -313,6 +401,17 @@ const ListControl: FC<IListControlProps> = ({
         </div>
       }
     >
+      <Show when={selectionMode === 'multiple'}>
+        <Checkbox
+          onChange={onSelectAll}
+          checked={state?.selectedItemIndexes?.length === value?.length && value?.length > 0}
+          indeterminate={state?.selectedItemIndexes?.length > 0 && state?.selectedItemIndexes?.length !== value?.length}
+        >
+          Select All
+        </Checkbox>
+        <SectionSeparator sectionName="" />
+      </Show>
+
       <Show when={isInDesignerMode && renderStrategy === 'dragAndDrop'}>
         <FormItemProvider labelCol={{ span: labelCol }} wrapperCol={{ span: wrapperCol }}>
           <ComponentsContainer containerId={containerId} />
@@ -330,58 +429,82 @@ const ListControl: FC<IListControlProps> = ({
 
         <ShaSpin spinning={isSpinning} tip={isFetchingEntities ? 'Fetching data...' : 'Submitting'}>
           <Show when={Array.isArray(value)}>
-            <div className="sha-list-component-body" style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}>
+            <div
+              className={classNames('sha-list-component-body', { loading: isFetchingEntities && value?.length === 0 })}
+              style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}
+            >
               <Form.List name={name} initialValue={[]}>
                 {(fields, { remove }) => {
                   return (
                     <>
                       {fields?.map((field, index) => (
-                        <div className="sha-list-component-item">
-                          <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
-                            <FormItemProvider
-                              namePrefix={`${index}`}
-                              wrapperCol={{ span: wrapperCol }}
-                              labelCol={{ span: labelCol }}
-                            >
-                              <ComponentsContainer
-                                containerId={containerId}
-                                plainWrapper
-                                direction="horizontal"
-                                alignItems="center"
-                              />
-                            </FormItemProvider>
-                          </Show>
+                        <Checkbox
+                          className={classNames('sha-list-component-item-checkbox', {
+                            selected: state?.selectedItemIndexes?.includes(index),
+                          })}
+                          checked={state?.selectedItemIndexes?.includes(index)}
+                          onChange={() => {
+                            onSelect(index);
+                          }}
+                        >
+                          <div
+                            className={classNames('sha-list-component-item', {
+                              selected: state?.selectedItemIndexes?.includes(index),
+                            })}
+                            onClick={() => {
+                              onSelect(index);
+                            }}
+                          >
+                            <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
+                              <FormItemProvider
+                                namePrefix={`${index}`}
+                                wrapperCol={{ span: wrapperCol }}
+                                labelCol={{ span: labelCol }}
+                              >
+                                <ComponentsContainer
+                                  containerId={containerId}
+                                  plainWrapper
+                                  direction="horizontal"
+                                  alignItems="center"
+                                />
+                              </FormItemProvider>
+                            </Show>
 
-                          <Show when={Boolean(formPath?.id) && Boolean(markup) && renderStrategy === 'externalForm'}>
-                            {renderSubForm(
-                              `${index}`,
-                              labelCol && { span: labelCol },
-                              wrapperCol && { span: wrapperCol }
-                            )}
-                          </Show>
+                            <Show when={Boolean(formPath?.id) && Boolean(markup) && renderStrategy === 'externalForm'}>
+                              {renderSubForm(
+                                `${index}`,
+                                labelCol && { span: labelCol },
+                                wrapperCol && { span: wrapperCol }
+                              )}
+                            </Show>
 
-                          <Show when={allowDeleteItems}>
-                            <div className="sha-list-component-add-item-btn">
-                              <Button
-                                danger
-                                type="ghost"
-                                size="small"
-                                className="dynamic-delete-button"
-                                onClick={() => {
-                                  deleteItem(field.name, remove);
-                                }}
-                                icon={<DeleteFilled />}
-                              />
-                            </div>
-                          </Show>
+                            <Show when={allowDeleteItems}>
+                              <div className="sha-list-component-add-item-btn">
+                                <Button
+                                  danger
+                                  type="ghost"
+                                  size="small"
+                                  className="dynamic-delete-button"
+                                  onClick={() => {
+                                    deleteItem(field.name, remove);
+                                  }}
+                                  icon={<DeleteFilled />}
+                                />
+                              </div>
+                            </Show>
 
-                          <Divider className="sha-list-component-divider" />
-                        </div>
+                            <Divider className="sha-list-component-divider" />
+                          </div>
+                        </Checkbox>
                       ))}
                     </>
                   );
                 }}
               </Form.List>
+
+              <Show when={hasNoData}>
+                <Empty description="There are no items found." />
+              </Show>
             </div>
           </Show>
         </ShaSpin>

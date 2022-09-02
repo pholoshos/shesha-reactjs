@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Column, SortingRule, TableState } from 'react-table';
+import { Column, Row, SortingRule, TableState } from 'react-table';
 
 export interface IColumnWidth {
   id: React.Key;
@@ -135,6 +135,11 @@ export interface IReactTableProps extends ITableRowDragProps {
    * A callback for when ids are selected. Required if useMultiSelect is true
    */
   onSelectedIdsChanged?: (ids: string[]) => void;
+
+  /**
+   * A callback for when multiple rows are selected with checkbox. Applicable if useMultiSelect is true
+   */
+  onMultiRowSelect?: (rows: Array<Row> | Row) => void;
 
   /**
    * Selected row index

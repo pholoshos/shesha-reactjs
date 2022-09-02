@@ -1,9 +1,13 @@
 import React, { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
 import { AutoComplete, Button, Input, Select } from 'antd';
 import { ThunderboltOutlined } from '@ant-design/icons';
-import { useForm, useMetadata } from '../../../../providers';
+import { useForm, useMetadata, useMetadataDispatcher } from '../../../../providers';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { camelCase } from 'lodash';
+import { IPropertyMetadata } from '../../../../interfaces/metadata';
+import camelcase from 'camelcase';
+import { getIconByDataType } from '../../../../utils/metadata';
+import ShaIcon from '../../../shaIcon';
 
 export interface IPropertyAutocompleteProps {
   id: string;
@@ -17,33 +21,86 @@ export interface IPropertyAutocompleteProps {
 
 interface IOption {
   value: string;
-  label: string;
+  label: string | React.ReactNode;
 }
 
 export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 'single', ...props }) => {
   const { style = { width: '32px' } } = props;
   const [options, setOptions] = useState<IOption[]>([]);
+  const [currentProperties, setCurrentProperties] = useState<IPropertyMetadata[]>([]);
 
   const { getAction } = useForm();
 
   const meta = useMetadata(false);
+  const { getMetadata: fetchMeta } = useMetadataDispatcher();
   const { metadata } = meta || {};
 
+  const getNested = (properties: IPropertyMetadata[], propName: string): Promise<IPropertyMetadata[]> => {
+    const propMeta = properties.find(p => camelcase(p.path) == propName);
+
+    if (!propMeta)
+      return Promise.reject(`property '${propName}' not found`);
+
+    if (propMeta.dataType === 'entity')
+      return fetchMeta({ modelType: propMeta.entityType }).then(m => m.properties);
+    
+    if (propMeta.dataType === 'object')
+      return Promise.resolve(propMeta.properties);
+    
+    return Promise.reject(`data type '${propMeta.dataType}' doesn't support nested properties`);
+  }
+
+  const containerPath = useMemo(() => {
+    if (!props.value || Array.isArray(props.value))
+      return null;
+    
+    const lastIdx = props.value?.lastIndexOf('.');
+    return lastIdx === -1
+      ? null
+      : props.value.substring(0, lastIdx);
+  }, [props.value]);
+
+  const getFullPath = (path: string, prefix: string) => {
+    return prefix ? `${prefix}.${camelcase(path)}` : camelcase(path);
+  }
+  const properties2options = (properties: IPropertyMetadata[], prefix: string): IOption[] => {
+    return properties.map(p => {
+      const value = getFullPath(p.path, prefix);
+      const icon = getIconByDataType(p.dataType);
+      const label = (
+        <div>{icon && <ShaIcon iconName={icon} />} {value}</div>
+      );
+      return {
+        value: value,
+        label: label
+      };
+    });
+  }
+
   useEffect(() => {
-    // add current value - recheck
-    const properties = metadata?.properties || [];
-    const opts = properties.map(p => ({ value: p.path, label: p.path }));
+    if (!metadata?.properties)
+      return;
+
+    if (containerPath){
+      const parts = containerPath.split('.');
+
+      const promise = parts.reduce((left, right) => {
+        return left.then(pp => getNested(pp, right));
+      }, Promise.resolve(metadata.properties));
+  
+      promise.then(properties => {
+        setCurrentProperties(properties);
+      })
+    } else {
+      setCurrentProperties(metadata.properties);
+    }
+  }, [metadata?.properties, containerPath]);
+
+  useEffect(() => {
+    const opts = properties2options(currentProperties, containerPath);
     setOptions(opts);
-  }, [metadata]);
-
-  /* 
-     1. implement search functionality
-        filter existing properties by input text
-        if input contains dot - left part before dot and if it exists - try to search property inside
-     2. implement select functionality
-     3. implement fill properties
-    */
-
+  }, [currentProperties]);
+  
   const onSelect = (data: string) => {
     if (props.onChange) props.onChange(data);
 
@@ -51,34 +108,24 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
   };
 
   const selectedProperty = useMemo(() => {
-    const properties = metadata?.properties || [];
-    const selectedProp = properties.find(p => p.path === props.value);
+    const selectedProp = currentProperties.find(p => getFullPath(p.path, containerPath) === props.value);
     return selectedProp;
-  }, [props.value, metadata]);
+  }, [props.value, currentProperties]);
 
   const onSearch = (data: string) => {
     if (props.onChange) props.onChange(data);
 
-    const properties = metadata?.properties || [];
-    // @ts-ignore
-    let exactMatch = false;
-
     const filteredProperties: IOption[] = [];
 
+    const properties = currentProperties;
     properties.forEach(p => {
-      if (p.path === data) exactMatch = true;
+      const fullPath = getFullPath(p.path, containerPath);
 
-      if (p.path?.toLowerCase()?.startsWith(data?.toLowerCase()))
-        filteredProperties.push({ value: p.path, label: p.path });
+      if (fullPath.toLowerCase()?.startsWith(data?.toLowerCase()))
+        filteredProperties.push({ value: fullPath, label: fullPath });
     });
 
-    // if (!exactMatch)
-    //     filteredProperties.unshift({ value: data, label: data });
-
     setOptions(filteredProperties);
-
-    // 1. fetch additional metadata if required and change options
-    // 2. if existing property selected - activate `fill` button
   };
 
   const onFillPropsClick = () => {

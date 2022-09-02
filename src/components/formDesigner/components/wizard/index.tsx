@@ -1,17 +1,17 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
-import { Steps, Button, Space } from 'antd';
+import { Wizard, Steps, Step } from 'react-albus';
 import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useAuth, useForm, useGlobalState } from '../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
 import WizardSettings from './settings';
 import { IWizardComponentProps } from './models';
-import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
+import ShaIcon from '../../../shaIcon';
 
 const { Step } = Steps;
 
@@ -25,14 +25,10 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
     const { anyOfPermissionsGranted } = useAuth();
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState } = useGlobalState();
-    const [ currentStep, setCurrentStep] = useState(0);
-    const [ currentComponent, setCurrentComponent] = useState(null);
 
-    const { steps, wizardType = 'default', current = currentStep } = model as IWizardComponentProps;
+    const { steps } = model as IWizardComponentProps;
 
     if (isComponentHidden(model)) return null;
-
-    // const actionKey = defaultActiveKey || (steps?.length && steps[0]?.key);
 
     const executeExpression = (expression: string, returnBoolean = true) => {
       if (!expression) {
@@ -57,93 +53,64 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
       return typeof evaluated === 'boolean' ? evaluated : true;
     };
 
-    const next = () => {
-      setCurrentStep(current + 1);
-      setCurrentComponent(steps[currentStep].components);
-    };
-
-    const prev = () => {
-      setCurrentStep(current - 1);
-      setCurrentComponent(steps[currentStep].components);
-    };
-
     return (
-      <>
-        <Steps
-          /*defaultActiveKey={actionKey} size={size}*/
-          type={wizardType}
-          current={current}>
+      <Wizard>
+        <Steps>
           {steps?.map(
             ({
-              // id,
+              id,
               key,
               title,
               subTitle,
               description,
               icon,
-              className,
+              // className,
               permissions,
               customVisibility,
-              customEnabled,
+              // customEnabled,
+              components,
             }) => {
+
               const granted = anyOfPermissionsGranted(permissions || []);
-
               const isVisibleByCondition = executeExpression(customVisibility, true);
-
-              const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
-
+              // const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
               if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
 
               return (
                 <>
                   <Step
+                    id={id}
                     key={key}
-                    className={className}
-                    disabled={isDisabledByCondition}
-                    title={title}
-                    subTitle={subTitle}
-                    description={description}
-                    icon={
-                      icon ? (
-                        <Fragment>
-                          <ShaIcon iconName={icon as any} />
-                        </Fragment>
-                      ) : (
-                        <Fragment>
-                          {icon}
-                        </Fragment>
-                      )
-                    }
-                  />
+                    render={({ next, previous }) => (
+                      <div>
 
+                        {icon ? (
+                          <Fragment>
+                            <ShaIcon iconName={icon as any} />
+                          </Fragment>
+                        ) : (
+                          <Fragment>
+                            {icon}
+                          </Fragment>
+                        )}
+
+                        <h2>{title}</h2>
+                        <h3>{subTitle}</h3>
+                        <p>{description}</p>
+                        <ComponentsContainer containerId={id} dynamicComponents={model?.isDynamic ? components : []} />
+
+                        <button onClick={next}>Next</button>
+                        <button onClick={previous}>Previous</button>
+
+                      </div>
+                    )}
+                  />
                 </>
               );
             }
           )}
         </Steps>
-        <div className="wizard-content">
-          <ComponentsContainer containerId={steps[current].id} dynamicComponents={model?.isDynamic ? currentComponent : []} />
-        </div>
-        <div className="wizard-action">
-          <Space size={'middle'}>
-            {current < steps.length - 1 && (
-              <Button type="primary" onClick={() => next()}>
-                Next
-              </Button>
-            )}
-            {current === steps.length - 1 && (
-              <Button type="primary">
-                Done
-              </Button>
-            )}
-            {current > 0 && (
-              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-                Previous
-              </Button>
-            )}
-          </Space>
-        </div>
-      </>
+      </Wizard>
     );
   },
   initModel: model => {

@@ -1,9 +1,7 @@
 import { IConfigurableItemBase } from '../../../../providers/itemListConfigurator/contexts';
-import { StepProps } from 'antd';
-// import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 
-export interface IStepProps extends IConfigurableItemBase, Omit<StepProps, 'children' | 'style' > {
+export interface IStepProps extends IConfigurableItemBase {
   id: string;
   icon?: string;
   key: string;

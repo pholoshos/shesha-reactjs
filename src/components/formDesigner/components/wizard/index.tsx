@@ -1,7 +1,7 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
-import { Steps, Button } from 'antd';
+import { Steps, Button, Space } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
 import React, { Fragment, useState } from 'react';
@@ -26,6 +26,7 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState } = useGlobalState();
     const [ currentStep, setCurrentStep] = useState(0);
+    const [ currentComponent, setCurrentComponent] = useState(null);
 
     const { steps, wizardType = 'default', current = currentStep } = model as IWizardComponentProps;
 
@@ -58,10 +59,12 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
 
     const next = () => {
       setCurrentStep(current + 1);
+      setCurrentComponent(steps[currentStep].components);
     };
 
     const prev = () => {
       setCurrentStep(current - 1);
+      setCurrentComponent(steps[currentStep].components);
     };
 
     return (
@@ -119,24 +122,26 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
           )}
         </Steps>
         <div className="wizard-content">
-          <ComponentsContainer containerId={steps[current].id} />
+          <ComponentsContainer containerId={steps[current].id} dynamicComponents={model?.isDynamic ? currentComponent : []} />
         </div>
         <div className="wizard-action">
-          {current < steps.length - 1 && (
-            <Button type="primary" onClick={() => next()}>
-              Next
-            </Button>
-          )}
-          {current === steps.length - 1 && (
-            <Button type="primary">
-              Done
-            </Button>
-          )}
-          {current > 0 && (
-            <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-              Previous
-            </Button>
-          )}
+          <Space size={'middle'}>
+            {current < steps.length - 1 && (
+              <Button type="primary" onClick={() => next()}>
+                Next
+              </Button>
+            )}
+            {current === steps.length - 1 && (
+              <Button type="primary">
+                Done
+              </Button>
+            )}
+            {current > 0 && (
+              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+                Previous
+              </Button>
+            )}
+          </Space>
         </div>
       </>
     );

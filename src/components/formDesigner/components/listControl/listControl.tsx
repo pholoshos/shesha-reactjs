@@ -64,7 +64,7 @@ const ListControl: FC<IListControlProps> = ({
   labelCol,
   wrapperCol,
   allowRemoteDelete,
-  allowSelection,
+  selectionMode,
 }) => {
   const { markup, error: fetchFormError } = useFormMarkup(formPath?.id);
   const [state, setState] = useState<IListComponentRenderState>({
@@ -127,9 +127,7 @@ const ListControl: FC<IListControlProps> = ({
       quickSearch: state?.quickSearch,
     };
 
-    if (properties?.length) {
-      _queryParams.properties = properties?.map(p => camelCase(p)).join(' ');
-    }
+    _queryParams.properties = Array.from(new Set(['id', properties?.map(p => camelCase(p))])).join(' ');
 
     if (filters && evaluatedFilters) {
       _queryParams.filter = evaluatedFilters;
@@ -155,12 +153,16 @@ const ListControl: FC<IListControlProps> = ({
   }, [isInDesignerMode, dataSource, evaluatedFilters]);
 
   useEffect(() => {
-    if (uniqueStateId) {
+    if (uniqueStateId && Array.isArray(value) && value.length) {
       setGlobalStateState({
         key: uniqueStateId,
         data: {
           selectedItemIndexes: state?.selectedItemIndexes,
-          selectedItems: value?.filter((_, index) => state?.selectedItemIndexes?.includes(index)),
+          selectedItems:
+            selectionMode === 'multiple'
+              ? value?.filter((_, index) => state?.selectedItemIndexes?.includes(index))
+              : null,
+          selectedItem: selectionMode === 'single' ? value[state?.selectedItemIndex] : null,
         },
       });
     }
@@ -361,15 +363,19 @@ const ListControl: FC<IListControlProps> = ({
 
   const onSelect = useCallback(
     index => {
-      if (allowDeleteItems) {
+      if (selectionMode === 'multiple') {
         const selectedItemIndexes = state?.selectedItemIndexes?.includes(index)
           ? state?.selectedItemIndexes?.filter(item => item !== index)
           : [...state?.selectedItemIndexes, index];
 
-        setState(prev => ({ ...prev, selectedItemIndexes }));
+        setState(prev => ({ ...prev, selectedItemIndexes, selectedItemIndex: -1 }));
+      } else if (selectionMode === 'single') {
+        if (state?.selectedItemIndex === index) {
+          setState(prev => ({ ...prev, selectedItemIndex: -1, selectedItemIndexes: [] }));
+        } else setState(prev => ({ ...prev, selectedItemIndex: index, selectedItemIndexes: [index] }));
       }
     },
-    [state, allowDeleteItems]
+    [state, selectionMode]
   );
 
   const onSelectAll = (e: CheckboxChangeEvent) => {
@@ -395,10 +401,10 @@ const ListControl: FC<IListControlProps> = ({
         </div>
       }
     >
-      <Show when={allowSelection}>
+      <Show when={selectionMode === 'multiple'}>
         <Checkbox
           onChange={onSelectAll}
-          checked={state?.selectedItemIndexes?.length === value?.length}
+          checked={state?.selectedItemIndexes?.length === value?.length && value?.length > 0}
           indeterminate={state?.selectedItemIndexes?.length > 0 && state?.selectedItemIndexes?.length !== value?.length}
         >
           Select All
@@ -432,54 +438,64 @@ const ListControl: FC<IListControlProps> = ({
                   return (
                     <>
                       {fields?.map((field, index) => (
-                        <div
-                          className={classNames('sha-list-component-item', {
+                        <Checkbox
+                          className={classNames('sha-list-component-item-checkbox', {
                             selected: state?.selectedItemIndexes?.includes(index),
                           })}
-                          onClick={() => {
+                          checked={state?.selectedItemIndexes?.includes(index)}
+                          onChange={() => {
                             onSelect(index);
                           }}
                         >
-                          <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
-                            <FormItemProvider
-                              namePrefix={`${index}`}
-                              wrapperCol={{ span: wrapperCol }}
-                              labelCol={{ span: labelCol }}
-                            >
-                              <ComponentsContainer
-                                containerId={containerId}
-                                plainWrapper
-                                direction="horizontal"
-                                alignItems="center"
-                              />
-                            </FormItemProvider>
-                          </Show>
+                          <div
+                            className={classNames('sha-list-component-item', {
+                              selected: state?.selectedItemIndexes?.includes(index),
+                            })}
+                            onClick={() => {
+                              onSelect(index);
+                            }}
+                          >
+                            <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
+                              <FormItemProvider
+                                namePrefix={`${index}`}
+                                wrapperCol={{ span: wrapperCol }}
+                                labelCol={{ span: labelCol }}
+                              >
+                                <ComponentsContainer
+                                  containerId={containerId}
+                                  plainWrapper
+                                  direction="horizontal"
+                                  alignItems="center"
+                                />
+                              </FormItemProvider>
+                            </Show>
 
-                          <Show when={Boolean(formPath?.id) && Boolean(markup) && renderStrategy === 'externalForm'}>
-                            {renderSubForm(
-                              `${index}`,
-                              labelCol && { span: labelCol },
-                              wrapperCol && { span: wrapperCol }
-                            )}
-                          </Show>
+                            <Show when={Boolean(formPath?.id) && Boolean(markup) && renderStrategy === 'externalForm'}>
+                              {renderSubForm(
+                                `${index}`,
+                                labelCol && { span: labelCol },
+                                wrapperCol && { span: wrapperCol }
+                              )}
+                            </Show>
 
-                          <Show when={allowDeleteItems}>
-                            <div className="sha-list-component-add-item-btn">
-                              <Button
-                                danger
-                                type="ghost"
-                                size="small"
-                                className="dynamic-delete-button"
-                                onClick={() => {
-                                  deleteItem(field.name, remove);
-                                }}
-                                icon={<DeleteFilled />}
-                              />
-                            </div>
-                          </Show>
+                            <Show when={allowDeleteItems}>
+                              <div className="sha-list-component-add-item-btn">
+                                <Button
+                                  danger
+                                  type="ghost"
+                                  size="small"
+                                  className="dynamic-delete-button"
+                                  onClick={() => {
+                                    deleteItem(field.name, remove);
+                                  }}
+                                  icon={<DeleteFilled />}
+                                />
+                              </div>
+                            </Show>
 
-                          <Divider className="sha-list-component-divider" />
-                        </div>
+                            <Divider className="sha-list-component-divider" />
+                          </div>
+                        </Checkbox>
                       ))}
                     </>
                   );

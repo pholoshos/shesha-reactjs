@@ -1,19 +1,15 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
-import { Wizard, Steps, Step } from 'react-albus';
 import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useAuth, useForm, useGlobalState } from '../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
 import WizardSettings from './settings';
 import { IWizardComponentProps } from './models';
 import moment from 'moment';
-import ShaIcon from '../../../shaIcon';
-
-const { Step } = Steps;
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -25,7 +21,6 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
     const { anyOfPermissionsGranted } = useAuth();
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState } = useGlobalState();
-
     const { steps } = model as IWizardComponentProps;
 
     if (isComponentHidden(model)) return null;
@@ -54,63 +49,25 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
     };
 
     return (
-      <Wizard>
-        <Steps>
-          {steps?.map(
-            ({
-              id,
-              key,
-              title,
-              subTitle,
-              description,
-              icon,
-              // className,
-              permissions,
-              customVisibility,
-              // customEnabled,
-              components,
-            }) => {
+      <>
+        {steps?.map(
+          ({
+            id,
+            permissions,
+            customVisibility,
+            components,
+          }) => {
 
-              const granted = anyOfPermissionsGranted(permissions || []);
-              const isVisibleByCondition = executeExpression(customVisibility, true);
-              // const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
-              if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
+            const granted = anyOfPermissionsGranted(permissions || []);
+            const isVisibleByCondition = executeExpression(customVisibility, true);
+            if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
 
-              return (
-                <>
-                  <Step
-                    id={id}
-                    key={key}
-                    render={({ next, previous }) => (
-                      <div>
-
-                        {icon ? (
-                          <Fragment>
-                            <ShaIcon iconName={icon as any} />
-                          </Fragment>
-                        ) : (
-                          <Fragment>
-                            {icon}
-                          </Fragment>
-                        )}
-
-                        <h2>{title}</h2>
-                        <h3>{subTitle}</h3>
-                        <p>{description}</p>
-                        <ComponentsContainer containerId={id} dynamicComponents={model?.isDynamic ? components : []} />
-
-                        <button onClick={next}>Next</button>
-                        <button onClick={previous}>Previous</button>
-
-                      </div>
-                    )}
-                  />
-                </>
-              );
-            }
-          )}
-        </Steps>
-      </Wizard>
+            return (
+              <ComponentsContainer containerId={id} dynamicComponents={model?.isDynamic ? components : []} />
+            );
+          }
+        )}
+      </>
     );
   },
   initModel: model => {
@@ -130,7 +87,6 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
     };
     return wizardModel;
   },
-  // settingsFormMarkup: settingsForm,
   settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
     return <WizardSettings model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },

@@ -30,11 +30,9 @@ const WizardSettings: FC<IWizardSettingsProps> = props => {
       id: nanoid(),
       itemType: 'item',
       sortOrder: count,
-      name: `Step${count + 1}`,
-      key: `stepKey${count + 1}`,
-      title: `Step ${count + 1}`,
-      subTitle: `Step ${count + 1}`,
-      description: `Step ${count + 1}`,
+      name: `Wizard${count + 1}`,
+      key: `wizardKey${count + 1}`,
+      title: `Wizard ${count + 1}`,
       components: [],
     };
 
@@ -88,7 +86,7 @@ const WizardSettings: FC<IWizardSettingsProps> = props => {
       <Form.Item name="steps" initialValue={steps}>
         <ItemListSettingsModal
           options={{ onAddNewItem }}
-          title="Configure Steps"
+          title="Configure Wizard Steps"
           heading="Settings"
           callToAction="Configure Wizard Steps"
           itemTypeMarkup={itemSettings as FormMarkup}

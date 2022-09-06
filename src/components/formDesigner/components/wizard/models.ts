@@ -1,13 +1,12 @@
 import { IConfigurableItemBase } from '../../../../providers/itemListConfigurator/contexts';
+import { StepProps } from 'antd';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 
-export interface IStepProps extends IConfigurableItemBase {
+export interface IStepProps extends IConfigurableItemBase, Omit<StepProps, 'children' | 'wizard' | 'style' | 'wizardKey'> {
   id: string;
   icon?: string;
   key: string;
   title: string;
-  subTitle: string;
-  description: string;
   customVisibility?: string;
   customEnabled?: string;
   permissions?: string[];
@@ -15,15 +14,12 @@ export interface IStepProps extends IConfigurableItemBase {
   childItems?: IStepProps[];
 }
 
-export interface IWizardComponentProps extends IConfigurableFormComponent {
+export interface IWizardComponentProps extends Omit<IConfigurableFormComponent, 'size'> {
   steps: IStepProps[];
-  // size?: 'default' | 'small';
-  // defaultActiveKey?: string;
+  size?: 'default' | 'small';
   wizardType?: 'default' | 'navigation';
   visibility?: 'Yes' | 'No' | 'Removed';
-  current: number;
   permissions?: string[];
   hidden?: boolean;
   customVisibility?: string;
-  // position?: 'left' | 'right' | 'top' | 'bottom';
 }

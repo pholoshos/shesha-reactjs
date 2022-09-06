@@ -57,9 +57,9 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
             customVisibility,
             components,
           }) => {
-
             const granted = anyOfPermissionsGranted(permissions || []);
             const isVisibleByCondition = executeExpression(customVisibility, true);
+
             if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
 
             return (
@@ -74,19 +74,11 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
     const wizardModel: IWizardComponentProps = {
       ...model,
       name: 'custom Name',
-      steps: [{
-        id: nanoid(),
-        label: 'Step 1',
-        title: 'Step 1',
-        subTitle: 'Step 1',
-        description: 'Step 1',
-        key: 'step1',
-        components: [],
-        itemType: 'item'
-      }],
+      steps: [{ id: nanoid(), label: 'Wizard 1', title: 'Wizard 1', key: 'wizard1', components: [], itemType: 'item' }],
     };
     return wizardModel;
   },
+  // settingsFormMarkup: settingsForm,
   settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
     return <WizardSettings model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },

@@ -1,7 +1,7 @@
 {
   "components": [
     {
-      "id": "14817287-cfa6-4f8f-a998-4eb6cc7cb818",
+      "id": "76fd2186-cd38-49ac-adc4-4a6e36c53dc2",
       "type": "textField",
       "name": "name",
       "label": "Name",
@@ -9,31 +9,16 @@
       "parentId": "root"
     },
     {
-      "id": "02deeaa2-1dc7-439f-8f1a-1f8bec6e8425",
+      "id": "58cb5e20-4426-4e4d-8c7d-e6328ecd4f5c",
       "type": "textField",
       "name": "title",
       "label": "Title",
       "labelAlign": "right",
       "parentId": "root"
     },
+
     {
-      "id": "7690cd12-138a-43d5-8a6d-7ceebf37815b",
-      "type": "textField",
-      "name": "subTitle",
-      "label": "Sub Title",
-      "labelAlign": "right",
-      "parentId": "root"
-    },
-    {
-      "id": "ebdb1417-64d4-4f72-840a-baad2975eff9",
-      "type": "textField",
-      "name": "description",
-      "label": "Description",
-      "labelAlign": "right",
-      "parentId": "root"
-    },
-    {
-      "id": "4bb6cdc7-0657-4e41-8c50-effe14d0dc96",
+      "id": "dc43cfa5-0809-487a-836e-ab9f42f46cad",
       "type": "textField",
       "name": "key",
       "label": "Key",
@@ -41,7 +26,7 @@
       "parentId": "root"
     },
     {
-      "id": "29be3a6a-129a-4004-a627-2b257ecb78b4",
+      "id": "e068b530-f30a-4118-a1ff-1bea69e12c34",
       "type": "textField",
       "name": "className",
       "label": "Class Name",
@@ -49,7 +34,7 @@
       "parentId": "root"
     },
     {
-      "id": "caed91a6-3e9e-4f04-9800-7d9c7a3ffb80",
+      "id": "6c16ba20-100f-4434-b898-6da188ef8edd",
       "type": "checkbox",
       "name": "animated",
       "label": "Animated",
@@ -60,7 +45,7 @@
       "validate": {}
     },
     {
-      "id": "4595a895-5078-4986-934b-c5013bf315ad",
+      "id": "e96e7a8c-e205-4c2f-ab7f-86cbb18435af",
       "type": "iconPicker",
       "name": "icon",
       "label": "Icon",
@@ -70,7 +55,7 @@
       "settingsValidationErrors": []
     },
     {
-      "id": "81da0da4-00db-4d6b-9f16-b364a6f9d9e1",
+      "id": "45d0c758-aefa-421c-818c-fad36948ba5c",
       "type": "checkbox",
       "name": "forceRender",
       "label": "Force Render",
@@ -81,7 +66,7 @@
       "validate": {}
     },
     {
-      "id": "d1e06550-826c-4db9-9b9f-ce05e565f64f",
+      "id": "d8ae3915-2639-4e82-b48d-b96ed62d775c",
       "type": "checkbox",
       "name": "disabled",
       "label": "Disabled",
@@ -92,7 +77,18 @@
       "validate": {}
     },
     {
-      "id": "d2f01684-31e5-41a3-b32a-c23abc20e700",
+      "id": "4b4f9dd3-2165-4e93-9c9e-f0158730806d",
+      "type": "checkbox",
+      "name": "destroyInactiveStep",
+      "label": "Destroy Inactive Wizard Steps",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {}
+    },
+    {
+      "id": "d2d08b68-d049-4468-bec0-49cdccae3105",
       "type": "codeEditor",
       "name": "style",
       "label": "Style",
@@ -103,7 +99,7 @@
       "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
     },
     {
-      "id": "78f2f5ee-9826-4567-a938-d7bc03ba90ac",
+      "id": "9b327f5f-0240-4950-a29a-1068f589b033",
       "type": "codeEditor",
       "name": "customVisibility",
       "label": "Custom Visibility",
@@ -120,7 +116,7 @@
       ]
     },
     {
-      "id": "377bbbee-d7f6-42bf-8f08-fc9303424518",
+      "id": "0f6f3294-3e88-466e-8e25-66e0ce0b7b37",
       "type": "codeEditor",
       "name": "customEnabled",
       "label": "Custom Enabled",
@@ -137,7 +133,7 @@
       ]
     },
     {
-      "id": "3d24cc31-a797-40b8-b178-1e77eabb69c4",
+      "id": "068c8ba5-6205-488a-aad0-dc271ee36ded",
       "type": "editableTagGroup",
       "name": "permissions",
       "label": "Permissions",

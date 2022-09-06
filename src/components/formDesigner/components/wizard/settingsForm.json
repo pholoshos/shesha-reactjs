@@ -1,14 +1,14 @@
 {
   "components": [
     {
-      "id": "70ab4ed7-b71a-4a98-8e58-1f9ae8d93cb8",
+      "id": "b8954bf6-f76d-4139-a850-c99bf06c8b69",
       "type": "sectionSeparator",
       "name": "separator1",
       "parentId": "root",
       "label": "Display"
     },
     {
-      "id": "82ced6f5-468d-4618-aa8c-1862bbc50799",
+      "id": "5c813b1a-04c5-4658-ac0f-cbcbae6b3bd4",
       "type": "textField",
       "name": "name",
       "parentId": "root",
@@ -18,7 +18,14 @@
       }
     },
     {
-      "id": "53ae9737-eceb-4e4a-b853-a940ee4b0445",
+      "id": "947b0f7d-aa08-48e9-ae81-031861d57cd0",
+      "type": "textField",
+      "name": "defaultActiveKey",
+      "parentId": "root",
+      "label": "Default Active Key"
+    },
+    {
+      "id": "8b9033ea-9408-4f56-80f2-89f07cf1cc8f",
       "type": "dropdown",
       "name": "wizardType",
       "parentId": "root",
@@ -27,19 +34,19 @@
         {
           "label": "Default",
           "value": "default",
-          "id": "1518073e-7e65-4d55-81f0-6a970107097d"
+          "id": "2e6e4c3a-19fd-4322-86b6-e53d62ffb379"
         },
         {
           "Label": "Navigation",
           "value": "navigation",
-          "id": "41d12cb4-6866-496a-a3f8-7f037354a350"
+          "id": "dcfc2d41-2ae2-4eff-ab7f-d63c463f4083"
         }
       ],
       "dataSourceType": "values",
       "defaultValue": "default"
     },
     {
-      "id": "4cbdb656-c2d5-4876-b28b-f0e769412a86",
+      "id": "df8a8f35-a50b-42f9-9642-73d390ceddbf",
       "type": "dropdown",
       "name": "visibility",
       "parentId": "root",
@@ -50,48 +57,48 @@
         {
           "label": "Yes (Display in UI and include in payload)",
           "value": "Yes",
-          "id": "9f83a606-a9f1-4a81-aea7-59722765ab01"
+          "id": "53cd10ce-26af-474b-af75-8e7b1f19e51d"
         },
         {
           "label": "No (Only include in payload)",
           "value": "No",
-          "id": "c4ec3e18-43cb-4684-9078-5a80ec1bc9db"
+          "id": "f07a228c-cb9c-4da7-a8bc-bc2be518a058"
         },
         {
           "label": "Removed (Remove from UI and exlude from payload)",
           "value": "Removed",
-          "id": "861ae95b-4b55-4eb0-9006-4a09c822ef4b"
+          "id": "3b6282ee-2eee-47ec-bab9-4cba52b970a0"
         }
       ],
       "dataSourceType": "values"
     },
     {
-      "id": "d0e0d44e-5048-422e-98af-77d6185da57b",
+      "id": "cfd7d45e-c7e3-4a27-987b-dc525c412448",
       "type": "checkbox",
       "name": "hidden",
       "parentId": "root",
       "label": "Hidden"
     },
     {
-      "id": "bcbb57ef-61a8-4590-87d5-4aacbe531eb3",
+      "id": "b395c0e9-dbc1-44f1-8fef-c18a49442871",
       "type": "labelValueEditor",
-      "name": "wizard",
+      "name": "tabs",
       "parentId": "root",
-      "label": "Wizard",
+      "label": "Tabs",
       "labelTitle": "Key",
       "labelName": "key",
       "valueTitle": "Title",
       "valueName": "title"
     },
     {
-      "id": "67a5e691-deca-4225-be9f-318bd988e309",
+      "id": "5161528d-5aa6-4397-9240-095e89d4978d",
       "type": "sectionSeparator",
       "name": "separatorVisibility",
       "parentId": "root",
       "label": "Visibility"
     },
     {
-      "id": "aae88979-d8c8-400a-bcdf-c8669fbd65c3",
+      "id": "cc2ef9f4-d0bd-4239-8c19-a2e0ca1892b2",
       "type": "codeEditor",
       "name": "customVisibility",
       "label": "Custom Visibility",

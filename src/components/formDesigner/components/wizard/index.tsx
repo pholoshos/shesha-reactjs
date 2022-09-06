@@ -1,19 +1,23 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
+import { Steps, Button, Space } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
-import React from 'react';
+import React, { Fragment, useState } from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useAuth, useForm, useGlobalState } from '../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
-import WizardSettings from './settings';
-import { IWizardComponentProps } from './models';
+import TabSettings from './settings';
+import { ITabsComponentProps } from './models';
+import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
+
+const { Step } = Steps;
 
 const settingsForm = settingsFormJson as FormMarkup;
 
-const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
+const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
   type: 'wizard',
   name: 'Wizard',
   icon: <DoubleRightOutlined />,
@@ -21,7 +25,10 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
     const { anyOfPermissionsGranted } = useAuth();
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState } = useGlobalState();
-    const { steps } = model as IWizardComponentProps;
+    const [current, setCurrent] = useState(0);
+    const [component, setComponent] = useState(null);
+
+    const { tabs, wizardType = 'default' } = model as ITabsComponentProps;
 
     if (isComponentHidden(model)) return null;
 
@@ -48,46 +55,117 @@ const WizardComponent: IToolboxComponent<IWizardComponentProps> = {
       return typeof evaluated === 'boolean' ? evaluated : true;
     };
 
+    const next = () => {
+      setCurrent(current + 1);
+      setComponent(tabs[current].components);
+    };
+
+    const previous = () => {
+      setCurrent(current - 1);
+      setComponent(tabs[current].components);
+    };
+
     return (
       <>
-        {steps?.map(
-          ({
-            id,
-            permissions,
-            customVisibility,
-            components,
-          }) => {
-            const granted = anyOfPermissionsGranted(permissions || []);
-            const isVisibleByCondition = executeExpression(customVisibility, true);
 
-            if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
+        <Steps
+          type={wizardType}
+          current={current}>
+          {tabs?.map(
+            ({
+              key,
+              title,
+              subTitle,
+              description,
+              icon,
+              permissions,
+              customVisibility,
+              customEnabled,
+            }) => {
+              const granted = anyOfPermissionsGranted(permissions || []);
+              const isVisibleByCondition = executeExpression(customVisibility, true);
+              const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
 
-            return (
-              <ComponentsContainer containerId={id} dynamicComponents={model?.isDynamic ? components : []} />
-            );
-          }
-        )}
+              if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
+
+              return (
+                <>
+                  <Step
+                    key={key}
+                    disabled={isDisabledByCondition}
+                    title={title}
+                    subTitle={subTitle}
+                    description={description}
+                    icon={
+                      icon ? (
+                        <Fragment>
+                          <ShaIcon iconName={icon as any} />
+                        </Fragment>
+                      ) : (
+                        <Fragment>
+                          {icon}
+                        </Fragment>
+                      )
+                    }
+                  />
+                </>
+              );
+            }
+          )}
+        </Steps>
+
+        <ComponentsContainer containerId={tabs[current].id} dynamicComponents={model?.isDynamic ? component : []} />
+
+        <div>
+          <Space size={'middle'}>
+            {current < tabs.length - 1 && (
+              <Button type="primary" onClick={() => next()}>
+                Next
+              </Button>
+            )}
+            {current === tabs.length - 1 && (
+              <Button type="primary">
+                Done
+              </Button>
+            )}
+            {current > 0 && (
+              <Button style={{ margin: '0 8px' }} onClick={() => previous()}>
+                Previous
+              </Button>
+            )}
+          </Space>
+        </div>
+
       </>
     );
   },
   initModel: model => {
-    const wizardModel: IWizardComponentProps = {
+    const tabsModel: ITabsComponentProps = {
       ...model,
       name: 'custom Name',
-      steps: [{ id: nanoid(), label: 'Wizard 1', title: 'Wizard 1', key: 'wizard1', components: [], itemType: 'item' }],
+      tabs: [{
+        id: nanoid(),
+        label: 'Tab 1',
+        title: 'Tab 1',
+        subTitle: 'Tab 1',
+        description: 'Tab 1',
+        key: 'tab1',
+        components: [],
+        itemType: 'item'
+      }],
     };
-    return wizardModel;
+    return tabsModel;
   },
   // settingsFormMarkup: settingsForm,
   settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
-    return <WizardSettings model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
+    return <TabSettings model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
-  customContainerNames: ['wizard'],
+  customContainerNames: ['tabs'],
   getContainers: model => {
-    const { steps } = model as IWizardComponentProps;
-    return steps.map<IFormComponentContainer>(t => ({ id: t.id }));
+    const { tabs } = model as ITabsComponentProps;
+    return tabs.map<IFormComponentContainer>(t => ({ id: t.id }));
   },
 };
 
-export default WizardComponent;
+export default TabsComponent;

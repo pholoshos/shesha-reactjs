@@ -1,7 +1,7 @@
 {
   "components": [
     {
-      "id": "89112c8d-da3d-4d6a-8c20-4d175a333fbb",
+      "id": "f061d971-8b38-4b82-b192-563259afc159",
       "type": "textField",
       "name": "name",
       "label": "Group Name",
@@ -14,14 +14,14 @@
       }
     },
     {
-      "id": "9e5a157f-f099-41ad-9b21-a74fa62ed376",
+      "id": "9b976b38-5c09-41c9-9e5a-70e6734ef38f",
       "type": "textField",
       "name": "label",
       "parentId": "root",
       "label": "Label"
     },
     {
-      "id": "31bb3f43-d549-4eec-a933-308df8aeb492",
+      "id": "2ab34541-6fa0-4be2-bb1e-eb65ec63b353",
       "type": "dropdown",
       "name": "groupType",
       "label": "Group Type",
@@ -31,12 +31,12 @@
         {
           "label": "Inline",
           "value": "inline",
-          "id": "5ab190a1-dd8e-438a-be55-86752a3bb5ca"
+          "id": "298c380b-2564-402d-b042-098a650e91a4"
         },
         {
           "label": "Dropdown",
           "value": "dropdown",
-          "id": "62753016-6cef-45a3-8206-6f22d5aa1ffc"
+          "id": "290923ac-fc23-4b3c-9452-3b99fc955689"
         }
       ],
       "dataSourceType": "values"

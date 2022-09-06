@@ -181,6 +181,10 @@ export const FormsIndex = addStory(DesignerTemplate, {
   formPath: 'forms-new',
 });
 
+export const WizardForm = addStory(DesignerTemplate, {
+  formPath: 'mazi-form-view',
+});
+
 export const FormsIndexNew = addStory(DesignerTemplate, {
   formPath: 'forms-new-refactored',
 });

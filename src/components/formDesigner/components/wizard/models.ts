@@ -14,9 +14,8 @@ export interface IStepProps extends IConfigurableItemBase, Omit<StepProps, 'chil
   childItems?: IStepProps[];
 }
 
-export interface IWizardComponentProps extends Omit<IConfigurableFormComponent, 'size'> {
+export interface IWizardComponentProps extends IConfigurableFormComponent {
   steps: IStepProps[];
-  size?: 'default' | 'small';
   wizardType?: 'default' | 'navigation';
   visibility?: 'Yes' | 'No' | 'Removed';
   permissions?: string[];

@@ -39,6 +39,7 @@ const AceEditorLazy = React.lazy<typeof ReactAce>(() => new Promise(async resolv
 }));
 
 export const CodeEditor: FC<ICodeEditorProps> = (props) => {
+    console.log('value', props.value)
     const isSSR = typeof window === 'undefined';
 
     const { aceBaseUrl, ...restProps } = props;
@@ -52,6 +53,7 @@ export const CodeEditor: FC<ICodeEditorProps> = (props) => {
                 mode="javascript" 
                 theme="monokai" 
                 {...restProps}
+                value={restProps.value ? restProps.value : ""} // note: have to change null/undefined to empty string to force re-rendering of the editor
             />
         </React.Suspense>
     )

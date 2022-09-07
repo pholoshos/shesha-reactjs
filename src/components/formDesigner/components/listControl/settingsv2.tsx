@@ -79,7 +79,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         <ButtonGroupSettingsModal />
       </FormItem>
 
-      <SectionSeparator sectionName="Data Source" />
+      <SectionSeparator sectionName="Data" />
 
       <FormItem
         name="dataSource"
@@ -344,11 +344,13 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         <InputNumber min={1} max={24} defaultValue={13} step={1} />
       </FormItem>
 
-      <SectionSeparator sectionName="Pagination" />
+      <SectionSeparator sectionName="Search" />
 
       <FormItem name="showQuickSearch" label="Show Quick Search" valuePropName="checked">
         <Checkbox />
       </FormItem>
+
+      <SectionSeparator sectionName="Pagination" />
 
       <FormItem name="showPagination" label="Show pagination" valuePropName="checked">
         <Checkbox />

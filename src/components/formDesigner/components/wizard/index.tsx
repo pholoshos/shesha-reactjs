@@ -118,9 +118,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
         <div>
           <Space size={'middle'}>
-            {current < tabs.length - 1 && (
-              <Button type="primary" onClick={() => next()}>
-                Next
+            {current > 0 && (
+              <Button style={{ margin: '0 8px' }} onClick={() => previous()}>
+                Previous
               </Button>
             )}
             {current === tabs.length - 1 && (
@@ -128,9 +128,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
                 Done
               </Button>
             )}
-            {current > 0 && (
-              <Button style={{ margin: '0 8px' }} onClick={() => previous()}>
-                Previous
+            {current < tabs.length - 1 && (
+              <Button type="primary" onClick={() => next()}>
+                Next
               </Button>
             )}
           </Space>

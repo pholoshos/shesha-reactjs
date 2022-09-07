@@ -2,13 +2,14 @@ import { Checkbox, Form, Input, InputNumber, Select } from 'antd';
 import React, { FC, useState } from 'react';
 import SectionSeparator from '../../../sectionSeparator';
 import ButtonGroupSettingsModal from '../button/buttonGroup/buttonGroupSettingsModal';
-import PropertyAutocomplete from '../propertyAutocomplete/propertyAutocomplete';
+import PropertyAutocomplete from '../../../propertyAutocomplete/propertyAutocomplete';
 import { IListItemsProps } from './models';
 import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
 import { AutocompleteDto, AutocompleteRaw } from '../../../autocomplete';
-import { QueryBuilderWithModelType } from './queryBuilder';
 import Properties from '../../../properties';
+import { QueryBuilderWithModelType } from '../queryBuilder/queryBuilderWithModelType';
+import { QueryBuilderPlainRenderer } from '../queryBuilder/queryBuilderFieldPlain';
 
 const Option = Select.Option;
 
@@ -110,9 +111,9 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
           <FormItem label="Query builder" name="filters">
             <QueryBuilderWithModelType
               modelType={state?.entityType}
-              useExpression={state?.useExpression}
-              value={state?.filters}
-            />
+            >
+              <QueryBuilderPlainRenderer useExpression={state?.useExpression} value={state?.filters}></QueryBuilderPlainRenderer>
+            </QueryBuilderWithModelType>
           </FormItem>
         </Show>
       </Show>

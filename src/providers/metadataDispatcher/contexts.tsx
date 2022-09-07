@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { IModelMetadata } from '../../interfaces/metadata';
+import { IModelMetadata, IPropertyMetadata } from '../../interfaces/metadata';
 import { IMetadataContext } from '../metadata/contexts';
 
 export interface IMetadataDispatcherStateContext {
@@ -10,6 +10,11 @@ export interface IGetMetadataPayload {
   modelType: string;
 }
 
+export interface IGetNestedPropertiesPayload {
+  metadata: IModelMetadata;
+  containerPath: string;
+}
+
 export interface IRegisterProviderPayload {
   id: string;
   modelType: string;
@@ -18,6 +23,7 @@ export interface IRegisterProviderPayload {
 
 export interface IMetadataDispatcherActionsContext {
   getMetadata: (payload: IGetMetadataPayload) => Promise<IModelMetadata>;
+  getContainerProperties: (payload: IGetNestedPropertiesPayload) => Promise<IPropertyMetadata[]>;
   registerProvider: (payload: IRegisterProviderPayload) => void;
   // todo: add `unregisterProvider`
   activateProvider: (providerId: string) => void;

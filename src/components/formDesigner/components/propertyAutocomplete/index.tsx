@@ -5,7 +5,7 @@ import { FileSearchOutlined } from '@ant-design/icons';
 import FormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { PropertyAutocomplete } from './propertyAutocomplete';
+import { PropertyAutocomplete } from '../../../propertyAutocomplete/propertyAutocomplete';
 import { useForm } from '../../../..';
 
 export interface IPropertyAutocompleteComponentProps extends IConfigurableFormComponent {

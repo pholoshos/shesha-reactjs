@@ -23,13 +23,22 @@ export const saveUserToken = ({ accessToken, expireInSeconds, expireOn }: IAcces
   return token;
 };
 
+const parseToken = (token: string): IAccessToken => {
+  try {
+    return JSON.parse(jseu.encoder.decodeBase64(token) as string) as IAccessToken;      
+  } catch (error) {
+    console.error('failed to parse token', error);
+    return null;
+  }
+}
+
 export const getAccessToken = (tokenName: string): IAccessToken | null => {
   const token = getLocalStorage()?.getItem(tokenName);
 
   if (token) {
-    const deserializedToken = JSON.parse(jseu.encoder.decodeBase64(token) as string) as IAccessToken;
+    const deserializedToken = parseToken(token);
 
-    if (hasTokenExpired(deserializedToken.expireOn || '')) {
+    if (!deserializedToken || hasTokenExpired(deserializedToken.expireOn || '')) {
       removeAccessToken(tokenName);
 
       return null;

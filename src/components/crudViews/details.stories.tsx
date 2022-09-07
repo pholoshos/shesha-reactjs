@@ -2,7 +2,7 @@ import React from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
 import { GenericDetailsPage, IGenericDetailsPageProps } from '../..';
-import { usePersonTestGet } from '../../apis/personTest';
+import { usePersonGet } from '../../apis/person';
 import { addStory } from '../../stories/utils';
 import StoryApp from '../storyBookApp';
 
@@ -26,7 +26,7 @@ const Template: Story<IGenericDetailsPageProps> = props => {
 };
 
 export const Base = addStory(Template, {
-  id: 'B3B60F2E-5B88-4F44-B8EB-D3987A8483D9',
+  id: 'AA0F6A79-B57B-4F4E-A6C3-3825AB3545F2',
   formPath: '/persons/details',
-  fetcher: usePersonTestGet,
+  fetcher: usePersonGet,
 });

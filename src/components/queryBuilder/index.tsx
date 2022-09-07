@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import {
   Query,
   Builder,
@@ -9,16 +9,26 @@ import {
   JsonLogicResult,
   FieldSettings,
   Widgets,
+  Fields,
 } from 'react-awesome-query-builder';
 import classNames from 'classnames';
 import { ITableColumn } from '../../interfaces';
 import { IProperty } from '../../providers/queryBuilder/models';
 import { DataTypes } from '../../interfaces/dataTypes';
 import { config as InitialConfig } from './config';
+import { FieldSelect } from './fieldSelect';
+import { FieldAutocomplete } from './fieldAutocomplete';
+import { extractVars } from '../../utils/jsonLogic';
+import { Skeleton } from 'antd';
 
 export interface IQueryBuilderColumn extends ITableColumn {
   fieldSettings?: FieldSettings;
   preferWidgets?: Widgets[];
+}
+
+export interface IQueryFieldsSource {
+  requireFields: (fields: string[]) => Promise<IProperty[]>;
+  fields: IProperty[];
 }
 
 export interface IQueryBuilderProps {
@@ -26,49 +36,52 @@ export interface IQueryBuilderProps {
   onChange?: (result: JsonLogicResult) => void;
   columns?: IQueryBuilderColumn[];
   fields: IProperty[];
+  fetchFields: (fieldNames: string[]) => void;
   showActionBtnOnHover?: boolean;
   useExpression?: boolean;
 }
 
-interface IQueryBuilderState {
-  tree?: ImmutableTree;
-  config?: Config;
-}
+export const QueryBuilder: FC<IQueryBuilderProps> = (props) => {
+  const { value, fields, fetchFields, useExpression } = props;
 
-export const QueryBuilder: FC<IQueryBuilderProps> = ({
-  showActionBtnOnHover = true,
-  onChange,
-  value,
-  fields,
-  useExpression,
-}) => {
-  const [state, setState] = useState<IQueryBuilderState>({});
+  const missingFields = useMemo(() => {
+    const vars = extractVars(value);
+    const result = vars.filter(v => !fields.find(f => f.propertyName === v));
+    return result;
+  }, [value, fields]);
 
   useEffect(() => {
-    initialize();
-  }, [value, useExpression]);
+    if (missingFields.length > 0) {
+      fetchFields(missingFields);
+    }
+  }, [missingFields]);
 
   // In dynamic mode, we want all the widgets to to text so that they can be passed Mustache string templates
   // TODO: Add a dynamic component for type: 'slider' and number as that also can be a range, which would have to receive 2 value - {{start}} and {{end}}
   const allFields = useMemo(
-    () =>
-      useExpression
+    () => {
+      return useExpression
         ? fields?.map(({ dataType, ...field }) => ({
-            ...field,
-            dataType: ['date-time', 'date', 'time'].includes(dataType) ? 'dateTimeDynamic' : 'text',
-          }))
-        : fields,
-    [useExpression, fields]
+          ...field,
+          dataType: ['date-time', 'date', 'time'].includes(dataType) ? 'dateTimeDynamic' : 'text',
+        }))
+        : fields;
+    },
+    [useExpression, fields, fields?.length]
   );
 
-  const initialize = () => {
+  // pre-parse tree and extract all used fields
+  // load all fields which are missing
 
-    const conf: Config = {
-      ...InitialConfig,
-      fields: {},
-    };
+  const qbSettings = {
+    ...InitialConfig.settings,
+    renderField: (props) => true ? <FieldAutocomplete {...props} /> : <FieldSelect {...props} />
+  };
 
-    allFields?.forEach(({ dataType, visible, propertyName, label, fieldSettings, preferWidgets }) => {
+  const convertFields = (fields: IProperty[]): Fields => {
+    const confFields: Fields = {};
+
+    fields?.forEach(({ dataType, visible, propertyName, label, fieldSettings, preferWidgets }) => {
       let type: string = dataType;
       let defaultPreferWidgets = [];
 
@@ -125,7 +138,7 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
         }
 
         const fieldPreferWidgets = preferWidgets || defaultPreferWidgets || [];
-        conf.fields[propertyName] = {
+        confFields[propertyName] = {
           label,
           type,
           valueSources: ['value'],
@@ -135,19 +148,42 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
         };
       }
     });
+    return confFields;
+  };
 
+  const qbConfig = useMemo(() => {
+    const conf: Config = {
+      ...InitialConfig,
+      settings: qbSettings,
+      fields: convertFields(allFields),
+    };
+    return conf;
+  }, [allFields]);
+
+  return missingFields.length > 0
+    ? <Skeleton></Skeleton>
+    : <QueryBuilderContent {...props} qbConfig={qbConfig} />;
+};
+
+interface IQueryBuilderContentProps extends IQueryBuilderProps {
+  qbConfig: Config;
+}
+
+const QueryBuilderContent: FC<IQueryBuilderContentProps> = ({
+  showActionBtnOnHover = true,
+  onChange,
+  value,
+  qbConfig,
+}) => {
+
+  const tree = useMemo(() => {
     const loadedTree = value
-      ? QbUtils.loadFromJsonLogic(value, conf)
+      ? QbUtils.loadFromJsonLogic(value, qbConfig)
       : QbUtils.loadTree({ id: QbUtils.uuid(), type: 'group' });
 
-    const checkedTree = QbUtils.checkTree(loadedTree, conf);
-
-    // Call setState once to avoid updating the state twice
-    setState({
-      tree: checkedTree,
-      config: conf,
-    });
-  };
+    const checkedTree = QbUtils.checkTree(loadedTree, qbConfig);
+    return checkedTree;
+  }, []);
 
   const renderBuilder = (props: BuilderProps) => {
     return (
@@ -160,22 +196,14 @@ export const QueryBuilder: FC<IQueryBuilderProps> = ({
   };
 
   const handleChange = (_tree: ImmutableTree, _config: Config) => {
-    // Tip: for better performance you can apply `throttle` - see `examples/demo`
-    setState({
-      tree: _tree,
-      config: _config,
-    });
-
     if (onChange) {
       onChange(QbUtils.jsonLogicFormat(_tree, _config));
     }
   };
 
-  const { tree, config } = state;
-
   return (
     <div className="sha-query-builder">
-      {tree && config && <Query {...config} value={tree} onChange={handleChange} renderBuilder={renderBuilder} />}
+      {tree && qbConfig && <Query {...qbConfig} value={tree} onChange={handleChange} renderBuilder={renderBuilder} />}
     </div>
   );
 };

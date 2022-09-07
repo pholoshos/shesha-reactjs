@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { FilterOutlined } from '@ant-design/icons';
@@ -6,22 +6,17 @@ import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import QueryBuilderField from './queryBuilderField';
 import {
-  MetadataProvider,
-  QueryBuilderProvider,
   useForm,
-  useMetadata,
   useQueryBuilder,
   useTableViewSelectorConfigurator,
 } from '../../../../providers';
 import { validateConfigurableComponentSettings, evaluateString } from '../../../../providers/form/utils';
-import ConditionalWrap from '../../../conditionalWrapper';
-import { IProperty } from '../../../../providers/queryBuilder/models';
 import { Alert, Typography } from 'antd';
+import { QueryBuilderWithModelType } from './queryBuilderWithModelType';
 
 export interface IQueryBuilderProps extends IConfigurableFormComponent {
   jsonExpanded?: boolean;
-  allowUseExpression?: boolean;
-  useExpression?: string;
+  useExpression?: boolean | string;
   modelType?: string;
   fieldsUnavailableHint?: string;
 }
@@ -44,67 +39,21 @@ const QueryBuilder: FC<IQueryBuilderProps> = props => {
   return queryBuilder ? (
     <QueryBuilderComponentRenderer {...props}></QueryBuilderComponentRenderer>
   ) : (
-    <QueryBuilderWithModelType {...props}></QueryBuilderWithModelType>
-  );
-};
-
-const QueryBuilderWithModelType: FC<IQueryBuilderProps> = props => {
-  const { formData } = useForm();
-  const { modelType: modelTypeExpression } = props;
-  const modelType = evaluateString(modelTypeExpression, { data: formData });
-
-  return (
-    <ConditionalWrap
-      condition={Boolean(modelType)}
-      wrap={content => <MetadataProvider modelType={modelType}>{content}</MetadataProvider>}
-    >
-      <QueryBuilderWithMetadata {...props}></QueryBuilderWithMetadata>
-    </ConditionalWrap>
-  );
-};
-
-const QueryBuilderWithMetadata: FC<IQueryBuilderProps> = props => {
-  const metadata = useMetadata(false);
-
-  const fields = useMemo<IProperty[]>(() => {
-    if (metadata) {
-      const properties = metadata?.metadata?.properties || [];
-      if (Boolean(properties))
-        return properties.map<IProperty>(property => ({
-          label: property.label,
-          propertyName: property.path,
-          visible: property.isVisible,
-          dataType: property.dataType,
-          fieldSettings: {
-            typeShortAlias: property.entityType,
-            referenceListName: property.referenceListName,
-            referenceListNamespace: property.referenceListNamespace,
-            allowInherited: true,
-          },
-        }));
-    }
-    return null;
-  }, [metadata, metadata?.metadata]);
-
-  return (
-    <ConditionalWrap
-      condition={fields !== null}
-      wrap={content => <QueryBuilderProvider fields={fields}>{content}</QueryBuilderProvider>}
-    >
+    <QueryBuilderWithModelType modelType={props.modelType}>
       <QueryBuilderComponentRenderer {...props}></QueryBuilderComponentRenderer>
-    </ConditionalWrap>
+    </QueryBuilderWithModelType>
   );
 };
 
 const QueryBuilderComponentRenderer: FC<IQueryBuilderProps> = props => {
   const { formMode, formData } = useForm();
-  const { fieldsUnavailableHint, allowUseExpression, useExpression: _useExpression } = props;
+  const { fieldsUnavailableHint, useExpression: _useExpression } = props;
   const { selectedItemId, items } = useTableViewSelectorConfigurator(false) ?? {}; // note: it should be outside the QueryBuilder component!
 
   // TODO: implement combined components which support both expressions/functions and custom values like date/datetime and remove the `useExpression` property
-  const useExpression = allowUseExpression
-    ? evaluateString(_useExpression, { data: formData }) === 'true'
-    : items?.find(({ id }) => id === selectedItemId)?.useExpression;
+  const useExpression = _useExpression === true 
+    || typeof(_useExpression) === 'string' && evaluateString(_useExpression, { data: formData }) === 'true'
+    || items?.find(({ id }) => id === selectedItemId)?.useExpression === true;
 
   const queryBuilder = useQueryBuilder(false);
 
@@ -120,6 +69,7 @@ const QueryBuilderComponentRenderer: FC<IQueryBuilderProps> = props => {
     );
 
   const fields = queryBuilder?.fields || [];
+  const fetchFields = queryBuilder?.fetchFields;
 
   return !fieldsAvailable && fieldsUnavailableHint ? (
     <ConfigurableFormItem model={props}>
@@ -127,7 +77,11 @@ const QueryBuilderComponentRenderer: FC<IQueryBuilderProps> = props => {
     </ConfigurableFormItem>
   ) : (
     <ConfigurableFormItem model={props}>
-      <QueryBuilderField fields={fields} jsonExpanded={props.jsonExpanded} useExpression={useExpression} />
+      <QueryBuilderField
+        fields={fields}
+        fetchFields={fetchFields}
+        jsonExpanded={props.jsonExpanded}
+        useExpression={useExpression} />
     </ConfigurableFormItem>
   );
 };

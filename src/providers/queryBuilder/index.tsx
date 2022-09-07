@@ -6,6 +6,9 @@ import {
   /* NEW_ACTION_IMPORT_GOES_HERE */
 } from './actions';
 import { IProperty } from './models';
+import { getPropertyFullPath, propertyMetadata2QbProperty, useMetadataFields } from './utils';
+import { useMetadataDispatcher } from '../metadataDispatcher';
+import { useMetadata } from '../metadata';
 
 export interface IQueryBuilderProviderProps {
   fields?: IProperty[];
@@ -19,20 +22,76 @@ const QueryBuilderProvider: FC<PropsWithChildren<IQueryBuilderProviderProps>> = 
     id,
   });
 
+  const { getContainerProperties } = useMetadataDispatcher();
+  const meta = useMetadata(false);
+
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   const setFields = (newFields: IProperty[]) => {
     dispatch(setFieldsAction(newFields));
   };
 
+  const fetchFields = (fieldNames: string[]) => {
+    if (!meta?.metadata?.properties)
+      return;
+
+    const containers: string[] = [];
+    fieldNames.forEach(f => {
+      const idx = f.lastIndexOf('.');
+      const container = idx === -1
+        ? null
+        : f.substring(0, idx);
+      if (containers.indexOf(container) === -1)
+        containers.push(container);
+    });
+
+    const promises = containers.map(prefix =>
+      getContainerProperties({ metadata: meta.metadata, containerPath: prefix })
+        .then(response => {
+          const properties = response.map(p => {
+            const qbProp = propertyMetadata2QbProperty(p);
+            qbProp.propertyName = getPropertyFullPath(p.path, prefix);
+            return qbProp;
+          })
+          return properties;
+        })
+    );
+
+    Promise.allSettled(promises).then(results => {
+      const missingProperties: IProperty[] = [];
+
+      results.filter(r => r.status === 'fulfilled').forEach(r => {
+        const properties = (r as PromiseFulfilledResult<IProperty[]>)?.value ?? [];
+        properties.forEach(prop => {
+          if (!fields.find(p => p.propertyName === prop.propertyName))
+            missingProperties.push(prop);
+        });
+      });
+
+      // add unknown fields todo: find a good way to handle these fields
+      const unknownFields = fieldNames.filter(f => !missingProperties.find(p => p.propertyName === f));
+      if (unknownFields.length > 0){
+        unknownFields.forEach(f => {
+          missingProperties.push({ label: f, propertyName: f, dataType: 'unknown', visible: true });
+        });
+      }
+
+      if (missingProperties.length > 0) {
+        const newFields = [...fields, ...missingProperties];
+        setFields(newFields);
+      }
+    });
+  };
+
   //TODO: Fix the passing of fields so that it can be consumed properly by QueryBuilderComponent.
   //TODO: For some weird reasons the component receives fields as empty, though it has been passed properly
   //TODO: As a work-around I passed fields here as it seems to work. Will revisit this bug later
   return (
-    <QueryBuilderStateContext.Provider value={{ ...state, fields }}>
+    <QueryBuilderStateContext.Provider value={{ ...state/*, fields*/ }}>
       <QueryBuilderActionsContext.Provider
         value={{
           setFields,
+          fetchFields,
           /* NEW_ACTION_GOES_HERE */
         }}
       >
@@ -74,4 +133,4 @@ function useQueryBuilder(requireBuilder: boolean = true) {
     : undefined;
 }
 
-export { QueryBuilderProvider, useQueryBuilderState, useQueryBuilderActions, useQueryBuilder };
+export { QueryBuilderProvider, useQueryBuilderState, useQueryBuilderActions, useQueryBuilder, useMetadataFields };

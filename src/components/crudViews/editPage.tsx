@@ -61,8 +61,8 @@ const GenericEditPage = forwardRef<CommonCrudHandles, IGenericEditPageProps>((pr
 
   const { loading: loading, refetch: fetchData, error: fetchError, data: serverData } = props.fetcher({
     lazy: true,
-    requestOptions: { headers: requestHeaders() },
     queryParams: { id: props.id },
+    requestOptions: { headers: requestHeaders() },
   });
 
   const [form] = Form.useForm();

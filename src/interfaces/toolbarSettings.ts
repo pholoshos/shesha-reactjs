@@ -12,7 +12,7 @@ import { INumberFieldProps } from '../components/formDesigner/components/numberF
 import { IQueryBuilderProps } from '../components/formDesigner/components/queryBuilder/queryBuilderComponent';
 import { ICodeEditorComponentProps } from '../components/formDesigner/components/codeEditor';
 import { IContainerComponentProps } from '../components/formDesigner/components/container/containerComponent';
-import { IPropertyAutocompleteProps } from '../components/formDesigner/components/propertyAutocomplete/propertyAutocomplete';
+import { IPropertyAutocompleteProps } from '../components/propertyAutocomplete/propertyAutocomplete';
 import { ICustomFilterProps } from '../components/formDesigner/components/dataTable/filter/models';
 
 interface ToolbarSettingsProp extends Omit<IConfigurableFormComponent, 'type'> {}

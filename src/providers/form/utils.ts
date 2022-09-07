@@ -1024,7 +1024,7 @@ export const convertDotNotationPropertiesToGraphQL = (properties: string[], colu
     for (const node in container){
       if (result !== "")
         result += " ";
-      const nodeValue = tree[node];
+      const nodeValue = container[node];
       if (typeof nodeValue === 'object')
         result += `${preparePropertyName(node)} { ${getNodes(nodeValue)} }`;
       else

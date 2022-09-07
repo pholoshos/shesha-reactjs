@@ -143,8 +143,17 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
       <SectionSeparator sectionName="Selection" />
 
-      <FormItem name="allowSelection" label="Allow Selections" valuePropName="checked">
-        <Checkbox />
+      <FormItem
+        name="selectionMode"
+        label="Selection Mode"
+        tooltip="How items should be selected"
+        initialValue={['none']}
+      >
+        <Select allowClear>
+          <Option value="none">None</Option>
+          <Option value="single">Single</Option>
+          <Option value="multiple">Multiple</Option>
+        </Select>
       </FormItem>
 
       <SectionSeparator sectionName="Delete/Remove Items" />

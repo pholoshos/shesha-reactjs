@@ -3,7 +3,7 @@ import { Form, Select, Input } from 'antd';
 import SectionSeparator from '../../../sectionSeparator';
 import CodeEditor from '../codeEditor/codeEditor';
 import EditableTagGroup from '../../../editableTagGroup';
-import { IStepProps, IWizardComponentProps } from './models';
+import { ITabPaneProps, ITabsComponentProps } from './models';
 import ItemListSettingsModal from '../itemListConfigurator/itemListSettingsModal';
 import itemSettings from './itemSettings.json';
 import { FormMarkup } from '../../../../providers/form/models';
@@ -11,14 +11,14 @@ import { nanoid } from 'nanoid/non-secure';
 
 const { Option } = Select;
 
-export interface IWizardSettingsProps {
-  model: IWizardComponentProps;
-  onSave: (model: IWizardComponentProps) => void;
+export interface ITabSettingsProps {
+  model: ITabsComponentProps;
+  onSave: (model: ITabsComponentProps) => void;
   onCancel: () => void;
-  onValuesChange?: (changedValues: any, values: IWizardComponentProps) => void;
+  onValuesChange?: (changedValues: any, values: ITabsComponentProps) => void;
 }
 
-const WizardSettings: FC<IWizardSettingsProps> = props => {
+const TabSettings: FC<ITabSettingsProps> = props => {
   const [form] = Form.useForm();
 
   const onValuesChange = (changedValues, values) => {
@@ -26,22 +26,22 @@ const WizardSettings: FC<IWizardSettingsProps> = props => {
   };
 
   const onAddNewItem = (_, count: number) => {
-    const buttonProps: IStepProps = {
+    const buttonProps: ITabPaneProps = {
       id: nanoid(),
       itemType: 'item',
       sortOrder: count,
-      name: `Step${count + 1}`,
-      key: `stepKey${count + 1}`,
-      title: `Step ${count + 1}`,
-      subTitle: `Step ${count + 1}`,
-      description: `Step ${count + 1}`,
+      name: `Tab${count + 1}`,
+      key: `tabKey${count + 1}`,
+      title: `Tab ${count + 1}`,
+      subTitle: `Tab ${count + 1}`,
+      description: `Tab ${count + 1}`,
       components: [],
     };
 
     return buttonProps;
   };
 
-  const steps = props.model.steps?.map(item => ({ ...item, label: item?.title }));
+  const tabs = props.model.tabs?.map(item => ({ ...item, label: item?.title }));
 
   return (
     <Form form={form} onFinish={props.onSave} onValuesChange={onValuesChange} labelCol={{ span: 24 }}>
@@ -85,10 +85,10 @@ const WizardSettings: FC<IWizardSettingsProps> = props => {
 
       <SectionSeparator sectionName="Configure Wizard Steps" />
 
-      <Form.Item name="steps" initialValue={steps}>
+      <Form.Item name="tabs" initialValue={tabs}>
         <ItemListSettingsModal
           options={{ onAddNewItem }}
-          title="Configure Steps"
+          title="Configure Wizard Steps"
           heading="Settings"
           callToAction="Configure Wizard Steps"
           itemTypeMarkup={itemSettings as FormMarkup}
@@ -126,4 +126,4 @@ const WizardSettings: FC<IWizardSettingsProps> = props => {
   );
 };
 
-export default WizardSettings;
+export default TabSettings;

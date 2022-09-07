@@ -16,8 +16,10 @@
       "labelAlign": "right",
       "parentId": "root"
     },
+
+
     {
-      "id": "7690cd12-138a-43d5-8a6d-7ceebf37815b",
+      "id": "e618b14f-1820-4564-8f19-23abfee8dc87",
       "type": "textField",
       "name": "subTitle",
       "label": "Sub Title",
@@ -25,13 +27,14 @@
       "parentId": "root"
     },
     {
-      "id": "ebdb1417-64d4-4f72-840a-baad2975eff9",
+      "id": "4dca96b4-095d-4d92-aad8-2135e07c04a6",
       "type": "textField",
       "name": "description",
       "label": "Description",
       "labelAlign": "right",
       "parentId": "root"
     },
+
     {
       "id": "4bb6cdc7-0657-4e41-8c50-effe14d0dc96",
       "type": "textField",
@@ -85,6 +88,17 @@
       "type": "checkbox",
       "name": "disabled",
       "label": "Disabled",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {}
+    },
+    {
+      "id": "a8b12318-65a5-4b98-bcce-834b6a40b2fd",
+      "type": "checkbox",
+      "name": "destroyInactiveTabPane",
+      "label": "Destroy Inactive Wizard Step",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,

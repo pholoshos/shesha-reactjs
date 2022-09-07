@@ -37,7 +37,7 @@ interface ICustomFilter {
   target?: FilterTarget;
 }
 
-export const CustomFilter: FC<ICustomFilter> = ({ value, target, onChange }) => {
+export const CustomFilter: FC<ICustomFilter> = ({ value, onChange }) => {
   const [showModal, setShowModal] = useState(false);
 
   const toggleFiltersModal = () => setShowModal(prev => !prev);

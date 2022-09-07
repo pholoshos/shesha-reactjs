@@ -1,7 +1,7 @@
 import { Checkbox, Form, Input, InputNumber, Select } from 'antd';
 import React, { FC, useState } from 'react';
 import SectionSeparator from '../../../sectionSeparator';
-import PropertyAutocomplete from '../propertyAutocomplete/propertyAutocomplete';
+import PropertyAutocomplete from '../../../propertyAutocomplete/propertyAutocomplete';
 import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
 import { AutocompleteDto, AutocompleteRaw } from '../../../autocomplete';

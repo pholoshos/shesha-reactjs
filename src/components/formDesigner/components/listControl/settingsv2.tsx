@@ -109,10 +109,11 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
           </FormItem>
 
           <FormItem label="Query builder" name="filters">
-            <QueryBuilderWithModelType
-              modelType={state?.entityType}
-            >
-              <QueryBuilderPlainRenderer useExpression={state?.useExpression} value={state?.filters}></QueryBuilderPlainRenderer>
+            <QueryBuilderWithModelType modelType={state?.entityType}>
+              <QueryBuilderPlainRenderer
+                useExpression={state?.useExpression}
+                value={state?.filters}
+              ></QueryBuilderPlainRenderer>
             </QueryBuilderWithModelType>
           </FormItem>
         </Show>
@@ -361,7 +362,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
       <Show when={!state?.showPagination}>
         <FormItem name="maxHeight" label="Max height">
-          <InputNumber min={200} step={5} defaultValue={13} />
+          <InputNumber min={200} step={5} defaultValue={400} />
         </FormItem>
       </Show>
 

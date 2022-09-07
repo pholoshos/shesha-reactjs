@@ -16,8 +16,6 @@
       "labelAlign": "right",
       "parentId": "root"
     },
-
-
     {
       "id": "e618b14f-1820-4564-8f19-23abfee8dc87",
       "type": "textField",
@@ -34,7 +32,22 @@
       "labelAlign": "right",
       "parentId": "root"
     },
-
+    {
+      "id": "737ae9b8-61d2-4ecd-9891-feaaec244a3a",
+      "type": "textField",
+      "name": "nextButtonText",
+      "label": "Next Button Text",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
+    {
+      "id": "ed059dec-4f1b-408b-8739-05f0242d662a",
+      "type": "textField",
+      "name": "backButtonText",
+      "label": "Back Button Text",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
     {
       "id": "4bb6cdc7-0657-4e41-8c50-effe14d0dc96",
       "type": "textField",

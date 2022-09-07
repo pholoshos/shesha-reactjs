@@ -35,6 +35,8 @@ const TabSettings: FC<ITabSettingsProps> = props => {
       title: `Tab ${count + 1}`,
       subTitle: `Tab ${count + 1}`,
       description: `Tab ${count + 1}`,
+      nextButtonText: 'Next',
+      backButtonText: 'Back',
       components: [],
     };
 

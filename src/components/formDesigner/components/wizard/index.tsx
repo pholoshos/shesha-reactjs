@@ -60,7 +60,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
       setComponent(tabs[current].components);
     };
 
-    const previous = () => {
+    const back = () => {
       setCurrent(current - 1);
       setComponent(tabs[current].components);
     };
@@ -122,8 +122,8 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         <div>
           <Space size={'middle'}>
             {current > 0 && (
-              <Button style={{ margin: '0 8px' }} onClick={() => previous()}>
-                Previous
+              <Button style={{ margin: '0 8px' }} onClick={() => back()}>
+                {tabs[current].backButtonText ? (tabs[current].backButtonText) : ('Back')}
               </Button>
             )}
             {current === tabs.length - 1 && (
@@ -133,7 +133,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
             )}
             {current < tabs.length - 1 && (
               <Button type="primary" onClick={() => next()}>
-                Next
+                {tabs[current].nextButtonText ? (tabs[current].nextButtonText) : ('Next')}
               </Button>
             )}
           </Space>
@@ -151,6 +151,8 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         label: 'Tab 1',
         title: 'Tab 1',
         subTitle: 'Tab 1',
+        nextButtonText: 'Next',
+        backButtonText: 'Back',
         description: 'Tab 1',
         key: 'tab1',
         components: [],

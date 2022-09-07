@@ -70,7 +70,8 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
         <Steps
           type={wizardType}
-          current={current}>
+          current={current}
+          style={{ marginBottom: '25px' }}>
           {tabs?.map(
             ({
               key,
@@ -114,7 +115,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
           )}
         </Steps>
 
-        <ComponentsContainer containerId={tabs[current].id} dynamicComponents={model?.isDynamic ? component : []} />
+        <ComponentsContainer
+          containerId={tabs[current].id}
+          dynamicComponents={model?.isDynamic ? component : []} />
 
         <div>
           <Space size={'middle'}>

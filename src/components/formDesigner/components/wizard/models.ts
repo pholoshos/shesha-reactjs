@@ -1,5 +1,4 @@
 import { IConfigurableItemBase } from '../../../../providers/itemListConfigurator/contexts';
-import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 
 export interface ITabPaneProps extends IConfigurableItemBase {
@@ -9,6 +8,8 @@ export interface ITabPaneProps extends IConfigurableItemBase {
   title: string;
   subTitle: string;
   description: string;
+  nextButtonText: string;
+  backButtonText: string;
   customVisibility?: string;
   customEnabled?: string;
   permissions?: string[];

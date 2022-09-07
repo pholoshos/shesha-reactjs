@@ -8,6 +8,7 @@ import {
   IMetadataDispatcherActionsContext,
   IGetMetadataPayload,
   IRegisterProviderPayload,
+  IGetNestedPropertiesPayload,
 } from './contexts';
 import {
   activateProviderAction,
@@ -18,8 +19,9 @@ import { metadataGetProperties, PropertyMetadataDto } from '../../apis/metadata'
 import { IModelsDictionary, IProvidersDictionary } from './models';
 import { useSheshaApplication } from '../../providers';
 import { IModelMetadata, IPropertyMetadata } from '../../interfaces/metadata';
+import camelcase from 'camelcase';
 
-export interface IMetadataDispatcherProviderProps {}
+export interface IMetadataDispatcherProviderProps { }
 
 const MetadataDispatcherProvider: FC<PropsWithChildren<IMetadataDispatcherProviderProps>> = ({ children }) => {
   const initial: IMetadataDispatcherStateContext = {
@@ -98,8 +100,42 @@ const MetadataDispatcherProvider: FC<PropsWithChildren<IMetadataDispatcherProvid
     return registration?.contextValue;
   };
 
+  const getNested = (properties: IPropertyMetadata[], propName: string): Promise<IPropertyMetadata[]> => {
+    const propMeta = properties.find(p => camelcase(p.path) == propName);
+
+    if (!propMeta)
+      return Promise.reject(`property '${propName}' not found`);
+
+    if (propMeta.dataType === 'entity')
+      return getMetadata({ modelType: propMeta.entityType }).then(m => m.properties);
+
+    if (propMeta.dataType === 'object')
+      return Promise.resolve(propMeta.properties);
+
+    return Promise.reject(`data type '${propMeta.dataType}' doesn't support nested properties`);
+  }
+
+  const getContainerProperties = (payload: IGetNestedPropertiesPayload) => {
+    const { metadata, containerPath } = payload;
+    if (!metadata?.properties)
+      return Promise.reject();
+
+    if (containerPath) {
+      const parts = containerPath.split('.');
+
+      const promise = parts.reduce((left, right) => {
+        return left.then(pp => getNested(pp, right));
+      }, Promise.resolve(metadata.properties));
+
+      return promise;
+    } else {
+      return Promise.resolve(metadata.properties);
+    }
+  };
+
   const metadataActions: IMetadataDispatcherActionsContext = {
     getMetadata,
+    getContainerProperties,
     registerProvider,
     activateProvider,
     getActiveProvider,

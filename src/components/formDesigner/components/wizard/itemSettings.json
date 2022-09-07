@@ -17,7 +17,7 @@
       "parentId": "root"
     },
     {
-      "id": "7690cd12-138a-43d5-8a6d-7ceebf37815b",
+      "id": "e618b14f-1820-4564-8f19-23abfee8dc87",
       "type": "textField",
       "name": "subTitle",
       "label": "Sub Title",
@@ -25,10 +25,26 @@
       "parentId": "root"
     },
     {
-      "id": "ebdb1417-64d4-4f72-840a-baad2975eff9",
+      "id": "4dca96b4-095d-4d92-aad8-2135e07c04a6",
       "type": "textField",
       "name": "description",
       "label": "Description",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
+    {
+      "id": "737ae9b8-61d2-4ecd-9891-feaaec244a3a",
+      "type": "textField",
+      "name": "nextButtonText",
+      "label": "Next Button Text",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
+    {
+      "id": "ed059dec-4f1b-408b-8739-05f0242d662a",
+      "type": "textField",
+      "name": "backButtonText",
+      "label": "Back Button Text",
       "labelAlign": "right",
       "parentId": "root"
     },
@@ -85,6 +101,17 @@
       "type": "checkbox",
       "name": "disabled",
       "label": "Disabled",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {}
+    },
+    {
+      "id": "a8b12318-65a5-4b98-bcce-834b6a40b2fd",
+      "type": "checkbox",
+      "name": "destroyInactiveTabPane",
+      "label": "Destroy Inactive Wizard Step",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,

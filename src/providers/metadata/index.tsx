@@ -16,11 +16,7 @@ export interface IMetadataProviderProps {
   modelType: string;
 }
 
-const MetadataProvider: FC<PropsWithChildren<IMetadataProviderProps>> = ({
-  id,
-  modelType,
-  children,
-}) => {
+const MetadataProvider: FC<PropsWithChildren<IMetadataProviderProps>> = ({ id, modelType, children }) => {
   const initial: IMetadataStateContext = {
     ...METADATA_CONTEXT_INITIAL_STATE,
     id,
@@ -43,21 +39,17 @@ const MetadataProvider: FC<PropsWithChildren<IMetadataProviderProps>> = ({
 
   const getMetadata = () => {
     return fetchMeta({ modelType });
-  }
+  };
 
   const metadataActions: IMetadataActionsContext = {
     /* NEW_ACTION_GOES_HERE */
-    getMetadata
+    getMetadata,
   };
 
   const contextValue: IMetadataContext = { ...state, ...metadataActions };
-    registerProvider({ id, modelType, contextValue });
+  registerProvider({ id, modelType, contextValue });
 
-  return (
-    <MetadataContext.Provider value={contextValue}>
-      {children}
-    </MetadataContext.Provider>
-  );
+  return <MetadataContext.Provider value={contextValue}>{children}</MetadataContext.Provider>;
 };
 
 function useMetadata(require: boolean) {

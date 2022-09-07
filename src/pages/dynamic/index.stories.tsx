@@ -13,8 +13,8 @@ export default {
 } as Meta;
 
 const DEFAULT_ARGS: IDynamicPageProps = {
-  path: 'facility-patient-details',
-  id: 'f84056e6-73fb-4609-a286-07c2244e4c7b',
+  path: 'mazi-form-view',
+  id: 'a91b07fc-6f21-4fb5-a709-4f4357f1271f',
   mode: 'edit',
 };
 
@@ -29,13 +29,13 @@ const Template: Story<IDynamicPageProps> = args => (
 export const Basic = Template.bind({});
 
 export const OtpSettings = addStory(Template, {
-  path: 'daily-appointment-book',
+  path: 'mazi-form-view',
   mode: 'edit',
 });
 
 export const PersonEdit = addStory(Template, {
-  path: '/persons/edit',
-  id: 'F85C437A-BF62-4922-9193-0EE14DB89D0D',
+  path: 'mazi-form-view',
+  id: 'a91b07fc-6f21-4fb5-a709-4f4357f1271f',
   mode: 'edit',
 });
 

@@ -25,7 +25,14 @@ export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onCh
   };
 
   return (
-    <Modal width={isSmall ? '90%' : '60%'} visible={visible} title="Configure Columns" okText="Save" onCancel={hideModal} onOk={onOkClick}>
+    <Modal
+      width={isSmall ? '90%' : '60%'}
+      visible={visible}
+      title="Configure Columns"
+      okText="Save"
+      onCancel={hideModal}
+      onOk={onOkClick}
+    >
       <ColumnsConfigurator />
     </Modal>
   );

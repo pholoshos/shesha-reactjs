@@ -1,19 +1,11 @@
 import React, { FC, useState } from 'react';
 import { JsonLogicResult } from 'react-awesome-query-builder';
 import { Modal, Button, Collapse, Space } from 'antd';
-import { IProperty } from '../../../../providers/queryBuilder/models';
 import QueryBuilder from '../../../queryBuilder';
 import { CodeEditor, Show } from '../../..';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { useMedia } from 'react-use';
-
-export interface IQueryBuilderFieldProps {
-  jsonExpanded?: boolean;
-  useExpression?: boolean;
-  fields: IProperty[];
-  value?: object;
-  onChange?: (value: any) => void;
-}
+import { IQueryBuilderFieldProps } from './models';
 
 export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -45,6 +37,10 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
   };
 
   const hasValue = Boolean(props?.value);
+
+  const val = props.value ? JSON.stringify(props.value, null, 2) : null;
+  if (!val)
+    console.log('val is null')
 
   return (
     <>
@@ -126,6 +122,7 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
           value={props.value}
           onChange={onChange}
           fields={props.fields}
+          fetchFields={props.fetchFields}
           useExpression={props?.useExpression}
         />
       </Modal>

@@ -72,5 +72,5 @@ export const config: Config = {
   // @ts-ignore
   types,
   operators,
-  widgets,  
+  widgets, 
 };

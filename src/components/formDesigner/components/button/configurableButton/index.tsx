@@ -25,7 +25,7 @@ export interface IConfigurableButtonProps extends Omit<IButtonGroupButton, 'styl
 
 export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
   const { backendUrl } = useSheshaApplication();
-  const { getAction, form, setFormMode, formData, formMode } = useForm();
+  const { /*getAction,*/ form, setFormMode, formData, formMode } = useForm();
   const { router } = useShaRouting();
   const { globalState } = useGlobalState();
   const { publish } = usePubSub();
@@ -162,12 +162,15 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
             // Anything other than this is a custom action
             publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
           } else {
+            /*
             if (props.customFormAction) {
               const actionBody = getAction(props.formComponentId, props.customFormAction);
 
               if (actionBody) actionBody();
               else console.warn(`action ${props.customFormAction} not found on the form`);
             } else console.warn('customFormAction is not specified');
+            */
+            publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
           }
         }
         break;

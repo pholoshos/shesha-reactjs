@@ -352,7 +352,6 @@
           "validate": {},
           "settingsValidationErrors": [],
           "useExpression": "{{data.useExpression}}",
-          "allowUseExpression": true,
           "modelType": "{{data.entityTypeShortAlias}}",
           "fieldsUnavailableHint": "Please select `Entity Type` to be able to configure this filter."
         },

@@ -7,11 +7,12 @@ import './styles/queryBuilderPlain.less';
 export interface IQueryBuilderPlainProps {
   useExpression?: boolean;
   fields: IProperty[];
+  fetchFields: (fieldNames: string[]) => void;
   value?: object;
   onChange?: (value: Object) => void;
 }
 
-export const QueryBuilderPlain: FC<IQueryBuilderPlainProps> = ({ value, fields, useExpression, onChange }) => {
+export const QueryBuilderPlain: FC<IQueryBuilderPlainProps> = ({ value, fields, fetchFields, useExpression, onChange }) => {
   const handleChange = (jsonLogicResult: JsonLogicResult) => {
     if (jsonLogicResult) {
       if (jsonLogicResult && jsonLogicResult.errors && jsonLogicResult.errors.length > 0) {
@@ -28,7 +29,13 @@ export const QueryBuilderPlain: FC<IQueryBuilderPlainProps> = ({ value, fields, 
 
   return (
     <div className="sha-query-builder-plain-wrapper">
-      <QueryBuilder value={value} onChange={handleChange} fields={fields} useExpression={useExpression} />
+      <QueryBuilder 
+        value={value} 
+        onChange={handleChange} 
+        fields={fields}
+        fetchFields={fetchFields}
+        useExpression={useExpression} 
+      />
     </div>
   );
 };

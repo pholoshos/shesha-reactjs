@@ -1,29 +1,27 @@
 import { IConfigurableItemBase } from '../../../../providers/itemListConfigurator/contexts';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 
-export interface IStepProps extends IConfigurableItemBase {
+export interface ITabPaneProps extends IConfigurableItemBase {
   id: string;
   icon?: string;
   key: string;
   title: string;
   subTitle: string;
   description: string;
+  nextButtonText: string;
+  backButtonText: string;
   customVisibility?: string;
   customEnabled?: string;
   permissions?: string[];
   components?: IConfigurableFormComponent[];
-  childItems?: IStepProps[];
+  childItems?: ITabPaneProps[];
 }
 
-export interface IWizardComponentProps extends IConfigurableFormComponent {
-  steps: IStepProps[];
-  // size?: 'default' | 'small';
-  // defaultActiveKey?: string;
+export interface ITabsComponentProps extends IConfigurableFormComponent {
+  tabs: ITabPaneProps[];
   wizardType?: 'default' | 'navigation';
   visibility?: 'Yes' | 'No' | 'Removed';
-  current: number;
   permissions?: string[];
   hidden?: boolean;
   customVisibility?: string;
-  // position?: 'left' | 'right' | 'top' | 'bottom';
 }

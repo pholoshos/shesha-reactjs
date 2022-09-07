@@ -18,6 +18,13 @@
       }
     },
     {
+      "id": "947b0f7d-aa08-48e9-ae81-031861d57cd0",
+      "type": "textField",
+      "name": "defaultActiveKey",
+      "parentId": "root",
+      "label": "Default Active Key"
+    },
+    {
       "id": "8b9033ea-9408-4f56-80f2-89f07cf1cc8f",
       "type": "dropdown",
       "name": "wizardType",
@@ -75,9 +82,9 @@
     {
       "id": "b395c0e9-dbc1-44f1-8fef-c18a49442871",
       "type": "labelValueEditor",
-      "name": "steps",
+      "name": "tabs",
       "parentId": "root",
-      "label": "Steps",
+      "label": "Tabs",
       "labelTitle": "Key",
       "labelName": "key",
       "valueTitle": "Title",

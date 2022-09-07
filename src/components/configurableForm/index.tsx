@@ -4,11 +4,12 @@ import { IConfigurableFormProps } from './models';
 import { FormProvider } from '../../providers/form';
 import ConfigurableComponent from '../appConfigurator/configurableComponent';
 import EditViewMsg from '../appConfigurator/editViewMsg';
-import { useShaRouting } from '../../providers';
+import { useAppConfigurator, useShaRouting } from '../../providers';
 import classNames from 'classnames';
 
 export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
   const { id, markup, mode, path, actions, sections, context, formRef, ...restProps } = props;
+  const { switchApplicationMode } = useAppConfigurator();
 
   const canConfigure = Boolean(id) || Boolean(path);
   const { router } = useShaRouting(false) ?? {};
@@ -17,8 +18,16 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
     <ConfigurableComponent
       canConfigure={canConfigure}
       onStartEdit={() => {
-        if (Boolean(id)) router?.push(`/settings/forms/designer?id=${id}`);
-        else if (Boolean(path)) router?.push(`/settings/forms/designer?path=${path}`);
+        const url = Boolean(id)
+          ? `/settings/forms/designer?id=${id}`
+          : Boolean(path)
+            ? `/settings/forms/designer?path=${path}`
+            : null;
+
+        if (url){
+          router?.push(url);
+        }
+        switchApplicationMode('live');
       }}
     >
       {(componentState, BlockOverlay) => (

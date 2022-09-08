@@ -169,6 +169,17 @@ interface IQueryBuilderContentProps extends IQueryBuilderProps {
   qbConfig: Config;
 }
 
+const loadJsonLogic = (jlValue: object, config: Config) => {
+  try {
+      const result = QbUtils.loadFromJsonLogic(jlValue, config);
+      //console.log('JsonLogic converted:', result);
+      return result;
+  } catch (error) {
+    console.error('failed to parse JsonLogic expression', { error, jlValue, config })
+    return null;
+  }
+}
+
 const QueryBuilderContent: FC<IQueryBuilderContentProps> = ({
   showActionBtnOnHover = true,
   onChange,
@@ -178,12 +189,12 @@ const QueryBuilderContent: FC<IQueryBuilderContentProps> = ({
 
   const tree = useMemo(() => {
     const loadedTree = value
-      ? QbUtils.loadFromJsonLogic(value, qbConfig)
+      ? loadJsonLogic(value, qbConfig) // QbUtils.loadFromJsonLogic(value, qbConfig)
       : QbUtils.loadTree({ id: QbUtils.uuid(), type: 'group' });
 
     const checkedTree = QbUtils.checkTree(loadedTree, qbConfig);
     return checkedTree;
-  }, []);
+  }, [value]);
 
   const renderBuilder = (props: BuilderProps) => {
     return (

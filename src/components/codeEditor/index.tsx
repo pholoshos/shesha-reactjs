@@ -39,7 +39,6 @@ const AceEditorLazy = React.lazy<typeof ReactAce>(() => new Promise(async resolv
 }));
 
 export const CodeEditor: FC<ICodeEditorProps> = (props) => {
-    console.log('value', props.value)
     const isSSR = typeof window === 'undefined';
 
     const { aceBaseUrl, ...restProps } = props;

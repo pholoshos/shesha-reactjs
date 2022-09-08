@@ -35,7 +35,7 @@ const QueryBuilderProvider: FC<PropsWithChildren<IQueryBuilderProviderProps>> = 
     if (!meta?.metadata?.properties)
       return;
 
-    const containers: string[] = [];
+    const containers: string[] = [null/*to ensure that root is loaded*/];
     fieldNames.forEach(f => {
       const idx = f.lastIndexOf('.');
       const container = idx === -1

@@ -28,6 +28,11 @@ const Template: Story<IDynamicPageProps> = args => (
 // Reuse that template for creating different stories
 export const Basic = Template.bind({});
 
+export const FormsIndexPage = addStory(Template, {
+  path: 'forms',
+  mode: 'edit',
+});
+
 export const OtpSettings = addStory(Template, {
   path: 'mazi-form-view',
   mode: 'edit',

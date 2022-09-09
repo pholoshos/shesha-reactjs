@@ -85,6 +85,7 @@ import qs from 'qs';
 import { advancedFilter2JsonLogic } from './utils';
 import { camelcaseDotNotation, convertDotNotationPropertiesToGraphQL } from '../form/utils';
 import { GENERIC_ENTITIES_ENDPOINT } from '../../constants';
+import { getFileNameFromResponse } from '../../utils/fetchers';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Type of entity */
@@ -322,6 +323,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     }
 
     const fetchPayload = getFetchDataPayload(expandedPayload, state.columns);
+
+    //console.log('DT fetch', { payload, expandedPayload, fetchPayload })
 
     return fetchDataTableDataInternal(fetchPayload).then(response => convertDataResponse(response, payload.pageSize));
   };
@@ -814,7 +817,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       headers,
     })
       .then(response => {
-        const fileName = response.headers['content-disposition']?.split('filename=')[1] ?? 'logfile.log';
+        const fileName = getFileNameFromResponse(response) ?? 'logfile.log';
         FileSaver.saveAs(new Blob([response.data]), fileName);
       })
       .catch(e => console.error(e));

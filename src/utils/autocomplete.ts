@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useGet } from 'restful-react';
 import { GENERIC_ENTITIES_ENDPOINT } from '../constants';
 import { IAbpWrappedGetEntityListResponse, EntityData, IGetAllPayload } from '../interfaces/gql';
+import { getEntityFilterByIds } from './graphQl';
 
 interface AutocompleteReturn {
   data: EntityData[];
@@ -29,8 +30,7 @@ const buildFilterById = (value: AutocompleteValueType): string => {
   if (!value) return null;
 
   const ids = Array.isArray(value) ? value : [value];
-  const expression = { in: [{ var: 'Id' }, ids] };
-  return JSON.stringify(expression);
+  return getEntityFilterByIds(ids);
 };
 
 /**

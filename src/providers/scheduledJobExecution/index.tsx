@@ -25,6 +25,7 @@ import axios from 'axios';
 import FileSaver from 'file-saver';
 import { useSheshaApplication } from '../sheshaApplication';
 import { useAuth } from '../auth';
+import { getFileNameFromResponse } from '../../utils/fetchers';
 
 export interface IScheduledJobExecutionProviderProps {
   id: string;
@@ -128,7 +129,7 @@ const ScheduledJobExecutionProvider: FC<PropsWithChildren<IScheduledJobExecution
     })
       .then(response => {
         dispatch(downloadLogFileSuccessAction());
-        const fileName = response.headers['content-disposition']?.split('filename=')[1] ?? 'logfile.log';
+        const fileName = getFileNameFromResponse(response) ?? 'logfile.log';
         FileSaver.saveAs(new Blob([response.data]), fileName);
       })
       .catch(() => {

@@ -1,4 +1,10 @@
+import axios from 'axios';
+import FileSaver from 'file-saver';
+import qs from 'qs';
 import { useMutate } from 'restful-react';
+import { useSheshaApplication } from '../../../../../providers';
+import { getFileNameFromResponse } from '../../../../../utils/fetchers';
+import { getEntityFilterByIds } from '../../../../../utils/graphQl';
 import { confirm, CONFIRM_BODY, getRowIds, onMessageDisplay } from './util';
 
 export interface IConfigureModalProps {
@@ -8,6 +14,7 @@ export interface IConfigureModalProps {
 }
 
 export const useConfig = (selectedRow: any, onRefresh: () => void) => {
+  const { backendUrl, httpHeaders } = useSheshaApplication();
   const selectedRowIds = getRowIds(selectedRow);
 
   const { mutate: deleteConfigsAsync } = useMutate({
@@ -20,10 +27,10 @@ export const useConfig = (selectedRow: any, onRefresh: () => void) => {
     path: `/api/services/Forms/Duplicate`,
   });
 
-  const { mutate: exportJsonConfigs } = useMutate({
-    verb: 'POST',
-    path: `/api/services/Forms/Export`,
-  });
+  // const { mutate: exportJsonConfigs } = useMutate({
+  //   verb: 'POST',
+  //   path: `/api/services/Shesha/FormConfiguration/Export`,
+  // });
 
   const confirmer = (key: number, callback: (args) => void) => () =>
     confirm(callback, CONFIRM_BODY[key].title, CONFIRM_BODY[key].content);
@@ -52,18 +59,25 @@ export const useConfig = (selectedRow: any, onRefresh: () => void) => {
   });
 
   const exportConfigs = () => {
-    exportJsonConfigs({ components: selectedRowIds }).then(response => {
-      const url = window.URL.createObjectURL(new Blob([JSON.stringify(response)]));
-      const link = document.createElement('a');
-      link.href = url;
-      const timestamp = Date.now();
-      const fileName = `exportJsonConfig` + timestamp + `.json`;
-      link.setAttribute('download', fileName);
+    const filter = selectedRowIds?.length > 0
+      ? getEntityFilterByIds(selectedRowIds)
+      : null;
+    const url = `${backendUrl}/api/services/Shesha/FormConfiguration/Export?${qs.stringify(
+      { filter }
+    )}`;
 
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-    });
+    axios({
+      url: url,
+      method: 'GET',
+      responseType: 'blob', // important
+      headers: httpHeaders,
+    })
+      .then(response => {
+        const fileName = getFileNameFromResponse(response) ?? `forms${Date.now()}.json`;
+
+        FileSaver.saveAs(new Blob([response.data]), fileName);
+      })
+      .catch(e => console.error(e));
   };
 
   return { deleteConfigs, duplicateConfigs, exportConfigs };

@@ -43,21 +43,7 @@
                 "parentId": "CTI0XKjHMiwet4AuHx__4",
                 "hidden": false,
                 "customVisibility": null,
-                "filters": [],
-                "items": [
-                  {
-                    "id": "06782a0b-1419-41c7-aca0-dc38eb2d9b2d",
-                    "sortOrder": 0,
-                    "name": "Filter 1",
-                    "filterType": "queryBuilder"
-                  },
-                  {
-                    "id": "b3b8f624-478a-4e1f-90f4-f29829d7c4ad",
-                    "sortOrder": 1,
-                    "name": "Filter 2",
-                    "filterType": "queryBuilder"
-                  }
-                ]
+                "filters": []
               }
             ],
             "direction": "horizontal"

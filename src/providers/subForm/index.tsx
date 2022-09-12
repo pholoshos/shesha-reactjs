@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, useEffect, useMemo } from 'react';
+import React, { FC, useReducer, useContext, useEffect, useMemo, useRef } from 'react';
 import { useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
@@ -69,13 +69,13 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     })();
   };
 
-  useEffect(() => {
-    console.log('LOGS:: SubFormProvider rendering...');
-  }, []);
+  const previousValue = useRef(value);
 
   useEffect(() => {
-    console.log('LOGS:: value changed ', value);
-  }, [value]);
+    if (typeof value === 'string' && typeof previousValue === 'string' && previousValue !== value) {
+      getData(value);
+    }
+  }, [value, globalState, formData]);
 
   const evaluatedQueryParams = useMemo(() => {
     if (formMode === 'designer') return {};
@@ -88,20 +88,28 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
     if (queryParams) {
       const getOnSubmitPayload = () => {
-        // tslint:disable-next-line:function-constructor
-        return new Function('data, query, globalState', queryParams)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+        try {
+          // tslint:disable-next-line:function-constructor
+          return new Function('data, query, globalState', queryParams)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+        } catch (error) {
+          console.warn('SubFormProvider: ', error);
+          return {};
+        }
       };
 
       params = { ...params, ...(typeof getOnSubmitPayload() === 'object' ? getOnSubmitPayload() : {}) };
     }
 
     return params;
-  }, [queryParams, formMode]);
+  }, [queryParams, formMode, globalState]);
 
-  const handleFetchData = () => fetchEntity({ queryParams: evaluatedQueryParams });
+  const handleFetchData = (id?: string) =>
+    fetchEntity({ queryParams: id ? { ...evaluatedQueryParams, id } : evaluatedQueryParams });
 
   useEffect(() => {
     if (queryParams && formMode !== 'designer' && dataSource === 'api') {
+      console.log('LOGS:: evaluatedQueryParams', evaluatedQueryParams);
+
       handleFetchData();
     }
   }, [queryParams, evaluatedQueryParams]);
@@ -136,7 +144,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   //#endregion
 
   //#region CRUD functions
-  const getData = useDebouncedCallback(() => {
+  const getData = useDebouncedCallback((id?: string) => {
     if (dataSource === 'api') {
       if (beforeGet) {
         const evaluateBeforeGet = () => {
@@ -149,7 +157,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         onChange(evaluatedData);
       }
 
-      handleFetchData();
+      handleFetchData(id);
     }
   }, 300);
 

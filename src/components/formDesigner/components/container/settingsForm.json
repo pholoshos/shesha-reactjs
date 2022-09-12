@@ -341,6 +341,15 @@
       "label": "Visibility"
     },
     {
+      "id": "987c3de1-b959-4670-96f6-9b1747189a6e",
+      "type": "codeEditor",
+      "name": "style",
+      "label": "Style",
+      "parentId": "root",
+      "mode": "dialog",
+      "exposedVariables": [{ "name": "data", "description": "Form data", "type": "object" }]
+    },
+    {
       "id": "68d4fae4-54af-4dad-822c-ba512a744ddb",
       "type": "codeEditor",
       "name": "customVisibility",

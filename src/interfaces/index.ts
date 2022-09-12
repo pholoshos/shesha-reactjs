@@ -30,6 +30,7 @@ export { IValuable } from './valuable';
 export { IChangeable } from './changeable';
 export { IFormItem } from './formItem';
 export { INamed } from './named';
+export { IStylable } from './stylable';
 export { ITableColumn, ICustomFilter, IDataTableInstance } from '../providers/dataTable/interfaces';
 export type { PageWithLayout } from './pageWithLayout';
 export * from './formDesigner';

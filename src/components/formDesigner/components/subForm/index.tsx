@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
-import { IToolboxComponent } from '../../../../interfaces';
+import { IStylable, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { FormOutlined } from '@ant-design/icons';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm, SubFormProvider, SubFormProviderProps } from '../../../../providers';
 import { alertSettingsForm } from './settings';
 import SubForm from './subForm';
@@ -23,7 +23,7 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
   name: 'Sub Form',
   icon: <FormOutlined />,
   factory: (model: ISubFormProps) => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden, formData } = useForm();
 
     const isHidden = isComponentHidden(model);
 
@@ -35,7 +35,7 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
         labelCol={{ span: model?.hideLabel ? 0 : model?.labelCol }}
         wrapperCol={{ span: model?.hideLabel ? 24 : model?.wrapperCol }}
       >
-        <SubFormWrapper {...model} />
+        <SubFormWrapper {...model} style={getStyle(model?.style, formData)} />
       </ConfigurableFormItem>
     );
   },
@@ -62,14 +62,14 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
   validateSettings: model => validateConfigurableComponentSettings(alertSettingsForm, model),
 };
 
-interface ISubFormWrapperProps extends Omit<ISubFormProps, 'id' | 'type'> {
+interface ISubFormWrapperProps extends Omit<ISubFormProps, 'id' | 'type' | 'style'>, IStylable {
   id: string;
 }
 
-const SubFormWrapper: FC<ISubFormWrapperProps> = props => {
+const SubFormWrapper: FC<ISubFormWrapperProps> = ({ style, ...props }) => {
   return (
     <SubFormProvider {...props}>
-      <SubForm />
+      <SubForm style={style} />
     </SubFormProvider>
   );
 };

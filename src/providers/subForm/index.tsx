@@ -2,7 +2,7 @@ import React, { FC, useReducer, useContext, useEffect, useMemo, useRef } from 'r
 import { useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
-import { useSubscribe } from '../../hooks';
+import { usePubSub, useSubscribe } from '../../hooks';
 import { useFormGet } from '../../apis/form';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
@@ -46,6 +46,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   onChange,
 }) => {
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
+  const { publish } = usePubSub();
   const { formData = {}, formMode } = useForm();
   const { globalState } = useGlobalState();
   const { refetch: fetchForm, loading: isFetchingForm, data: fetchFormResponse, error: fetchFormError } = useFormGet({
@@ -171,11 +172,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         if (onCreated) {
           const evaluateOnCreated = () => {
             // tslint:disable-next-line:function-constructor
-            return new Function('data, globalState, submittedValue, message', onCreated)(
+            return new Function('data, globalState, submittedValue, message, publish', onCreated)(
               formData,
               globalState,
               submittedValue?.result,
-              message
+              message,
+              publish
             );
           };
 
@@ -197,11 +199,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         if (onUpdated) {
           const evaluateOnUpdated = () => {
             // tslint:disable-next-line:function-constructor
-            return new Function('data, globalState, submittedValue, message', onUpdated)(
+            return new Function('data, globalState, response, message, publish', onUpdated)(
               formData,
               globalState,
               submittedValue?.result,
-              message
+              message,
+              publish
             );
           };
 
@@ -272,7 +275,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   });
 
   //#region Events
-  useSubscribe(SUB_FORM_EVENT_NAMES.postFormData, ({ stateId, state, doneEvent }) => {
+  useSubscribe(SUB_FORM_EVENT_NAMES.postFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {
       postData();
     }

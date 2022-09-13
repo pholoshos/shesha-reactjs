@@ -12,6 +12,7 @@ import TabSettings from './settings';
 import { ITabsComponentProps } from './models';
 import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
+import { usePubSub } from '../../../../hooks';
 
 const { Step } = Steps;
 
@@ -25,6 +26,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
     const { anyOfPermissionsGranted } = useAuth();
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState } = useGlobalState();
+    const { publish } = usePubSub();
     const [current, setCurrent] = useState(0);
     const [component, setComponent] = useState(null);
 
@@ -55,44 +57,92 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
       return typeof evaluated === 'boolean' ? evaluated : true;
     };
 
+    /// NAVIGATION
+
     const next = () => {
+      const buttonAction = tabs[current].nextButtonAction;
       const actionScript = tabs[current].nextButtonActionScript;
 
-      if (actionScript)
-        executeExpression(actionScript);
+      switch (buttonAction) {
+        case 'executeScript':
+          executeScript(actionScript);
+          break;
+        case 'dispatchAnEvent':
+          dispatchAnEvent('', '', '');
+          break;
+        default:
+          break;
+      }
 
       setCurrent(current + 1);
       setComponent(tabs[current].components);
     };
 
     const back = () => {
+      const buttonAction = tabs[current].backButtonAction;
       const actionScript = tabs[current].backButtonActionScript;
 
-      if (actionScript)
-        executeExpression(actionScript);
+
+      switch (buttonAction) {
+        case 'executeScript':
+          executeScript(actionScript);
+          break;
+        case 'dispatchAnEvent':
+          dispatchAnEvent('', '', '');
+        default:
+          break;
+      }
 
       setCurrent(current - 1);
       setComponent(tabs[current].components);
     };
 
     const cancel = () => {
+      const buttonAction = tabs[current].cancelButtonAction;
       const actionScript = tabs[current].cancelButtonActionScript;
 
-      if (actionScript)
-        executeExpression(actionScript);
 
-      // setCurrent(0);
-      // setComponent(null);
+      switch (buttonAction) {
+        case 'executeScript':
+          executeScript(actionScript);
+          break;
+        case 'dispatchAnEvent':
+          dispatchAnEvent('', '', '');
+        default:
+          break;
+      }
     };
 
     const done = () => {
+      const buttonAction = tabs[current].doneButtonAction;
       const actionScript = tabs[current].doneButtonActionScript;
 
-      if (actionScript)
-        executeExpression(actionScript);
+      switch (buttonAction) {
+        case 'executeScript':
+          executeScript(actionScript);
+          break;
+        case 'dispatchAnEvent':
+          dispatchAnEvent('', '', '');
+        default:
+          break;
+      }
+    };
 
-      // setCurrent(0);
-      // setComponent(null);
+    /// ACTIONS
+
+    const executeScript = (actionScript) => {
+      if (actionScript) {
+        executeExpression(actionScript);
+      }
+    };
+
+    const dispatchAnEvent = (eventName, customEventNameToDispatch, uniqueStateId) => {
+      const EVENT_NAME =
+        eventName === 'CUSTOM_EVENT' && customEventNameToDispatch
+          ? customEventNameToDispatch
+          : eventName;
+
+      publish(EVENT_NAME, { stateId: uniqueStateId || 'NO_PROVIDED' });
     };
 
     return (

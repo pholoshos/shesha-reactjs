@@ -1,6 +1,10 @@
 import { IConfigurableItemBase } from '../../../../providers/itemListConfigurator/contexts';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 
+type ButtonActionType =
+  | 'executeScript'
+  | 'dispatchAnEvent';
+
 export interface ITabPaneProps extends IConfigurableItemBase {
   id: string;
   icon?: string;
@@ -8,12 +12,17 @@ export interface ITabPaneProps extends IConfigurableItemBase {
   title: string;
   subTitle: string;
   description: string;
-  allowCancel: boolean;
+  allowCancel?: boolean;
 
-  cancelButtonText: string;
-  nextButtonText: string;
-  backButtonText: string;
-  doneButtonText: string;
+  cancelButtonText?: string;
+  nextButtonText?: string;
+  backButtonText?: string;
+  doneButtonText?: string;
+
+  cancelButtonAction?: ButtonActionType;
+  nextButtonAction?: ButtonActionType;
+  backButtonAction?: ButtonActionType;
+  doneButtonAction?: ButtonActionType;
 
   cancelButtonActionScript?: string;
   backButtonActionScript?: string;

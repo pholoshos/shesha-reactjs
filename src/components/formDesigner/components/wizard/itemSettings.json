@@ -126,7 +126,7 @@
       "validate": {}
     },
     {
-      "id": "1cd244c1-d2f4-40fb-937a-cd223af48b7e",
+      "id": "b70ccff9-b0ca-428a-927a-916e5f4946c9",
       "type": "codeEditor",
       "name": "nextButtonActionScript",
       "label": "Action Script",
@@ -204,7 +204,7 @@
       "validate": {}
     },
     {
-      "id": "e78a9c2b-31cf-4857-a921-b4862810e763",
+      "id": "5c0eb1ce-4615-452c-a1b9-30a9ecbdd7c5",
       "type": "codeEditor",
       "name": "backButtonActionScript",
       "label": "Action Script",
@@ -258,7 +258,7 @@
       "label": "Done Button"
     },
     {
-      "id": "bbdd219c-8b72-48bb-ba66-ebbae69edce2",
+      "id": "20ea7d88-2e09-4d2e-9e4a-caa23b1e3502",
       "type": "textField",
       "name": "doneButtonText",
       "label": "Text",
@@ -282,7 +282,7 @@
       "validate": {}
     },
     {
-      "id": "f7499633-d8ba-433e-91bc-0770ac37c65e",
+      "id": "8bfd92f5-6c83-41ca-b5a2-88461612712a",
       "type": "codeEditor",
       "name": "doneButtonActionScript",
       "label": "Action Script",
@@ -306,7 +306,7 @@
     },
     
     {
-      "id": "b20d139e-0869-482a-8171-ffa1b09b4113",
+      "id": "83304267-84ad-4489-8800-0f7aeb5bb7ce",
       "type": "sectionSeparator",
       "name": "cancelButtonSeparatorVisibility",
       "parentId": "root",
@@ -337,7 +337,7 @@
       "validate": {}
     },
     {
-      "id": "f7499633-d8ba-433e-91bc-0770ac37c65e",
+      "id": "0632cb45-fdb2-464b-8a29-c35a060fa696",
       "type": "codeEditor",
       "name": "cancelButtonActionScript",
       "label": "Action Script",

@@ -7,12 +7,14 @@ import settingsFormJson from './settingsForm.json';
 import React, { Fragment, useState } from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useAuth, useForm, useGlobalState } from '../../../../providers';
+import { useSheshaApplication } from '../../../../';
 import { nanoid } from 'nanoid/non-secure';
 import TabSettings from './settings';
 import { ITabsComponentProps } from './models';
 import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
 import { usePubSub } from '../../../../hooks';
+import { axiosHttp } from '../../../../apis/axios';
 
 const { Step } = Steps;
 
@@ -26,6 +28,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
     const { anyOfPermissionsGranted } = useAuth();
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState } = useGlobalState();
+    const { backendUrl } = useSheshaApplication();
     const { publish } = usePubSub();
     const [current, setCurrent] = useState(0);
     const [component, setComponent] = useState(null);
@@ -40,16 +43,16 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
           return true;
         } else {
           console.error('Expected expression to be defined but it was found to be empty.');
-
           return false;
         }
       }
 
       /* tslint:disable:function-constructor */
-      const evaluated = new Function('data, formMode, globalState, moment', expression)(
+      const evaluated = new Function('data, formMode, globalState, http, moment', expression)(
         formData,
         formMode,
         globalState,
+        axiosHttp(backendUrl),
         moment
       );
 

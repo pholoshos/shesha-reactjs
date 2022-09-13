@@ -426,6 +426,25 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         <InputNumber min={1} max={24} defaultValue={13} step={1} />
       </FormItem>
 
+      <FormItem name="style" label="Style">
+        <CodeEditor
+          mode="dialog"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="style"
+          type={''}
+          id={''}
+          description="CSS Style"
+          exposedVariables={[
+            {
+              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+              name: 'data',
+              description: 'Form data',
+              type: 'object',
+            },
+          ]}
+        />
+      </FormItem>
+
       <SectionSeparator sectionName="Visibility" />
 
       <FormItem

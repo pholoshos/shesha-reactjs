@@ -164,24 +164,27 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const { router } = useShaRouting();
 
   const fetchDataTableDataInternal = (getDataPayload: IGetDataPayload) => {
-    const getDataUrl = `${backendUrl}${getDataPath || `${GENERIC_ENTITIES_ENDPOINT}/GetAll`}?${qs.stringify(getDataPayload)}`;
+    const getDataUrl = `${backendUrl}${getDataPath || `${GENERIC_ENTITIES_ENDPOINT}/GetAll`}?${qs.stringify(
+      getDataPayload
+    )}`;
 
     return axios({
       url: getDataUrl,
       method: 'GET',
       headers,
-    }).then(response => response.data as IResult<ITableDataResponse>)
-  }; 
+    }).then(response => response.data as IResult<ITableDataResponse>);
+  };
 
-  const expandFetchDataPayload = (payload: IGetDataPayloadInternal, providedState: IDataTableStateContext): IGetDataPayloadInternal => {
+  const expandFetchDataPayload = (
+    payload: IGetDataPayloadInternal,
+    providedState: IDataTableStateContext
+  ): IGetDataPayloadInternal => {
     // convert filters
     const allFilters = providedState?.predefinedFilters || [];
 
     let skipFetch = false;
 
-    const filters = payload.selectedFilterIds
-      .map(id => allFilters.find(f => f.id === id))
-      .filter(f => Boolean(f));
+    const filters = payload.selectedFilterIds.map(id => allFilters.find(f => f.id === id)).filter(f => Boolean(f));
 
     const expandedPayload: IGetDataPayloadInternal = { ...payload, selectedFilters: filters };
 
@@ -225,18 +228,14 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     }
 
     return { ...expandedPayload, skipFetch };
-
   };
 
   const convertFilters = (internalPayload: IGetDataPayloadInternal): string => {
     let allFilters = [];
-    if (internalPayload.selectedFilters && internalPayload.selectedFilters.length > 0)
-    {
+    if (internalPayload.selectedFilters && internalPayload.selectedFilters.length > 0) {
       internalPayload.selectedFilters.forEach(f => {
-        if (f.expression){
-          const jsonLogic = typeof(f.expression) === 'string'
-            ? JSON.parse(f.expression)
-            : f.expression;
+        if (f.expression) {
+          const jsonLogic = typeof f.expression === 'string' ? JSON.parse(f.expression) : f.expression;
 
           allFilters.push(jsonLogic);
         }
@@ -246,21 +245,17 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     const advancedFilter = advancedFilter2JsonLogic(internalPayload.advancedFilter, state.columns);
     //console.log('converted advanced filter', advancedFilter);
 
-    if (advancedFilter && advancedFilter.length > 0)
-      allFilters = allFilters.concat(advancedFilter);
+    if (advancedFilter && advancedFilter.length > 0) allFilters = allFilters.concat(advancedFilter);
 
-    if (allFilters.length === 0)
-      return null;
+    if (allFilters.length === 0) return null;
 
-    const jsonLogicFilters = allFilters.length === 1
-        ? allFilters[0]
-        : { and: allFilters };
+    const jsonLogicFilters = allFilters.length === 1 ? allFilters[0] : { and: allFilters };
 
     // console.log('allFilters', allFilters);
     // console.log('jsonLogicFilters', jsonLogicFilters);
 
     return JSON.stringify(jsonLogicFilters);
-  }
+  };
 
   const getFetchDataPayload = (internalPayload: IGetDataPayloadInternal, columns: ITableColumn[]): IGetDataPayload => {
     const payload: IGetDataPayload = {
@@ -269,19 +264,23 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       skipCount: (internalPayload.currentPage - 1) * internalPayload.pageSize,
       properties: convertDotNotationPropertiesToGraphQL(internalPayload.properties, columns),
       quickSearch: internalPayload.quickSearch,
-      sorting: internalPayload.sorting.filter(s => Boolean(s.id)).map(s => camelcaseDotNotation(s.id) + (s.desc ? " desc" : "")).join(","),
-      filter: convertFilters(internalPayload)
+      sorting: internalPayload.sorting
+        .filter(s => Boolean(s.id))
+        .map(s => camelcaseDotNotation(s.id) + (s.desc ? ' desc' : ''))
+        .join(','),
+      filter: convertFilters(internalPayload),
     };
 
     return payload;
-  }
+  };
 
-  const convertDataResponse = (response: IResult<ITableDataResponse>, pageSize: number): IResult<ITableDataInternalResponse> => {
-    if (!response.result)
-      return { ...response, result: null };
+  const convertDataResponse = (
+    response: IResult<ITableDataResponse>,
+    pageSize: number
+  ): IResult<ITableDataInternalResponse> => {
+    if (!response.result) return { ...response, result: null };
 
-    const internalResult: ITableDataInternalResponse =
-    {
+    const internalResult: ITableDataInternalResponse = {
       totalRows: response.result.totalCount,
       totalPages: Math.ceil(response.result.totalCount / pageSize),
       rows: response.result.items,
@@ -290,18 +289,20 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
     const internalResponse: IResult<ITableDataInternalResponse> = {
       ...response,
-      result: internalResult
+      result: internalResult,
     };
 
     return internalResponse;
-  }
+  };
 
   /**
    * Returns the fetch data table data or null in a case where `skipFetch: true`
    * @param payload
    * @returns Promise<IResult<ITableDataResponse>> or null
    */
-  const fetchDataTableData = (payload: IGetDataPayloadInternal): Promise<IResult<ITableDataInternalResponse>> | null => {
+  const fetchDataTableData = (
+    payload: IGetDataPayloadInternal
+  ): Promise<IResult<ITableDataInternalResponse>> | null => {
     // save current user configuration to local storage
     const userConfigToSave: IDataTableUserConfig = {
       pageSize: payload.pageSize,
@@ -340,7 +341,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       ...settingsToReturn,
     };
   }, [defaultFilter, userDTSettingsInner]);
-  
+
   // fetch table data when config is ready or something changed (selected filter, changed current page etc.)
   useEffect(() => {
     if (entityType) {
@@ -349,7 +350,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       refreshTable();
     }
   }, [
-    state.tableFilter/*?.length*/,
+    state.tableFilter /*?.length*/,
     state.currentPage,
     state.selectedStoredFilterIds,
     state.selectedPageSize,
@@ -516,19 +517,18 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
         .filter(c => c.dataType !== 'action')
         .map<IExcelColumn>(c => ({ propertyName: c.propertyName, label: c.caption }));
 
-      if (excelColumns.findIndex(c => c.propertyName == "id") === -1)
-      {
-        excelColumns = [{propertyName: 'id', label: 'Id'}, ...excelColumns];
-      }      
+      if (excelColumns.findIndex(c => c.propertyName == 'id') === -1) {
+        excelColumns = [{ propertyName: 'id', label: 'Id' }, ...excelColumns];
+      }
 
       const excelPayload: IExportExcelPayload = {
         ...getDataPayload,
         maxResultCount: 2147483647,
-        columns: excelColumns
+        columns: excelColumns,
       };
-      
+
       const excelEndpoint = getExportToExcelPath || `${GENERIC_ENTITIES_ENDPOINT}/ExportToExcel`;
-      const excelDataUrl =  `${backendUrl}${excelEndpoint}`;
+      const excelDataUrl = `${backendUrl}${excelEndpoint}`;
 
       axios({
         url: excelDataUrl,

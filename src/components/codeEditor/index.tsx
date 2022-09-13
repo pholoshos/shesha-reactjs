@@ -52,6 +52,7 @@ export const CodeEditor: FC<ICodeEditorProps> = (props) => {
                 mode="javascript" 
                 theme="monokai" 
                 {...restProps}
+                value={restProps.value ? restProps.value : ""} // note: have to change null/undefined to empty string to force re-rendering of the editor
             />
         </React.Suspense>
     )

@@ -25,7 +25,7 @@ const ConfigurableThemePage: FC<IConfigurableThemePageProps> = () => {
     (colorName: 'primaryColor' | 'errorColor' | 'warningColor' | 'successColor' | 'infoColor') => {
       const initialColor = theme?.application && theme?.application[colorName];
 
-      console.log('LOGS:: renderColor theme: ', initialColor, colorName);
+      //console.log('LOGS:: renderColor theme: ', initialColor, colorName);
 
       return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>

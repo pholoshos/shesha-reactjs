@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, useEffect, useMemo } from 'react';
+import React, { FC, useReducer, useContext, useEffect, useMemo, useRef } from 'react';
 import { useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
@@ -15,10 +15,11 @@ import { useGlobalState } from '../globalState';
 import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
 
-export interface SubFormProviderProps extends Omit<ISubFormProps, 'name'> {
+export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
   uniqueStateId?: string;
   name?: string;
   markup?: IFormDto['markup'];
+  value?: string | { id: string; [key: string]: any };
 }
 
 const SubFormProvider: FC<SubFormProviderProps> = ({
@@ -45,7 +46,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   onChange,
 }) => {
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
-  const { formData, formMode } = useForm();
+  const { formData = {}, formMode } = useForm();
   const { globalState } = useGlobalState();
   const { refetch: fetchForm, loading: isFetchingForm, data: fetchFormResponse, error: fetchFormError } = useFormGet({
     queryParams: { id: formPath?.id },
@@ -68,6 +69,14 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     })();
   };
 
+  const previousValue = useRef(value);
+
+  useEffect(() => {
+    if (typeof value === 'string' && typeof previousValue === 'string' && previousValue !== value) {
+      getData(value);
+    }
+  }, [value, globalState, formData]);
+
   const evaluatedQueryParams = useMemo(() => {
     if (formMode === 'designer') return {};
 
@@ -75,31 +84,32 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       entityType,
     };
 
-    if (properties) {
-      params.properties = properties?.join(' ');
-    }
+    params.properties = ['id', ...Array.from(new Set(properties || []))].join(' '); // Always include the `id` property/. Useful for deleting
 
     if (queryParams) {
       const getOnSubmitPayload = () => {
-        // tslint:disable-next-line:function-constructor
-        return new Function('data, query, globalState, value', queryParams)(
-          formData,
-          getQueryParams(),
-          globalState,
-          value
-        ); // Pass data, query, globalState
+        try {
+          // tslint:disable-next-line:function-constructor
+          return new Function('data, query, globalState', queryParams)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+        } catch (error) {
+          console.warn('SubFormProvider: ', error);
+          return {};
+        }
       };
 
       params = { ...params, ...(typeof getOnSubmitPayload() === 'object' ? getOnSubmitPayload() : {}) };
     }
 
     return params;
-  }, [queryParams, formMode]);
+  }, [queryParams, formMode, globalState]);
 
-  const handleFetchData = () => fetchEntity({ queryParams: evaluatedQueryParams });
+  const handleFetchData = (id?: string) =>
+    fetchEntity({ queryParams: id ? { ...evaluatedQueryParams, id } : evaluatedQueryParams });
 
   useEffect(() => {
     if (queryParams && formMode !== 'designer' && dataSource === 'api') {
+      console.log('LOGS:: evaluatedQueryParams', evaluatedQueryParams);
+
       handleFetchData();
     }
   }, [queryParams, evaluatedQueryParams]);
@@ -134,17 +144,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   //#endregion
 
   //#region CRUD functions
-  const getData = useDebouncedCallback(() => {
+  const getData = useDebouncedCallback((id?: string) => {
     if (dataSource === 'api') {
       if (beforeGet) {
         const evaluateBeforeGet = () => {
           // tslint:disable-next-line:function-constructor
-          return new Function('data, value, initialValues, globalState', beforeGet)(
-            formData,
-            value,
-            initialValues,
-            globalState
-          );
+          return new Function('data, initialValues, globalState', beforeGet)(formData, initialValues, globalState);
         };
 
         const evaluatedData = evaluateBeforeGet();
@@ -152,7 +157,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         onChange(evaluatedData);
       }
 
-      handleFetchData();
+      handleFetchData(id);
     }
   }, 300);
 
@@ -216,7 +221,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         description: 'Please make sure you have specified the Delete URL',
       });
     } else {
-      deleteHttp('', { queryParams: { id: value?.id || value?.Id } }).then(() => {
+      deleteHttp('', { queryParams: { id: typeof value === 'string' ? value : value?.id } }).then(() => {
         if (onDeleted) {
           const evaluateOnUpdated = () => {
             // tslint:disable-next-line:function-constructor

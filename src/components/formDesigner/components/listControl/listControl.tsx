@@ -36,6 +36,7 @@ import { DeleteFilled } from '@ant-design/icons';
 import classNames from 'classnames';
 import SectionSeparator from '../../../sectionSeparator';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import ConditionalWrap from '../../../conditionalWrapper';
 
 const ListControl: FC<IListControlProps> = ({
   containerId,
@@ -438,14 +439,21 @@ const ListControl: FC<IListControlProps> = ({
                   return (
                     <>
                       {fields?.map((field, index) => (
-                        <Checkbox
-                          className={classNames('sha-list-component-item-checkbox', {
-                            selected: state?.selectedItemIndexes?.includes(index),
-                          })}
-                          checked={state?.selectedItemIndexes?.includes(index)}
-                          onChange={() => {
-                            onSelect(index);
-                          }}
+                        <ConditionalWrap
+                          condition={selectionMode !== 'none'}
+                          wrap={children => (
+                            <Checkbox
+                              className={classNames('sha-list-component-item-checkbox', {
+                                selected: state?.selectedItemIndexes?.includes(index),
+                              })}
+                              checked={state?.selectedItemIndexes?.includes(index)}
+                              onChange={() => {
+                                onSelect(index);
+                              }}
+                            >
+                              {children}
+                            </Checkbox>
+                          )}
                         >
                           <div
                             className={classNames('sha-list-component-item', {
@@ -495,7 +503,7 @@ const ListControl: FC<IListControlProps> = ({
 
                             <Divider className="sha-list-component-divider" />
                           </div>
-                        </Checkbox>
+                        </ConditionalWrap>
                       ))}
                     </>
                   );

@@ -39,7 +39,7 @@ interface IEventNamesProps extends IFormItem {}
 // TODO: Make this configurable by exposing an EventsProvider that all components that can listen to events will be able to register them
 const EventNames: FC<IEventNamesProps> = props => {
   return (
-    <Select {...props}>
+    <Select {...props} allowClear showSearch>
       {EVENT_NAMES?.map(name => (
         <Select.Option value={name} key={name}>
           {camelCase(name)}

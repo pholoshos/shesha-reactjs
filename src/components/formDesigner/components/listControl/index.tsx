@@ -54,6 +54,7 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
       uniqueStateId,
       labelCol: 5,
       wrapperCol: 13,
+      selectionMode: 'single',
       deleteConfirmMessage: 'Are you sure you want to delete this item? Please note this action cannot be reversed',
       buttons: [
         {

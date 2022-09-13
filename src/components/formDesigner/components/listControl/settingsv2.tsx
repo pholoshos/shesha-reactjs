@@ -79,7 +79,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         <ButtonGroupSettingsModal />
       </FormItem>
 
-      <SectionSeparator sectionName="Data Source" />
+      <SectionSeparator sectionName="Data" />
 
       <FormItem
         name="dataSource"
@@ -109,10 +109,11 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
           </FormItem>
 
           <FormItem label="Query builder" name="filters">
-            <QueryBuilderWithModelType
-              modelType={state?.entityType}
-            >
-              <QueryBuilderPlainRenderer useExpression={state?.useExpression} value={state?.filters}></QueryBuilderPlainRenderer>
+            <QueryBuilderWithModelType modelType={state?.entityType}>
+              <QueryBuilderPlainRenderer
+                useExpression={state?.useExpression}
+                value={state?.filters}
+              ></QueryBuilderPlainRenderer>
             </QueryBuilderWithModelType>
           </FormItem>
         </Show>
@@ -343,11 +344,13 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         <InputNumber min={1} max={24} defaultValue={13} step={1} />
       </FormItem>
 
-      <SectionSeparator sectionName="Pagination" />
+      <SectionSeparator sectionName="Search" />
 
       <FormItem name="showQuickSearch" label="Show Quick Search" valuePropName="checked">
         <Checkbox />
       </FormItem>
+
+      <SectionSeparator sectionName="Pagination" />
 
       <FormItem name="showPagination" label="Show pagination" valuePropName="checked">
         <Checkbox />
@@ -361,7 +364,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
       <Show when={!state?.showPagination}>
         <FormItem name="maxHeight" label="Max height">
-          <InputNumber min={200} step={5} defaultValue={13} />
+          <InputNumber min={200} step={5} defaultValue={400} />
         </FormItem>
       </Show>
 

@@ -23,6 +23,7 @@ export interface IComponentsContainerProps {
   itemsLimit?: number;
   plainWrapper?: boolean;
   dynamicComponents?: IConfigurableFormComponent[];
+  style?: CSSProperties;
 }
 const ComponentsContainer: FC<IComponentsContainerProps> = ({
   containerId,
@@ -36,6 +37,7 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
   itemsLimit = -1,
   plainWrapper = false,
   dynamicComponents = [],
+  style: incomingStyle,
 }) => {
   const {
     getChildComponents,
@@ -47,6 +49,8 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
     formMode,
     // type,
   } = useForm();
+
+  console.log('incomingStyle: ', incomingStyle);
 
   const isDesignerMode = formMode === 'designer';
 
@@ -160,7 +164,7 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
             bubbleScroll={true}
             direction={direction}
             className={`sha-components-container-inner`}
-            style={style}
+            style={{ ...style, ...incomingStyle }}
             /* note: may be used form horizontal containers like toolbar or action buttons
       direction={(evt: SortableEvent, _target: HTMLElement, _dragEl: HTMLElement) => {
         const insideColumn = evt.target.className.includes('sha-designer-column');
@@ -174,7 +178,7 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
           </ReactSortable>
         </>
       ) : (
-        <div className="sha-components-container-inner" style={style}>
+        <div className="sha-components-container-inner" style={{ ...style, ...incomingStyle }}>
           {renderComponents()}
         </div>
       )}

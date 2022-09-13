@@ -120,7 +120,7 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       return queryParamObj;
     };
 
-    console.log('LOGS:: filter, evaluatedFilters, getQueryParams(): ', filter, evaluatedFilters, getQueryParams());
+    //console.log('LOGS:: filter, evaluatedFilters, getQueryParams(): ', filter, evaluatedFilters, getQueryParams());
 
     const getFetchedItemData = (
       item: object,

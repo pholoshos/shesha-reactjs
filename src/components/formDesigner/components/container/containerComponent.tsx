@@ -5,7 +5,7 @@ import { GroupOutlined } from '@ant-design/icons';
 import settingsFormJson from './settingsForm.json';
 import ComponentsContainer from '../../componentsContainer';
 import { useForm } from '../../../../providers/form';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 
 export type ContainerDirection = 'horizontal' | 'vertical';
 export type AlignItems =
@@ -70,7 +70,7 @@ const ContainerComponent: IToolboxComponent<IContainerComponentProps> = {
   name: 'Container',
   icon: <GroupOutlined />,
   factory: (model: IContainerComponentProps) => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden, formData } = useForm();
 
     if (isComponentHidden(model)) return null;
 
@@ -82,6 +82,7 @@ const ContainerComponent: IToolboxComponent<IContainerComponentProps> = {
         alignItems={model.direction === 'horizontal' ? model?.alignItems : null}
         justifyItems={model.direction === 'horizontal' ? model?.justifyItems : null}
         className={model.className}
+        style={getStyle(model?.style, formData)}
         // dynamicComponents={model?.isDynamic ? model?.components : []}
       />
     );

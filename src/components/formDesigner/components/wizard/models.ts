@@ -29,6 +29,16 @@ export interface ITabPaneProps extends IConfigurableItemBase {
   nextButtonActionScript?: string;
   doneButtonActionScript?: string;
 
+  nextEventName?: string;
+  backEventName?: string;
+  doneEventName?: string;
+  cancelEventName?: string;
+
+  cancelCustomEventNameToDispatch?: string;
+  doneCustomEventNameToDispatch?: string;
+  backCustomEventNameToDispatch?: string;
+  nextCustomEventNameToDispatch?: string;
+
   customVisibility?: string;
   customEnabled?: string;
   permissions?: string[];

@@ -62,13 +62,15 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
     const next = () => {
       const buttonAction = tabs[current].nextButtonAction;
       const actionScript = tabs[current].nextButtonActionScript;
+      const eventName = tabs[current].nextEventName;
+      const customEventNameToDispatch = tabs[current].nextCustomEventNameToDispatch;
 
       switch (buttonAction) {
         case 'executeScript':
           executeScript(actionScript);
           break;
         case 'dispatchAnEvent':
-          dispatchAnEvent('', '', '');
+          dispatchAnEvent(eventName, customEventNameToDispatch, '');
           break;
         default:
           break;
@@ -81,6 +83,8 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
     const back = () => {
       const buttonAction = tabs[current].backButtonAction;
       const actionScript = tabs[current].backButtonActionScript;
+      const eventName = tabs[current].backEventName;
+      const customEventNameToDispatch = tabs[current].backCustomEventNameToDispatch;
 
 
       switch (buttonAction) {
@@ -88,7 +92,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
           executeScript(actionScript);
           break;
         case 'dispatchAnEvent':
-          dispatchAnEvent('', '', '');
+          dispatchAnEvent(eventName, customEventNameToDispatch, '');
         default:
           break;
       }
@@ -100,6 +104,8 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
     const cancel = () => {
       const buttonAction = tabs[current].cancelButtonAction;
       const actionScript = tabs[current].cancelButtonActionScript;
+      const eventName = tabs[current].cancelEventName;
+      const customEventNameToDispatch = tabs[current].cancelCustomEventNameToDispatch;
 
 
       switch (buttonAction) {
@@ -107,7 +113,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
           executeScript(actionScript);
           break;
         case 'dispatchAnEvent':
-          dispatchAnEvent('', '', '');
+          dispatchAnEvent(eventName, customEventNameToDispatch, '');
         default:
           break;
       }
@@ -116,13 +122,15 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
     const done = () => {
       const buttonAction = tabs[current].doneButtonAction;
       const actionScript = tabs[current].doneButtonActionScript;
+      const eventName = tabs[current].doneEventName;
+      const customEventNameToDispatch = tabs[current].doneCustomEventNameToDispatch;
 
       switch (buttonAction) {
         case 'executeScript':
           executeScript(actionScript);
           break;
         case 'dispatchAnEvent':
-          dispatchAnEvent('', '', '');
+          dispatchAnEvent(eventName, customEventNameToDispatch, '');
         default:
           break;
       }

@@ -149,6 +149,27 @@
       ]
     },
     {
+      "id": "f8bd9677-514d-4848-aa3b-8db5cd1a0b5c",
+      "type": "eventNames",
+      "name": "nextEventName",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "label": "Event name",
+      "description": "This is the event that will be published when the button is dispatched",
+      "customVisibility": "return data.nextButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "3de7d642-c832-4d61-ba44-6d3d6a0ac6d3",
+      "type": "textField",
+      "name": "nextCustomEventNameToDispatch",
+      "label": "Custom Event",
+      "labelAlign": "right",
+      "parentId": "0bfa869c-57a8-4abc-93b1-d36d5215a004",
+      "hidden": false,
+      "customVisibility": "return data.nextEventName === 'CUSTOM_EVENT'",
+      "description": "This is the custom event that will be published when the button is clicked",
+      "validate": {}
+    },
+    {
       "id": "4f8e7cc9-ae85-4bfe-a820-db997b564845",
       "type": "codeEditor",
       "name": "onNextClicked",
@@ -227,6 +248,27 @@
       ]
     },
     {
+      "id": "1dc9889f-98c7-4392-a5c1-ed64d8cded18",
+      "type": "eventNames",
+      "name": "backEventName",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "label": "Event name",
+      "description": "This is the event that will be published when the button is dispatched",
+      "customVisibility": "return data.backButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "186d37d5-4041-47b4-8fe6-28a91b52e04b",
+      "type": "textField",
+      "name": "backCustomEventNameToDispatch",
+      "label": "Custom Event",
+      "labelAlign": "right",
+      "parentId": "0bfa869c-57a8-4abc-93b1-d36d5215a004",
+      "hidden": false,
+      "customVisibility": "return data.backEventName === 'CUSTOM_EVENT'",
+      "description": "This is the custom event that will be published when the button is clicked",
+      "validate": {}
+    },
+    {
       "id": "7f40dd38-fd9e-4439-be7a-13b666411aa1",
       "type": "codeEditor",
       "name": "onBackClicked",
@@ -282,6 +324,27 @@
       "validate": {}
     },
     {
+      "id": "15acb1bc-2d71-4507-b239-3a9018e6ac05",
+      "type": "eventNames",
+      "name": "doneEventName",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "label": "Event name",
+      "description": "This is the event that will be published when the button is dispatched",
+      "customVisibility": "return data.doneButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "f4f7f1b4-fa0e-4058-a0ba-821e0a66160a",
+      "type": "textField",
+      "name": "doneCustomEventNameToDispatch",
+      "label": "Custom Event",
+      "labelAlign": "right",
+      "parentId": "0bfa869c-57a8-4abc-93b1-d36d5215a004",
+      "hidden": false,
+      "customVisibility": "return data.doneEventName === 'CUSTOM_EVENT'",
+      "description": "This is the custom event that will be published when the button is clicked",
+      "validate": {}
+    },
+    {
       "id": "8bfd92f5-6c83-41ca-b5a2-88461612712a",
       "type": "codeEditor",
       "name": "doneButtonActionScript",
@@ -334,6 +397,27 @@
         { "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae", "label": "Execute Script", "value": "executeScript" },
         { "id": "b4952ca2-c648-4c79-bf3c-e2683bf3d509", "label": "Dispatch an Event", "value": "dispatchAnEvent" }
       ],
+      "validate": {}
+    },
+    {
+      "id": "76f6d2f4-f225-4b23-b119-8dd3f05765af",
+      "type": "eventNames",
+      "name": "cancelEventName",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "label": "Event name",
+      "description": "This is the event that will be published when the button is dispatched",
+      "customVisibility": "return data.cancelButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "b009df67-4b6d-452a-b717-f770ed08aa3d",
+      "type": "textField",
+      "name": "cancelCustomEventNameToDispatch",
+      "label": "Custom Event",
+      "labelAlign": "right",
+      "parentId": "0bfa869c-57a8-4abc-93b1-d36d5215a004",
+      "hidden": false,
+      "customVisibility": "return data.cancelEventName === 'CUSTOM_EVENT'",
+      "description": "This is the custom event that will be published when the button is clicked",
       "validate": {}
     },
     {

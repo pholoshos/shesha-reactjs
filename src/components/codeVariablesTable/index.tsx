@@ -32,5 +32,5 @@ export interface ICodeVariablesTableProps {
 }
 
 export const CodeVariablesTables: FC<ICodeVariablesTableProps> = ({ data }) => (
-  <Table columns={columns} dataSource={data} pagination={false} />
+  <Table columns={columns} dataSource={data} pagination={false} rowKey="id" />
 );

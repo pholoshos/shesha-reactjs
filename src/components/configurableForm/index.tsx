@@ -39,7 +39,7 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
             id={id}
             markup={markup}
             mode={mode}
-            path={path}
+            name={path}
             form={restProps.form}
             actions={actions}
             sections={sections}

@@ -19,7 +19,6 @@ import Mustache from 'mustache';
 import { ITableColumn, IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
 import Schema, { Rules, ValidateSource } from 'async-validator';
 import { DEFAULT_FORM_SETTINGS, IFormSettings } from './contexts';
-import { formGet, formGetByPath } from '../../apis/form';
 import { IPropertyMetadata } from '../../interfaces/metadata';
 import { nanoid } from 'nanoid';
 import { Rule, RuleObject } from 'antd/lib/form';
@@ -143,17 +142,6 @@ export const componentsFlatStructureToTree = (
   processComponent(tree, ROOT_COMPONENT_KEY);
 
   return tree;
-};
-
-/**
- * Load form from the back-end
- */
-export const loadFormById = (id: string) => {
-  // @ts-ignore
-  return formGet({ id });
-};
-export const loadFormByPath = (path: string) => {
-  return formGetByPath({ path }, {});
 };
 
 export const getCustomVisibilityFunc = ({ customVisibility, name }: IConfigurableFormComponent) => {

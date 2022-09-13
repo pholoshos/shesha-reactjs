@@ -15,7 +15,7 @@ import { GenericIndexPageDefault, IIndexTableFullProps, OnSuccessActionType } fr
 import { IShaDataTableProps } from '../../../interfaces';
 import { DataTableFullInstance } from '../../../providers/dataTable/contexts';
 
-import { useCreateForm } from './defaults/utils';
+//import { useCreateForm } from './defaults/utils';
 
 export interface IFormsIndexPageProps {
   tableProps?: Omit<IIndexTableFullProps, 'id'>;
@@ -176,7 +176,7 @@ const FormsIndexPage: FC<IFormsIndexPageProps> = ({ tableProps }) => {
         }
         createModalProps={{
           title: 'Create Form',
-          updater: useCreateForm,
+          updater: () => null,//useCreateForm,
           formPath: `/settings/forms/create`,
           OnSuccessAction: OnSuccessActionType.GoToUrl,
           onSuccessUrl: data => {

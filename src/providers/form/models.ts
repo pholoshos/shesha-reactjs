@@ -1,6 +1,5 @@
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ReactNode } from 'react';
-import { FormDto } from '../../apis/form';
 import { IAsyncValidationError } from '../../interfaces';
 import { IFormSettings } from './contexts';
 
@@ -158,8 +157,9 @@ export interface IFlatComponentsStructure {
 
 export interface IFormProps extends IFlatComponentsStructure {
   id?: string;
-  path?: string;
+  module?: string;
   name?: string;
+  label?: string;
   description?: string;
   components: IConfigurableFormComponent[];
   formSettings: IFormSettings;
@@ -218,6 +218,37 @@ export interface IFormSection {
   name: string;
   /** Action body */
   body: (data?: any) => ReactNode;
+}
+
+/**
+ * Form DTO
+ */
+ export interface FormDto {
+  id?: string;
+  /**
+   * Form name
+   */
+  name?: string;
+  /**
+   * Form label
+   */
+  label?: string | null;
+  /**
+   * Description
+   */
+  description?: string | null;
+  /**
+   * Form markup (components) in JSON format
+   */
+  markup?: string | null;
+  /**
+   * Type of the form model
+   */
+  modelType?: string | null;
+  /**
+   * Type
+   */
+  type?: string | null;
 }
 
 export interface IFormDto extends Omit<FormDto, 'markup'> {

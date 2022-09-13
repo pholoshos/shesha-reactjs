@@ -36,6 +36,7 @@ interface IQueryParams {
 
 export interface IAutocompleteProps extends IConfigurableFormComponent {
   entityTypeShortAlias?: string;
+  entityDisplayProperty?: string;
   hideBorder?: boolean;
   dataSourceUrl?: string;
   dataSourceType: AutocompleteDataSourceType;
@@ -166,6 +167,7 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
 
     const autocompleteProps = {
       typeShortAlias: model?.entityTypeShortAlias,
+      entityDisplayProperty: model?.entityDisplayProperty,
       allowInherited: true /*hardcoded for now*/,
       disabled,
       bordered: !model.hideBorder,

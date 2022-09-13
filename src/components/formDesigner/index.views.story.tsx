@@ -21,7 +21,7 @@ const configurableFormProps: IConfigurableFormProps = {
 const BasicTemplate: Story<IConfigurableFormProps> = ({ path, mode, id }) => {
   return (
     <StoryApp>
-      <FormProvider id={id} path={path} mode={mode}>
+      <FormProvider id={id} name={path} mode={mode}>
         <FormDesigner />
       </FormProvider>
     </StoryApp>

@@ -7,7 +7,7 @@ import { FormSettingsEditor } from './formSettingsEditor';
 export interface IFormHeaderProps {}
 
 export const FormDesignerHeader: FC<IFormHeaderProps> = () => {
-  const { name, path } = useForm();
+  const { name, name: path } = useForm();
   const [settingsVisible, setSettingsVisible] = useState(false);
 
   const onSettingsClick = () => {

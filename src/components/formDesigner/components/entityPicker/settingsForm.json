@@ -234,8 +234,8 @@
             "required": true
           },
           "dataSourceType": "entitiesList",
-          "dataSourceUrl": "/api/services/app/Metadata/EntityTypeAutocomplete",
-          "entityTypeShortAlias": "Shesha.Framework.Form",
+          "entityTypeShortAlias": "Shesha.Core.FormConfiguration",
+          "entityDisplayProperty": "configuration.name",
           "useRawValues": true
         },
         {

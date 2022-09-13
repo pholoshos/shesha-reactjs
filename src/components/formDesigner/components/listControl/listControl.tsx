@@ -3,7 +3,6 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutate } from 'restful-react';
 import { EntitiesGetAllQueryParams, useEntitiesGetAll } from '../../../../apis/entities';
 import { FormItemProvider, SubFormProvider, useForm, useGlobalState } from '../../../../providers';
-import { useFormMarkup } from '../../../../providers/form/hooks';
 import { getQueryParams } from '../../../../utils/url';
 import camelCaseKeys from 'camelcase-keys';
 import { IListControlProps, IListComponentRenderState } from './models';
@@ -37,13 +36,15 @@ import classNames from 'classnames';
 import SectionSeparator from '../../../sectionSeparator';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import ConditionalWrap from '../../../conditionalWrapper';
+import { useFormConfiguration } from '../../../../providers/form/api';
 
 const ListControl: FC<IListControlProps> = ({
   containerId,
   dataSource,
   showPagination,
   paginationDefaultPageSize = 5,
-  formPath, // Render embedded form if this option is provided
+  formModule,
+  formName, // Render embedded form if this option is provided
   value,
   name,
   onChange,
@@ -67,7 +68,7 @@ const ListControl: FC<IListControlProps> = ({
   allowRemoteDelete,
   selectionMode,
 }) => {
-  const { markup, error: fetchFormError } = useFormMarkup(formPath?.id);
+  const { formConfiguration, error: fetchFormError } = useFormConfiguration({ name: formName, module: formModule, lazy: !Boolean(formName) });
   const [state, setState] = useState<IListComponentRenderState>({
     maxResultCount: paginationDefaultPageSize,
     selectedItemIndexes: [],
@@ -348,7 +349,7 @@ const ListControl: FC<IListControlProps> = ({
     return (
       <SubFormProvider
         name={localName}
-        markup={markup}
+        markup={formConfiguration?.markup}
         properties={[]}
         labelCol={localLabelCol}
         wrapperCol={localWrapperCol}
@@ -418,7 +419,7 @@ const ListControl: FC<IListControlProps> = ({
           <ComponentsContainer containerId={containerId} />
         </FormItemProvider>
       </Show>
-      <Show when={isInDesignerMode && renderStrategy === 'externalForm' && Boolean(formPath?.id)}>
+      <Show when={isInDesignerMode && renderStrategy === 'externalForm' && Boolean(formName)}>
         {renderSubForm('__IGNORE__')}
       </Show>
 
@@ -478,7 +479,7 @@ const ListControl: FC<IListControlProps> = ({
                               </FormItemProvider>
                             </Show>
 
-                            <Show when={Boolean(formPath?.id) && Boolean(markup) && renderStrategy === 'externalForm'}>
+                            <Show when={Boolean(formName) && Boolean(formConfiguration?.markup) && renderStrategy === 'externalForm'}>
                               {renderSubForm(
                                 `${index}`,
                                 labelCol && { span: labelCol },

@@ -6,8 +6,6 @@ import {
   IComponentUpdatePayload,
   ISetVisibleComponentsPayload,
   IFormLoadPayload,
-  IFormLoadByIdPayload,
-  IFormLoadByPathPayload,
   IUpdateChildComponentsPayload,
   ISetFormDataPayload,
   IRegisterActionsPayload,
@@ -242,8 +240,8 @@ const reducer = handleActions<IFormStateContext, any>(
 
       return {
         ...state,
-        id: (payload as IFormLoadByIdPayload)?.id || state.id,
-        path: (payload as IFormLoadByPathPayload)?.path || state.id,
+        module: payload.module,
+        name: payload.name,
       };
     },
 
@@ -253,8 +251,9 @@ const reducer = handleActions<IFormStateContext, any>(
       return {
         ...state,
         id: payload.id,
-        path: payload.path,
+        module: payload.module,
         name: payload.name,
+        label: payload.label,
         description: payload.description,
         allComponents: payload.allComponents,
         componentRelations: payload.componentRelations,

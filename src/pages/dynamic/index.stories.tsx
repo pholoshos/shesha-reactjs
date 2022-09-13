@@ -33,14 +33,18 @@ export const FormsIndexPage = addStory(Template, {
   mode: 'edit',
 });
 
+export const MissingPage = addStory(Template, {
+  path: 'dummy',
+  mode: 'edit',
+});
+
 export const OtpSettings = addStory(Template, {
   path: 'mazi-form-view',
   mode: 'edit',
 });
 
-export const PersonEdit = addStory(Template, {
-  path: 'mazi-form-view',
-  id: 'a91b07fc-6f21-4fb5-a709-4f4357f1271f',
+export const PersonForm = addStory(Template, {
+  path: 'person-form',
   mode: 'edit',
 });
 

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useGet } from 'restful-react';
 import { GENERIC_ENTITIES_ENDPOINT } from '../constants';
 import { IAbpWrappedGetEntityListResponse, EntityData, IGetAllPayload } from '../interfaces/gql';
+import { convertDotNotationPropertiesToGraphQL } from '../providers/form/utils';
 import { getEntityFilterByIds } from './graphQl';
 
 interface AutocompleteReturn {
@@ -38,7 +39,7 @@ const buildFilterById = (value: AutocompleteValueType): string => {
  */
 export const useEntityAutocomplete = (props: IAutocompleteProps): AutocompleteReturn => {
   const displayProperty = props.displayProperty ?? '_displayName';
-  const properties = `id ${displayProperty}`;
+  const properties = convertDotNotationPropertiesToGraphQL(['id', displayProperty], []);
   const getListFetcherQueryParams = (term: string): IAutocompletePayload => {
     return {
       skipCount: 0,

@@ -15,10 +15,10 @@ import {
   ConfigurableFormInstance,
   IFormActionsContext,
   IFormSettings,
-  DEFAULT_FORM_SETTINGS,
   IAddDataPropertyPayload,
   ISetEnabledComponentsPayload,
   IComponentAddFromTemplatePayload,
+  DEFAULT_FORM_SETTINGS,
 } from './contexts';
 import { IFormProps, IFormActions, FormMarkup, FormMarkupWithSettings, IFormSections, FormMode } from './models';
 import { getFlagSetters } from '../utils/flagsSetters';
@@ -53,7 +53,7 @@ import {
   componentAddFromTemplateAction,
   /* NEW_ACTION_IMPORT_GOES_HERE */
 } from './actions';
-import { useFormGet, useFormGetByPath, useFormUpdateMarkup, FormUpdateMarkupInput } from '../../apis/form';
+import { useFormConfigurationUpdateMarkup, FormUpdateMarkupInput } from '../../apis/formConfiguration';
 import {
   componentsTreeToFlatStructure,
   componentsFlatStructureToTree,
@@ -79,10 +79,12 @@ import { IDataSource } from '../formDesigner/models';
 import { useMetadataDispatcher } from '../../providers';
 import { FormPubsubConstants } from './pubSub';
 import { useSubscribe } from '../../hooks';
+import { useFormConfiguration } from './api';
 
 export interface IFormProviderProps {
   id?: string;
-  path?: string;
+  name?: string;
+  module?: string;
   uniqueStateId?: string;
   markup?: FormMarkup;
   mode: FormMode;
@@ -97,7 +99,8 @@ export interface IFormProviderProps {
 const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   children,
   id,
-  path,
+  module,
+  name,
   markup,
   mode = 'readonly',
   form,
@@ -125,7 +128,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   const initial: IFormStateContext = {
     ...FORM_CONTEXT_INITIAL_STATE,
     id,
-    path,
+    name,
     formMode: mode,
     components: formComponents || [],
     form,
@@ -144,19 +147,18 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     future: [],
   });
 
-  const fetcherById = useFormGet({ lazy: true, queryParams: { id } });
-  const fetcherByPath = useFormGetByPath({ lazy: true });
-  const { loading: isFetchingFormInfo, error: fetchingFormInfoError, data: fetchingFormInfoResponse } = path
-    ? fetcherByPath
-    : fetcherById;
+  const {
+    refetch: fetchFormMarkup,
+    loading: isFetchingMarkup,
+    error: fetchMarkupError,
+    formConfiguration
+  } = useFormConfiguration({ module: module, name: name, lazy: true });
+
 
   const doFetchFormInfo = () => {
-    if (id) {
-      dispatch(loadRequestAction({ id }));
-      fetcherById.refetch({});
-    } else if (path) {
-      dispatch(loadRequestAction({ path }));
-      fetcherByPath.refetch({ queryParams: { path } });
+    if (name) {
+      dispatch(loadRequestAction({ module, name }));
+      fetchFormMarkup();
     }
   };
 
@@ -164,41 +166,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     if (markup) return;
 
     doFetchFormInfo();
-  }, [id, path, markup]);
-
-  const EMPTY_PARSED_FORM: FormMarkupWithSettings = {
-    components: [],
-    formSettings: DEFAULT_FORM_SETTINGS,
-  };
-
-  const parseForm = (formJson: string): FormMarkupWithSettings => {
-    try {
-      const parsed = formJson ? JSON.parse(formJson) : null;
-
-      if (parsed) {
-        // old format: array of components
-        if (Array.isArray(parsed)) {
-          return {
-            components: parsed,
-            formSettings: DEFAULT_FORM_SETTINGS,
-          } as FormMarkupWithSettings;
-        }
-
-        // new format
-        if (parsed.components && parsed.formSettings) {
-          return {
-            components: parsed.components,
-            formSettings: parsed.formSettings,
-          } as FormMarkupWithSettings;
-        }
-      }
-
-      return EMPTY_PARSED_FORM;
-    } catch (error) {
-      console.error('Failed to parse form. Error: ' + error);
-      return EMPTY_PARSED_FORM;
-    }
-  };
+  }, [id, module, name, markup]);
 
   useEffect(() => {
     if (markup) {
@@ -206,41 +174,38 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
       const newFlatComponents = componentsTreeToFlatStructure(toolboxComponents, newFormProps.components);
       dispatch(changeMarkupAction(newFlatComponents));
     } else {
-      if (!isFetchingFormInfo) {
-        if (fetchingFormInfoResponse) {
-          const fetchedForm = (fetchingFormInfoResponse as any).result;
+      if (!isFetchingMarkup) {
+        if (formConfiguration) {
+          const components = formConfiguration.markup?.components ?? [];
+          const formSettings: IFormSettings = formConfiguration.markup?.formSettings ?? DEFAULT_FORM_SETTINGS;
+          const newFlatComponents = componentsTreeToFlatStructure(toolboxComponents, components);
 
-          if (fetchedForm) {
-            const parsedForm = parseForm(fetchedForm.markup);
+          const formContent: IFormProps = {
+            // todo: use partial for loading
+            id: formConfiguration.id,
+            name: formConfiguration.name,
+            label: formConfiguration.label,
+            description: formConfiguration.description,
 
-            const newFlatComponents = componentsTreeToFlatStructure(toolboxComponents, parsedForm.components);
+            components: components,
+            formSettings: formSettings,
+            ...newFlatComponents,
+          };
 
-            const formContent: IFormProps = {
-              // todo: use partial for loading
-              id: fetchedForm.id,
-              path: fetchedForm.path,
-              name: fetchedForm.name,
-              description: fetchedForm.description,
-              components: parsedForm.components,
-              formSettings: parsedForm.formSettings,
-              ...newFlatComponents,
-            };
-
-            // parse json content
-            dispatch((dispatchThunk, _getState) => {
-              dispatchThunk(loadSuccessAction(formContent));
-              dispatchThunk(ActionCreators.clearHistory());
-            });
-          }
+          // parse json content
+          dispatch((dispatchThunk, _getState) => {
+            dispatchThunk(loadSuccessAction(formContent));
+            dispatchThunk(ActionCreators.clearHistory());
+          });
         }
 
-        if (fetchingFormInfoError) {
+        if (fetchMarkupError) {
           // todo: handle error messages
           dispatch(loadErrorAction());
         }
       }
     }
-  }, [isFetchingFormInfo, fetchingFormInfoResponse, fetchingFormInfoError, markup]);
+  }, [isFetchingMarkup, formConfiguration, fetchMarkupError, markup]);
 
   useEffect(() => {
     if (mode !== state.present.formMode) {
@@ -316,7 +281,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   };
 
   // todo: review usage of useFormUpdateMarkup after
-  const { mutate: saveFormHttp /*, loading: saveFormInProgress, error: saveFormError*/ } = useFormUpdateMarkup({});
+  const { mutate: saveFormHttp } = useFormConfigurationUpdateMarkup({});
 
   const saveForm = async (): Promise<void> => {
     if (!state.present.id) return Promise.reject();
@@ -409,7 +374,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   //#endregion
 
   const setFormData = (payload: ISetFormDataPayload) => {
-    
+
     dispatch((dispatchThunk, getState) => {
       dispatchThunk(setFormDataAction(payload));
       const newState = getState().present;

@@ -1,7 +1,4 @@
-import { UseMutateReturn } from 'restful-react';
-import { FormDto, useFormCreate, UseFormCreateProps } from '../../../../apis/form';
 import { generateNewKey } from '../../../../components/formDesigner/components/dataTable/table/utils';
-import { evaluateString } from '../../../../providers/form/utils';
 import blankViewMarkup from '../defaults/markups/blankView.json';
 import dashboardViewMarkup from '../defaults/markups/dashboardView.json';
 import detailsViewMarkup from '../defaults/markups/detailsView.json';
@@ -44,29 +41,6 @@ export interface IFormMarkupWithSettings {
   columns?: [];
   settings: IFormSettings;
 }
-
-export const useCreateForm = (props: UseFormCreateProps): UseMutateReturn<FormDto, FormDto, FormDto, any, void> => {
-  const hook = useFormCreate(props);
-
-  const mutate = (data: FormDto) => {
-    const json = getDefaultFormMarkup(data.type as ViewType);
-
-    let markup: any;
-
-    if (typeof json === 'object') {
-      const markupString = JSON.stringify(json);
-
-      markup = evaluateString(markupString, { modelType: data?.modelType });
-    }
-
-    return hook.mutate({
-      ...data,
-      markup: typeof markup === 'object' ? JSON.stringify(markup) : markup,
-    });
-  };
-
-  return { ...hook, mutate };
-};
 
 export type ViewType = 'details' | 'table' | 'form' | 'blank' | 'masterDetails' | 'menu' | 'dashboard';
 

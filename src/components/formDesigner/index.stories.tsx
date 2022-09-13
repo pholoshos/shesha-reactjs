@@ -3,8 +3,6 @@ import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
 import FormDesigner from './formDesigner';
 import { FormProvider, MetadataDispatcherProvider } from '../../providers';
-// @ts-ignore
-import { formGetByPath, formTestDelayGet, formTestDelayPost, formUpdateMarkup } from '../../apis/form';
 import { addStory } from '../../stories/utils';
 import { FormMode } from '../../providers/form/models';
 import StoryApp from '../storyBookApp';
@@ -15,16 +13,16 @@ export default {
 } as Meta;
 
 export interface IFormDesignerStoryProps {
-  formPath?: string;
-  formId?: string;
+  module?: string;
+  formName: string;
   mode?: FormMode;
 }
 
 // Create a master template for mapping args to render the Button component
-const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formPath, formId, mode = 'designer' }) => (
+const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ module, formName, mode = 'designer' }) => (
   <StoryApp>
     <MetadataDispatcherProvider>
-      <FormProvider path={formPath} id={formId} mode={mode}>
+      <FormProvider module={module} name={formName} mode={mode}>
         <FormDesigner />
       </FormProvider>
     </MetadataDispatcherProvider>
@@ -32,25 +30,33 @@ const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formPath, formId, mo
 );
 
 export const PersonEdit = addStory(DesignerTemplate, {
-  formPath: '/persons/edit',
+  formName: 'person-form',
 });
 
 export const PersonDetails = addStory(DesignerTemplate, {
-  formPath: '/persons/details',
+  formName: '/persons/details',
 });
 
 export const FormsIndexOld = addStory(DesignerTemplate, {
-  formPath: 'forms-v2',
+  formName: 'forms-v2',
 });
 
 export const WizardForm = addStory(DesignerTemplate, {
-  formPath: 'mazi-form-view',
+  formName: 'mazi-form-view',
 });
 
 export const FormsIndexNew = addStory(DesignerTemplate, {
-  formPath: 'forms',
+  formName: 'forms',
+});
+
+export const FormCreateNew = addStory(DesignerTemplate, {
+  formName: 'form-create',
+});
+
+export const Autocomplete = addStory(DesignerTemplate, {
+  formName: 'autocomplete',
 });
 
 export const Playground = addStory(DesignerTemplate, {
-  formPath: 'playground-form',
+  formName: 'playground-form',
 });

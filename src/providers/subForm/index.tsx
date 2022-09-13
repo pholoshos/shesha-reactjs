@@ -3,7 +3,6 @@ import { useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
 import { useSubscribe } from '../../hooks';
-import { useFormGet } from '../../apis/form';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
 import { getQueryParams } from '../../utils/url';
@@ -14,6 +13,7 @@ import { message, notification } from 'antd';
 import { useGlobalState } from '../globalState';
 import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
+import { useFormConfiguration } from '../form/api';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
   uniqueStateId?: string;
@@ -25,7 +25,8 @@ export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'valu
 const SubFormProvider: FC<SubFormProviderProps> = ({
   children,
   value,
-  formPath,
+  formName,
+  formModule,
   getUrl,
   postUrl,
   putUrl,
@@ -48,10 +49,14 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
   const { formData = {}, formMode } = useForm();
   const { globalState } = useGlobalState();
-  const { refetch: fetchForm, loading: isFetchingForm, data: fetchFormResponse, error: fetchFormError } = useFormGet({
-    queryParams: { id: formPath?.id },
-    lazy: true,
-  });
+
+  const { 
+    refetch: fetchForm,
+    formConfiguration: fetchFormResponse,
+    loading: isFetchingForm,
+    error: fetchFormError
+   } = useFormConfiguration({ module: formModule, name: formName, lazy: true });
+
   const {
     refetch: fetchEntity,
     data: fetchEntityResponse,
@@ -229,26 +234,18 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   //#region Fetch Form
   useEffect(() => {
-    if (formPath?.id && !markup) {
+    if (formName && !markup) {
       fetchForm();
     }
 
-    if (!formPath?.id && markup) {
+    if (!formName && markup) {
       dispatch(setMarkupWithSettingsAction(markup));
     }
-  }, [formPath?.id, markup]); //
-
+  }, [formName, markup]); //
+  
   useEffect(() => {
     if (!isFetchingForm && fetchFormResponse) {
-      const result = (fetchFormResponse as any)?.result;
-
-      const markup = result?.markup;
-
-      const formDto = result as IFormDto;
-
-      if (markup) formDto.markup = JSON.parse(markup);
-
-      dispatch(setMarkupWithSettingsAction(formDto?.markup));
+      dispatch(setMarkupWithSettingsAction(fetchFormResponse.markup));
     }
   }, [fetchFormResponse, isFetchingForm]);
 

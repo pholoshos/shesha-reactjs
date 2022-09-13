@@ -87,7 +87,8 @@ export interface IFormStateContext
     IHasComponentGroups,
     IFormProps {
   id?: string;
-  path?: string;
+  module?: string;
+  name?: string;
   formMode: FormMode;
   type?: ViewType;
   isDebug: boolean;
@@ -168,20 +169,16 @@ export interface ISetSelectedComponentPayload {
   dataSourceId: string;
 }
 
-export interface IFormLoadByIdPayload {
-  id: string;
-}
-
-export interface IFormLoadByPathPayload {
-  path: string;
-}
-
 export interface IRegisterActionsPayload {
   id: string /** component id */;
   actions: IFormActions /** component actions */;
 }
 
-export type IFormLoadPayload = IFormLoadByIdPayload | IFormLoadByPathPayload;
+export interface IFormLoadPayload {
+  module: string;
+  name: string;
+  version?: number;
+}
 
 export interface IFormActionsContext
   extends IFlagsSetters<IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags> {

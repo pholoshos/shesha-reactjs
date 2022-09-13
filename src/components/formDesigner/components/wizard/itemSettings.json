@@ -215,6 +215,44 @@
         { "name": "moment", "description": "The moment.js object", "type": "object" }
       ]
     },
+
+    {
+      "id": "b20d139e-0869-482a-8171-ffa1b09b4113",
+      "type": "sectionSeparator",
+      "name": "doneButtonSeparatorVisibility",
+      "parentId": "root",
+      "label": "Done Button"
+    },
+    {
+      "id": "bbdd219c-8b72-48bb-ba66-ebbae69edce2",
+      "type": "textField",
+      "name": "doneButtonText",
+      "label": "Text",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
+    {
+      "id": "f7499633-d8ba-433e-91bc-0770ac37c65e",
+      "type": "codeEditor",
+      "name": "doneButtonActionScript",
+      "label": "Action Script",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
+        { "name": "result", "description": "only available after a successful http post", "type": "object" },
+        { "name": "message", "description": "A notification object by Ant", "type": "object" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ]
+    },
     
     {
       "id": "b20d139e-0869-482a-8171-ffa1b09b4113",

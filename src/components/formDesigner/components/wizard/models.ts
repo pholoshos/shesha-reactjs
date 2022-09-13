@@ -9,8 +9,17 @@ export interface ITabPaneProps extends IConfigurableItemBase {
   subTitle: string;
   description: string;
   allowCancel: boolean;
+
+  cancelButtonText: string;
   nextButtonText: string;
   backButtonText: string;
+  doneButtonText: string;
+
+  cancelButtonActionScript?: string;
+  backButtonActionScript?: string;
+  nextButtonActionScript?: string;
+  doneButtonActionScript?: string;
+
   customVisibility?: string;
   customEnabled?: string;
   permissions?: string[];

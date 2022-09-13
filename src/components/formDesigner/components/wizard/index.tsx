@@ -56,13 +56,43 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
     };
 
     const next = () => {
+      const actionScript = tabs[current].nextButtonActionScript;
+
+      if (actionScript)
+        executeExpression(actionScript);
+
       setCurrent(current + 1);
       setComponent(tabs[current].components);
     };
 
     const back = () => {
+      const actionScript = tabs[current].backButtonActionScript;
+
+      if (actionScript)
+        executeExpression(actionScript);
+
       setCurrent(current - 1);
       setComponent(tabs[current].components);
+    };
+
+    const cancel = () => {
+      const actionScript = tabs[current].cancelButtonActionScript;
+
+      if (actionScript)
+        executeExpression(actionScript);
+
+      // setCurrent(0);
+      // setComponent(null);
+    };
+
+    const done = () => {
+      const actionScript = tabs[current].doneButtonActionScript;
+
+      if (actionScript)
+        executeExpression(actionScript);
+
+      // setCurrent(0);
+      // setComponent(null);
     };
 
     return (
@@ -122,8 +152,8 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         <div>
           <Space size={'middle'}>
             {tabs[current].allowCancel === true && (
-              <Button>
-                Cancel
+              <Button onClick={() => cancel()}>
+                {tabs[current].cancelButtonText ? (tabs[current].cancelButtonText) : ('Cancel')}
               </Button>
             )}
             {current > 0 && (
@@ -137,8 +167,8 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
               </Button>
             )}
             {current === tabs.length - 1 && (
-              <Button type="primary">
-                Done
+              <Button type="primary" onClick={() => done()}>
+                {tabs[current].doneButtonText ? (tabs[current].doneButtonText) : ('Done')}
               </Button>
             )}
           </Space>
@@ -158,8 +188,10 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         subTitle: 'Tab 1',
         description: 'Tab 1',
         allowCancel: false,
+        cancelButtonText: 'Cancel',
         nextButtonText: 'Next',
         backButtonText: 'Back',
+        doneButtonText: 'Done',
         key: 'tab1',
         components: [],
         itemType: 'item'

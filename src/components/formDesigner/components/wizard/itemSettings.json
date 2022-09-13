@@ -33,22 +33,6 @@
       "parentId": "root"
     },
     {
-      "id": "737ae9b8-61d2-4ecd-9891-feaaec244a3a",
-      "type": "textField",
-      "name": "nextButtonText",
-      "label": "Next Button Text",
-      "labelAlign": "right",
-      "parentId": "root"
-    },
-    {
-      "id": "ed059dec-4f1b-408b-8739-05f0242d662a",
-      "type": "textField",
-      "name": "backButtonText",
-      "label": "Back Button Text",
-      "labelAlign": "right",
-      "parentId": "root"
-    },
-    {
       "id": "4bb6cdc7-0657-4e41-8c50-effe14d0dc96",
       "type": "textField",
       "name": "key",
@@ -65,17 +49,6 @@
       "parentId": "root"
     },
     {
-      "id": "caed91a6-3e9e-4f04-9800-7d9c7a3ffb80",
-      "type": "checkbox",
-      "name": "animated",
-      "label": "Animated",
-      "labelAlign": "right",
-      "parentId": "root",
-      "hidden": false,
-      "customVisibility": null,
-      "validate": {}
-    },
-    {
       "id": "4595a895-5078-4986-934b-c5013bf315ad",
       "type": "iconPicker",
       "name": "icon",
@@ -84,17 +57,6 @@
       "parentId": "root",
       "hidden": false,
       "settingsValidationErrors": []
-    },
-    {
-      "id": "81da0da4-00db-4d6b-9f16-b364a6f9d9e1",
-      "type": "checkbox",
-      "name": "forceRender",
-      "label": "Force Render",
-      "labelAlign": "right",
-      "parentId": "root",
-      "hidden": false,
-      "customVisibility": null,
-      "validate": {}
     },
     {
       "id": "d1e06550-826c-4db9-9b9f-ce05e565f64f",
@@ -108,15 +70,220 @@
       "validate": {}
     },
     {
-      "id": "a8b12318-65a5-4b98-bcce-834b6a40b2fd",
+      "id": "ba280e2b-a604-4e3e-acab-cfde391d99e0",
       "type": "checkbox",
-      "name": "destroyInactiveTabPane",
-      "label": "Destroy Inactive Wizard Step",
+      "name": "allowCancel",
+      "label": "Allow Cancel",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "defaultValue": false,
+      "customVisibility": null,
+      "validate": {}
+    },
+    {
+      "id": "7146e31e-056d-4870-a7d3-898afe88f6c9",
+      "type": "checkbox",
+      "name": "canSkipTo",
+      "label": "Can Skip To",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "defaultValue": false,
+      "customVisibility": null,
+      "validate": {}
+    },
+
+    {
+      "id": "4d2ca388-22ef-4e24-924b-2c2e3a7e0161",
+      "type": "sectionSeparator",
+      "name": "nextButtonSeparatorVisibility",
+      "parentId": "root",
+      "label": "Next Button"
+    },
+    {
+      "id": "737ae9b8-61d2-4ecd-9891-feaaec244a3a",
+      "type": "textField",
+      "name": "nextButtonText",
+      "label": "Text",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
+    {
+      "id": "1cd244c1-d2f4-40fb-937a-cd223af48b7e",
+      "type": "codeEditor",
+      "name": "nextButtonActionScript",
+      "label": "Action Script",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
+        { "name": "result", "description": "only available after a successful http post", "type": "object" },
+        { "name": "message", "description": "A notification object by Ant", "type": "object" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ]
+    },
+    {
+      "id": "4f8e7cc9-ae85-4bfe-a820-db997b564845",
+      "type": "codeEditor",
+      "name": "onNextClicked",
+      "label": "On Next Clicked",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "validate": {}
+      "description": "Enter custom even handler on changing of event. (form, event) are exposed",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        { "name": "message", "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
+      ]
+    },
+
+    {
+      "id": "4beaa8dc-300f-4742-8e1f-d4cf76be942c",
+      "type": "sectionSeparator",
+      "name": "backButtonSeparatorVisibility",
+      "parentId": "root",
+      "label": "Back Button"
+    },
+    {
+      "id": "ed059dec-4f1b-408b-8739-05f0242d662a",
+      "type": "textField",
+      "name": "backButtonText",
+      "label": "Text",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
+    {
+      "id": "e78a9c2b-31cf-4857-a921-b4862810e763",
+      "type": "codeEditor",
+      "name": "backButtonActionScript",
+      "label": "Action Script",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
+        { "name": "result", "description": "only available after a successful http post", "type": "object" },
+        { "name": "message", "description": "A notification object by Ant", "type": "object" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ]
+    },
+    {
+      "id": "7f40dd38-fd9e-4439-be7a-13b666411aa1",
+      "type": "codeEditor",
+      "name": "onBackClicked",
+      "label": "On Back Clicked",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Enter custom even handler on changing of event. (form, event) are exposed",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        { "name": "message", "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
+      ]
+    },
+    
+    {
+      "id": "b20d139e-0869-482a-8171-ffa1b09b4113",
+      "type": "sectionSeparator",
+      "name": "cancelButtonSeparatorVisibility",
+      "parentId": "root",
+      "label": "Cancel Button"
+    },
+    {
+      "id": "bbdd219c-8b72-48bb-ba66-ebbae69edce2",
+      "type": "textField",
+      "name": "cancelButtonText",
+      "label": "Text",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
+    {
+      "id": "f7499633-d8ba-433e-91bc-0770ac37c65e",
+      "type": "codeEditor",
+      "name": "cancelButtonActionScript",
+      "label": "Action Script",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
+        { "name": "result", "description": "only available after a successful http post", "type": "object" },
+        { "name": "message", "description": "A notification object by Ant", "type": "object" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ]
+    },
+
+
+    {
+      "id": "ae7ae12f-afb8-44a7-a8cb-805550415aeb",
+      "type": "sectionSeparator",
+      "name": "otherSeparatorVisibility",
+      "parentId": "root",
+      "label": "Other"
+    },
+    {
+      "id": "9e6ead7b-a14c-481a-97cf-5b8363974625",
+      "type": "codeEditor",
+      "name": "onBeforeRender",
+      "label": "On Before Render",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Enter custom even handler on changing of event. (form, event) are exposed",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        { "name": "message", "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
+      ]
     },
     {
       "id": "d2f01684-31e5-41a3-b32a-c23abc20e700",

@@ -121,19 +121,24 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
         <div>
           <Space size={'middle'}>
+            {tabs[current].allowCancel === true && (
+              <Button>
+                Cancel
+              </Button>
+            )}
             {current > 0 && (
               <Button style={{ margin: '0 8px' }} onClick={() => back()}>
                 {tabs[current].backButtonText ? (tabs[current].backButtonText) : ('Back')}
               </Button>
             )}
-            {current === tabs.length - 1 && (
-              <Button type="primary">
-                Done
-              </Button>
-            )}
             {current < tabs.length - 1 && (
               <Button type="primary" onClick={() => next()}>
                 {tabs[current].nextButtonText ? (tabs[current].nextButtonText) : ('Next')}
+              </Button>
+            )}
+            {current === tabs.length - 1 && (
+              <Button type="primary">
+                Done
               </Button>
             )}
           </Space>
@@ -151,9 +156,10 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         label: 'Tab 1',
         title: 'Tab 1',
         subTitle: 'Tab 1',
+        description: 'Tab 1',
+        allowCancel: false,
         nextButtonText: 'Next',
         backButtonText: 'Back',
-        description: 'Tab 1',
         key: 'tab1',
         components: [],
         itemType: 'item'

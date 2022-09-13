@@ -1,7 +1,7 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
-import { Steps, Button, Space } from 'antd';
+import { Steps, Button, Space, message } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
 import React, { Fragment, useState } from 'react';
@@ -48,11 +48,12 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
       }
 
       /* tslint:disable:function-constructor */
-      const evaluated = new Function('data, formMode, globalState, http, moment', expression)(
+      const evaluated = new Function('data, formMode, globalState, http, message, moment', expression)(
         formData,
         formMode,
         globalState,
         axiosHttp(backendUrl),
+        message,
         moment
       );
 

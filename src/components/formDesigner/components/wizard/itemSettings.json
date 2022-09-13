@@ -110,6 +110,22 @@
       "parentId": "root"
     },
     {
+      "id": "0b7cb209-e112-488d-ba31-b029ee27f9a1",
+      "type": "dropdown",
+      "name": "nextButtonAction",
+      "label": "Action",
+      "labelAlign": "right",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "hidden": false,
+      "customVisibility": "",
+      "dataSourceType": "values",
+      "values": [
+        { "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae", "label": "Execute Script", "value": "executeScript" },
+        { "id": "b4952ca2-c648-4c79-bf3c-e2683bf3d509", "label": "Dispatch an Event", "value": "dispatchAnEvent" }
+      ],
+      "validate": {}
+    },
+    {
       "id": "1cd244c1-d2f4-40fb-937a-cd223af48b7e",
       "type": "codeEditor",
       "name": "nextButtonActionScript",
@@ -117,6 +133,7 @@
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
+      "customVisibility": "return data.nextButtonAction === 'executeScript'",
       "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
       "settingsValidationErrors": [],
@@ -171,6 +188,22 @@
       "parentId": "root"
     },
     {
+      "id": "b6982029-e88d-4585-82f6-d708bc973102",
+      "type": "dropdown",
+      "name": "backButtonAction",
+      "label": "Action",
+      "labelAlign": "right",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "hidden": false,
+      "customVisibility": "",
+      "dataSourceType": "values",
+      "values": [
+        { "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae", "label": "Execute Script", "value": "executeScript" },
+        { "id": "b4952ca2-c648-4c79-bf3c-e2683bf3d509", "label": "Dispatch an Event", "value": "dispatchAnEvent" }
+      ],
+      "validate": {}
+    },
+    {
       "id": "e78a9c2b-31cf-4857-a921-b4862810e763",
       "type": "codeEditor",
       "name": "backButtonActionScript",
@@ -178,6 +211,7 @@
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
+      "customVisibility": "return data.backButtonAction === 'executeScript'",
       "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
       "settingsValidationErrors": [],
@@ -232,6 +266,22 @@
       "parentId": "root"
     },
     {
+      "id": "82541b37-8394-455a-93a8-d89adeccc0d0",
+      "type": "dropdown",
+      "name": "doneButtonAction",
+      "label": "Action",
+      "labelAlign": "right",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "hidden": false,
+      "customVisibility": "",
+      "dataSourceType": "values",
+      "values": [
+        { "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae", "label": "Execute Script", "value": "executeScript" },
+        { "id": "b4952ca2-c648-4c79-bf3c-e2683bf3d509", "label": "Dispatch an Event", "value": "dispatchAnEvent" }
+      ],
+      "validate": {}
+    },
+    {
       "id": "f7499633-d8ba-433e-91bc-0770ac37c65e",
       "type": "codeEditor",
       "name": "doneButtonActionScript",
@@ -239,6 +289,7 @@
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
+      "customVisibility": "return data.doneButtonAction === 'executeScript'",
       "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
       "settingsValidationErrors": [],
@@ -270,6 +321,22 @@
       "parentId": "root"
     },
     {
+      "id": "536546d6-176d-4c4c-b14f-67a5970b262d",
+      "type": "dropdown",
+      "name": "cancelButtonAction",
+      "label": "Action",
+      "labelAlign": "right",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "hidden": false,
+      "customVisibility": "",
+      "dataSourceType": "values",
+      "values": [
+        { "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae", "label": "Execute Script", "value": "executeScript" },
+        { "id": "b4952ca2-c648-4c79-bf3c-e2683bf3d509", "label": "Dispatch an Event", "value": "dispatchAnEvent" }
+      ],
+      "validate": {}
+    },
+    {
       "id": "f7499633-d8ba-433e-91bc-0770ac37c65e",
       "type": "codeEditor",
       "name": "cancelButtonActionScript",
@@ -277,6 +344,7 @@
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
+      "customVisibility": "return data.cancelButtonAction === 'executeScript'",
       "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
       "validate": {},
       "settingsValidationErrors": [],

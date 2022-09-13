@@ -33,22 +33,6 @@
       "parentId": "root"
     },
     {
-      "id": "737ae9b8-61d2-4ecd-9891-feaaec244a3a",
-      "type": "textField",
-      "name": "nextButtonText",
-      "label": "Next Button Text",
-      "labelAlign": "right",
-      "parentId": "root"
-    },
-    {
-      "id": "ed059dec-4f1b-408b-8739-05f0242d662a",
-      "type": "textField",
-      "name": "backButtonText",
-      "label": "Back Button Text",
-      "labelAlign": "right",
-      "parentId": "root"
-    },
-    {
       "id": "4bb6cdc7-0657-4e41-8c50-effe14d0dc96",
       "type": "textField",
       "name": "key",
@@ -65,17 +49,6 @@
       "parentId": "root"
     },
     {
-      "id": "caed91a6-3e9e-4f04-9800-7d9c7a3ffb80",
-      "type": "checkbox",
-      "name": "animated",
-      "label": "Animated",
-      "labelAlign": "right",
-      "parentId": "root",
-      "hidden": false,
-      "customVisibility": null,
-      "validate": {}
-    },
-    {
       "id": "4595a895-5078-4986-934b-c5013bf315ad",
       "type": "iconPicker",
       "name": "icon",
@@ -84,17 +57,6 @@
       "parentId": "root",
       "hidden": false,
       "settingsValidationErrors": []
-    },
-    {
-      "id": "81da0da4-00db-4d6b-9f16-b364a6f9d9e1",
-      "type": "checkbox",
-      "name": "forceRender",
-      "label": "Force Render",
-      "labelAlign": "right",
-      "parentId": "root",
-      "hidden": false,
-      "customVisibility": null,
-      "validate": {}
     },
     {
       "id": "d1e06550-826c-4db9-9b9f-ce05e565f64f",
@@ -108,15 +70,458 @@
       "validate": {}
     },
     {
-      "id": "a8b12318-65a5-4b98-bcce-834b6a40b2fd",
+      "id": "ba280e2b-a604-4e3e-acab-cfde391d99e0",
       "type": "checkbox",
-      "name": "destroyInactiveTabPane",
-      "label": "Destroy Inactive Wizard Step",
+      "name": "allowCancel",
+      "label": "Allow Cancel",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "defaultValue": false,
+      "customVisibility": null,
+      "validate": {}
+    },
+    {
+      "id": "7146e31e-056d-4870-a7d3-898afe88f6c9",
+      "type": "checkbox",
+      "name": "canSkipTo",
+      "label": "Can Skip To",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "defaultValue": false,
+      "customVisibility": null,
+      "validate": {}
+    },
+
+    {
+      "id": "4d2ca388-22ef-4e24-924b-2c2e3a7e0161",
+      "type": "sectionSeparator",
+      "name": "nextButtonSeparatorVisibility",
+      "parentId": "root",
+      "label": "Next Button"
+    },
+    {
+      "id": "737ae9b8-61d2-4ecd-9891-feaaec244a3a",
+      "type": "textField",
+      "name": "nextButtonText",
+      "label": "Text",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
+    {
+      "id": "4571667c-0fc4-4ceb-8354-a9d9cb80e228",
+      "type": "textField",
+      "name": "nextUniqueStateId",
+      "label": "Unique State ID",
+      "labelAlign": "right",
+      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
+      "validate": {}
+    },
+    {
+      "id": "0b7cb209-e112-488d-ba31-b029ee27f9a1",
+      "type": "dropdown",
+      "name": "nextButtonAction",
+      "label": "Action",
+      "labelAlign": "right",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "hidden": false,
+      "customVisibility": "",
+      "dataSourceType": "values",
+      "values": [
+        { "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae", "label": "Execute Script", "value": "executeScript" },
+        { "id": "b4952ca2-c648-4c79-bf3c-e2683bf3d509", "label": "Dispatch an Event", "value": "dispatchAnEvent" }
+      ],
+      "validate": {}
+    },
+    {
+      "id": "b70ccff9-b0ca-428a-927a-916e5f4946c9",
+      "type": "codeEditor",
+      "name": "nextButtonActionScript",
+      "label": "Action Script",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return data.nextButtonAction === 'executeScript'",
+      "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
+        { "name": "result", "description": "only available after a successful http post", "type": "object" },
+        { "name": "message", "description": "A notification object by Ant", "type": "object" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ]
+    },
+    {
+      "id": "f8bd9677-514d-4848-aa3b-8db5cd1a0b5c",
+      "type": "eventNames",
+      "name": "nextEventName",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "label": "Event name",
+      "description": "This is the event that will be published when the button is dispatched",
+      "customVisibility": "return data.nextButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "3de7d642-c832-4d61-ba44-6d3d6a0ac6d3",
+      "type": "textField",
+      "name": "nextCustomEventNameToDispatch",
+      "label": "Custom Event",
+      "labelAlign": "right",
+      "parentId": "0bfa869c-57a8-4abc-93b1-d36d5215a004",
+      "hidden": false,
+      "customVisibility": "return data.nextEventName === 'CUSTOM_EVENT'",
+      "description": "This is the custom event that will be published when the button is clicked",
+      "validate": {}
+    },
+    {
+      "id": "4f8e7cc9-ae85-4bfe-a820-db997b564845",
+      "type": "codeEditor",
+      "name": "onNextClicked",
+      "label": "On Next Clicked",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
+      "description": "Enter custom even handler on changing of event. (form, event) are exposed",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        { "name": "message", "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
+      ]
+    },
+
+    {
+      "id": "4beaa8dc-300f-4742-8e1f-d4cf76be942c",
+      "type": "sectionSeparator",
+      "name": "backButtonSeparatorVisibility",
+      "parentId": "root",
+      "label": "Back Button"
+    },
+    {
+      "id": "ed059dec-4f1b-408b-8739-05f0242d662a",
+      "type": "textField",
+      "name": "backButtonText",
+      "label": "Text",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
+    {
+      "id": "ab5f13e0-a338-4f0a-9dbd-67d8c6b96b16",
+      "type": "textField",
+      "name": "backUniqueStateId",
+      "label": "Unique State ID",
+      "labelAlign": "right",
+      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
       "validate": {}
+    },
+    {
+      "id": "b6982029-e88d-4585-82f6-d708bc973102",
+      "type": "dropdown",
+      "name": "backButtonAction",
+      "label": "Action",
+      "labelAlign": "right",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "hidden": false,
+      "customVisibility": "",
+      "dataSourceType": "values",
+      "values": [
+        { "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae", "label": "Execute Script", "value": "executeScript" },
+        { "id": "b4952ca2-c648-4c79-bf3c-e2683bf3d509", "label": "Dispatch an Event", "value": "dispatchAnEvent" }
+      ],
+      "validate": {}
+    },
+    {
+      "id": "5c0eb1ce-4615-452c-a1b9-30a9ecbdd7c5",
+      "type": "codeEditor",
+      "name": "backButtonActionScript",
+      "label": "Action Script",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return data.backButtonAction === 'executeScript'",
+      "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
+        { "name": "result", "description": "only available after a successful http post", "type": "object" },
+        { "name": "message", "description": "A notification object by Ant", "type": "object" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ]
+    },
+    {
+      "id": "1dc9889f-98c7-4392-a5c1-ed64d8cded18",
+      "type": "eventNames",
+      "name": "backEventName",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "label": "Event name",
+      "description": "This is the event that will be published when the button is dispatched",
+      "customVisibility": "return data.backButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "186d37d5-4041-47b4-8fe6-28a91b52e04b",
+      "type": "textField",
+      "name": "backCustomEventNameToDispatch",
+      "label": "Custom Event",
+      "labelAlign": "right",
+      "parentId": "0bfa869c-57a8-4abc-93b1-d36d5215a004",
+      "hidden": false,
+      "customVisibility": "return data.backEventName === 'CUSTOM_EVENT'",
+      "description": "This is the custom event that will be published when the button is clicked",
+      "validate": {}
+    },
+    {
+      "id": "7f40dd38-fd9e-4439-be7a-13b666411aa1",
+      "type": "codeEditor",
+      "name": "onBackClicked",
+      "label": "On Back Clicked",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Enter custom even handler on changing of event. (form, event) are exposed",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        { "name": "message", "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
+      ]
+    },
+
+    {
+      "id": "b20d139e-0869-482a-8171-ffa1b09b4113",
+      "type": "sectionSeparator",
+      "name": "doneButtonSeparatorVisibility",
+      "parentId": "root",
+      "label": "Done Button"
+    },
+    {
+      "id": "20ea7d88-2e09-4d2e-9e4a-caa23b1e3502",
+      "type": "textField",
+      "name": "doneButtonText",
+      "label": "Text",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
+    {
+      "id": "bfa7fa46-f8c1-4271-8b8a-0bf8e0cd47ef",
+      "type": "textField",
+      "name": "doneUniqueStateId",
+      "label": "Unique State ID",
+      "labelAlign": "right",
+      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
+      "validate": {}
+    },
+    {
+      "id": "82541b37-8394-455a-93a8-d89adeccc0d0",
+      "type": "dropdown",
+      "name": "doneButtonAction",
+      "label": "Action",
+      "labelAlign": "right",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "hidden": false,
+      "customVisibility": "",
+      "dataSourceType": "values",
+      "values": [
+        { "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae", "label": "Execute Script", "value": "executeScript" },
+        { "id": "b4952ca2-c648-4c79-bf3c-e2683bf3d509", "label": "Dispatch an Event", "value": "dispatchAnEvent" }
+      ],
+      "validate": {}
+    },
+    {
+      "id": "15acb1bc-2d71-4507-b239-3a9018e6ac05",
+      "type": "eventNames",
+      "name": "doneEventName",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "label": "Event name",
+      "description": "This is the event that will be published when the button is dispatched",
+      "customVisibility": "return data.doneButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "f4f7f1b4-fa0e-4058-a0ba-821e0a66160a",
+      "type": "textField",
+      "name": "doneCustomEventNameToDispatch",
+      "label": "Custom Event",
+      "labelAlign": "right",
+      "parentId": "0bfa869c-57a8-4abc-93b1-d36d5215a004",
+      "hidden": false,
+      "customVisibility": "return data.doneEventName === 'CUSTOM_EVENT'",
+      "description": "This is the custom event that will be published when the button is clicked",
+      "validate": {}
+    },
+    {
+      "id": "8bfd92f5-6c83-41ca-b5a2-88461612712a",
+      "type": "codeEditor",
+      "name": "doneButtonActionScript",
+      "label": "Action Script",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return data.doneButtonAction === 'executeScript'",
+      "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
+        { "name": "result", "description": "only available after a successful http post", "type": "object" },
+        { "name": "message", "description": "A notification object by Ant", "type": "object" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ]
+    },
+    
+    {
+      "id": "83304267-84ad-4489-8800-0f7aeb5bb7ce",
+      "type": "sectionSeparator",
+      "name": "cancelButtonSeparatorVisibility",
+      "parentId": "root",
+      "label": "Cancel Button"
+    },
+    {
+      "id": "bbdd219c-8b72-48bb-ba66-ebbae69edce2",
+      "type": "textField",
+      "name": "cancelButtonText",
+      "label": "Text",
+      "labelAlign": "right",
+      "parentId": "root"
+    },
+    {
+      "id": "924b0529-8729-411b-994d-2d16afbc1c80",
+      "type": "textField",
+      "name": "cancelUniqueStateId",
+      "label": "Unique State ID",
+      "labelAlign": "right",
+      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
+      "validate": {}
+    },
+    {
+      "id": "536546d6-176d-4c4c-b14f-67a5970b262d",
+      "type": "dropdown",
+      "name": "cancelButtonAction",
+      "label": "Action",
+      "labelAlign": "right",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "hidden": false,
+      "customVisibility": "",
+      "dataSourceType": "values",
+      "values": [
+        { "id": "3f71a488-7cd8-4b9b-b0f6-8b37b8a04aae", "label": "Execute Script", "value": "executeScript" },
+        { "id": "b4952ca2-c648-4c79-bf3c-e2683bf3d509", "label": "Dispatch an Event", "value": "dispatchAnEvent" }
+      ],
+      "validate": {}
+    },
+    {
+      "id": "76f6d2f4-f225-4b23-b119-8dd3f05765af",
+      "type": "eventNames",
+      "name": "cancelEventName",
+      "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+      "label": "Event name",
+      "description": "This is the event that will be published when the button is dispatched",
+      "customVisibility": "return data.cancelButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "b009df67-4b6d-452a-b717-f770ed08aa3d",
+      "type": "textField",
+      "name": "cancelCustomEventNameToDispatch",
+      "label": "Custom Event",
+      "labelAlign": "right",
+      "parentId": "0bfa869c-57a8-4abc-93b1-d36d5215a004",
+      "hidden": false,
+      "customVisibility": "return data.cancelEventName === 'CUSTOM_EVENT'",
+      "description": "This is the custom event that will be published when the button is clicked",
+      "validate": {}
+    },
+    {
+      "id": "0632cb45-fdb2-464b-8a29-c35a060fa696",
+      "type": "codeEditor",
+      "name": "cancelButtonActionScript",
+      "label": "Action Script",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return data.cancelButtonAction === 'executeScript'",
+      "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
+        { "name": "result", "description": "only available after a successful http post", "type": "object" },
+        { "name": "message", "description": "A notification object by Ant", "type": "object" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ]
+    },
+
+
+    {
+      "id": "ae7ae12f-afb8-44a7-a8cb-805550415aeb",
+      "type": "sectionSeparator",
+      "name": "otherSeparatorVisibility",
+      "parentId": "root",
+      "label": "Other"
+    },
+    {
+      "id": "9e6ead7b-a14c-481a-97cf-5b8363974625",
+      "type": "codeEditor",
+      "name": "onBeforeRender",
+      "label": "On Before Render",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Enter custom even handler on changing of event. (form, event) are exposed",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "Selected form values", "type": "object" },
+        { "name": "event", "description": "Event callback when user input", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        { "name": "message", "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" }
+      ]
     },
     {
       "id": "d2f01684-31e5-41a3-b32a-c23abc20e700",

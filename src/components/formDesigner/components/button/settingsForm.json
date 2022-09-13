@@ -640,6 +640,29 @@
       "validate": {}
     },
     {
+      "id": "4b5e5951-4998-4635-b1c8-0b6d3940c301",
+      "type": "codeEditor",
+      "name": "actionScript",
+      "label": "Action Script",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return data.buttonAction === 'executeScript'",
+      "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "data", "description": "The form data", "type": "object" },
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        { "name": "form", "description": "Form instance", "type": "FormInstance" },
+        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
+        { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
+        { "name": "result", "description": "only available after a successful http post", "type": "object" },
+        { "name": "message", "description": "A notification object by Ant", "type": "object" },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+      ]
+    },
+    {
       "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
       "type": "sectionSeparator",
       "name": "sectionStyle",
@@ -705,29 +728,7 @@
       "validate": {},
       "settingsValidationErrors": []
     },
-    {
-      "id": "4b5e5951-4998-4635-b1c8-0b6d3940c301",
-      "type": "codeEditor",
-      "name": "actionScript",
-      "label": "Action Script",
-      "labelAlign": "right",
-      "parentId": "root",
-      "hidden": false,
-      "customVisibility": "return data.buttonAction === 'executeScript'",
-      "description": "Enter custom code that will be executed when the button is clicked. Global variables that are provided are 'data' - the state, 'moment' - moment object, 'form' - form instance, 'formMode' - form mode, 'axios' - to make http requests, and allows you to access the data of any form component, by using its API key.",
-      "validate": {},
-      "settingsValidationErrors": [],
-      "exposedVariables": [
-        { "name": "data", "description": "The form data", "type": "object" },
-        { "name": "moment", "description": "The moment.js object", "type": "object" },
-        { "name": "form", "description": "Form instance", "type": "FormInstance" },
-        { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
-        { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
-        { "name": "result", "description": "only available after a successful http post", "type": "object" },
-        { "name": "message", "description": "A notification object by Ant", "type": "object" },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" }
-      ]
-    },
+    
     {
       "id": "341beffe-2d62-4c4c-8c97-5f2b433716bf",
       "type": "codeEditor",

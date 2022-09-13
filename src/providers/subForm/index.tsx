@@ -108,8 +108,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   useEffect(() => {
     if (queryParams && formMode !== 'designer' && dataSource === 'api') {
-      console.log('LOGS:: evaluatedQueryParams', evaluatedQueryParams);
-
       handleFetchData();
     }
   }, [queryParams, evaluatedQueryParams]);
@@ -274,7 +272,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   });
 
   //#region Events
-  useSubscribe(SUB_FORM_EVENT_NAMES.postFormData, ({ stateId }) => {
+  useSubscribe(SUB_FORM_EVENT_NAMES.postFormData, ({ stateId, state, doneEvent }) => {
     if (stateId === uniqueStateId) {
       postData();
     }

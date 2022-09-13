@@ -336,28 +336,34 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           description="Triggered after successfully creating a new sub-form object in the back-end"
           exposedVariables={[
             {
-              id: 'dcfa68b9-1d53-44b1-87d8-34884f643d6d',
+              id: 'a4fa029d-731b-4fda-a527-0e109c8c2218',
               name: 'response',
               description: 'Submitted data',
               type: 'object',
             },
             {
-              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+              id: 'ab8a5818-00d7-4a4b-a736-9081252d145d',
               name: 'data',
               description: 'Form data',
               type: 'object',
             },
             {
-              id: '65b71112-d412-401f-af15-1d3080f85319',
+              id: '9fc8c63f-9fd5-48a8-b841-bc804c08ae97',
               name: 'globalState',
               description: 'The global state',
               type: 'object',
             },
             {
-              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-              name: 'queryParams',
-              description: 'Query parameters',
+              id: '9d75b33e-c247-4465-8cc3-7440d2807c66',
+              name: 'message',
+              description: 'Toast message',
               type: 'object',
+            },
+            {
+              id: 'ecada650-c940-438c-80ae-8986ba54bce1',
+              name: 'publish',
+              description: 'Event publisher',
+              type: 'function',
             },
           ]}
         />
@@ -377,28 +383,34 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           description="Triggered after successfully updating the sub-form object in the back-end"
           exposedVariables={[
             {
-              id: 'dcfa68b9-1d53-44b1-87d8-34884f643d6d',
+              id: 'a4fa029d-731b-4fda-a527-0e109c8c2218',
               name: 'response',
-              description: 'Updated data',
+              description: 'Submitted data',
               type: 'object',
             },
             {
-              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+              id: 'ab8a5818-00d7-4a4b-a736-9081252d145d',
               name: 'data',
               description: 'Form data',
               type: 'object',
             },
             {
-              id: '65b71112-d412-401f-af15-1d3080f85319',
+              id: '9fc8c63f-9fd5-48a8-b841-bc804c08ae97',
               name: 'globalState',
               description: 'The global state',
               type: 'object',
             },
             {
-              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-              name: 'queryParams',
-              description: 'Query parameters',
+              id: '9d75b33e-c247-4465-8cc3-7440d2807c66',
+              name: 'message',
+              description: 'Toast message',
               type: 'object',
+            },
+            {
+              id: 'ecada650-c940-438c-80ae-8986ba54bce1',
+              name: 'publish',
+              description: 'Event publisher',
+              type: 'function',
             },
           ]}
         />

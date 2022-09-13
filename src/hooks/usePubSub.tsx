@@ -28,6 +28,12 @@ export interface IPubSubPayload<T = any> {
    * Subscribed data
    */
   readonly state?: T;
+
+  readonly doneEvent?: {
+    name: string;
+    stateId: string;
+    data: any;
+  };
 }
 
 /**

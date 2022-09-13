@@ -39,6 +39,11 @@ export interface ITabPaneProps extends IConfigurableItemBase {
   backCustomEventNameToDispatch?: string;
   nextCustomEventNameToDispatch?: string;
 
+  nextUniqueStateId?: string;
+  backUniqueStateId?: string;
+  doneUniqueStateId?: string;
+  cancelUniqueStateId?: string;
+
   customVisibility?: string;
   customEnabled?: string;
   permissions?: string[];

@@ -64,13 +64,14 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
       const actionScript = tabs[current].nextButtonActionScript;
       const eventName = tabs[current].nextEventName;
       const customEventNameToDispatch = tabs[current].nextCustomEventNameToDispatch;
+      const uniqueStateId = tabs[current].nextUniqueStateId;
 
       switch (buttonAction) {
         case 'executeScript':
           executeScript(actionScript);
           break;
         case 'dispatchAnEvent':
-          dispatchAnEvent(eventName, customEventNameToDispatch, '');
+          dispatchAnEvent(eventName, customEventNameToDispatch, uniqueStateId);
           break;
         default:
           break;
@@ -85,14 +86,14 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
       const actionScript = tabs[current].backButtonActionScript;
       const eventName = tabs[current].backEventName;
       const customEventNameToDispatch = tabs[current].backCustomEventNameToDispatch;
-
+      const uniqueStateId = tabs[current].backUniqueStateId;
 
       switch (buttonAction) {
         case 'executeScript':
           executeScript(actionScript);
           break;
         case 'dispatchAnEvent':
-          dispatchAnEvent(eventName, customEventNameToDispatch, '');
+          dispatchAnEvent(eventName, customEventNameToDispatch, uniqueStateId);
         default:
           break;
       }
@@ -106,14 +107,14 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
       const actionScript = tabs[current].cancelButtonActionScript;
       const eventName = tabs[current].cancelEventName;
       const customEventNameToDispatch = tabs[current].cancelCustomEventNameToDispatch;
-
+      const uniqueStateId = tabs[current].cancelUniqueStateId;
 
       switch (buttonAction) {
         case 'executeScript':
           executeScript(actionScript);
           break;
         case 'dispatchAnEvent':
-          dispatchAnEvent(eventName, customEventNameToDispatch, '');
+          dispatchAnEvent(eventName, customEventNameToDispatch, uniqueStateId);
         default:
           break;
       }
@@ -124,13 +125,14 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
       const actionScript = tabs[current].doneButtonActionScript;
       const eventName = tabs[current].doneEventName;
       const customEventNameToDispatch = tabs[current].doneCustomEventNameToDispatch;
+      const uniqueStateId = tabs[current].doneUniqueStateId;
 
       switch (buttonAction) {
         case 'executeScript':
           executeScript(actionScript);
           break;
         case 'dispatchAnEvent':
-          dispatchAnEvent(eventName, customEventNameToDispatch, '');
+          dispatchAnEvent(eventName, customEventNameToDispatch, uniqueStateId);
         default:
           break;
       }

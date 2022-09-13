@@ -110,18 +110,6 @@
       "parentId": "root"
     },
     {
-      "id": "4571667c-0fc4-4ceb-8354-a9d9cb80e228",
-      "type": "textField",
-      "name": "nextUniqueStateId",
-      "label": "Unique State ID",
-      "labelAlign": "right",
-      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
-      "hidden": false,
-      "customVisibility": null,
-      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
-      "validate": {}
-    },
-    {
       "id": "0b7cb209-e112-488d-ba31-b029ee27f9a1",
       "type": "dropdown",
       "name": "nextButtonAction",
@@ -168,6 +156,18 @@
       "label": "Event name",
       "description": "This is the event that will be published when the button is dispatched",
       "customVisibility": "return data.nextButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "4571667c-0fc4-4ceb-8354-a9d9cb80e228",
+      "type": "textField",
+      "name": "nextUniqueStateId",
+      "label": "Unique State ID",
+      "labelAlign": "right",
+      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
+      "validate": {}
     },
     {
       "id": "3de7d642-c832-4d61-ba44-6d3d6a0ac6d3",
@@ -221,18 +221,6 @@
       "parentId": "root"
     },
     {
-      "id": "ab5f13e0-a338-4f0a-9dbd-67d8c6b96b16",
-      "type": "textField",
-      "name": "backUniqueStateId",
-      "label": "Unique State ID",
-      "labelAlign": "right",
-      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
-      "hidden": false,
-      "customVisibility": null,
-      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
-      "validate": {}
-    },
-    {
       "id": "b6982029-e88d-4585-82f6-d708bc973102",
       "type": "dropdown",
       "name": "backButtonAction",
@@ -279,6 +267,18 @@
       "label": "Event name",
       "description": "This is the event that will be published when the button is dispatched",
       "customVisibility": "return data.backButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "ab5f13e0-a338-4f0a-9dbd-67d8c6b96b16",
+      "type": "textField",
+      "name": "backUniqueStateId",
+      "label": "Unique State ID",
+      "labelAlign": "right",
+      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
+      "validate": {}
     },
     {
       "id": "186d37d5-4041-47b4-8fe6-28a91b52e04b",
@@ -332,18 +332,6 @@
       "parentId": "root"
     },
     {
-      "id": "bfa7fa46-f8c1-4271-8b8a-0bf8e0cd47ef",
-      "type": "textField",
-      "name": "doneUniqueStateId",
-      "label": "Unique State ID",
-      "labelAlign": "right",
-      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
-      "hidden": false,
-      "customVisibility": null,
-      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
-      "validate": {}
-    },
-    {
       "id": "82541b37-8394-455a-93a8-d89adeccc0d0",
       "type": "dropdown",
       "name": "doneButtonAction",
@@ -367,6 +355,18 @@
       "label": "Event name",
       "description": "This is the event that will be published when the button is dispatched",
       "customVisibility": "return data.doneButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "bfa7fa46-f8c1-4271-8b8a-0bf8e0cd47ef",
+      "type": "textField",
+      "name": "doneUniqueStateId",
+      "label": "Unique State ID",
+      "labelAlign": "right",
+      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
+      "validate": {}
     },
     {
       "id": "f4f7f1b4-fa0e-4058-a0ba-821e0a66160a",
@@ -420,18 +420,6 @@
       "parentId": "root"
     },
     {
-      "id": "924b0529-8729-411b-994d-2d16afbc1c80",
-      "type": "textField",
-      "name": "cancelUniqueStateId",
-      "label": "Unique State ID",
-      "labelAlign": "right",
-      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
-      "hidden": false,
-      "customVisibility": null,
-      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
-      "validate": {}
-    },
-    {
       "id": "536546d6-176d-4c4c-b14f-67a5970b262d",
       "type": "dropdown",
       "name": "cancelButtonAction",
@@ -455,6 +443,18 @@
       "label": "Event name",
       "description": "This is the event that will be published when the button is dispatched",
       "customVisibility": "return data.cancelButtonAction === 'dispatchAnEvent'"
+    },
+    {
+      "id": "924b0529-8729-411b-994d-2d16afbc1c80",
+      "type": "textField",
+      "name": "cancelUniqueStateId",
+      "label": "Unique State ID",
+      "labelAlign": "right",
+      "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
+      "validate": {}
     },
     {
       "id": "b009df67-4b6d-452a-b717-f770ed08aa3d",

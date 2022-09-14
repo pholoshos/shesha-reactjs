@@ -145,7 +145,8 @@
         { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
         { "name": "result", "description": "only available after a successful http post", "type": "object" },
         { "name": "message", "description": "A notification object by Ant", "type": "object" },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "setGlobalState", "description": "Set the global state of the application e.g. `setGlobalState({ key, data });`", "type": "function" }
       ]
     },
     {
@@ -256,7 +257,8 @@
         { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
         { "name": "result", "description": "only available after a successful http post", "type": "object" },
         { "name": "message", "description": "A notification object by Ant", "type": "object" },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "setGlobalState", "description": "Set the global state of the application e.g. `setGlobalState({ key, data });`", "type": "function" }
       ]
     },
     {
@@ -400,7 +402,8 @@
         { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
         { "name": "result", "description": "only available after a successful http post", "type": "object" },
         { "name": "message", "description": "A notification object by Ant", "type": "object" },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "setGlobalState", "description": "Set the global state of the application e.g. `setGlobalState({ key, data });`", "type": "function" }
       ]
     },
     
@@ -488,7 +491,8 @@
         { "name": "http", "description": "The axios instance for making http requests", "type": "object" },
         { "name": "result", "description": "only available after a successful http post", "type": "object" },
         { "name": "message", "description": "A notification object by Ant", "type": "object" },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" }
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "setGlobalState", "description": "Set the global state of the application e.g. `setGlobalState({ key, data });`", "type": "function" }
       ]
     },
 

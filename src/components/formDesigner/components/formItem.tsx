@@ -59,8 +59,6 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
     return name;
   };
 
-  console.log('layout, layout?.labelCol, layout?.wrapperCol ', layout, layout?.labelCol, layout?.wrapperCol);
-
   return (
     <Form.Item
       className={classNames(className, { 'form-item-hidden': model.hideLabel })}

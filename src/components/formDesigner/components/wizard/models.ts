@@ -55,6 +55,7 @@ export interface ITabsComponentProps extends IConfigurableFormComponent {
   tabs: ITabPaneProps[];
   wizardType?: 'default' | 'navigation';
   visibility?: 'Yes' | 'No' | 'Removed';
+  uniqueStateId?: string;
   permissions?: string[];
   hidden?: boolean;
   customVisibility?: string;

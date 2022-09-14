@@ -46,7 +46,7 @@ const TabSettings: FC<ITabSettingsProps> = props => {
   const tabs = props.model.tabs?.map(item => ({ ...item, label: item?.title }));
 
   return (
-    <Form form={form} onFinish={props.onSave} onValuesChange={onValuesChange} labelCol={{ span: 24 }}>
+    <Form initialValues={props?.model} form={form} onFinish={props.onSave} onValuesChange={onValuesChange} labelCol={{ span: 24 }}>
       <SectionSeparator sectionName="Display" />
       <Form.Item name="name" initialValue={props.model.name} label="Name" rules={[{ required: true }]}>
         <Input />
@@ -83,6 +83,13 @@ const TabSettings: FC<ITabSettingsProps> = props => {
           <Option value="No">No (Only include in payload)</Option>
           <Option value="Removed">Removed (Remove from UI and exlude from payload)</Option>
         </Select>
+      </Form.Item>
+
+      <Form.Item 
+        name="uniqueStateId" 
+        label="Unique State ID" 
+        tooltip="Important for accessing the ">
+        <Input />
       </Form.Item>
 
       <SectionSeparator sectionName="Configure Wizard Steps" />

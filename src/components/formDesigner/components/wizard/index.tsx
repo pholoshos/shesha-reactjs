@@ -13,8 +13,9 @@ import TabSettings from './settings';
 import { ITabsComponentProps } from './models';
 import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
-import { usePubSub } from '../../../../hooks';
+import { usePubSub, useSubscribe } from '../../../../hooks';
 import { axiosHttp } from '../../../../apis/axios';
+import { useDebouncedCallback } from 'use-debounce';
 
 const { Step } = Steps;
 
@@ -27,7 +28,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
   factory: model => {
     const { anyOfPermissionsGranted } = useAuth();
     const { isComponentHidden, formMode, formData } = useForm();
-    const { globalState } = useGlobalState();
+    const { globalState, setState: setGlobalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();
     const { publish } = usePubSub();
     const [current, setCurrent] = useState(0);
@@ -48,12 +49,13 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
       }
 
       /* tslint:disable:function-constructor */
-      const evaluated = new Function('data, formMode, globalState, http, message, moment', expression)(
+      const evaluated = new Function('data, formMode, globalState, http, message, setGlobalState, moment', expression)(
         formData,
         formMode,
         globalState,
         axiosHttp(backendUrl),
         message,
+        setGlobalState,
         moment
       );
 
@@ -63,7 +65,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
     /// NAVIGATION
 
-    const next = () => {
+    const next = useDebouncedCallback(() => {
       const buttonAction = tabs[current].nextButtonAction;
       const actionScript = tabs[current].nextButtonActionScript;
       const eventName = tabs[current].nextEventName;
@@ -83,9 +85,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
       setCurrent(current + 1);
       setComponent(tabs[current].components);
-    };
+    }, 300);
 
-    const back = () => {
+    const back = useDebouncedCallback(() => {
       const buttonAction = tabs[current].backButtonAction;
       const actionScript = tabs[current].backButtonActionScript;
       const eventName = tabs[current].backEventName;
@@ -104,9 +106,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
       setCurrent(current - 1);
       setComponent(tabs[current].components);
-    };
+    }, 300);
 
-    const cancel = () => {
+    const cancel = useDebouncedCallback(() => {
       const buttonAction = tabs[current].cancelButtonAction;
       const actionScript = tabs[current].cancelButtonActionScript;
       const eventName = tabs[current].cancelEventName;
@@ -122,9 +124,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         default:
           break;
       }
-    };
+    }, 300);
 
-    const done = () => {
+    const done = useDebouncedCallback(() => {
       const buttonAction = tabs[current].doneButtonAction;
       const actionScript = tabs[current].doneButtonActionScript;
       const eventName = tabs[current].doneEventName;
@@ -140,7 +142,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         default:
           break;
       }
-    };
+    }, 300);
 
     /// ACTIONS
 
@@ -158,6 +160,37 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
       publish(EVENT_NAME, { stateId: uniqueStateId || 'NO_PROVIDED' });
     };
+
+    /// EVENTS
+
+    useSubscribe('WIZARD_MAZI_FORM_VIEW', ({ stateId }) => {
+      console.log("WIZARD_MAZI_FORM_VIEW", stateId, model.uniqueStateId, stateId === model.uniqueStateId);
+      const uniqueStateId = tabs[current].nextUniqueStateId;
+      if (stateId === uniqueStateId) {
+        next();
+      }
+    });
+
+    useSubscribe('WIZARD_ACTION_BUTTON_BACK', ({ stateId }) => {
+      const uniqueStateId = tabs[current].backUniqueStateId;
+      if (stateId === uniqueStateId) {
+        back();
+      }
+    });
+
+    useSubscribe('WIZARD_ACTION_BUTTON_CANCEL', ({ stateId }) => {
+      const uniqueStateId = tabs[current].cancelUniqueStateId;
+      if (stateId === uniqueStateId) {
+        cancel();
+      }
+    });
+
+    useSubscribe('WIZARD_ACTION_BUTTON_DONE', ({ stateId }) => {
+      const uniqueStateId = tabs[current].doneUniqueStateId;
+      if (stateId === uniqueStateId) {
+        done();
+      }
+    });
 
     return (
       <>

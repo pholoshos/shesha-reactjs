@@ -57,6 +57,8 @@ const ReactTable: FC<IReactTableProps> = ({
   onRowDropped,
   selectedRowIndex,
   omitClick,
+  containerStyle,
+  tableStyle,
 }) => {
   const [componentState, setComponentState] = useState<IReactTableState>({
     allRows: data,
@@ -280,8 +282,8 @@ const ReactTable: FC<IReactTableProps> = ({
         </span>
       }
     >
-      <div className="sha-react-table">
-        <table {...getTableProps()} className="sha-table">
+      <div className="sha-react-table" style={containerStyle}>
+        <table {...getTableProps()} className="sha-table" style={tableStyle}>
           {columns?.length > 1 &&
             headerGroups.map(headerGroup => (
               <span

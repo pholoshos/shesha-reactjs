@@ -1,4 +1,4 @@
-import React, { FC, useRef, useEffect, useState, Fragment, MutableRefObject, useMemo } from 'react';
+import React, { FC, useRef, useEffect, useState, Fragment, MutableRefObject, useMemo, CSSProperties } from 'react';
 import { Column, SortingRule, TableProps } from 'react-table';
 import {
   CheckOutlined,
@@ -41,6 +41,8 @@ export interface IIndexTableProps extends IShaDataTableProps, ICrudProps, TableP
   tableRef?: MutableRefObject<Partial<DataTableFullInstance> | null>;
   records?: object[];
   options?: IIndexTableOptions;
+  containerStyle?: CSSProperties;
+  tableStyle?: CSSProperties;
 }
 
 export interface IExtendedModalProps extends ModalProps {
@@ -71,6 +73,8 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
   onRowDropped,
   allowRowDragAndDrop,
   options,
+  containerStyle,
+  tableStyle,
 }) => {
   const store = useDataTableStore();
   const { headers } = useAuthState();
@@ -587,6 +591,8 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
     ),
     onRowDropped,
     allowRowDragAndDrop,
+    containerStyle,
+    tableStyle,
     // pageSize: selectedPageSize,
     omitClick: options?.omitClick,
   };

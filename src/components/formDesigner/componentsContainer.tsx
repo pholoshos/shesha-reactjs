@@ -23,6 +23,7 @@ export interface IComponentsContainerProps {
   itemsLimit?: number;
   plainWrapper?: boolean;
   dynamicComponents?: IConfigurableFormComponent[];
+  wrapperStyle?: CSSProperties;
   style?: CSSProperties;
 }
 const ComponentsContainer: FC<IComponentsContainerProps> = ({
@@ -37,6 +38,7 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
   itemsLimit = -1,
   plainWrapper = false,
   dynamicComponents = [],
+  wrapperStyle,
   style: incomingStyle,
 }) => {
   const {
@@ -138,7 +140,7 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
   }
 
   return (
-    <div className={joinStringValues(['sha-components-container', direction, className])}>
+    <div className={joinStringValues(['sha-components-container', direction, className])} style={wrapperStyle}>
       {isDesignerMode ? (
         <>
           {components.length === 0 && <div className="sha-drop-hint">Drag and Drop form component</div>}

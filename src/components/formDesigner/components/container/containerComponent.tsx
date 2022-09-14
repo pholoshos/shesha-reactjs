@@ -60,6 +60,7 @@ export interface IContainerComponentProps extends IConfigurableFormComponent {
   alignItems?: AlignItems;
   justifyItems?: JustifyItems;
   className?: string;
+  wrapperStyle?: string;
   components: IConfigurableFormComponent[]; // Only important for fluent API
 }
 
@@ -82,6 +83,7 @@ const ContainerComponent: IToolboxComponent<IContainerComponentProps> = {
         alignItems={model.direction === 'horizontal' ? model?.alignItems : null}
         justifyItems={model.direction === 'horizontal' ? model?.justifyItems : null}
         className={model.className}
+        wrapperStyle={getStyle(model?.wrapperStyle, formData)}
         style={getStyle(model?.style, formData)}
         // dynamicComponents={model?.isDynamic ? model?.components : []}
       />

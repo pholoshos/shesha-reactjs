@@ -20,7 +20,7 @@ import {
   IFormSection,
   ViewType,
 } from './models';
-import { FormInstance } from 'antd';
+import { ColProps, FormInstance } from 'antd';
 import { StateWithHistory } from 'redux-undo';
 import { FormLayout } from 'antd/lib/form/Form';
 import { IDataSource } from '../formDesigner/models';
@@ -51,10 +51,6 @@ export type IFlagErrorFlags =
   | 'save' /* NEW_ERROR_FLAG_GOES_HERE */;
 export type IFlagActionedFlags = '__DEFAULT__' /* NEW_ACTIONED_FLAG_GOES_HERE */;
 
-export interface ILayoutProps {
-  span: number;
-}
-
 export interface IFormSettings {
   modelType?: string;
   postUrl?: string;
@@ -63,8 +59,8 @@ export interface IFormSettings {
   getUrl?: string;
   layout: FormLayout;
   colon: boolean;
-  labelCol: ILayoutProps;
-  wrapperCol: ILayoutProps;
+  labelCol: ColProps;
+  wrapperCol: ColProps;
   showModeToggler?: boolean;
   preparedValues?: string;
   size?: SizeType;

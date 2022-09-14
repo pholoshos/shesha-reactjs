@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { IConfigurableFormComponent } from '../../../providers/form/models';
 import { ColProps, Form } from 'antd';
 import { useForm } from '../../../providers/form';
@@ -36,16 +36,18 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
 }) => {
   const { isComponentHidden, formData } = useForm();
 
-  const { namePrefix, wrapperCol: _wrapperCol, labelCol: _labelCol } = useFormItem();
+  const formItem = useFormItem();
+
+  const { namePrefix, wrapperCol: _wrapperCol, labelCol: _labelCol } = formItem;
 
   const isHidden = isComponentHidden(model);
 
   const style = model?.hidden ? { display: 'none' } : {};
 
-  const getLayout = () => {
+  const layout = useMemo(() => {
     // Make sure the `wrapperCol` and `labelCol` from `FormItemProver` override the ones from the main form
     return { labelCol: _labelCol || labelCol, wrapperCol: _wrapperCol || wrapperCol };
-  };
+  }, [formItem]);
 
   const getPropName = () => {
     const name = getFieldNameFromExpression(model.name);
@@ -56,6 +58,8 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
 
     return name;
   };
+
+  console.log('layout, layout?.labelCol, layout?.wrapperCol ', layout, layout?.labelCol, layout?.wrapperCol);
 
   return (
     <Form.Item
@@ -69,7 +73,8 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
       initialValue={initialValue}
       tooltip={model.description}
       rules={isHidden ? [] : getValidationRules(model, { formData })}
-      {...getLayout()}
+      labelCol={layout?.labelCol}
+      wrapperCol={layout?.wrapperCol}
       style={style}
     >
       {children}

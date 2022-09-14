@@ -10,7 +10,7 @@ import { getQueryParams } from '../../utils/url';
 import { IFormDto } from '../form/models';
 import { setMarkupWithSettingsAction } from './actions';
 import { ISubFormProps } from './interfaces';
-import { message, notification } from 'antd';
+import { ColProps, message, notification } from 'antd';
 import { useGlobalState } from '../globalState';
 import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
@@ -294,6 +294,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   });
   //#endregion
 
+  const getColSpan = (span: number | ColProps): ColProps => {
+    if (!span) return null;
+
+    return typeof span === 'number' ? { span } : span;
+  };
+
   return (
     <SubFormContext.Provider
       value={{
@@ -315,8 +321,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         components: state?.components,
         formSettings: {
           ...state?.formSettings,
-          labelCol: labelCol || (state?.formSettings?.labelCol as any), // Override with the incoming one
-          wrapperCol: wrapperCol || (state?.formSettings?.wrapperCol as any), // Override with the incoming one
+          labelCol: getColSpan(labelCol) || getColSpan(state?.formSettings?.labelCol),
+          wrapperCol: getColSpan(wrapperCol) || getColSpan(state?.formSettings?.wrapperCol), // Override with the incoming one
         },
         name,
       }}

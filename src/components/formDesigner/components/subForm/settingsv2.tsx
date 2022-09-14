@@ -46,7 +46,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
     >
       <SectionSeparator sectionName="Display" />
 
-      <FormItem name="name" label="Name" rules={[{ required: true }]}>
+      <FormItem name="name" label="Name">
         <PropertyAutocomplete id="fb71cb51-884f-4f34-aa77-820c12276c95" />
       </FormItem>
 

@@ -97,48 +97,49 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
             <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} />
           </FormItem>
         </Show>
-      </Show>
 
-      <FormItem
-        label="Query Params"
-        name="queryParams"
-        tooltip="The code that returns the query parameters to be used to fetch the data. Ideally this should be a function that returns an object with the entity id"
-      >
-        <CodeEditor
-          mode="dialog"
-          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-          name="getUrl"
-          type={''}
-          id={''}
-          description="The code that returns the query parameters to be used to fetch the data. Ideally this should be a function that returns an object with the entity id"
-          exposedVariables={[
-            {
-              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-              name: 'data',
-              description: 'Form data',
-              type: 'object',
-            },
-            {
-              id: '65b71112-d412-401f-af15-1d3080f85319',
-              name: 'globalState',
-              description: 'The global state',
-              type: 'object',
-            },
-            {
-              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-              name: 'queryParams',
-              description: 'Query parameters',
-              type: 'object',
-            },
-            {
-              id: 'bb3f8b7a-fada-43ab-bb83-acf557b77013',
-              name: 'value',
-              description: 'The form value',
-              type: 'object',
-            },
-          ]}
-        />
-      </FormItem>
+        <FormItem
+          label="Query Params"
+          name="queryParams"
+          tooltip="The code that returns the query parameters to be used to fetch the data. Ideally this should be a function that returns an object with the entity id"
+        >
+          <CodeEditor
+            mode="dialog"
+            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+            name="getUrl"
+            type={''}
+            id={''}
+            label="Query Params"
+            description="The code that returns the query parameters to be used to fetch the data. Ideally this should be a function that returns an object with the entity id"
+            exposedVariables={[
+              {
+                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                name: 'data',
+                description: 'Form data',
+                type: 'object',
+              },
+              {
+                id: '65b71112-d412-401f-af15-1d3080f85319',
+                name: 'globalState',
+                description: 'The global state',
+                type: 'object',
+              },
+              {
+                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+                name: 'queryParams',
+                description: 'Query parameters',
+                type: 'object',
+              },
+              {
+                id: 'bb3f8b7a-fada-43ab-bb83-acf557b77013',
+                name: 'value',
+                description: 'The form value',
+                type: 'object',
+              },
+            ]}
+          />
+        </FormItem>
+      </Show>
 
       <SectionSeparator sectionName="URLs" />
 
@@ -153,6 +154,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           name="getUrl"
           type={''}
           id={''}
+          label="GET Url"
           description="The API url that will be used to fetch the data. Write the code that returns the string"
           exposedVariables={[
             {
@@ -186,6 +188,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="postUrl"
+          label="POST Url"
           type={''}
           id={''}
           description="he API url that will be used to update data. Write the code that returns the string"
@@ -221,6 +224,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="putUrl"
+          label="PUT Url"
           type={''}
           id={''}
           description="The API url that will be used to update data. Write the code that returns the string"
@@ -256,6 +260,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="deleteUrl"
+          label="DELETE Url"
           type={''}
           id={''}
           description="The API url that will be used to delete data. Write the code that returns the string"
@@ -293,6 +298,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="beforeGet"
+          label="On Submit"
           type={''}
           id={''}
           description="Triggered before retrieving the sub-form object from the back-end"
@@ -335,6 +341,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="onCreated"
+          label="On Created"
           type={''}
           id={''}
           description="Triggered after successfully creating a new sub-form object in the back-end"
@@ -382,6 +389,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="onUpdated"
+          label="On Updated"
           type={''}
           id={''}
           description="Triggered after successfully updating the sub-form object in the back-end"
@@ -420,18 +428,6 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         />
       </FormItem>
 
-      <SectionSeparator sectionName="Data and Filter" />
-
-      <FormItem name="entityType" label="Entity type" tooltip="The entity you want to you use to fetch data against">
-        <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" />
-      </FormItem>
-
-      <Show when={Boolean(state?.entityType)}>
-        <FormItem name="properties" label="Properties">
-          <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} />
-        </FormItem>
-      </Show>
-
       <SectionSeparator sectionName="Layout" />
 
       <FormItem name="labelCol" label="Label Col">
@@ -445,6 +441,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
       <FormItem name="style" label="Style">
         <CodeEditor
           mode="dialog"
+          label="Style"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="style"
           type={''}
@@ -470,6 +467,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
       >
         <CodeEditor
           mode="dialog"
+          label="Custom Visibility"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="customVisibility"
           type={''}

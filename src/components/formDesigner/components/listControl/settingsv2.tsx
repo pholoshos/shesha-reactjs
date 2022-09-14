@@ -183,6 +183,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
               mode="dialog"
               setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
               name="deleteUrl"
+              label="Delete URL"
               type={''}
               id={''}
               description="The API url that will be used delete the list item. Write the code that returns the string"
@@ -216,6 +217,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
           >
             <CodeEditor
               mode="dialog"
+              label="Delete Confirm Message"
               setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
               name="deleteConfirmMessage"
               type={''}
@@ -377,6 +379,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
       >
         <CodeEditor
           mode="dialog"
+          label="Custom Visibility"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="customVisibility"
           type={''}

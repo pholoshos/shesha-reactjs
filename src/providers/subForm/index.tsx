@@ -74,7 +74,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   useEffect(() => {
     if (typeof value === 'string' && typeof previousValue === 'string' && previousValue !== value) {
-      getData(value);
+      handleFetchData(value);
     }
   }, [value, globalState, formData]);
 
@@ -109,7 +109,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   useEffect(() => {
     if (queryParams && formMode !== 'designer' && dataSource === 'api') {
-      handleFetchData();
+      if (evaluatedQueryParams?.id || getUrl) {
+        // Only fetch when there's an `Id`. Ideally an API that is used to fetch data should have an id
+        handleFetchData();
+      } else {
+        onChange({});
+      }
     }
   }, [queryParams, evaluatedQueryParams]);
 
@@ -143,7 +148,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   //#endregion
 
   //#region CRUD functions
-  const getData = useDebouncedCallback((id?: string) => {
+  const getData = useDebouncedCallback(() => {
     if (dataSource === 'api') {
       if (beforeGet) {
         const evaluateBeforeGet = () => {
@@ -156,7 +161,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         onChange(evaluatedData);
       }
 
-      handleFetchData(id);
+      handleFetchData();
     }
   }, 300);
 

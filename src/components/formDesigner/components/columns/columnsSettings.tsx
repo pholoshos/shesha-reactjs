@@ -28,7 +28,7 @@ function ColumnsSettings({ onSave, model, onValuesChange }: IProps) {
       </Form.Item>
 
       <Form.Item name="label" label="Label" initialValue={model?.label}>
-       <Input />
+        <Input />
       </Form.Item>
 
       <Form.Item name="columns" label="Columns" initialValue={model?.columns || []}>

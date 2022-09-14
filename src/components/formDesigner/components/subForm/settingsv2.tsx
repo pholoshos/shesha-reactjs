@@ -54,6 +54,10 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         <Input />
       </FormItem>
 
+      <FormItem name="readOnly" label="Read Only" valuePropName="checked">
+        <Checkbox />
+      </FormItem>
+
       <Form.Item name="hideLabel" label="Hide Label" valuePropName="checked">
         <Checkbox />
       </Form.Item>

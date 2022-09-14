@@ -8,13 +8,14 @@ interface IDynamicConfigurableFormComponent extends IConfigurableFormComponent {
 
 interface ISubFormContainerProps {
   components: IDynamicConfigurableFormComponent[];
+  readOnly?: boolean;
 }
 
-export const SubFormContainer: FC<ISubFormContainerProps> = ({ components }) => {
+export const SubFormContainer: FC<ISubFormContainerProps> = ({ components, readOnly }) => {
   return (
     <Fragment>
       {components?.map(model => {
-        return <DynamicComponent model={{ ...model, isDynamic: true }} key={model?.id} />;
+        return <DynamicComponent model={{ ...model, isDynamic: true, readOnly }} key={model?.id} />;
       })}
     </Fragment>
   );

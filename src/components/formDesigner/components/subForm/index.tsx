@@ -66,10 +66,10 @@ interface ISubFormWrapperProps extends Omit<ISubFormProps, 'id' | 'type' | 'styl
   id: string;
 }
 
-const SubFormWrapper: FC<ISubFormWrapperProps> = ({ style, ...props }) => {
+const SubFormWrapper: FC<ISubFormWrapperProps> = ({ style, readOnly, ...props }) => {
   return (
     <SubFormProvider {...props}>
-      <SubForm style={style} />
+      <SubForm style={style} readOnly={readOnly} />
     </SubFormProvider>
   );
 };

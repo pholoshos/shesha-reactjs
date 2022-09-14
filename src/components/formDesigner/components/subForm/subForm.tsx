@@ -7,16 +7,15 @@ import { FormItemProvider } from '../../../../providers';
 
 interface ISubFormProps {
   style?: CSSProperties;
+  readOnly?: boolean;
 }
 
-const SubForm: FC<ISubFormProps> = ({ style }) => {
+const SubForm: FC<ISubFormProps> = ({ readOnly }) => {
   const { errors, loading, components, formSettings, name } = useSubForm();
 
   const isLoading = useMemo(() => {
     return Object.values(loading).find(l => Boolean(l));
   }, [loading]);
-
-  console.log('SubForm style: ', style);
 
   return (
     <ShaSpin spinning={isLoading}>
@@ -27,7 +26,7 @@ const SubForm: FC<ISubFormProps> = ({ style }) => {
 
         <div>
           <FormItemProvider namePrefix={name} labelCol={formSettings?.labelCol} wrapperCol={formSettings?.wrapperCol}>
-            <SubFormContainer components={components} />
+            <SubFormContainer components={components} readOnly={readOnly} />
           </FormItemProvider>
         </div>
       </div>

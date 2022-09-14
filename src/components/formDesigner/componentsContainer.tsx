@@ -52,8 +52,6 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
     // type,
   } = useForm();
 
-  console.log('incomingStyle: ', incomingStyle);
-
   const isDesignerMode = formMode === 'designer';
 
   const components = getChildComponents(containerId);

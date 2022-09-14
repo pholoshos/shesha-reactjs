@@ -1,9 +1,6 @@
 import { ColProps } from 'antd';
 import { IGuidNullableEntityWithDisplayNameDto } from '../../interfaces/shesha';
-import { IChangeable, IConfigurableFormComponent, IValuable } from '../../interfaces';
-import { IStoredFilter } from '../dataTable/interfaces';
-
-
+import { IChangeable, IValuable } from '../../interfaces';
 
 export interface ISubFormProps extends IValuable, IChangeable {
   dataSourceUrl?: string;

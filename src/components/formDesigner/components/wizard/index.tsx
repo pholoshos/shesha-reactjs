@@ -15,7 +15,7 @@ import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
 import { usePubSub, useSubscribe } from '../../../../hooks';
 import { axiosHttp } from '../../../../apis/axios';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 
 const { Step } = Steps;
 

@@ -40,4 +40,6 @@ export const onMessageDisplay = (type: keyof MessageApi, content: ArgsProps | an
 export const CONFIRM_BODY = [
   { title: 'Delete Configs', content: 'Are you sure you want to delete? This action cannot be undone.' },
   { title: 'Duplicate Config', content: 'Are you sure you want to duplicate this config?' },
+  { title: 'Publish Config', content: 'Are you sure you want to publish this config?' },
+  { title: 'Set Config Ready', content: 'Are you sure you want to set this config ready?' },
 ];

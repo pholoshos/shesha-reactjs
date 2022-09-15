@@ -38,7 +38,7 @@ const buildFilterById = (value: AutocompleteValueType): string => {
  * Generic entities autocomplete
  */
 export const useEntityAutocomplete = (props: IAutocompleteProps): AutocompleteReturn => {
-  const displayProperty = props.displayProperty ?? '_displayName';
+  const displayProperty = props.displayProperty || '_displayName';
   const properties = convertDotNotationPropertiesToGraphQL(['id', displayProperty], []);
   const getListFetcherQueryParams = (term: string): IAutocompletePayload => {
     return {

@@ -6,7 +6,12 @@ export interface IDynamicPageProps {
   /**
    * Form path.
    */
-  path?: string;
+  formName?: string;
+
+  /**
+   * Module name
+   */
+  module?: string;
 
   /**
    * Entity id. This should not be confused with the form id

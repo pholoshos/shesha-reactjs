@@ -25,7 +25,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   const { publish } = usePubSub();
 
-  const { id, path, entityPathId } = state;
+  const { id, formName, entityPathId } = state;
 
   // todo: find a way to pass module
   const { 
@@ -33,7 +33,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     formConfiguration,
     loading: isFetchingMarkup,
     error: fetchMarkupError
-   } = useFormConfiguration({ module: null, name: props.path, lazy: true });
+   } = useFormConfiguration({ module: props.module, name: props.formName, lazy: true });
   const formMarkup = formConfiguration?.markup;
   
   const [form] = Form.useForm();
@@ -139,11 +139,11 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   //#region Fetch form and set the state
   useEffect(() => {
-    if (path) {
+    if (formName) {
       fetchFormMarkup();
       return;
     }
-  }, [path]);
+  }, [formName]);
 
   useEffect(() => {
     setState(prev => ({ ...prev, formMarkup: formMarkup }));

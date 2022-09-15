@@ -45,12 +45,40 @@ export const WizardForm = addStory(DesignerTemplate, {
   formName: 'mazi-form-view',
 });
 
-export const FormsIndexNew = addStory(DesignerTemplate, {
+export const FormsIndex = addStory(DesignerTemplate, {
   formName: 'forms',
 });
 
-export const FormCreateNew = addStory(DesignerTemplate, {
+export const FormCreate = addStory(DesignerTemplate, {
   formName: 'form-create',
+});
+
+export const FormDetails = addStory(DesignerTemplate, {
+  formName: 'form-details',
+});
+
+export const Modules = addStory(DesignerTemplate, {
+  formName: 'modules',
+});
+
+export const ModuleCreate = addStory(DesignerTemplate, {
+  formName: 'module-create',
+});
+
+export const ModuleDetails = addStory(DesignerTemplate, {
+  formName: 'module-details',
+});
+
+export const FormTemplates = addStory(DesignerTemplate, {
+  formName: 'form-templates',
+});
+
+export const FormTemplateCreate = addStory(DesignerTemplate, {
+  formName: 'form-template-create',
+});
+
+export const FormTemplateDetails = addStory(DesignerTemplate, {
+  formName: 'form-template-details',
 });
 
 export const Autocomplete = addStory(DesignerTemplate, {

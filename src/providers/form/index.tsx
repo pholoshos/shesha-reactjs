@@ -152,11 +152,11 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     loading: isFetchingMarkup,
     error: fetchMarkupError,
     formConfiguration
-  } = useFormConfiguration({ module: module, name: name, lazy: true });
+  } = useFormConfiguration({ id, module: module, name: name, lazy: true });
 
 
   const doFetchFormInfo = () => {
-    if (name) {
+    if (name || id) {
       dispatch(loadRequestAction({ module, name }));
       fetchFormMarkup();
     }

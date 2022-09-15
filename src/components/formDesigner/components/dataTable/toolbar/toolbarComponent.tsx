@@ -7,7 +7,7 @@ import { Alert, Menu, Dropdown } from 'antd';
 import { IButtonGroup, IToolbarButton, ToolbarItemProps } from '../../../../../providers/toolbarConfigurator/models';
 import { useForm, isInDesignerMode } from '../../../../../providers/form';
 import { getVisibilityFunc2 } from '../../../../../providers/form/utils';
-import { DataTableSelectionProvider, useDataTableSelection } from '../../../../../providers/dataTableSelection';
+import { useDataTableSelection } from '../../../../../providers/dataTableSelection';
 import { ToolbarButton } from './toolbarButton';
 import { ShaIcon } from '../../../..';
 import { IconType } from '../../../../shaIcon';
@@ -19,7 +19,7 @@ const ToolbarComponent: IToolboxComponent<IToolbarProps> = {
   name: 'Toolbar',
   icon: <DashOutlined />,
   factory: (model: IToolbarProps) => {
-    return <ToolbarWithProvider {...model} />;
+    return <Toolbar {...model} />;
   },
   initModel: (model: IToolbarProps) => {
     return {
@@ -35,7 +35,7 @@ const ToolbarComponent: IToolboxComponent<IToolbarProps> = {
 export const Toolbar: FC<IToolbarProps> = ({ items, id }) => {
   const { formMode } = useForm();
   const { anyOfPermissionsGranted } = useAuth();
-  const { selectedRow } = useDataTableSelection();
+  const { selectedRow } = useDataTableSelection(false) ?? {};
   const isDesignMode = formMode === 'designer';
 
   const renderItem = (item: ToolbarItemProps, uuid: string) => {
@@ -43,6 +43,7 @@ export const Toolbar: FC<IToolbarProps> = ({ items, id }) => {
       const visibilityFunc = getVisibilityFunc2(item.customVisibility, item.name);
 
       const isVisible = visibilityFunc({}, { selectedRow }, formMode);
+
       if (!isVisible) return null;
     }
 
@@ -108,11 +109,3 @@ export const Toolbar: FC<IToolbarProps> = ({ items, id }) => {
 };
 
 export default ToolbarComponent;
-
-//#region Page Toolbar
-export const ToolbarWithProvider: FC<IToolbarProps> = props => (
-  <DataTableSelectionProvider>
-    <Toolbar {...props} />
-  </DataTableSelectionProvider>
-);
-//#endregion

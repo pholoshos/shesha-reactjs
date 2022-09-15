@@ -44,28 +44,36 @@ const DataTableSelectionProvider: FC<PropsWithChildren<IDataTableSelectionProvid
   );
 };
 
-function useDataTableSelectionState() {
+function useDataTableSelectionState(require: boolean = true) {
   const context = useContext(DataTableSelectionStateContext);
 
-  if (context === undefined) {
+  if (require && context === undefined) {
     throw new Error('useDataTableSelection must be used within a DataTableSelectionProvider');
   }
 
   return context;
 }
 
-function useDataTableSelectionActions() {
+function useDataTableSelectionActions(require: boolean = true) {
   const context = useContext(DataTableSelectionActionsContext);
 
-  if (context === undefined) {
+  if (require && context === undefined) {
     throw new Error('useDataTableSelectionActions must be used within a DataTableSelectionProvider');
   }
 
   return context;
 }
 
-function useDataTableSelection() {
-  return { ...useDataTableSelectionState(), ...useDataTableSelectionActions() };
+function useDataTableSelection(require: boolean = true) {
+  const actionsContext = useDataTableSelectionActions(require);
+  const stateContext = useDataTableSelectionState(require);
+
+  // useContext() returns initial state when provider is missing
+  // initial context state is useless especially when require == true
+  // so we must return value only when both context are available
+  return actionsContext !== undefined && stateContext !== undefined
+    ? { ...actionsContext, ...stateContext }
+    : undefined;
 }
 
 export { DataTableSelectionProvider, useDataTableSelectionState, useDataTableSelectionActions, useDataTableSelection };

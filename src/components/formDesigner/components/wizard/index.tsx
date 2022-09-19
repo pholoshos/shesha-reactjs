@@ -15,7 +15,6 @@ import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
 import { usePubSub, useSubscribe } from '../../../../hooks';
 import { axiosHttp } from '../../../../apis/axios';
-import { useDebouncedCallback } from 'use-debounce';
 
 const { Step } = Steps;
 
@@ -65,7 +64,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
     /// NAVIGATION
 
-    const next = useDebouncedCallback(() => {
+    const next = () => {
       const buttonAction = tabs[current].nextButtonAction;
       const actionScript = tabs[current].nextButtonActionScript;
       const eventName = tabs[current].nextEventName;
@@ -85,9 +84,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
       setCurrent(current + 1);
       setComponent(tabs[current].components);
-    }, 300);
+    };
 
-    const back = useDebouncedCallback(() => {
+    const back = () => {
       const buttonAction = tabs[current].backButtonAction;
       const actionScript = tabs[current].backButtonActionScript;
       const eventName = tabs[current].backEventName;
@@ -106,9 +105,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
       setCurrent(current - 1);
       setComponent(tabs[current].components);
-    }, 300);
+    };
 
-    const cancel = useDebouncedCallback(() => {
+    const cancel = () => {
       const buttonAction = tabs[current].cancelButtonAction;
       const actionScript = tabs[current].cancelButtonActionScript;
       const eventName = tabs[current].cancelEventName;
@@ -124,9 +123,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         default:
           break;
       }
-    }, 300);
+    };
 
-    const done = useDebouncedCallback(() => {
+    const done = () => {
       const buttonAction = tabs[current].doneButtonAction;
       const actionScript = tabs[current].doneButtonActionScript;
       const eventName = tabs[current].doneEventName;
@@ -142,7 +141,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         default:
           break;
       }
-    }, 300);
+    };
 
     /// ACTIONS
 

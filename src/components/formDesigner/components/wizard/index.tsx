@@ -217,26 +217,24 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
               if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
 
               return (
-                <>
-                  <Step
-                    key={key}
-                    disabled={isDisabledByCondition}
-                    title={title}
-                    subTitle={subTitle}
-                    description={description}
-                    icon={
-                      icon ? (
-                        <Fragment>
-                          <ShaIcon iconName={icon as any} />
-                        </Fragment>
-                      ) : (
-                        <Fragment>
-                          {icon}
-                        </Fragment>
-                      )
-                    }
-                  />
-                </>
+                <Step
+                  key={key}
+                  disabled={isDisabledByCondition}
+                  title={title}
+                  subTitle={subTitle}
+                  description={description}
+                  icon={
+                    icon ? (
+                      <Fragment>
+                        <ShaIcon iconName={icon as any} />
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        {icon}
+                      </Fragment>
+                    )
+                  }
+                />
               );
             }
           )}

@@ -12,7 +12,8 @@ import { IAjaxResponseBase } from '../../interfaces/ajaxResponse';
 import { useGlobalState, useSheshaApplication } from '../../providers';
 import { useFormConfiguration } from '../../providers/form/api';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
-import { evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
+import { FormIdentifier } from '../../providers/form/models';
+import { asFormFullName, evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
 import { getQueryParams, isValidSubmitVerb } from '../../utils/url';
 import { EntityAjaxResponse, IDynamicPageProps, IDynamicPageState } from './interfaces';
 import { DynamicFormPubSubConstants } from './pubSub';
@@ -25,7 +26,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   const { publish } = usePubSub();
 
-  const { id, formName, entityPathId } = state;
+  const { id, formId, entityPathId } = state;
 
   // todo: find a way to pass module
   const { 
@@ -33,7 +34,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     formConfiguration,
     loading: isFetchingMarkup,
     error: fetchMarkupError
-   } = useFormConfiguration({ module: props.module, name: props.formName, lazy: true });
+   } = useFormConfiguration({ formId, lazy: true });
   const formMarkup = formConfiguration?.markup;
   
   const [form] = Form.useForm();
@@ -102,21 +103,21 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     setState(() => ({ ...props }));
   }, [props]);
 
+  const sameForm = (formId: FormIdentifier, name: string, module: string): boolean => {
+    const fullName = asFormFullName(formId);
+    return fullName && fullName.name == name && fullName.module == module;
+  }
+
   //#region get form data
   useEffect(() => {
     // The mismatch happens if you're drilled down to a page and then click the back button on the browser
     // When you land, because you'd still be having the formResponse, before the correct form is being fetched
     // Data/Entity will be fetched with the previous value of the response. That is why we have to check that we don't have the old form response
     //const isPathMismatch = props?.path !== formResponse?.path;
-    const isPathMismatch = true;
+    const correctForm = formConfiguration && sameForm(props.formId, formConfiguration.name, formConfiguration.module);
 
     // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
-    if (fetchDataPath && !isPathMismatch) {
-      // clear form data
-      //formRef?.current?.setFormData({ values: null, mergeValues: false });
-
-      console.log('fetch data', {id, getUrl: formMarkup?.formSettings?.getUrl, entityPathId, fetchDataPath});
-
+    if (fetchDataPath && correctForm) {
       fetchData({ queryParams: entityPathId || !id ? {} : { id } });
     }
   }, [id, formMarkup?.formSettings?.getUrl, entityPathId, fetchDataPath]);
@@ -139,11 +140,11 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   //#region Fetch form and set the state
   useEffect(() => {
-    if (formName) {
+    if (formId) {
       fetchFormMarkup();
       return;
     }
-  }, [formName]);
+  }, [formId]);
 
   useEffect(() => {
     setState(prev => ({ ...prev, formMarkup: formMarkup }));
@@ -216,12 +217,9 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   const isLoading = isFetchingData || isFetchingMarkup || isPostingData;
 
-  //console.log('formResponse?.markup', props, formResponse);
-
   const markupErrorCode = fetchMarkupError
     ? (fetchMarkupError.data as IAjaxResponseBase)?.error?.code
     : null;
-  console.log('markupErrorCode:', markupErrorCode);
 
   if (!isLoading && markupErrorCode === 404) {
     return (
@@ -254,17 +252,11 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     }
   };
 
-  console.log('render page', {
-    isFetchingMarkup,
-    markupErrorCode,
-    stateFormMarkup: state?.formMarkup,
-    formMarkup
-  })
-
   return (
     <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
       <ConfigurableForm
         markup={state?.formMarkup}
+        formId={formId}
         formRef={formRef}
         mode={state?.mode}
         form={form}

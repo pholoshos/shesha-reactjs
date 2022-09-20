@@ -26,7 +26,7 @@ function getItem({ label, target, key, icon, children, isParent, navigate } : IG
     icon,
     children,
     label: (
-      <a className={classNames('nav-links-renderer', { 'is-parent-menu': isParent })} onClick={e => clickHandler(e, target)}>
+      <a className={classNames('nav-links-renderer', { 'is-parent-menu': isParent })} onClick={target ? e => clickHandler(e, target) : undefined}>
         {label}
       </a>
     ),

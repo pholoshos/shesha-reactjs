@@ -4,7 +4,7 @@ import { ValidationErrors, ConfigurableForm } from '../';
 import { FormInstance } from 'antd/lib/form';
 import { useShaRouting, useUi } from '../../providers';
 import { IDataMutator } from './models';
-import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
+import { FormIdentifier, FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
 import { useMedia } from 'react-use';
 
 export enum OnSuccessActionType {
@@ -26,9 +26,9 @@ export interface IGenericCreateModalProps {
   visible?: boolean;
 
   /**
-   * Path to the form to display on the modal
+   * Identifier of form to display on the modal
    */
-  formPath: string;
+   formId: FormIdentifier;
 
   /**
    * A callback to update the entity
@@ -91,7 +91,7 @@ const GenericCreateModal: FC<IGenericCreateModalProps> = ({
   onSuccess,
   updater,
   title,
-  formPath,
+  formId,
   prepareValues,
   OnSuccessAction = OnSuccessActionType.Return,
   onSuccessUrl,
@@ -188,7 +188,7 @@ const GenericCreateModal: FC<IGenericCreateModalProps> = ({
           {...formItemLayout}
           form={form}
           onFinish={onFinish}
-          path={formPath}
+          formId={formId}
           markup={formMarkup}
           onFieldsChange={onFieldsChange}
           actions={actions}

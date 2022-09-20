@@ -10,13 +10,14 @@ import PageHeaderTag, { ITagProps } from './pageHeaderTag';
 import StatusTag, { IStatusTagProps } from '../statusTag';
 import { IToolbarButtonItem } from '../toolbar/models';
 import Toolbar from '../toolbar';
+import { FormIdentifier } from '../../providers/form/models';
 
 export interface IPageHeadProps {
   readonly title?: string;
   readonly description?: string;
   readonly url?: string;
   readonly ogImage?: string;
-  readonly formId?: string;
+  readonly formId?: FormIdentifier;
   readonly formMode?: string;
 }
 

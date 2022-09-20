@@ -43,6 +43,8 @@ export const SidebarMenu: FC<ISidebarMenuProps> = ({ theme = 'dark' }) => {
   const keys = openedKeys && openedKeys.length > 0 ? openedKeys : undefined;
 
   const handleNavigate = (url: string) => {
+    if (!url)
+      return;
     if (typeof router === 'object') {
       try {
         router?.push(url);

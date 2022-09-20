@@ -1,17 +1,27 @@
 import { createContext } from 'react';
 import { IToolboxComponentGroup } from '../..';
 
+export interface ISheshaRutes {
+  formsDesigner: string;
+}
+
 export interface ISheshaApplicationStateContext {
   applicationName?: string;
   backendUrl: string;
   httpHeaders: { [key: string]: string };
   toolboxComponentGroups?: IToolboxComponentGroup[];
+  routes: ISheshaRutes;
+}
+
+export const DEFAULT_SHESHA_ROUTES: ISheshaRutes = {
+  formsDesigner: '/shesha/forms-designer'
 }
 
 export const SHESHA_APPLICATION_CONTEXT_INITIAL_STATE: ISheshaApplicationStateContext = {
   backendUrl: '',
   httpHeaders: {},
   toolboxComponentGroups: [],
+  routes: DEFAULT_SHESHA_ROUTES,
 };
 
 export interface ISheshaApplicationActionsContext {

@@ -20,7 +20,7 @@ import {
   IComponentAddFromTemplatePayload,
   DEFAULT_FORM_SETTINGS,
 } from './contexts';
-import { IFormProps, IFormActions, FormMarkup, FormMarkupWithSettings, IFormSections, FormMode } from './models';
+import { IFormProps, IFormActions, FormMarkup, FormMarkupWithSettings, IFormSections, FormMode, FormIdentifier } from './models';
 import { getFlagSetters } from '../utils/flagsSetters';
 import {
   componentAddAction,
@@ -82,9 +82,7 @@ import { useSubscribe } from '../../hooks';
 import { useFormConfiguration } from './api';
 
 export interface IFormProviderProps {
-  id?: string;
-  name?: string;
-  module?: string;
+  formId: FormIdentifier;
   uniqueStateId?: string;
   markup?: FormMarkup;
   mode: FormMode;
@@ -98,9 +96,7 @@ export interface IFormProviderProps {
 
 const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   children,
-  id,
-  module,
-  name,
+  formId,
   markup,
   mode = 'readonly',
   form,
@@ -127,8 +123,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   const initial: IFormStateContext = {
     ...FORM_CONTEXT_INITIAL_STATE,
-    id,
-    name,
+    formId: formId,
     formMode: mode,
     components: formComponents || [],
     form,
@@ -152,12 +147,12 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     loading: isFetchingMarkup,
     error: fetchMarkupError,
     formConfiguration
-  } = useFormConfiguration({ id, module: module, name: name, lazy: true });
+  } = useFormConfiguration({ formId, lazy: true });
 
 
   const doFetchFormInfo = () => {
-    if (name || id) {
-      dispatch(loadRequestAction({ module, name }));
+    if (formId) {
+      dispatch(loadRequestAction({ formId }));
       fetchFormMarkup();
     }
   };
@@ -166,7 +161,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     if (markup) return;
 
     doFetchFormInfo();
-  }, [id, module, name, markup]);
+  }, [formId, markup]);
 
   useEffect(() => {
     if (markup) {

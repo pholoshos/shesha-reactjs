@@ -12,6 +12,7 @@ import moment from 'moment';
 import {
   evaluateComplexString,
   evaluateKeyValuesToObjectMatchedData,
+  evaluateString,
   getObjectWithOnlyIncludedKeys,
 } from '../../providers/form/utils';
 import cleanDeep from 'clean-deep';
@@ -20,6 +21,11 @@ import { getQueryParams } from '../../utils/url';
 import _ from 'lodash';
 import { usePrevious } from 'react-use';
 import { axiosHttp } from '../../apis/axios';
+import qs from 'qs';
+import axios, { AxiosResponse } from 'axios';
+import { FormConfigurationDto } from '../../providers/form/api';
+import { IAbpWrappedGetEntityResponse } from '../../interfaces/gql';
+import { nanoid } from 'nanoid/non-secure';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   children,
@@ -31,7 +37,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   beforeSubmit,
   prepareInitialValues,
   skipFetchData,
-  formId,
   ...props
 }) => {
   const { setFormData, formData, allComponents, formMode, isDragging, formSettings, setValidationErrors } = useForm();
@@ -91,12 +96,12 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     formSettings?.initialValues?.forEach(({ key, value }) => {
       const evaluatedValue = value?.includes('{{')
         ? evaluateComplexString(value, [
-            { match: 'data', data: formData },
-            { match: 'parentFormValues', data: parentFormValues },
-            { match: 'globalState', data: globalState },
-            { match: 'query', data: queryParamsFromAddressBar },
-            { match: 'initialValues', data: initialValues },
-          ])
+          { match: 'data', data: formData },
+          { match: 'parentFormValues', data: parentFormValues },
+          { match: 'globalState', data: globalState },
+          { match: 'query', data: queryParamsFromAddressBar },
+          { match: 'initialValues', data: initialValues },
+        ])
         : value;
       _.set(computedInitialValues, key, evaluatedValue);
     });
@@ -121,11 +126,11 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     if (getUrl) {
       const evaluatedGetUrl = getUrl?.includes('{{')
         ? evaluateComplexString(getUrl, [
-            { match: 'data', data: formData },
-            { match: 'parentFormValues', data: parentFormValues },
-            { match: 'globalState', data: globalState },
-            { match: 'query', data: queryParamsFromAddressBar },
-          ])
+          { match: 'data', data: formData },
+          { match: 'parentFormValues', data: parentFormValues },
+          { match: 'globalState', data: globalState },
+          { match: 'query', data: queryParamsFromAddressBar },
+        ])
         : getUrl;
 
       const fullUrl = `${backendUrl}${evaluatedGetUrl}`;
@@ -176,7 +181,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     // If you want only `fetchedFormEntity`, don't pass `initialValuesFromSettings`
     if (!_.isEmpty(initialValuesFromSettings)) {
       incomingInitialValues = fetchedFormEntity
-      ? Object.assign(fetchedFormEntity, initialValuesFromSettings)
+        ? Object.assign(fetchedFormEntity, initialValuesFromSettings)
         : initialValuesFromSettings;
     } else if (!_.isEmpty(fetchedFormEntity) || !_.isEmpty(lastTruthyPersistedValue)) {
       // `fetchedFormEntity` will always be merged with persisted values from local storage
@@ -210,6 +215,31 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     path: submitUrl,
   });
 
+  const sheshaUtils = {
+    prepareTemplate: (templateId: string, replacements: object): Promise<string> => {
+      if (!templateId)
+        return Promise.resolve(null);
+
+        const payload = {
+          id: templateId,
+          properties: 'markup'
+        };
+      const url = `${backendUrl}/api/services/Shesha/FormConfiguration/Query?${qs.stringify(payload)}`;
+      return axios.get<any, AxiosResponse<IAbpWrappedGetEntityResponse<FormConfigurationDto>>>(url)
+        .then(response => {
+          const markup = response.data.result.markup;
+
+          const preparedMarkup = evaluateString(markup, { 
+            NEW_KEY: nanoid(), 
+            GEN_KEY: nanoid(),
+            ...(replacements ?? {}),
+          });
+
+          return preparedMarkup;
+        });
+    }
+  };
+
   const getExpressionExecutor = (
     expression: string,
     includeInitialValues = true,
@@ -223,30 +253,22 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
 
     // tslint:disable-next-line:function-constructor
-    return new Function('data, parentFormValues, initialValues, globalState, moment, http, message', expression)(
+    return new Function('data, parentFormValues, initialValues, globalState, moment, http, message, shesha', expression)(
       exposedData || formData,
       parentFormValues,
       includeInitialValues ? initialValues : undefined,
       globalState,
       includeMoment ? moment : undefined,
       includeAxios ? axiosHttp(backendUrl) : undefined,
-      includeMessage ? message : undefined
+      includeMessage ? message : undefined,
+      sheshaUtils
     );
   };
 
-  const getDynamicPreparedValues = () => {
+  const getDynamicPreparedValues = (): Promise<object> => {
     const { preparedValues } = formSettings;
 
-    if (preparedValues) {
-      const localValues = getExpressionExecutor(preparedValues);
-
-      if (typeof localValues === 'object') {
-        return localValues;
-      }
-
-      return getExpressionExecutor(preparedValues);
-    }
-    return {};
+    return Promise.resolve(preparedValues ? getExpressionExecutor(preparedValues) : {})
   };
 
   const getInitialValuesFromFormSettings = () => {
@@ -275,57 +297,61 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const onFinish = () => {
     const initialValuesFromFormSettings = getInitialValuesFromFormSettings();
 
-    const preparedPostData = { ...formData, ...getDynamicPreparedValues(), ...getInitialValuesFromFormSettings() };
+    getDynamicPreparedValues()
+      .then(dynamicValues => {
+        const preparedPostData = { ...formData, ...dynamicValues, ...getInitialValuesFromFormSettings() };
 
-    const postData = excludeFormFieldsInPayload ? preparedPostData : addFormFieldsList(preparedPostData, form);
+        const postData = excludeFormFieldsInPayload ? preparedPostData : addFormFieldsList(preparedPostData, form);
 
-    if (excludeFormFieldsInPayload) {
-      delete postData._formFields;
-    } else {
-      if (initialValuesFromFormSettings) {
-        postData._formFields = Array.from(
-          new Set<string>([...(postData._formFields || []), ...Object.keys(initialValuesFromFormSettings)])
-        );
-      }
-    }
+        if (excludeFormFieldsInPayload) {
+          delete postData._formFields;
+        } else {
+          if (initialValuesFromFormSettings) {
+            postData._formFields = Array.from(
+              new Set<string>([...(postData._formFields || []), ...Object.keys(initialValuesFromFormSettings)])
+            );
+          }
+        }
 
-    if (skipPostOnFinish) {
-      if (props?.onFinish) {
-        props?.onFinish(postData, null, options);
-      }
+        if (skipPostOnFinish) {
+          if (props?.onFinish) {
+            props?.onFinish(postData, null, options);
+          }
 
-      return;
-    }
+          return;
+        }
 
-    if (submitUrl) {
-      setValidationErrors(null);
+        if (submitUrl) {
+          setValidationErrors(null);
 
-      const doPost = () =>
-        doSubmit(postData)
-          .then(response => {
-            // note: we pass merged values
-            if (props.onFinish) props.onFinish(postData, response?.result, options);
-          })
-          .catch(e => {
-            setValidationErrors(e?.data?.error || e);
-            console.log('ConfigurableFormRenderer onFinish e: ', e);
-          }); // todo: test and show server-side validation
+          const doPost = () =>
+            doSubmit(postData)
+              .then(response => {
+                // note: we pass merged values
+                if (props.onFinish) props.onFinish(postData, response?.result, options);
+              })
+              .catch(e => {
+                setValidationErrors(e?.data?.error || e);
+                console.log('ConfigurableFormRenderer onFinish e: ', e);
+              }); // todo: test and show server-side validation
 
-      if (typeof beforeSubmit === 'function') {
-        beforeSubmit(postData)
-          .then(() => {
-            console.log('beforeSubmit then');
+          if (typeof beforeSubmit === 'function') {
+            beforeSubmit(postData)
+              .then(() => {
+                console.log('beforeSubmit then');
 
+                doPost();
+              })
+              .catch(() => {
+                console.log('beforeSubmit catch');
+              });
+          } else {
             doPost();
-          })
-          .catch(() => {
-            console.log('beforeSubmit catch');
-          });
-      } else {
-        doPost();
-      }
-    } // note: we pass merged values
-    else if (props.onFinish) props.onFinish(postData, null, options);
+          }
+        } // note: we pass merged values
+        else if (props.onFinish) props.onFinish(postData, null, options);
+      })
+      .catch(error => console.error(error));
   };
 
   const onFinishFailed = (errorInfo: ValidateErrorEntity) => {

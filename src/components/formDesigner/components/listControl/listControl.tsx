@@ -43,8 +43,7 @@ const ListControl: FC<IListControlProps> = ({
   dataSource,
   showPagination,
   paginationDefaultPageSize = 5,
-  formModule,
-  formName, // Render embedded form if this option is provided
+  formId, // Render embedded form if this option is provided
   value,
   name,
   onChange,
@@ -68,7 +67,7 @@ const ListControl: FC<IListControlProps> = ({
   allowRemoteDelete,
   selectionMode,
 }) => {
-  const { formConfiguration, error: fetchFormError } = useFormConfiguration({ name: formName, module: formModule, lazy: !Boolean(formName) });
+  const { formConfiguration, error: fetchFormError } = useFormConfiguration({ formId: formId, lazy: !Boolean(formId) });
   const [state, setState] = useState<IListComponentRenderState>({
     maxResultCount: paginationDefaultPageSize,
     selectedItemIndexes: [],
@@ -419,7 +418,7 @@ const ListControl: FC<IListControlProps> = ({
           <ComponentsContainer containerId={containerId} />
         </FormItemProvider>
       </Show>
-      <Show when={isInDesignerMode && renderStrategy === 'externalForm' && Boolean(formName)}>
+      <Show when={isInDesignerMode && renderStrategy === 'externalForm' && Boolean(formId)}>
         {renderSubForm('__IGNORE__')}
       </Show>
 
@@ -479,7 +478,7 @@ const ListControl: FC<IListControlProps> = ({
                               </FormItemProvider>
                             </Show>
 
-                            <Show when={Boolean(formName) && Boolean(formConfiguration?.markup) && renderStrategy === 'externalForm'}>
+                            <Show when={Boolean(formId) && Boolean(formConfiguration?.markup) && renderStrategy === 'externalForm'}>
                               {renderSubForm(
                                 `${index}`,
                                 labelCol && { span: labelCol },

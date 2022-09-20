@@ -240,8 +240,7 @@ const reducer = handleActions<IFormStateContext, any>(
 
       return {
         ...state,
-        module: payload.module,
-        name: payload.name,
+        formId: payload.formId,
       };
     },
 

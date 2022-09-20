@@ -4,9 +4,8 @@ import { requestHeaders } from '../../utils/requestHeaders';
 import { IToolbarItem } from '../../interfaces';
 import { MainLayout, IndexToolbar, ValidationErrors, ConfigurableForm } from '../';
 import { useUi } from '../../providers';
-import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
+import { FormIdentifier, FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
 import { UseGenericGetProps, IDataFetcher } from './models';
-import { useShaRouting } from '../../providers/shaRouting';
 import { CommonCrudHandles } from './interfaces';
 import { DEFAULT_FILTERS, filterGenericModelData, IGenericFormFilter } from './utils';
 
@@ -17,9 +16,9 @@ export interface IGenericDetailsPageProps {
   id?: string;
 
   /**
-   * The id of the form that will be used to render the entity. If not passed, the pathname will be used as the form id
+   * The id of the form that will be used to render the entity.
    */
-  formId?: string;
+  formId?: FormIdentifier;
 
   /**
    * A get API to be called with the id to get the details of the form
@@ -50,11 +49,6 @@ export interface IGenericDetailsPageProps {
    * Used to display the statuses of the entity as well as the reference numbers
    */
   headerControls?: ReactNode | ((model: any) => ReactNode);
-
-  /**
-   * Form path. If not passed, router.pathname will be used instead.
-   */
-  formPath?: string;
 
   /**
    * Form actions. Page-specific actions which can be executed from the configurable form
@@ -131,8 +125,6 @@ const GenericDetailsPage = forwardRef<CommonCrudHandles, IGenericDetailsPageProp
     }
   }, [loading]);
 
-  const { router } = useShaRouting();
-
   const renderTitle = () => {
     const { title } = props;
 
@@ -163,7 +155,7 @@ const GenericDetailsPage = forwardRef<CommonCrudHandles, IGenericDetailsPageProp
               mode="readonly"
               {...formItemLayout}
               form={form}
-              path={props?.formPath || router?.pathname}
+              formId={props?.formId}
               markup={props?.markup}
               initialValues={initialValues}
               actions={props?.formActions}

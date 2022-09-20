@@ -5,6 +5,7 @@ import StoryApp from '../../components/storyBookApp';
 import DynamicPage from './';
 import { addStory } from '../../stories/utils';
 import { IDynamicPageProps } from './interfaces';
+import { MainLayout } from '../..';
 
 export default {
   title: 'Pages/DynamicPage',
@@ -13,7 +14,7 @@ export default {
 } as Meta;
 
 const DEFAULT_ARGS: IDynamicPageProps = {
-  formName: 'mazi-form-view',
+  formId: { name: 'mazi-form-view' },
   id: 'a91b07fc-6f21-4fb5-a709-4f4357f1271f',
   mode: 'edit',
 };
@@ -21,7 +22,9 @@ const DEFAULT_ARGS: IDynamicPageProps = {
 // Create a master template for mapping args to render the Button component
 const Template: Story<IDynamicPageProps> = args => (
   <StoryApp>
-    <DynamicPage {...args} />
+    <MainLayout>
+      <DynamicPage {...args} />
+    </MainLayout>
   </StoryApp>
 );
 
@@ -29,49 +32,48 @@ const Template: Story<IDynamicPageProps> = args => (
 export const Basic = Template.bind({});
 
 export const FormsIndexPage = addStory(Template, {
-  formName: 'forms',
+  formId: { name: 'forms', module: 'Shesha' },
   mode: 'edit',
 });
 
 export const FormDetailsPage = addStory(Template, {
-  formName: 'form-details',
+  formId: { name: 'form-details', module: 'Shesha' },
   mode: 'edit',
+  id: '7545b898-e3b1-42a8-9404-00ee56ade384',
 });
 
 export const FormsTemplatesIndexPage = addStory(Template, {
-  formName: 'form-templates',
-  module: 'Shesha',
+  formId: { name: 'form-templates', module: 'Shesha' },
   mode: 'edit',
 });
 
 export const FormTemplateDetailsPage = addStory(Template, {
-  formName: 'form-template-details',
-  module: 'Shesha',
+  formId: { name: 'form-template-details', module: 'Shesha' },
   mode: 'edit',
 });
 
 export const ModulesIndexPage = addStory(Template, {
-  formName: 'modules',
+  formId: { name: 'modules', module: 'Shesha' },
   mode: 'edit',
 });
 
 export const ModuleDetailsPage = addStory(Template, {
-  formName: 'module-details',
+  formId: { name: 'module-details', module: 'Shesha' },
   mode: 'edit',
 });
 
 export const MissingPage = addStory(Template, {
-  formName: 'dummy',
+  formId: { name: 'dummy' },
   mode: 'edit',
 });
 
 export const OtpSettings = addStory(Template, {
-  formName: 'mazi-form-view',
+  formId: { name: 'mazi-form-view' },
   mode: 'edit',
 });
 
 export const PersonForm = addStory(Template, {
-  formName: 'person-form',
+  formId: { name: 'person-form' },
   mode: 'edit',
 });
 

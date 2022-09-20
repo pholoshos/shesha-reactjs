@@ -6,6 +6,7 @@ import { IDataSource } from '../../providers/formDesigner/models';
 import SearchBox from './toolboxSearchBox';
 import DataSourceTree from './dataSourceTree';
 import { IPropertyMetadata } from '../../interfaces/metadata';
+import { getClassNameFromFullName } from '../../providers/metadataDispatcher/utils';
 
 const { Panel } = Collapse;
 
@@ -90,13 +91,14 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
         <Collapse activeKey={openedKeys} onChange={onCollapseChange}>
           {datasourcesWithVisible.map((ds, dsIndex) => {
             const visibleItems = ds.visibleItems;
+            const shortName = getClassNameFromFullName(ds.datasource.name);
 
             const classes = ['sha-toolbox-panel'];
             if (ds.datasource.id === activeDataSourceId) classes.push('active');
 
             return visibleItems.length === 0 ? null : (
               <Panel
-                header={ds.datasource.name}
+                header={shortName}
                 key={dsIndex.toString()}
                 className={classes.reduce((a, c) => a + ' ' + c)}
               >

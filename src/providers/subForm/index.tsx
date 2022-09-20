@@ -55,7 +55,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     formConfiguration: fetchFormResponse,
     loading: isFetchingForm,
     error: fetchFormError
-   } = useFormConfiguration({ module: formModule, name: formName, lazy: true });
+   } = useFormConfiguration({ formId: { module: formModule, name: formName }, lazy: true });
 
   const {
     refetch: fetchEntity,

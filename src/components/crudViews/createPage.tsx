@@ -9,11 +9,11 @@ import { IToolbarItem } from '../../interfaces';
 import { SaveOutlined, CloseOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import PageBtnContainer from '../pageBtnContainer';
 import { useShaRouting } from '../../providers/shaRouting';
-import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
+import { FormIdentifier, FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
 
 export interface IGenericCreatePageProps {
   title?: string;
-  formPath?: string;
+  formId?: FormIdentifier;
   formMarkup?: FormMarkup;
   updater: (props: any) => IDataMutator;
   onSuccess?: (form: FormInstance) => void;
@@ -35,7 +35,7 @@ const GenericCreatePage: NextPage<IGenericCreatePageProps> = ({
   onSuccess,
   updater,
   title,
-  formPath,
+  formId,
   prepareValues,
   initialValues,
   formActions,
@@ -86,7 +86,7 @@ const GenericCreatePage: NextPage<IGenericCreatePageProps> = ({
           form={form}
           markup={formMarkup}
           onFinish={handleSubmit}
-          path={formPath || router?.pathname}
+          formId={formId}
           initialValues={initialValues}
           actions={formActions}
           sections={formSections}

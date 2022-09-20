@@ -177,10 +177,21 @@ export interface FormMarkupWithSettings {
 }
 export type FormMarkup = IConfigurableFormComponent[] | FormMarkupWithSettings;
 
+export interface FormFullName {
+  readonly name: string;
+  readonly module?: string;
+  readonly version?: number;
+}
+export type FormUid = string;
+export type FormIdentifier = FormFullName | FormUid;
+
 export interface IConfigurableFormBaseProps {
-  id?: string;
+  formId?: FormIdentifier;
+  //id?: string;
   markup?: FormMarkup;
-  path?: string;
+  //path?: string;
+  //name?: string;
+  //module?: string;
 }
 
 export type FormAction = (values?: any, parameters?: any) => void;
@@ -229,6 +240,11 @@ export interface IFormSection {
    * Form name
    */
   name?: string;
+
+  /**
+   * Module
+   */
+  module?: string;
   /**
    * Form label
    */

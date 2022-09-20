@@ -5,7 +5,7 @@ import { ConfigurableForm, IndexToolbar, MainLayout, ValidationErrors } from '..
 import { IToolbarItem } from '../../interfaces';
 import { useUi } from '../../providers';
 import { ConfigurableFormInstance } from '../../providers/form/contexts';
-import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
+import { FormIdentifier, FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
 import { useShaRouting } from '../../providers/shaRouting';
 import { requestHeaders } from '../../utils/requestHeaders';
 import { CommonCrudHandles } from './interfaces';
@@ -21,9 +21,9 @@ export interface IGenericDualEditDetailsPageProps {
   id?: string;
 
   /**
-   * The id of the form that will be used to render the entity. If not passed, the pathname will be used as the form id
+   * The id of the form that will be used to render the entity.
    */
-  formId?: string;
+  formId?: FormIdentifier;
 
   /**
    * A get API to be called with the id to get the details of the form
@@ -59,11 +59,6 @@ export interface IGenericDualEditDetailsPageProps {
    * Used to display the statuses of the entity as well as the reference numbers
    */
   headerControls?: ReactNode | ((model: any) => ReactNode);
-
-  /**
-   * Form path. If not passed, router.pathname will be used instead.
-   */
-  formPath?: string;
 
   /**
    * Form actions. Page-specific actions which can be executed from the configurable form
@@ -251,7 +246,7 @@ const GenericDualEditDetailsPage = forwardRef<CommonCrudHandles, IGenericDualEdi
                 form={form}
                 formRef={formRef}
                 onFinish={handleSubmit}
-                path={props?.formPath || router?.pathname}
+                formId={props?.formId}
                 markup={props?.markup}
                 initialValues={initialValues}
                 actions={props?.formActions}

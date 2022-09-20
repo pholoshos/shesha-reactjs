@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { GetDataError, useGet } from "restful-react";
 import { IAjaxResponseBase } from "../../interfaces/ajaxResponse";
 import { IAbpWrappedGetEntityResponse } from "../../interfaces/gql";
-import { FormMarkupWithSettings, IFormDto } from "./models";
+import { FormIdentifier, FormMarkupWithSettings, IFormDto } from "./models";
+import { asFormFullName, asFormRawId } from "./utils";
 
 /**
  * Form configuration DTO
@@ -53,7 +54,9 @@ export interface IFormByNameProps {
 }
 export type UseFormConfigurationByIdArgs = IFormByIdProps & IFormFetcherProps;
 export type UseFormConfigurationByNameArgs = IFormByNameProps & IFormFetcherProps;
-export type UseFormConfigurationArgs = UseFormConfigurationByIdArgs | UseFormConfigurationByNameArgs;
+export type UseFormConfigurationArgs = {
+    formId: FormIdentifier;
+} & IFormFetcherProps;
 
 export interface IUseFormConfigurationProps {
     id?: string;
@@ -93,41 +96,42 @@ const getMarkupFromResponse = (data: IAbpWrappedGetEntityResponse<FormConfigurat
  * Load form markup from the back-end
  */
 export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarkupResponse => {
-    const argsByName = args as UseFormConfigurationByNameArgs;
-    if (argsByName.name)
-        return useFormConfigurationByName(argsByName);
+    const requestParams = useMemo(() => {
+        const formRawId = asFormRawId(args.formId);
+        const formFullName = asFormFullName(args.formId);
 
-    const argsById = args as UseFormConfigurationByIdArgs;
-    if (argsById.id)
-        return useFormConfigurationById(argsById);
+        if (formRawId)
+            return {
+                url: '/api/services/Shesha/FormConfiguration/Get',
+                queryParams: { id: formRawId }
+            };
 
-    return {
-        formConfiguration: null,
-        loading: false,
-        error: null,
-        refetch: () => {
-            console.log('try to fetch')
-            return null;
-        }
-    };
-}
+        if (formFullName)
+            return {
+                url: '/api/services/Shesha/FormConfiguration/GetByName',
+                queryParams: { name: formFullName.name, module: formFullName.module, version: formFullName.version }
+            };
 
-const useFormConfigurationById = (props: UseFormConfigurationByIdArgs): IFormMarkupResponse => {
-    const fetcher = useGet<IAbpWrappedGetEntityResponse<FormConfigurationDto>, IAjaxResponseBase, IGetFormByIdPayload>(
-        `/api/services/Shesha/FormConfiguration/Get`, { queryParams: { id: props.id }, lazy: props.lazy });
+        return {
+            url: 'dont-load'
+        };
+    }, [args.formId]);
+
+    const fetcher = useGet<IAbpWrappedGetEntityResponse<FormConfigurationDto>, IAjaxResponseBase, IGetFormByIdPayload | IGetFormByNamePayload>(
+        requestParams.url,
+        { queryParams: requestParams.queryParams, lazy: args.lazy }
+    );
 
     const formConfiguration = useMemo<IFormDto>(() => {
-        if (!fetcher.data?.result)
-            return null;
-        
-        return {
-            ...fetcher.data?.result, 
-            markup: getMarkupFromResponse(fetcher.data),
-        };
-    }, [props.id, fetcher.data]);
+        return fetcher?.data?.result
+            ? {
+                ...fetcher?.data?.result,
+                markup: getMarkupFromResponse(fetcher?.data),
+            }
+            : null;
+    }, [args.formId, fetcher?.data]);
 
     const reFetcher = () => {
-        console.log('try to fetch by id')
         return fetcher.refetch().then(response => {
             return getMarkupFromResponse(response);
         });
@@ -140,34 +144,64 @@ const useFormConfigurationById = (props: UseFormConfigurationByIdArgs): IFormMar
         refetch: reFetcher,
     };
     return result;
-}
 
-const useFormConfigurationByName = (props: UseFormConfigurationByNameArgs): IFormMarkupResponse => {
-    const fetcher = useGet<IAbpWrappedGetEntityResponse<FormConfigurationDto>, IAjaxResponseBase, IGetFormByNamePayload>(
-        `/api/services/Shesha/FormConfiguration/GetByName`, { queryParams: { module: props.module, name: props.name, version: props.version }, lazy: props.lazy });
+    /*
+    const fetcherByRawId = useGet<IAbpWrappedGetEntityResponse<FormConfigurationDto>, IAjaxResponseBase, IGetFormByIdPayload>(
+        `/api/services/Shesha/FormConfiguration/Get`, {
+        queryParams: { id: formRawId },
+        lazy: !Boolean(formRawId) || args.lazy
+    });
 
+    
+    const fetcherByFullName = useGet<IAbpWrappedGetEntityResponse<FormConfigurationDto>, IAjaxResponseBase, IGetFormByNamePayload>(
+        `/api/services/Shesha/FormConfiguration/GetByName`, {
+        queryParams: { module: formFullName?.module, name: formFullName?.name, version: formFullName?.version },
+        lazy: !Boolean(formFullName) || args.lazy
+    });
+
+    const fetcher = formRawId
+        ? fetcherByRawId
+        : formFullName
+            ? fetcherByFullName
+            : null;
+
+    const response = useMemo<IFormMarkupResponse>(() => {
+        const formConfiguration = fetcher?.data?.result
+            ? {
+                ...fetcher?.data?.result,
+                markup: getMarkupFromResponse(fetcher?.data),
+            }
+            : null;
+        return null;
+    }, []);
+    return response;
+
+    //const deps = { formId: args.formId, fetcher, fetcherData: fetcher?.data};
     const formConfiguration = useMemo<IFormDto>(() => {
-        if (!fetcher.data?.result)
+        //console.log('calculate formConfiguration', deps);
+
+        if (!fetcher?.data?.result)
             return null;
-        
+
         return {
-            ...fetcher.data?.result, 
-            markup: getMarkupFromResponse(fetcher.data),
+            ...fetcher?.data?.result,
+            markup: getMarkupFromResponse(fetcher?.data),
         };
-    }, [props.module, props.name, props.version, fetcher.data]);
+    }, [args.formId, fetcher, fetcher?.data]);
 
     const reFetcher = () => {
-        console.log('try to fetch by name')
-        return fetcher.refetch().then(response => {
+        console.log('reFetcher called');
+        return fetcher?.refetch().then(response => {
             return getMarkupFromResponse(response);
         });
     };
 
     const result: IFormMarkupResponse = {
         formConfiguration: formConfiguration,
-        loading: fetcher.loading,
-        error: fetcher.error,
+        loading: fetcher?.loading,
+        error: fetcher?.error,
         refetch: reFetcher,
     };
     return result;
+    */
 }

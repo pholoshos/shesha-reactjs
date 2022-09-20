@@ -40,8 +40,6 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
 
   const isHidden = isComponentHidden(model);
 
-  const style = model?.hidden ? { display: 'none' } : {};
-
   const getLayout = () => {
     // Make sure the `wrapperCol` and `labelCol` from `FormItemProver` override the ones from the main form
     return { labelCol: _labelCol || labelCol, wrapperCol: _wrapperCol || wrapperCol };
@@ -70,7 +68,6 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
       tooltip={model.description}
       rules={isHidden ? [] : getValidationRules(model, { formData })}
       {...getLayout()}
-      style={style}
     >
       {children}
     </Form.Item>

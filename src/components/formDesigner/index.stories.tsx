@@ -4,7 +4,7 @@ import { Story } from '@storybook/react';
 import FormDesigner from './formDesigner';
 import { FormProvider, MetadataDispatcherProvider } from '../../providers';
 import { addStory } from '../../stories/utils';
-import { FormMode } from '../../providers/form/models';
+import { FormIdentifier, FormMode } from '../../providers/form/models';
 import StoryApp from '../storyBookApp';
 
 export default {
@@ -13,16 +13,17 @@ export default {
 } as Meta;
 
 export interface IFormDesignerStoryProps {
-  module?: string;
-  formName: string;
+  formId: FormIdentifier;
+  // module?: string;
+  // formName: string;
   mode?: FormMode;
 }
 
 // Create a master template for mapping args to render the Button component
-const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ module, formName, mode = 'designer' }) => (
+const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formId, mode = 'designer' }) => (
   <StoryApp>
     <MetadataDispatcherProvider>
-      <FormProvider module={module} name={formName} mode={mode}>
+      <FormProvider formId={formId} mode={mode}>
         <FormDesigner />
       </FormProvider>
     </MetadataDispatcherProvider>
@@ -30,61 +31,100 @@ const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ module, formName, mo
 );
 
 export const PersonEdit = addStory(DesignerTemplate, {
-  formName: 'person-form',
+  formId: {
+    name: 'person-form',
+  }
 });
 
 export const PersonDetails = addStory(DesignerTemplate, {
-  formName: '/persons/details',
+  formId: {
+    name: '/persons/details',
+  }
 });
 
 export const FormsIndexOld = addStory(DesignerTemplate, {
-  formName: 'forms-v2',
+  formId: {
+    name: 'forms-v2',
+  }
 });
 
 export const WizardForm = addStory(DesignerTemplate, {
-  formName: 'mazi-form-view',
+  formId: {
+    name: 'mazi-form-view',
+  }
 });
 
 export const FormsIndex = addStory(DesignerTemplate, {
-  formName: 'forms',
+  formId: {
+    name: 'forms',
+    module: 'shesha',
+  }
 });
 
 export const FormCreate = addStory(DesignerTemplate, {
-  formName: 'form-create',
+  formId: {
+    name: 'form-create',
+    module: 'shesha',
+  }
 });
 
 export const FormDetails = addStory(DesignerTemplate, {
-  formName: 'form-details',
+  formId: {
+    name: 'form-details',
+    module: 'shesha',
+  }
 });
 
 export const Modules = addStory(DesignerTemplate, {
-  formName: 'modules',
+  formId: {
+    name: 'modules',
+    module: 'shesha',
+  }
 });
 
 export const ModuleCreate = addStory(DesignerTemplate, {
-  formName: 'module-create',
+  formId: {
+    name: 'module-create',
+    module: 'shesha',
+  }
 });
 
 export const ModuleDetails = addStory(DesignerTemplate, {
-  formName: 'module-details',
+  formId: {
+    name: 'module-details',
+    module: 'shesha',
+  }
 });
 
 export const FormTemplates = addStory(DesignerTemplate, {
-  formName: 'form-templates',
+  formId: {
+    name: 'form-templates',
+    module: 'shesha',
+  }
 });
 
 export const FormTemplateCreate = addStory(DesignerTemplate, {
-  formName: 'form-template-create',
+  formId: {
+    name: 'form-template-create',
+    module: 'shesha',
+  }
 });
 
 export const FormTemplateDetails = addStory(DesignerTemplate, {
-  formName: 'form-template-details',
+  formId: {
+    name: 'form-template-details',
+    module: 'shesha',
+  }
 });
 
 export const Autocomplete = addStory(DesignerTemplate, {
-  formName: 'autocomplete',
+  formId: {
+    name: 'autocomplete',
+  }
 });
 
 export const Playground = addStory(DesignerTemplate, {
-  formName: 'playground-form',
+  formId: {
+    name: 'playground-form',
+  }
 });

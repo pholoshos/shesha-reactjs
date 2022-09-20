@@ -4,6 +4,7 @@ import { ConfigurableForm } from '../';
 import { useUi } from '../../providers';
 import { useGet } from 'restful-react';
 import ValidationErrors from '../validationErrors';
+import { FormIdentifier } from '../../providers/form/models';
 
 export interface IQuickViewProps {
     /**
@@ -12,9 +13,9 @@ export interface IQuickViewProps {
     entityId?: string;
 
     /**
-     * Path to the form to display on the modal
+     * Identifier of the form to display on the modal
      */
-    formPath?: string;
+    formIdentifier?: FormIdentifier;
 
     /**
      * The Url that details of the entity are retreived
@@ -34,7 +35,7 @@ export interface IQuickViewProps {
 
 const QuickView: FC<Omit<IQuickViewProps, 'children'>> = ({
     entityId,
-    formPath,
+    formIdentifier,
     getEntityUrl,
     displayProperty,
     width = 450
@@ -74,7 +75,7 @@ const QuickView: FC<Omit<IQuickViewProps, 'children'>> = ({
             mode="readonly"
             {...formItemLayout}
             form={form}
-            path={formPath}
+            formId={formIdentifier}
             initialValues={formData} />
     );
 

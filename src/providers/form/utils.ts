@@ -14,6 +14,9 @@ import {
   ViewType,
   IFormValidationRulesOptions,
   SILENT_KEY,
+  FormIdentifier,
+  FormFullName,
+  FormUid,
 } from './models';
 import Mustache from 'mustache';
 import { ITableColumn, IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
@@ -1023,4 +1026,16 @@ export const convertDotNotationPropertiesToGraphQL = (properties: string[], colu
 
   // convert tree to a GQL syntax
   return getNodes(tree);
+}
+
+export const asFormRawId = (formId: FormIdentifier): FormUid | undefined => {
+  return formId && typeof(formId) === 'string'
+    ? formId as FormUid
+    : undefined;
+}
+
+export const asFormFullName = (formId: FormIdentifier): FormFullName | undefined => {
+  return formId && Boolean((formId as FormFullName)?.name)
+    ? formId as FormFullName
+    : undefined;
 }

@@ -5,12 +5,10 @@ import { FormLayout } from 'antd/lib/form/Form';
 import { ConfigurableFormInstance } from '../../providers/form/contexts';
 import { FormMode, Store, IConfigurableFormBaseProps, IFormActions, IFormSections } from '../../providers/form/models';
 import { ValidateErrorEntity } from '../../interfaces';
-//import { SizeType } from 'antd/lib/config-provider/SizeContext';
 
 type BaseFormProps = Pick<FormProps, 'size'>;
 
 export interface IConfigurableFormRendererProps<Values = any, FieldData = any> extends BaseFormProps {
-  formId?: string; // This will be important for persisting
   labelCol?: ColProps;
   wrapperCol?: ColProps;
   layout?: FormLayout;

@@ -2,6 +2,8 @@ import React, { FC, useReducer, useContext, PropsWithChildren } from 'react';
 import appConfiguratorReducer from './reducer';
 import {
   DEFAULT_ACCESS_TOKEN_NAME,
+  DEFAULT_SHESHA_ROUTES,
+  ISheshaRutes,
   SheshaApplicationActionsContext,
   SheshaApplicationStateContext,
   SHESHA_APPLICATION_CONTEXT_INITIAL_STATE,
@@ -30,6 +32,7 @@ export interface IShaApplicationProviderProps {
   unauthorizedRedirectUrl?: string;
   whitelistUrls?: string[];
   themeProps?: ThemeProviderProps;
+  routes?: ISheshaRutes;
 }
 
 const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>> = ({
@@ -42,9 +45,11 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
   unauthorizedRedirectUrl,
   whitelistUrls,
   themeProps,
+  routes,
 }) => {
   const [state, dispatch] = useReducer(appConfiguratorReducer, {
     ...SHESHA_APPLICATION_CONTEXT_INITIAL_STATE,
+    routes: routes ?? DEFAULT_SHESHA_ROUTES,
     backendUrl,
     applicationName,
     toolboxComponentGroups,

@@ -1,17 +1,12 @@
-import { FormMarkupWithSettings } from '../../providers/form/models';
+import { FormFullName, FormMarkupWithSettings } from '../../providers/form/models';
 
 export type FormMode = 'designer' | 'edit' | 'readonly';
 
 export interface IDynamicPageProps {
   /**
-   * Form path.
+   * Form name.
    */
-  formName?: string;
-
-  /**
-   * Module name
-   */
-  module?: string;
+  formId?: FormFullName;
 
   /**
    * Entity id. This should not be confused with the form id

@@ -4,7 +4,7 @@ import { Form, Spin } from 'antd';
 import { requestHeaders } from '../../utils/requestHeaders';
 import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { useUi } from '../../providers';
-import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
+import { FormIdentifier, FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
 import { UseGenericGetProps, IDataFetcher, IDataMutator } from './models';
 import { IToolbarItem } from '../../interfaces';
 import { useShaRouting } from '../../providers/shaRouting';
@@ -27,9 +27,9 @@ export interface IGenericEditPageProps {
   headerControls?: ReactNode | ((model: any) => ReactNode);
 
   /**
-   * Form path. If not passed, router.pathname will be used instead.
+   * Form identifier.
    */
-  formPath?: string;
+  formId?: FormIdentifier;
 
   /**
    * Form actions. Page-specific actions which can be executed from the configurable form
@@ -144,7 +144,7 @@ const GenericEditPage = forwardRef<CommonCrudHandles, IGenericEditPageProps>((pr
             markup={props?.markup}
             form={form}
             onFinish={handleSubmit}
-            path={props?.formPath || router?.pathname}
+            formId={props.formId}
             initialValues={model}
             actions={props.formActions}
             sections={props.formSections}

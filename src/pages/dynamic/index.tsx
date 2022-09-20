@@ -10,9 +10,9 @@ import { AjaxResponseBase } from '../../apis/user';
 import { ConfigurableForm, ValidationErrors } from '../../components';
 import { useSubscribe, usePubSub } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
-import { useGlobalState, useSheshaApplication } from '../../providers';
+import { useGlobalState, useSheshaApplication, MetadataProvider } from '../../providers';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
-import { IFormDto } from '../../providers/form/models';
+import { IFormDto, IConfigurableFormComponent } from '../../providers/form/models';
 import { evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
 import { getQueryParams, isValidSubmitVerb } from '../../utils/url';
 import { EntityAjaxResponse, IDynamicPageProps, IDynamicPageState } from './interfaces';
@@ -140,9 +140,56 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
       // clear form data
       //formRef?.current?.setFormData({ values: null, mergeValues: false });
 
-      fetchData({ queryParams: entityPathId || !id ? {} : { id } });
+      let gql = getGqlQuery(formResponse?.markup?.components);
+
+      fetchData({ queryParams: entityPathId || !id ? {} : { id, properties: gql } });
     }
   }, [id, formResponse?.markup?.formSettings?.getUrl, entityPathId, fetchDataPath]);
+
+  interface IFieldData {
+    name: string;
+    //fullName: string;
+    child: IFieldData[]
+  } 
+
+  const getGqlQuery = (components: IConfigurableFormComponent[]) => {
+    let fields: IFieldData[] = [];
+    components.forEach((item) => {
+      if (item.name){
+        let fs = item.name.split('.');
+        let f: IFieldData;
+        let list = fields;
+        fs.forEach(fn => {
+          f = list.find(val => val.name == fn);
+          if (!f){
+            f ??= {name: fn, child: []} ;
+            list.push(f);
+          }
+          list = f.child;
+        });
+
+        /*let f = fields.find(val => val.name == fs[0]);
+        if (!f){
+          f ??= {name: fs[0], child: []} ;
+          fields.push(f);
+        }*/
+      }
+    })
+
+    let resf = (items: IFieldData[]) => {
+      let s = '';
+      items.forEach((item) => {
+        s += s ? ',' + item.name : item.name;
+        if (item.child.length > 0) {
+          s += '{' + resf(item.child) + '}';
+        }
+      });
+
+      return s;
+    }
+
+    return 'id,' + resf(fields);
+  };
 
   const onChangeId = (localId: string) => {
     setState(prev => ({ ...prev, id: localId }));
@@ -313,19 +360,21 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   return (
     <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
-      <ConfigurableForm
-        path={path}
-        id={formId}
-        formRef={formRef}
-        mode={state?.mode}
-        form={form}
-        actions={{ onChangeId, onChangeFormData }}
-        onFinish={onFinish}
-        initialValues={state?.fetchedData}
-        skipPostOnFinish
-        skipFetchData
-        className="sha-dynamic-page"
-      />
+      <MetadataProvider id="dynamic" modelType={formResponse?.markup?.formSettings?.modelType}>
+        <ConfigurableForm
+          path={path}
+          id={formId}
+          formRef={formRef}
+          mode={state?.mode}
+          form={form}
+          actions={{ onChangeId, onChangeFormData }}
+          onFinish={onFinish}
+          initialValues={state?.fetchedData}
+          skipPostOnFinish
+          skipFetchData
+          className="sha-dynamic-page"
+        />
+      </MetadataProvider>
     </Spin>
   );
 };

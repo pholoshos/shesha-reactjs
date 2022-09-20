@@ -39,4 +39,10 @@ export const PersonEdit = addStory(Template, {
   mode: 'edit',
 });
 
+export const OrganisationEdit = addStory(Template, {
+  path: '/organisations/edit',
+  id: '5BC9A277-63ED-4A71-919F-0B4064363BBC',
+  mode: 'edit',
+});
+
 Basic.args = DEFAULT_ARGS;

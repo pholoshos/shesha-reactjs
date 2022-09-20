@@ -6,7 +6,6 @@ import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
 import { AutocompleteDto, AutocompleteRaw } from '../../../autocomplete';
 import { ISubFormProps } from '../../../../providers/subForm/interfaces';
-import Properties from '../../../properties';
 
 const Option = Select.Option;
 
@@ -41,7 +40,10 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
 
         onValuesChange(changedValues, incomingState);
       }}
-      initialValues={model}
+      initialValues={{
+        ...model,
+        properties: typeof model?.properties === 'string' ? model?.properties : model?.properties?.join(' '),
+      }}
       // initialValues={initialValues}
     >
       <SectionSeparator sectionName="Display" />
@@ -92,9 +94,19 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         <FormItem name="entityType" label="Entity type">
           <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" />
         </FormItem>
+
         <Show when={Boolean(state?.entityType)}>
           <FormItem name="properties" label="Properties">
-            <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} />
+            <CodeEditor
+              mode="inline"
+              setOptions={{ minLines: 15, maxLines: 500, fixedWidthGutter: true }}
+              name="getUrl"
+              type={''}
+              id={''}
+              language="graphqlschema"
+              label="Query Params"
+              description="Properties in GraphQL-like syntax"
+            />
           </FormItem>
         </Show>
 

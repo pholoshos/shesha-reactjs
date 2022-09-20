@@ -1,4 +1,4 @@
-import { camelCase, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutate } from 'restful-react';
 import { EntitiesGetAllQueryParams, useEntitiesGetAll } from '../../../../apis/entities';
@@ -128,7 +128,9 @@ const ListControl: FC<IListControlProps> = ({
       quickSearch: state?.quickSearch,
     };
 
-    _queryParams.properties = Array.from(new Set(['id', properties?.map(p => camelCase(p))])).join(' ');
+    // _queryParams.properties = Array.from(new Set(['id', properties?.map(p => camelCase(p))])).join(' ');
+    _queryParams.properties =
+      typeof properties === 'string' ? `id ${properties}` : ['id', ...Array.from(new Set(properties || []))].join(' '); // Always include the `id` property/. Useful for deleting
 
     if (filters && evaluatedFilters) {
       _queryParams.filter = evaluatedFilters;

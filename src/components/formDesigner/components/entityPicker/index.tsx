@@ -56,7 +56,7 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
     return (
       <ConfigurableFormItem model={model} initialValue={model?.defaultValue}>
         <EntityPicker
-          formId={model?.id}
+          modalId={model?.id}
           disabled={disabled}
           readOnly={isReadOnly}
           tableId={model?.tableId}

@@ -3,10 +3,8 @@ import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
 import FormDesigner from './formDesigner';
 import { FormProvider, MetadataDispatcherProvider } from '../../providers';
-// @ts-ignore
-import { formGetByPath, formTestDelayGet, formTestDelayPost, formUpdateMarkup } from '../../apis/form';
 import { addStory } from '../../stories/utils';
-import { FormMode } from '../../providers/form/models';
+import { FormIdentifier, FormMode } from '../../providers/form/models';
 import StoryApp from '../storyBookApp';
 
 export default {
@@ -15,16 +13,17 @@ export default {
 } as Meta;
 
 export interface IFormDesignerStoryProps {
-  formPath?: string;
-  formId?: string;
+  formId: FormIdentifier;
+  // module?: string;
+  // formName: string;
   mode?: FormMode;
 }
 
 // Create a master template for mapping args to render the Button component
-const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formPath, formId, mode = 'designer' }) => (
+const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formId, mode = 'designer' }) => (
   <StoryApp>
     <MetadataDispatcherProvider>
-      <FormProvider path={formPath} id={formId} mode={mode}>
+      <FormProvider formId={formId} mode={mode}>
         <FormDesigner />
       </FormProvider>
     </MetadataDispatcherProvider>
@@ -32,25 +31,100 @@ const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formPath, formId, mo
 );
 
 export const PersonEdit = addStory(DesignerTemplate, {
-  formPath: '/persons/edit',
+  formId: {
+    name: 'person-form',
+  }
 });
 
 export const PersonDetails = addStory(DesignerTemplate, {
-  formPath: '/persons/details',
+  formId: {
+    name: '/persons/details',
+  }
 });
 
 export const FormsIndexOld = addStory(DesignerTemplate, {
-  formPath: 'forms-v2',
+  formId: {
+    name: 'forms-v2',
+  }
 });
 
 export const WizardForm = addStory(DesignerTemplate, {
-  formPath: 'mazi-form-view',
+  formId: {
+    name: 'mazi-form-view',
+  }
 });
 
-export const FormsIndexNew = addStory(DesignerTemplate, {
-  formPath: 'forms',
+export const FormsIndex = addStory(DesignerTemplate, {
+  formId: {
+    name: 'forms',
+    module: 'shesha',
+  }
+});
+
+export const FormCreate = addStory(DesignerTemplate, {
+  formId: {
+    name: 'form-create',
+    module: 'shesha',
+  }
+});
+
+export const FormDetails = addStory(DesignerTemplate, {
+  formId: {
+    name: 'form-details',
+    module: 'shesha',
+  }
+});
+
+export const Modules = addStory(DesignerTemplate, {
+  formId: {
+    name: 'modules',
+    module: 'shesha',
+  }
+});
+
+export const ModuleCreate = addStory(DesignerTemplate, {
+  formId: {
+    name: 'module-create',
+    module: 'shesha',
+  }
+});
+
+export const ModuleDetails = addStory(DesignerTemplate, {
+  formId: {
+    name: 'module-details',
+    module: 'shesha',
+  }
+});
+
+export const FormTemplates = addStory(DesignerTemplate, {
+  formId: {
+    name: 'form-templates',
+    module: 'shesha',
+  }
+});
+
+export const FormTemplateCreate = addStory(DesignerTemplate, {
+  formId: {
+    name: 'form-template-create',
+    module: 'shesha',
+  }
+});
+
+export const FormTemplateDetails = addStory(DesignerTemplate, {
+  formId: {
+    name: 'form-template-details',
+    module: 'shesha',
+  }
+});
+
+export const Autocomplete = addStory(DesignerTemplate, {
+  formId: {
+    name: 'autocomplete',
+  }
 });
 
 export const Playground = addStory(DesignerTemplate, {
-  formPath: 'playground-form',
+  formId: {
+    name: 'playground-form',
+  }
 });

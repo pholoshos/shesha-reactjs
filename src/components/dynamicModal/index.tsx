@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Modal, Form, ModalProps } from 'antd';
 import { useDynamicModals } from '../../providers';
 import { ConfigurableForm } from '../';
-import { FormMode } from '../../providers/form/models';
+import { FormIdentifier, FormMode } from '../../providers/form/models';
 import { IModalProps } from '../../providers/dynamicModal/models';
 import { evaluateString, useShaRouting } from '../..';
 import _ from 'lodash';
@@ -14,7 +14,7 @@ export interface IDynamicModalProps extends Omit<IModalProps, 'fetchUrl'> {
   isVisible: boolean;
 
   // todo: move to a separate object
-  formId: string;
+  formId: FormIdentifier;
   mode: FormMode;
   onSubmitted?: (response: any) => void;
 }
@@ -116,7 +116,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
       width={isSmall ? width : '60%'}
     >
       <ConfigurableForm
-        id={formId}
+        formId={formId}
         form={form}
         mode={mode}
         actions={{

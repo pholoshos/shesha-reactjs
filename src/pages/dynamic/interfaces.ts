@@ -1,22 +1,17 @@
-import { IFormDto } from '../../providers/form/models';
+import { FormFullName, FormMarkupWithSettings } from '../../providers/form/models';
 
 export type FormMode = 'designer' | 'edit' | 'readonly';
 
 export interface IDynamicPageProps {
   /**
-   * Form path. You can pass either this or `formId`. This is required if `formId` is not provided
+   * Form name.
    */
-  path?: string;
+  formId?: FormFullName;
 
   /**
    * Entity id. This should not be confused with the form id
    */
   id?: string;
-
-  /**
-   * Form id. You can pass either this or the `path`. This is required if `path` is not provided
-   */
-  formId?: string;
 
   /**
    * form mode.
@@ -49,7 +44,7 @@ export interface IEntity {
 }
 
 export interface IDynamicPageState extends IDynamicPageProps {
-  formResponse?: IFormDto;
+  formMarkup?: FormMarkupWithSettings;
   fetchedData?: IEntity;
   mode?: FormMode;
 }

@@ -4,14 +4,14 @@ import { ValidationErrors, ConfigurableForm } from '../';
 import { FormInstance } from 'antd/lib/form';
 import { useUi } from '../../providers';
 import { UseGenericGetProps, IDataFetcher, IDataMutator } from './models';
-import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
+import { FormIdentifier, FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
 import { useMedia } from 'react-use';
 
 export interface IGenericEditModalProps {
   id: string;
   title?: (model: any) => string;
   visible: boolean;
-  formPath: string;
+  formId: FormIdentifier;
   formMarkup?: FormMarkup;
   fetcher: (props: UseGenericGetProps) => IDataFetcher;
   updater: (props: any) => IDataMutator;
@@ -33,7 +33,7 @@ const GenericEditModal: FC<IGenericEditModalProps> = ({
   fetcher,
   updater,
   title,
-  formPath,
+  formId,
   prepareValues,
   onFieldsChange,
   beforeSubmit,
@@ -101,7 +101,7 @@ const GenericEditModal: FC<IGenericEditModalProps> = ({
             form={form}
             markup={formMarkup}
             onFinish={handleSubmit}
-            path={formPath}
+            formId={formId}
             initialValues={model}
             onFieldsChange={onFieldsChange}
             actions={actions}

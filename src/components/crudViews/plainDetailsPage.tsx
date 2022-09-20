@@ -4,9 +4,8 @@ import { requestHeaders } from '../../utils/requestHeaders';
 import { IToolbarItem } from '../../interfaces';
 import { ValidationErrors, ConfigurableForm } from '..';
 import { useUi } from '../../providers';
-import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
+import { FormIdentifier, FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
 import { UseGenericGetProps, IDataFetcher } from './models';
-import { useShaRouting } from '../../providers/shaRouting';
 import { CommonCrudHandles } from './interfaces';
 import { DEFAULT_FILTERS, filterGenericModelData, IGenericFormFilter } from './utils';
 import Page, { IPageProps } from '../page';
@@ -20,7 +19,7 @@ export interface IGenericDetailsPageProps extends Omit<IPageProps, 'title'> {
   /**
    * The id of the form that will be used to render the entity. If not passed, the pathname will be used as the form id
    */
-  formId?: string;
+  formId?: FormIdentifier;
 
   /**
    * A get API to be called with the id to get the details of the form
@@ -51,11 +50,6 @@ export interface IGenericDetailsPageProps extends Omit<IPageProps, 'title'> {
    * Used to display the statuses of the entity as well as the reference numbers
    */
   headerControls?: ReactNode | ((model: any) => ReactNode);
-
-  /**
-   * Form path. If not passed, router.pathname will be used instead.
-   */
-  formPath?: string;
 
   /**
    * Form actions. Page-specific actions which can be executed from the configurable form
@@ -99,7 +93,7 @@ const GenericDetailsPagePlain = forwardRef<CommonCrudHandles, IGenericDetailsPag
     markup,
     title,
     toolbarItems,
-    formPath,
+    formId,
     formActions,
     formSections,
     pageRef,
@@ -152,8 +146,6 @@ const GenericDetailsPagePlain = forwardRef<CommonCrudHandles, IGenericDetailsPag
     }
   }, [isFetchingData]);
 
-  const { router } = useShaRouting();
-
   const renderTitle = () => {
     if (title) {
       return typeof title === 'string' ? title : title(model);
@@ -181,7 +173,7 @@ const GenericDetailsPagePlain = forwardRef<CommonCrudHandles, IGenericDetailsPag
               mode="readonly"
               {...formItemLayout}
               form={form}
-              path={formPath || router?.pathname}
+              formId={formId}
               markup={markup}
               initialValues={formValues || model}
               actions={formActions}

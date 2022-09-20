@@ -19,6 +19,7 @@ import {
   FormSection,
   IFormSection,
   ViewType,
+  FormIdentifier,
 } from './models';
 import { ColProps, FormInstance } from 'antd';
 import { StateWithHistory } from 'redux-undo';
@@ -82,8 +83,7 @@ export interface IFormStateContext
   extends IFlagsState<IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags>,
     IHasComponentGroups,
     IFormProps {
-  id?: string;
-  path?: string;
+  formId: FormIdentifier;
   formMode: FormMode;
   type?: ViewType;
   isDebug: boolean;
@@ -164,20 +164,14 @@ export interface ISetSelectedComponentPayload {
   dataSourceId: string;
 }
 
-export interface IFormLoadByIdPayload {
-  id: string;
-}
-
-export interface IFormLoadByPathPayload {
-  path: string;
-}
-
 export interface IRegisterActionsPayload {
   id: string /** component id */;
   actions: IFormActions /** component actions */;
 }
 
-export type IFormLoadPayload = IFormLoadByIdPayload | IFormLoadByPathPayload;
+export interface IFormLoadPayload {
+  formId: FormIdentifier;
+}
 
 export interface IFormActionsContext
   extends IFlagsSetters<IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags> {
@@ -234,6 +228,7 @@ export const DEFAULT_FORM_SETTINGS: IFormSettings = {
 
 /** Form initial state */
 export const FORM_CONTEXT_INITIAL_STATE: IFormStateContext = {
+  formId: null,
   isInProgress: {},
   succeeded: {},
   error: {},

@@ -14,12 +14,14 @@ import {
   ViewType,
   IFormValidationRulesOptions,
   SILENT_KEY,
+  FormIdentifier,
+  FormFullName,
+  FormUid,
 } from './models';
 import Mustache from 'mustache';
 import { ITableColumn, IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
 import Schema, { Rules, ValidateSource } from 'async-validator';
 import { DEFAULT_FORM_SETTINGS, IFormSettings } from './contexts';
-import { formGet, formGetByPath } from '../../apis/form';
 import { IPropertyMetadata } from '../../interfaces/metadata';
 import { nanoid } from 'nanoid';
 import { Rule, RuleObject } from 'antd/lib/form';
@@ -143,17 +145,6 @@ export const componentsFlatStructureToTree = (
   processComponent(tree, ROOT_COMPONENT_KEY);
 
   return tree;
-};
-
-/**
- * Load form from the back-end
- */
-export const loadFormById = (id: string) => {
-  // @ts-ignore
-  return formGet({ id });
-};
-export const loadFormByPath = (path: string) => {
-  return formGetByPath({ path }, {});
 };
 
 export const getCustomVisibilityFunc = ({ customVisibility, name }: IConfigurableFormComponent) => {
@@ -1035,4 +1026,16 @@ export const convertDotNotationPropertiesToGraphQL = (properties: string[], colu
 
   // convert tree to a GQL syntax
   return getNodes(tree);
+}
+
+export const asFormRawId = (formId: FormIdentifier): FormUid | undefined => {
+  return formId && typeof(formId) === 'string'
+    ? formId as FormUid
+    : undefined;
+}
+
+export const asFormFullName = (formId: FormIdentifier): FormFullName | undefined => {
+  return formId && Boolean((formId as FormFullName)?.name)
+    ? formId as FormFullName
+    : undefined;
 }

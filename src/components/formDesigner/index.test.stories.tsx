@@ -17,7 +17,7 @@ export interface IFormDesignerStoryProps {
 // Create a master template for mapping args to render the Button component
 const Template: Story<IFormDesignerStoryProps> = args => (
   <StoryApp>
-    <FormProvider path={args.formPath} mode="designer">
+    <FormProvider name={args.formPath} mode="designer">
       <FormDesigner />
     </FormProvider>
   </StoryApp>

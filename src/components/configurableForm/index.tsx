@@ -4,24 +4,25 @@ import { IConfigurableFormProps } from './models';
 import { FormProvider } from '../../providers/form';
 import ConfigurableComponent from '../appConfigurator/configurableComponent';
 import EditViewMsg from '../appConfigurator/editViewMsg';
-import { useAppConfigurator, useShaRouting } from '../../providers';
+import { useAppConfigurator, useShaRouting, useSheshaApplication } from '../../providers';
 import classNames from 'classnames';
 
 export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
-  const { id, markup, mode, path, actions, sections, context, formRef, ...restProps } = props;
+  const { formId, markup, mode, actions, sections, context, formRef, ...restProps } = props;
   const { switchApplicationMode } = useAppConfigurator();
+  const app = useSheshaApplication();
 
-  const canConfigure = Boolean(id) || Boolean(path);
+  const canConfigure = Boolean(app.routes.formsDesigner) && Boolean(formId);
   const { router } = useShaRouting(false) ?? {};
 
   return (
     <ConfigurableComponent
       canConfigure={canConfigure}
       onStartEdit={() => {
-        const url = Boolean(id)
-          ? `/settings/forms/designer?id=${id}`
-          : Boolean(path)
-            ? `/settings/forms/designer?path=${path}`
+        const url = typeof(formId) === 'string'
+          ? `${app.routes.formsDesigner}?id=${formId}`
+          : Boolean(formId.name)
+            ? `${app.routes.formsDesigner}?module=${formId.module}&name=${formId.name}`
             : null;
 
         if (url){
@@ -36,10 +37,9 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
             <EditViewMsg />
           </BlockOverlay>
           <FormProvider
-            id={id}
+            formId={formId}
             markup={markup}
             mode={mode}
-            path={path}
             form={restProps.form}
             actions={actions}
             sections={sections}
@@ -47,7 +47,7 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
             formRef={formRef}
             onValuesChange={restProps.onValuesChange}
           >
-            <ConfigurableFormRenderer {...restProps} formId={id} />
+            <ConfigurableFormRenderer {...restProps} />
           </FormProvider>
         </div>
       )}

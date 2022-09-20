@@ -1,4 +1,4 @@
-import { FormMode } from './../form/models';
+import { FormIdentifier, FormMode } from './../form/models';
 import { ValidateErrorEntity } from '../../interfaces';
 import { IKeyValue } from '../../interfaces/keyValue';
 
@@ -9,7 +9,7 @@ export interface IModalProps {
   /**
    * Id of the form to be rendered on the markup
    */
-  formId: string;
+  formId: FormIdentifier;
 
   /**
    * Url to be used to fetch form data
@@ -37,7 +37,7 @@ export interface IModalProps {
   /**
    * Id of the modal to be shown
    */
-  id: string;
+   id: string;
 
   /**
    * Whether the modal is visible

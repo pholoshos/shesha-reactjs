@@ -9,6 +9,7 @@ import { getMoment } from '../../utils/date';
 import moment from 'moment';
 import classNames from 'classnames';
 import QuickView from '../quickView';
+import { FormIdentifier } from '../../providers/form/models';
 
 type AutocompleteType = ISelectOption<IDtoType>;
 
@@ -32,7 +33,7 @@ export interface IReadOnlyDisplayFormItemProps {
   checked?: boolean;
   defaultChecked?: boolean;
   quickviewEnabled?: boolean;
-  quickviewFormPath?: string;
+  quickviewFormPath?: FormIdentifier;
   quickviewDisplayPropertyName?: string;
   quickviewGetEntityUrl?: string;
   quickviewWidth?: number;
@@ -75,7 +76,7 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
             return (
               <QuickView
                 entityId={value?.data}
-                formPath={quickviewFormPath}
+                formIdentifier={quickviewFormPath}
                 getEntityUrl={quickviewGetEntityUrl}
                 displayProperty={quickviewDisplayPropertyName}
                 width={quickviewWidth}

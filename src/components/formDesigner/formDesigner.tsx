@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
 import { SidebarContainer, ConfigurableFormRenderer } from '../../components';
 import { Row, Col, Divider } from 'antd';
-import { FormDto } from '../../apis/form';
 import Toolbox from './toolbox';
 import FormDesignerToolbar from './formDesignerToolbar';
 import ComponentPropertiesPanel from './componentPropertiesPanel';
@@ -10,9 +9,10 @@ import { useForm } from '../../providers/form';
 import { FormDesignerHeader } from './formDesignerHeader';
 import { MetadataProvider } from '../../providers';
 import ConditionalWrap from '../conditionalWrapper';
+import { IFormDto } from '../../providers/form/models';
 
 export interface IFormDesignerProps {
-  model?: FormDto;
+  model?: IFormDto;
 }
 
 export const FormDesigner: FC<IFormDesignerProps> = ({}) => {

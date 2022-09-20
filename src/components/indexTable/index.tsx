@@ -301,7 +301,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
                 const { key, render } = customRender;
 
                 if (columnItem.dataType === key || columnItem.dataFormat === key) {
-                  return render(props, router) || null;
+                  return render(props, router) ?? null; // note: don't use `||`, it will hide zero values
                 }
               }
             }

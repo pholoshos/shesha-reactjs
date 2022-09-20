@@ -323,10 +323,35 @@
           "settingsValidationErrors": []
         },
         {
+          "textType": "text",
+          "id": "NPtPoeSHfhMP97Wzhex7X",
+          "type": "textField",
+          "name": "entityDisplayProperty",
+          "label": "Display Property",
+          "labelAlign": "right",
+          "parentId": "uEFBpy19tApJMiBuFyj9s",
+          "hidden": false,
+          "visibility": "Yes",
+          "customVisibility": null,
+          "isDynamic": false,
+          "placeholder": "",
+          "description": "Name of the property that should be displayed in the autocomplete. Live empty to use default display property defined on the back-end.",
+          "validate": {
+            "minLength": "",
+            "maxLength": "",
+            "message": ""
+          },
+          "prefix": "",
+          "suffix": "",
+          "initialValue": "",
+          "quickviewWidth": "",
+          "settingsValidationErrors": []
+        },
+        {
           "id": "14413162-429e-451c-b3e6-b3f0ab6d7b09",
           "type": "sectionSeparator",
           "name": "sectionFilters",
-          "parentId": "root",
+          "parentId": "uEFBpy19tApJMiBuFyj9s",
           "label": "Filters"
         },
         {
@@ -334,7 +359,7 @@
           "type": "checkbox",
           "name": "useExpression",
           "label": "Use Expression",
-          "parentId": "root",
+          "parentId": "uEFBpy19tApJMiBuFyj9s",
           "hidden": false,
           "customVisibility": "return Boolean(data.entityTypeShortAlias);",
           "validate": {}
@@ -359,7 +384,7 @@
           "id": "253ee0fd-9916-4728-9f93-16ecc1ca3bb9",
           "type": "sectionSeparator",
           "name": "sectionFilters",
-          "parentId": "root",
+          "parentId": "uEFBpy19tApJMiBuFyj9s",
           "label": ""
         }
       ]

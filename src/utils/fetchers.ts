@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import qs from "qs";
 
 export interface BaseRequestOptions {
@@ -117,4 +118,32 @@ export function constructUrl<TQueryParams>(
   const composed = normalizedBase + encodedPathWithParams;
 
   return composed;
+}
+
+export const getFileNameFromContentDisposition = (disposition: string): string => {
+  if (!disposition)
+    return null;
+  const utf8FilenameRegex = /filename\*=UTF-8''([\w%\-\.]+)(?:; ?|$)/i;
+  const asciiFilenameRegex = /^filename=(["']?)(.*?[^\\])\1(?:; ?|$)/i;
+
+  let fileName: string = null;
+  if (utf8FilenameRegex.test(disposition)) {
+    fileName = decodeURIComponent(utf8FilenameRegex.exec(disposition)[1]);
+  } else {
+    // prevent ReDos attacks by anchoring the ascii regex to string start and
+    //  slicing off everything before 'filename='
+    const filenameStart = disposition.toLowerCase().indexOf('filename=');
+    if (filenameStart >= 0) {
+      const partialDisposition = disposition.slice(filenameStart);
+      const matches = asciiFilenameRegex.exec(partialDisposition );
+      if (matches != null && matches[2]) {
+        fileName = matches[2];
+      }
+    }
+  }
+  return fileName;
+}
+
+export const getFileNameFromResponse = (fileResponse: AxiosResponse<any>): string => {
+  return getFileNameFromContentDisposition(fileResponse.headers['content-disposition']);
 }

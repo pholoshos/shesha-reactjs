@@ -257,8 +257,8 @@
                 "required": true
               },
               "dataSourceType": "entitiesList",
-              "dataSourceUrl": "/api/services/app/Metadata/EntityTypeAutocomplete",
-              "entityTypeShortAlias": "Shesha.Framework.Form",
+              "entityTypeShortAlias": "Shesha.Core.FormConfiguration",
+              "entityDisplayProperty": "configuration.name",
               "description": "The form that will be rendered within the dialog. Please make sure the form has been been created",
               "useRawValues": true
             },

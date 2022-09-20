@@ -15,8 +15,6 @@ import Page, { IPageProps } from '../page';
 export interface IGenericCreatePageProps extends IPageProps {
   title?: string;
 
-  formPath?: string;
-
   formMarkup?: FormMarkup;
 
   updater: (props: any) => IDataMutator;
@@ -43,7 +41,6 @@ const GenericCreatePagePlain: NextPage<IGenericCreatePageProps> = ({
   onSuccess,
   updater: useUpdater,
   title,
-  formPath,
   prepareValues,
   initialValues,
   formActions,
@@ -56,6 +53,7 @@ const GenericCreatePagePlain: NextPage<IGenericCreatePageProps> = ({
   breadcrumbItems,
   headerTagList,
   loadingText,
+  formId,
 }) => {
   const { mutate: save, error: saveError, loading: saveInProgress } = useUpdater({});
 
@@ -110,7 +108,7 @@ const GenericCreatePagePlain: NextPage<IGenericCreatePageProps> = ({
         form={form}
         markup={formMarkup}
         onFinish={handleSubmit}
-        path={formPath || router?.pathname}
+        formId={formId}
         initialValues={initialValues}
         actions={formActions}
         sections={formSections}

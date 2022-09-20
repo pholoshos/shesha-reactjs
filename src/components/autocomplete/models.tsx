@@ -119,6 +119,11 @@ export interface IEntityAutocompleteProps<TValue = any> extends ICommonAutocompl
    * The short alias if this is a reference list
    */
   typeShortAlias?: string;
+  
+  /**
+   * Name of the property to display. Live empty to use default display name property defined on the back-end
+   */
+  entityDisplayProperty?: string;
 
   /**
    * Applies if this is a reference list

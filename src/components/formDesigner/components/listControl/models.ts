@@ -1,4 +1,5 @@
-import { IConfigurableFormComponent, IFormItem, IGuidNullableEntityWithDisplayNameDto } from '../../../../interfaces';
+import { IConfigurableFormComponent, IFormItem } from '../../../../interfaces';
+import { FormIdentifier } from '../../../../providers/form/models';
 
 export interface IListItemsProps {
   name: string;
@@ -6,7 +7,7 @@ export interface IListItemsProps {
   queryParamsExpression?: string;
   title?: string;
   footer?: string;
-  formPath?: IGuidNullableEntityWithDisplayNameDto;
+  formId?: FormIdentifier;
   selectionMode?: 'none' | 'single' | 'multiple';
   allowDeleteItems?: boolean;
   allowRemoteDelete?: boolean;

@@ -4,7 +4,7 @@ import { Form } from 'antd';
 import { requestHeaders } from '../../utils/requestHeaders';
 import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { useUi } from '../../providers';
-import { FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
+import { FormIdentifier, FormMarkup, IFormActions, IFormSections } from '../../providers/form/models';
 import { UseGenericGetProps, IDataFetcher, IDataMutator } from './models';
 import { IToolbarItem } from '../../interfaces';
 import { useShaRouting } from '../../providers/shaRouting';
@@ -24,9 +24,9 @@ export interface IGenericEditPageProps extends Omit<IPageProps, 'title'> {
 
   loading?: boolean;
   /**
-   * Form path. If not passed, router.pathname will be used instead.
+   * Form identifier.
    */
-  formPath?: string;
+  formId?: FormIdentifier;
 
   /**
    * Form actions. Page-specific actions which can be executed from the configurable form
@@ -64,7 +64,7 @@ const GenericEditPagePlain = forwardRef<CommonCrudHandles, IGenericEditPageProps
     updater: useUpdater,
     title,
     loading,
-    formPath,
+    formId,
     formActions,
     formSections,
     pageRef,
@@ -160,7 +160,7 @@ const GenericEditPagePlain = forwardRef<CommonCrudHandles, IGenericEditPageProps
           markup={markup}
           form={form}
           onFinish={handleSubmit}
-          path={formPath || router?.pathname}
+          formId={formId}
           initialValues={model}
           actions={formActions}
           sections={formSections}

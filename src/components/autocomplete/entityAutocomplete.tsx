@@ -17,6 +17,7 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
     defaultValue,
     placeHolder,
     typeShortAlias,
+    entityDisplayProperty,
     //allowInherited,
     onChange,
     disabled,
@@ -51,6 +52,7 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
     entityType: typeShortAlias,
     value: rawValue,
     filter,
+    displayProperty: entityDisplayProperty,
   });
 
   const selectRef = useRef(null);
@@ -59,8 +61,15 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
 
   useSubscribe(subscribedEventNames, () => debouncedClear(autocompleteText));
 
+  const extractProperty = (item: object, propertyName: string): string => {
+    const propName = propertyName || '_displayName';
+    var path = propName.split('.')
+    var result = path.reduce((val, name) => val ? val[name] : null, item);
+    return result;
+  }
+
   const getFetchedItems = (): AutocompleteItemDto[] => {
-    return fetchedData.map<AutocompleteItemDto>(e => ({ value: e.id.toString(), displayText: e['_displayName'] }));
+    return fetchedData.map<AutocompleteItemDto>(e => ({ value: e.id.toString(), displayText: extractProperty(e, entityDisplayProperty) }));
   };
 
   const handleSelect = () => {

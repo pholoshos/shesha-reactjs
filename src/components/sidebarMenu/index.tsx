@@ -5,6 +5,7 @@ import { useLocalStorage } from '../../hooks';
 import { ISidebarMenuItem, useSidebarMenu } from '../../providers/sidebarMenu';
 import { getCurrentUrl, normalizeUrl } from '../../utils/url';
 import { renderSidebarMenuItem } from './utils';
+import { useShaRouting } from '../../providers';
 
 export interface ISidebarMenuProps {
   isCollapsed?: boolean;
@@ -25,6 +26,7 @@ const findItem = (target: string, array: ISidebarMenuItem[]): ISidebarMenuItem =
 export const SidebarMenu: FC<ISidebarMenuProps> = ({ theme = 'dark' }) => {
   const [openedKeys, setOpenedKeys] = useLocalStorage('openedSidebarKeys', null);
   const { getItems, isItemVisible } = useSidebarMenu();
+  const { router } = useShaRouting();
 
   const items = getItems();
 
@@ -40,6 +42,21 @@ export const SidebarMenu: FC<ISidebarMenuProps> = ({ theme = 'dark' }) => {
 
   const keys = openedKeys && openedKeys.length > 0 ? openedKeys : undefined;
 
+  const handleNavigate = (url: string) => {
+    if (!url)
+      return;
+    if (typeof router === 'object') {
+      try {
+        router?.push(url);
+      } catch (error) {
+        window.location.href = url;
+      }
+    } else {
+      window.location.href = url;
+    }
+  }
+
+
   return (
     <Menu
       mode="inline"
@@ -48,7 +65,7 @@ export const SidebarMenu: FC<ISidebarMenuProps> = ({ theme = 'dark' }) => {
       defaultOpenKeys={keys}
       onOpenChange={onOpenChange}
       theme={theme}
-      items={items.map(item => renderSidebarMenuItem({ ...item, isItemVisible }))}
+      items={items.map(item => renderSidebarMenuItem({ ...item, isItemVisible, navigate: handleNavigate }))}
     />
   );
 };

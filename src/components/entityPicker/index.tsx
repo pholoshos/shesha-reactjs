@@ -36,7 +36,7 @@ interface IAddNewRecordProps {
 }
 
 export interface IEntityPickerProps extends Omit<IWrappedEntityPickerProps, 'onDblClick'> {
-  formId?: string;
+  modalId?: string;
   onChange?: (value: string, data: IAnyObject) => void;
   onSelect?: (data: IAnyObject) => void;
   value?: any;
@@ -82,7 +82,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   defaultValue,
   title = 'Select Item',
   configurableColumns,
-  formId,
+  modalId,
   addNewRecordsProps,
   readOnly,
 }) => {
@@ -106,7 +106,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   const hidePickerDialog = () => setState(prev => ({ ...prev, showModal: false }));
 
   const modalProps: IModalProps = {
-    id: formId,
+    id: modalId,
     isVisible: false,
     formId: addNewRecordsProps?.modalFormId,
     title: addNewRecordsProps?.modalTitle,
@@ -141,10 +141,10 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   useEffect(() => {
     // This is important for form designer configured picker
     // register columns
-    if (formId && configurableColumns) {
-      registerConfigurableColumns(formId, configurableColumns);
+    if (modalId && configurableColumns) {
+      registerConfigurableColumns(modalId, configurableColumns);
     }
-  }, [formId, configurableColumns]);
+  }, [modalId, configurableColumns]);
 
   if (!tableId && !entityType) {
     throw new Error(

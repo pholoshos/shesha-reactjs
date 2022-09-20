@@ -5,13 +5,15 @@ import Link from 'next/link';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GetDataError, useGet, useMutate } from 'restful-react';
 import { axiosHttp } from '../../apis/axios';
-import { FormDto, useFormGet, useFormGetByPath } from '../../apis/form';
-import { AjaxResponseBase } from '../../apis/user';
 import { ConfigurableForm, ValidationErrors } from '../../components';
 import { useSubscribe, usePubSub } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
+import { IAjaxResponseBase } from '../../interfaces/ajaxResponse';
 import { useGlobalState, useSheshaApplication, MetadataProvider } from '../../providers';
+import { useFormConfiguration } from '../../providers/form/api';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
+import { FormIdentifier } from '../../providers/form/models';
+import { asFormFullName, evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
 import { IFormDto, IConfigurableFormComponent } from '../../providers/form/models';
 import { evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
 import { getQueryParams, isValidSubmitVerb } from '../../utils/url';
@@ -26,60 +28,31 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   const { publish } = usePubSub();
 
-  const { id, path, formId, entityPathId } = state;
+  const { id, formId, entityPathId } = state;
 
+  // todo: find a way to pass module
   const {
-    refetch: fetchFormByPath,
-    data: dataByPath,
-    loading: isFetchingFormByPath,
-    error: fetchFormByPathError,
-  } = useFormGetByPath({ queryParams: { path }, lazy: true });
+    refetch: fetchFormMarkup,
+    formConfiguration,
+    loading: isFetchingMarkup,
+    error: fetchMarkupError
+   } = useFormConfiguration({ formId, lazy: true });
+  const formMarkup = formConfiguration?.markup;
 
   const [form] = Form.useForm();
 
-  const {
-    refetch: fetchFormById,
-    data: dataById,
-    loading: isFetchingFormById,
-    error: fetchFormByIdError,
-  } = useFormGet({ queryParams: { id: formId }, lazy: true });
-
-  const formResponse: IFormDto = useMemo(() => {
-    if (isFetchingFormByPath || isFetchingFormById) {
-      return null;
-    }
-
-    //console.log('[dataByPath, dataById, props], ', [dataByPath, dataById, props]);
-
-    let result: FormDto;
-    if (dataByPath) {
-      result = (dataByPath as any).result;
-    }
-
-    if (dataById) {
-      result = (dataById as any).result;
-    }
-
-    if (result) {
-      const localFormResponse: IFormDto = { ...(result as any) };
-      localFormResponse.markup = JSON.parse(result.markup);
-
-      return localFormResponse;
-    }
-
-    return null;
-  }, [isFetchingFormByPath, isFetchingFormById, props]);
-
+  // url that is used to get form data
   const fetchDataPath = useMemo(() => {
-    const pathToReturn = (removeZeroWidthCharsFromString(formResponse?.markup?.formSettings?.getUrl) || '').trim();
+    const pathToReturn = (removeZeroWidthCharsFromString(formMarkup?.formSettings?.getUrl) || '').trim();
 
     if (entityPathId) {
       return pathToReturn?.endsWith('/') ? `${pathToReturn}${entityPathId}` : `${pathToReturn}/${entityPathId}`;
     }
 
     return pathToReturn?.trim();
-  }, [formResponse, entityPathId, props, state]);
+  }, [formMarkup, entityPathId, props, state]);
 
+  // form data fetcher
   const { refetch: fetchData, error: fetchDataError, loading: isFetchingData, data: fetchDataResponse } = useGet<
     EntityAjaxResponse
   >({
@@ -88,6 +61,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     lazy: true, // We wanna make sure we have both the id and the state?.markup?.formSettings?.getUrl before fetching data
   });
 
+  // submit verb (PUT/POST)
   const submitVerb = useMemo(() => {
     const verb = state?.submitVerb?.toUpperCase() as typeof state.submitVerb;
 
@@ -96,10 +70,11 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     return verb && isValidSubmitVerb(verb) ? verb : defaultSubmitVerb;
   }, [state?.fetchedData]);
 
+  // submit URL
   const submitUrl = useMemo(() => {
-    const url = formResponse?.markup?.formSettings[`${submitVerb?.toLocaleLowerCase()}Url`];
+    const url = formMarkup?.formSettings[`${submitVerb?.toLocaleLowerCase()}Url`];
 
-    if (!url && formResponse?.markup?.formSettings) {
+    if (!url && formMarkup?.formSettings) {
       console.warn(`Please make sure you have specified the '${submitVerb}' URL`);
     }
 
@@ -109,10 +84,12 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
           { match: 'globalState', data: globalState },
         ])
       : '';
-  }, [formResponse?.markup?.formSettings, submitVerb]);
+  }, [formMarkup?.formSettings, submitVerb]);
 
-  const onDataLoaded = formResponse?.markup?.formSettings?.onDataLoaded;
+  // custom event executed on data loaded
+  const onDataLoaded = formMarkup?.formSettings?.onDataLoaded;
 
+  // effect that executes onDataLoaded handler
   useEffect(() => {
     if (onDataLoaded && state?.fetchedData) {
       getExpressionExecutor(onDataLoaded);
@@ -128,23 +105,26 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     setState(() => ({ ...props }));
   }, [props]);
 
+  const sameForm = (formId: FormIdentifier, name: string, module: string): boolean => {
+    const fullName = asFormFullName(formId);
+    return fullName && fullName.name == name && fullName.module == module;
+  }
+
   //#region get form data
   useEffect(() => {
     // The mismatch happens if you're drilled down to a page and then click the back button on the browser
     // When you land, because you'd still be having the formResponse, before the correct form is being fetched
     // Data/Entity will be fetched with the previous value of the response. That is why we have to check that we don't have the old form response
-    const isPathMismatch = props?.path !== formResponse?.path;
+    //const isPathMismatch = props?.path !== formResponse?.path;
+    const correctForm = formConfiguration && sameForm(props.formId, formConfiguration.name, formConfiguration.module);
 
     // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
-    if (fetchDataPath && !isPathMismatch) {
-      // clear form data
-      //formRef?.current?.setFormData({ values: null, mergeValues: false });
-
+    if (fetchDataPath && correctForm) {
       let gql = getGqlQuery(formResponse?.markup?.components);
 
       fetchData({ queryParams: entityPathId || !id ? {} : { id, properties: gql } });
     }
-  }, [id, formResponse?.markup?.formSettings?.getUrl, entityPathId, fetchDataPath]);
+  }, [id, formMarkup?.formSettings?.getUrl, entityPathId, fetchDataPath]);
 
   interface IFieldData {
     name: string;
@@ -201,42 +181,23 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   };
 
   useEffect(() => {
-    if (!isFetchingFormByPath && fetchDataResponse) {
+    if (!isFetchingMarkup && fetchDataResponse) {
       setState(prev => ({ ...prev, fetchedData: fetchDataResponse?.result }));
     }
-  }, [isFetchingFormByPath, fetchDataResponse]);
+  }, [isFetchingMarkup, fetchDataResponse]);
   //#endregion
 
   //#region Fetch form and set the state
   useEffect(() => {
-    if (path) {
-      fetchFormByPath();
+    if (formId) {
+      fetchFormMarkup();
       return;
     }
-
-    if (formId) {
-      fetchFormById();
-    }
-  }, [path, formId, fetchFormByPath, fetchFormById]);
+  }, [formId]);
 
   useEffect(() => {
-    let result: FormDto;
-    if (dataByPath) {
-      result = (dataByPath as any)?.result;
-    }
-
-    if (dataById) {
-      result = (dataById as any)?.result;
-    }
-
-    if (result) {
-      const localFormResponse: IFormDto = { ...(result as any) };
-
-      localFormResponse.markup = JSON.parse(result.markup);
-
-      setState(prev => ({ ...prev, formResponse: localFormResponse }));
-    }
-  }, [dataByPath, dataById]);
+    setState(prev => ({ ...prev, formMarkup: formMarkup }));
+  }, [formMarkup]);
   //#endregion
 
   const onFinish = (values: any, _response?: any, options?: any) => {
@@ -263,19 +224,14 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [fetchDataError]);
 
   useEffect(() => {
-    if (fetchFormByPathError) {
-      displayNotificationError(fetchFormByPathError);
+    if (fetchMarkupError) {
+      displayNotificationError(fetchMarkupError);
     }
-  }, [fetchFormByPathError]);
+  }, [fetchMarkupError]);
 
-  useEffect(() => {
-    if (fetchFormByIdError) {
-      displayNotificationError(fetchFormByIdError);
-    }
-  }, [fetchFormByIdError]);
   //#endregion
 
-  const displayNotificationError = (error: GetDataError<AjaxResponseBase>) => {
+  const displayNotificationError = (error: GetDataError<IAjaxResponseBase>) => {
     notification.error({
       message: 'Sorry! An error occurred.',
       icon: null,
@@ -290,20 +246,6 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
     formRef?.current?.setFormMode('readonly');
   });
-
-  useEffect(() => {
-    if (formResponse && !formResponse?.markup && state?.path) {
-      notification.error({
-        message: 'Form not found',
-        description: (
-          <span>
-            Could not find a form with the path <strong>{state?.path}</strong>. Please make sure the path is correct or
-            that it hasn't been changed
-          </span>
-        ),
-      });
-    }
-  }, [formResponse]);
 
   //#region Expression executor
   const getExpressionExecutor = (expression: string) => {
@@ -322,11 +264,13 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   };
   //#endregion
 
-  const isLoading = isFetchingData || isFetchingFormByPath || isFetchingFormById || isPostingData;
+  const isLoading = isFetchingData || isFetchingMarkup || isPostingData;
 
-  //console.log('formResponse?.markup', props, formResponse);
+  const markupErrorCode = fetchMarkupError
+    ? (fetchMarkupError.data as IAjaxResponseBase)?.error?.code
+    : null;
 
-  if (state && !formResponse?.markup && !isLoading) {
+  if (!isLoading && markupErrorCode === 404) {
     return (
       <Result
         status="404"
@@ -348,8 +292,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     switch (true) {
       case isFetchingData:
         return 'Fetching data...';
-      case isFetchingFormByPath:
-      case isFetchingFormById:
+      case isFetchingMarkup:
         return 'Fetching form...';
       case isPostingData:
         return 'Saving data...';
@@ -362,8 +305,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
       <MetadataProvider id="dynamic" modelType={formResponse?.markup?.formSettings?.modelType}>
         <ConfigurableForm
-          path={path}
-          id={formId}
+        markup={state?.formMarkup}
+        formId={formId}
           formRef={formRef}
           mode={state?.mode}
           form={form}

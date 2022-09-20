@@ -98,7 +98,7 @@ const TableContextAccessor: FC<ITableContextComponentProps> = ({ id }) => {
   const { registerActions } = useForm();
   const { refreshTable, exportToExcel, tableConfigLoaded, setIsInProgressFlag } = useDataTableStore();
   const { selectedRow, selectedRows } = useDataTableSelection();
-  const { deleteConfigs, duplicateConfigs, exportConfigs } = useConfig(selectedRows, refreshTable);
+  const { deleteConfigs, duplicateConfigs, exportConfigs, publishConfigs, setConfigsReady } = useConfig({ selectedRow, selectedRows, onRefresh: refreshTable });
 
   const [{ visible }, setState] = useState({ visible: false });
 
@@ -131,6 +131,8 @@ const TableContextAccessor: FC<ITableContextComponentProps> = ({ id }) => {
         deleteConfigs,
         duplicateConfigs,
         exportConfigs,
+        publishConfigs,
+        setConfigsReady,
         importConfigs,
       }),
     [tableConfigLoaded, selectedRow]

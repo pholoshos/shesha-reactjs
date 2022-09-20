@@ -43,21 +43,7 @@
                 "parentId": "CTI0XKjHMiwet4AuHx__4",
                 "hidden": false,
                 "customVisibility": null,
-                "filters": [],
-                "items": [
-                  {
-                    "id": "06782a0b-1419-41c7-aca0-dc38eb2d9b2d",
-                    "sortOrder": 0,
-                    "name": "Filter 1",
-                    "filterType": "queryBuilder"
-                  },
-                  {
-                    "id": "b3b8f624-478a-4e1f-90f4-f29829d7c4ad",
-                    "sortOrder": 1,
-                    "name": "Filter 2",
-                    "filterType": "queryBuilder"
-                  }
-                ]
+                "filters": []
               }
             ],
             "direction": "horizontal"
@@ -138,7 +124,7 @@
                     "name": "Add",
                     "itemSubType": "button",
                     "icon": "PlusOutlined",
-                    "buttonType": "primary",
+                    "buttonType": "link",
                     "buttonAction": "dialogue",
                     "modalTitle": "Add New",
                     "selected": false
@@ -158,7 +144,7 @@
                     "name": "Open",
                     "itemSubType": "button",
                     "buttonAction": "navigate",
-                    "buttonType": "primary",
+                    "buttonType": "link",
                     "customVisibility": "return context.selectedRow && context.selectedRow.id",
                     "targetUrl": "/page/details?id={{selectedRow.id}}",
                     "selected": false
@@ -169,7 +155,7 @@
                     "sortOrder": 5,
                     "name": "Edit",
                     "itemSubType": "button",
-                    "buttonType": "primary",
+                    "buttonType": "link",
                     "buttonAction": "navigate",
                     "targetUrl": "/page/edit?id={{selectedRow.id}}",
                     "customVisibility": "return context.selectedRow && context.selectedRow.id",
@@ -181,33 +167,7 @@
                     "sortOrder": 3,
                     "name": "separator",
                     "itemSubType": "separator",
-                    "selected": false,
-                    "childItems": [
-                      {
-                        "id": "nvnj0Q1wivGgkrCcfl9Jc",
-                        "itemType": "item",
-                        "sortOrder": 4,
-                        "name": "Open",
-                        "itemSubType": "button",
-                        "buttonAction": "navigate",
-                        "buttonType": "primary",
-                        "customVisibility": "",
-                        "targetUrl": "/page/details?id={{selectedRow.id}}",
-                        "selected": false
-                      },
-                      {
-                        "id": "cWvZyb0P456Ndcpyb7vrz",
-                        "itemType": "item",
-                        "sortOrder": 5,
-                        "name": "Edit",
-                        "itemSubType": "button",
-                        "buttonType": "primary",
-                        "buttonAction": "navigate",
-                        "targetUrl": "/page/edit?id={{selectedRow.id}}",
-                        "customVisibility": "",
-                        "selected": false
-                      }
-                    ]
+                    "selected": false
                   },
                   {
                     "id": "RjL_C607edu-_k4r5Oj_g",
@@ -216,167 +176,10 @@
                     "name": "Export",
                     "itemSubType": "button",
                     "icon": "DownloadOutlined",
-                    "buttonType": "primary",
+                    "buttonType": "link",
                     "buttonAction": "executeFormAction",
                     "formAction": "exportToExcel",
-                    "selected": false,
-                    "childItems": [
-                      {
-                        "id": "nvnj0Q1wivGgkrCcfl9Jc",
-                        "itemType": "item",
-                        "sortOrder": 4,
-                        "name": "Open",
-                        "itemSubType": "button",
-                        "buttonAction": "navigate",
-                        "buttonType": "primary",
-                        "customVisibility": "",
-                        "targetUrl": "/page/details?id={{selectedRow.id}}",
-                        "selected": false
-                      },
-                      {
-                        "id": "D0xNVk62p9GFliocBS9jA",
-                        "itemType": "item",
-                        "sortOrder": 3,
-                        "name": "separator",
-                        "itemSubType": "separator",
-                        "selected": false
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "id": "4bBJP0OY2qzgX--xLWd5V",
-                "type": "toolbar",
-                "name": "toolbar1",
-                "label": "Toolbar1",
-                "labelAlign": "right",
-                "parentId": "46jNfZhuX5Qf-6cmtqWrO",
-                "hidden": false,
-                "customVisibility": null,
-                "items": [
-                  {
-                    "id": "5eb2b39e-857c-414f-8837-aeebf6e0993a",
-                    "type": "item",
-                    "sortOrder": 8,
-                    "name": "New User",
-                    "buttonType": "button",
-                    "buttonAction": "dialogue",
-                    "modalTitle": "New User",
-                    "modalFormId": "07e25729-5736-43bc-b561-6e772a4b5bbd",
-                    "modalActionOnSuccess": "refresh123",
-                    "modalFormModel": [
-                      {
-                        "id": "359dd655-1b25-469d-84dd-9ee2d0fb2511",
-                        "key": "id",
-                        "value": "new Value"
-                      }
-                    ]
-                  },
-                  {
-                    "id": "00fdcc82-5244-44c0-aeff-26b26a5fdab9",
-                    "type": "item",
-                    "sortOrder": 9,
-                    "name": "separator",
-                    "buttonType": "separator"
-                  },
-                  {
-                    "id": "df2d236d-5cda-4d95-9848-a269c9bea5fd",
-                    "type": "item",
-                    "sortOrder": 2,
-                    "name": "Open",
-                    "buttonType": "button",
-                    "visibility": "return context.selectedRow && context.selectedRow.id",
-                    "buttonAction": "navigate",
-                    "targetUrl": "/administration/user-management/details?id={{selectedRow.id}}"
-                  },
-                  {
-                    "id": "ef7b5318-1cf0-4fe0-805b-ab13d71f1d5a",
-                    "type": "item",
-                    "sortOrder": 3,
-                    "name": "Edit",
-                    "buttonType": "button",
-                    "buttonAction": "navigate",
-                    "targetUrl": "/administration/user-management/edit?id={{selectedRow.id}}",
-                    "visibility": "return context.selectedRow && context.selectedRow.id"
-                  },
-                  {
-                    "id": "31c79a94-4d25-43ee-8161-8d22a379a7ac",
-                    "type": "item",
-                    "sortOrder": 5,
-                    "name": "Delete",
-                    "buttonType": "button",
-                    "visibility": "return context.selectedRow && context.selectedRow.id",
-                    "buttonAction": "executeFormAction",
-                    "formAction": "deleteRow"
-                  },
-                  {
-                    "id": "c41d8b7f-16a5-4a08-ab99-5ea50966dc32",
-                    "type": "item",
-                    "sortOrder": 5,
-                    "name": "separator",
-                    "buttonType": "separator",
-                    "visibility": "return context.selectedRow && context.selectedRow.id"
-                  },
-                  {
-                    "id": "66218f7a-f43c-4d74-af32-d5787feb13e2",
-                    "type": "group",
-                    "sortOrder": 1,
-                    "name": "View PDF",
-                    "childItems": [
-                      {
-                        "id": "f33edeee-c868-4001-9fa7-6ce628fe7707",
-                        "type": "item",
-                        "sortOrder": 2,
-                        "name": "Submission",
-                        "buttonType": "button",
-                        "selected": false
-                      },
-                      {
-                        "id": "34f42533-40d7-4765-a815-dafa9e0c9b49",
-                        "type": "item",
-                        "sortOrder": 2,
-                        "name": "Route Form",
-                        "buttonType": "button",
-                        "selected": false,
-                        "buttonAction": "navigate",
-                        "tooltip": "Lorem ipsum dolor sit amet"
-                      }
-                    ],
-                    "selected": false
-                  },
-                  {
-                    "id": "530766c1-b5a3-4f84-9c30-89181e27be25",
-                    "type": "item",
-                    "sortOrder": 3,
-                    "name": "Export to Excel",
-                    "buttonType": "button",
-                    "buttonAction": "executeFormAction",
-                    "formAction": "exportToExcel"
-                  },
-                  {
-                    "id": "9f083987-d31e-4257-a5be-4bb55653779b",
-                    "type": "item",
-                    "sortOrder": 6,
-                    "name": "Test Modal",
-                    "buttonType": "button",
-                    "buttonAction": "dialogue",
-                    "modalForm": "1d0031ce-0fac-43ed-ba88-3810a9319fce",
-                    "modalFormId": "1d0031ce-0fac-43ed-ba88-3810a9319fce",
-                    "modalTitle": "Delete User (new)",
-                    "modalFormModel": "{id: context.selectedRow.id}",
-                    "modalActionOnSuccess": "refresh"
-                  },
-                  {
-                    "id": "2303005b-51fc-443d-b0da-e7c6dd2030c3",
-                    "type": "item",
-                    "sortOrder": 7,
-                    "name": "Refresh table",
-                    "buttonType": "button",
-                    "buttonAction": "executeFormAction",
-                    "modalTitle": "WoW!",
-                    "modalFormId": "efd830e2-30e7-4727-ad2b-ac14c6355a07",
-                    "formAction": "refresh"
+                    "selected": false                    
                   }
                 ]
               }

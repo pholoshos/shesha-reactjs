@@ -179,6 +179,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
             // todo: use partial for loading
             id: formConfiguration.id,
             name: formConfiguration.name,
+            module: formConfiguration.module,
             label: formConfiguration.label,
             description: formConfiguration.description,
 

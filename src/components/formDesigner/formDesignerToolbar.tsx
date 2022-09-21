@@ -58,6 +58,14 @@ export const FormDesignerToolbar: FC<IProps> = () => {
         >
           <EyeOutlined /> Preview
         </Button>
+        <Button
+          onClick={() => {
+            setFormMode(formMode === 'designer' ? 'edit' : 'designer');
+          }}
+          type={formMode === 'designer' ? 'default' : 'primary'}
+        >
+          <EyeOutlined /> JSON
+        </Button>
         <Button onClick={onCancelClick} type="primary" danger>
           <CloseCircleOutlined /> Cancel
         </Button>

@@ -14,8 +14,7 @@ export interface ISidebarMenuItem {
   isHidden?: boolean;
   visibility?: string;
   requiredPermissions?: string[];
-
+  isRootItem?: boolean;
   childItems?: ISidebarMenuItem[];
-
   selected?: boolean;
 }

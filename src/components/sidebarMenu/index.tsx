@@ -48,7 +48,9 @@ export const SidebarMenu: FC<ISidebarMenuProps> = ({ theme = 'dark' }) => {
       defaultOpenKeys={keys}
       onOpenChange={onOpenChange}
       theme={theme}
-      items={items.map(item => renderSidebarMenuItem({ ...item, isItemVisible }))}
+      items={items
+        .map(item => ({ ...item, isRootItem: true }))
+        .map(item => renderSidebarMenuItem({ ...item, isItemVisible }))}
     />
   );
 };

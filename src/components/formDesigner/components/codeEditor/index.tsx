@@ -34,7 +34,7 @@ const CodeEditorComponent: IToolboxComponent<ICodeEditorComponentProps> = {
           <CodeEditor
             language="typescript"
             {...editorProps}
-            mode="dialog"
+            mode={model.mode || 'dialog'}
             setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           />
         </ConfigurableFormItem>
@@ -45,6 +45,7 @@ const CodeEditorComponent: IToolboxComponent<ICodeEditorComponentProps> = {
     const textAreaModel: ICodeEditorComponentProps = {
       ...model,
       label: 'Code Editor',
+      mode: 'dialog',
     };
 
     return textAreaModel;

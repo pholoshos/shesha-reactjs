@@ -35,9 +35,19 @@ export const FormsIndexPage = addStory(Template, {
   formId: { name: 'forms', module: 'Shesha' },
   mode: 'edit',
 });
+export const FormsIndexPage2 = addStory(Template, {
+  formId: { name: 'forms', module: null },
+  mode: 'edit',
+});
 
 export const FormDetailsPage = addStory(Template, {
   formId: { name: 'form-details', module: 'Shesha' },
+  mode: 'edit',
+  id: '7545b898-e3b1-42a8-9404-00ee56ade384',
+});
+
+export const FormDetailsPage2 = addStory(Template, {
+  formId: { name: 'form-details' },
   mode: 'edit',
   id: '7545b898-e3b1-42a8-9404-00ee56ade384',
 });

@@ -7,9 +7,9 @@ import { Alert, Menu } from 'antd';
 import { IButtonGroupButton, ButtonGroupItemProps } from '../../../../../providers/buttonGroupConfigurator/models';
 import { useForm } from '../../../../../providers/form';
 import { ConfigurableButton } from '../configurableButton';
-import { useAuth, useGlobalState } from '../../../../../providers';
+import { useAuth, useDataTableSelection, useGlobalState } from '../../../../../providers';
 import moment from 'moment';
-import { getStyle } from '../../../../../providers/form/utils';
+import { executeExpression, getStyle } from '../../../../../providers/form/utils';
 import { getButtonGroupMenuItem } from './utils';
 
 const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
@@ -46,31 +46,26 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
   const { formMode, formData, form } = useForm();
   const { anyOfPermissionsGranted } = useAuth();
   const { globalState } = useGlobalState();
+  const { selectedRow } = useDataTableSelection(false) ?? {}; // todo: move to a generic context provider
 
   const isDesignMode = formMode === 'designer';
 
-  const executeExpression = (expression: string, returnBoolean = false) => {
-    if (!expression) {
-      if (returnBoolean) {
+  const localexecuteExpression = (expression: string) => {
+    const expressionArgs = {
+      data: formData,
+      form: form,
+      formMode: formMode,
+      globalState: globalState,
+      moment: moment,
+      context: { selectedRow },
+    };
+    return executeExpression<boolean>(expression,
+      expressionArgs,
+      true,
+      (error) => {
+        console.error(error);
         return true;
-      } else {
-        console.error('Expected expression to be defined but it was found to be empty.');
-
-        return false;
-      }
-    }
-
-    /* tslint:disable:function-constructor */
-    const evaluated = new Function('data, form, formMode, globalState, moment', expression)(
-      formData,
-      form,
-      formMode,
-      globalState,
-      moment
-    );
-
-    // tslint:disable-next-line:function-constructor
-    return typeof evaluated === 'boolean' ? evaluated : true;
+      });
   };
 
   /**
@@ -81,7 +76,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
   const getIsVisible = (item: ButtonGroupItemProps) => {
     const { permissions, hidden } = item;
 
-    const isVisibleByCondition = executeExpression(item.customVisibility, true);
+    const isVisibleByCondition = localexecuteExpression(item.customVisibility);
 
     const granted = anyOfPermissionsGranted(permissions || []);
 
@@ -91,7 +86,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
   const renderMenuButton = (props: MenuButton, isChild = false) => {
     const hasChildren = props?.childItems?.length > 0;
 
-    const disabled = !executeExpression(props.customEnabled, true);
+    const disabled = !localexecuteExpression(props.customEnabled);
 
     return getButtonGroupMenuItem(
       renderButtonItem(props, props?.id, disabled),

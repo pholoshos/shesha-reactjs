@@ -104,8 +104,10 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [props]);
 
   const sameForm = (formId: FormIdentifier, name: string, module: string): boolean => {
+    const safeStringsEqual = (a: string, b: string) => (a ?? '').toLowerCase() === (b ?? '').toLowerCase();
+
     const fullName = asFormFullName(formId);
-    return fullName && fullName.name == name && fullName.module == module;
+    return fullName && safeStringsEqual(fullName.name, name) && safeStringsEqual(fullName.module, module);
   }
 
   //#region get form data
@@ -115,7 +117,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     // Data/Entity will be fetched with the previous value of the response. That is why we have to check that we don't have the old form response
     //const isPathMismatch = props?.path !== formResponse?.path;
     const correctForm = formConfiguration && sameForm(props.formId, formConfiguration.name, formConfiguration.module);
-
+    
     // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
     if (fetchDataPath && correctForm) {
       fetchData({ queryParams: entityPathId || !id ? {} : { id } });

@@ -59,6 +59,39 @@
       "label": "Description"
     },
     {
+      "id": "ZEAbHFGIsJsmRblAqm4O8",
+      "type": "dropdown",
+      "name": "mode",
+      "label": "Mode",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "visibility": "Yes",
+      "customVisibility": null,
+      "isDynamic": false,
+      "dataSourceType": "values",
+      "useRawValues": false,
+      "placeholder": "",
+      "description": "",
+      "defaultValue": "",
+      "entityTypeShortAlias": "",
+      "dataSourceUrl": "",
+      "validate": {},
+      "values": [
+        {
+          "id": "s8AEjax1wAvs14Kryi2y7",
+          "label": "Dialog",
+          "value": "dialog"
+        },
+        {
+          "id": "gbWBGf8rSJcHtF7-A1x4A",
+          "label": "Inline",
+          "value": "inline"
+        }
+      ],
+      "settingsValidationErrors": []
+    },
+    {
       "id": "df8a8f35-a50b-42f9-9642-73d390ceddbf",
       "type": "dropdown",
       "name": "visibility",
@@ -140,8 +173,16 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
-        { "name": "value", "description": "Component current value", "type": "string | any" },
-        { "name": "data", "description": "Selected form values", "type": "object" }
+        {
+          "name": "value",
+          "description": "Component current value",
+          "type": "string | any"
+        },
+        {
+          "name": "data",
+          "description": "Selected form values",
+          "type": "object"
+        }
       ]
     }
   ],

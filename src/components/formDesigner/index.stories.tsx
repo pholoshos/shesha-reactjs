@@ -61,6 +61,12 @@ export const FormsIndex = addStory(DesignerTemplate, {
   }
 });
 
+export const FormsIndex2 = addStory(DesignerTemplate, {
+  formId: {
+    name: 'forms'
+  }
+});
+
 export const FormCreate = addStory(DesignerTemplate, {
   formId: {
     name: 'form-create',

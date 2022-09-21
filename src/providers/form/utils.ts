@@ -387,6 +387,31 @@ export const getVisibilityFunc2 = (expression, name) => {
   } else return () => true;
 };
 
+
+export interface IExpressionExecuterArguments {
+  [key: string]: any;
+}
+export type IExpressionExecuterReturn<TResult> = () => TResult;
+export type IExpressionExecuterFailedHandler<TResult> = (error: any) => TResult;
+export function executeExpression<TResult>(expression: string, expressionArgs: IExpressionExecuterArguments, defaultValue: TResult, onFail: IExpressionExecuterFailedHandler<TResult>): IExpressionExecuterReturn<TResult> {
+  if (expression) {
+    try {
+      let argsDefinition = '';
+      const argList: any[] = [];
+      for (const argumentName in expressionArgs){
+        argsDefinition += (argsDefinition ? ', ' : '') + argumentName;
+        argList.push(expressionArgs[argumentName]);
+      }
+      
+      const expressionExecuter = new Function(argsDefinition, expression);
+
+      return expressionExecuter.apply(null, argList);
+    } catch (e) {
+      return () => onFail(e);
+    }
+  } else return () => defaultValue;
+};
+
 /**
  * Return ids of visible components according to the custom visibility
  */

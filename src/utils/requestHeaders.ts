@@ -1,12 +1,14 @@
-
 import { getAccessToken } from './auth';
 import { getLocalizationOrDefault } from './localization';
-import { getTenantId } from './multitenancy';
+import { getCustomHeaders, getTenantId } from './multitenancy';
 
+interface IOptions {
+  addCustomHeaders?: boolean;
+}
 /**
  * Retrieves the request headers for the application
  */
-export const requestHeaders = (tokenName?: string): { [key: string]: string } => {
+export const requestHeaders = (tokenName?: string, options: IOptions = {}): { [key: string]: string } => {
   const headers: { [key: string]: string } = {};
 
   const tokenResult = getAccessToken(tokenName);
@@ -23,6 +25,16 @@ export const requestHeaders = (tokenName?: string): { [key: string]: string } =>
 
   if (tenantId) {
     headers['Abp.TenantId'] = getTenantId().toString();
+  }
+
+  if (options?.addCustomHeaders) {
+    const additionalHeaders = getCustomHeaders();
+
+    additionalHeaders.forEach(([key, value]) => {
+      if (key && value) {
+        headers[key] = value?.toString();
+      }
+    });
   }
 
   return headers;

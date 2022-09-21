@@ -189,7 +189,9 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
     const additionalHeaders = getCustomHeaders();
 
     additionalHeaders.forEach(([key, value]) => {
-      headers[key] = value?.toString();
+      if (key && value) {
+        headers[key] = value?.toString();
+      }
     });
 
     return headers;

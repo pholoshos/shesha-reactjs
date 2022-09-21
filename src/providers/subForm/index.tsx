@@ -85,7 +85,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       entityType,
     };
 
-    params.properties = ['id', ...Array.from(new Set(properties || []))].join(' '); // Always include the `id` property/. Useful for deleting
+    params.properties =
+      typeof properties === 'string' ? `id ${properties}` : ['id', ...Array.from(new Set(properties || []))].join(' '); // Always include the `id` property/. Useful for deleting
 
     if (queryParams) {
       const getOnSubmitPayload = () => {
@@ -174,6 +175,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       });
     } else {
       postHttp(value).then(submittedValue => {
+        onChange(submittedValue?.result);
         if (onCreated) {
           const evaluateOnCreated = () => {
             // tslint:disable-next-line:function-constructor
@@ -201,6 +203,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       });
     } else {
       putHttp(value).then(submittedValue => {
+        onChange(submittedValue?.result);
         if (onUpdated) {
           const evaluateOnUpdated = () => {
             // tslint:disable-next-line:function-constructor

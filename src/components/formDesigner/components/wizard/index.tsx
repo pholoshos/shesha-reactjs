@@ -35,6 +35,37 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
     const { tabs, wizardType = 'default' } = model as ITabsComponentProps;
 
+    /// EVENTS
+
+    useSubscribe('WIZARD_MAZI_FORM_VIEW', ({ stateId }) => {
+      console.log("WIZARD_MAZI_FORM_VIEW", stateId, model.uniqueStateId, stateId === model.uniqueStateId);
+      const uniqueStateId = tabs[current].nextUniqueStateId;
+      if (stateId === uniqueStateId) {
+        next();
+      }
+    });
+
+    useSubscribe('WIZARD_ACTION_BUTTON_BACK', ({ stateId }) => {
+      const uniqueStateId = tabs[current].backUniqueStateId;
+      if (stateId === uniqueStateId) {
+        back();
+      }
+    });
+
+    useSubscribe('WIZARD_ACTION_BUTTON_CANCEL', ({ stateId }) => {
+      const uniqueStateId = tabs[current].cancelUniqueStateId;
+      if (stateId === uniqueStateId) {
+        cancel();
+      }
+    });
+
+    useSubscribe('WIZARD_ACTION_BUTTON_DONE', ({ stateId }) => {
+      const uniqueStateId = tabs[current].doneUniqueStateId;
+      if (stateId === uniqueStateId) {
+        done();
+      }
+    });
+
     if (isComponentHidden(model)) return null;
 
     const executeExpression = (expression: string, returnBoolean = true) => {
@@ -159,37 +190,6 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
       publish(EVENT_NAME, { stateId: uniqueStateId || 'NO_PROVIDED' });
     };
-
-    /// EVENTS
-
-    useSubscribe('WIZARD_MAZI_FORM_VIEW', ({ stateId }) => {
-      console.log("WIZARD_MAZI_FORM_VIEW", stateId, model.uniqueStateId, stateId === model.uniqueStateId);
-      const uniqueStateId = tabs[current].nextUniqueStateId;
-      if (stateId === uniqueStateId) {
-        next();
-      }
-    });
-
-    useSubscribe('WIZARD_ACTION_BUTTON_BACK', ({ stateId }) => {
-      const uniqueStateId = tabs[current].backUniqueStateId;
-      if (stateId === uniqueStateId) {
-        back();
-      }
-    });
-
-    useSubscribe('WIZARD_ACTION_BUTTON_CANCEL', ({ stateId }) => {
-      const uniqueStateId = tabs[current].cancelUniqueStateId;
-      if (stateId === uniqueStateId) {
-        cancel();
-      }
-    });
-
-    useSubscribe('WIZARD_ACTION_BUTTON_DONE', ({ stateId }) => {
-      const uniqueStateId = tabs[current].doneUniqueStateId;
-      if (stateId === uniqueStateId) {
-        done();
-      }
-    });
 
     return (
       <>

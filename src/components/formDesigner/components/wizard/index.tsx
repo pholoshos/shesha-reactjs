@@ -1,7 +1,7 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
-import { Steps, Button, Space, message } from 'antd';
+import { Steps, Button, Space, message, Col, Row } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
 import React, { Fragment, useState } from 'react';
@@ -243,30 +243,36 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
           containerId={tabs[current].id}
           dynamicComponents={model?.isDynamic ? component : []} />
 
-        <div>
-          <Space size={'middle'}>
-            {tabs[current].allowCancel === true && (
-              <Button onClick={() => cancel()}>
-                {tabs[current].cancelButtonText ? (tabs[current].cancelButtonText) : ('Cancel')}
-              </Button>
-            )}
-            {current > 0 && (
-              <Button style={{ margin: '0 8px' }} onClick={() => back()}>
-                {tabs[current].backButtonText ? (tabs[current].backButtonText) : ('Back')}
-              </Button>
-            )}
-            {current < tabs.length - 1 && (
-              <Button type="primary" onClick={() => next()}>
-                {tabs[current].nextButtonText ? (tabs[current].nextButtonText) : ('Next')}
-              </Button>
-            )}
-            {current === tabs.length - 1 && (
-              <Button type="primary" onClick={() => done()}>
-                {tabs[current].doneButtonText ? (tabs[current].doneButtonText) : ('Done')}
-              </Button>
-            )}
-          </Space>
-        </div>
+        <Row>
+          <Col span={12}>
+            <Space size={'middle'}>
+              {tabs[current].allowCancel === true && (
+                <Button onClick={() => cancel()}>
+                  {tabs[current].cancelButtonText ? (tabs[current].cancelButtonText) : ('Cancel')}
+                </Button>
+              )}
+              {current > 0 && (
+                <Button style={{ margin: '0 8px' }} onClick={() => back()}>
+                  {tabs[current].backButtonText ? (tabs[current].backButtonText) : ('Back')}
+                </Button>
+              )}
+            </Space>
+          </Col>
+          <Col span={12}>
+            <Space size={'middle'} style={{width: '100%', justifyContent: 'right'}}>
+              {current < tabs.length - 1 && (
+                <Button type="primary" onClick={() => next()}>
+                  {tabs[current].nextButtonText ? (tabs[current].nextButtonText) : ('Next')}
+                </Button>
+              )}
+              {current === tabs.length - 1 && (
+                <Button type="primary" onClick={() => done()}>
+                  {tabs[current].doneButtonText ? (tabs[current].doneButtonText) : ('Done')}
+                </Button>
+              )}
+            </Space>
+          </Col>
+        </Row>
 
       </>
     );

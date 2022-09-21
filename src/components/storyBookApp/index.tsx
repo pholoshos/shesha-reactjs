@@ -1,6 +1,7 @@
 import React, { FC, PropsWithChildren } from 'react';
 import { GlobalStateProvider, ShaApplicationProvider, SidebarMenuDefaultsProvider } from '../../providers';
 import AuthContainer from '../authedContainer';
+require('antd/dist/antd.less');
 
 const DEFAULT_ROUTER = {
   route: '',

@@ -8,7 +8,7 @@ import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
 import { AutocompleteDto, AutocompleteRaw } from '../../../autocomplete';
 import { QueryBuilderWithModelType } from '../queryBuilder/queryBuilderWithModelType';
-import { QueryBuilderPlainRenderer } from '../queryBuilder/queryBuilderFieldPlain';
+import { QueryBuilderComponentRenderer } from '../queryBuilder/queryBuilderComponent';
 
 const Option = Select.Option;
 
@@ -26,6 +26,8 @@ interface IListSettingsState extends IListItemsProps {}
 export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, model, onValuesChange }) => {
   const [state, setState] = useState<IListSettingsState>(model);
   const [form] = Form.useForm();
+
+  console.log('ListControlSettings model', model.filters);
 
   return (
     <Form
@@ -120,14 +122,15 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
             <Checkbox />
           </FormItem>
 
-          <FormItem label="Query builder" name="filters">
-            <QueryBuilderWithModelType modelType={state?.entityType}>
-              <QueryBuilderPlainRenderer
-                useExpression={state?.useExpression}
-                value={state?.filters}
-              ></QueryBuilderPlainRenderer>
-            </QueryBuilderWithModelType>
-          </FormItem>
+          <QueryBuilderWithModelType modelType={state?.entityType}>
+            <QueryBuilderComponentRenderer
+              name="filters"
+              type={''}
+              id={''}
+              label="Query builder"
+              useExpression={state?.useExpression}
+            />
+          </QueryBuilderWithModelType>
         </Show>
       </Show>
 

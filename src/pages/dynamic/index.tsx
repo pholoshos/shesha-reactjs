@@ -35,19 +35,20 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     error: fetchMarkupError
    } = useFormConfiguration({ formId, lazy: true });
   const formMarkup = formConfiguration?.markup;
+  const formSettings = formConfiguration?.settings;
   
   const [form] = Form.useForm();
 
   // url that is used to get form data
   const fetchDataPath = useMemo(() => {
-    const pathToReturn = (removeZeroWidthCharsFromString(formMarkup?.formSettings?.getUrl) || '').trim();
+    const pathToReturn = (removeZeroWidthCharsFromString(formSettings?.getUrl) || '').trim();
 
     if (entityPathId) {
       return pathToReturn?.endsWith('/') ? `${pathToReturn}${entityPathId}` : `${pathToReturn}/${entityPathId}`;
     }
 
     return pathToReturn?.trim();
-  }, [formMarkup, entityPathId, props, state]);
+  }, [formSettings, entityPathId, props, state]);
 
   // form data fetcher
   const { refetch: fetchData, error: fetchDataError, loading: isFetchingData, data: fetchDataResponse } = useGet<
@@ -69,9 +70,11 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   // submit URL
   const submitUrl = useMemo(() => {
-    const url = formMarkup?.formSettings[`${submitVerb?.toLocaleLowerCase()}Url`];
+    const url = formSettings 
+      ? formSettings[`${submitVerb?.toLocaleLowerCase()}Url`] 
+      : null;
 
-    if (!url && formMarkup?.formSettings) {
+    if (!url && formSettings) {
       console.warn(`Please make sure you have specified the '${submitVerb}' URL`);
     }
 
@@ -81,10 +84,10 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
           { match: 'globalState', data: globalState },
         ])
       : '';
-  }, [formMarkup?.formSettings, submitVerb]);
+  }, [formSettings, submitVerb]);
 
   // custom event executed on data loaded
-  const onDataLoaded = formMarkup?.formSettings?.onDataLoaded;
+  const onDataLoaded = formSettings?.onDataLoaded;
 
   // effect that executes onDataLoaded handler
   useEffect(() => {
@@ -121,7 +124,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     if (fetchDataPath && correctForm) {
       fetchData({ queryParams: entityPathId || !id ? {} : { id } });
     }
-  }, [id, formMarkup?.formSettings?.getUrl, entityPathId, fetchDataPath]);
+  }, [id, formSettings?.getUrl, entityPathId, fetchDataPath]);
 
   const onChangeId = (localId: string) => {
     setState(prev => ({ ...prev, id: localId }));
@@ -148,8 +151,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [formId]);
 
   useEffect(() => {
-    setState(prev => ({ ...prev, formMarkup: formMarkup }));
-  }, [formMarkup]);
+    setState(prev => ({ ...prev, formMarkup: formMarkup, formSettings: formSettings }));
+  }, [formMarkup, formSettings]);
   //#endregion
 
   const onFinish = (values: any, _response?: any, options?: any) => {
@@ -256,7 +259,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   return (
     <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
       <ConfigurableForm
-        markup={state?.formMarkup ?? []} // pass empty markup to prevent unneeded form fetching
+        markup={{ components: state?.formMarkup, formSettings: state?.formSettings }} // pass empty markup to prevent unneeded form fetching
         formId={formId}
         formRef={formRef}
         mode={state?.mode}

@@ -870,14 +870,6 @@ export const createComponentModelForDataProperty = (
   return componentModel;
 };
 
-export const sheshaApplication = () => {
-  try {
-    return useSheshaApplication();
-  } catch (error) {
-    return { toolboxComponentGroups: [] };
-  }
-};
-
 export const useFormDesignerComponentGroups = () => {
   const app = useSheshaApplication(false);
   const appComponentGroups = app?.toolboxComponentGroups ?? [];
@@ -1083,4 +1075,16 @@ export const asFormFullName = (formId: FormIdentifier): FormFullName | undefined
   return formId && Boolean((formId as FormFullName)?.name)
     ? formId as FormFullName
     : undefined;
+}
+
+export const convertToMarkupWithSettings = (markup: FormMarkup): FormMarkupWithSettings => {
+  if (!markup)
+    return null;
+  const result = markup as FormMarkupWithSettings;
+  if (result?.components && result.formSettings)
+    return result;
+  if (Array.isArray(markup))
+    return { components: markup, formSettings: DEFAULT_FORM_SETTINGS };
+
+  return { components: [], formSettings: DEFAULT_FORM_SETTINGS };
 }

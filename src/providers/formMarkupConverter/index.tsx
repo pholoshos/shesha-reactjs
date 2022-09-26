@@ -1,9 +1,9 @@
 import React, { FC, ReactNode, useMemo } from 'react';
-import { FormMarkup, IFlatComponentsStructure } from '../form/models';
+import { FormRawMarkup, IFlatComponentsStructure } from '../form/models';
 import { componentsTreeToFlatStructure, getComponentsFromMarkup, useFormDesignerComponents } from '../form/utils';
 
 export interface IFormMarkupConverterProps {
-    markup: FormMarkup,
+    markup: FormRawMarkup,
     children: (flatStructure: IFlatComponentsStructure, onChange: (flatStructure: IFlatComponentsStructure) => void) => ReactNode,
 }
 

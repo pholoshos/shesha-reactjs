@@ -32,6 +32,7 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
           description: payload.description,
         },
         markup: payload.markup,
+        formSettings: payload.formSettings
       };
     },
 

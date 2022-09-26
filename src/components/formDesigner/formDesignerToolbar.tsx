@@ -13,6 +13,7 @@ import { useShaRouting } from '../../providers/shaRouting';
 import { useFormPersister } from '../../providers/formPersisterProvider';
 import { useFormDesigner } from '../../providers/formDesigner';
 import { componentsFlatStructureToTree, useFormDesignerComponents } from '../../providers/form/utils';
+import { FormMarkupWithSettings } from '../../providers/form/models';
 
 export interface IProps {}
 
@@ -26,7 +27,7 @@ export const FormDesignerToolbar: FC<IProps> = () => {
   const toolboxComponents = useFormDesignerComponents();
 
   const onSaveClick = () => {
-    const payload = {
+    const payload: FormMarkupWithSettings = {
       components: componentsFlatStructureToTree(toolboxComponents, { allComponents, componentRelations }),
       formSettings: formSettings,
     };

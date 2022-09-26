@@ -1,4 +1,3 @@
-import { IFormMarkupWithSettings } from './../pages/settings/form/defaults/utils';
 import { ReactNode, MutableRefObject } from 'react';
 import { IConfigurableFormComponent, IFormComponentContainer, FormMarkup } from '../providers/form/models';
 import { FormInstance } from 'antd';
@@ -109,5 +108,4 @@ export interface IAsyncValidationError {
 
 export interface IFormValidationErrors {}
 
-export { IFormMarkupWithSettings };
 export { ConfigurableFormInstance };

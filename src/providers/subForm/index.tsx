@@ -6,7 +6,7 @@ import { useSubscribe } from '../../hooks';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
 import { getQueryParams } from '../../utils/url';
-import { IFormDto } from '../form/models';
+import { FormMarkupWithSettings } from '../form/models';
 import { setMarkupWithSettingsAction } from './actions';
 import { ISubFormProps } from './interfaces';
 import { message, notification } from 'antd';
@@ -18,7 +18,7 @@ import { useFormConfiguration } from '../form/api';
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
   uniqueStateId?: string;
   name?: string;
-  markup?: IFormDto['markup'];
+  markup?: FormMarkupWithSettings;
   value?: string | { id: string; [key: string]: any };
 }
 
@@ -245,7 +245,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   
   useEffect(() => {
     if (!isFetchingForm && fetchFormResponse) {
-      dispatch(setMarkupWithSettingsAction(fetchFormResponse.markup));
+      dispatch(setMarkupWithSettingsAction({ components: fetchFormResponse.markup, formSettings: fetchFormResponse.settings }));
     }
   }, [fetchFormResponse, isFetchingForm]);
 

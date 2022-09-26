@@ -1,4 +1,4 @@
-import { FormMarkupWithSettings } from "../form/models";
+import { FormRawMarkup, IFormSettings } from "../form/models";
 
 export interface IPersistedFormProps {
     id?: string;
@@ -6,5 +6,6 @@ export interface IPersistedFormProps {
     name?: string;
     label?: string;
     description?: string;
-    markup?: FormMarkupWithSettings;
+    markup?: FormRawMarkup;
+    formSettings?: IFormSettings;
 }

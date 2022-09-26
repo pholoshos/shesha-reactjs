@@ -8,7 +8,8 @@ import { useAppConfigurator, useShaRouting, useSheshaApplication } from '../../p
 import classNames from 'classnames';
 import { FormPersisterConsumer, FormPersisterProvider } from '../../providers/formPersisterProvider';
 import { FormMarkupConverter } from '../../providers/formMarkupConverter';
-import { FormMarkup } from '../../providers/form/models';
+import { FormRawMarkup, IFormSettings } from '../../providers/form/models';
+import { convertToMarkupWithSettings } from '../../providers/form/utils';
 
 export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
   const { formId, markup, mode, actions, sections, context, formRef, ...restProps } = props;
@@ -18,12 +19,15 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
   const canConfigure = Boolean(app.routes.formsDesigner) && Boolean(formId);
   const { router } = useShaRouting(false) ?? {};
 
-  const renderWithMarkup = (providedMarkup: FormMarkup) => {
+  const markupWithSettings = convertToMarkupWithSettings(markup);
+
+  const renderWithMarkup = (providedMarkup: FormRawMarkup, formSettings: IFormSettings) => {
     return (
       <FormMarkupConverter markup={providedMarkup}>
         {(flatComponents) => (
           <FormProvider
             flatComponents={flatComponents}
+            formSettings={formSettings}
             mode={mode}
             form={restProps.form}
             actions={actions}
@@ -60,11 +64,11 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
             <EditViewMsg />
           </BlockOverlay>
           {markup
-            ? renderWithMarkup(markup)
+            ? renderWithMarkup(markupWithSettings.components, markupWithSettings.formSettings)
             : (
               <FormPersisterProvider formId={formId}>
                 <FormPersisterConsumer>
-                  {persister => renderWithMarkup(persister.markup)}
+                  {persister => renderWithMarkup(persister.markup, persister.formSettings)}
                 </FormPersisterConsumer>
               </FormPersisterProvider>
             )

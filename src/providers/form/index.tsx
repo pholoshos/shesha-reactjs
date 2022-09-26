@@ -1,4 +1,4 @@
-import React, { FC, useContext, PropsWithChildren, useEffect, MutableRefObject, useMemo } from 'react';
+import React, { FC, useContext, PropsWithChildren, useEffect, MutableRefObject } from 'react';
 import formReducer from './reducer';
 import {
   FormActionsContext,
@@ -15,7 +15,8 @@ import {
   IFormActions,
   IFormSections,
   FormMode,
-  IFlatComponentsStructure
+  IFlatComponentsStructure,
+  IFormSettings
 } from './models';
 import { getFlagSetters } from '../utils/flagsSetters';
 import {
@@ -30,10 +31,9 @@ import {
 import {
   convertActions,
   getVisibleComponentIds,
-  toolbarGroupsToComponents,
   convertSectionsToList,
   getEnabledComponentIds,
-  sheshaApplication,
+  useFormDesignerComponents,
 } from './utils';
 import { FormInstance } from 'antd';
 import useThunkReducer from 'react-hook-thunk-reducer';
@@ -47,6 +47,7 @@ import { useSubscribe } from '../../hooks';
 export interface IFormProviderProps {
   uniqueStateId?: string;
   flatComponents: IFlatComponentsStructure;
+  formSettings: IFormSettings;
   mode: FormMode;
   form?: FormInstance<any>;
   actions?: IFormActions;
@@ -66,17 +67,9 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   context,
   formRef,
   uniqueStateId,
+  formSettings,
 }) => {
-  const { toolboxComponentGroups } = sheshaApplication();
-
-  // console.log('LOG: flatComponents', flatComponents);
-
-  const actualComponentGroups = [
-    ...(FORM_CONTEXT_INITIAL_STATE.toolboxComponentGroups || []),
-    ...(toolboxComponentGroups || []),
-  ];
-
-  const toolboxComponents = useMemo(() => toolbarGroupsToComponents(actualComponentGroups), [toolboxComponentGroups]);
+  const toolboxComponents = useFormDesignerComponents();
 
   const getToolboxComponent = (type: string) => toolboxComponents[type];
 
@@ -87,8 +80,8 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     actions: convertActions(null, actions),
     sections: convertSectionsToList(null, sections),
     context,
-    toolboxComponentGroups: actualComponentGroups,
     ...flatComponents,
+    formSettings: formSettings,
   };
 
   // console.log('LOG: initial', initial);

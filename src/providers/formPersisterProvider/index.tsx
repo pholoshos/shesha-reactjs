@@ -71,6 +71,7 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
           label: formConfiguration.label,
           description: formConfiguration.description,
           markup: formConfiguration.markup,
+          formSettings: formConfiguration.settings,
         };
 
         // parse json content
@@ -104,7 +105,7 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
       id: state.formProps.id,
       markup: JSON.stringify(payload, null, 2),
     };
-
+console.log('SAVE FORM: ', dto);
     await saveFormHttp(dto, {})
       .then(_response => {
         dispatch(saveSuccessAction());

@@ -4,7 +4,6 @@ import {
   IToolboxComponent,
   IFormValidationErrors,
 } from '../../interfaces';
-import defaultToolboxComponents from './defaults/toolboxComponents';
 import {
   FormMode,
   IConfigurableFormComponent,
@@ -25,7 +24,7 @@ export interface IHasComponentGroups {
 }
 
 export interface IFormStateContext
-  extends IHasComponentGroups, IFlatComponentsStructure
+  extends IFlatComponentsStructure
     /*IFormProps*/ {
   formSettings: IFormSettings;
   formMode: FormMode;
@@ -94,7 +93,6 @@ export const FORM_CONTEXT_INITIAL_STATE: IFormStateContext = {
   actions: [],
   sections: [],
   context: null,
-  toolboxComponentGroups: defaultToolboxComponents,
   formSettings: DEFAULT_FORM_SETTINGS,
 };
 

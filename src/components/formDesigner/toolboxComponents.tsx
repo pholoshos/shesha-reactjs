@@ -3,10 +3,10 @@ import ToolboxComponent from './toolboxComponent';
 import { Collapse, Empty } from 'antd';
 import { useLocalStorage } from '../../hooks';
 import { ItemInterface, ReactSortable } from 'react-sortablejs';
-import { useForm } from '../../providers';
 import { TOOLBOX_COMPONENT_DROPPABLE_KEY } from '../../providers/form/models';
 import { IToolboxComponentGroup } from '../../interfaces';
 import { SearchBox } from './toolboxSearchBox';
+import { useFormDesigner } from '../../providers/formDesigner';
 
 const { Panel } = Collapse;
 
@@ -16,7 +16,7 @@ export const ToolboxComponents: FC<IToolboxComponentsProps> = () => {
   const [openedKeys, setOpenedKeys] = useLocalStorage('shaDesigner.toolbox.components.openedKeys', ['']);
   const [searchText, setSearchText] = useLocalStorage('shaDesigner.toolbox.components.search', '');
 
-  const { toolboxComponentGroups } = useForm();
+  const { toolboxComponentGroups } = useFormDesigner();
 
   const filteredGroups = useMemo<IToolboxComponentGroup[]>(() => {
     if (!Boolean(searchText)) return [...toolboxComponentGroups];

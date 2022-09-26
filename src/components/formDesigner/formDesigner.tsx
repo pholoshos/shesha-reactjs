@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { SidebarContainer, ConfigurableFormRenderer } from '../../components';
-import { Row, Col, Divider } from 'antd';
+import { Row, Col, Divider, Skeleton } from 'antd';
 import Toolbox from './toolbox';
 import FormDesignerToolbar from './formDesignerToolbar';
 import ComponentPropertiesPanel from './componentPropertiesPanel';
@@ -24,20 +24,26 @@ export const FormDesigner: FC<IFormDesignerProps> = ({ formId }) => {
   return (
     <FormPersisterProvider formId={formId}>
       <FormPersisterStateConsumer>
-        {formStore => (
-          <FormMarkupConverter markup={formStore.markup}>
-            {flatComponents => (
-              <FormDesignerProvider flatComponents={flatComponents}>
-                <FormDesignerStateConsumer>
-                  {designerState => (
-                    <FormProvider mode="designer" flatComponents={{ allComponents: designerState.allComponents, componentRelations: designerState.componentRelations }}>
-                      <FormDesignerRenderer formId={formId} />
-                    </FormProvider>
-                  )}
-                </FormDesignerStateConsumer>
-              </FormDesignerProvider>
-            )}
-          </FormMarkupConverter>
+        {formStore => (formStore.markup
+          ? (
+            <FormMarkupConverter markup={formStore.markup}>
+              {flatComponents => (
+                <FormDesignerProvider flatComponents={flatComponents} formSettings={formStore.formSettings}>
+                  <FormDesignerStateConsumer>
+                    {designerState => (
+                      <FormProvider mode="designer" 
+                        flatComponents={{ allComponents: designerState.allComponents, componentRelations: designerState.componentRelations }} 
+                        formSettings={designerState.formSettings}
+                      >
+                        <FormDesignerRenderer formId={formId} />
+                      </FormProvider>
+                    )}
+                  </FormDesignerStateConsumer>
+                </FormDesignerProvider>
+              )}
+            </FormMarkupConverter>
+          )
+          : (<Skeleton></Skeleton>)
         )}
       </FormPersisterStateConsumer>
     </FormPersisterProvider>

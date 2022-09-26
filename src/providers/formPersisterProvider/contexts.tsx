@@ -6,8 +6,8 @@ import {
 import {
   DEFAULT_FORM_SETTINGS,
   FormIdentifier,
-  FormMarkup,
   FormMarkupWithSettings,
+  FormRawMarkup,
   IFormSettings,
 } from '../form/models';
 import { IPersistedFormProps } from './models';
@@ -27,7 +27,8 @@ export interface IFormPersisterStateContext extends IFlagsState<IFlagProgressFla
   formId: FormIdentifier;
   formProps: IPersistedFormProps;
   formSettings: IFormSettings;
-  markup: FormMarkup;
+  markup: FormRawMarkup;
+  loaded: boolean;
 }
 
 export interface IFormLoadPayload {
@@ -51,6 +52,7 @@ export const FORM_PERSISTER_CONTEXT_INITIAL_STATE: IFormPersisterStateContext = 
   markup: null,
   formSettings: DEFAULT_FORM_SETTINGS,
   formProps: null,
+  loaded: false,
 };
 
 export const FormPersisterStateContext = createContext<IFormPersisterStateContext>(FORM_PERSISTER_CONTEXT_INITIAL_STATE);

@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import { IConfigurableFormComponent } from '../../../../interfaces/formDesigner';
 import { IPropertyMetadata } from '../../../../interfaces/metadata';
 import { useForm } from '../../../../providers/form';
-import { camelcaseDotNotation, createComponentModelForDataProperty } from '../../../../providers/form/utils';
+import { camelcaseDotNotation, createComponentModelForDataProperty, useFormDesignerComponentGroups } from '../../../../providers/form/utils';
 import { useMetadata } from '../../../../providers/metadata';
 import DynamicContainer from './dynamicContainer';
 
@@ -13,7 +13,8 @@ export interface DynamicViewProps extends IConfigurableFormComponent {
 export const DynamicView: FC<DynamicViewProps> = (model) => {
     const currentMeta = useMetadata(false)?.metadata;
 
-    const { allComponents, toolboxComponentGroups, isComponentHidden } = useForm();
+    const { allComponents, isComponentHidden } = useForm();
+    const toolboxComponentGroups = useFormDesignerComponentGroups();
 
     const staticComponents = useMemo<IConfigurableFormComponent[]>(() => {
         const result: IConfigurableFormComponent[] = [];

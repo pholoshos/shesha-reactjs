@@ -3,7 +3,6 @@ import { Form, Modal, Tabs } from 'antd';
 import { ConfigurableForm } from '../../components';
 import formSettingsJson from './formSettings.json';
 import { FormMarkup } from '../../providers/form/models';
-import { useForm } from '../../providers/form';
 import { CodeVariablesTables } from '../codeVariablesTable';
 import { useFormDesigner } from '../../providers/formDesigner';
 
@@ -14,8 +13,7 @@ export interface IFormSettingsEditorProps {
 
 export const FormSettingsEditor: FC<IFormSettingsEditorProps> = ({ isVisible, close }) => {
   const [form] = Form.useForm();
-  const { formSettings } = useForm();
-  const { updateFormSettings } = useFormDesigner();
+  const { formSettings, updateFormSettings } = useFormDesigner();
 
   const onSave = values => {
     updateFormSettings(values);
@@ -47,7 +45,6 @@ export const FormSettingsEditor: FC<IFormSettingsEditorProps> = ({ isVisible, cl
                 onFinish={onSave}
                 markup={formSettingsJson as FormMarkup}
                 initialValues={formSettings}
-              // parentFormValues={}
               />
             )
           },

@@ -172,7 +172,8 @@ export interface FormMarkupWithSettings {
   formSettings: IFormSettings;
   components: IConfigurableFormComponent[];
 }
-export type FormMarkup = IConfigurableFormComponent[] | FormMarkupWithSettings;
+export type FormRawMarkup = IConfigurableFormComponent[];
+export type FormMarkup = FormRawMarkup | FormMarkupWithSettings;
 
 export interface FormFullName {
   readonly name: string;
@@ -185,6 +186,7 @@ export type FormIdentifier = FormFullName | FormUid;
 export interface IConfigurableFormBaseProps {
   formId?: FormIdentifier;
   markup?: FormMarkup;
+  //formSettings?: IFormSettings;
 }
 
 export type FormAction = (values?: any, parameters?: any) => void;
@@ -261,7 +263,8 @@ export interface IFormSection {
 }
 
 export interface IFormDto extends Omit<FormDto, 'markup'> {
-  markup: FormMarkupWithSettings;
+  markup: FormRawMarkup;
+  settings: IFormSettings;
 }
 
 export interface IFormValidationRulesOptions {

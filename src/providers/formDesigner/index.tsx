@@ -55,21 +55,26 @@ import { useMetadataDispatcher } from '../../providers';
 export interface IFormProviderProps {
     uniqueStateId?: string;
     flatComponents: IFlatComponentsStructure;
+    formSettings: IFormSettings;
 }
 
 const FormDesignerProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     children,
     flatComponents,
+    formSettings,
 }) => {
     const toolboxComponentGroups = useFormDesignerComponentGroups();
     const toolboxComponents = useFormDesignerComponents();
 
     const getToolboxComponent = (type: string) => toolboxComponents[type];
 
+    console.log('render designer: ', {...flatComponents, formSettings})
+
     const initial: IFormDesignerStateContext = {
         ...FORM_DESIGNER_CONTEXT_INITIAL_STATE,
         toolboxComponentGroups: toolboxComponentGroups,
         ...flatComponents,
+        formSettings: formSettings,
     };
 
     // console.log('LOG: initial', initial);
@@ -145,7 +150,10 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     };
 
     const setFlatComponents = (flatComponents: IFlatComponentsStructure) => {
-        dispatch(setFlatComponentsAction(flatComponents));
+        dispatch((dispatchThunk, _getState) => {
+            dispatchThunk(setFlatComponentsAction(flatComponents));
+            dispatchThunk(ActionCreators.clearHistory());
+          });
     };
 
     const setDebugMode = (isDebug: boolean) => {
@@ -265,6 +273,13 @@ function useUndoableState(require: boolean = true) {
     if (require && context === undefined) {
         throw new Error('useUndoableState must be used within a FormDesignerProvider');
     }
+
+console.log({
+    pastLength: context.past.length,
+    futureLength: context.future.length > 0,
+    canUndo: context.past.length > 0,
+    canRedo: context.future.length > 0,
+});
 
     return {
         canUndo: context.past.length > 0,

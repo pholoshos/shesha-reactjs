@@ -1,4 +1,4 @@
-import { FormFullName, FormMarkupWithSettings } from '../../providers/form/models';
+import { FormFullName, FormRawMarkup, IFormSettings } from '../../providers/form/models';
 
 export type FormMode = 'designer' | 'edit' | 'readonly';
 
@@ -44,7 +44,8 @@ export interface IEntity {
 }
 
 export interface IDynamicPageState extends IDynamicPageProps {
-  formMarkup?: FormMarkupWithSettings;
+  formMarkup?: FormRawMarkup;
+  formSettings?: IFormSettings;
   fetchedData?: IEntity;
   mode?: FormMode;
 }

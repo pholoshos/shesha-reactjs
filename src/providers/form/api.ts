@@ -123,12 +123,15 @@ export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarku
     );
 
     const formConfiguration = useMemo<IFormDto>(() => {
-        return fetcher?.data?.result
-            ? {
+        if (fetcher?.data?.result){
+            const markupWithSettings = getMarkupFromResponse(fetcher?.data);
+            return {
                 ...fetcher?.data?.result,
-                markup: getMarkupFromResponse(fetcher?.data),
-            }
-            : null;
+                markup: markupWithSettings?.components,
+                settings: markupWithSettings?.formSettings
+            };
+        } else
+            return null;
     }, [args.formId, fetcher?.data]);
 
     const reFetcher = () => {
@@ -144,64 +147,4 @@ export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarku
         refetch: reFetcher,
     };
     return result;
-
-    /*
-    const fetcherByRawId = useGet<IAbpWrappedGetEntityResponse<FormConfigurationDto>, IAjaxResponseBase, IGetFormByIdPayload>(
-        `/api/services/Shesha/FormConfiguration/Get`, {
-        queryParams: { id: formRawId },
-        lazy: !Boolean(formRawId) || args.lazy
-    });
-
-    
-    const fetcherByFullName = useGet<IAbpWrappedGetEntityResponse<FormConfigurationDto>, IAjaxResponseBase, IGetFormByNamePayload>(
-        `/api/services/Shesha/FormConfiguration/GetByName`, {
-        queryParams: { module: formFullName?.module, name: formFullName?.name, version: formFullName?.version },
-        lazy: !Boolean(formFullName) || args.lazy
-    });
-
-    const fetcher = formRawId
-        ? fetcherByRawId
-        : formFullName
-            ? fetcherByFullName
-            : null;
-
-    const response = useMemo<IFormMarkupResponse>(() => {
-        const formConfiguration = fetcher?.data?.result
-            ? {
-                ...fetcher?.data?.result,
-                markup: getMarkupFromResponse(fetcher?.data),
-            }
-            : null;
-        return null;
-    }, []);
-    return response;
-
-    //const deps = { formId: args.formId, fetcher, fetcherData: fetcher?.data};
-    const formConfiguration = useMemo<IFormDto>(() => {
-        //console.log('calculate formConfiguration', deps);
-
-        if (!fetcher?.data?.result)
-            return null;
-
-        return {
-            ...fetcher?.data?.result,
-            markup: getMarkupFromResponse(fetcher?.data),
-        };
-    }, [args.formId, fetcher, fetcher?.data]);
-
-    const reFetcher = () => {
-        console.log('reFetcher called');
-        return fetcher?.refetch().then(response => {
-            return getMarkupFromResponse(response);
-        });
-    };
-
-    const result: IFormMarkupResponse = {
-        formConfiguration: formConfiguration,
-        loading: fetcher?.loading,
-        error: fetcher?.error,
-        refetch: reFetcher,
-    };
-    return result;
-    */
 }

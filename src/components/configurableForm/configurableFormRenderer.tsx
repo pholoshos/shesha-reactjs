@@ -26,6 +26,7 @@ import axios, { AxiosResponse } from 'axios';
 import { FormConfigurationDto } from '../../providers/form/api';
 import { IAbpWrappedGetEntityResponse } from '../../interfaces/gql';
 import { nanoid } from 'nanoid/non-secure';
+import { useFormDesigner } from '../../providers/formDesigner';
 
 export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   children,
@@ -39,7 +40,8 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   skipFetchData,
   ...props
 }) => {
-  const { setFormData, formData, allComponents, formMode, isDragging, formSettings, setValidationErrors } = useForm();
+  const { setFormData, formData, allComponents, formMode, formSettings, setValidationErrors } = useForm();
+  const { isDragging = false } = useFormDesigner(false);
   const { excludeFormFieldsInPayload, onDataLoaded, onUpdate, formKeysToPersist, uniqueFormId } = formSettings;
   const { globalState } = useGlobalState();
   const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);

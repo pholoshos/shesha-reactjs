@@ -17,11 +17,12 @@ import {
   FormIdentifier,
   FormFullName,
   FormUid,
+  IFormSettings,
+  DEFAULT_FORM_SETTINGS,
 } from './models';
 import Mustache from 'mustache';
 import { ITableColumn, IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
 import Schema, { Rules, ValidateSource } from 'async-validator';
-import { DEFAULT_FORM_SETTINGS, IFormSettings } from './contexts';
 import { IPropertyMetadata } from '../../interfaces/metadata';
 import { nanoid } from 'nanoid';
 import { Rule, RuleObject } from 'antd/lib/form';
@@ -35,8 +36,9 @@ import masterDetailsViewMarkup from './defaults/markups/masterDetailsView.json';
 import menuViewMarkup from './defaults/markups/menuView.json';
 import tableViewMarkup from './defaults/markups/tableView.json';
 import { useSheshaApplication } from '..';
-import { CSSProperties } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import camelcase from 'camelcase';
+import defaultToolboxComponents from './defaults/toolboxComponents';
 
 /**
  * Convert components tree to flat structure.
@@ -398,11 +400,11 @@ export function executeExpression<TResult>(expression: string, expressionArgs: I
     try {
       let argsDefinition = '';
       const argList: any[] = [];
-      for (const argumentName in expressionArgs){
+      for (const argumentName in expressionArgs) {
         argsDefinition += (argsDefinition ? ', ' : '') + argumentName;
         argList.push(expressionArgs[argumentName]);
       }
-      
+
       const expressionExecuter = new Function(argsDefinition, expression);
 
       return expressionExecuter.apply(null, argList);
@@ -876,6 +878,24 @@ export const sheshaApplication = () => {
   }
 };
 
+export const useFormDesignerComponentGroups = () => {
+  const app = useSheshaApplication(false);
+  const appComponentGroups = app?.toolboxComponentGroups ?? [];
+
+  const toolboxComponentGroups = [
+    ...(defaultToolboxComponents || []),
+    ...(appComponentGroups),
+  ];
+  return toolboxComponentGroups;
+}
+
+export const useFormDesignerComponents = () => {
+  const componentGroups = useFormDesignerComponentGroups();
+
+  const toolboxComponents = useMemo(() => toolbarGroupsToComponents(componentGroups), [componentGroups]);
+  return toolboxComponents;
+}
+
 interface IKeyValue {
   key: string;
   value: string;
@@ -987,25 +1007,25 @@ export const filterFormData = (data: any) => {
  */
 export const convertDotNotationPropertiesToGraphQL = (properties: string[], columns: ITableColumn[]): string => {
   const tree = {};
-  
+
   const makeProp = (container: object, name: string) => {
     let parts = name.split('.');
     let currentContainer = container;
 
     do {
       const part = parts.shift();
-      if (parts.length > 0){
+      if (parts.length > 0) {
         // current property is a container
         const existingContainer = currentContainer[part];
         // reuse if already exists, it already contains some properties
         if (typeof existingContainer !== 'object')
           currentContainer[part] = {};
 
-          currentContainer = currentContainer[part];
+        currentContainer = currentContainer[part];
       } else {
         if (!Boolean(currentContainer[part]))
           currentContainer[part] = true; // scalar property
-      }        
+      }
     } while (parts.length > 0);
   }
 
@@ -1013,7 +1033,7 @@ export const convertDotNotationPropertiesToGraphQL = (properties: string[], colu
   // add id if missing
   if (!expandedProps.includes('id'))
     expandedProps.push('id');
-    
+
   // special handling for entity references: expand properties list to include `id` and `_displayName`
   const entityColumns = columns.filter(c => c.dataType === 'entity');
   entityColumns.forEach(c => {
@@ -1036,8 +1056,8 @@ export const convertDotNotationPropertiesToGraphQL = (properties: string[], colu
   }
 
   const getNodes = (container: object): string => {
-    let result = "";  
-    for (const node in container){
+    let result = "";
+    for (const node in container) {
       if (result !== "")
         result += " ";
       const nodeValue = container[node];
@@ -1054,7 +1074,7 @@ export const convertDotNotationPropertiesToGraphQL = (properties: string[], colu
 }
 
 export const asFormRawId = (formId: FormIdentifier): FormUid | undefined => {
-  return formId && typeof(formId) === 'string'
+  return formId && typeof (formId) === 'string'
     ? formId as FormUid
     : undefined;
 }

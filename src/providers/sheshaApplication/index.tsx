@@ -104,10 +104,10 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
   );
 };
 
-function useSheshaApplication() {
+function useSheshaApplication(require: boolean = true) {
   const context = useContext(SheshaApplicationStateContext);
 
-  if (context === undefined) {
+  if (context === undefined && !require) {
     throw new Error('useSheshaApplication must be used within a SheshaApplicationStateContext');
   }
 

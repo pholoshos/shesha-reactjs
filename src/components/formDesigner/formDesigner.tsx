@@ -5,26 +5,57 @@ import Toolbox from './toolbox';
 import FormDesignerToolbar from './formDesignerToolbar';
 import ComponentPropertiesPanel from './componentPropertiesPanel';
 import ComponentPropertiesTitle from './componentPropertiesTitle';
-import { useForm } from '../../providers/form';
+import { FormProvider, useForm } from '../../providers/form';
 import { FormDesignerHeader } from './formDesignerHeader';
 import { MetadataProvider } from '../../providers';
 import ConditionalWrap from '../conditionalWrapper';
-import { IFormDto } from '../../providers/form/models';
+import { FormIdentifier } from '../../providers/form/models';
+import { FormPersisterProvider, useFormPersister } from '../../providers/formPersisterProvider';
+import { FormPersisterStateConsumer } from '../../providers/formPersisterProvider/contexts';
+import { FormDesignerProvider, useFormDesigner } from '../../providers/formDesigner';
+import { FormDesignerStateConsumer } from '../../providers/formDesigner/contexts';
+import { FormMarkupConverter } from '../../providers/formMarkupConverter';
 
 export interface IFormDesignerProps {
-  model?: IFormDto;
+  formId: FormIdentifier;
 }
 
-export const FormDesigner: FC<IFormDesignerProps> = ({}) => {
+export const FormDesigner: FC<IFormDesignerProps> = ({ formId }) => {
+  return (
+    <FormPersisterProvider formId={formId}>
+      <FormPersisterStateConsumer>
+        {formStore => (
+          <FormMarkupConverter markup={formStore.markup}>
+            {flatComponents => (
+              <FormDesignerProvider flatComponents={flatComponents}>
+                <FormDesignerStateConsumer>
+                  {designerState => (
+                    <FormProvider mode="designer" flatComponents={{ allComponents: designerState.allComponents, componentRelations: designerState.componentRelations }}>
+                      <FormDesignerRenderer formId={formId} />
+                    </FormProvider>
+                  )}
+                </FormDesignerStateConsumer>
+              </FormDesignerProvider>
+            )}
+          </FormMarkupConverter>
+        )}
+      </FormPersisterStateConsumer>
+    </FormPersisterProvider>
+  );
+}
+
+export const FormDesignerRenderer: FC<IFormDesignerProps> = ({ }) => {
   const [widgetsOpen, setWidgetOpen] = useState(true);
   const [fieldPropertiesOpen, setFieldPropertiesOpen] = useState(true);
+  const { } = useFormPersister();
 
   const toggleWidgetSidebar = () => setWidgetOpen(widget => !widget);
 
   const toggleFieldPropertiesSidebar = () => setFieldPropertiesOpen(prop => !prop);
 
   const [formValues, setFormValues] = useState({});
-  const { isDebug, formSettings } = useForm();
+  const { formSettings } = useForm();
+  const { isDebug } = useFormDesigner();
 
   return (
     <div className="sha-form-designer">

@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { Button } from 'antd';
 import { DeleteFilled } from '@ant-design/icons';
-import { useForm } from '../../providers/form';
+import { useFormDesigner } from '../../providers/formDesigner';
 
 export interface IProps {}
 
 export const ComponentPropertiesTitle: FC<IProps> = ({}) => {
-  const { deleteComponent, selectedComponentId } = useForm();
+  const { deleteComponent, selectedComponentId } = useFormDesigner();
 
   const onDeleteClick = () => {
     deleteComponent({ componentId: selectedComponentId });

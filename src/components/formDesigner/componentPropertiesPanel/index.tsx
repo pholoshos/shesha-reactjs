@@ -7,6 +7,7 @@ import { FormMarkup } from '../../../providers/form/models';
 import GenericSettingsForm from '../genericSettingsForm';
 import { useMetadataDispatcher } from '../../../providers';
 import { MetadataContext } from '../../../providers/metadata/contexts';
+import { useFormDesigner } from '../../../providers/formDesigner';
 
 export interface IProps {
 }
@@ -33,7 +34,8 @@ const getDefaultFactory = (markup: FormMarkup): ISettingsFormFactory => {
 };
 
 export const ComponentPropertiesPanel: FC<IProps> = () => {
-  const { updateComponent, selectedComponentId: id, getComponentModel, getToolboxComponent } = useForm();
+  const { getToolboxComponent } = useForm();
+  const { getComponentModel, updateComponent, selectedComponentId: id } = useFormDesigner();
   // note: we have to memoize the editor to prevent unneeded re-rendering and loosing of the focus
   const [editor, setEditor] = useState<ReactNode>(<></>);
   
@@ -57,15 +59,6 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
 
   const onValuesChange = (_changedValues, values) => {
     debouncedSave(values);
-    /*
-    form.validateFields()
-      .then(validatedValues => {
-        console.log({ validatedValues });
-      })
-      .catch((errorInfo: ValidateErrorEntity<any>) => {
-        console.log({ errorInfo });
-      });
-    */
   };
 
   const wrapEditor = (renderEditor: () => ReactNode) => {
@@ -83,7 +76,7 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
   const getEditor = () => {
     const emptyEditor = null;
     if (!id) return emptyEditor;
-
+    
     const componentModel = getComponentModel(id);
     const toolboxComponent = getToolboxComponent(componentModel.type);
     if (!Boolean(toolboxComponent))
@@ -119,8 +112,6 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
     return (
       <>
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing" />
-        {/* <Form form={form}></Form>  */}
-        {/* is used just to remove warning */}
       </>
     );
 

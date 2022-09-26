@@ -5,6 +5,7 @@ import formSettingsJson from './formSettings.json';
 import { FormMarkup } from '../../providers/form/models';
 import { useForm } from '../../providers/form';
 import { CodeVariablesTables } from '../codeVariablesTable';
+import { useFormDesigner } from '../../providers/formDesigner';
 
 export interface IFormSettingsEditorProps {
   isVisible: boolean;
@@ -13,7 +14,8 @@ export interface IFormSettingsEditorProps {
 
 export const FormSettingsEditor: FC<IFormSettingsEditorProps> = ({ isVisible, close }) => {
   const [form] = Form.useForm();
-  const { formSettings, updateFormSettings } = useForm();
+  const { formSettings } = useForm();
+  const { updateFormSettings } = useFormDesigner();
 
   const onSave = values => {
     updateFormSettings(values);

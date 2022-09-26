@@ -1,7 +1,8 @@
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ReactNode } from 'react';
 import { IAsyncValidationError } from '../../interfaces';
-import { IFormSettings } from './contexts';
+import { FormLayout } from 'antd/lib/form/Form';
+import { IKeyValue } from '../../interfaces/keyValue';
 
 export const ROOT_COMPONENT_KEY: string = 'root'; // root key of the flat components structure
 export const TOOLBOX_COMPONENT_DROPPABLE_KEY: string = 'toolboxComponent';
@@ -151,8 +152,6 @@ export interface IComponentRelations {
 export interface IFlatComponentsStructure {
   allComponents: IComponentsDictionary;
   componentRelations: IComponentRelations;
-  visibleComponentIds?: string[];
-  enabledComponentIds?: string[];
 }
 
 export interface IFormProps extends IFlatComponentsStructure {
@@ -161,9 +160,7 @@ export interface IFormProps extends IFlatComponentsStructure {
   name?: string;
   label?: string;
   description?: string;
-  components: IConfigurableFormComponent[];
   formSettings: IFormSettings;
-  type?: ViewType;
 }
 
 export declare type StoreValue = any;
@@ -187,11 +184,7 @@ export type FormIdentifier = FormFullName | FormUid;
 
 export interface IConfigurableFormBaseProps {
   formId?: FormIdentifier;
-  //id?: string;
   markup?: FormMarkup;
-  //path?: string;
-  //name?: string;
-  //module?: string;
 }
 
 export type FormAction = (values?: any, parameters?: any) => void;
@@ -274,3 +267,36 @@ export interface IFormDto extends Omit<FormDto, 'markup'> {
 export interface IFormValidationRulesOptions {
   formData?: any;
 }
+
+export interface ILayoutProps {
+  span: number;
+}
+
+export interface IFormSettings {
+  modelType?: string;
+  postUrl?: string;
+  putUrl?: string;
+  deleteUrl?: string;
+  getUrl?: string;
+  layout: FormLayout;
+  colon: boolean;
+  labelCol: ILayoutProps;
+  wrapperCol: ILayoutProps;
+  showModeToggler?: boolean;
+  preparedValues?: string;
+  size?: SizeType;
+  formKeysToPersist?: string[];
+  excludeFormFieldsInPayload?: string;
+  uniqueFormId?: string;
+  onDataLoaded?: string;
+  onUpdate?: string;
+  initialValues?: IKeyValue[];
+}
+
+/** Default form settings */
+export const DEFAULT_FORM_SETTINGS: IFormSettings = {
+  layout: 'horizontal',
+  colon: true,
+  labelCol: { span: 5 },
+  wrapperCol: { span: 13 },
+};

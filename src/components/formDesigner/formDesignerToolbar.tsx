@@ -10,15 +10,27 @@ import {
 } from '@ant-design/icons';
 import { useForm } from '../../providers/form';
 import { useShaRouting } from '../../providers/shaRouting';
+import { useFormPersister } from '../../providers/formPersisterProvider';
+import { useFormDesigner } from '../../providers/formDesigner';
+import { componentsFlatStructureToTree, useFormDesignerComponents } from '../../providers/form/utils';
 
 export interface IProps {}
 
 export const FormDesignerToolbar: FC<IProps> = () => {
-  const { saveForm, setFormMode, setDebugMode, formMode, isDebug, undo, redo, canUndo, canRedo } = useForm();
+  const { saveForm } = useFormPersister();
+  const { setFormMode, formMode } = useForm();
+  const { setDebugMode, isDebug, undo, redo, canUndo, canRedo } = useFormDesigner();
   const { router } = useShaRouting();
 
+  const { allComponents, componentRelations, formSettings } = useFormDesigner();
+  const toolboxComponents = useFormDesignerComponents();
+
   const onSaveClick = () => {
-    saveForm()
+    const payload = {
+      components: componentsFlatStructureToTree(toolboxComponents, { allComponents, componentRelations }),
+      formSettings: formSettings,
+    };
+    saveForm(payload)
       .then(() => message.success('Form saved successfully'))
       .catch(() => message.error('Failed to save form'));
   };
@@ -58,14 +70,14 @@ export const FormDesignerToolbar: FC<IProps> = () => {
         >
           <EyeOutlined /> Preview
         </Button>
-        <Button
+        {/* <Button
           onClick={() => {
             setFormMode(formMode === 'designer' ? 'edit' : 'designer');
           }}
           type={formMode === 'designer' ? 'default' : 'primary'}
         >
           <EyeOutlined /> JSON
-        </Button>
+        </Button> */}
         <Button onClick={onCancelClick} type="primary" danger>
           <CloseCircleOutlined /> Cancel
         </Button>

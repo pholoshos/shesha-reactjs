@@ -2,7 +2,7 @@ import React from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
 import FormDesigner from './formDesigner';
-import { FormProvider, MetadataDispatcherProvider } from '../../providers';
+import { MetadataDispatcherProvider } from '../../providers';
 import { addStory } from '../../stories/utils';
 import { FormIdentifier, FormMode } from '../../providers/form/models';
 import StoryApp from '../storyBookApp';
@@ -20,12 +20,10 @@ export interface IFormDesignerStoryProps {
 }
 
 // Create a master template for mapping args to render the Button component
-const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formId, mode = 'designer' }) => (
+const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formId }) => (
   <StoryApp>
     <MetadataDispatcherProvider>
-      <FormProvider formId={formId} mode={mode}>
-        <FormDesigner />
-      </FormProvider>
+      <FormDesigner formId={formId}/>
     </MetadataDispatcherProvider>
   </StoryApp>
 );

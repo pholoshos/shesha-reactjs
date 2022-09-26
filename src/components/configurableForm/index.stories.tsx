@@ -21,7 +21,7 @@ const configurableFormProps: IConfigurableFormProps = {
 };
 
 // Create a master template for mapping args to render the Button component
-const BasicTemplate: Story<IConfigurableFormProps> = ({ path, mode }) => {
+const BasicTemplate: Story<IConfigurableFormProps> = ({ formId, mode }) => {
   const [form] = Form.useForm();
 
   const onFinish = (data: any) => {
@@ -35,7 +35,7 @@ const BasicTemplate: Story<IConfigurableFormProps> = ({ path, mode }) => {
         <Col span={24}>
           <ConfigurableForm
             mode={mode}
-            path={path}
+            formId={formId}
             onFinish={onFinish}
             form={form}
             sections={{
@@ -71,7 +71,7 @@ const BasicTemplate: Story<IConfigurableFormProps> = ({ path, mode }) => {
   );
 };
 // Create a master template for mapping args to render the Button component
-const DualModeForm: Story<IConfigurableFormProps> = ({ path, mode = 'readonly' }) => {
+const DualModeForm: Story<IConfigurableFormProps> = ({ formId, mode = 'readonly' }) => {
   const formRef = useRef<ConfigurableFormInstance>();
   const [form] = Form.useForm();
 
@@ -92,9 +92,9 @@ const DualModeForm: Story<IConfigurableFormProps> = ({ path, mode = 'readonly' }
       <Row>
         <Col span={24}>
           <ConfigurableForm
-            mode={'edit'}
+            mode={mode}
             formRef={formRef}
-            path={path}
+            formId={formId}
             onFinish={onFinish}
             onFieldsChange={data => console.log('onFieldsChange data: ', data)}
             onValuesChange={data => console.log('onValuesChange data: ', data)}
@@ -160,12 +160,16 @@ const DualModeForm: Story<IConfigurableFormProps> = ({ path, mode = 'readonly' }
 
 export const Basic = addStory(BasicTemplate, {
   ...configurableFormProps,
-  path: '/settings/forms/playground',
+  formId: {
+    name: '/settings/forms/playground'
+  }
 });
 
 export const ReadOnly = addStory(DualModeForm, {
   // ...configurableFormProps,
-  path: '/settings/forms/playground',
+  formId: {
+    name: '/settings/forms/playground'
+  },
   mode: 'readonly',
 });
 
@@ -176,6 +180,7 @@ IndexPage.args = {
 
 export const PersonEditTest = addStory(BasicTemplate, {
   ...configurableFormProps,
-  path: '/persons/edit',
-  id: 'F85C437A-BF62-4922-9193-0EE14DB89D0D'
+  formId: {
+    name: 'person-form',
+  },
 });

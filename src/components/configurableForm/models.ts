@@ -12,8 +12,6 @@ export interface IConfigurableFormRendererProps<Values = any, FieldData = any> e
   labelCol?: ColProps;
   wrapperCol?: ColProps;
   layout?: FormLayout;
-  //size?: SizeType;
-
   initialValues?: Store;
   parentFormValues?: Store;
   onValuesChange?: (changedValues: any, values: Values) => void;

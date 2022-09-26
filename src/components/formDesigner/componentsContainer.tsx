@@ -9,6 +9,7 @@ import {
 import { ItemInterface, ReactSortable } from 'react-sortablejs';
 import { joinStringValues } from '../../utils';
 import DynamicComponent from './components/dynamicView/dynamicComponent';
+import { useFormDesigner } from '../../providers/formDesigner';
 
 export type Direction = 'horizontal' | 'vertical';
 
@@ -24,47 +25,62 @@ export interface IComponentsContainerProps {
   plainWrapper?: boolean;
   dynamicComponents?: IConfigurableFormComponent[];
 }
-const ComponentsContainer: FC<IComponentsContainerProps> = ({
-  containerId,
-  children,
-  direction = 'vertical',
-  justifyContent,
-  alignItems,
-  justifyItems,
-  className,
-  render,
-  itemsLimit = -1,
-  plainWrapper = false,
-  dynamicComponents = [],
-}) => {
+const ComponentsContainer: FC<IComponentsContainerProps> = (props) => {
+  const { formMode } = useForm();
+  const designer = useFormDesigner(false);
+
+  // containers with dynamic components is not configurable, draw them as is
+  if (props.dynamicComponents?.length) {
+    return (
+      <Fragment>
+        {props.dynamicComponents?.map(m => (
+          <DynamicComponent model={{ ...m, isDynamic: true }} />
+        ))}
+      </Fragment>
+    );
+  }
+
+  const useDesigner = formMode === 'designer' && Boolean(designer);
+  return useDesigner
+    ? <ComponentsContainerDesigner {...props} />
+    : <ComponentsContainerLive {...props} />;
+};
+
+type AlignmentProps = Pick<IComponentsContainerProps, "direction" | "justifyContent" | "alignItems" | "justifyItems">;
+const getAlignmentStyle = ({ direction = 'vertical', justifyContent, alignItems, justifyItems }: AlignmentProps): CSSProperties => {
+  const style: CSSProperties = {};
+  if (direction === 'horizontal' && justifyContent) {
+    style['justifyContent'] = justifyContent;
+    style['alignItems'] = alignItems;
+    style['justifyItems'] = justifyItems;
+  }
+  return style;
+}
+
+const ComponentsContainerDesigner: FC<IComponentsContainerProps> = (props) => {
+  const { containerId,
+    children,
+    direction = 'vertical',
+    className,
+    render,
+    itemsLimit = -1,
+  } = props;
+
+  const { getChildComponents } = useForm();
   const {
-    getChildComponents,
     updateChildComponents,
     addComponent,
     addDataProperty,
     startDragging,
-    endDragging,
-    formMode,
-    // type,
-  } = useForm();
+    endDragging
+  } = useFormDesigner();
 
-  const isDesignerMode = formMode === 'designer';
 
   const components = getChildComponents(containerId);
 
   const componentsMapped = components.map<ItemInterface>(c => ({
     id: c.id,
   }));
-
-  if (dynamicComponents?.length) {
-    return (
-      <Fragment>
-        {dynamicComponents?.map(m => (
-          <DynamicComponent model={{ ...m, isDynamic: true }} />
-        ))}
-      </Fragment>
-    );
-  }
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
     if (!isNaN(itemsLimit) && itemsLimit && newState?.length === Math.round(itemsLimit) + 1) {
@@ -122,65 +138,80 @@ const ComponentsContainer: FC<IComponentsContainerProps> = ({
     return typeof render === 'function' ? render(renderedComponents) : renderedComponents;
   };
 
-  const style: CSSProperties = {};
-  if (direction === 'horizontal' && justifyContent) {
-    style['justifyContent'] = justifyContent;
-    style['alignItems'] = alignItems;
-    style['justifyItems'] = justifyItems;
-  }
-
-  if (plainWrapper && formMode !== 'designer') {
-    return <>{renderComponents()}</>;
-  }
+  const style = getAlignmentStyle(props);
 
   return (
     <div className={joinStringValues(['sha-components-container', direction, className])}>
-      {isDesignerMode ? (
-        <>
-          {components.length === 0 && <div className="sha-drop-hint">Drag and Drop form component</div>}
-          <ReactSortable
-            // disabled
-            disabled={!isDesignerMode}
-            onStart={onDragStart}
-            onEnd={onDragEnd}
-            list={componentsMapped}
-            setList={onSetList}
-            fallbackOnBody={true}
-            swapThreshold={0.5}
-            group={{
-              name: 'shared',
-            }}
-            sort={true}
-            draggable=".sha-component"
-            animation={75}
-            ghostClass="sha-component-ghost"
-            emptyInsertThreshold={20}
-            handle=".sha-component-drag-handle"
-            scroll={true}
-            bubbleScroll={true}
-            direction={direction}
-            className={`sha-components-container-inner`}
-            style={style}
-            /* note: may be used form horizontal containers like toolbar or action buttons
-      direction={(evt: SortableEvent, _target: HTMLElement, _dragEl: HTMLElement) => {
-        const insideColumn = evt.target.className.includes('sha-designer-column');
-        return insideColumn
-          ? 'horizontal'
-          : 'vertical';
-      }}
-      */
-          >
-            {renderComponents()}
-          </ReactSortable>
-        </>
-      ) : (
-        <div className="sha-components-container-inner" style={style}>
+      <>
+        {components.length === 0 && <div className="sha-drop-hint">Drag and Drop form component</div>}
+        <ReactSortable
+          // disabled
+          disabled={false}
+          onStart={onDragStart}
+          onEnd={onDragEnd}
+          list={componentsMapped}
+          setList={onSetList}
+          fallbackOnBody={true}
+          swapThreshold={0.5}
+          group={{
+            name: 'shared',
+          }}
+          sort={true}
+          draggable=".sha-component"
+          animation={75}
+          ghostClass="sha-component-ghost"
+          emptyInsertThreshold={20}
+          handle=".sha-component-drag-handle"
+          scroll={true}
+          bubbleScroll={true}
+          direction={direction}
+          className={`sha-components-container-inner`}
+          style={style}
+        >
           {renderComponents()}
-        </div>
-      )}
+        </ReactSortable>
+      </>
+
       {children}
     </div>
   );
+};
+
+const ComponentsContainerLive: FC<IComponentsContainerProps> = (props) => {
+  const {
+    containerId,
+    children,
+    direction = 'vertical',
+    className,
+    render,
+    plainWrapper = false,
+  } = props;
+  const {
+    getChildComponents,
+  } = useForm();
+
+  const components = getChildComponents(containerId);
+
+  const renderComponents = () => {
+    const renderedComponents = components.map((c, index) => (
+      <ConfigurableFormComponent id={c.id} index={index} key={c.id} />
+    ));
+
+    return typeof render === 'function' ? render(renderedComponents) : renderedComponents;
+  };
+
+  const style = getAlignmentStyle(props);
+
+  return plainWrapper
+    ? <>{renderComponents()}</>
+    : (
+      <div className={joinStringValues(['sha-components-container', direction, className])}>
+        <div className="sha-components-container-inner" style={style}>
+          {renderComponents()}
+        </div>
+        {children}
+      </div>
+    );
 };
 
 export default ComponentsContainer;

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { removeZeroWidthCharsFromString } from '../..';
-import { IFormSettings } from '../../providers/form/contexts';
+import { IFormSettings } from '../../providers/form/models';
 import { evaluateComplexString } from '../../providers/form/utils';
 import { getQueryParams } from '../../utils/url';
 

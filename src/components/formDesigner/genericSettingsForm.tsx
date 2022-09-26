@@ -16,7 +16,7 @@ export interface IProps<TModel extends IConfigurableFormComponent> {
   toolboxComponent: IToolboxComponent;
 }
 
-function Settings<TModel extends IConfigurableFormComponent>({
+function GenericSettingsForm<TModel extends IConfigurableFormComponent>({
   onSave,
   model,
   markup,
@@ -66,4 +66,4 @@ function Settings<TModel extends IConfigurableFormComponent>({
   );
 }
 
-export default Settings;
+export default GenericSettingsForm;

@@ -1,13 +1,13 @@
 import React, { FC, useState } from 'react';
-import { useForm } from '../../providers/form';
 import { SettingOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { FormSettingsEditor } from './formSettingsEditor';
+import { useFormDesigner } from '../../providers/formDesigner';
 
 export interface IFormHeaderProps {}
 
 export const FormDesignerHeader: FC<IFormHeaderProps> = () => {
-  const { name, module } = useForm();
+  const { name, module } = useFormDesigner();
   const [settingsVisible, setSettingsVisible] = useState(false);
 
   const onSettingsClick = () => {

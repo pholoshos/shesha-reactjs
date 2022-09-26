@@ -2,6 +2,7 @@ import React, { FC, MutableRefObject } from 'react';
 import { useForm } from '../../../providers/form';
 import { useMetadata } from '../../../providers';
 import { Tooltip } from 'antd';
+import { useFormDesigner } from '../../../providers/formDesigner';
 
 interface IDragHandleProps {
   componentId: string;
@@ -9,7 +10,8 @@ interface IDragHandleProps {
 }
 
 export const DragHandle: FC<IDragHandleProps> = props => {
-  const { selectedComponentId, setSelectedComponent, getComponentModel, isDebug } = useForm();
+  const { getComponentModel } = useForm();
+  const { selectedComponentId, setSelectedComponent, isDebug } = useFormDesigner();
 
   const metadata = useMetadata(false);
 

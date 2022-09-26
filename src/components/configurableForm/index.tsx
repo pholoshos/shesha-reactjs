@@ -6,6 +6,9 @@ import ConfigurableComponent from '../appConfigurator/configurableComponent';
 import EditViewMsg from '../appConfigurator/editViewMsg';
 import { useAppConfigurator, useShaRouting, useSheshaApplication } from '../../providers';
 import classNames from 'classnames';
+import { FormPersisterConsumer, FormPersisterProvider } from '../../providers/formPersisterProvider';
+import { FormMarkupConverter } from '../../providers/formMarkupConverter';
+import { FormMarkup } from '../../providers/form/models';
 
 export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
   const { formId, markup, mode, actions, sections, context, formRef, ...restProps } = props;
@@ -15,30 +18,12 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
   const canConfigure = Boolean(app.routes.formsDesigner) && Boolean(formId);
   const { router } = useShaRouting(false) ?? {};
 
-  return (
-    <ConfigurableComponent
-      canConfigure={canConfigure}
-      onStartEdit={() => {
-        const url = typeof(formId) === 'string'
-          ? `${app.routes.formsDesigner}?id=${formId}`
-          : Boolean(formId.name)
-            ? `${app.routes.formsDesigner}?module=${formId.module}&name=${formId.name}`
-            : null;
-
-        if (url){
-          router?.push(url);
-        }
-        switchApplicationMode('live');
-      }}
-    >
-      {(componentState, BlockOverlay) => (
-        <div className={classNames(componentState.wrapperClassName, props?.className)}>
-          <BlockOverlay>
-            <EditViewMsg />
-          </BlockOverlay>
+  const renderWithMarkup = (providedMarkup: FormMarkup) => {
+    return (
+      <FormMarkupConverter markup={providedMarkup}>
+        {(flatComponents) => (
           <FormProvider
-            formId={formId}
-            markup={markup}
+            flatComponents={flatComponents}
             mode={mode}
             form={restProps.form}
             actions={actions}
@@ -49,6 +34,41 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
           >
             <ConfigurableFormRenderer {...restProps} />
           </FormProvider>
+        )}
+      </FormMarkupConverter>
+    );
+  }
+
+  return (
+    <ConfigurableComponent
+      canConfigure={canConfigure}
+      onStartEdit={() => {
+        const url = typeof (formId) === 'string'
+          ? `${app.routes.formsDesigner}?id=${formId}`
+          : Boolean(formId.name)
+            ? `${app.routes.formsDesigner}?module=${formId.module}&name=${formId.name}`
+            : null;
+
+        if (url && router) {
+          router.push(url).then(() => switchApplicationMode('live'));
+        }
+      }}
+    >
+      {(componentState, BlockOverlay) => (
+        <div className={classNames(componentState.wrapperClassName, props?.className)}>
+          <BlockOverlay>
+            <EditViewMsg />
+          </BlockOverlay>
+          {markup
+            ? renderWithMarkup(markup)
+            : (
+              <FormPersisterProvider formId={formId}>
+                <FormPersisterConsumer>
+                  {persister => renderWithMarkup(persister.markup)}
+                </FormPersisterConsumer>
+              </FormPersisterProvider>
+            )
+          }
         </div>
       )}
     </ConfigurableComponent>

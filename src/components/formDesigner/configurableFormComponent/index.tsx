@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react';
+import React, { FC, MutableRefObject, useRef } from 'react';
 import { Button, Tooltip } from 'antd';
 import { DeleteFilled, StopOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import FormComponent from '../formComponent';
@@ -8,42 +8,66 @@ import ValidationIcon from './validationIcon';
 import { Show } from '../../show';
 import classNames from 'classnames';
 import CustomErrorBoundary from '../../customErrorBoundary';
+import { useFormDesigner } from '../../../providers/formDesigner';
+import { IConfigurableFormComponent } from '../../../interfaces';
 
 export interface IConfigurableFormComponentProps {
   id: string;
   index: number;
 }
 
-const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*, index*/ }) => {
-  const {
-    formMode,
-    visibleComponentIds,
-    enabledComponentIds,
-    deleteComponent,
-    getComponentModel,
-    selectedComponentId,
-  } = useForm();
-  const componentRef = useRef(null);
-
-  const onDeleteClick = () => {
-    deleteComponent({ componentId: id });
-  };
+const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id }) => {
+  const { formMode, getComponentModel } = useForm();
+  const designer = useFormDesigner(false);
 
   const componentModel = getComponentModel(id);
-
+  const componentRef = useRef(null);
   const isDesignMode = formMode === 'designer';
-  const hiddenByCondition = visibleComponentIds && !visibleComponentIds.includes(componentModel.id);
-  const disabledByCondition = enabledComponentIds && !enabledComponentIds.includes(componentModel.id);
 
-  const renderComponent = () => {
-    return (
-      <CustomErrorBoundary>
-        <FormComponent id={id} componentRef={componentRef} />
-      </CustomErrorBoundary>
-    );
+  if (!designer || !isDesignMode || componentModel?.isDynamic) return (
+    <ComponentRenderer id={id} componentRef={componentRef}/>
+  );
+
+  return (
+    <ConfigurableFormComponentDesigner 
+      componentModel={componentModel}
+      componentRef={componentRef}
+    />
+  );
+};
+
+interface IComponentRendererProps {
+  id: string;
+  componentRef: MutableRefObject<any>;
+}
+const ComponentRenderer: FC<IComponentRendererProps> = ({ id, componentRef }) => {
+  return (
+    <CustomErrorBoundary>
+      <FormComponent id={id} componentRef={componentRef} />
+    </CustomErrorBoundary>
+  );
+}
+
+interface IConfigurableFormComponentDesignerProps {
+  componentModel: IConfigurableFormComponent;
+  componentRef: MutableRefObject<any>;
+}
+const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerProps> = ({ componentModel, componentRef }) => {
+  const {
+    visibleComponentIds,
+    enabledComponentIds,
+  } = useForm();
+  const {
+    deleteComponent,
+    selectedComponentId,
+  } = useFormDesigner();
+
+  const onDeleteClick = () => {
+    deleteComponent({ componentId: componentModel.id });
   };
 
-  if (!isDesignMode || componentModel?.isDynamic) return renderComponent();
+  const hiddenByCondition = visibleComponentIds && !visibleComponentIds.includes(componentModel.id);
+  const disabledByCondition = enabledComponentIds && !enabledComponentIds.includes(componentModel.id);
 
   const invalidConfiguration =
     componentModel.settingsValidationErrors && componentModel.settingsValidationErrors.length > 0;
@@ -51,7 +75,7 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*,
   return (
     <div
       className={classNames('sha-component', {
-        selected: selectedComponentId === id,
+        selected: selectedComponentId === componentModel.id,
         'has-config-errors': invalidConfiguration,
       })}
     >
@@ -78,11 +102,13 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id /*,
           console.log('LOGS:: event.key ', event.key);
         }}
       >
-        <DragHandle componentId={id} componentRef={componentRef} />
-        <div style={{ paddingLeft: '15px' }}>{renderComponent()}</div>
+        <DragHandle componentId={componentModel.id} componentRef={componentRef} />
+        <div style={{ paddingLeft: '15px' }}>
+          <ComponentRenderer id={componentModel.id} componentRef={componentRef}/>
+        </div>
       </div>
     </div>
   );
-};
+}
 
 export default ConfigurableFormComponent;

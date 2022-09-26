@@ -28,7 +28,6 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   const { id, formId, entityPathId } = state;
 
-  // todo: find a way to pass module
   const { 
     refetch: fetchFormMarkup,
     formConfiguration,
@@ -257,7 +256,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   return (
     <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
       <ConfigurableForm
-        markup={state?.formMarkup}
+        markup={state?.formMarkup ?? []} // pass empty markup to prevent unneeded form fetching
         formId={formId}
         formRef={formRef}
         mode={state?.mode}

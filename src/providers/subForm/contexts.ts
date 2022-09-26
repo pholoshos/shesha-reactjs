@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { GetDataError } from 'restful-react';
 import { IConfigurableFormComponent } from '../../interfaces';
-import { IFormSettings } from '../form/contexts';
+import { IFormSettings } from '../form/models';
 
 export interface ISubFormStateContext {
   initialValues?: any;

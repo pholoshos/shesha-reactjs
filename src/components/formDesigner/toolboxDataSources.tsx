@@ -1,12 +1,13 @@
 import React, { FC, useMemo } from 'react';
 import { Collapse, Empty } from 'antd';
 import { useLocalStorage } from '../../hooks';
-import { useForm, useMetadata } from '../../providers';
+import { useMetadata } from '../../providers';
 import { IDataSource } from '../../providers/formDesigner/models';
 import SearchBox from './toolboxSearchBox';
 import DataSourceTree from './dataSourceTree';
 import { IPropertyMetadata } from '../../interfaces/metadata';
 import { getClassNameFromFullName } from '../../providers/metadataDispatcher/utils';
+import { useFormDesigner } from '../../providers/formDesigner';
 
 const { Panel } = Collapse;
 
@@ -53,7 +54,7 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
       }
     : null;
 
-  const { dataSources: formDs, activeDataSourceId } = useForm();
+  const { dataSources: formDs, activeDataSourceId } = useFormDesigner();
 
   const allDataSources = useMemo<IDataSource[]>(() => {
     const dataSources = [...formDs];

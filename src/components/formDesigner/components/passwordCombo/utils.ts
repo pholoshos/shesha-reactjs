@@ -2,8 +2,7 @@ import { FormItemProps, FormProps } from 'antd';
 import classNames from 'classnames';
 import { getFieldNameFromExpression, getValidationRules } from '../../../../formDesignerUtils';
 import { IConfigurableFormComponent } from '../../../../interfaces';
-import { IFormSettings } from '../../../../providers/form/contexts';
-import { SILENT_KEY } from '../../../../providers/form/models';
+import { IFormSettings, SILENT_KEY } from '../../../../providers/form/models';
 import { getStyle } from '../../../../providers/form/utils';
 
 export interface IFormPropOptions {

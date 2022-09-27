@@ -32,7 +32,7 @@ const Template: Story<IDynamicPageProps> = args => (
 export const Basic = Template.bind({});
 
 export const FormsIndexPage = addStory(Template, {
-  formId: { name: 'forms', module: 'Shesha' },
+  formId: { name: 'forms', module: 'shesha' },
   mode: 'edit',
 });
 export const FormsIndexPage2 = addStory(Template, {

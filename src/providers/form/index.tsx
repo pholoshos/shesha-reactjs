@@ -91,7 +91,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   useEffect(() => {
     if (flatComponents && (flatComponents.allComponents !== state.allComponents || flatComponents.componentRelations !== state.componentRelations)) {
-      console.log('LOG: update flat components');
+      //console.log('LOG: update flat components');
       setFlatComponents(flatComponents);
     }
   }, [flatComponents]);

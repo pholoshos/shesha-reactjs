@@ -274,13 +274,6 @@ function useUndoableState(require: boolean = true) {
         throw new Error('useUndoableState must be used within a FormDesignerProvider');
     }
 
-console.log({
-    pastLength: context.past.length,
-    futureLength: context.future.length > 0,
-    canUndo: context.past.length > 0,
-    canRedo: context.future.length > 0,
-});
-
     return {
         canUndo: context.past.length > 0,
         canRedo: context.future.length > 0,
@@ -288,7 +281,15 @@ console.log({
 }
 
 function useFormDesigner(require: boolean = true) {
-    return { ...useFormDesignerState(require), ...useFormDesignerActions(require), ...useUndoableState(require) };
+    const actionsContext = useFormDesignerActions(require);
+    const stateContext = useFormDesignerState(require);
+  
+    // useContext() returns initial state when provider is missing
+    // initial context state is useless especially when require == true
+    // so we must return value only when both context are available
+    return actionsContext !== undefined && stateContext !== undefined
+      ? { ...actionsContext, ...stateContext, ...useUndoableState(require) }
+      : undefined;
 }
 
 export { FormDesignerProvider, useFormDesignerState, useFormDesignerActions, useFormDesigner };

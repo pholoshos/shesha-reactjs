@@ -17,7 +17,7 @@ const FormMarkupConverter: FC<IFormMarkupConverterProps> = ({
         const components = getComponentsFromMarkup(markup);
         const newFlatComponents = componentsTreeToFlatStructure(designerComponents, components);
         
-        console.log('LOG: calculate flat components', { markup, newFlatComponents });
+        //console.log('LOG: calculate flat components', { markup, newFlatComponents });
 
         return newFlatComponents;
     }, [markup]);

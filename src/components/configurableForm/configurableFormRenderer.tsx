@@ -41,7 +41,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   ...props
 }) => {
   const { setFormData, formData, allComponents, formMode, formSettings, setValidationErrors } = useForm();
-  const { isDragging = false } = useFormDesigner(false);
+  const { isDragging = false } = useFormDesigner(false) ?? {};
   const { excludeFormFieldsInPayload, onDataLoaded, onUpdate, formKeysToPersist, uniqueFormId } = formSettings;
   const { globalState } = useGlobalState();
   const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);

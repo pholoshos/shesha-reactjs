@@ -47,6 +47,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
   const isSmall = useMedia('(max-width: 480px)');
 
   const onOk = () => {
+    //console.log('LOG:onOk')
     if (submitLocally) {
       const formValues = form?.getFieldsValue();
 
@@ -71,6 +72,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
   };
 
   const onSubmitted = (_: any, response: any) => {
+    //console.log('LOG:onSubmitted')
     if (onSuccessRedirectUrl) {
       const computedRedirectUrl = evaluateString(onSuccessRedirectUrl, response);
 

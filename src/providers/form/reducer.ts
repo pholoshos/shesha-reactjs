@@ -23,7 +23,7 @@ const reducer = handleActions<IFormStateContext, any>(
     [FormActionEnums.SetFlatComponentsAction]: (state: IFormStateContext, action: ReduxActions.Action<IFlatComponentsStructure>) => {
       const { payload } = action;
       
-      console.log('LOG: SetFlatComponentsAction', payload);
+      //console.log('LOG: SetFlatComponentsAction', payload);
 
       return {
         ...state,

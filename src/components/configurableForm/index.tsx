@@ -22,9 +22,13 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
   const markupWithSettings = convertToMarkupWithSettings(markup);
 
   const renderWithMarkup = (providedMarkup: FormRawMarkup, formSettings: IFormSettings) => {
+    if (!providedMarkup)
+      return null;
+
+    //console.log('LOG:renderWithMarkup', providedMarkup, formSettings);
     return (
       <FormMarkupConverter markup={providedMarkup}>
-        {(flatComponents) => (
+        {(flatComponents) =>
           <FormProvider
             flatComponents={flatComponents}
             formSettings={formSettings}
@@ -38,7 +42,7 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
           >
             <ConfigurableFormRenderer {...restProps} />
           </FormProvider>
-        )}
+        }
       </FormMarkupConverter>
     );
   }

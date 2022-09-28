@@ -1,11 +1,12 @@
 import React, { FC, useMemo } from 'react';
-import { Collapse, Empty } from 'antd';
+import { Collapse, Empty, Tooltip } from 'antd';
 import { useLocalStorage } from '../../hooks';
 import { useForm, useMetadata } from '../../providers';
 import { IDataSource } from '../../providers/formDesigner/models';
 import SearchBox from './toolboxSearchBox';
 import DataSourceTree from './dataSourceTree';
 import { IPropertyMetadata } from '../../interfaces/metadata';
+import { HEADER_LENGTH } from '../../constants';
 
 const { Panel } = Collapse;
 
@@ -93,13 +94,17 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
 
             const classes = ['sha-toolbox-panel'];
             if (ds.datasource.id === activeDataSourceId) classes.push('active');
+            let headerLength = ds.datasource.name?.length;
+            let overFlowHeader = (
+              <Tooltip placement="bottom" title={ds.datasource.name} autoAdjustOverflow={false}>
+                {`${ds.datasource.name.slice(0, HEADER_LENGTH)} ...`}
+              </Tooltip>
+            );
+
+            let header = headerLength > HEADER_LENGTH ? overFlowHeader : ds.datasource.name;
 
             return visibleItems.length === 0 ? null : (
-              <Panel
-                header={ds.datasource.name}
-                key={dsIndex.toString()}
-                className={classes.reduce((a, c) => a + ' ' + c)}
-              >
+              <Panel header={header} key={dsIndex.toString()} className={classes.reduce((a, c) => a + ' ' + c)}>
                 <DataSourceTree
                   items={visibleItems}
                   searchText={searchText}

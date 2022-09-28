@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { Collapse, Empty } from 'antd';
+import { Collapse, Empty, Tooltip } from 'antd';
 import { useLocalStorage } from '../../hooks';
 import { useForm, useMetadata } from '../../providers';
 import { IDataSource } from '../../providers/formDesigner/models';
@@ -93,13 +93,16 @@ export const ToolboxDataSources: FC<IToolboxDataSourcesProps> = () => {
 
             const classes = ['sha-toolbox-panel'];
             if (ds.datasource.id === activeDataSourceId) classes.push('active');
+            
+            let header = (
+              <Tooltip placement="bottom" title={ds.datasource.name} mouseEnterDelay={1}>
+                {ds.datasource.name}
+              </Tooltip>
+            );
 
+      
             return visibleItems.length === 0 ? null : (
-              <Panel
-                header={ds.datasource.name}
-                key={dsIndex.toString()}
-                className={classes.reduce((a, c) => a + ' ' + c)}
-              >
+              <Panel header={header} key={dsIndex.toString()} className={classes.reduce((a, c) => a + ' ' + c)}>
                 <DataSourceTree
                   items={visibleItems}
                   searchText={searchText}

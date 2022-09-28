@@ -8,6 +8,7 @@ import settingsFormJson from './settingsForm.json';
 import { AutoCompletePlaces } from '../../../';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../..';
+import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 
 export interface IAddressCompomentProps extends IConfigurableFormComponent {
   placeholder?: string;
@@ -23,9 +24,13 @@ const AddressCompoment: IToolboxComponent<IAddressCompomentProps> = {
   name: 'Address',
   icon: <HomeOutlined />,
   factory: (model: IAddressCompomentProps) => {
+    const { formMode } = useForm();
+
+    const readOnly = model?.readOnly || formMode === 'readonly';
+
     return (
       <ConfigurableFormItem model={model}>
-        <AutoCompletePlacesField {...model} />
+        {readOnly ? <ReadOnlyDisplayFormItem disabled={model?.disabled} /> : <AutoCompletePlacesField {...model} />}
       </ConfigurableFormItem>
     );
   },

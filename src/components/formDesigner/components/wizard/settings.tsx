@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { Form, Select, Input } from 'antd';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { Form, Select, Input, InputNumber, RefSelectProps } from 'antd';
 import SectionSeparator from '../../../sectionSeparator';
 import CodeEditor from '../codeEditor/codeEditor';
 import EditableTagGroup from '../../../editableTagGroup';
@@ -19,10 +19,20 @@ export interface ITabSettingsProps {
 }
 
 const TabSettings: FC<ITabSettingsProps> = props => {
+  const [state, setState] = useState<ITabsComponentProps>(props?.model);
   const [form] = Form.useForm();
 
-  const onValuesChange = (changedValues, values) => {
-    if (props.onValuesChange) props.onValuesChange(changedValues, values);
+  const onValuesChange = (changedValues: any, values: ITabsComponentProps) => {
+    // whenever the tabs change, check to see if `defaultActiveStep` is still present within the tabs. If not, remove it
+    const foundIndex = values?.defaultActiveStep
+      ? values?.tabs?.findIndex(item => item?.id === values?.defaultActiveStep)
+      : 0;
+
+    const newValues = { ...state, ...values, defaultActiveStep: foundIndex < 0 ? null : values?.defaultActiveStep };
+
+    setState(prev => ({ ...prev, ...values, defaultActiveStep: foundIndex < 0 ? null : values?.defaultActiveStep }));
+
+    if (props.onValuesChange) props.onValuesChange(changedValues, newValues);
   };
 
   const onAddNewItem = (_, count: number) => {
@@ -43,10 +53,18 @@ const TabSettings: FC<ITabSettingsProps> = props => {
     return buttonProps;
   };
 
-  const tabs = props.model.tabs?.map(item => ({ ...item, label: item?.title }));
+  const tabs = props?.model?.tabs?.map(item => ({ ...item, label: item?.title }));
+
+  const selectRef = useRef<RefSelectProps>();
 
   return (
-    <Form initialValues={props?.model} form={form} onFinish={props.onSave} onValuesChange={onValuesChange} labelCol={{ span: 24 }}>
+    <Form
+      initialValues={props?.model}
+      form={form}
+      onFinish={props.onSave}
+      onValuesChange={onValuesChange}
+      labelCol={{ span: 24 }}
+    >
       <SectionSeparator sectionName="Display" />
       <Form.Item name="name" initialValue={props.model.name} label="Name" rules={[{ required: true }]}>
         <Input />
@@ -73,6 +91,21 @@ const TabSettings: FC<ITabSettingsProps> = props => {
       </Form.Item>
 
       <Form.Item
+        name="defaultActiveStep"
+        initialValue={props.model.defaultActiveStep}
+        label="Default Active Step"
+        tooltip="This will be the default step tha"
+      >
+        <Select allowClear ref={selectRef} value={state?.defaultActiveStep}>
+          {state?.tabs?.reverse().map(({ id, title }) => (
+            <Option value={id} key={id}>
+              {title}
+            </Option>
+          ))}
+        </Select>
+      </Form.Item>
+
+      <Form.Item
         name="visibility"
         initialValue={props.model.visibility}
         label="Visibility"
@@ -85,10 +118,7 @@ const TabSettings: FC<ITabSettingsProps> = props => {
         </Select>
       </Form.Item>
 
-      <Form.Item 
-        name="uniqueStateId" 
-        label="Unique State ID" 
-        tooltip="Important for accessing the ">
+      <Form.Item name="uniqueStateId" label="Unique State ID" tooltip="Important for accessing the ">
         <Input />
       </Form.Item>
 

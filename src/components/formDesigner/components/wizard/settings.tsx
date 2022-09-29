@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
-import { Form, Select, Input, InputNumber, RefSelectProps } from 'antd';
+import React, { FC, useRef, useState } from 'react';
+import { Form, Select, Input, RefSelectProps } from 'antd';
 import SectionSeparator from '../../../sectionSeparator';
 import CodeEditor from '../codeEditor/codeEditor';
 import EditableTagGroup from '../../../editableTagGroup';

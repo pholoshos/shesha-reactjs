@@ -41,6 +41,7 @@ export interface IListComponentProps extends IListItemsProps, IConfigurableFormC
 export interface IListControlProps extends IListItemsProps, IFormItem {
   containerId: string;
   value?: any[];
+  namePrefix?: string;
 }
 
 export interface IListComponentRenderState {

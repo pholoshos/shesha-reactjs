@@ -38,35 +38,38 @@ import SectionSeparator from '../../../sectionSeparator';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import ConditionalWrap from '../../../conditionalWrapper';
 
-const ListControl: FC<IListControlProps> = ({
-  containerId,
-  dataSource,
-  showPagination,
-  paginationDefaultPageSize = 5,
-  formPath, // Render embedded form if this option is provided
-  value,
-  name,
-  onChange,
-  allowDeleteItems,
-  deleteUrl,
-  deleteConfirmMessage,
-  buttons,
-  title,
-  maxHeight,
-  filters,
-  properties,
-  renderStrategy,
-  uniqueStateId,
-  submitHttpVerb = 'POST',
-  onSubmit,
-  submitUrl,
-  entityType,
-  showQuickSearch,
-  labelCol,
-  wrapperCol,
-  allowRemoteDelete,
-  selectionMode,
-}) => {
+const ListControl: FC<IListControlProps> = props => {
+  const {
+    containerId,
+    dataSource,
+    showPagination,
+    paginationDefaultPageSize = 5,
+    formPath, // Render embedded form if this option is provided
+    value,
+    name,
+    onChange,
+    allowDeleteItems,
+    deleteUrl,
+    deleteConfirmMessage,
+    buttons,
+    title,
+    maxHeight,
+    filters,
+    properties,
+    renderStrategy,
+    uniqueStateId,
+    submitHttpVerb = 'POST',
+    onSubmit,
+    submitUrl,
+    entityType,
+    showQuickSearch,
+    labelCol,
+    wrapperCol,
+    allowRemoteDelete,
+    selectionMode,
+    namePrefix,
+  } = props;
+
   const { markup, error: fetchFormError } = useFormMarkup(formPath?.id);
   const [state, setState] = useState<IListComponentRenderState>({
     maxResultCount: paginationDefaultPageSize,
@@ -79,6 +82,10 @@ const ListControl: FC<IListControlProps> = ({
     lazy: true,
   });
   const isInDesignerMode = formMode === 'designer';
+
+  if (name === 'selectedMedicalAidId') {
+    console.log('LOGS:: ListControl props: ', props, data);
+  }
 
   const getEvaluatedUrl = (url: string) => {
     if (!url) return '';
@@ -186,10 +193,10 @@ const ListControl: FC<IListControlProps> = ({
     if (isInDesignerMode) return;
 
     if (!isFetchingEntities && typeof onChange === 'function' && data && dataSource === 'api') {
-      if (Array.isArray(data?.result)) {
-        onChange(data?.result);
-      } else if (Array.isArray(data?.result?.items)) {
+      if (Array.isArray(data?.result?.items)) {
         onChange(data?.result?.items);
+      } else if (Array.isArray(data?.result)) {
+        onChange(data?.result);
       }
     }
   }, [data, isInDesignerMode, isFetchingEntities]);
@@ -347,6 +354,7 @@ const ListControl: FC<IListControlProps> = ({
 
   const renderSubForm = (localName?: string, localLabelCol?: ColProps, localWrapperCol?: ColProps) => {
     // Note we do not pass the name. The name will be provided by the List component
+
     return (
       <SubFormProvider
         name={localName}
@@ -436,7 +444,7 @@ const ListControl: FC<IListControlProps> = ({
               className={classNames('sha-list-component-body', { loading: isFetchingEntities && value?.length === 0 })}
               style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}
             >
-              <Form.List name={name} initialValue={[]}>
+              <Form.List name={namePrefix ? [namePrefix, name]?.join('.')?.split('.') : name} initialValue={[]}>
                 {(fields, { remove }) => {
                   return (
                     <>

@@ -151,153 +151,120 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
             ]}
           />
         </FormItem>
-      </Show>
 
-      <SectionSeparator sectionName="URLs" />
+        <SectionSeparator
+          sectionName="URLs"
+          tooltip="These settings are not mandatory except if you do not want to use the default URL, which is dependent on the Entity"
+        />
 
-      <FormItem
-        label="GET Url"
-        name="getUrl"
-        tooltip="The API url that will be used to fetch the data. Write the code that returns the string"
-      >
-        <CodeEditor
-          mode="dialog"
-          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-          name="getUrl"
-          type={''}
-          id={''}
+        <FormItem
           label="GET Url"
-          description="The API url that will be used to fetch the data. Write the code that returns the string"
-          exposedVariables={[
-            {
-              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-              name: 'data',
-              description: 'Form data',
-              type: 'object',
-            },
-            {
-              id: '65b71112-d412-401f-af15-1d3080f85319',
-              name: 'globalState',
-              description: 'The global state',
-              type: 'object',
-            },
-            {
-              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-              name: 'queryParams',
-              description: 'Query parameters',
-              type: 'object',
-            },
-          ]}
-        />
-      </FormItem>
+          name="getUrl"
+          tooltip="The API url that will be used to fetch the data. Write the code that returns the string"
+        >
+          <CodeEditor
+            mode="dialog"
+            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+            name="getUrl"
+            type={''}
+            id={''}
+            label="GET Url"
+            description="The API url that will be used to fetch the data. Write the code that returns the string"
+            exposedVariables={[
+              {
+                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                name: 'data',
+                description: 'Form data',
+                type: 'object',
+              },
+              {
+                id: '65b71112-d412-401f-af15-1d3080f85319',
+                name: 'globalState',
+                description: 'The global state',
+                type: 'object',
+              },
+              {
+                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+                name: 'queryParams',
+                description: 'Query parameters',
+                type: 'object',
+              },
+            ]}
+          />
+        </FormItem>
 
-      <FormItem
-        label="POST Url"
-        name="postUrl"
-        tooltip="The API url that will be used to update data. Write the code that returns the string"
-      >
-        <CodeEditor
-          mode="dialog"
-          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-          name="postUrl"
+        <FormItem
           label="POST Url"
-          type={''}
-          id={''}
-          description="he API url that will be used to update data. Write the code that returns the string"
-          exposedVariables={[
-            {
-              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-              name: 'data',
-              description: 'Form data',
-              type: 'object',
-            },
-            {
-              id: '65b71112-d412-401f-af15-1d3080f85319',
-              name: 'globalState',
-              description: 'The global state',
-              type: 'object',
-            },
-            {
-              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-              name: 'queryParams',
-              description: 'Query parameters',
-              type: 'object',
-            },
-          ]}
-        />
-      </FormItem>
+          name="postUrl"
+          tooltip="The API url that will be used to update data. Write the code that returns the string"
+        >
+          <CodeEditor
+            mode="dialog"
+            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+            name="postUrl"
+            label="POST Url"
+            type={''}
+            id={''}
+            description="he API url that will be used to update data. Write the code that returns the string"
+            exposedVariables={[
+              {
+                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                name: 'data',
+                description: 'Form data',
+                type: 'object',
+              },
+              {
+                id: '65b71112-d412-401f-af15-1d3080f85319',
+                name: 'globalState',
+                description: 'The global state',
+                type: 'object',
+              },
+              {
+                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+                name: 'queryParams',
+                description: 'Query parameters',
+                type: 'object',
+              },
+            ]}
+          />
+        </FormItem>
 
-      <FormItem
-        label="PUT Url"
-        name="putUrl"
-        tooltip="The API url that will be used to update data. Write the code that returns the string"
-      >
-        <CodeEditor
-          mode="dialog"
-          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-          name="putUrl"
+        <FormItem
           label="PUT Url"
-          type={''}
-          id={''}
-          description="The API url that will be used to update data. Write the code that returns the string"
-          exposedVariables={[
-            {
-              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-              name: 'data',
-              description: 'Form data',
-              type: 'object',
-            },
-            {
-              id: '65b71112-d412-401f-af15-1d3080f85319',
-              name: 'globalState',
-              description: 'The global state',
-              type: 'object',
-            },
-            {
-              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-              name: 'queryParams',
-              description: 'Query parameters',
-              type: 'object',
-            },
-          ]}
-        />
-      </FormItem>
-
-      <FormItem
-        label="DELETE Url"
-        name="deleteUrl"
-        tooltip="The API url that will be used to delete data. Write the code that returns the string"
-      >
-        <CodeEditor
-          mode="dialog"
-          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-          name="deleteUrl"
-          label="DELETE Url"
-          type={''}
-          id={''}
-          description="The API url that will be used to delete data. Write the code that returns the string"
-          exposedVariables={[
-            {
-              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-              name: 'data',
-              description: 'Form data',
-              type: 'object',
-            },
-            {
-              id: '65b71112-d412-401f-af15-1d3080f85319',
-              name: 'globalState',
-              description: 'The global state',
-              type: 'object',
-            },
-            {
-              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-              name: 'queryParams',
-              description: 'Query parameters',
-              type: 'object',
-            },
-          ]}
-        />
-      </FormItem>
+          name="putUrl"
+          tooltip="The API url that will be used to update data. Write the code that returns the string"
+        >
+          <CodeEditor
+            mode="dialog"
+            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+            name="putUrl"
+            label="PUT Url"
+            type={''}
+            id={''}
+            description="The API url that will be used to update data. Write the code that returns the string"
+            exposedVariables={[
+              {
+                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                name: 'data',
+                description: 'Form data',
+                type: 'object',
+              },
+              {
+                id: '65b71112-d412-401f-af15-1d3080f85319',
+                name: 'globalState',
+                description: 'The global state',
+                type: 'object',
+              },
+              {
+                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+                name: 'queryParams',
+                description: 'Query parameters',
+                type: 'object',
+              },
+            ]}
+          />
+        </FormItem>
+      </Show>
 
       <SectionSeparator sectionName="Actions" />
 

@@ -519,11 +519,6 @@
                   "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
                 },
                 {
-                  "label": "deleteFormData (SubForm)",
-                  "value": "deleteFormData",
-                  "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
-                },
-                {
                   "label": "refreshTable (DataTable)",
                   "value": "REFRESH_TABLE",
                   "id": "a89e2856-a42a-4332-b83e-ca7dd093ab21"

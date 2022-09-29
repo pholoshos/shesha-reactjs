@@ -29,11 +29,9 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   getUrl,
   postUrl,
   putUrl,
-  deleteUrl,
   beforeGet,
   onCreated,
   onUpdated,
-  onDeleted,
   uniqueStateId,
   dataSource,
   markup,
@@ -130,11 +128,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     verb: 'POST',
   });
 
-  const { mutate: deleteHttp, loading: isDeleting, error: deleteError } = useMutate({
-    path: getEvaluatedUrl(deleteUrl),
-    verb: 'DELETE',
-  });
-
   const { mutate: putHttp, loading: isUpdating, error: updateError } = useMutate({
     path: getEvaluatedUrl(putUrl),
     verb: 'PUT',
@@ -221,27 +214,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       });
     }
   }, 300);
-
-  const deleteData = useDebouncedCallback(() => {
-    if (!deleteUrl) {
-      notification.error({
-        placement: 'top',
-        message: 'deleteUrl missing',
-        description: 'Please make sure you have specified the Delete URL',
-      });
-    } else {
-      deleteHttp('', { queryParams: { id: typeof value === 'string' ? value : value?.id } }).then(() => {
-        if (onDeleted) {
-          const evaluateOnUpdated = () => {
-            // tslint:disable-next-line:function-constructor
-            return new Function('data, globalState, message', onDeleted)(formData, globalState, message);
-          };
-
-          evaluateOnUpdated();
-        }
-      });
-    }
-  }, 300);
   //#endregion
 
   //#region Fetch Form
@@ -294,12 +266,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       putData();
     }
   });
-
-  useSubscribe(SUB_FORM_EVENT_NAMES.deleteFormData, ({ stateId }) => {
-    if (stateId === uniqueStateId) {
-      deleteData();
-    }
-  });
   //#endregion
 
   const getColSpan = (span: number | ColProps): ColProps => {
@@ -315,14 +281,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         errors: {
           getForm: fetchFormError,
           postData: postError,
-          deleteData: deleteError,
           getData: fetchEntityError,
           putData: updateError,
         },
         loading: {
           getForm: isFetchingForm,
           postData: isPosting,
-          deleteData: isDeleting,
           getData: isFetchingEntity,
           putData: isUpdating,
         },
@@ -340,7 +304,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
           getData,
           postData,
           putData,
-          deleteData,
         }}
       >
         {children}

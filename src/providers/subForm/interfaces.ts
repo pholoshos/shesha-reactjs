@@ -22,7 +22,6 @@ export interface ISubFormProps extends IValuable, IChangeable {
   beforeGet?: string;
   onCreated?: string;
   onUpdated?: string;
-  onDeleted?: string;
   //#endregion
 
   //#region URLs
@@ -30,7 +29,6 @@ export interface ISubFormProps extends IValuable, IChangeable {
   getUrl?: string;
   postUrl?: string;
   putUrl?: string;
-  deleteUrl?: string;
   //#endregion
 }
 

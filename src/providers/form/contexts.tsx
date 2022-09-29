@@ -66,6 +66,7 @@ export interface IFormSettings {
   preparedValues?: string;
   size?: SizeType;
   formKeysToPersist?: string[];
+  fieldsToFetch?: string[];
   excludeFormFieldsInPayload?: string;
   uniqueFormId?: string;
   onDataLoaded?: string;

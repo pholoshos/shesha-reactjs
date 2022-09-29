@@ -78,8 +78,8 @@ export const PersonForm = addStory(Template, {
 });
 
 export const OrganisationEdit = addStory(Template, {
-  path: '/organisations/edit',
-  id: '5BC9A277-63ED-4A71-919F-0B4064363BBC',
+  formId: { name: '/organisations/edit' },
+  id: '1C0558C5-8A67-48D8-9A06-F49DBED2187D',
   mode: 'edit',
 });
 

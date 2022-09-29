@@ -9,16 +9,15 @@ import { ConfigurableForm, ValidationErrors } from '../../components';
 import { useSubscribe, usePubSub } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
 import { IAjaxResponseBase } from '../../interfaces/ajaxResponse';
-import { useGlobalState, useSheshaApplication, MetadataProvider } from '../../providers';
+import { useGlobalState, useSheshaApplication, MetadataProvider, useMetadataDispatcher } from '../../providers';
 import { useFormConfiguration } from '../../providers/form/api';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
 import { FormIdentifier } from '../../providers/form/models';
 import { asFormFullName, evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
-import { IFormDto, IConfigurableFormComponent } from '../../providers/form/models';
-import { evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
 import { getQueryParams, isValidSubmitVerb } from '../../utils/url';
 import { EntityAjaxResponse, IDynamicPageProps, IDynamicPageState } from './interfaces';
 import { DynamicFormPubSubConstants } from './pubSub';
+import { IModelMetadata, IPropertyMetadata } from '../../interfaces/metadata';
 
 const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const { backendUrl } = useSheshaApplication();
@@ -27,6 +26,10 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const { globalState } = useGlobalState();
 
   const { publish } = usePubSub();
+
+  const { getMetadata: fetchMeta } = useMetadataDispatcher();
+  const [ metadata, setMetadata ] = useState<IModelMetadata>();
+  const [ metadataFetchCount, setMetadataFetchCount ] = useState<number>(null);
 
   const { id, formId, entityPathId } = state;
 
@@ -110,6 +113,115 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     return fullName && fullName.name == name && fullName.module == module;
   }
 
+  useEffect(() => {
+    if (formMarkup?.formSettings?.modelType)
+      fetchMeta({ modelType: formMarkup?.formSettings?.modelType }).then(meta => {
+        setMetadata(meta);
+      });
+  }, [formMarkup?.formSettings?.modelType])
+
+  // just for intrenal use
+  interface IFieldData {
+    name: string;
+    child: IFieldData[]
+    property: IPropertyMetadata;
+  } 
+
+  const getProperties = (field: IFieldData) => {
+    if (field.property?.dataType == 'entity') {
+      setMetadataFetchCount((count) => count == null ? 1 : count + 1);
+      fetchMeta({ modelType: field.property.entityType }).then(meta => {
+        field.child.forEach((item) => {
+          item.property = meta.properties.find(p => p.path.toLowerCase() == item.name.toLowerCase());
+          getProperties(item);
+        });
+        setMetadataFetchCount((count) => count - 1);
+      });
+    }
+  };
+
+  const getFieldsFromCustomEvents = (code: string) => {
+    if (!code) return [];
+    const reg = new RegExp('(?<![_a-zA-Z0-9.])data\.[_a-zA-Z0-9.]+', 'g');
+    const matchAll = code.matchAll(reg);
+    if (!matchAll) return [];
+    const match = Array.from(matchAll);
+    return match.map((item) => item[0].replace('data.', ''));
+  }
+
+  const gqlFields = useMemo(() => {
+    if (!metadata || !formMarkup?.components) return null;
+    let fields: IFieldData[] = [];
+    let fieldNames = formMarkup?.components.map(i => i.name);
+    
+    fieldNames = fieldNames.concat(formMarkup?.formSettings?.fieldsToFetch ?? []);
+
+    formMarkup?.components.forEach((item) => {
+      fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.customEnabled));
+      fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.customVisibility));
+      fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.onBlurCustom));
+      fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.onChangeCustom));
+      fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.onFocusCustom));
+    });
+    fieldNames.push('id');
+
+    fieldNames = fieldNames.sort((a, b) => a < b ? -1 : a > b ? 1 : 0);
+    let prevItem = null;
+    fieldNames.forEach((item) => {
+      if (item && prevItem != item) {
+        item = item.trim();
+        prevItem = item;
+        let path = item.split('.');
+
+        if (path.length == 1) {
+          fields.push({name: item, child: [], property: metadata?.properties.find(p => p.path.toLowerCase() == path[0].toLowerCase())});
+          return;
+        }
+
+        let i = 0;
+        let parent: IFieldData = null;
+        while (i < path.length) {
+          let fs = parent?.child ?? fields;
+          let field = fs.find(f => f.name == path[i]);
+          if (!field){
+            field = {name: path[i], child: [],
+              property: i == 0 
+              ? metadata?.properties.find(p => p.path.toLowerCase() == path[0].toLowerCase()) 
+              : parent?.property?.dataType == 'object'
+                ? parent.property.properties?.find(p => p.path.toLowerCase() == path[i].toLowerCase())
+                : null};
+            fs.push(field);
+          }
+          parent = field;
+          i++;
+        }
+      }
+    });
+
+    fields.forEach((item) => { getProperties(item); });
+    return fields;
+  }, [metadata, formMarkup?.components]);
+
+  const fetchFields = useMemo(() => {
+    if (metadataFetchCount == 0) {
+      let resf = (items: IFieldData[]) => {
+        let s = '';
+        items.forEach((item) => {
+          if (!item.property) return;
+          s += s ? ',' + item.name : item.name;
+          if (item.child.length > 0) {
+            s += '{' + resf(item.child) + '}';
+          }
+        });
+  
+        return s;
+      }
+  
+      return resf(gqlFields);
+    }
+    return null;
+  }, [metadataFetchCount]);
+
   //#region get form data
   useEffect(() => {
     // The mismatch happens if you're drilled down to a page and then click the back button on the browser
@@ -119,57 +231,10 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     const correctForm = formConfiguration && sameForm(props.formId, formConfiguration.name, formConfiguration.module);
 
     // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
-    if (fetchDataPath && correctForm) {
-      let gql = getGqlQuery(formResponse?.markup?.components);
-
-      fetchData({ queryParams: entityPathId || !id ? {} : { id, properties: gql } });
+    if (fetchDataPath && correctForm && fetchFields) {
+      fetchData({ queryParams: entityPathId || !id ? {} : { id, properties: fetchFields } });
     }
-  }, [id, formMarkup?.formSettings?.getUrl, entityPathId, fetchDataPath]);
-
-  interface IFieldData {
-    name: string;
-    //fullName: string;
-    child: IFieldData[]
-  } 
-
-  const getGqlQuery = (components: IConfigurableFormComponent[]) => {
-    let fields: IFieldData[] = [];
-    components.forEach((item) => {
-      if (item.name){
-        let fs = item.name.split('.');
-        let f: IFieldData;
-        let list = fields;
-        fs.forEach(fn => {
-          f = list.find(val => val.name == fn);
-          if (!f){
-            f ??= {name: fn, child: []} ;
-            list.push(f);
-          }
-          list = f.child;
-        });
-
-        /*let f = fields.find(val => val.name == fs[0]);
-        if (!f){
-          f ??= {name: fs[0], child: []} ;
-          fields.push(f);
-        }*/
-      }
-    })
-
-    let resf = (items: IFieldData[]) => {
-      let s = '';
-      items.forEach((item) => {
-        s += s ? ',' + item.name : item.name;
-        if (item.child.length > 0) {
-          s += '{' + resf(item.child) + '}';
-        }
-      });
-
-      return s;
-    }
-
-    return 'id,' + resf(fields);
-  };
+  }, [id, fetchFields, formMarkup?.formSettings?.getUrl, entityPathId, fetchDataPath]);
 
   const onChangeId = (localId: string) => {
     setState(prev => ({ ...prev, id: localId }));
@@ -303,10 +368,10 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   return (
     <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
-      <MetadataProvider id="dynamic" modelType={formResponse?.markup?.formSettings?.modelType}>
+      <MetadataProvider id="dynamic" modelType={formMarkup?.formSettings?.modelType}>
         <ConfigurableForm
-        markup={state?.formMarkup}
-        formId={formId}
+          markup={state?.formMarkup}
+          formId={formId}
           formRef={formRef}
           mode={state?.mode}
           form={form}

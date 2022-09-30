@@ -52,6 +52,10 @@ export interface ModelPropertyDto {
    * Child properties, applicable for complex data types (e.g. object, array)
    */
   properties?: ModelPropertyDto[] | null;
+  /**
+  * If true, indicates that current property is a framework-related (e.g. Abp.Domain.Entities.ISoftDelete.IsDeleted, Abp.Domain.Entities.Auditing.IHasModificationTime.LastModificationTime)
+  */
+  isFrameworkRelated?: boolean;
 }
 
 /**

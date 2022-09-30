@@ -32,7 +32,7 @@ const PropertiesEditorProvider: FC<PropsWithChildren<IPropertiesEditorProviderPr
   const selRef = useRef(null);
   const [state, dispatch] = useThunkReducer(modelReducer, {
     ...PROPERTIES_EDITOR_CONTEXT_INITIAL_STATE,
-    items: props.items || [],
+    items: props.items?.filter(x => !x.isFrameworkRelated) || [],
     onChange: props.onChange,
     selectedItemRef: selRef,
   });

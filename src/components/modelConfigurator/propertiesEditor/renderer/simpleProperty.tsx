@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Button, Tooltip } from 'antd';
+import { Button, Tooltip, Tag } from 'antd';
 import { DeleteFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { usePropertiesEditor } from '../provider';
 import DragHandle from './dragHandle';
@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { IModelItem } from '../../../../interfaces/modelConfigurator';
 import { getIconByDataType } from '../../../../utils/metadata';
 import { ShaIcon } from '../../..';
+import { MetadataSourceType } from '../../../../interfaces/metadata';
 
 export interface IProps extends IModelItem {
   index: number[];
@@ -36,7 +37,11 @@ export const SimpleProperty: FC<IProps> = props => {
           </Tooltip>
         )}
         <div className="sha-sidebar-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+          {
+            props.source == MetadataSourceType.UserDefined 
+              ? <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+              : <Tag>APP</Tag>
+          }
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, CSSProperties } from 'react';
 import { Column, Row, SortingRule, TableState } from 'react-table';
 
 export interface IColumnWidth {
@@ -180,4 +180,8 @@ export interface IReactTableProps extends ITableRowDragProps {
    * Allows the click event to be skipped. Required if conflicting with double click event
    */
   omitClick?: boolean;
+
+  containerStyle?: CSSProperties;
+
+  tableStyle?: CSSProperties;
 }

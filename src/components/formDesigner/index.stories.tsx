@@ -132,3 +132,7 @@ export const Playground = addStory(DesignerTemplate, {
     name: 'playground-form',
   }
 });
+
+export const OrganisationEdit = addStory(DesignerTemplate, {
+  formId: { name: '/organisations/edit' },
+});

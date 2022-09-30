@@ -342,6 +342,34 @@ function ColumnsSettings(props: IProps) {
           </Show>
         </Show>
       </Show>
+
+      <SectionSeparator sectionName="Layout" />
+
+      <Form.Item name="containerStyle" label="Table container style">
+        <CodeEditor
+          mode="dialog"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="onRowDropped"
+          type={''}
+          id={''}
+          label="On Row Dropped"
+          description="The style that will be applied to the table container/wrapper"
+          exposedVariables={[]}
+        />
+      </Form.Item>
+
+      <Form.Item name="tableStyle" label="Table style">
+        <CodeEditor
+          mode="dialog"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="onRowDropped"
+          type={''}
+          id={''}
+          label="On Row Dropped"
+          description="The style that will be applied to the table"
+          exposedVariables={[]}
+        />
+      </Form.Item>
     </Form>
   );
 }

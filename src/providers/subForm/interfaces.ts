@@ -1,4 +1,5 @@
 import { ColProps } from 'antd';
+import { IGuidNullableEntityWithDisplayNameDto } from '../../interfaces/shesha';
 import { IChangeable, IValuable } from '../../interfaces';
 
 export interface ISubFormProps extends IValuable, IChangeable {

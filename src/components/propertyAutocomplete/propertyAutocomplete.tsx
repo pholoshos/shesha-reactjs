@@ -1,5 +1,5 @@
 import React, { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
-import { AutoComplete, Button, Input, Select } from 'antd';
+import { AutoComplete, Button, Input, Select, Tag } from 'antd';
 import { ThunderboltOutlined } from '@ant-design/icons';
 import { useForm, useMetadata, useMetadataDispatcher } from '../../providers';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
@@ -59,6 +59,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
 
   const initialProperties = metadata?.properties ?? [];
   const [state, setState] = useState<IAutocompleteState>({ options: properties2options(initialProperties, null), properties: initialProperties });
+  const [multipleValue, setMultipleValue] = useState('');
 
   const setProperties = (properties: IPropertyMetadata[], prefix: string) => {
     if (props.onPropertiesLoaded)
@@ -75,23 +76,33 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
     if (!props.value || Array.isArray(props.value))
       return null;
 
-    const lastIdx = props.value?.lastIndexOf('.');
+    const lastIdx = props.value.lastIndexOf('.');
     return lastIdx === -1
       ? null
       : props.value.substring(0, lastIdx);
   }, [props.value]);
 
+  const containerPathMultiple = useMemo(() => {
+    if (!multipleValue)
+      return null;
+
+    const lastIdx = multipleValue.lastIndexOf('.');
+    return lastIdx === -1
+      ? null
+      : multipleValue.substring(0, lastIdx);
+  }, [multipleValue]);
+
   // todo: move to metadata dispatcher
   // todo: add `loadProperties` method with callback:
   //    modelType, properties[] (dot notation props list)
   useEffect(() => {
-    getContainerProperties({ metadata, containerPath }).then(properties => {
-      setProperties(properties, containerPath)
+    getContainerProperties({ metadata, containerPath: containerPath ?? containerPathMultiple }).then(properties => {
+      setProperties(properties, containerPath ?? containerPathMultiple)
     });
-  }, [metadata?.properties, containerPath]);
+  }, [metadata?.properties, containerPath, containerPathMultiple]);
 
   const getProperty = (path: string): IPropertyMetadata => {
-    return state.properties.find(p => getFullPath(p.path, containerPath) === path);
+    return state.properties.find(p => getFullPath(p.path, containerPath ?? containerPathMultiple) === path);
   }
 
   const onSelect = (data: string) => {
@@ -100,6 +111,38 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
       const property = getProperty(data);
       props.onSelect(data, property);
     }
+  };
+
+  const onSelectMultiple = (data: string) => {
+    if (data != multipleValue) {
+      setMultipleValue(data);
+    } else{
+      var list = props.value
+        ? Array.isArray(props.value) ? props.value : []
+        : [];
+
+      list.push(data);
+      setMultipleValue('');
+
+      if (props.onChange) props.onChange(list);
+      if (props.onSelect) {
+        const property = getProperty(data);
+        props.onSelect(list, property);
+      }
+    }
+  };
+
+  const onSearchMultiple = (data: string) => {
+    setMultipleValue(data);
+    const filteredOptions: IOption[] = [];
+    state.properties.forEach(p => {
+      const fullPath = getFullPath(p.path, containerPathMultiple);
+
+      if (fullPath.toLowerCase()?.startsWith(data?.toLowerCase()))
+        filteredOptions.push({ value: fullPath, label: fullPath });
+    });
+
+    setState({ properties: state.properties, options: filteredOptions });
   };
 
   const selectedProperty = useMemo(() => {
@@ -112,7 +155,6 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
     if (props.onChange) props.onChange(data);
 
     const filteredOptions: IOption[] = [];
-
     state.properties.forEach(p => {
       const fullPath = getFullPath(p.path, containerPath);
 
@@ -149,6 +191,56 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
     />
   );
 
+  const forMap = (tag: string) => {
+    const tagElem = (
+      <>
+          <Tag
+            closable
+            onClose={e => {
+              e.preventDefault();
+              if (Array.isArray(props.value))
+              if (props.onChange) props.onChange(props.value.filter(item => item != tag));
+            }}
+            onClick={e => {
+              e.preventDefault();
+              setMultipleValue(tag);
+              if (Array.isArray(props.value))
+              if (props.onChange) props.onChange(props.value.filter(item => item != tag));
+            }}
+          >
+            {tag}
+          </Tag>
+      </>
+    );
+    return (
+      <span key={tag} style={{ display: 'inline-block' }}>
+        {tagElem}
+      </span>
+    );
+  };
+
+  const tagChild = Boolean(props.value) && Array.isArray(props.value) ? props.value?.map(forMap) : null;
+
+  const multiple = (
+    <>
+      <AutoComplete
+        value={multipleValue}
+        options={state.options}
+        style={showFillPropsButton ? { width: 'calc(100% - 32px)'} : props.style }
+        //onChange={setMultipleValue}
+        onSelect={onSelectMultiple}
+        onSearch={onSearchMultiple}
+        notFoundContent="Not found"
+        size={props.size}
+        dropdownStyle={props?.dropdownStyle}
+        dropdownMatchSelectWidth={false}
+      />
+      <div style={{ marginTop: 16 }}>
+        {tagChild}
+      </div>
+    </>
+);
+
   return (
     <>
       {mode === 'single' ? (
@@ -166,8 +258,11 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
             </Input.Group>
           )
           : <>{autoComplete}</>
-      ) : (
-        <Select allowClear onChange={props?.onChange} value={props.value} mode={mode} showSearch size={props.size}>
+      ) : mode === 'multiple' ? (
+        <>{multiple}</>
+      ) :
+      (
+        <Select allowClear onChange={props?.onChange} value={props.value} mode={mode} /*showSearch*/ size={props.size}>
           {state.options.map((option, index) => (
             <Select.Option key={index} value={camelCase(option.value)}>
               {option.label}

@@ -163,7 +163,7 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
   }
 
   const dataLoaded = fetchedData && fetchedData.length > 0;
-  const autocompleteValue = value && (dataLoaded || fetchError) ? wrapValue(value) : undefined;
+  const autocompleteValue = value || dataLoaded || fetchError ? wrapValue(value) : undefined;
   const selectPlaceholder = value && !dataLoaded && loading ? 'Loading...' : placeHolder ?? 'Type to search';
 
   if (readOnly || disabled) {

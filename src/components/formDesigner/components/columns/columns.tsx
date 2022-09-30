@@ -47,6 +47,7 @@ const ColumnsComponent: IToolboxComponent<IColumnsComponentProps> = {
             >
               <ComponentsContainer
                 containerId={col.id}
+                style={{ display: 'unset' }}
                 // dynamicComponents={model?.isDynamic ? col?.components : []}
               />
             </Col>

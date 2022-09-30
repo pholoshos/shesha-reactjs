@@ -18,6 +18,7 @@ import { useDataTableStore, useGlobalState } from '../../../../../providers';
 import TableSettings from './tableComponent-settings';
 import { ITableComponentProps } from './models';
 import { IModalProps } from '../../../../../providers/dynamicModal/models';
+import { getStyle } from '../../../../../providers/form/utils';
 
 const TableComponent: IToolboxComponent<ITableComponentProps> = {
   type: 'datatable',
@@ -66,6 +67,8 @@ export const TableWrapper: FC<ITableComponentProps> = ({
   dialogSubmitHttpVerb,
   dialogShowModalButtons,
   dialogTitle,
+  tableStyle,
+  containerStyle,
 }) => {
   const { formMode, formData } = useForm();
   const { globalState } = useGlobalState();
@@ -231,6 +234,8 @@ export const TableWrapper: FC<ITableComponentProps> = ({
         overrideDefaultCrudBehavior={overrideDefaultCrudBehavior}
         allowRowDragAndDrop={allowRowDragAndDrop}
         onRowDropped={handleOnRowDropped}
+        tableStyle={getStyle(tableStyle, formData, globalState)}
+        containerStyle={getStyle(containerStyle, formData, globalState)}
         // crudMode="dialog"
       />
     </CollapsibleSidebarContainer>

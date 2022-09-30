@@ -321,7 +321,7 @@
     },
     {
       "textType": "text",
-      "id": "jhbdWW6p65-RpmtpPhrNd",
+      "id": "ab892092-08ec-4eb3-9b79-51b515ef5d22",
       "type": "textField",
       "name": "className",
       "label": "Custom CSS Class",
@@ -336,12 +336,39 @@
     {
       "id": "bc67960e-77e3-40f2-89cc-f18f94678cce",
       "type": "sectionSeparator",
+      "name": "separatorStyle",
+      "parentId": "root",
+      "label": "Style"
+    },
+    {
+      "id": "5ab13301-7277-427a-8edb-2a2537e70407",
+      "type": "codeEditor",
+      "name": "style",
+      "label": "Style",
+      "parentId": "root",
+      "mode": "dialog",
+      "description": "The style that will be applied to the container",
+      "exposedVariables": [{ "name": "data", "description": "Form data", "type": "object" }]
+    },
+    {
+      "id": "987c3de1-b959-4670-96f6-9b1747189a6e",
+      "type": "codeEditor",
+      "name": "wrapperStyle",
+      "label": "Wrapper Style",
+      "parentId": "root",
+      "mode": "dialog",
+      "description": "The style that will be applied to the container wrapper",
+      "exposedVariables": [{ "name": "data", "description": "Form data", "type": "object" }]
+    },
+    {
+      "id": "30111098-21da-4d6b-a737-145c5db41c72",
+      "type": "sectionSeparator",
       "name": "separatorVisibility",
       "parentId": "root",
       "label": "Visibility"
     },
     {
-      "id": "68d4fae4-54af-4dad-822c-ba512a744ddb",
+      "id": "a34130d9-7987-4331-8b95-71a3b77f8eb9",
       "type": "codeEditor",
       "name": "customVisibility",
       "label": "Custom Visibility",

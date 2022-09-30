@@ -165,6 +165,19 @@
       "validate": {}
     },
     {
+      "id": "63f3360d-1e54-4a79-a888-8cd23b0bedd5",
+      "type": "propertyAutocomplete",
+      "name": "fieldsToFetch",
+      "label": "Additional fields for fetch",
+      "mode": "multiple",
+      "labelAlign": "right",
+      "hidden": false,
+      "customVisibility": null,
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A list of fields you want to fetch"
+    },
+    {
       "id": "52f4460d-2e64-4d79-a900-7cd28b0bebd3",
       "type": "propertyAutocomplete",
       "name": "formKeysToPersist",

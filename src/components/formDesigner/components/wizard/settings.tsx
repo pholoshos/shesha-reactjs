@@ -97,7 +97,7 @@ const TabSettings: FC<ITabSettingsProps> = props => {
         tooltip="This will be the default step tha"
       >
         <Select allowClear ref={selectRef} value={state?.defaultActiveStep}>
-          {state?.tabs?.reverse().map(({ id, title }) => (
+          {state?.tabs?.map(({ id, title }) => (
             <Option value={id} key={id}>
               {title}
             </Option>

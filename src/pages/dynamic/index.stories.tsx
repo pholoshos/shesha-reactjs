@@ -31,23 +31,24 @@ const Template: Story<IDynamicPageProps> = args => (
 // Reuse that template for creating different stories
 export const Basic = Template.bind({});
 
-export const FormsIndexPage = addStory(Template, {
-  formId: { name: 'forms', module: 'shesha' },
+export const SubFormPage = addStory(Template, {
+  formId: { name: 'sub-form' },
   mode: 'edit',
 });
-export const FormsIndexPage2 = addStory(Template, {
-  formId: { name: 'forms', module: null },
+
+export const PersonListPage = addStory(Template, {
+  formId: { name: 'person-list' },
+  mode: 'edit',
+});
+
+
+export const FormsIndexPage = addStory(Template, {
+  formId: { name: 'forms', module: 'shesha' },
   mode: 'edit',
 });
 
 export const FormDetailsPage = addStory(Template, {
   formId: { name: 'form-details', module: 'Shesha' },
-  mode: 'edit',
-  id: '7545b898-e3b1-42a8-9404-00ee56ade384',
-});
-
-export const FormDetailsPage2 = addStory(Template, {
-  formId: { name: 'form-details' },
   mode: 'edit',
   id: '7545b898-e3b1-42a8-9404-00ee56ade384',
 });

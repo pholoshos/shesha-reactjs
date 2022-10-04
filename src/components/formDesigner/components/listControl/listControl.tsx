@@ -37,6 +37,7 @@ import SectionSeparator from '../../../sectionSeparator';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import ConditionalWrap from '../../../conditionalWrapper';
 import { useFormConfiguration } from '../../../../providers/form/api';
+import { useConfigurableActionDispatcher } from '../../../../providers/configurableActionsDispatcher';
 
 const ListControl: FC<IListControlProps> = ({
   containerId,
@@ -203,6 +204,38 @@ const ListControl: FC<IListControlProps> = ({
       onChange([]); // Make sure the form is not undefined
     }
   }, [value]);
+
+  const { registerAction } = useConfigurableActionDispatcher();
+  
+  useEffect(() => {
+    registerAction({
+      name: 'Refresh list items',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        debouncedRefresh(); // todo: return real promise
+        return Promise.resolve();
+      }
+    });
+    registerAction({
+      name: 'Save list items',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        submitListItems(submitUrl); // todo: return real promise
+        return Promise.resolve();
+      }
+    });
+    registerAction({
+      name: 'Add list items',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        debouncedAddItems(state); // todo: return real promise
+        return Promise.resolve();
+      }
+    });
+  }, [state]);
 
   //#region Events
   useSubscribe(ListControlEvents.refreshListItems, ({ stateId }) => {

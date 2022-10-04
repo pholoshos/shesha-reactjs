@@ -14,6 +14,7 @@ import { useGlobalState } from '../globalState';
 import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
 import { useFormConfiguration } from '../form/api';
+import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
   uniqueStateId?: string;
@@ -255,6 +256,50 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     }
   }, [markup]);
   //#endregion
+
+  const { registerAction } = useConfigurableActionDispatcher();
+  
+  useEffect(() => {
+    registerAction({
+      name: 'Get form data',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        getData(); // todo: return real promise
+        return Promise.resolve();
+      }
+    });
+
+    registerAction({
+      name: 'Post form data',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        postData(); // todo: return real promise
+        return Promise.resolve();
+      }
+    });
+
+    registerAction({
+      name: 'Update form data',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        putData(); // todo: return real promise
+        return Promise.resolve();
+      }
+    });
+
+    registerAction({
+      name: 'Delete form data',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        deleteData(); // todo: return real promise
+        return Promise.resolve();
+      }
+    });    
+  }, [uniqueStateId]);
 
   useSubscribe(SUB_FORM_EVENT_NAMES.getFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {

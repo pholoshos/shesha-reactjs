@@ -859,8 +859,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       owner: uniqueStateId,
       hasArguments: false,
       executer: () => {
-        console.log('Refresh table action')
-        refreshTable();
+        refreshTable(); // todo: return correct promise
         return Promise.resolve()
       }
     });
@@ -870,7 +869,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       owner: uniqueStateId,
       hasArguments: false,
       executer: () => {
-        deleteRow();
+        deleteRow(); // todo: return correct promise
         return Promise.resolve();
       }
     });

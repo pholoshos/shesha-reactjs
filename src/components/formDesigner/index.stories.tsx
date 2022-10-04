@@ -40,9 +40,15 @@ export const PersonDetails = addStory(DesignerTemplate, {
   }
 });
 
-export const FormsIndexOld = addStory(DesignerTemplate, {
+export const SubForm = addStory(DesignerTemplate, {
   formId: {
-    name: 'forms-v2',
+    name: 'sub-form',
+  }
+});
+
+export const PersonList = addStory(DesignerTemplate, {
+  formId: {
+    name: 'person-list',
   }
 });
 
@@ -56,12 +62,6 @@ export const FormsIndex = addStory(DesignerTemplate, {
   formId: {
     name: 'forms',
     module: 'shesha',
-  }
-});
-
-export const FormsIndex2 = addStory(DesignerTemplate, {
-  formId: {
-    name: 'forms'
   }
 });
 

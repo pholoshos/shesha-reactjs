@@ -14,6 +14,7 @@ import { usePubSub } from '../../../../../hooks';
 import { DataTablePubsubConstants } from '../../../../../providers/dataTable/pubSub';
 import { DynamicFormPubSubConstants } from '../../../../../pages/dynamic/pubSub';
 import { CSSProperties } from 'react';
+import { useConfigurableActionDispatcher } from '../../../../../providers/configurableActionsDispatcher';
 
 export interface IConfigurableButtonProps extends Omit<IButtonGroupButton, 'style'> {
   formComponentId: string;
@@ -29,6 +30,8 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
   const { router } = useShaRouting();
   const { globalState } = useGlobalState();
   const { publish } = usePubSub();
+
+  const { executeAction } = useConfigurableActionDispatcher();
 
   const executeExpression = (expression: string, result?: any) => {
     if (!expression) {
@@ -170,20 +173,34 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
       }
       case 'executeFormAction':
       case 'customAction':
-        if (props?.formAction) {
-          if (props?.formAction === 'CUSTOM_ACTION') {
-            publish(props?.customFormAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
-          } else {
-            /*
-            if (props.customFormAction) {
-              const actionBody = getAction(props.formComponentId, props.customFormAction);
-              if (actionBody) actionBody();
-              else console.warn(`action ${props.customFormAction} not found on the form`);
-            } else console.warn('customFormAction is not specified');
-            */
-            publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
-          }
-        }
+        if (props.actionConfiguration){
+          //const { actionOwner, actionName } = props.actionConfiguration;
+          const evaluationContext = {
+            selectedRow: props.selectedRow,
+            data: formData,
+            moment: moment,
+            form: form,
+            formMode: formMode,
+          };
+          executeAction({ 
+            actionConfiguration: props.actionConfiguration,
+            argumentsEvaluationContext: evaluationContext
+          });
+        }        
+        // if (props?.formAction) {
+        //   if (props?.formAction === 'CUSTOM_ACTION') {
+        //     publish(props?.customFormAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
+        //   } else {
+        //     /*
+        //     if (props.customFormAction) {
+        //       const actionBody = getAction(props.formComponentId, props.customFormAction);
+        //       if (actionBody) actionBody();
+        //       else console.warn(`action ${props.customFormAction} not found on the form`);
+        //     } else console.warn('customFormAction is not specified');
+        //     */
+        //     publish(props?.formAction, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
+        //   }
+        // }
         break;
       default:
         break;

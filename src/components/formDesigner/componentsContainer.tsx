@@ -24,6 +24,8 @@ export interface IComponentsContainerProps {
   itemsLimit?: number;
   plainWrapper?: boolean;
   dynamicComponents?: IConfigurableFormComponent[];
+  wrapperStyle?: CSSProperties;
+  style?: CSSProperties;
 }
 const ComponentsContainer: FC<IComponentsContainerProps> = (props) => {
   const { formMode } = useForm();
@@ -64,6 +66,8 @@ const ComponentsContainerDesigner: FC<IComponentsContainerProps> = (props) => {
     className,
     render,
     itemsLimit = -1,
+    wrapperStyle,
+    style: incomingStyle,
   } = props;
 
   const { getChildComponents } = useForm();
@@ -141,7 +145,7 @@ const ComponentsContainerDesigner: FC<IComponentsContainerProps> = (props) => {
   const style = getAlignmentStyle(props);
 
   return (
-    <div className={joinStringValues(['sha-components-container', direction, className])}>
+    <div className={joinStringValues(['sha-components-container', direction, className])} style={wrapperStyle}>
       <>
         {components.length === 0 && <div className="sha-drop-hint">Drag and Drop form component</div>}
         <ReactSortable
@@ -166,7 +170,7 @@ const ComponentsContainerDesigner: FC<IComponentsContainerProps> = (props) => {
           bubbleScroll={true}
           direction={direction}
           className={`sha-components-container-inner`}
-          style={style}
+          style={{ ...style, ...incomingStyle }}
         >
           {renderComponents()}
         </ReactSortable>
@@ -185,6 +189,8 @@ const ComponentsContainerLive: FC<IComponentsContainerProps> = (props) => {
     className,
     render,
     plainWrapper = false,
+    wrapperStyle,
+    style: incomingStyle,
   } = props;
   const {
     getChildComponents,
@@ -200,12 +206,12 @@ const ComponentsContainerLive: FC<IComponentsContainerProps> = (props) => {
     return typeof render === 'function' ? render(renderedComponents) : renderedComponents;
   };
 
-  const style = getAlignmentStyle(props);
+  const style = {...getAlignmentStyle(props), ...incomingStyle};
 
   return plainWrapper
     ? <>{renderComponents()}</>
     : (
-      <div className={joinStringValues(['sha-components-container', direction, className])}>
+      <div className={joinStringValues(['sha-components-container', direction, className])} style={wrapperStyle}>
         <div className="sha-components-container-inner" style={style}>
           {renderComponents()}
         </div>

@@ -51,7 +51,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
         const initialValues = evaluateKeyValuesToObject(actionArgs.additionalProperties, formData);
         const parentFormValues = formData;
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _reject) => {
           
 
           const modalProps: IModalProps = {

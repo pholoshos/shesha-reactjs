@@ -522,11 +522,6 @@
               "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
             },
             {
-              "label": "deleteFormData (SubForm)",
-              "value": "deleteFormData",
-              "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
-            },
-            {
               "label": "refreshTable (DataTable)",
               "value": "REFRESH_TABLE",
               "id": "a89e2856-a42a-4332-b83e-ca7dd093ab21"
@@ -740,9 +735,24 @@
       "labelAlign": "right",
       "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
       "hidden": false,
-      "customVisibility": "return data.formAction === 'CUSTOM_ACTION'",
+      "customVisibility": "return data.buttonAction === 'executeFormAction' && data.formAction === 'CUSTOM_ACTION'",
       "description": "",
       "validate": {}
+    },
+    {
+      "id": "8e70db8a-addb-43a5-a8ce-24a829b4f3c7",
+      "type": "labelValueEditor",
+      "name": "customActionParameters",
+      "label": "Parameters",
+      "labelAlign": "right",
+      "hidden": false,
+      "customVisibility": "return data.buttonAction === 'executeFormAction' || data.buttonAction === 'dispatchAnEvent'",
+      "labelTitle": "Key",
+      "labelName": "key",
+      "valueTitle": "Value",
+      "valueName": "value",
+      "validate": {},
+      "settingsValidationErrors": []
     },
     {
       "id": "880f31ea-2a86-40a5-83ef-ccbe88aa0140",
@@ -845,7 +855,7 @@
       "validate": {},
       "settingsValidationErrors": []
     },
-    
+
     {
       "id": "341beffe-2d62-4c4c-8c97-5f2b433716bf",
       "type": "codeEditor",

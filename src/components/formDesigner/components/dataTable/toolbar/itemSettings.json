@@ -206,6 +206,11 @@
               "id": "18fa8cc0-a327-466d-9513-52c53218d39d",
               "label": "Execute form action",
               "value": "executeFormAction"
+            },
+            {
+              "id": "b4952ca2-c648-4c79-bf3c-e2683bf3d509",
+              "label": "Dispatch an Event",
+              "value": "dispatchAnEvent"
             }
           ],
           "validate": {}
@@ -437,6 +442,27 @@
           ]
         },
         {
+          "id": "22e6bfe5-b6cc-40a4-8fe2-815174e5a60d",
+          "type": "eventNames",
+          "name": "eventName",
+          "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
+          "label": "Event name",
+          "description": "This is the event that will be published when the button is dispatched",
+          "customVisibility": "return data.buttonAction === 'dispatchAnEvent'"
+        },
+        {
+          "id": "adaab7e3-c5c8-4701-aef2-96fe80bc5d5a",
+          "type": "textField",
+          "name": "customEventNameToDispatch",
+          "label": "Custom Event",
+          "labelAlign": "right",
+          "parentId": "0bfa869c-57a8-4abc-93b1-d36d5215a004",
+          "hidden": false,
+          "customVisibility": "return data.eventName === 'CUSTOM_EVENT'",
+          "description": "This is the custom event that will be published when the button is clicked",
+          "validate": {}
+        },
+        {
           "id": "8786d976-3822-4f8b-a532-ccac0b0130e3",
           "type": "textField",
           "name": "formAction",
@@ -454,11 +480,21 @@
           "label": "Parameters",
           "labelAlign": "right",
           "hidden": false,
-          "customVisibility": "return data.buttonAction === 'executeFormAction'",
+          "customVisibility": "return data.buttonAction === 'executeFormAction' || data.buttonAction === 'dispatchAnEvent'",
           "labelTitle": "Key",
           "labelName": "key",
           "valueTitle": "Value",
           "valueName": "value",
+          "validate": {},
+          "settingsValidationErrors": []
+        },
+        {
+          "id": "F3B46A95-703F-4465-96CA-A58496A5F78C",
+          "type": "configurableActionConfigurator",
+          "name": "actionConfiguration",
+          "label": "Action configuration",
+          "hidden": false,
+          "customVisibility": "return data.buttonAction === 'executeFormAction'",
           "validate": {},
           "settingsValidationErrors": []
         },
@@ -481,6 +517,15 @@
             { "name": "formMode", "description": "The form mode", "type": "'readonly' | 'edit' | 'designer'" },
             { "name": "axios", "description": "axios instance used to make http requests", "type": "object" }
           ]
+        },
+        {
+          "id": "CFCF89F9-F565-421E-B2EF-FD03BA7E4B19",
+          "type": "checkbox",
+          "name": "refreshTableOnSuccess",
+          "parentId": "root",
+          "label": "Refresh table on success?",
+          "defaultChecked": false,
+          "customVisibility": "return data.buttonAction !== 'dialogue'"
         }
       ]
     },

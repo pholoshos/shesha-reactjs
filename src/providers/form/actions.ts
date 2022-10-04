@@ -6,10 +6,11 @@ import {
   IRegisterActionsPayload,
   ISetEnabledComponentsPayload,
 } from './contexts';
-import { IFlatComponentsStructure, FormMode } from './models';
+import { IFlatComponentsStructure, FormMode, IFormSettings } from './models';
 
 export enum FormActionEnums {
   SetFlatComponentsAction = 'SET_FLAT_COMPONENTS',
+  SetSettingsAction = 'SET_SETTINGS',
   SetFormMode = 'SET_FORM_MODE',
   SetVisibleComponents = 'SET_VISIBLE_COMPONENTS',
   SetEnabledComponents = 'SET_ENABLED_COMPONENTS',
@@ -19,6 +20,8 @@ export enum FormActionEnums {
 }
 
 export const setFlatComponentsAction = createAction<IFlatComponentsStructure, IFlatComponentsStructure>(FormActionEnums.SetFlatComponentsAction, p => p);
+
+export const setSettingsAction = createAction<IFormSettings, IFormSettings>(FormActionEnums.SetSettingsAction, p => p);
 
 export const setFormModeAction = createAction<FormMode, FormMode>(FormActionEnums.SetFormMode, p => p);
 

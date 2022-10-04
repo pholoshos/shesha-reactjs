@@ -3,13 +3,15 @@ import { Button } from 'antd';
 import { useShaRouting, useDataTableStore, useForm, useModal } from '../../../../../../providers';
 import { ISelectionProps } from '../../../../../../providers/dataTableSelection/models';
 import { IModalProps } from '../../../../../../providers/dynamicModal/models';
-import { evaluateKeyValuesToObject, evaluateString } from '../../../../../../providers/form/utils';
+import { evaluateKeyValuesToObject, evaluateString, getFormActionArguments } from '../../../../../../providers/form/utils';
 import { IToolbarButton } from '../../../../../../providers/toolbarConfigurator/models';
 import ShaIcon, { IconType } from '../../../../../shaIcon';
 import classNames from 'classnames';
 import moment from 'moment';
 import { IKeyValue } from '../../../../../../interfaces/keyValue';
 import axios from 'axios';
+import { usePubSub } from '../../../../../../hooks';
+import { useConfigurableActionDispatcher } from '../../../../../../providers/configurableActionsDispatcher';
 
 export interface IToolbarButtonProps extends IToolbarButton {
   formComponentId: string;
@@ -17,8 +19,11 @@ export interface IToolbarButtonProps extends IToolbarButton {
 }
 
 export const ToolbarButton: FC<IToolbarButtonProps> = props => {
-  const { getAction, form, setFormMode, formData, formMode } = useForm();
+  const { /*getAction,*/ form, setFormMode, formData, formMode } = useForm();
   const { router } = useShaRouting();
+  const { publish } = usePubSub();
+
+  const { executeAction } = useConfigurableActionDispatcher();
 
   if (props?.buttonAction === 'dialogue') {
     const convertedProps = props as IToolbarButtonTableDialogProps;
@@ -88,12 +93,61 @@ export const ToolbarButton: FC<IToolbarButtonProps> = props => {
       case 'reset':
         form?.resetFields();
         break;
+      case 'dispatchAnEvent': {
+        const eventName =
+          props?.eventName === 'CUSTOM_EVENT' && props?.customEventNameToDispatch
+            ? props?.customEventNameToDispatch
+            : props?.eventName;
+
+        const evaluationContext = {
+          selectedRow: props.selectedRow,
+          data: formData,
+          moment: moment,
+          form: form,
+          formMode: formMode,
+        };
+        getFormActionArguments(props?.customActionParameters, evaluationContext)
+          .then(actionArgs => { 
+            //console.log('toolbar button resolve args', { actionArgs, evaluationContext })
+            publish(eventName, { stateId: props?.uniqueStateId || 'NO_PROVIDED', state: actionArgs });
+          })
+          .catch(error => console.error(error)); // todo: add alert
+        break;
+      }
       case 'executeFormAction':
+        if (props.actionConfiguration){
+          //const { actionOwner, actionName } = props.actionConfiguration;
+          const evaluationContext = {
+            selectedRow: props.selectedRow,
+            data: formData,
+            moment: moment,
+            form: form,
+            formMode: formMode,
+          };
+          executeAction({ 
+            actionConfiguration: props.actionConfiguration,
+            argumentsEvaluationContext: evaluationContext
+          });
+        }
+        /*
+        console.log(props.buttonAction, { formComponentId: props.formComponentId, formAction: props.formAction, params: props.customActionParameters })
         if (props.formAction) {
           const actionBody = getAction(props.formComponentId, props.formAction);
-          if (actionBody) actionBody();
+          if (actionBody) {
+            const evaluationContext = {
+              selectedRow: props.selectedRow,
+              data: formData,
+              moment: moment,
+              form: form,
+              formMode: formMode,
+            };
+            getFormActionArguments(props?.customActionParameters, { data: evaluationContext })
+              .then(actionArgs => actionBody(actionArgs))
+              .catch(error => console.error(error)); // todo: add alert
+          }
           else console.warn(`action ${props.formAction} not found on the form`);
         } else console.warn('formAction is not specified');
+        */
         break;
 
       default:

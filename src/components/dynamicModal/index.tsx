@@ -72,7 +72,8 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
   };
 
   const onSubmitted = (_: any, response: any) => {
-    //console.log('LOG:onSubmitted')
+    debugger
+    console.log('LOG:onSubmitted')
     if (onSuccessRedirectUrl) {
       const computedRedirectUrl = evaluateString(onSuccessRedirectUrl, response);
 
@@ -116,6 +117,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
       {...footerProps}
       destroyOnClose
       width={isSmall ? width : '60%'}
+      maskClosable={false}
     >
       <ConfigurableForm
         formId={formId}

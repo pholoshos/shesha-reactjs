@@ -6,5 +6,5 @@ export const axiosHttp = (baseURL: string) =>
   axios.create({
     baseURL,
     timeout: 10000,
-    headers: requestHeaders(DEFAULT_ACCESS_TOKEN_NAME),
+    headers: requestHeaders(DEFAULT_ACCESS_TOKEN_NAME, { addCustomHeaders: true }),
   });

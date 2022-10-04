@@ -9,6 +9,7 @@ import {
 import {
   FormMode,
   IFlatComponentsStructure,
+  IFormSettings,
 } from './models';
 import { FormActionEnums } from './actions';
 import { handleActions } from 'redux-actions';
@@ -31,6 +32,15 @@ const reducer = handleActions<IFormStateContext, any>(
         componentRelations: payload.componentRelations,
       };
     },
+
+    [FormActionEnums.SetSettingsAction]: (state: IFormStateContext, action: ReduxActions.Action<IFormSettings>) => {
+      const { payload } = action;
+      
+      return {
+        ...state,
+        formSettings: payload,
+      };
+    },    
 
     [FormActionEnums.SetFormMode]: (state: IFormStateContext, action: ReduxActions.Action<FormMode>) => {
       const { payload } = action;

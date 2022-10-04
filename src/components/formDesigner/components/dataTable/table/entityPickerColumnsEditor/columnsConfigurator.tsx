@@ -9,7 +9,7 @@ import './styles/index.less';
 export interface IColumnsConfiguratorProps {}
 
 export const ColumnsConfigurator: FC<IColumnsConfiguratorProps> = () => {
-  const { items, addButton, addGroup } = useColumnsConfigurator();
+  const { items, addColumn: addButton, addGroup } = useColumnsConfigurator();
 
   return (
     <div className="sha-toolbar-configurator">

@@ -1,6 +1,7 @@
 import { FormMode } from './../form/models';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ButtonType } from 'antd/lib/button';
+import { IConfigurableActionConfiguration } from '../../interfaces/configurableAction';
 
 type ButtonGroupItemType = 'item' | 'group';
 
@@ -86,6 +87,8 @@ export interface IButtonGroupButton extends IButtonGroupItemBase {
   modalConfirmDialogMessage?: string;
   onSuccessScript?: string;
   onErrorScript?: string;
+
+  actionConfiguration?: IConfigurableActionConfiguration;
 }
 
 export interface IButtonGroup extends IButtonGroupItemBase {

@@ -12,7 +12,7 @@ import { nanoid } from 'nanoid/non-secure';
 
 const toolbarReducer = handleActions<IColumnsConfiguratorStateContext, any>(
   {
-    [ColumnsActionEnums.AddButton]: (state: IColumnsConfiguratorStateContext) => {
+    [ColumnsActionEnums.AddColumn]: (state: IColumnsConfiguratorStateContext) => {
       const buttonsCount = state.items.filter(i => i.itemType === 'item').length;
       const columnProps: IConfigurableColumnsProps = {
         id: nanoid(),
@@ -21,6 +21,7 @@ const toolbarReducer = handleActions<IColumnsConfiguratorStateContext, any>(
         caption: `Column ${buttonsCount + 1}`,
         columnType: 'data',
         isVisible: true,
+        minWidth: 100,
       };
 
       const newItems = [...state.items];
@@ -38,7 +39,7 @@ const toolbarReducer = handleActions<IColumnsConfiguratorStateContext, any>(
       };
     },
 
-    [ColumnsActionEnums.DeleteButton]: (
+    [ColumnsActionEnums.DeleteColumn]: (
       state: IColumnsConfiguratorStateContext,
       action: ReduxActions.Action<string>
     ) => {

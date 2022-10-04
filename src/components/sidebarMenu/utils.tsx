@@ -1,3 +1,4 @@
+import { QuestionOutlined } from '@ant-design/icons';
 import { MenuProps } from 'antd';
 import classNames from 'classnames';
 import React, { ReactNode } from 'react';
@@ -33,12 +34,12 @@ function getItem({ label, target, key, icon, children, isParent, navigate } : IG
   } as MenuItem;
 }
 
-const getIcon = (icon: ReactNode, isParent?: boolean) => {
+const getIcon = (icon: ReactNode, isParent?: boolean, isRootItem?: boolean) => {
   if (typeof icon === 'string')
     return <ShaIcon iconName={icon as IconType} className={classNames({ 'is-parent-menu': isParent })} />;
 
   if (React.isValidElement(icon)) return icon;
-  return null;
+  return isRootItem ? <QuestionOutlined /> : null; // Make sure there's always an Icon on the root item menu, even when not specified
 };
 
 export interface IProps extends ISidebarMenuItem {
@@ -49,7 +50,7 @@ export interface IProps extends ISidebarMenuItem {
 
 // Note: Have to use function instead of react control. It's a known issue, you can only pass MenuItem or MenuGroup as Menu's children. See https://github.com/ant-design/ant-design/issues/4853
 export const renderSidebarMenuItem = (props: IProps) => {
-  const { id: key, title, icon, childItems, target, isItemVisible } = props;
+  const { id: key, title, icon, childItems, target, isItemVisible, isRootItem } = props;
 
   if (typeof isItemVisible === 'function' && !isItemVisible(props)) return null;
 
@@ -59,7 +60,7 @@ export const renderSidebarMenuItem = (props: IProps) => {
     label: title,
     target,
     key,
-    icon: getIcon(icon, hasChildren),
+    icon: getIcon(icon, hasChildren, isRootItem),
     children: hasChildren ? childItems?.map(item => renderSidebarMenuItem({ ...item, navigate: props.navigate, isItemVisible: props.isItemVisible })) : null,
     isParent: hasChildren,
     navigate: props.navigate

@@ -16,6 +16,7 @@ import { usePublish } from '../../hooks';
 import Show from '../show';
 import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
 import { useMedia } from 'react-use';
+import { useEntityDisplayText } from '../../utils/entity';
 
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
 
@@ -90,7 +91,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     showModal: false,
   });
   const isSmall = useMedia('(max-width: 480px)');
-  
+
   const {
     registerConfigurableColumns,
     tableData,
@@ -190,21 +191,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     hidePickerDialog();
   };
 
-  const getValueRow = () => {
-    if (!value) return null;
-
-    if (!records?.length) return value;
-
-    const recordKeys = Object.keys(records[0]);
-
-    const localDisplayEntityKey = displayEntityKey
-      ? displayEntityKey
-      : recordKeys?.length > 1
-      ? recordKeys[1]
-      : recordKeys[0];
-
-    return records.find(i => (i as any)?.Id === value)?.[localDisplayEntityKey];
-  };
+  const displayName = useEntityDisplayText({ entityType: entityType, propertyName: displayEntityKey, entityId: value });
 
   const handleButtonPickerClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event?.stopPropagation();
@@ -239,7 +226,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   };
 
   if (readOnly) {
-    return <ReadOnlyDisplayFormItem value={getValueRow()} />;
+    return <ReadOnlyDisplayFormItem value={displayName} />;
   }
 
   return (
@@ -255,7 +242,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
               <Input
                 allowClear
                 className="picker-input-group-input"
-                value={getValueRow()}
+                value={displayName}
                 disabled={disabled}
                 name={name}
                 size={size}

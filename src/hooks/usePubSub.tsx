@@ -106,24 +106,26 @@ export function useSubscribe<T extends IPubSubPayload>(
   eventName: string | string[],
   eventHandler: (data: T) => void
 ): void {
+  // it's important to use the same event listener to be able to unsubscribe correctly
+  const eventListener = e => eventHandler((e as any).detail);
   useEffect(() => {
     if (typeof eventName === 'string') {
-      window.addEventListener(eventName, e => eventHandler((e as any).detail));
+      window.addEventListener(eventName, eventListener);
     } else if (Array.isArray(eventName)) {
       eventName.forEach(name => {
         if (name) {
-          window.addEventListener(name, e => eventHandler((e as any).detail));
+          window.addEventListener(name, eventListener);
         }
       });
     }
 
     return () => {
       if (typeof eventName === 'string') {
-        window.removeEventListener(eventName, () => {}, false);
+        window.removeEventListener(eventName, eventListener, false);
       } else if (Array.isArray(eventName)) {
         eventName.forEach(name => {
           if (name) {
-            window.removeEventListener(name, () => {}, false);
+            window.removeEventListener(name, eventListener, false);
           }
         });
       }

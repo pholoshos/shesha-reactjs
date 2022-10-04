@@ -50,11 +50,21 @@
       }
       .sha-toolbox-component {
         margin: 0;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 225px;
+        text-overflow: ellipsis;
+
         .sha-component-title {
+        
           margin-right: 10px;
+         
+    
         }
       }
       .site-tree-search-value {
+        background-color: chartreuse;
         color: #f50;
         // font-weight: bold;
       }
@@ -77,6 +87,12 @@
     }
 
     .sha-toolbox-panel {
+      .ant-collapse-header-text{
+        white-space: nowrap;
+        overflow: hidden;
+        width: 300px;
+        text-overflow: ellipsis;
+      }
       &.active {
         // border: #61affe 1px dashed;
         // border-radius: 4px;

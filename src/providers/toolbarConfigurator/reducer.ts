@@ -21,6 +21,7 @@ const toolbarReducer = handleActions<IToolbarConfiguratorStateContext, any>(
         name: `Button${buttonsCount + 1}`,
         label: `Button ${buttonsCount + 1}`,
         itemSubType: 'button',
+        buttonType: 'link',
       };
 
       const newItems = [...state.items];

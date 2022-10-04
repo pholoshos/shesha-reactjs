@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { IAsyncValidationError } from '../../interfaces';
 import { FormLayout } from 'antd/lib/form/Form';
 import { IKeyValue } from '../../interfaces/keyValue';
+import { ColProps } from 'antd';
 
 export const ROOT_COMPONENT_KEY: string = 'root'; // root key of the flat components structure
 export const TOOLBOX_COMPONENT_DROPPABLE_KEY: string = 'toolboxComponent';
@@ -271,10 +272,6 @@ export interface IFormValidationRulesOptions {
   formData?: any;
 }
 
-export interface ILayoutProps {
-  span: number;
-}
-
 export interface IFormSettings {
   modelType?: string;
   postUrl?: string;
@@ -283,8 +280,8 @@ export interface IFormSettings {
   getUrl?: string;
   layout: FormLayout;
   colon: boolean;
-  labelCol: ILayoutProps;
-  wrapperCol: ILayoutProps;
+  labelCol: ColProps;
+  wrapperCol: ColProps;
   showModeToggler?: boolean;
   preparedValues?: string;
   size?: SizeType;
@@ -304,3 +301,9 @@ export const DEFAULT_FORM_SETTINGS: IFormSettings = {
   labelCol: { span: 5 },
   wrapperCol: { span: 13 },
 };
+
+export type ActionParametersJs = string;
+export type ActionParametersDictionary = [{ key: string; value: string }];
+export type ActionParameters = ActionParametersJs | ActionParametersDictionary;
+export type ActionArguments = { [key: string]: any };
+export type GenericDictionary = { [key: string]: any };

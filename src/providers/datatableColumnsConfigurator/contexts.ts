@@ -17,8 +17,8 @@ export interface IColumnsConfiguratorStateContext {
 }
 
 export interface IColumnsConfiguratorActionsContext {
-  addButton: () => void;
-  deleteButton: (uid: string) => void;
+  addColumn: () => void;
+  deleteColumn: (uid: string) => void;
 
   addGroup: () => void;
   deleteGroup: (uid: string) => void;

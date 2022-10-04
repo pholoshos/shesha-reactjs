@@ -1,10 +1,10 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { FormMarkup, IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
-import { Steps, Button, Space, message } from 'antd';
+import { Steps, Button, Space, message, Col, Row } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useAuth, useForm, useGlobalState } from '../../../../providers';
 import { useSheshaApplication } from '../../../../';
@@ -15,7 +15,6 @@ import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
 import { usePubSub, useSubscribe } from '../../../../hooks';
 import { axiosHttp } from '../../../../apis/axios';
-import { useDebouncedCallback } from 'use-debounce';
 
 const { Step } = Steps;
 
@@ -31,10 +30,51 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
     const { globalState, setState: setGlobalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();
     const { publish } = usePubSub();
-    const [current, setCurrent] = useState(0);
+    const [current, setCurrent] = useState(() => {
+      const localCurrent = model?.defaultActiveStep
+        ? model?.tabs?.findIndex(({ id }) => id === model?.defaultActiveStep)
+        : 0;
+
+      return localCurrent < 0 ? 0 : localCurrent;
+    });
     const [component, setComponent] = useState(null);
 
     const { tabs, wizardType = 'default' } = model as ITabsComponentProps;
+
+    useEffect(() => {
+      const defaultActiveStep = model?.tabs?.findIndex(item => item?.id === model?.defaultActiveStep);
+      setCurrent(defaultActiveStep < 0 ? 0 : defaultActiveStep);
+    }, [model?.defaultActiveStep]);
+
+    /// EVENTS
+    useSubscribe('WIZARD_MAZI_FORM_VIEW', ({ stateId }) => {
+      console.log('WIZARD_MAZI_FORM_VIEW', stateId, model.uniqueStateId, stateId === model.uniqueStateId);
+      const uniqueStateId = tabs[current].nextUniqueStateId;
+      if (stateId === uniqueStateId) {
+        next();
+      }
+    });
+
+    useSubscribe('WIZARD_ACTION_BUTTON_BACK', ({ stateId }) => {
+      const uniqueStateId = tabs[current].backUniqueStateId;
+      if (stateId === uniqueStateId) {
+        back();
+      }
+    });
+
+    useSubscribe('WIZARD_ACTION_BUTTON_CANCEL', ({ stateId }) => {
+      const uniqueStateId = tabs[current].cancelUniqueStateId;
+      if (stateId === uniqueStateId) {
+        cancel();
+      }
+    });
+
+    useSubscribe('WIZARD_ACTION_BUTTON_DONE', ({ stateId }) => {
+      const uniqueStateId = tabs[current].doneUniqueStateId;
+      if (stateId === uniqueStateId) {
+        done();
+      }
+    });
 
     if (isComponentHidden(model)) return null;
 
@@ -65,7 +105,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
     /// NAVIGATION
 
-    const next = useDebouncedCallback(() => {
+    const next = () => {
       const buttonAction = tabs[current].nextButtonAction;
       const actionScript = tabs[current].nextButtonActionScript;
       const eventName = tabs[current].nextEventName;
@@ -85,9 +125,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
       setCurrent(current + 1);
       setComponent(tabs[current].components);
-    }, 300);
+    };
 
-    const back = useDebouncedCallback(() => {
+    const back = () => {
       const buttonAction = tabs[current].backButtonAction;
       const actionScript = tabs[current].backButtonActionScript;
       const eventName = tabs[current].backEventName;
@@ -106,9 +146,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
       setCurrent(current - 1);
       setComponent(tabs[current].components);
-    }, 300);
+    };
 
-    const cancel = useDebouncedCallback(() => {
+    const cancel = () => {
       const buttonAction = tabs[current].cancelButtonAction;
       const actionScript = tabs[current].cancelButtonActionScript;
       const eventName = tabs[current].cancelEventName;
@@ -124,9 +164,9 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         default:
           break;
       }
-    }, 300);
+    };
 
-    const done = useDebouncedCallback(() => {
+    const done = () => {
       const buttonAction = tabs[current].doneButtonAction;
       const actionScript = tabs[current].doneButtonActionScript;
       const eventName = tabs[current].doneEventName;
@@ -142,11 +182,11 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         default:
           break;
       }
-    }, 300);
+    };
 
     /// ACTIONS
 
-    const executeScript = (actionScript) => {
+    const executeScript = actionScript => {
       if (actionScript) {
         executeExpression(actionScript);
       }
@@ -154,123 +194,74 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
 
     const dispatchAnEvent = (eventName, customEventNameToDispatch, uniqueStateId) => {
       const EVENT_NAME =
-        eventName === 'CUSTOM_EVENT' && customEventNameToDispatch
-          ? customEventNameToDispatch
-          : eventName;
+        eventName === 'CUSTOM_EVENT' && customEventNameToDispatch ? customEventNameToDispatch : eventName;
 
       publish(EVENT_NAME, { stateId: uniqueStateId || 'NO_PROVIDED' });
     };
 
-    /// EVENTS
-
-    useSubscribe('WIZARD_MAZI_FORM_VIEW', ({ stateId }) => {
-      console.log("WIZARD_MAZI_FORM_VIEW", stateId, model.uniqueStateId, stateId === model.uniqueStateId);
-      const uniqueStateId = tabs[current].nextUniqueStateId;
-      if (stateId === uniqueStateId) {
-        next();
-      }
-    });
-
-    useSubscribe('WIZARD_ACTION_BUTTON_BACK', ({ stateId }) => {
-      const uniqueStateId = tabs[current].backUniqueStateId;
-      if (stateId === uniqueStateId) {
-        back();
-      }
-    });
-
-    useSubscribe('WIZARD_ACTION_BUTTON_CANCEL', ({ stateId }) => {
-      const uniqueStateId = tabs[current].cancelUniqueStateId;
-      if (stateId === uniqueStateId) {
-        cancel();
-      }
-    });
-
-    useSubscribe('WIZARD_ACTION_BUTTON_DONE', ({ stateId }) => {
-      const uniqueStateId = tabs[current].doneUniqueStateId;
-      if (stateId === uniqueStateId) {
-        done();
-      }
-    });
-
     return (
       <>
+        <Steps type={wizardType} current={current} style={{ marginBottom: '25px' }}>
+          {tabs?.map(({ key, title, subTitle, description, icon, permissions, customVisibility, customEnabled }) => {
+            const granted = anyOfPermissionsGranted(permissions || []);
+            const isVisibleByCondition = executeExpression(customVisibility, true);
+            const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
 
-        <Steps
-          type={wizardType}
-          current={current}
-          style={{ marginBottom: '25px' }}>
-          {tabs?.map(
-            ({
-              key,
-              title,
-              subTitle,
-              description,
-              icon,
-              permissions,
-              customVisibility,
-              customEnabled,
-            }) => {
-              const granted = anyOfPermissionsGranted(permissions || []);
-              const isVisibleByCondition = executeExpression(customVisibility, true);
-              const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
+            if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
 
-              if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
-
-              return (
-                <>
-                  <Step
-                    key={key}
-                    disabled={isDisabledByCondition}
-                    title={title}
-                    subTitle={subTitle}
-                    description={description}
-                    icon={
-                      icon ? (
-                        <Fragment>
-                          <ShaIcon iconName={icon as any} />
-                        </Fragment>
-                      ) : (
-                        <Fragment>
-                          {icon}
-                        </Fragment>
-                      )
-                    }
-                  />
-                </>
-              );
-            }
-          )}
+            return (
+              <Step
+                key={key}
+                disabled={isDisabledByCondition}
+                title={title}
+                subTitle={subTitle}
+                description={description}
+                icon={
+                  icon ? (
+                    <Fragment>
+                      <ShaIcon iconName={icon as any} />
+                    </Fragment>
+                  ) : (
+                    <Fragment>{icon}</Fragment>
+                  )
+                }
+              />
+            );
+          })}
         </Steps>
 
-        <ComponentsContainer
-          containerId={tabs[current].id}
-          dynamicComponents={model?.isDynamic ? component : []} />
+        <ComponentsContainer containerId={tabs[current].id} dynamicComponents={model?.isDynamic ? component : []} />
 
-        <div>
-          <Space size={'middle'}>
-            {tabs[current].allowCancel === true && (
-              <Button onClick={() => cancel()}>
-                {tabs[current].cancelButtonText ? (tabs[current].cancelButtonText) : ('Cancel')}
-              </Button>
-            )}
-            {current > 0 && (
-              <Button style={{ margin: '0 8px' }} onClick={() => back()}>
-                {tabs[current].backButtonText ? (tabs[current].backButtonText) : ('Back')}
-              </Button>
-            )}
-            {current < tabs.length - 1 && (
-              <Button type="primary" onClick={() => next()}>
-                {tabs[current].nextButtonText ? (tabs[current].nextButtonText) : ('Next')}
-              </Button>
-            )}
-            {current === tabs.length - 1 && (
-              <Button type="primary" onClick={() => done()}>
-                {tabs[current].doneButtonText ? (tabs[current].doneButtonText) : ('Done')}
-              </Button>
-            )}
-          </Space>
-        </div>
-
+        <Row>
+          <Col span={12}>
+            <Space size={'middle'}>
+              {tabs[current].allowCancel === true && (
+                <Button onClick={() => cancel()}>
+                  {tabs[current].cancelButtonText ? tabs[current].cancelButtonText : 'Cancel'}
+                </Button>
+              )}
+              {current > 0 && (
+                <Button style={{ margin: '0 8px' }} onClick={() => back()}>
+                  {tabs[current].backButtonText ? tabs[current].backButtonText : 'Back'}
+                </Button>
+              )}
+            </Space>
+          </Col>
+          <Col span={12}>
+            <Space size={'middle'} style={{ width: '100%', justifyContent: 'right' }}>
+              {current < tabs.length - 1 && (
+                <Button type="primary" onClick={() => next()}>
+                  {tabs[current].nextButtonText ? tabs[current].nextButtonText : 'Next'}
+                </Button>
+              )}
+              {current === tabs.length - 1 && (
+                <Button type="primary" onClick={() => done()}>
+                  {tabs[current].doneButtonText ? tabs[current].doneButtonText : 'Done'}
+                </Button>
+              )}
+            </Space>
+          </Col>
+        </Row>
       </>
     );
   },
@@ -278,21 +269,23 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
     const tabsModel: ITabsComponentProps = {
       ...model,
       name: 'custom Name',
-      tabs: [{
-        id: nanoid(),
-        label: 'Tab 1',
-        title: 'Tab 1',
-        subTitle: 'Tab 1',
-        description: 'Tab 1',
-        allowCancel: false,
-        cancelButtonText: 'Cancel',
-        nextButtonText: 'Next',
-        backButtonText: 'Back',
-        doneButtonText: 'Done',
-        key: 'tab1',
-        components: [],
-        itemType: 'item'
-      }],
+      tabs: [
+        {
+          id: nanoid(),
+          label: 'Tab 1',
+          title: 'Tab 1',
+          subTitle: 'Tab 1',
+          description: 'Tab 1',
+          allowCancel: false,
+          cancelButtonText: 'Cancel',
+          nextButtonText: 'Next',
+          backButtonText: 'Back',
+          doneButtonText: 'Done',
+          key: 'tab1',
+          components: [],
+          itemType: 'item',
+        },
+      ],
     };
     return tabsModel;
   },

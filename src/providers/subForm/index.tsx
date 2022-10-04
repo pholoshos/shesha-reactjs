@@ -14,6 +14,7 @@ import { useGlobalState } from '../globalState';
 import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
 import { useFormConfiguration } from '../form/api';
+import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
   uniqueStateId?: string;
@@ -30,11 +31,9 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   getUrl,
   postUrl,
   putUrl,
-  deleteUrl,
   beforeGet,
   onCreated,
   onUpdated,
-  onDeleted,
   uniqueStateId,
   dataSource,
   markup,
@@ -90,7 +89,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       entityType,
     };
 
-    params.properties = ['id', ...Array.from(new Set(properties || []))].join(' '); // Always include the `id` property/. Useful for deleting
+    params.properties =
+      typeof properties === 'string' ? `id ${properties}` : ['id', ...Array.from(new Set(properties || []))].join(' '); // Always include the `id` property/. Useful for deleting
 
     if (queryParams) {
       const getOnSubmitPayload = () => {
@@ -134,11 +134,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     verb: 'POST',
   });
 
-  const { mutate: deleteHttp, loading: isDeleting, error: deleteError } = useMutate({
-    path: getEvaluatedUrl(deleteUrl),
-    verb: 'DELETE',
-  });
-
   const { mutate: putHttp, loading: isUpdating, error: updateError } = useMutate({
     path: getEvaluatedUrl(putUrl),
     verb: 'PUT',
@@ -179,6 +174,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       });
     } else {
       postHttp(value).then(submittedValue => {
+        onChange(submittedValue?.result);
         if (onCreated) {
           const evaluateOnCreated = () => {
             // tslint:disable-next-line:function-constructor
@@ -206,6 +202,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       });
     } else {
       putHttp(value).then(submittedValue => {
+        onChange(submittedValue?.result);
         if (onUpdated) {
           const evaluateOnUpdated = () => {
             // tslint:disable-next-line:function-constructor
@@ -216,27 +213,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
               message,
               publish
             );
-          };
-
-          evaluateOnUpdated();
-        }
-      });
-    }
-  }, 300);
-
-  const deleteData = useDebouncedCallback(() => {
-    if (!deleteUrl) {
-      notification.error({
-        placement: 'top',
-        message: 'deleteUrl missing',
-        description: 'Please make sure you have specified the Delete URL',
-      });
-    } else {
-      deleteHttp('', { queryParams: { id: typeof value === 'string' ? value : value?.id } }).then(() => {
-        if (onDeleted) {
-          const evaluateOnUpdated = () => {
-            // tslint:disable-next-line:function-constructor
-            return new Function('data, globalState, message', onDeleted)(formData, globalState, message);
           };
 
           evaluateOnUpdated();
@@ -270,6 +246,40 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   }, [markup]);
   //#endregion
 
+  const { registerAction } = useConfigurableActionDispatcher();
+  
+  useEffect(() => {
+    registerAction({
+      name: 'Get form data',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        getData(); // todo: return real promise
+        return Promise.resolve();
+      }
+    });
+
+    registerAction({
+      name: 'Post form data',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        postData(); // todo: return real promise
+        return Promise.resolve();
+      }
+    });
+
+    registerAction({
+      name: 'Update form data',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        putData(); // todo: return real promise
+        return Promise.resolve();
+      }
+    });
+  }, [uniqueStateId]);
+
   useSubscribe(SUB_FORM_EVENT_NAMES.getFormData, ({ stateId }) => {
     if (stateId === uniqueStateId) {
       getData();
@@ -288,12 +298,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       putData();
     }
   });
-
-  useSubscribe(SUB_FORM_EVENT_NAMES.deleteFormData, ({ stateId }) => {
-    if (stateId === uniqueStateId) {
-      deleteData();
-    }
-  });
   //#endregion
 
   const getColSpan = (span: number | ColProps): ColProps => {
@@ -309,14 +313,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         errors: {
           getForm: fetchFormError,
           postData: postError,
-          deleteData: deleteError,
           getData: fetchEntityError,
           putData: updateError,
         },
         loading: {
           getForm: isFetchingForm,
           postData: isPosting,
-          deleteData: isDeleting,
           getData: isFetchingEntity,
           putData: isUpdating,
         },
@@ -334,7 +336,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
           getData,
           postData,
           putData,
-          deleteData,
         }}
       >
         {children}

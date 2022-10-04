@@ -19,6 +19,10 @@ import {
   FormUid,
   IFormSettings,
   DEFAULT_FORM_SETTINGS,
+  ActionArguments,
+  ActionParameters,
+  ActionParametersDictionary,
+  GenericDictionary,
 } from './models';
 import Mustache from 'mustache';
 import { ITableColumn, IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
@@ -1087,4 +1091,78 @@ export const convertToMarkupWithSettings = (markup: FormMarkup): FormMarkupWithS
     return { components: markup, formSettings: DEFAULT_FORM_SETTINGS };
 
   return { components: [], formSettings: DEFAULT_FORM_SETTINGS };
+}
+
+const evaluateRecursive = (data: any, evaluationContext: GenericDictionary): any => {
+  if (typeof(data) === 'string'){
+    return evaluateString(data, evaluationContext);
+  }
+  if (Array.isArray(data)){
+    // note: `typeof` returns object for arrays too, we must to check isArray before `typeof`
+    return data.map(item => evaluateRecursive(item, evaluationContext))
+  }
+  if (typeof(data) === 'object')
+  {
+    const evaluatedObject = {};
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        evaluatedObject[key] = evaluateRecursive(data[key], evaluationContext);
+      }
+    }
+    return evaluatedObject;
+  }
+  return data;
+}
+
+export const genericActionArgumentsEvaluator = <TArguments = ActionParametersDictionary>(argumentsConfiguration: TArguments, evaluationContext: GenericDictionary): Promise<TArguments> => {
+  if (!Boolean(argumentsConfiguration))
+    return Promise.resolve(null);
+
+  return new Promise<TArguments>((resolve) => {
+    console.log('LOG: generic arguments evaluation')
+    const evaluated = evaluateRecursive(argumentsConfiguration, evaluationContext);
+    resolve(evaluated as TArguments);
+  });  
+}
+
+/**
+ * Convert action parameters definition to a runtime parameters
+ */
+export const getFormActionArguments = (params: ActionParameters, evaluationContext: GenericDictionary): Promise<ActionArguments> => {
+  if (!Boolean(params))
+    return Promise.resolve({});
+
+  if (typeof (params) === 'string') {
+    try {
+      const evaluationKeys = Object.keys(evaluationContext);
+      evaluationKeys.push(params);
+
+      const func = Function.apply(null, evaluationKeys);
+      const evaluated = func(evaluationContext); // promise or value
+      return Promise.resolve(evaluated);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  return new Promise<ActionArguments>((resolve) => {
+    const dictionary = params as ActionParametersDictionary;
+    const actionArgs = {};
+
+    for (const parameterIdx in dictionary) {
+      if (parameterIdx) {
+        const parameter = dictionary[parameterIdx];
+
+        // todo: add promise support
+        const value = typeof(parameter?.value) === 'string'
+          ? evaluateString(parameter?.value, evaluationContext)
+          : parameter?.value;
+
+        if (value) {
+          actionArgs[parameter?.key] = value;
+        }
+      }
+    }
+    resolve(actionArgs);
+  });
 }

@@ -85,7 +85,7 @@ const ContainerComponent: IToolboxComponent<IContainerComponentProps> = {
         className={model.className}
         wrapperStyle={getStyle(model?.wrapperStyle, formData)}
         style={getStyle(model?.style, formData)}
-        // dynamicComponents={model?.isDynamic ? model?.components : []}
+         dynamicComponents={model?.isDynamic ? model?.components : []}
       />
     );
   },

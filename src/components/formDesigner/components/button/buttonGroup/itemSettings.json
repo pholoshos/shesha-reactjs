@@ -266,7 +266,7 @@
           "id": "75407830-901f-41a0-bfa0-da18f043b299",
           "type": "container",
           "name": "cntNavigate",
-          "label": "Container (horizontal or vertical)1",
+          "label": "Container (horizontal or vertical)",
           "labelAlign": "right",
           "parentId": "345c2181-fb9f-48ed-9631-864ac357807b",
           "hidden": false,
@@ -519,11 +519,6 @@
                   "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
                 },
                 {
-                  "label": "deleteFormData (SubForm)",
-                  "value": "deleteFormData",
-                  "id": "aadef786-fd46-4cc6-93b0-aa7fc65bdb8f"
-                },
-                {
                   "label": "refreshTable (DataTable)",
                   "value": "REFRESH_TABLE",
                   "id": "a89e2856-a42a-4332-b83e-ca7dd093ab21"
@@ -710,9 +705,24 @@
           "labelAlign": "right",
           "parentId": "fe4b3c03-3e0b-410f-8a9d-93db02ca51ed",
           "hidden": false,
-          "customVisibility": "return data.formAction === 'CUSTOM_ACTION'",
+          "customVisibility": "return data.buttonAction === 'executeFormAction' && data.formAction === 'CUSTOM_ACTION'",
           "description": "",
           "validate": {}
+        },
+        {
+          "id": "8e70db8a-addb-43a5-a8ce-24a829b4f3c7",
+          "type": "labelValueEditor",
+          "name": "customActionParameters",
+          "label": "Parameters",
+          "labelAlign": "right",
+          "hidden": false,
+          "customVisibility": "return data.buttonAction === 'executeFormAction' || data.buttonAction === 'dispatchAnEvent'",
+          "labelTitle": "Key",
+          "labelName": "key",
+          "valueTitle": "Value",
+          "valueName": "value",
+          "validate": {},
+          "settingsValidationErrors": []
         },
         {
           "id": "880f31ea-2a86-40a5-83ef-ccbe88aa0140",
@@ -726,6 +736,16 @@
           "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
           "validate": {}
         },
+        {
+          "id": "F3B46A95-703F-4465-96CA-A58496A5F78C",
+          "type": "configurableActionConfigurator",
+          "name": "actionConfiguration",
+          "label": "Action configuration",
+          "hidden": false,
+          "customVisibility": "return data.buttonAction === 'executeFormAction'",
+          "validate": {},
+          "settingsValidationErrors": []
+        },        
         {
           "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
           "type": "sectionSeparator",
@@ -750,21 +770,6 @@
           "name": "sectionVisibility",
           "parentId": "root",
           "label": "Visibility"
-        },
-        {
-          "id": "8e70db8a-addb-43a5-a8ce-24a829b4f3c7",
-          "type": "labelValueEditor",
-          "name": "customActionParameters",
-          "label": "Parameters",
-          "labelAlign": "right",
-          "hidden": false,
-          "customVisibility": "return data.buttonAction === 'executeFormAction'",
-          "labelTitle": "Key",
-          "labelName": "key",
-          "valueTitle": "Value",
-          "valueName": "value",
-          "validate": {},
-          "settingsValidationErrors": []
         },
         {
           "id": "4b5e5951-4998-4635-b1c8-0b6d3940c301",

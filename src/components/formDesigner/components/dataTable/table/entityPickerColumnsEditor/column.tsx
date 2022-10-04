@@ -14,7 +14,7 @@ export interface IProps extends IConfigurableColumnsProps {
 }
 
 export const Column: FC<IProps> = props => {
-  const { deleteButton, selectedItemId } = useColumnsConfigurator();
+  const { deleteColumn: deleteButton, selectedItemId } = useColumnsConfigurator();
 
   const onDeleteClick = () => {
     deleteButton(props.id);

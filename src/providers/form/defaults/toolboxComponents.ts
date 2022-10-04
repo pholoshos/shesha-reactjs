@@ -71,6 +71,7 @@ import Buttons from '../../../components/formDesigner/components/button/buttonGr
 import SubForm from '../../../components/formDesigner/components/subForm';
 import Link from '../../../components/formDesigner/components/link';
 import EventNames from '../../../components/formDesigner/components/eventNamesList';
+import ConfigurableActionConfigurator from '../../../components/formDesigner/components/configurableActionsConfigurator';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -132,6 +133,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       RichTextEditor,
       Progress,
       EventNames,
+      ConfigurableActionConfigurator,
     ],
   },
   {

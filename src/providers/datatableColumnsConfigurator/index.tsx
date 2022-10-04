@@ -8,8 +8,8 @@ import {
   TOOLBAR_CONTEXT_INITIAL_STATE,
 } from './contexts';
 import {
-  addButtonAction,
-  deleteButtonAction,
+  addColumnAction,
+  deleteColumnAction,
   addGroupAction,
   deleteGroupAction,
   selectItemAction,
@@ -42,12 +42,12 @@ const ColumnsConfiguratorProvider: FC<PropsWithChildren<IColumnsConfiguratorProv
     items: props.items,
   });
 
-  const addButton = () => {
-    dispatch(addButtonAction());
+  const addColumn = () => {
+    dispatch(addColumnAction());
   };
 
-  const deleteButton = (uid: string) => {
-    dispatch(deleteButtonAction(uid));
+  const deleteColumn = (uid: string) => {
+    dispatch(deleteColumnAction(uid));
   };
 
   const addGroup = () => {
@@ -80,8 +80,8 @@ const ColumnsConfiguratorProvider: FC<PropsWithChildren<IColumnsConfiguratorProv
     <ColumnsConfiguratorStateContext.Provider value={state}>
       <ColumnsConfiguratorActionsContext.Provider
         value={{
-          addButton,
-          deleteButton,
+          addColumn,
+          deleteColumn,
           addGroup,
           deleteGroup,
           selectItem,

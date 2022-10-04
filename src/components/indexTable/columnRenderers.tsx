@@ -154,10 +154,8 @@ export const renderers: ITableCustomTypesRender[] = [
 
       const handleDeleteRowClick = () => {
         const deletingLoader = message.loading('Action in progress..', 0);
-
-        const id: string = props?.cell?.row?.original?.Id;
-
-        deleteRowHttp('', { queryParams: { id } })
+        const id: string = props?.cell?.row?.original?.id;
+          deleteRowHttp('', { queryParams: { id } })
           .then(() => {
             refreshTable();
           })

@@ -14,8 +14,6 @@ export default {
 
 export interface IFormDesignerStoryProps {
   formId: FormIdentifier;
-  // module?: string;
-  // formName: string;
   mode?: FormMode;
 }
 
@@ -40,9 +38,15 @@ export const PersonDetails = addStory(DesignerTemplate, {
   }
 });
 
-export const FormsIndexOld = addStory(DesignerTemplate, {
+export const SubForm = addStory(DesignerTemplate, {
   formId: {
-    name: 'forms-v2',
+    name: 'sub-form',
+  }
+});
+
+export const PersonList = addStory(DesignerTemplate, {
+  formId: {
+    name: 'person-list',
   }
 });
 
@@ -52,16 +56,16 @@ export const WizardForm = addStory(DesignerTemplate, {
   }
 });
 
+export const WizardFormDebug = addStory(DesignerTemplate, {
+  formId: { 
+    name: 'mazi-form-view-debug' 
+  },
+});
+
 export const FormsIndex = addStory(DesignerTemplate, {
   formId: {
     name: 'forms',
     module: 'shesha',
-  }
-});
-
-export const FormsIndex2 = addStory(DesignerTemplate, {
-  formId: {
-    name: 'forms'
   }
 });
 

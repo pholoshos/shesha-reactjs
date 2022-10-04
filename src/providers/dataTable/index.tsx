@@ -86,6 +86,7 @@ import { advancedFilter2JsonLogic } from './utils';
 import { camelcaseDotNotation, convertDotNotationPropertiesToGraphQL } from '../form/utils';
 import { GENERIC_ENTITIES_ENDPOINT } from '../../constants';
 import { getFileNameFromResponse } from '../../utils/fetchers';
+import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Type of entity */
@@ -839,6 +840,70 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       });
     }
   }, [state, uniqueStateId]);
+
+  const { registerAction } = useConfigurableActionDispatcher();
+
+  useEffect(() => {
+    registerAction({
+      name: 'Test failed action',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        console.log('Test failed action')
+        return Promise.reject({ message: 'my failed action response' });
+      }
+    });
+
+    registerAction({
+      name: 'Refresh table',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        refreshTable(); // todo: return correct promise
+        return Promise.resolve()
+      }
+    });
+
+    registerAction({
+      name: 'Delete row',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        deleteRow(); // todo: return correct promise
+        return Promise.resolve();
+      }
+    });
+
+    registerAction({
+      name: 'Export to Excel',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        debouncedExportToExcel(); // return real promise
+        return Promise.resolve();
+      }
+    });
+
+    registerAction({
+      name: 'Toggle Advanced Filter',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        toggleAdvancedFilter(); // return real promise
+        return Promise.resolve();
+      }
+    });
+
+    registerAction({
+      name: 'Toggle Columns Selector',
+      owner: uniqueStateId,
+      hasArguments: false,
+      executer: () => {
+        toggleColumnsSelector(); // return real promise
+        return Promise.resolve();
+      }
+    });
+  }, [state]);
 
   useSubscribe(DataTablePubsubConstants.refreshTable, data => {
     if (data.stateId === uniqueStateId) {

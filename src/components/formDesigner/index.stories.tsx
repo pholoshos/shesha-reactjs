@@ -14,8 +14,6 @@ export default {
 
 export interface IFormDesignerStoryProps {
   formId: FormIdentifier;
-  // module?: string;
-  // formName: string;
   mode?: FormMode;
 }
 
@@ -56,6 +54,12 @@ export const WizardForm = addStory(DesignerTemplate, {
   formId: {
     name: 'mazi-form-view',
   }
+});
+
+export const WizardFormDebug = addStory(DesignerTemplate, {
+  formId: { 
+    name: 'mazi-form-view-debug' 
+  },
 });
 
 export const FormsIndex = addStory(DesignerTemplate, {

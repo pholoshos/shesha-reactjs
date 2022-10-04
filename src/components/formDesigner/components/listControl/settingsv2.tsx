@@ -7,9 +7,8 @@ import { IListItemsProps } from './models';
 import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
 import { AutocompleteDto, AutocompleteRaw } from '../../../autocomplete';
-import Properties from '../../../properties';
 import { QueryBuilderWithModelType } from '../queryBuilder/queryBuilderWithModelType';
-import { QueryBuilderPlainRenderer } from '../queryBuilder/queryBuilderFieldPlain';
+import { QueryBuilderComponentRenderer } from '../queryBuilder/queryBuilderComponent';
 
 const Option = Select.Option;
 
@@ -28,6 +27,8 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
   const [state, setState] = useState<IListSettingsState>(model);
   const [form] = Form.useForm();
 
+  console.log('ListControlSettings model', model.filters);
+
   return (
     <Form
       form={form}
@@ -45,7 +46,10 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
         onValuesChange(changedValues, incomingState);
       }}
-      initialValues={model}
+      initialValues={{
+        ...model,
+        properties: typeof model?.properties === 'string' ? model?.properties : model?.properties?.join(' '),
+      }}
     >
       <SectionSeparator sectionName="Display" />
 
@@ -99,7 +103,17 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         </FormItem>
         <Show when={Boolean(state?.entityType)}>
           <FormItem name="properties" label="Properties">
-            <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} />
+            <CodeEditor
+              mode="inline"
+              setOptions={{ minLines: 15, maxLines: 500, fixedWidthGutter: true }}
+              name="getUrl"
+              type={''}
+              id={''}
+              language="graphqlschema"
+              label="Query Params"
+              description="Properties in GraphQL-like syntax"
+            />
+            {/* <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} /> */}
           </FormItem>
 
           <SectionSeparator sectionName="Query builder" />
@@ -108,14 +122,15 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
             <Checkbox />
           </FormItem>
 
-          <FormItem label="Query builder" name="filters">
-            <QueryBuilderWithModelType modelType={state?.entityType}>
-              <QueryBuilderPlainRenderer
-                useExpression={state?.useExpression}
-                value={state?.filters}
-              ></QueryBuilderPlainRenderer>
-            </QueryBuilderWithModelType>
-          </FormItem>
+          <QueryBuilderWithModelType modelType={state?.entityType}>
+            <QueryBuilderComponentRenderer
+              name="filters"
+              type={''}
+              id={''}
+              label="Query builder"
+              useExpression={state?.useExpression}
+            />
+          </QueryBuilderWithModelType>
         </Show>
       </Show>
 

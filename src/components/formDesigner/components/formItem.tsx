@@ -51,7 +51,9 @@ const ConfigurableFormItem: FC<IConfigurableFormItemProps> = ({
     const name = getFieldNameFromExpression(model.name);
 
     if (namePrefix) {
-      return typeof name === 'string' ? [namePrefix, name] : [namePrefix, ...name];
+      const prefix = namePrefix?.split('.');
+
+      return typeof name === 'string' ? [...prefix, name] : [...prefix, ...name];
     }
 
     return name;

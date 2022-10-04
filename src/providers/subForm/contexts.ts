@@ -13,14 +13,12 @@ export interface ISubFormStateContext {
     getForm?: GetDataError<unknown>;
     postData?: GetDataError<unknown>;
     putData?: GetDataError<unknown>;
-    deleteData?: GetDataError<unknown>;
   };
   loading?: {
     getData?: boolean;
     getForm?: boolean;
     postData?: boolean;
     putData?: boolean;
-    deleteData?: boolean;
   };
 }
 

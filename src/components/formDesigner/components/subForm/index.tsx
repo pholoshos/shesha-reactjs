@@ -3,7 +3,7 @@ import { IStylable, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { FormOutlined } from '@ant-design/icons';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm, SubFormProvider, SubFormProviderProps } from '../../../../providers';
+import { useForm, SubFormProvider, SubFormProviderProps, useGlobalState, useFormItem } from '../../../../providers';
 import { alertSettingsForm } from './settings';
 import SubForm from './subForm';
 import ConfigurableFormItem from '../formItem';
@@ -23,11 +23,34 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
   name: 'Sub Form',
   icon: <FormOutlined />,
   factory: (model: ISubFormProps) => {
-    const { isComponentHidden, formData } = useForm();
+    const { formMode, formData } = useForm();
+    const { globalState } = useGlobalState();
 
-    const isHidden = isComponentHidden(model);
+    const executeExpression = (expression: string, returnBoolean = false) => {
+      if (!expression) {
+        if (returnBoolean) {
+          return true;
+        } else {
+          console.error('Expected expression to be defined but it was found to be empty.');
 
-    if (isHidden) return null;
+          return false;
+        }
+      }
+
+      /* tslint:disable:function-constructor */
+      const evaluated = new Function('data, globalState', expression)(formData, globalState);
+
+      // tslint:disable-next-line:function-constructor
+      return typeof evaluated === 'boolean' ? evaluated : true;
+    };
+
+    const isVisibleByCondition = executeExpression(model?.customVisibility, true);
+
+    if (!isVisibleByCondition && formMode !== 'designer') return null;
+
+    const { namePrefix } = useFormItem();
+
+    const name = namePrefix ? [namePrefix, model?.name]?.join('.') : model?.name;
 
     return (
       <ConfigurableFormItem
@@ -35,7 +58,7 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
         labelCol={{ span: model?.hideLabel ? 0 : model?.labelCol }}
         wrapperCol={{ span: model?.hideLabel ? 24 : model?.wrapperCol }}
       >
-        <SubFormWrapper {...model} style={getStyle(model?.style, formData)} />
+        <SubFormWrapper {...model} name={name} style={getStyle(model?.style, formData)} />
       </ConfigurableFormItem>
     );
   },

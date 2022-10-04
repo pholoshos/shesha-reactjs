@@ -152,7 +152,7 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
           >
             <ComponentsContainer
               containerId={model.id}
-              // dynamicComponents={model?.isDynamic ? model?.components : []}
+               dynamicComponents={model?.isDynamic ? model?.components : []}
             />
           </CollapsiblePanel>
         </Show>

@@ -1,9 +1,7 @@
 import { IConfigurableItemBase } from '../../../../providers/itemListConfigurator/contexts';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 
-type ButtonActionType =
-  | 'executeScript'
-  | 'dispatchAnEvent';
+type ButtonActionType = 'executeScript' | 'dispatchAnEvent';
 
 export interface ITabPaneProps extends IConfigurableItemBase {
   id: string;
@@ -59,4 +57,5 @@ export interface ITabsComponentProps extends IConfigurableFormComponent {
   permissions?: string[];
   hidden?: boolean;
   customVisibility?: string;
+  defaultActiveStep?: string;
 }

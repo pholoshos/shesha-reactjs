@@ -41,7 +41,7 @@ export interface IQueryBuilderProps {
   useExpression?: boolean;
 }
 
-export const QueryBuilder: FC<IQueryBuilderProps> = (props) => {
+export const QueryBuilder: FC<IQueryBuilderProps> = props => {
   const { value, fields, fetchFields, useExpression } = props;
 
   const missingFields = useMemo(() => {
@@ -58,24 +58,21 @@ export const QueryBuilder: FC<IQueryBuilderProps> = (props) => {
 
   // In dynamic mode, we want all the widgets to to text so that they can be passed Mustache string templates
   // TODO: Add a dynamic component for type: 'slider' and number as that also can be a range, which would have to receive 2 value - {{start}} and {{end}}
-  const allFields = useMemo(
-    () => {
-      return useExpression
-        ? fields?.map(({ dataType, ...field }) => ({
+  const allFields = useMemo(() => {
+    return useExpression
+      ? fields?.map(({ dataType, ...field }) => ({
           ...field,
           dataType: ['date-time', 'date', 'time'].includes(dataType) ? 'dateTimeDynamic' : 'text',
         }))
-        : fields;
-    },
-    [useExpression, fields, fields?.length]
-  );
+      : fields;
+  }, [useExpression, fields, fields?.length]);
 
   // pre-parse tree and extract all used fields
   // load all fields which are missing
 
   const qbSettings = {
     ...InitialConfig.settings,
-    renderField: (props) => true ? <FieldAutocomplete {...props} /> : <FieldSelect {...props} />
+    renderField: props => (true ? <FieldAutocomplete {...props} /> : <FieldSelect {...props} />),
   };
 
   const convertFields = (fields: IProperty[]): Fields => {
@@ -160,9 +157,9 @@ export const QueryBuilder: FC<IQueryBuilderProps> = (props) => {
     return conf;
   }, [allFields]);
 
-  return missingFields.length > 0
-    ? <Skeleton></Skeleton>
-    : <QueryBuilderContent {...props} qbConfig={qbConfig} />;
+  console.log('QueryBuilder value,  missingFields, useExpression: ', value, missingFields, useExpression);
+
+  return missingFields.length > 0 ? <Skeleton></Skeleton> : <QueryBuilderContent {...props} qbConfig={qbConfig} />;
 };
 
 interface IQueryBuilderContentProps extends IQueryBuilderProps {
@@ -171,14 +168,14 @@ interface IQueryBuilderContentProps extends IQueryBuilderProps {
 
 const loadJsonLogic = (jlValue: object, config: Config) => {
   try {
-      const result = QbUtils.loadFromJsonLogic(jlValue, config);
-      //console.log('JsonLogic converted:', result);
-      return result;
+    const result = QbUtils.loadFromJsonLogic(jlValue, config);
+    //console.log('JsonLogic converted:', result);
+    return result;
   } catch (error) {
-    console.error('failed to parse JsonLogic expression', { error, jlValue, config })
+    console.error('failed to parse JsonLogic expression', { error, jlValue, config });
     return null;
   }
-}
+};
 
 const QueryBuilderContent: FC<IQueryBuilderContentProps> = ({
   showActionBtnOnHover = true,
@@ -186,7 +183,6 @@ const QueryBuilderContent: FC<IQueryBuilderContentProps> = ({
   value,
   qbConfig,
 }) => {
-
   const tree = useMemo(() => {
     const loadedTree = value
       ? loadJsonLogic(value, qbConfig) // QbUtils.loadFromJsonLogic(value, qbConfig)

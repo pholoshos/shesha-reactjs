@@ -2,7 +2,7 @@ import React from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { OrderedListOutlined } from '@ant-design/icons';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm } from '../../../../providers';
+import { useForm, useFormItem } from '../../../../providers';
 import { listSettingsForm } from './settings';
 import ConfigurableFormItem from '../formItem';
 import './styles/index.less';
@@ -20,6 +20,8 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
 
     const isHidden = isComponentHidden(model);
 
+    const { namePrefix } = useFormItem();
+
     if (isHidden) return null;
 
     return (
@@ -29,7 +31,7 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
         labelCol={{ span: model?.hideLabel ? 0 : model?.labelCol }}
         wrapperCol={{ span: model?.hideLabel ? 24 : model?.wrapperCol }}
       >
-        <ListControl {...model} containerId={model?.id} />
+        <ListControl {...model} containerId={model?.id} namePrefix={namePrefix || ''} />
       </ConfigurableFormItem>
     );
   },

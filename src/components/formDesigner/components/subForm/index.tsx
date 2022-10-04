@@ -3,7 +3,7 @@ import { IStylable, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { FormOutlined } from '@ant-design/icons';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useForm, SubFormProvider, SubFormProviderProps, useGlobalState } from '../../../../providers';
+import { useForm, SubFormProvider, SubFormProviderProps, useGlobalState, useFormItem } from '../../../../providers';
 import { alertSettingsForm } from './settings';
 import SubForm from './subForm';
 import ConfigurableFormItem from '../formItem';
@@ -48,13 +48,17 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
 
     if (!isVisibleByCondition && formMode !== 'designer') return null;
 
+    const { namePrefix } = useFormItem();
+
+    const name = namePrefix ? [namePrefix, model?.name]?.join('.') : model?.name;
+
     return (
       <ConfigurableFormItem
         model={model}
         labelCol={{ span: model?.hideLabel ? 0 : model?.labelCol }}
         wrapperCol={{ span: model?.hideLabel ? 24 : model?.wrapperCol }}
       >
-        <SubFormWrapper {...model} style={getStyle(model?.style, formData)} />
+        <SubFormWrapper {...model} name={name} style={getStyle(model?.style, formData)} />
       </ConfigurableFormItem>
     );
   },

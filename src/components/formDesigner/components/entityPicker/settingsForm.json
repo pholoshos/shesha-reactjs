@@ -84,7 +84,7 @@
       "name": "mode",
       "parentId": "root",
       "label": "Mode",
-      "hidden": true,
+      "hidden": false,
       "values": [
         {
           "label": "single",

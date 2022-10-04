@@ -1,11 +1,11 @@
-import React, { CSSProperties, FC, Fragment, ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { CSSProperties, FC, Fragment, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { Modal, Input, Button, ButtonProps, Select } from 'antd';
 import IndexTable from '../indexTable';
 import { IAnyObject } from '../../interfaces';
 import DataTableProvider, { useDataTable } from '../../providers/dataTable';
 import GlobalTableFilter from '../globalTableFilter';
 import TablePager from '../tablePager';
-import _ from 'lodash';
+import _, { camelCase } from 'lodash';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { IConfigurableColumnsBase } from '../../providers/datatableColumnsConfigurator/models';
@@ -16,6 +16,7 @@ import { usePublish } from '../../hooks';
 import Show from '../show';
 import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
 import { useMedia } from 'react-use';
+import { snakeCase } from 'lodash';
 import { useEntityDisplayText } from '../../utils/entity';
 
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
@@ -26,6 +27,10 @@ interface IWrappedEntityPickerProps {
   allowNewRecord?: boolean;
   parentEntityId?: string;
   onDblClick?: (data: any) => void;
+}
+interface ISelectedProps {
+  id?: string;
+  displayName?: string;
 }
 
 interface IAddNewRecordProps {
@@ -45,6 +50,7 @@ export interface IEntityPickerProps extends Omit<IWrappedEntityPickerProps, 'onD
   disabled?: boolean;
   loading?: boolean;
   name?: string;
+  mode?: 'single' | 'multiple' | 'tags';
   size?: SizeType;
   title?: string;
   useButtonPicker?: boolean;
@@ -76,6 +82,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   loading,
   value,
   name,
+  mode,
   size,
   useButtonPicker,
   pickerButtonProps,
@@ -90,6 +97,8 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   const [state, setState] = useState<IEntityPickerState>({
     showModal: false,
   });
+  const [selectedRows, setSelectedRows] = useState<ISelectedProps[]>([]);
+  const [selectedIds,setSelectedIds]= useState<string[]>([]);
   const isSmall = useMedia('(max-width: 480px)');
 
   const {
@@ -99,6 +108,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     selectedStoredFilterIds,
     columns,
   } = useDataTable();
+  const selectRef = useRef(undefined);
 
   usePublish(COLUMNS_CHANGED_EVENT_NAME, () => ({ stateId: 'NOT_PROVIDED', state: columns }), [columns]);
 
@@ -147,6 +157,12 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     }
   }, [formId, configurableColumns]);
 
+  useEffect(() => {
+    if (!!selectRef){
+      setSelectedIds(()=>selectedRows.map(({ id }) => id))
+    }
+  }, [selectedRows]);
+
   if (!tableId && !entityType) {
     throw new Error(
       'Please make sure that either tableId or entityType is configured for the entity picker to work properly'
@@ -164,6 +180,10 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
       onSelect(row);
     } else {
       handleOnChange(row);
+      console.log('row ::', row);
+      let isNewRow = !selectedRows.map(({ id }) => id).includes(row?.id);
+      let propertyName = camelCase(snakeCase(displayEntityKey));
+      if (isNewRow) setSelectedRows(prev => [...prev, { id: row?.id, displayName: row[propertyName] }]);
     }
 
     hidePickerDialog();
@@ -178,7 +198,10 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
       onChange(row && (row.id || row.Id), row);
     }
   };
-
+const handleMultiChange=(value:string[])=>{
+  setSelectedRows(()=>(selectedRows?.filter(row=>value.includes(row.id))));
+  setSelectedIds(()=>(value))
+}
   const onModalOk = () => {
     if (onSelect && state?.selectedRow) {
       onSelect(state?.selectedRow);
@@ -193,12 +216,14 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
 
   const displayName = useEntityDisplayText({ entityType: entityType, propertyName: displayEntityKey, entityId: value });
 
+  const isMultiMode=mode==='multiple'
+
   const handleButtonPickerClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event?.stopPropagation();
 
     showPickerDialog();
   };
-
+ 
   const selectedRowIndex = useMemo(() => {
     if (records?.length && value) {
       return records?.findIndex((item: any) => item?.Id === value);
@@ -229,6 +254,12 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     return <ReadOnlyDisplayFormItem value={displayName} />;
   }
 
+  const options=useMemo(()=>{
+    return selectedRows.map(({displayName,id})=>({label: displayName, value: id}))
+
+  },[selectedRows])
+  console.log('filteredDisplayName ::',selectedRows.map(({displayName,id})=>({label: displayName, value: id})));
+
   return (
     <div className="entity-picker-container">
       <div>
@@ -238,7 +269,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
           </Button>
         ) : (
           <Input.Group compact className="picker-input-group">
-            <Show when={true}>
+            <Show when={isMultiMode}>
               <Input
                 allowClear
                 className="picker-input-group-input"
@@ -249,15 +280,24 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
                 defaultValue={defaultValue}
                 onChange={handleChange}
               />
-            </Show>
-
-            <Show when={false}>
-              <Select style={{ width: 200 }}>
-                {columns?.map(({ caption, id }) => (
-                  <Select.Option key={id} value={id}>
-                    {caption}
-                  </Select.Option>
-                ))}
+            </Show> 
+            <Show when={isMultiMode}>
+              <Select
+                size={size}
+                onFocus={() => {
+                  selectRef.current.blur();
+                  showPickerDialog();
+                }}
+                value={selectedIds}
+                notFoundContent={''}
+                ref={selectRef}
+                allowClear
+                mode={'multiple'}
+                options={options}
+                showArrow={false}
+                onChange={handleMultiChange}
+                >
+                 {''}
               </Select>
             </Show>
 

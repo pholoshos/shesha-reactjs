@@ -88,4 +88,10 @@ export const PersonForm = addStory(Template, {
   mode: 'edit',
 });
 
+export const OrganisationEdit = addStory(Template, {
+  formId: { name: '/organisations/edit' },
+  id: '1C0558C5-8A67-48D8-9A06-F49DBED2187D',
+  mode: 'edit',
+});
+
 Basic.args = DEFAULT_ARGS;

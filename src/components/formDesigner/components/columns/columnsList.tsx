@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useContext, useState } from 'react';
+import React, { FC, useEffect, useRef, useContext, useState, Fragment } from 'react';
 import {
   DragDropContext,
   DropResult,
@@ -11,7 +11,7 @@ import {
 } from 'react-beautiful-dnd';
 
 import { IColumnProps } from './columns';
-import { Table, Space, Popconfirm, Button, Form, InputNumber } from 'antd';
+import { Table, Space, Popconfirm, Button, Form, InputNumber, Modal } from 'antd';
 import { MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import { nanoid } from 'nanoid/non-secure';
 
@@ -242,44 +242,49 @@ export const ColumnsList: FC<IProps> = ({ value, onChange }) => {
     }
   };
 
+  const [showDialog, setShowDialog] = useState(false);
+
+  const toggleModal = () => setShowDialog(prevVisible => !prevVisible);
+
   return (
-    <Space direction="vertical" style={{ width: '100%' }}>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId={'columns'}>
-          {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
-            <div ref={provided.innerRef} {...provided.droppableProps} style={getListStyle(snapshot.isDraggingOver)}>
-              <Table
-                scroll={{ x: 'mex-content' }}
-                bordered
-                pagination={false}
-                dataSource={columns}
-                columns={tableColumns}
-                rowKey={r => r.id}
-                components={{
-                  body: {
-                    row: ({ className, style, ...restProps }) => (
-                      <DraggableBodyRowInner
-                        columns={columns}
-                        className={className}
-                        style={style}
-                        {...restProps}
-                      />
-                    ),
-                    cell: EditableCell,
-                  },
-                }}
-              />
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-      <div>
-        <Button type="default" onClick={handleAddColumn} icon={<PlusOutlined />}>
-          Add Column
-        </Button>
-      </div>
-    </Space>
+    <Fragment>
+      <Button onClick={toggleModal}>Configure Columns</Button>
+
+      <Modal title="Configure Columns" visible={showDialog} onOk={toggleModal} onCancel={toggleModal} width="650px">
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId={'columns'}>
+              {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
+                <div ref={provided.innerRef} {...provided.droppableProps} style={getListStyle(snapshot.isDraggingOver)}>
+                  <Table
+                    scroll={{ x: 'mex-content' }}
+                    bordered
+                    pagination={false}
+                    dataSource={columns}
+                    columns={tableColumns}
+                    rowKey={r => r.id}
+                    components={{
+                      body: {
+                        row: ({ className, style, ...restProps }) => (
+                          <DraggableBodyRowInner columns={columns} className={className} style={style} {...restProps} />
+                        ),
+                        cell: EditableCell,
+                      },
+                    }}
+                  />
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+          <div>
+            <Button type="default" onClick={handleAddColumn} icon={<PlusOutlined />}>
+              Add Column
+            </Button>
+          </div>
+        </Space>
+      </Modal>
+    </Fragment>
   );
 };
 

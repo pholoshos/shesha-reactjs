@@ -22,6 +22,8 @@ export interface ITableComponentBaseProps extends ITableCrudConfig {
   dialogShowModalButtons?: boolean;
   dialogOnSuccessScript?: string;
   dialogOnErrorScript?: string;
+  containerStyle?: string;
+  tableStyle?: string;
   dialogSubmitHttpVerb?: 'POST' | 'PUT';
   //#endregion
 }

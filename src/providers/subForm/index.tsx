@@ -1,15 +1,15 @@
-import React, { FC, useReducer, useContext, useEffect, useMemo } from 'react';
+import React, { FC, useReducer, useContext, useEffect, useMemo, useRef } from 'react';
 import { useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
-import { useSubscribe } from '../../hooks';
+import { usePubSub, useSubscribe } from '../../hooks';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
 import { getQueryParams } from '../../utils/url';
 import { FormMarkupWithSettings } from '../form/models';
 import { setMarkupWithSettingsAction } from './actions';
 import { ISubFormProps } from './interfaces';
-import { message, notification } from 'antd';
+import { ColProps, message, notification } from 'antd';
 import { useGlobalState } from '../globalState';
 import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
@@ -48,10 +48,11 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   onChange,
 }) => {
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
+  const { publish } = usePubSub();
   const { formData = {}, formMode } = useForm();
   const { globalState } = useGlobalState();
 
-  const { 
+  const {
     refetch: fetchForm,
     formConfiguration: fetchFormResponse,
     loading: isFetchingForm,
@@ -75,13 +76,13 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     })();
   };
 
-  useEffect(() => {
-    console.log('LOGS:: SubFormProvider rendering...');
-  }, []);
+  const previousValue = useRef(value);
 
   useEffect(() => {
-    console.log('LOGS:: value changed ', value);
-  }, [value]);
+    if (typeof value === 'string' && typeof previousValue === 'string' && previousValue !== value) {
+      handleFetchData(value);
+    }
+  }, [value, globalState, formData]);
 
   const evaluatedQueryParams = useMemo(() => {
     if (formMode === 'designer') return {};
@@ -94,21 +95,32 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
     if (queryParams) {
       const getOnSubmitPayload = () => {
-        // tslint:disable-next-line:function-constructor
-        return new Function('data, query, globalState', queryParams)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+        try {
+          // tslint:disable-next-line:function-constructor
+          return new Function('data, query, globalState', queryParams)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+        } catch (error) {
+          console.warn('SubFormProvider: ', error);
+          return {};
+        }
       };
 
       params = { ...params, ...(typeof getOnSubmitPayload() === 'object' ? getOnSubmitPayload() : {}) };
     }
 
     return params;
-  }, [queryParams, formMode]);
+  }, [queryParams, formMode, globalState]);
 
-  const handleFetchData = () => fetchEntity({ queryParams: evaluatedQueryParams });
+  const handleFetchData = (id?: string) =>
+    fetchEntity({ queryParams: id ? { ...evaluatedQueryParams, id } : evaluatedQueryParams });
 
   useEffect(() => {
     if (queryParams && formMode !== 'designer' && dataSource === 'api') {
-      handleFetchData();
+      if (evaluatedQueryParams?.id || getUrl) {
+        // Only fetch when there's an `Id`. Ideally an API that is used to fetch data should have an id
+        handleFetchData();
+      } else {
+        onChange({});
+      }
     }
   }, [queryParams, evaluatedQueryParams]);
 
@@ -171,11 +183,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         if (onCreated) {
           const evaluateOnCreated = () => {
             // tslint:disable-next-line:function-constructor
-            return new Function('data, globalState, submittedValue, message', onCreated)(
+            return new Function('data, globalState, submittedValue, message, publish', onCreated)(
               formData,
               globalState,
               submittedValue?.result,
-              message
+              message,
+              publish
             );
           };
 
@@ -197,11 +210,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         if (onUpdated) {
           const evaluateOnUpdated = () => {
             // tslint:disable-next-line:function-constructor
-            return new Function('data, globalState, submittedValue, message', onUpdated)(
+            return new Function('data, globalState, response, message, publish', onUpdated)(
               formData,
               globalState,
               submittedValue?.result,
-              message
+              message,
+              publish
             );
           };
 
@@ -243,7 +257,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       dispatch(setMarkupWithSettingsAction(markup));
     }
   }, [formName, markup]); //
-  
+
   useEffect(() => {
     if (!isFetchingForm && fetchFormResponse) {
       dispatch(setMarkupWithSettingsAction({ components: fetchFormResponse.markup, formSettings: fetchFormResponse.settings }));
@@ -327,6 +341,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   });
   //#endregion
 
+  const getColSpan = (span: number | ColProps): ColProps => {
+    if (!span) return null;
+
+    return typeof span === 'number' ? { span } : span;
+  };
+
   return (
     <SubFormContext.Provider
       value={{
@@ -348,8 +368,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         components: state?.components,
         formSettings: {
           ...state?.formSettings,
-          labelCol: labelCol || (state?.formSettings?.labelCol as any), // Override with the incoming one
-          wrapperCol: wrapperCol || (state?.formSettings?.wrapperCol as any), // Override with the incoming one
+          labelCol: getColSpan(labelCol) || getColSpan(state?.formSettings?.labelCol),
+          wrapperCol: getColSpan(wrapperCol) || getColSpan(state?.formSettings?.wrapperCol), // Override with the incoming one
         },
         name,
       }}

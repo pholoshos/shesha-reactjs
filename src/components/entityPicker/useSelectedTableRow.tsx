@@ -40,9 +40,14 @@ export const useSelectedTableRow = (selectedTableId: string) => {
       ],
     })
       .then(response => {
-        const { rows } = response?.result;
+        if(response?.result){
+          const { rows } = response?.result;
 
-        setData(rows?.length ? rows[0] : null); // length === 1
+          setData(rows?.length ? rows[0] : null); // length === 1
+        }else{
+          setData(null)
+        }
+  
       })
       .finally(() => {
         setLoading(false);

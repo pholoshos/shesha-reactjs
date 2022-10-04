@@ -303,3 +303,9 @@ export const DEFAULT_FORM_SETTINGS: IFormSettings = {
   labelCol: { span: 5 },
   wrapperCol: { span: 13 },
 };
+
+export type ActionParametersJs = string;
+export type ActionParametersDictionary = [{ key: string; value: string }];
+export type ActionParameters = ActionParametersJs | ActionParametersDictionary;
+export type ActionArguments = { [key: string]: any };
+export type GenericDictionary = { [key: string]: any };

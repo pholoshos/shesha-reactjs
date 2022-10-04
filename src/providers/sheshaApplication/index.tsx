@@ -22,6 +22,8 @@ import { UiProvider } from '../ui';
 import { MetadataDispatcherProvider } from '../metadataDispatcher';
 import { IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
 import { ReferenceListDispatcherProvider } from '../referenceListDispatcher';
+import { IConfigurationFrameworkHookArguments, useItemCancelVersionEvent, useItemCreateNewVersionEvent, usePublishItemEvent, useSetItemReadyEvent } from '../../utils/configurationFramework/actions';
+import { ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -35,18 +37,19 @@ export interface IShaApplicationProviderProps {
   routes?: ISheshaRutes;
 }
 
-const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>> = ({
-  children,
-  backendUrl,
-  applicationName,
-  accessTokenName,
-  router,
-  toolboxComponentGroups = [],
-  unauthorizedRedirectUrl,
-  whitelistUrls,
-  themeProps,
-  routes,
-}) => {
+const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>> = (props) => {
+  const {
+    children,
+    backendUrl,
+    applicationName,
+    accessTokenName,
+    router,
+    toolboxComponentGroups = [],
+    unauthorizedRedirectUrl,
+    whitelistUrls,
+    themeProps,
+    routes,
+  } = props;
   const [state, dispatch] = useReducer(appConfiguratorReducer, {
     ...SHESHA_APPLICATION_CONTEXT_INITIAL_STATE,
     routes: routes ?? DEFAULT_SHESHA_ROUTES,
@@ -54,6 +57,16 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     applicationName,
     toolboxComponentGroups,
   });
+
+  //#region Configuration Framework
+
+  const cfArgs: IConfigurationFrameworkHookArguments = { backendUrl: state.backendUrl, httpHeaders: state.httpHeaders };
+  usePublishItemEvent(cfArgs);
+  useSetItemReadyEvent(cfArgs);
+  useItemCreateNewVersionEvent(cfArgs);
+  useItemCancelVersionEvent(cfArgs);
+
+  //#endregion
 
   const onSetRequestHeaders = (headers: IRequestHeaders) => {
     dispatch(setHeadersAction(headers));
@@ -76,28 +89,30 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
             headers: state.httpHeaders,
           }}
         >
-          <UiProvider>
-            <ThemeProvider {...(themeProps || {})}>
-              <ShaRoutingProvider router={router}>
-                <AuthProvider
-                  tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
-                  onSetRequestHeaders={onSetRequestHeaders}
-                  unauthorizedRedirectUrl={unauthorizedRedirectUrl}
-                  whitelistUrls={whitelistUrls}
-                >
-                  <AuthorizationSettingsProvider>
-                    <AppConfiguratorProvider>
-                      <ReferenceListDispatcherProvider>
-                        <MetadataDispatcherProvider>
-                          <DynamicModalProvider>{children}</DynamicModalProvider>
-                        </MetadataDispatcherProvider>
-                      </ReferenceListDispatcherProvider>
-                    </AppConfiguratorProvider>
-                  </AuthorizationSettingsProvider>
-                </AuthProvider>
-              </ShaRoutingProvider>
-            </ThemeProvider>
-          </UiProvider>
+          <ConfigurableActionDispatcherProvider>
+            <UiProvider>
+              <ThemeProvider {...(themeProps || {})}>
+                <ShaRoutingProvider router={router}>
+                  <AuthProvider
+                    tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
+                    onSetRequestHeaders={onSetRequestHeaders}
+                    unauthorizedRedirectUrl={unauthorizedRedirectUrl}
+                    whitelistUrls={whitelistUrls}
+                  >
+                    <AuthorizationSettingsProvider>
+                      <AppConfiguratorProvider>
+                        <ReferenceListDispatcherProvider>
+                          <MetadataDispatcherProvider>
+                            <DynamicModalProvider>{children}</DynamicModalProvider>
+                          </MetadataDispatcherProvider>
+                        </ReferenceListDispatcherProvider>
+                      </AppConfiguratorProvider>
+                    </AuthorizationSettingsProvider>
+                  </AuthProvider>
+                </ShaRoutingProvider>
+              </ThemeProvider>
+            </UiProvider>
+          </ConfigurableActionDispatcherProvider>
         </RestfulProvider>
       </SheshaApplicationActionsContext.Provider>
     </SheshaApplicationStateContext.Provider>

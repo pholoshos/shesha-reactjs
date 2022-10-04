@@ -21,6 +21,7 @@ const buttonGroupReducer = handleActions<IButtonGroupConfiguratorStateContext, a
         name: `button${buttonsCount + 1}`,
         label: `Button ${buttonsCount + 1}`,
         itemSubType: 'button',
+        buttonType: 'link',
       };
 
       const newItems = [...state.items];

@@ -1,12 +1,12 @@
 import React, { FC, Fragment, ReactNode } from 'react';
 import { Tooltip, Button } from 'antd';
-import { evaluateValue, joinStringValues, ShaIcon, useForm, useShaRouting } from '../..';
+import { joinStringValues, ShaIcon, useForm, useShaRouting } from '../..';
 import { nanoid } from 'nanoid/non-secure';
 import classNames from 'classnames';
 import { IconType } from '../shaIcon';
 import ConditionalWrap from '../conditionalWrapper';
 import moment from 'moment';
-import { evaluateExpression } from '../../providers/form/utils';
+import { evaluateExpression, getFormActionArguments } from '../../providers/form/utils';
 import { IToolbarButtonItem, IToolbarProps } from './models';
 
 /**
@@ -69,6 +69,8 @@ export const ToolbarButtonGroup: FC<IToolbarProps> = ({ items, className, btnSiz
       return;
     }
 
+    console.log('handleClick!', item)
+
     switch (item.buttonAction) {
       case 'submit': {
         form?.submit();
@@ -85,21 +87,15 @@ export const ToolbarButtonGroup: FC<IToolbarProps> = ({ items, className, btnSiz
         const action = formAction ? getAction(formId, formAction) : null;
 
         if (action) {
-          const actionArgs = {};
-
-          for (const parameterIdx in customActionParameters) {
-            if (parameterIdx) {
-              const parameter = customActionParameters[parameterIdx];
-
-              const value = evaluateValue(parameter?.value, { data: formData });
-
-              if (value) {
-                actionArgs[parameter?.key] = value;
-              }
-            }
-          }
-
-          action(formData, actionArgs);
+          const evaluationContext = {
+            data: formData,
+            moment: moment,
+            form: form,
+            formMode: formMode,
+          };
+          getFormActionArguments(customActionParameters, evaluationContext)
+            .then(actionArgs => action(formData, actionArgs))
+            .catch(error => console.error(error)); // todo: add alert
         }
         return;
       }

@@ -24,7 +24,6 @@ const FormMarkupConverter: FC<IFormMarkupConverterProps> = ({
 
     const onChange = (_value: IFlatComponentsStructure) => {
         console.log('CONVERTER onChange')
-        debugger
     }
 
     return <>{children(flatComponents, onChange)}</>;

@@ -3,7 +3,7 @@ import { Button, message, Modal } from 'antd';
 import { useShaRouting, useForm, useModal, useGlobalState, useSheshaApplication } from '../../../../../providers';
 import { ISelectionProps } from '../../../../../providers/dataTableSelection/models';
 import { IModalProps } from '../../../../../providers/dynamicModal/models';
-import { evaluateKeyValuesToObject, evaluateString } from '../../../../../providers/form/utils';
+import { evaluateKeyValuesToObject, evaluateString, getFormActionArguments } from '../../../../../providers/form/utils';
 import ShaIcon, { IconType } from '../../../../shaIcon';
 import classNames from 'classnames';
 import moment from 'moment';
@@ -104,7 +104,12 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
         if (props.targetUrl) {
           const preparedUrl =
             props.targetUrl.indexOf('{{') > -1
-              ? evaluateString(props.targetUrl, { selectedRow: props.selectedRow })
+              ? evaluateString(props.targetUrl,
+                {
+                  selectedRow: props.selectedRow,
+                  data: formData,
+                }
+              )
               : props.targetUrl;
 
           router?.push(preparedUrl);
@@ -148,7 +153,19 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
             ? props?.customEventNameToDispatch
             : props?.eventName;
 
-        publish(eventName, { stateId: props?.uniqueStateId || 'NO_PROVIDED' });
+            const evaluationContext = {
+          selectedRow: props.selectedRow,
+          data: formData,
+          moment: moment,
+          form: form,
+          formMode: formMode,
+        };
+        getFormActionArguments(props?.customActionParameters, evaluationContext)
+          .then(actionArgs => { 
+            //console.log('toolbar button resolve args', { actionArgs, evaluationContext })
+            publish(eventName, { stateId: props?.uniqueStateId || 'NO_PROVIDED', state: actionArgs });
+          })
+          .catch(error => console.error(error)); // todo: add alert
         break;
       }
       case 'executeFormAction':

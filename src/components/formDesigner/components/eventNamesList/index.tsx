@@ -6,9 +6,8 @@ import { Select } from 'antd';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
 import { alertSettingsForm } from './settings';
-import { EVENT_NAMES } from './eventNames';
+import { EVENTS } from './eventNames';
 import ConfigurableFormItem from '../formItem';
-import { camelCase } from 'lodash';
 
 export interface IEventNamesComponentProps extends IConfigurableFormComponent {}
 
@@ -40,9 +39,9 @@ interface IEventNamesProps extends IFormItem {}
 const EventNames: FC<IEventNamesProps> = props => {
   return (
     <Select {...props} allowClear showSearch>
-      {EVENT_NAMES?.map(name => (
-        <Select.Option value={name} key={name}>
-          {camelCase(name)}
+      {EVENTS?.map(event => (
+        <Select.Option value={event.name} key={event.name}>
+          {event.displayName}
         </Select.Option>
       ))}
       <Select.Option value="CUSTOM_EVENT">( add custom event )</Select.Option>

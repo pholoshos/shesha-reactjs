@@ -21,6 +21,7 @@ import {
 import { getFlagSetters } from '../utils/flagsSetters';
 import {
   setFlatComponentsAction,
+  setSettingsAction,
   setFormModeAction,
   setVisibleComponentsAction,
   setFormDataAction,
@@ -43,6 +44,7 @@ import {
 } from '../../interfaces';
 import { FormPubsubConstants } from './pubSub';
 import { useSubscribe } from '../../hooks';
+import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
 
 export interface IFormProviderProps {
   uniqueStateId?: string;
@@ -67,11 +69,53 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   context,
   formRef,
   uniqueStateId,
-  formSettings,
+  formSettings
 }) => {
   const toolboxComponents = useFormDesignerComponents();
 
   const getToolboxComponent = (type: string) => toolboxComponents[type];
+
+  const { registerAction } = useConfigurableActionDispatcher();
+
+  const actionsOwner = 'Form';
+  useEffect(() => {
+    registerAction({
+      name: 'Start Edit',
+      owner: actionsOwner,
+      hasArguments: false,
+      executer: () => {
+        setFormMode('edit');
+        return Promise.resolve()
+      }
+    });
+    registerAction({
+      name: 'Cancel Edit',
+      owner: actionsOwner,
+      hasArguments: false,
+      executer: () => {
+        setFormMode('readonly');
+        return Promise.resolve()
+      }
+    });
+    registerAction({
+      name: 'Submit',
+      owner: actionsOwner,
+      hasArguments: false,
+      executer: () => {
+        form.submit();
+        return Promise.resolve()
+      }
+    });
+    registerAction({
+      name: 'Reset',
+      owner: actionsOwner,
+      hasArguments: false,
+      executer: () => {
+        form.resetFields();
+        return Promise.resolve()
+      }
+    });
+  }, []);
 
   const initial: IFormStateContext = {
     ...FORM_CONTEXT_INITIAL_STATE,
@@ -97,14 +141,19 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   }, [flatComponents]);
 
   useEffect(() => {
+    if (formSettings !== state.formSettings) {
+      //console.log('LOG: update flat components');
+      setSettings(formSettings);
+    }
+  }, [formSettings]);
+
+  useEffect(() => {
     if (mode !== state.formMode) {
       setFormMode(mode);
     }
   }, [mode]);
 
   const getComponentModel = componentId => {
-    if (!state.allComponents[componentId])
-      debugger
     return state.allComponents[componentId];
   };
 
@@ -141,6 +190,10 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   const setFlatComponents = (flatComponents: IFlatComponentsStructure) => {
     dispatch(setFlatComponentsAction(flatComponents));
+  };
+
+  const setSettings = (settings: IFormSettings) => {
+    dispatch(setSettingsAction(settings));
   };
 
   //#region Set visible components

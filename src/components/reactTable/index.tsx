@@ -350,6 +350,7 @@ const ReactTable: FC<IReactTableProps> = ({
               {rows.map((row, rowIndex) => {
                 return (
                   <Row
+                    key={rowIndex}
                     prepareRow={prepareRow}
                     onClick={handleSelectRow}
                     onDoubleClick={handleDoubleClickRow}

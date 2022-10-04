@@ -1,20 +1,43 @@
-import React, { FC, useReducer, useContext, PropsWithChildren } from 'react';
+import React, { FC, useReducer, useContext, PropsWithChildren, useEffect } from 'react';
 import { shaRoutingReducer } from './reducer';
 import { ShaRoutingActionsContext, ShaRoutingStateContext, SHA_ROUTING_CONTEXT_INITIAL_STATE } from './contexts';
 import { getFlagSetters } from '../utils/flagsSetters';
 import { Router } from 'next/router';
+import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
+import { navigateArgumentsForm } from './actions/navigate-arguments';
 
 export interface IRoutingProviderProvider {
   router: Router;
 }
 
+interface INavigateActoinArguments {
+  target: string;
+}
+
 const ShaRoutingProvider: FC<PropsWithChildren<any>> = ({ children, router }) => {
   const [state, dispatch] = useReducer(shaRoutingReducer, { ...SHA_ROUTING_CONTEXT_INITIAL_STATE, router });
-
+  const { registerAction } = useConfigurableActionDispatcher();
+  
   /* NEW_ACTION_DECLARATION_GOES_HERE */
   const goingToRoute = (route: string) => {
     state?.router?.push(route);
   };
+
+  useEffect(() => {
+    console.log('register navigate action', { router, stateRoute: state.router })
+    registerAction<INavigateActoinArguments>({
+      name: 'Navigate',
+      owner: 'Common',
+      hasArguments: true,
+      executer: (request) => {
+        console.log('execute navigate', request)
+        return state?.router
+          ? state?.router?.push(request.target)
+          : Promise.reject('Router is not available');
+      },
+      argumentsFormMarkup: navigateArgumentsForm
+    });
+  }, [state, state?.router]);
 
   return (
     <ShaRoutingStateContext.Provider value={state}>

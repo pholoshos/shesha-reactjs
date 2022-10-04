@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, PropsWithChildren } from 'react';
+import React, { FC, useReducer, useContext, PropsWithChildren, useEffect } from 'react';
 import DynamicModalReducer from './reducer';
 import {
   DynamicModalActionsContext,
@@ -15,14 +15,90 @@ import {
 } from './actions';
 import { IModalProps } from './models';
 import { DynamicModal } from '../../components/dynamicModal';
+import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
+import { dialogArgumentsForm } from './actions/show-dialog-arguments';
+import { FormIdentifier } from '../form/models';
+import { IKeyValue } from '../../interfaces/keyValue';
+import { nanoid } from 'nanoid/non-secure';
+import { evaluateKeyValuesToObject } from '../form/utils';
 
 export interface IDynamicModalProviderProps {}
+
+export interface IShowModalactionArguments {
+  modalTitle: string;
+  formId: FormIdentifier;
+  showModalFooter: boolean;
+  additionalProperties?: IKeyValue[];
+  modalWidth?: number;
+}
 
 const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = ({ children }) => {
   const [state, dispatch] = useReducer(DynamicModalReducer, {
     ...DYNAMIC_MODAL_CONTEXT_INITIAL_STATE,
   });
 
+  const { registerAction } = useConfigurableActionDispatcher();
+  useEffect(() => {
+    registerAction<IShowModalactionArguments>({
+      name: 'Show Dialog',
+      owner: 'Common',
+      hasArguments: true,
+      executer: (actionArgs, context) => {
+        console.log('show dialog') 
+        const modalId = nanoid();
+
+        const formData = context?.formData ?? {};
+        const initialValues = evaluateKeyValuesToObject(actionArgs.additionalProperties, formData);
+        const parentFormValues = formData;
+
+        return new Promise((resolve, reject) => {
+          
+
+          const modalProps: IModalProps = {
+            ...actionArgs,
+            id: modalId,
+            initialValues: initialValues,
+            parentFormValues: parentFormValues,
+            isVisible: true,
+            onSubmitted: (values) => {
+              removeModal(modalId);
+              
+              console.log('dialog success:', { values });
+              resolve(values); // todo: return result e.g. we may need to handle created entity id and navigate to edit/details page
+            },
+            /*
+            onFailed: (error) => {
+              removeModal(modalId);
+
+              console.log('dialog failed:', { error });
+              reject(); // todo: return error
+            },*/
+          };
+          console.log('modalProps', modalProps)
+          createModal({ ...modalProps, isVisible: true });
+          
+          // wait for modal completion and resolve the promise
+          // if submit failed - reject it
+        });
+      },
+      argumentsFormMarkup: dialogArgumentsForm
+    });
+  }, []);
+  /*
+      const modalProps: IModalProps = {
+      id: props.id, // link modal to the current form component by id
+      isVisible: false,
+      formId: props.modalFormId,
+      title: props.modalTitle,
+      showModalFooter: convertedProps?.showModalFooter,
+      submitHttpVerb: convertedProps?.submitHttpVerb,
+      onSuccessRedirectUrl: convertedProps?.onSuccessRedirectUrl,
+      destroyOnClose: true,
+      width: props?.modalWidth,
+      initialValues: evaluateKeyValuesToObject(convertedProps?.additionalProperties, formData),
+      parentFormValues: formData,
+    };
+ */
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   const toggle = (id: string, isVisible: boolean) => {

@@ -5,7 +5,7 @@ import { IAnyObject } from '../../interfaces';
 import DataTableProvider, { useDataTable } from '../../providers/dataTable';
 import GlobalTableFilter from '../globalTableFilter';
 import TablePager from '../tablePager';
-import _, { camelCase } from 'lodash';
+import _, { camelCase,snakeCase } from 'lodash';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { IConfigurableColumnsBase } from '../../providers/datatableColumnsConfigurator/models';
@@ -16,7 +16,6 @@ import { usePublish } from '../../hooks';
 import Show from '../show';
 import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
 import { useMedia } from 'react-use';
-import { snakeCase } from 'lodash';
 import { useEntityDisplayText } from '../../utils/entity';
 
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';

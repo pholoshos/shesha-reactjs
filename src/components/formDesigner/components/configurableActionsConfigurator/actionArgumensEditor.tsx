@@ -35,8 +35,6 @@ const getDefaultFactory = (markup: FormMarkup): IConfigurableActionArgumentsForm
 export const ActionArgumentsEditor: FC<IActionArgumentsEditorProps> = ({ action, value, onChange }) => {
 
     const argumentsEditor = useMemo(() => {
-        console.log('LOG: recalc arguments editor')
-
         const settingsFormFactory = action.argumentsFormFactory
             ? action.argumentsFormFactory
             : action.argumentsFormMarkup

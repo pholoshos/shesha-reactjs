@@ -5,14 +5,13 @@ import { BorderOutlined } from '@ant-design/icons';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { IModalProperties } from '../../../../providers/dynamicModal/models';
 import ConfigurableButton from './configurableButton';
 import { IButtonGroupButton } from '../../../../providers/buttonGroupConfigurator/models';
 import { useAuth, useForm } from '../../../..';
 
 export type IActionParameters = [{ key: string; value: string }];
 
-export interface IButtonProps extends IButtonGroupButton, IConfigurableFormComponent, IModalProperties {}
+export interface IButtonProps extends IButtonGroupButton, IConfigurableFormComponent {}
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -60,7 +59,12 @@ const ButtonField: IToolboxComponent<IButtonProps> = {
     const buttonModel: IButtonProps = {
       ...model,
       label: 'Submit',
-      buttonAction: 'submit',
+      actionConfiguration: {
+        actionName: 'Submit',
+        actionOwner: 'Form',
+        handleFail: false,
+        handleSuccess: false,
+      },
       buttonType: 'default',
     };
     return buttonModel;

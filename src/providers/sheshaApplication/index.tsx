@@ -22,7 +22,6 @@ import { UiProvider } from '../ui';
 import { MetadataDispatcherProvider } from '../metadataDispatcher';
 import { IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
 import { ReferenceListDispatcherProvider } from '../referenceListDispatcher';
-import { IConfigurationFrameworkHookArguments, useItemCancelVersionEvent, useItemCreateNewVersionEvent, usePublishItemEvent, useSetItemReadyEvent } from '../../utils/configurationFramework/actions';
 import { ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
 
 export interface IShaApplicationProviderProps {
@@ -57,16 +56,6 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     applicationName,
     toolboxComponentGroups,
   });
-
-  //#region Configuration Framework
-
-  const cfArgs: IConfigurationFrameworkHookArguments = { backendUrl: state.backendUrl, httpHeaders: state.httpHeaders };
-  usePublishItemEvent(cfArgs);
-  useSetItemReadyEvent(cfArgs);
-  useItemCreateNewVersionEvent(cfArgs);
-  useItemCancelVersionEvent(cfArgs);
-
-  //#endregion
 
   const onSetRequestHeaders = (headers: IRequestHeaders) => {
     dispatch(setHeadersAction(headers));

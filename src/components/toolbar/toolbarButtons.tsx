@@ -1,12 +1,11 @@
 import React, { FC, Fragment, ReactNode } from 'react';
 import { Tooltip, Button } from 'antd';
-import { joinStringValues, ShaIcon, useForm, useShaRouting } from '../..';
+import { joinStringValues, ShaIcon, useForm } from '../..';
 import { nanoid } from 'nanoid/non-secure';
 import classNames from 'classnames';
 import { IconType } from '../shaIcon';
 import ConditionalWrap from '../conditionalWrapper';
 import moment from 'moment';
-import { evaluateExpression, getFormActionArguments } from '../../providers/form/utils';
 import { IToolbarButtonItem, IToolbarProps } from './models';
 
 /**
@@ -14,11 +13,10 @@ import { IToolbarButtonItem, IToolbarProps } from './models';
  *
  * Can be rendered as toolbar items and extra buttons on the CollapsiblePanel
  */
-export const ToolbarButtonGroup: FC<IToolbarProps> = ({ items, className, btnSize = 'small', formId }) => {
+export const ToolbarButtonGroup: FC<IToolbarProps> = ({ items, className, btnSize = 'small' }) => {
   const formState = useForm();
-  const { router } = useShaRouting();
 
-  const { formData, form, getAction, formMode } = formState;
+  const { formData, form, formMode } = formState;
 
   const renderIcon = (icon: string | ReactNode) =>
     typeof icon === 'string' ? <ShaIcon iconName={icon as IconType} /> : icon;
@@ -59,62 +57,8 @@ export const ToolbarButtonGroup: FC<IToolbarProps> = ({ items, className, btnSiz
   const handleClick = (event: React.MouseEvent<HTMLElement, MouseEvent>, item: IToolbarButtonItem) => {
     event.stopPropagation();
 
-    const { actionScript, targetUrl, formAction, customActionParameters } = item;
-
-    function executeExpression() {
-      if (actionScript) {
-        getExpressionExecutor(actionScript);
-      }
-
-      return;
-    }
-
-    console.log('handleClick!', item)
-
-    switch (item.buttonAction) {
-      case 'submit': {
-        form?.submit();
-        return;
-      }
-      case 'reset': {
-        form?.resetFields();
-        return;
-      }
-      case 'dialogue': {
-        return;
-      }
-      case 'executeFormAction': {
-        const action = formAction ? getAction(formId, formAction) : null;
-
-        if (action) {
-          const evaluationContext = {
-            data: formData,
-            moment: moment,
-            form: form,
-            formMode: formMode,
-          };
-          getFormActionArguments(customActionParameters, evaluationContext)
-            .then(actionArgs => action(formData, actionArgs))
-            .catch(error => console.error(error)); // todo: add alert
-        }
-        return;
-      }
-      case 'executeScript': {
-        executeExpression();
-        return;
-      }
-      case 'navigate': {
-        const evaluatedUrl = evaluateExpression(targetUrl, formData);
-
-        if (targetUrl) {
-          router?.push(evaluatedUrl);
-        }
-        return;
-      }
-
-      default:
-        break;
-    }
+    if (item.onClick)
+      item.onClick(null);
   };
 
   return (

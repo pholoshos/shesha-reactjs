@@ -1,4 +1,3 @@
-import { FormMode } from './../form/models';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ButtonType } from 'antd/lib/button';
 import { IConfigurableActionConfiguration } from '../../interfaces/configurableAction';
@@ -46,48 +45,6 @@ export interface IButtonGroupItemBase {
 
 export interface IButtonGroupButton extends IButtonGroupItemBase {
   itemSubType: ToolbarItemSubType;
-  buttonAction?: ButtonActionType;
-  refreshTableOnSuccess?: boolean; // TODO: Remove this and make this logic more generic
-  targetUrl?: string;
-
-  /**
-   * Predefined form action that gets executed via events
-   */
-  formAction?: string;
-
-  /**
-   * Custom form events that can be passed with parameters
-   */
-  customFormAction?: string;
-  uniqueStateId?: string;
-  customAction?: string;
-  customActionParameters?: string;
-  actionScript?: string;
-  size?: SizeType;
-  modalFormId?: string;
-  modalTitle?: string;
-  modalFormMode?: FormMode;
-  skipFetchData?: boolean;
-  submitLocally?: boolean;
-
-  // This is the event that will be triggered once the form has been submitted. The event will be passed this data
-  onSubmitEvent?: string;
-
-  /** An event name to dispatch on the click of a button */
-  eventName?: string;
-
-  /** The string representing a custom event name to dispatch when the button has been dispatched
-   * in case we forgot to include it in the `eventName` dropdown
-   */
-  customEventNameToDispatch?: string;
-
-  modalWidth?: number;
-  modalActionOnSuccess?: 'keepOpen' | 'navigateToUrl' | 'close' | undefined;
-  showConfirmDialogBeforeSubmit?: boolean;
-  modalConfirmDialogMessage?: string;
-  onSuccessScript?: string;
-  onErrorScript?: string;
-
   actionConfiguration?: IConfigurableActionConfiguration;
 }
 

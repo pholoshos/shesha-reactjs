@@ -34,11 +34,6 @@ const ConfigurableActionConfiguratorComponent: IToolboxComponent<IConfigurableAc
         <ConfigurableActionConfigurator editorConfig={model} level={1} />
       </Form.Item>
     );
-    // return (
-    //   <ConfigurableFormItem model={model}>
-    //     <ConfigurableActionConfigurator editorConfig={model} />
-    //   </ConfigurableFormItem>
-    // );
   },
   settingsFormMarkup: configurableActionsConfiguratorSettingsForm,
   validateSettings: model => validateConfigurableComponentSettings(configurableActionsConfiguratorSettingsForm, model),
@@ -80,18 +75,6 @@ const ConfigurableActionConfigurator: FC<IConfigurableActionConfiguratorProps> =
   const { getActions, getConfigurableAction } = useConfigurableActionDispatcher();
   const actions = getActions();
 
-  /*
-    get parent form settings
-    draw nested form with the same layout settings
-    fetch arguments editor
-    hide arguments if not applicable
-  */
-  /*
-    layout: props.layout ?? formSettings.layout,
-    labelCol: props.labelCol ?? formSettings.labelCol,
-    wrapperCol: props.wrapperCol ?? formSettings.wrapperCol,
-    colon: formSettings.colon,
-    */
   const formValues = useMemo<IActionFormModel>(() => {
     if (!value)
       return null;
@@ -118,15 +101,6 @@ const ConfigurableActionConfigurator: FC<IConfigurableActionConfiguratorProps> =
     }
   }
 
-  /*
-  const selectedActionFullName = form.getFieldValue('actionFullName');
-  const selectedAction = useMemo(() => {
-    const actionId = parseActionFullName(selectedActionFullName);
-    return actionId
-      ? getConfigurableAction({ owner: actionId.actionOwner, name: actionId.actionName })
-      : null;
-  }, [selectedActionFullName]);
-  */
   const { actionName, actionOwner } = value ?? {};
   const selectedAction = useMemo(() => {
     return actionName
@@ -134,7 +108,6 @@ const ConfigurableActionConfigurator: FC<IConfigurableActionConfiguratorProps> =
       : null;
   }, [actionName, actionOwner]);  
 
-  console.log('LOG: render action', { actionName, actionOwner, selectedAction })
   return (
     <div
       style={{ paddingLeft: 10 }} className="sha-action-props"

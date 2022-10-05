@@ -42,37 +42,37 @@ export interface IToolbarButton extends IToolbarItemBase {
   itemSubType: ToolbarItemSubType;
   buttonAction?: ButtonActionType;
   actionConfiguration?: IConfigurableActionConfiguration;
-  refreshTableOnSuccess?: boolean;
-  targetUrl?: string;
+  //refreshTableOnSuccess?: boolean;
+  //targetUrl?: string;
 
   /**
    * @deprecated - use customAction. It is named that way to be consistent with the 
    */
-  formAction?: string;
-  customAction?: string;
-  action?: IConfigurableActionConfiguration;
-  customActionParameters?: ActionParameters;
-  actionScript?: string;
-  size?: SizeType;
-  modalFormId?: string;
-  modalTitle?: string;
-  modalWidth?: number;
-  modalActionOnSuccess?: 'keepOpen' | 'navigateToUrl' | 'close' | undefined;
-  showConfirmDialogBeforeSubmit?: boolean;
-  modalConfirmDialogMessage?: string;
+  //formAction?: string;
+  //customAction?: string;
+  // action?: IConfigurableActionConfiguration;
+  // customActionParameters?: ActionParameters;
+  // actionScript?: string;
+  // size?: SizeType;
+  // modalFormId?: string;
+  // modalTitle?: string;
+  // modalWidth?: number;
+  // modalActionOnSuccess?: 'keepOpen' | 'navigateToUrl' | 'close' | undefined;
+  // showConfirmDialogBeforeSubmit?: boolean;
+  // modalConfirmDialogMessage?: string;
 
-  onSuccessScript?: string;
+  // onSuccessScript?: string;
 
-  onErrorScript?: string;
+  // onErrorScript?: string;
 
-  /** An event name to dispatch on the click of a button */
-  eventName?: string;
+  // /** An event name to dispatch on the click of a button */
+  // eventName?: string;
 
-  /** The string representing a custom event name to dispatch when the button has been dispatched
-   * in case we forgot to include it in the `eventName` dropdown
-   */
-  customEventNameToDispatch?: string;
-  uniqueStateId?: string;
+  // /** The string representing a custom event name to dispatch when the button has been dispatched
+  //  * in case we forgot to include it in the `eventName` dropdown
+  //  */
+  // customEventNameToDispatch?: string;
+  // uniqueStateId?: string;
 }
 
 export interface IButtonGroup extends IToolbarItemBase {

@@ -4,8 +4,9 @@ import SectionSeparator from '../../../sectionSeparator';
 import PropertyAutocomplete from '../../../propertyAutocomplete/propertyAutocomplete';
 import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
-import { AutocompleteDto, AutocompleteRaw } from '../../../autocomplete';
+import { Autocomplete, AutocompleteRaw, IDtoType, ISelectOption } from '../../../autocomplete';
 import { ISubFormProps } from '../../../../providers/subForm/interfaces';
+import { IGuidNullableEntityWithDisplayNameDto } from '../../../..';
 
 const Option = Select.Option;
 
@@ -64,11 +65,26 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         <Checkbox />
       </Form.Item>
 
-      <FormItem name="formPath" label="Form Path">
-        <AutocompleteDto
+      <FormItem name="formName" label="Form Path">
+        <Autocomplete
           dataSourceType="entitiesList"
-          dataSourceUrl="/api/Autocomplete/List"
           typeShortAlias="Shesha.Framework.Form"
+          getOptionFromFetchedItem={(item): ISelectOption<IDtoType> => {
+            return {
+              value: item['value'],
+              label: item['displayText'],
+              data: item['displayText']
+            }}}
+            getLabeledValue={(
+              itemValue: IGuidNullableEntityWithDisplayNameDto,
+              _options: ISelectOption<IDtoType>[]
+            ) => {
+              return {
+                value: itemValue.id,
+                label: itemValue.displayText,
+                data: itemValue,
+              };
+            }}
         />
       </FormItem>
 

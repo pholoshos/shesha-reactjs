@@ -68,16 +68,12 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
     const getToolboxComponent = (type: string) => toolboxComponents[type];
 
-    console.log('render designer: ', {...flatComponents, formSettings})
-
     const initial: IFormDesignerStateContext = {
         ...FORM_DESIGNER_CONTEXT_INITIAL_STATE,
         toolboxComponentGroups: toolboxComponentGroups,
         ...flatComponents,
         formSettings: formSettings,
     };
-
-    // console.log('LOG: initial', initial);
 
     const { activateProvider } = useMetadataDispatcher(false) ?? {};
 
@@ -86,11 +82,9 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
         present: initial,
         future: [],
     });
-    // console.log('LOG: state', state);
 
     useEffect(() => {
         if (flatComponents && (flatComponents.allComponents !== state.present.allComponents || flatComponents.componentRelations !== state.present.componentRelations)) {
-            // console.log('LOG: update flat components');
             setFlatComponents(flatComponents);
         }
     }, [flatComponents]);

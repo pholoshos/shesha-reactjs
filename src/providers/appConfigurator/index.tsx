@@ -10,6 +10,9 @@ import {
 } from './actions';
 import { configurableComponentGet } from '../../apis/configurableComponent';
 import { useSheshaApplication } from '../sheshaApplication';
+import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
+import { createNewVersion, downloadAsJson, IConfigurationFrameworkHookArguments, IHasConfigurableItemId, itemCancelVersion, publishItem, setItemReady } from '../../utils/configurationFramework/actions';
+import { genericItemActionArgumentsForm } from './configurable-actions/generic-item-arguments';
 
 export interface IAppConfiguratorProviderProps {}
 
@@ -21,6 +24,70 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
   const settingsDictionary = useRef<IComponentSettingsDictionary>({});
 
   const { backendUrl, httpHeaders } = useSheshaApplication();
+
+  //#region Configuration Framework
+
+  const { registerAction } = useConfigurableActionDispatcher();
+  
+  const actionsOwner = 'Configuration Framework';
+
+  const cfArgs: IConfigurationFrameworkHookArguments = { backendUrl: backendUrl, httpHeaders: httpHeaders };
+
+  useEffect(() => {
+    registerAction<IHasConfigurableItemId>({
+      name: 'Create new item version',
+      owner: actionsOwner,
+      hasArguments: true,
+      executer: (actionArgs) => {
+        return createNewVersion({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm
+    });
+
+    registerAction<IHasConfigurableItemId>({
+      name: 'Set Item Ready',
+      owner: actionsOwner,
+      hasArguments: true,
+      executer: (actionArgs) => {
+        return setItemReady({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm
+    });
+
+    registerAction<IHasConfigurableItemId>({
+      name: 'Publish Item',
+      owner: actionsOwner,
+      hasArguments: true,
+      executer: (actionArgs) => {
+        return publishItem({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm
+    });
+
+    registerAction<IHasConfigurableItemId>({
+      name: 'Cancel item version',
+      owner: actionsOwner,
+      hasArguments: true,
+      executer: (actionArgs) => {
+        return itemCancelVersion({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm
+    });
+
+    registerAction<IHasConfigurableItemId>({
+      name: 'Download as JSON',
+      owner: actionsOwner,
+      hasArguments: true,
+      executer: (actionArgs) => {
+        debugger
+        return downloadAsJson({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm
+    });
+}, [state]);
+
+  //#endregion
+
 
   useEffect(() => {
     if (!document) return;

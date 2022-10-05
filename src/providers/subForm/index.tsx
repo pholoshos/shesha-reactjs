@@ -6,7 +6,7 @@ import { usePubSub, useSubscribe } from '../../hooks';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
 import { getQueryParams } from '../../utils/url';
-import { FormMarkupWithSettings } from '../form/models';
+import { FormIdentifier, FormMarkupWithSettings } from '../form/models';
 import { setMarkupWithSettingsAction } from './actions';
 import { ISubFormProps } from './interfaces';
 import { ColProps, message, notification } from 'antd';
@@ -50,12 +50,17 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   const { formData = {}, formMode } = useForm();
   const { globalState } = useGlobalState();
 
+  const formId = useMemo<FormIdentifier>(() => {
+    return formName
+      ? { module: formModule, name: formName }
+      : null;
+  }, [formModule, formName]);
   const {
     refetch: fetchForm,
     formConfiguration: fetchFormResponse,
     loading: isFetchingForm,
     error: fetchFormError
-   } = useFormConfiguration({ formId: { module: formModule, name: formName }, lazy: true });
+   } = useFormConfiguration({ formId: formId, lazy: true });
 
   const {
     refetch: fetchEntity,

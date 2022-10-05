@@ -24,16 +24,17 @@ const ShaRoutingProvider: FC<PropsWithChildren<any>> = ({ children, router }) =>
   };
 
   useEffect(() => {
-    console.log('register navigate action', { router, stateRoute: state.router })
     registerAction<INavigateActoinArguments>({
       name: 'Navigate',
       owner: 'Common',
       hasArguments: true,
       executer: (request) => {
-        console.log('execute navigate', request)
-        return state?.router
-          ? state?.router?.push(request.target)
-          : Promise.reject('Router is not available');
+        if (state?.router){
+          return state?.router?.push(request.target)
+        } else {
+          window.location.href = request.target;
+          return Promise.resolve();
+        }        
       },
       argumentsFormMarkup: navigateArgumentsForm
     });

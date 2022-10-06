@@ -13,11 +13,12 @@ import { useGlobalState, useSheshaApplication, MetadataProvider, useMetadataDisp
 import { useFormConfiguration } from '../../providers/form/api';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
 import { FormIdentifier } from '../../providers/form/models';
-import { asFormFullName, evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
+import { asFormFullName, evaluateComplexString, getComponentsFromMarkup, removeZeroWidthCharsFromString, useFormDesignerComponents } from '../../providers/form/utils';
 import { getQueryParams, isValidSubmitVerb } from '../../utils/url';
 import { EntityAjaxResponse, IDynamicPageProps, IDynamicPageState } from './interfaces';
 import { DynamicFormPubSubConstants } from './pubSub';
 import { IModelMetadata, IPropertyMetadata } from '../../interfaces/metadata';
+import { componentsTreeToFlatStructure } from '../..';
 
 const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const { backendUrl } = useSheshaApplication();
@@ -153,10 +154,17 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     return match.map((item) => item[0].replace('data.', ''));
   }
 
+  const toolboxComponent = useFormDesignerComponents();
+
   const gqlFields = useMemo(() => {
     if (!metadata || !formMarkup) return null;
+    
     let fields: IFieldData[] = [];
-    let fieldNames = formMarkup.map(i => i.name);
+    const components = componentsTreeToFlatStructure(toolboxComponent, getComponentsFromMarkup(formMarkup)).allComponents;
+    let fieldNames = [];
+    for(const key in components){
+      fieldNames.push(components[key].name);
+    }
     
     fieldNames = fieldNames.concat(formSettings?.fieldsToFetch ?? []);
 
@@ -202,6 +210,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
       }
     });
 
+    setMetadataFetchCount(0);
     fields.forEach((item) => { getProperties(item); });
     return fields;
   }, [metadata, formMarkup]);

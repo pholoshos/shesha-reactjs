@@ -94,4 +94,9 @@ export const OrganisationEdit = addStory(Template, {
   mode: 'edit',
 });
 
+export const PermissionedObject = addStory(Template, {
+  formId: { name: '/permissionedObject/webapi' },
+  mode: 'edit',
+});
+
 Basic.args = DEFAULT_ARGS;

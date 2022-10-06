@@ -140,3 +140,7 @@ export const Playground = addStory(DesignerTemplate, {
 export const OrganisationEdit = addStory(DesignerTemplate, {
   formId: { name: '/organisations/edit' },
 });
+
+export const PermissionedObjects = addStory(DesignerTemplate, {
+  formId: { name: '/permissionedObject/webapi' },
+});

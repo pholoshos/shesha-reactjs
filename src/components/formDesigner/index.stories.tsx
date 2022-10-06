@@ -26,15 +26,17 @@ const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formId }) => (
   </StoryApp>
 );
 
-export const PersonEdit = addStory(DesignerTemplate, {
+export const PersonDetails = addStory(DesignerTemplate, {
   formId: {
-    name: 'person-form',
+    name: 'person-details',
+    module: 'shesha',
   }
 });
 
-export const PersonDetails = addStory(DesignerTemplate, {
+export const PersonsIndex = addStory(DesignerTemplate, {
   formId: {
-    name: '/persons/details',
+    name: 'persons',
+    module: 'shesha',
   }
 });
 

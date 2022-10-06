@@ -1,10 +1,8 @@
-import { FormMode } from './../form/models';
+import { IConfigurableActionConfiguration } from '../../interfaces/configurableAction';
 
 type ColumnsItemType = 'item' | 'group';
 
 export type ColumnsItemProps = IConfigurableColumnsProps | IConfigurableColumnGroup;
-
-type ButtonActionType = 'navigate' | 'dialogue' | 'executeScript' | 'executeFormAction' | 'deleteRow' | 'editRow';
 
 /**
  * Base properties of configurable column
@@ -41,55 +39,15 @@ export interface IDataColumnsProps extends IConfigurableColumnsProps {
  * Configurable action column
  */
 export interface IConfigurableActionColumnsProps extends IConfigurableColumnsProps {
+  /**
+   * Icon, is used for action columns
+   */
   icon?: string;
-  /**
-   * type of action
-   */
-  action?: ButtonActionType;
-
-  //#region Action = 'navigate'
 
   /**
-   * target Url, applicable when action = 'navigate'
+   * Configurable action configuration
    */
-  targetUrl?: string;
-
-  //#endregion
-
-  //#region Action = 'dialogue'
-
-  /**
-   * Title of the modal
-   */
-  modalTitle?: string;
-
-  /**
-   * Id of the modal form
-   */
-  modalFormId?: string;
-
-  //#endregion
-
-  //#region Action = 'executeFormAction'
-
-  /** Form action */
-  formAction?: string;
-
-  /** Form action */
-  actionScript?: string;
-
-  /**
-   * The warning message to display before deleting an item
-   */
-  deleteWarningMessage?: string;
-
-  additionalProperties?: any;
-
-  uniqueStateId?: string;
-
-  modalFormMode?: FormMode;
-
-  modalWidth?: any;
+  actionConfiguration?: IConfigurableActionConfiguration;
   //#endregion
 }
 

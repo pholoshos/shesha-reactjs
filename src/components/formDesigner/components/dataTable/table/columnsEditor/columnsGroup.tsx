@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { DeleteFilled } from '@ant-design/icons';
 import { IConfigurableColumnGroup } from '../../../../../../providers/datatableColumnsConfigurator/models';
 import { useColumnsConfigurator } from '../../../../../../providers/datatableColumnsConfigurator';
-import ToolbarItemsContainer from './columnsContainer';
+import ColumnsContainer from './columnsContainer';
 import DragHandle from './dragHandle';
 
 export interface IProps extends IConfigurableColumnGroup {
@@ -30,7 +30,7 @@ export const ColumnsGroup: FC<IProps> = props => {
         </div>
       </div>
       <div className="sha-toolbar-group-container">
-        <ToolbarItemsContainer index={props.index} items={props.childItems || []} />
+        <ColumnsContainer index={props.index} items={props.childItems || []} />
       </div>
     </div>
   );

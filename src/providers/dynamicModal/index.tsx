@@ -57,6 +57,8 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
           const modalProps: IModalProps = {
             ...actionArgs,
             id: modalId,
+            title: actionArgs.modalTitle,
+            width: actionArgs.modalWidth,
             initialValues: initialValues,
             parentFormValues: parentFormValues,
             isVisible: true,

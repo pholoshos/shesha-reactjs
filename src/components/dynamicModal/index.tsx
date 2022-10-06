@@ -72,7 +72,6 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
   };
 
   const onSubmitted = (_: any, response: any) => {
-    debugger
     console.log('LOG:onSubmitted')
     if (onSuccessRedirectUrl) {
       const computedRedirectUrl = evaluateString(onSuccessRedirectUrl, response);

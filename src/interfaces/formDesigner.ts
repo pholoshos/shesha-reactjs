@@ -80,6 +80,16 @@ export interface IToolboxComponent<T = IConfigurableFormComponent> {
 
   isTemplate?: boolean;
   build?: () => IConfigurableFormComponent[];
+
+  /**
+   * Version number
+   */
+  version?: number;
+
+  /**
+   * Settings migrations. Returns last version of settings
+   */
+  migrateSettings?: (settings: any) => T;
 }
 
 export interface IToolboxComponentGroup {

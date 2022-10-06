@@ -33,7 +33,7 @@ export interface IHasConfigurableItemId {
 interface UpdateItemStatusArgs extends IHasHttpSettings {
     id: string;
     status: ConfigurationItemVersionStatus;
-    onSuccess?: (dto: FormConfigurationDto) => void;
+    onSuccess?: () => void;
 }
 const updateItemStatus = (props: UpdateItemStatusArgs) => {
     const url = `${props.backendUrl}/api/services/Shesha/FormConfiguration/UpdateStatus`;
@@ -42,13 +42,10 @@ const updateItemStatus = (props: UpdateItemStatusArgs) => {
         status: props.status
     };
     return axios.put<any, AxiosResponse<IAbpWrappedGetEntityResponse<FormConfigurationDto>>>(url, httpPayload, { headers: props.httpHeaders })
-        .then(response => {
+        .then(_response => {
             message.destroy();
             if (props.onSuccess)
-                props.onSuccess(response?.data?.result);
-
-            //message.info('Configs published successfully', 3);
-            //onRefresh();
+                props.onSuccess();
         })
         .catch(e => {
             message.destroy();
@@ -75,7 +72,9 @@ export const publishItem = (payload: IPublishItemPayload): Promise<IPublishItemR
                 httpHeaders: payload.httpHeaders,
                 id: payload.id,
                 status: ConfigurationItemVersionStatus.Live,
-                onSuccess: (dto) => resolve({ id: dto.id }),
+                onSuccess: () => {
+                    resolve({ id: payload.id });
+                },
             });
         }
         Modal.confirm({
@@ -101,6 +100,8 @@ export interface ISetItemReadyResponse {
     id: string;
 }
 export const setItemReady = (payload: ISetItemReadyPayload): Promise<ISetItemReadyResponse> => {
+    if (!payload.id)
+        throw 'Id must not be null';
     return new Promise<ISetItemReadyResponse>((resolve) => {
         const onOk = () => {
             updateItemStatus({
@@ -108,7 +109,9 @@ export const setItemReady = (payload: ISetItemReadyPayload): Promise<ISetItemRea
                 httpHeaders: payload.httpHeaders,
                 id: payload.id,
                 status: ConfigurationItemVersionStatus.Ready,
-                onSuccess: (dto) => resolve({ id: dto.id }),
+                onSuccess: () => {
+                    resolve({ id: payload.id });
+                },
             });
 
         }
@@ -192,12 +195,6 @@ export const itemCancelVersion = (payload: ICancelItemVersionPayload): Promise<I
                 id: payload.id
             };
             return axios.post<any, AxiosResponse<IAbpWrappedGetEntityResponse<FormConfigurationDto>>>(url, httpPayload, { headers: payload.httpHeaders })
-                /*return axios.post<>({
-                    url: url,
-                    method: 'POST',
-                    data: httpPayload,
-                    headers: app.httpHeaders,
-                })*/
                 .then(response => {
                     message.destroy();
                     //message.info('Version cancelled successfully', 3);

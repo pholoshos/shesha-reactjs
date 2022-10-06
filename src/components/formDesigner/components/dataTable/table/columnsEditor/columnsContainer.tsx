@@ -14,7 +14,7 @@ export interface IToolbarItemsSortableProps {
   items: IConfigurableColumnsBase[];
 }
 
-export const ToolbarItemsContainer: FC<IToolbarItemsSortableProps> = props => {
+export const ColumnsContainer: FC<IToolbarItemsSortableProps> = props => {
   const { updateChildItems } = useColumnsConfigurator();
 
   const renderItem = (item: IConfigurableColumnsBase, index: number) => {
@@ -64,4 +64,4 @@ export const ToolbarItemsContainer: FC<IToolbarItemsSortableProps> = props => {
     </ReactSortable>
   );
 };
-export default ToolbarItemsContainer;
+export default ColumnsContainer;

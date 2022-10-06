@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Button } from 'antd';
 import { SidebarContainer } from '../../../../../../components';
 import { ColumnProperties } from './columnProperties';
-import ToolbarItemsContainer from './columnsContainer';
+import ColumnsContainer from './columnsContainer';
 import { useColumnsConfigurator } from '../../../../../../providers/datatableColumnsConfigurator';
 import './styles/index.less';
 
@@ -31,7 +31,7 @@ export const ColumnsConfigurator: FC<IColumnsConfiguratorProps> = () => {
           content: () => <ColumnProperties />,
         }}
       >
-        <ToolbarItemsContainer items={items} index={[]} />
+        <ColumnsContainer items={items} index={[]} />
       </SidebarContainer>
     </div>
   );

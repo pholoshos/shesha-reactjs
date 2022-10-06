@@ -79,7 +79,6 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
       owner: actionsOwner,
       hasArguments: true,
       executer: (actionArgs) => {
-        debugger
         return downloadAsJson({ id: actionArgs.itemId, ...cfArgs });
       },
       argumentsFormMarkup: genericItemActionArgumentsForm

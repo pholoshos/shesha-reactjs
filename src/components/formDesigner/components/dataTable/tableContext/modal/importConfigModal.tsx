@@ -45,7 +45,7 @@ const ImportConfigModal: FC<IProps> = ({ onCancel, onRefresh, visible }) => {
   return (
     <Modal
       title="Upload Import File"
-      visible={visible}
+      open={visible}
       onOk={onOk}
       onCancel={onCancel}
       okButtonProps={{ disabled: !fileList.length }}

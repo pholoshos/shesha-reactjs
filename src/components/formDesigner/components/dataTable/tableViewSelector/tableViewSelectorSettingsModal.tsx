@@ -75,7 +75,7 @@ export const TableViewSelectorSettingsModalInner: FC<ITableViewSelectorSettingsM
   return (
     <Modal
       width="75%"
-      visible={visible}
+      open={visible}
       title="Configure Filters"
       okText="Save"
       onCancel={hideModal}

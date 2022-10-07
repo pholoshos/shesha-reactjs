@@ -71,7 +71,7 @@ export const IdleTimerRenderer: FC<PropsWithChildren<IIdleTimerRendererProps>> =
         {children}
         <Modal
           title="You have been idle"
-          visible={visible}
+          open={visible}
           cancelText="Keep me signed in"
           okText="Logoff"
           onOk={onOk}

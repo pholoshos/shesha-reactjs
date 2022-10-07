@@ -109,7 +109,7 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
         </Collapse.Panel>
       </Collapse>
       <Modal
-        visible={modalVisible}
+        open={modalVisible}
         width={isSmall ? '90%' : '60%'}
         title="Quick Filter Query Builder"
         onCancel={() => setModalVisible(false)}

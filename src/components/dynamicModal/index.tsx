@@ -110,7 +110,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     <Modal
       key={id}
       title={title}
-      visible={isVisible}
+      open={isVisible}
       onOk={onOk} // not used
       onCancel={hideForm} // not used
       {...footerProps}

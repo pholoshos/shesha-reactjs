@@ -40,7 +40,7 @@ export const ItemListSettingsModalInner: FC<Omit<
 
       <Modal
         width={isSmall ? '90%' : '60%'}
-        visible={showModal}
+        open={showModal}
         title={title}
         okText="Save"
         onCancel={toggleModalVisibility}

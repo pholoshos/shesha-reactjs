@@ -276,7 +276,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
       <Modal
         title={title || 'Select Item'}
         className="entity-picker-modal"
-        visible={state?.showModal}
+        open={state?.showModal}
         onOk={onModalOk}
         onCancel={handleCancel}
         width={isSmall ? '90%' : '60%'}

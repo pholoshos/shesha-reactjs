@@ -626,7 +626,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
         okText="Save"
         onCancel={cancelCreateOrEditRowData}
         onOk={createOrUpdateItem}
-        visible={crudMode === 'dialog' && Boolean(newOrEditableRowData?.id)}
+        open={crudMode === 'dialog' && Boolean(newOrEditableRowData?.id)}
         key="captureEntityDetailsModal"
         width={CRUD_MODAL_WIDTH}
         okButtonProps={{ loading: isCreating }}
@@ -679,7 +679,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
         title="Details"
         onCancel={cancelCreateOrEditRowData}
         onOk={cancelCreateOrEditRowData}
-        visible={Boolean(newOrEditableRowData?.id) && newOrEditableRowData?.mode === 'read'}
+        open={Boolean(newOrEditableRowData?.id) && newOrEditableRowData?.mode === 'read'}
         key="displayEntityDetailsModal"
         width={CRUD_MODAL_WIDTH}
       >

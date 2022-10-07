@@ -9,7 +9,7 @@ export const SwitchToEditModeConfirmation: FC<IProps> = () => {
   return (
     <Modal
       title="Launch Edit Mode"
-      visible={editModeConfirmationVisible}
+      open={editModeConfirmationVisible}
       onCancel={() => toggleEditModeConfirmation(false)}
       onOk={() => switchApplicationMode('edit')}
       okButtonProps={{}}

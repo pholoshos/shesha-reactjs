@@ -77,7 +77,7 @@ export const FilterSettingsModalInner: FC<IFilterSettingsModal> = ({ visible, on
   return (
     <Modal
       width={isSmall ? '90%' : '60%'}
-      visible={visible}
+      open={visible}
       title="Configure Filters"
       okText="Save"
       onCancel={hideModal}

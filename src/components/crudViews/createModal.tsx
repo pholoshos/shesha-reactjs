@@ -166,7 +166,7 @@ const GenericCreateModal: FC<IGenericCreateModalProps> = ({
   return (
     <Modal
       width={isSmall ? '90%' : '60%'}
-      visible={visible}
+      open={visible}
       title={title}
       confirmLoading={loading}
       onCancel={handleCancel}

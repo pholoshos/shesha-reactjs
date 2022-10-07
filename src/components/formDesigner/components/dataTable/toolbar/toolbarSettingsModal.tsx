@@ -34,7 +34,7 @@ export const ToolbarSettingsModalInner: FC<IToolbarSettingsModal> = ({
   };
 
   return (
-    <Modal width={isSmall ? '90%' : '60%'} visible={visible} title={title} okText="Save" onCancel={hideModal} onOk={onOkClick}>
+    <Modal width={isSmall ? '90%' : '60%'} open={visible} title={title} okText="Save" onCancel={hideModal} onOk={onOkClick}>
       <ToolbarConfigurator allowAddGroups={allowAddGroups} heading={heading} render={render} />
     </Modal>
   );

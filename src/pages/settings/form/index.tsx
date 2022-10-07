@@ -199,7 +199,7 @@ const FormsIndexPage: FC<IFormsIndexPageProps> = ({ tableProps }) => {
 
       <Modal
         title="Upload Import File"
-        visible={state.isUploadImportModalVisible}
+        open={state.isUploadImportModalVisible}
         onOk={handleFileUploadAsync}
         onCancel={toggleImportToJsonDialog}
       >
@@ -218,7 +218,7 @@ const FormsIndexPage: FC<IFormsIndexPageProps> = ({ tableProps }) => {
       </Modal>
       <Modal
         title="Delete Configs"
-        visible={state.isDeleteModalVisible}
+        open={state.isDeleteModalVisible}
         onOk={handleDeleteAsync}
         onCancel={toggleDeleteConfigDialog}
         okText={'Yes, delete.'}
@@ -227,7 +227,7 @@ const FormsIndexPage: FC<IFormsIndexPageProps> = ({ tableProps }) => {
       </Modal>
       <Modal
         title="Duplicate Config"
-        visible={state.isDuplicateModalVisible}
+        open={state.isDuplicateModalVisible}
         onOk={handleDuplicateConfigAsync}
         onCancel={toggleDuplicateConfigDialog}
         okText={'Yes, duplicate.'}

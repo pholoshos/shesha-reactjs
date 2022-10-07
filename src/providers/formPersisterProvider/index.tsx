@@ -23,7 +23,7 @@ import {
 import { useFormConfigurationUpdateMarkup, FormUpdateMarkupInput } from '../../apis/formConfiguration';
 import useThunkReducer from 'react-hook-thunk-reducer';
 import { useFormConfiguration } from '../form/api';
-import { FormIdentifier, FormMarkupWithSettings, IFormSettings } from '../form/models';
+import { DEFAULT_FORM_SETTINGS, FormIdentifier, FormMarkupWithSettings, IFormSettings } from '../form/models';
 import { IPersistedFormProps } from './models';
 
 export interface IFormProviderProps {
@@ -70,8 +70,8 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
           module: formConfiguration.module,
           label: formConfiguration.label,
           description: formConfiguration.description,
-          markup: formConfiguration.markup,
-          formSettings: formConfiguration.settings,
+          markup: formConfiguration.markup ?? [],
+          formSettings: formConfiguration.settings ?? DEFAULT_FORM_SETTINGS,
         };
 
         // parse json content

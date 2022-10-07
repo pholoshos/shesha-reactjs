@@ -99,7 +99,7 @@ export const CodeEditor: FC<ICodeEditorProps> = ({
         </Button>
       </Show>
 
-      <Modal visible={showDialog} onCancel={closeEditorDialog} onOk={closeEditorDialog} width={650} title={props.label}>
+      <Modal open={showDialog} onCancel={closeEditorDialog} onOk={closeEditorDialog} width={650} title={props.label}>
         <Show when={!!props?.description}>
           <Alert message={props?.description} />
           <br />

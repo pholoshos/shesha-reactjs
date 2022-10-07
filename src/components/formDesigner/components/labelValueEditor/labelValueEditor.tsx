@@ -278,7 +278,7 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
             Click to Add Items
           </Button>
 
-          <Modal title="Add Items" visible={showModal} onCancel={toggleModal} onOk={toggleModal} width={650}>
+          <Modal title="Add Items" open={showModal} onCancel={toggleModal} onOk={toggleModal} width={650}>
             <Show when={!!description}>
               <Alert type="info" message={description} />
               <br />

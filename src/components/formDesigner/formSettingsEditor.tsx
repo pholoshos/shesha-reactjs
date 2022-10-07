@@ -22,7 +22,7 @@ export const FormSettingsEditor: FC<IFormSettingsEditorProps> = ({ isVisible, cl
 
   return (
     <Modal
-      visible={isVisible}
+    open={isVisible}
       title="Form Settings"
       onOk={() => {
         form.submit();

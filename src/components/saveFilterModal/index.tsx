@@ -43,7 +43,7 @@ export const SaveFilterModal: FC<ISaveFilterModalProps> = ({
   return (
     <Modal
       title="Save Filters"
-      visible={showSaveFilterModal}
+      open={showSaveFilterModal}
       onOk={handleOk}
       onCancel={handleCancel}
       okButtonProps={{

@@ -26,6 +26,10 @@ const DesignerTemplate: Story<IFormDesignerStoryProps> = ({ formId }) => (
   </StoryApp>
 );
 
+export const NewForm = addStory(DesignerTemplate, {
+  formId: '219b04eb-aa51-4f67-94ba-a299173f7c5d'
+});
+
 export const PersonDetails = addStory(DesignerTemplate, {
   formId: {
     name: 'person-details',

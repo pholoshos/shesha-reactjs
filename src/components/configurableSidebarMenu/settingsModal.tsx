@@ -27,7 +27,7 @@ export const ComponentSettingsModalInner: FC<IProps> = memo(({ title, onSave, on
   };
 
   return (
-    <Modal width={isSmall ? '90%' : '60%'} visible={true} title={title} onCancel={onCancel} onOk={onOk}>
+    <Modal width={isSmall ? '90%' : '60%'} open={true} title={title} onCancel={onCancel} onOk={onOk}>
       <SidebarConfigurator />
     </Modal>
   );

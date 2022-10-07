@@ -42,7 +42,7 @@ function ComponentSettingsModal<T extends IConfigurableFormComponent>({
   return (
     <Modal
       width={isSmall ? '90%' : '60%'}
-      visible={isVisible}
+      open={isVisible}
       title="Settings"
       okText="Save"
       onCancel={onCancelClick}

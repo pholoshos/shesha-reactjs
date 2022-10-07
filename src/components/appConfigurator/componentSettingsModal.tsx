@@ -29,7 +29,7 @@ export const ComponentSettingsModal = <TSettings extends any>({
   };
 
   return (
-    <Modal visible={true} title={title} onCancel={onCancel} onOk={onOk}>
+    <Modal open={true} title={title} onCancel={onCancel} onOk={onOk}>
       {/* <div>You can customize the Logo component from this screen or upload a new one.</div> */}
       <ConfigurableForm
         mode="edit"

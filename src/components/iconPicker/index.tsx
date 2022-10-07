@@ -121,7 +121,7 @@ const IconPicker: FC<IIconPickerProps> = ({ selectBtnSize = 'middle', value, onI
       <Modal
         onCancel={toggleModalVisibility}
         onOk={toggleModalVisibility}
-        visible={showModal}
+        open={showModal}
         width={950}
         title="Select Icon"
         footer={

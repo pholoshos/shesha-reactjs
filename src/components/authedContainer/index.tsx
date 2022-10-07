@@ -88,7 +88,7 @@ const AuthContainer: FC<IAuthContainerProps> = ({ children, layout = false }) =>
 
         <Modal
           title="Login"
-          visible={isSignInModalVisible}
+          open={isSignInModalVisible}
           onCancel={hideSignInModal}
           onOk={() => loginForm?.submit()}
           okButtonProps={{ loading: isInProgress?.loginUser || false }}

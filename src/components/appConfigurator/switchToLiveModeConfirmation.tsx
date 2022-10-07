@@ -13,7 +13,7 @@ export const SwitchToLiveModeConfirmation: FC<IProps> = () => {
   return (
     <Modal
       title="Launch Live Mode"
-      visible={closeEditModeConfirmationVisible}
+      open={closeEditModeConfirmationVisible}
       onOk={() => switchApplicationMode('live')}
       onCancel={() => toggleCloseEditModeConfirmation(false)}
     >

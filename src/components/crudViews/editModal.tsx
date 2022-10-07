@@ -84,7 +84,7 @@ const GenericEditModal: FC<IGenericEditModalProps> = ({
   return (
     <Modal
       width={isSmall ? '90%' : '60%'}
-      visible={visible}
+      open={visible}
       title={title ? title(model) : 'Edit'}
       okText="Save"
       onCancel={handleCancel}

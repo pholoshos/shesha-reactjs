@@ -250,7 +250,7 @@ export const ColumnsList: FC<IProps> = ({ value, onChange }) => {
     <Fragment>
       <Button onClick={toggleModal}>Configure Columns</Button>
 
-      <Modal title="Configure Columns" visible={showDialog} onOk={toggleModal} onCancel={toggleModal} width="650px">
+      <Modal title="Configure Columns" open={showDialog} onOk={toggleModal} onCancel={toggleModal} width="650px">
         <Space direction="vertical" style={{ width: '100%' }}>
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId={'columns'}>

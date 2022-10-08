@@ -43,6 +43,7 @@ import { useSheshaApplication } from '..';
 import { CSSProperties, useMemo } from 'react';
 import camelcase from 'camelcase';
 import defaultToolboxComponents from './defaults/toolboxComponents';
+import { Migrator } from '../../utils/fluentMigrator/migrator';
 
 /**
  * Convert components tree to flat structure.
@@ -103,6 +104,55 @@ export const componentsTreeToFlatStructure = (
   return result;
 };
 
+export const upgradeComponents = (
+  toolboxComponents: IToolboxComponents,
+  flatStructure: IFlatComponentsStructure
+) => {
+  console.log('LOG: upgrade components');
+  const { allComponents } = flatStructure;
+  for (const key in allComponents) {
+    if (allComponents.hasOwnProperty(key)) {
+      const component = allComponents[key] as IConfigurableFormComponent;
+
+      const componentDefinition = toolboxComponents[component.type];
+      if (componentDefinition){
+        allComponents[key] = upgradeComponent(component, componentDefinition);
+      }
+    }
+  }
+};
+
+export const upgradeComponent = (componentModel: IConfigurableFormComponent, definition: IToolboxComponent) => {
+  if (!definition.migrator)
+    return componentModel;
+
+  const migrator = new Migrator<IConfigurableFormComponent, IConfigurableFormComponent>();
+  const fluent = definition.migrator(migrator);
+  if (componentModel.version === undefined)
+    componentModel.version = -1;
+  const model = fluent.migrator.upgrade(componentModel);
+  return model;
+}
+
+/*
+export const UpgradeComponent = (component: IConfigurableFormComponent, toolboxComponents: IToolboxComponents): IConfigurableFormComponent => {
+  const componentRegistration = toolboxComponents[component.type];
+  if (componentRegistration){
+    if (componentRegistration.version && componentRegistration.version > (component.version ?? 0)){
+      console.log(`Component with id = '${component.id}' is out of date, upgrading...`);
+      const newComponent = componentRegistration.migrateSettings(component);
+
+      return newComponent;
+    } else {
+      console.log(`Component with id = '${component.id}' already up to date`);
+      return component;
+    }
+  } else {
+    console.error(`Component registration not found, type = '${component.type}' (component id = '${component.id}')`);
+    return component;
+  }
+};
+*/
 /** Convert flat components structure to a component tree */
 export const componentsFlatStructureToTree = (
   toolboxComponents: IToolboxComponents,

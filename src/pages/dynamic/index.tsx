@@ -132,16 +132,22 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     property: IPropertyMetadata;
   } 
 
+  console.log('LOG: metadataFetchCount', metadataFetchCount)
   const getProperties = (field: IFieldData) => {
+    console.log('LOG: getProperties')
     if (field.property?.dataType == 'entity') {
+      console.log('LOG: plus', metadataFetchCount)
       setMetadataFetchCount((count) => count == null ? 1 : count + 1);
       fetchMeta({ modelType: field.property.entityType }).then(meta => {
         field.child.forEach((item) => {
           item.property = meta.properties.find(p => p.path.toLowerCase() == item.name.toLowerCase());
           getProperties(item);
         });
+        console.log('LOG: minus', metadataFetchCount);
         setMetadataFetchCount((count) => count - 1);
       });
+    } else {
+      console.log('LOG: getProperties - not entity', field.property?.dataType)
     }
   };
 
@@ -157,6 +163,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const toolboxComponent = useFormDesignerComponents();
 
   const gqlFields = useMemo(() => {
+    console.log('gqlFields')
     if (!metadata || !formMarkup) return null;
     
     let fields: IFieldData[] = [];
@@ -216,6 +223,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [metadata, formMarkup]);
 
   const fetchFields = useMemo(() => {
+    console.log('LOG: fetchFields', metadataFetchCount);
     if (metadataFetchCount == 0) {
       let resf = (items: IFieldData[]) => {
         let s = '';

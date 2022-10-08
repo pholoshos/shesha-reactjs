@@ -4,6 +4,7 @@ import { IAsyncValidationError } from '../../interfaces';
 import { FormLayout } from 'antd/lib/form/Form';
 import { IKeyValue } from '../../interfaces/keyValue';
 import { ColProps } from 'antd';
+import { IHasVersion } from '../../utils/fluentMigrator/migrator';
 
 export const ROOT_COMPONENT_KEY: string = 'root'; // root key of the flat components structure
 export const TOOLBOX_COMPONENT_DROPPABLE_KEY: string = 'toolboxComponent';
@@ -59,7 +60,7 @@ export type ConfigurableFormComponentTypes =
 /**
  * Base model of the configurable component
  */
-export interface IConfigurableFormComponent extends IFormComponentContainer {
+export interface IConfigurableFormComponent extends IFormComponentContainer, IHasVersion {
   /** component name */
   name: string;
 

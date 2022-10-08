@@ -4,6 +4,7 @@ import { FormInstance } from 'antd';
 import { InternalNamePath } from 'rc-field-form/lib/interface';
 import { IPropertyMetadata } from './metadata';
 import { ConfigurableFormInstance } from '../providers/form/contexts';
+import { Migrator, MigratorFluent } from '../utils/fluentMigrator/migrator';
 
 export interface ISettingsFormFactoryArgs<TModel = IConfigurableFormComponent> {
   model: TModel;
@@ -82,15 +83,15 @@ export interface IToolboxComponent<T = IConfigurableFormComponent> {
   build?: () => IConfigurableFormComponent[];
 
   /**
-   * Version number
-   */
-  version?: number;
-
-  /**
    * Settings migrations. Returns last version of settings
    */
-  migrateSettings?: (settings: any) => T;
+  migrator?: SettingsMigrator<T>;
 }
+
+/**
+ * Settings migrator
+ */
+export type SettingsMigrator<TSettings> = (migrator: Migrator<IConfigurableFormComponent, TSettings>) => MigratorFluent<IConfigurableFormComponent, TSettings>;
 
 export interface IToolboxComponentGroup {
   name: string;

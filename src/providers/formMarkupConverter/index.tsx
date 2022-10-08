@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useMemo } from 'react';
 import { FormRawMarkup, IFlatComponentsStructure } from '../form/models';
-import { componentsTreeToFlatStructure, getComponentsFromMarkup, useFormDesignerComponents } from '../form/utils';
+import { componentsTreeToFlatStructure, getComponentsFromMarkup, upgradeComponents, useFormDesignerComponents } from '../form/utils';
 
 export interface IFormMarkupConverterProps {
     markup: FormRawMarkup,
@@ -17,8 +17,9 @@ const FormMarkupConverter: FC<IFormMarkupConverterProps> = ({
         const components = getComponentsFromMarkup(markup);
         const newFlatComponents = componentsTreeToFlatStructure(designerComponents, components);
         
-        //console.log('LOG: calculate flat components', { markup, newFlatComponents });
-
+        // migrate components to last version
+        upgradeComponents(designerComponents, newFlatComponents);
+        
         return newFlatComponents;
     }, [markup]);
 

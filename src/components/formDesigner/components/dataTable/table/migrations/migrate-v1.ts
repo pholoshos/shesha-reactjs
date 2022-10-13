@@ -1,10 +1,12 @@
+import { SettingsMigrationContext } from "../../../../../..";
 import { IConfigurableActionConfiguration } from "../../../../../../interfaces/configurableAction";
 import { IConfigurableActionColumnsProps, IConfigurableColumnsProps } from "../../../../../../providers/datatableColumnsConfigurator/models";
 import { IShowModalactionArguments } from "../../../../../../providers/dynamicModal/configurable-actions/show-dialog-arguments";
 import { IModalProps } from "../../../../../../providers/dynamicModal/models";
+import { getClosestTableId } from "../../../../../../providers/form/utils";
 import { ITableComponentProps } from "../models";
 
-export const migrateV0toV1 = (props: ITableComponentProps): ITableComponentProps => {
+export const migrateV0toV1 = (props: ITableComponentProps, context: SettingsMigrationContext): ITableComponentProps => {
     const { items } = props;
     const newItems = items.map(item => {
         if (item.itemType === "item") {
@@ -26,7 +28,7 @@ export const migrateV0toV1 = (props: ITableComponentProps): ITableComponentProps
 
                         }
                         case "deleteRow": {
-                            actonColumn.actionConfiguration = getDeleteRowActionConfig(oldColumn);
+                            actonColumn.actionConfiguration = getDeleteRowActionConfig(oldColumn, context);
                             break;
                         }
                         case "executeFormAction": {
@@ -89,7 +91,7 @@ const getExecuteScriptActionConfig = (oldColumn: IConfigurableActionColumnsProps
     }, oldColumn);
 }
 
-const getDeleteRowActionConfig = (oldColumn: IConfigurableActionColumnsPropsV0): IConfigurableActionConfiguration => {
+const getDeleteRowActionConfig = (oldColumn: IConfigurableActionColumnsPropsV0, context: SettingsMigrationContext): IConfigurableActionConfiguration => {
     const actionConfiguration: IConfigurableActionConfiguration = {
         actionOwner: 'Common',
         actionName: 'Show Confirmation Dialog',
@@ -108,7 +110,7 @@ const getDeleteRowActionConfig = (oldColumn: IConfigurableActionColumnsPropsV0):
             handleFail: false,
             handleSuccess: true,
             onSuccess: {
-                actionOwner: 'table',
+                actionOwner: getClosestTableId(context),
                 actionName: 'Refresh table',
                 handleFail: false,
                 handleSuccess: false,

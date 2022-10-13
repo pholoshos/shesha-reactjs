@@ -19,7 +19,7 @@ import TableSettings from './tableComponent-settings';
 import { ITableComponentProps } from './models';
 import { IModalProps } from '../../../../../providers/dynamicModal/models';
 import { getStyle } from '../../../../../providers/form/utils';
-import { migrateV0toV1 } from './migrations/migrate-0-1';
+import { migrateV0toV1 } from './migrations/migrate-v1';
 
 const TableComponent: IToolboxComponent<ITableComponentProps> = {
   type: 'datatable',
@@ -44,7 +44,7 @@ const TableComponent: IToolboxComponent<ITableComponentProps> = {
       flexibleHeight: prev['flexibleHeight'] ?? false,
     };
   })
-  .add<ITableComponentProps>(1, prev => migrateV0toV1(prev)),
+  .add<ITableComponentProps>(1, migrateV0toV1),
 
   settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
     return <TableSettings model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;

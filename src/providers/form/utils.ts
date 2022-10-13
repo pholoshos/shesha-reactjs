@@ -25,7 +25,7 @@ import {
   GenericDictionary,
 } from './models';
 import Mustache from 'mustache';
-import { ITableColumn, IToolboxComponent, IToolboxComponentGroup, IToolboxComponents } from '../../interfaces';
+import { ITableColumn, IToolboxComponent, IToolboxComponentGroup, IToolboxComponents, SettingsMigrationContext } from '../../interfaces';
 import Schema, { Rules, ValidateSource } from 'async-validator';
 import { IPropertyMetadata } from '../../interfaces/metadata';
 import { nanoid } from 'nanoid';
@@ -116,13 +116,13 @@ export const upgradeComponents = (
 
       const componentDefinition = toolboxComponents[component.type];
       if (componentDefinition) {
-        allComponents[key] = upgradeComponent(component, componentDefinition);
+        allComponents[key] = upgradeComponent(component, componentDefinition, flatStructure);
       }
     }
   }
 };
 
-export const upgradeComponent = (componentModel: IConfigurableFormComponent, definition: IToolboxComponent) => {
+export const upgradeComponent = (componentModel: IConfigurableFormComponent, definition: IToolboxComponent, flatStructure: IFlatComponentsStructure) => {
   if (!definition.migrator)
     return componentModel;
 
@@ -130,29 +130,35 @@ export const upgradeComponent = (componentModel: IConfigurableFormComponent, def
   const fluent = definition.migrator(migrator);
   if (componentModel.version === undefined)
     componentModel.version = -1;
-  const model = fluent.migrator.upgrade(componentModel, {});
+  const model = fluent.migrator.upgrade(componentModel, { flatStructure, componentId: componentModel.id });
   return model;
 }
 
-/*
-export const UpgradeComponent = (component: IConfigurableFormComponent, toolboxComponents: IToolboxComponents): IConfigurableFormComponent => {
-  const componentRegistration = toolboxComponents[component.type];
-  if (componentRegistration){
-    if (componentRegistration.version && componentRegistration.version > (component.version ?? 0)){
-      console.log(`Component with id = '${component.id}' is out of date, upgrading...`);
-      const newComponent = componentRegistration.migrateSettings(component);
+//#region Migration utils
 
-      return newComponent;
-    } else {
-      console.log(`Component with id = '${component.id}' already up to date`);
-      return component;
-    }
-  } else {
-    console.error(`Component registration not found, type = '${component.type}' (component id = '${component.id}')`);
-    return component;
-  }
-};
-*/
+export const getClosestComponent = (componentId: string, context: SettingsMigrationContext, componentType: string) => {
+  let component = context.flatStructure.allComponents[componentId];
+  do {
+      component = component?.parentId
+          ? context.flatStructure.allComponents[component.parentId]
+          : null;
+  } while(component && component.type !== componentType);
+
+  return component?.type === componentType
+      ? component
+      : null;
+}
+
+export const getClosestTableId = (context: SettingsMigrationContext) => {
+  const table = getClosestComponent(context.componentId, context, 'datatableContext');
+  return table
+      ? table['uniqueStateId']
+      : null;
+}
+
+//#endregion
+
+
 /** Convert flat components structure to a component tree */
 export const componentsFlatStructureToTree = (
   toolboxComponents: IToolboxComponents,

@@ -1,5 +1,5 @@
 import { ReactNode, MutableRefObject } from 'react';
-import { IConfigurableFormComponent, IFormComponentContainer, FormMarkup } from '../providers/form/models';
+import { IConfigurableFormComponent, IFormComponentContainer, FormMarkup, IFlatComponentsStructure } from '../providers/form/models';
 import { FormInstance } from 'antd';
 import { InternalNamePath } from 'rc-field-form/lib/interface';
 import { IPropertyMetadata } from './metadata';
@@ -88,10 +88,15 @@ export interface IToolboxComponent<T = IConfigurableFormComponent> {
   migrator?: SettingsMigrator<T>;
 }
 
+export interface SettingsMigrationContext {
+  flatStructure: IFlatComponentsStructure;
+  componentId: string;
+}
+
 /**
  * Settings migrator
  */
-export type SettingsMigrator<TSettings> = (migrator: Migrator<IConfigurableFormComponent, TSettings>) => MigratorFluent<IConfigurableFormComponent, TSettings>;
+export type SettingsMigrator<TSettings> = (migrator: Migrator<IConfigurableFormComponent, TSettings, SettingsMigrationContext>) => MigratorFluent<TSettings, TSettings, SettingsMigrationContext>;
 
 export interface IToolboxComponentGroup {
   name: string;

@@ -13,17 +13,17 @@ export interface IAddMigrationPayload<TModel = IHasVersion, TNext = IHasVersion>
     migration: Migration<TModel, TNext>;
 }
 
-export class MigratorFluent<TModel = IHasVersion, TDst = IHasVersion> {
+export class MigratorFluent<TModel = IHasVersion, TDst = IHasVersion, TContext = any> {
     readonly migrator: IMigrationRegistrationsOwner<TDst>;
     
     constructor(owner: IMigrationRegistrationsOwner<TDst>) {
         this.migrator = owner;
     }
 
-    add = <TNext = IHasVersion>(version: number, migration: Migration<TModel, TNext>) => {
+    add = <TNext = IHasVersion>(version: number, migration: Migration<TModel, TNext, TContext>) => {
         this.migrator.addMigration<TModel, TNext>({ version, migration });
         
-        const fluent = new MigratorFluent<TNext, TDst>(this.migrator);
+        const fluent = new MigratorFluent<TNext, TDst, TContext>(this.migrator);
         return fluent;
     }
 }
@@ -54,7 +54,7 @@ export class Migrator<TSrc = IHasVersion, TDst = IHasVersion, TContext = any> im
     add = <TNext = IHasVersion>(version: number, migration: Migration<TSrc, TNext>) => {
         this.addMigration<TSrc, TNext>({ version, migration });
 
-        return new MigratorFluent<TNext, TDst>(this);
+        return new MigratorFluent<TNext, TDst, TContext>(this);
     }
     
     upgrade = (currentModel: IHasVersion, context: TContext): TDst => {

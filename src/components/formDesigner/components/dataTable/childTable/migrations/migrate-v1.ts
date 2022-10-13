@@ -1,10 +1,12 @@
 import { IChildTableComponentProps } from "..";
 import { IConfigurableActionConfiguration } from "../../../../../../interfaces/configurableAction";
+import { SettingsMigrationContext } from "../../../../../../interfaces/formDesigner";
 import { IKeyValue } from "../../../../../../interfaces/keyValue";
 import { IButtonGroupButton } from "../../../../../../providers/buttonGroupConfigurator/models";
 import { IShowModalactionArguments as IShowModalActionArguments } from "../../../../../../providers/dynamicModal/configurable-actions/show-dialog-arguments";
+import { getClosestTableId } from "../../../../../../providers/form/utils";
 
-export const migrateV0toV1 = (props: IChildTableComponentProps): IChildTableComponentProps => {
+export const migrateV0toV1 = (props: IChildTableComponentProps, context: SettingsMigrationContext): IChildTableComponentProps => {
     const { toolbarItems } = props;
 
     const newToolbarItems = toolbarItems.map(item => {
@@ -13,7 +15,7 @@ export const migrateV0toV1 = (props: IChildTableComponentProps): IChildTableComp
 
         const button = item as IButtonGroupButtonV0;
         const newItem: IButtonGroupButton = { ...button };
-        newItem.actionConfiguration = getActionConfiguration(button);
+        newItem.actionConfiguration = getActionConfiguration(button, context);
 
         return newItem;
     });
@@ -21,7 +23,7 @@ export const migrateV0toV1 = (props: IChildTableComponentProps): IChildTableComp
     return { ...props, toolbarItems: newToolbarItems };
 }
 
-const getActionConfiguration = (buttonProps: IButtonGroupButtonV0): IConfigurableActionConfiguration => {
+const getActionConfiguration = (buttonProps: IButtonGroupButtonV0, context: SettingsMigrationContext): IConfigurableActionConfiguration => {
     switch (buttonProps.buttonAction) {
         case "cancelFormEdit": {
             return {
@@ -102,7 +104,7 @@ const getActionConfiguration = (buttonProps: IButtonGroupButtonV0): IConfigurabl
             if (propsWithModal.refreshTableOnSuccess) {
                 actionConfig.handleSuccess = true;
                 actionConfig.onSuccess = {
-                    actionOwner: null,//propsWithModal.uni,
+                    actionOwner: getClosestTableId(context),
                     actionName: 'Refresh table',
                     handleSuccess: false,
                     handleFail: false,

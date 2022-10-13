@@ -15,7 +15,7 @@ import './styles/index.less';
 import { ButtonGroup } from '../../button/buttonGroup/buttonGroupComponent';
 import camelCaseKeys from 'camelcase-keys';
 import _, { isEmpty } from 'lodash';
-import { migrateV0toV1 } from './migrations/migrate-0-1';
+import { migrateV0toV1 } from './migrations/migrate-v1';
 
 export interface IChildTableComponentProps extends IChildTableSettingsProps, IConfigurableFormComponent {
   components?: IConfigurableFormComponent[];
@@ -177,13 +177,13 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
     isNotWrapped: true,
   }),
   migrator: m => m.add<IChildTableComponentProps>(0, prev => {
-    return { 
-      ...prev,
-      isNotWrapped: prev['isNotWrapped'] ?? true,
-      defaultSelectedFilterId: null,
-    };
-  })
-  .add<IChildTableComponentProps>(1, prev => migrateV0toV1(prev)),
+      return { 
+        ...prev,
+        isNotWrapped: prev['isNotWrapped'] ?? true,
+        defaultSelectedFilterId: null,
+      };
+    })
+    .add<IChildTableComponentProps>(1, (prev, context) => migrateV0toV1(prev, context)),
 };
 
 export default ChildTableComponent;

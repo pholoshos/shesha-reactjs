@@ -42,6 +42,7 @@ export interface IListControlProps extends IListItemsProps, IFormItem {
   containerId: string;
   value?: any[];
   namePrefix?: string;
+  customVisibility?: string;
 }
 
 export interface IListComponentRenderState {

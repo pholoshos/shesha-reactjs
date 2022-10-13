@@ -132,22 +132,17 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     property: IPropertyMetadata;
   } 
 
-  console.log('LOG: metadataFetchCount', metadataFetchCount)
   const getProperties = (field: IFieldData) => {
-    console.log('LOG: getProperties')
     if (field.property?.dataType == 'entity') {
-      console.log('LOG: plus', metadataFetchCount)
       setMetadataFetchCount((count) => count == null ? 1 : count + 1);
       fetchMeta({ modelType: field.property.entityType }).then(meta => {
         field.child.forEach((item) => {
           item.property = meta.properties.find(p => p.path.toLowerCase() == item.name.toLowerCase());
           getProperties(item);
         });
-        console.log('LOG: minus', metadataFetchCount);
         setMetadataFetchCount((count) => count - 1);
       });
     } else {
-      console.log('LOG: getProperties - not entity', field.property?.dataType)
     }
   };
 
@@ -163,7 +158,6 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const toolboxComponent = useFormDesignerComponents();
 
   const gqlFields = useMemo(() => {
-    console.log('gqlFields')
     if (!metadata || !formMarkup) return null;
     
     let fields: IFieldData[] = [];
@@ -223,7 +217,6 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [metadata, formMarkup]);
 
   const fetchFields = useMemo(() => {
-    console.log('LOG: fetchFields', metadataFetchCount);
     if (metadataFetchCount == 0) {
       let resf = (items: IFieldData[]) => {
         let s = '';
@@ -251,14 +244,6 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     //const isPathMismatch = props?.path !== formResponse?.path;
     const correctForm = formConfiguration && sameForm(props.formId, formConfiguration.name, formConfiguration.module);
     
-    console.log('LOG: set fetchedData', { 
-      correctForm, 
-      formId: props.formId,
-      name: formConfiguration?.name, 
-      module: formConfiguration?.module,
-      fetchFields
-     });
-    
     // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
     if (fetchDataPath && correctForm && fetchFields) {
       fetchData({ queryParams: entityPathId || !id ? {} : { id, properties: fetchFields } });
@@ -275,7 +260,6 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   };
 
   useEffect(() => {
-    console.log('LOG: set fetchedData', { isFetchingMarkup, fetchDataResponse });
     if (!isFetchingMarkup && fetchDataResponse) {
       setState(prev => ({ ...prev, fetchedData: fetchDataResponse?.result }));
     }

@@ -1,4 +1,23 @@
+import { IKeyValue } from "../../../interfaces/keyValue";
 import { DesignerToolbarSettings } from "../../../interfaces/toolbarSettings";
+import { FormIdentifier } from "../../form/models";
+
+export interface IShowModalactionArguments {
+  modalTitle: string;
+  formId: FormIdentifier;
+  showModalFooter: boolean;
+  additionalProperties?: IKeyValue[];
+  modalWidth?: number;
+  /**
+   * If specified, the form data will not be fetched, even if the GET Url has query parameters that can be used to fetch the data.
+   * This is useful in cases whereby one form is used both for create and edit mode
+   */
+  skipFetchData?: boolean;
+  /**
+   * What http verb to use when submitting the form. Used in conjunction with `showModalFooter`
+   */
+  submitHttpVerb?: 'POST' | 'PUT';
+}
 
 export const dialogArgumentsForm = new DesignerToolbarSettings()
   .addTextField({

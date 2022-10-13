@@ -115,7 +115,7 @@ export const upgradeComponents = (
       const component = allComponents[key] as IConfigurableFormComponent;
 
       const componentDefinition = toolboxComponents[component.type];
-      if (componentDefinition){
+      if (componentDefinition) {
         allComponents[key] = upgradeComponent(component, componentDefinition);
       }
     }
@@ -130,7 +130,7 @@ export const upgradeComponent = (componentModel: IConfigurableFormComponent, def
   const fluent = definition.migrator(migrator);
   if (componentModel.version === undefined)
     componentModel.version = -1;
-  const model = fluent.migrator.upgrade(componentModel);
+  const model = fluent.migrator.upgrade(componentModel, {});
   return model;
 }
 
@@ -467,6 +467,26 @@ export function executeExpression<TResult>(expression: string, expressionArgs: I
     }
   } else return () => defaultValue;
 };
+
+export function executeScript<TResult = any>(expression: string, expressionArgs: IExpressionExecuterArguments): Promise<TResult> {
+  return new Promise<TResult>((resolve, reject) => {
+    if (!expression)
+      reject('Expression must be defined');
+
+    let argsDefinition = '';
+    const argList: any[] = [];
+    for (const argumentName in expressionArgs) {
+      argsDefinition += (argsDefinition ? ', ' : '') + argumentName;
+      argList.push(expressionArgs[argumentName]);
+    }
+
+    const expressionExecuter = new Function(argsDefinition, expression);
+
+    const result = expressionExecuter.apply(null, argList);
+    resolve(result);
+  });
+};
+
 
 /**
  * Return ids of visible components according to the custom visibility
@@ -1144,15 +1164,14 @@ export const convertToMarkupWithSettings = (markup: FormMarkup): FormMarkupWithS
 }
 
 const evaluateRecursive = (data: any, evaluationContext: GenericDictionary): any => {
-  if (typeof(data) === 'string'){
+  if (typeof (data) === 'string') {
     return evaluateString(data, evaluationContext);
   }
-  if (Array.isArray(data)){
+  if (Array.isArray(data)) {
     // note: `typeof` returns object for arrays too, we must to check isArray before `typeof`
     return data.map(item => evaluateRecursive(item, evaluationContext))
   }
-  if (typeof(data) === 'object')
-  {
+  if (typeof (data) === 'object') {
     const evaluatedObject = {};
     for (const key in data) {
       if (data.hasOwnProperty(key)) {
@@ -1172,7 +1191,7 @@ export const genericActionArgumentsEvaluator = <TArguments = ActionParametersDic
     console.log('LOG: generic arguments evaluation')
     const evaluated = evaluateRecursive(argumentsConfiguration, evaluationContext);
     resolve(evaluated as TArguments);
-  });  
+  });
 }
 
 /**
@@ -1204,7 +1223,7 @@ export const getFormActionArguments = (params: ActionParameters, evaluationConte
         const parameter = dictionary[parameterIdx];
 
         // todo: add promise support
-        const value = typeof(parameter?.value) === 'string'
+        const value = typeof (parameter?.value) === 'string'
           ? evaluateString(parameter?.value, evaluationContext)
           : parameter?.value;
 

@@ -16,21 +16,13 @@ import {
 import { IModalProps } from './models';
 import { DynamicModal } from '../../components/dynamicModal';
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
-import { dialogArgumentsForm } from './configurable-actions/show-dialog-arguments';
-import { FormIdentifier } from '../form/models';
-import { IKeyValue } from '../../interfaces/keyValue';
+import { dialogArgumentsForm, IShowModalactionArguments } from './configurable-actions/show-dialog-arguments';
+import { IShowConfigrmationArguments, showConfirmationArgumentsForm } from './configurable-actions/show-confirmation-arguments';
 import { nanoid } from 'nanoid/non-secure';
 import { evaluateKeyValuesToObject } from '../form/utils';
+import { Modal } from 'antd';
 
-export interface IDynamicModalProviderProps {}
-
-export interface IShowModalactionArguments {
-  modalTitle: string;
-  formId: FormIdentifier;
-  showModalFooter: boolean;
-  additionalProperties?: IKeyValue[];
-  modalWidth?: number;
-}
+export interface IDynamicModalProviderProps { }
 
 const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = ({ children }) => {
   const [state, dispatch] = useReducer(DynamicModalReducer, {
@@ -39,20 +31,43 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
 
   const { registerAction } = useConfigurableActionDispatcher();
   useEffect(() => {
+    registerAction<IShowConfigrmationArguments>({
+      name: 'Show Confirmation Dialog',
+      owner: 'Common',
+      hasArguments: true,
+      executer: (actionArgs, _context) => {
+        return new Promise((resolve, _reject) => {
+          Modal.confirm({
+            title: actionArgs.title,
+            content: actionArgs.content,
+            okText: actionArgs.okText ?? 'Yes',
+            cancelText: actionArgs.cancelText ?? 'No',
+            okButtonProps: {
+              type: 'primary',
+              danger: true,
+            },
+            onOk: () => {
+              resolve(true);
+            },
+          });
+
+        });
+      },
+      argumentsFormMarkup: showConfirmationArgumentsForm
+    });
     registerAction<IShowModalactionArguments>({
       name: 'Show Dialog',
       owner: 'Common',
       hasArguments: true,
       executer: (actionArgs, context) => {
-        console.log('show dialog') 
+        console.log('show dialog')
         const modalId = nanoid();
 
-        const formData = context?.formData ?? {};
+        const formData = context?.data ?? {};
         const initialValues = evaluateKeyValuesToObject(actionArgs.additionalProperties, formData);
         const parentFormValues = formData;
 
         return new Promise((resolve, _reject) => {
-          
 
           const modalProps: IModalProps = {
             ...actionArgs,
@@ -64,7 +79,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
             isVisible: true,
             onSubmitted: (values) => {
               removeModal(modalId);
-              
+
               console.log('dialog success:', { values });
               resolve(values); // todo: return result e.g. we may need to handle created entity id and navigate to edit/details page
             },
@@ -76,11 +91,8 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
               reject(); // todo: return error
             },*/
           };
-          console.log('modalProps', modalProps)
+          console.log('modalProps', { modalProps, context })
           createModal({ ...modalProps, isVisible: true });
-          
-          // wait for modal completion and resolve the promise
-          // if submit failed - reject it
         });
       },
       argumentsFormMarkup: dialogArgumentsForm

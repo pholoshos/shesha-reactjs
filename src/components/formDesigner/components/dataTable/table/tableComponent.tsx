@@ -19,6 +19,7 @@ import TableSettings from './tableComponent-settings';
 import { ITableComponentProps } from './models';
 import { IModalProps } from '../../../../../providers/dynamicModal/models';
 import { getStyle } from '../../../../../providers/form/utils';
+import { migrateV0toV1 } from './migrations/migrate-0-1';
 
 const TableComponent: IToolboxComponent<ITableComponentProps> = {
   type: 'datatable',
@@ -33,6 +34,18 @@ const TableComponent: IToolboxComponent<ITableComponentProps> = {
       items: [],
     };
   },
+  migrator: m => m.add<ITableComponentProps>(0, prev => {
+    const items = prev['items'] && Array.isArray(prev['items']) ? prev['items'] : [];
+    return { 
+      ...prev, 
+      items: items,
+      useMultiselect: prev['useMultiselect'] ?? false,
+      crud: prev['crud'] ?? false,
+      flexibleHeight: prev['flexibleHeight'] ?? false,
+    };
+  })
+  .add<ITableComponentProps>(1, prev => migrateV0toV1(prev)),
+
   settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
     return <TableSettings model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },

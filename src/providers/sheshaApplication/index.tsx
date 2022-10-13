@@ -22,7 +22,10 @@ import { UiProvider } from '../ui';
 import { MetadataDispatcherProvider } from '../metadataDispatcher';
 import { IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
 import { ReferenceListDispatcherProvider } from '../referenceListDispatcher';
-import { ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
+import { ConfigurableActionDispatcherConsumer, ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
+import { IConfigurableActionDispatcherActionsContext } from '../configurableActionsDispatcher/contexts';
+import { executeScriptArgumentsForm, IExecuteScriptArguments } from './configurable-actions/execute-script';
+import { executeScript } from '../form/utils';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -65,6 +68,23 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     dispatch(setBackendUrlAction(newBackendUrl));
   };
 
+  const registerSystemActions = (dispatcherContext: IConfigurableActionDispatcherActionsContext) => {
+    dispatcherContext.registerAction<IExecuteScriptArguments>({
+      owner: 'Common',
+      name: 'Execute Script',
+      hasArguments: true,
+      argumentsFormMarkup: executeScriptArgumentsForm,
+      executer: (actionArgs, context) => {
+        if (!actionArgs.expression)
+          return Promise.reject('Expected expression to be defined but it was found to be empty.');
+
+        console.log('context is: ', context);
+
+        return executeScript(actionArgs.expression, context);
+      }
+    });
+  }
+
   return (
     <SheshaApplicationStateContext.Provider value={state}>
       <SheshaApplicationActionsContext.Provider
@@ -92,7 +112,14 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
                       <AppConfiguratorProvider>
                         <ReferenceListDispatcherProvider>
                           <MetadataDispatcherProvider>
-                            <DynamicModalProvider>{children}</DynamicModalProvider>
+                            <DynamicModalProvider>
+                              <ConfigurableActionDispatcherConsumer>
+                                {configurableActions => {
+                                  registerSystemActions(configurableActions);
+                                  return <>{children}</>
+                                }}
+                              </ConfigurableActionDispatcherConsumer>
+                            </DynamicModalProvider>
                           </MetadataDispatcherProvider>
                         </ReferenceListDispatcherProvider>
                       </AppConfiguratorProvider>

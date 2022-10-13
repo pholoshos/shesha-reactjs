@@ -81,6 +81,8 @@ const ComponentsContainerDesigner: FC<IComponentsContainerProps> = (props) => {
 
 
   const components = getChildComponents(containerId);
+  console.log('Container', props.containerId, components)
+
 
   const componentsMapped = components.map<ItemInterface>(c => ({
     id: c.id,

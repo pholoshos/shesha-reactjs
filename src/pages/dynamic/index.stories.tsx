@@ -31,6 +31,11 @@ const Template: Story<IDynamicPageProps> = args => (
 // Reuse that template for creating different stories
 export const Basic = Template.bind({});
 
+export const RoleDetailsPage = addStory(Template, {
+  formId: { name: 'role-details' },
+  id: '81ae1b5a-4121-429b-89fa-06ec3a549e54'
+});
+
 export const PersonsIndexPage = addStory(Template, {
   formId: { name: 'persons', module: 'shesha' },
 });

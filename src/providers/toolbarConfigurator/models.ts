@@ -1,6 +1,4 @@
-import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ButtonType } from 'antd/lib/button';
-import { ActionParameters } from '../form/models';
 import { IConfigurableActionConfiguration } from '../../interfaces/configurableAction';
 
 type ToolbarItemType = 'item' | 'group';

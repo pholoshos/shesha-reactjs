@@ -1,4 +1,4 @@
-export type Migration<TPrev = IHasVersion, TNext = IHasVersion> = (prev: TPrev) => TNext;
+export type Migration<TPrev = IHasVersion, TNext = IHasVersion, TContext = any> = (prev: TPrev, context: TContext) => TNext;
 export interface MigrationRegistration<TPrev = IHasVersion, TNext = IHasVersion> {
   version: number;
   up: Migration<TPrev, TNext>;
@@ -28,13 +28,13 @@ export class MigratorFluent<TModel = IHasVersion, TDst = IHasVersion> {
     }
 }
 
-interface IMigrationRegistrationsOwner<TDst = IHasVersion> {
+interface IMigrationRegistrationsOwner<TDst = IHasVersion, TContext = any> {
     addMigration: <TModel, TNext>(payload: IAddMigrationPayload<TModel, TNext>) => void;
     migrations: MigrationRegistration[];
-    upgrade: (currentModel: IHasVersion) => TDst;
+    upgrade: (currentModel: IHasVersion, context: TContext) => TDst;
 }
 
-export class Migrator<TSrc = IHasVersion, TDst = IHasVersion> implements IMigrationRegistrationsOwner<TDst> {
+export class Migrator<TSrc = IHasVersion, TDst = IHasVersion, TContext = any> implements IMigrationRegistrationsOwner<TDst> {
     migrations: MigrationRegistration[];
     
     constructor(){
@@ -57,7 +57,7 @@ export class Migrator<TSrc = IHasVersion, TDst = IHasVersion> implements IMigrat
         return new MigratorFluent<TNext, TDst>(this);
     }
     
-    upgrade = (currentModel: IHasVersion): TDst => {
+    upgrade = (currentModel: IHasVersion, context: TContext): TDst => {
         console.log('upgrade', { currentVersion: currentModel.version, currentModel });
         const unappliedMigrations = this.migrations
             .filter(m => m.version > currentModel.version)
@@ -66,7 +66,7 @@ export class Migrator<TSrc = IHasVersion, TDst = IHasVersion> implements IMigrat
         let current = {...currentModel};
         unappliedMigrations.forEach(migration => {
             console.log(`upgrade to version ${migration.version}`);
-            current = migration.up(current);
+            current = migration.up(current, context);
             current.version = migration.version;
         });
         return current as TDst;

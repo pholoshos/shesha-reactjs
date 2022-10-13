@@ -159,9 +159,11 @@ const useConfigurableAction = (owner: string, name: string): ILoadingState<IConf
   console.log()
 }
 */
+const ConfigurableActionDispatcherConsumer = ConfigurableActionDispatcherActionsContext.Consumer;
 
 export {
   ConfigurableActionDispatcherProvider,
   useConfigurableActionDispatcher,
+  ConfigurableActionDispatcherConsumer,
   //useConfigurableAction
 };

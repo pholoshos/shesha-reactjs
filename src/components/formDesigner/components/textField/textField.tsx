@@ -39,17 +39,6 @@ const renderInput = (type: TextType) => {
   }
 };
 
-/*
-const migrator = new Migrator<IConfigurableFormComponent, ITextFieldProps>()
-.add<ITextFieldProps>(0, src => ({
-    textType: 'text',
-    ...src,
-  }));
-
-export type SettingsMigrator<TSettings> = (migrator: Migrator<IConfigurableFormComponent, TSettings>) => MigratorFluent<TSettings>;
-const m: SettingsMigrator<ITextFieldProps> = m => m.add<ITextFieldProps>(1, prev => ({...prev, name: '', type: '', id: ''}));
-*/ 
-
 const TextField: IToolboxComponent<ITextFieldProps> = {
   type: 'textField',
   name: 'Text field',
@@ -116,7 +105,7 @@ const TextField: IToolboxComponent<ITextFieldProps> = {
     textType: 'text',
     ...model,
   }),
-  //migrator: m => m.add<ITextFieldProps>(0, prev => ({...prev, textType: 'text'})).add<ITextFieldProps>(1, prev => ({...prev, placeholder: 'Type here...'})),
+  migrator: m => m.add<ITextFieldProps>(0, prev => ({...prev, textType: 'text'})),
   linkToModelMetadata: (model, metadata): ITextFieldProps => {
     return {
       ...model,

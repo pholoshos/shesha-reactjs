@@ -11,6 +11,7 @@ import { useAuth, useDataTableSelection, useGlobalState } from '../../../../../p
 import moment from 'moment';
 import { executeExpression, getStyle } from '../../../../../providers/form/utils';
 import { getButtonGroupMenuItem } from './utils';
+import { migrateV0toV1 } from './migrations/migrate-v1';
 
 const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
   type: 'buttonGroup',
@@ -33,6 +34,13 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
       items: [],
     };
   },
+  migrator: m => m.add<IButtonGroupProps>(0, prev => {
+    return { 
+      ...prev,
+      items: prev['items'] ?? [],
+    };
+  })
+  .add<IButtonGroupProps>(1, migrateV0toV1),
   settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
     return <ToolbarSettings model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },

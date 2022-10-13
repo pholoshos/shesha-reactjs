@@ -183,7 +183,7 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
         defaultSelectedFilterId: null,
       };
     })
-    .add<IChildTableComponentProps>(1, (prev, context) => migrateV0toV1(prev, context)),
+    .add<IChildTableComponentProps>(1, migrateV0toV1),
 };
 
 export default ChildTableComponent;

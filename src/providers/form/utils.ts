@@ -108,7 +108,6 @@ export const upgradeComponents = (
   toolboxComponents: IToolboxComponents,
   flatStructure: IFlatComponentsStructure
 ) => {
-  console.log('LOG: upgrade components');
   const { allComponents } = flatStructure;
   for (const key in allComponents) {
     if (allComponents.hasOwnProperty(key)) {

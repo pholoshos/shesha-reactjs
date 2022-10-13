@@ -58,14 +58,12 @@ export class Migrator<TSrc = IHasVersion, TDst = IHasVersion, TContext = any> im
     }
     
     upgrade = (currentModel: IHasVersion, context: TContext): TDst => {
-        console.log('upgrade', { currentVersion: currentModel.version, currentModel });
         const unappliedMigrations = this.migrations
             .filter(m => m.version > currentModel.version)
             .sort(m => m.version);
         
         let current = {...currentModel};
         unappliedMigrations.forEach(migration => {
-            console.log(`upgrade to version ${migration.version}`);
             current = migration.up(current, context);
             current.version = migration.version;
         });

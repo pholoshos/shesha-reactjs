@@ -7,7 +7,7 @@ import { useFormGet } from '../../apis/form';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
 import { getQueryParams } from '../../utils/url';
-import { IConfigurableFormComponent, IFormDto } from '../form/models';
+import { IFormDto } from '../form/models';
 import { setMarkupWithSettingsAction } from './actions';
 import { ISubFormProps } from './interfaces';
 import { ColProps, message, notification } from 'antd';
@@ -223,9 +223,9 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     }
 
     if (!formPath?.id && markup) {
-      filteredMarkUp(markup.components);
+      dispatch(setMarkupWithSettingsAction(markup));
     }
-  }, [formPath?.id, markup, formData]); //
+  }, [formPath?.id, markup]); //
 
   useEffect(() => {
     if (!isFetchingForm && fetchFormResponse) {
@@ -234,16 +234,16 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       const markup = result?.markup;
 
       const formDto = result as IFormDto;
-
+     
       if (markup) formDto.markup = JSON.parse(markup);
 
-      filteredMarkUp(formDto?.markup.components);
+      dispatch(setMarkupWithSettingsAction(formDto?.markup));
     }
   }, [fetchFormResponse, isFetchingForm]);
 
   useEffect(() => {
     if (markup) {
-      filteredMarkUp(markup.components);
+      dispatch(setMarkupWithSettingsAction(markup));
     }
   }, [markup]);
   //#endregion
@@ -274,34 +274,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     return typeof span === 'number' ? { span } : span;
   };
 
-  function executeExpression(expression: string, returnBoolean = false) {
-    if (!expression) {
-      if (returnBoolean) {
-        return true;
-      } else {
-        console.error('Expected expression to be defined but it was found to be empty.');
 
-        return false;
-      }
-    }
 
-    /* tslint:disable:function-constructor */
-    const evaluated = new Function('data, globalState', expression)(formData, globalState);
-    // tslint:disable-next-line:function-constructor
-    return typeof evaluated === 'boolean' ? evaluated : true;
-  }
-
-  function getVisibleComponents(components): Promise<IConfigurableFormComponent[]> {
-    return new Promise(resolve => {
-      resolve(components?.filter(component => executeExpression(component?.customVisibility, true)));
-    });
-  }
-
-  function filteredMarkUp(components) {
-    getVisibleComponents(components).then(result => {
-      dispatch(setMarkupWithSettingsAction({ ...markup, components: result }));
-    });
-  }
   return (
     <SubFormContext.Provider
       value={{
@@ -325,6 +299,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
           wrapperCol: getColSpan(wrapperCol) || getColSpan(state?.formSettings?.wrapperCol), // Override with the incoming one
         },
         name,
+        value:value
       }}
     >
       <SubFormActionsContext.Provider

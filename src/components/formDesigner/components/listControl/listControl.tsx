@@ -376,6 +376,8 @@ const ListControl: FC<IListControlProps> = props => {
   );
 
   const isHidden = useMemo(() => {
+    if (!customVisibility) return false;
+
     const executeExpression = (returnBoolean = true) => {
       if (!customVisibility) {
         if (returnBoolean) {

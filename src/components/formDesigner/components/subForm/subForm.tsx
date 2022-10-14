@@ -26,7 +26,7 @@ const SubForm: FC<ISubFormProps> = ({ readOnly }) => {
 
         <div>
           <FormItemProvider namePrefix={name} labelCol={formSettings?.labelCol} wrapperCol={formSettings?.wrapperCol}>
-            <SubFormContainer components={components} readOnly={readOnly} />
+            <SubFormContainer components={components} readOnly={readOnly}  />
           </FormItemProvider>
         </div>
       </div>

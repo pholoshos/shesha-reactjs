@@ -3,6 +3,7 @@ import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { CSSProperties, ReactNode } from 'react';
 import { IAnyObject } from '../../interfaces';
 import { IConfigurableColumnsBase } from '../../providers/datatableColumnsConfigurator/models';
+import { FormIdentifier } from '../../providers/form/models';
 
 interface IWrappedEntityPickerProps {
   tableId?: string;
@@ -18,7 +19,7 @@ export interface ISelectedProps {
 }
 
 interface IAddNewRecordProps {
-  modalFormId?: string;
+  modalFormId?: FormIdentifier;
   modalTitle?: string;
   showModalFooter?: boolean;
   submitHttpVerb?: 'POST' | 'PUT';
@@ -34,7 +35,7 @@ export interface IEntityPickerState {
 }
 
 export interface IEntityPickerProps extends Omit<IWrappedEntityPickerProps, 'onDblClick'> {
-  formId?: string;
+  formId?: FormIdentifier;
   onChange?: (value: string, data: IAnyObject) => void;
   onSelect?: (data: IAnyObject) => void;
   value?: any;

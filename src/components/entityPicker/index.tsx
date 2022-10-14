@@ -1,6 +1,7 @@
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Button, Modal, Select } from 'antd';
 import _, { camelCase, snakeCase } from 'lodash';
+import { nanoid } from 'nanoid/non-secure';
 import React, { FC, Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useMedia } from 'react-use';
 import { usePublish } from '../../hooks';
@@ -38,10 +39,11 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   defaultValue,
   title = 'Select Item',
   configurableColumns,
-  modalId,
+  formId,
   addNewRecordsProps,
   readOnly,
 }) => {
+  const [modalId] = useState(nanoid()); // use generated value because formId was changed. to be reviewed
   const [state, setState] = useState<IEntityPickerState>({
     showModal: false,
   });
@@ -109,7 +111,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     // This is important for form designer configured picker
     // register columns
     if (formId && configurableColumns) {
-      registerConfigurableColumns(formId, configurableColumns);
+      registerConfigurableColumns(modalId, configurableColumns);
     }
   }, [formId, configurableColumns]);
 

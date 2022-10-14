@@ -2,13 +2,16 @@
 
 import React from 'react';
 import { Get, GetProps, useGet, UseGetProps, Mutate, MutateProps, useMutate, UseMutateProps } from 'restful-react';
+import { MetadataSourceType } from '../interfaces/metadata';
 
 import * as RestfulShesha from '../utils/fetchers';
+import { PermissionedObjectDto } from './permissionedObject';
 export const SPEC_VERSION = 'v1';
 /**
  * Indicate the source of the entity/property metadata
  */
-export type MetadataSourceType = 1 | 2;
+// use Metadata
+//export type MetadataSourceType = 1 | 2;
 
 /**
  * Model property DTO
@@ -56,6 +59,65 @@ export interface ModelPropertyDto {
   * If true, indicates that current property is a framework-related (e.g. Abp.Domain.Entities.ISoftDelete.IsDeleted, Abp.Domain.Entities.Auditing.IHasModificationTime.LastModificationTime)
   */
   isFrameworkRelated?: boolean;
+
+  suppress?: boolean;
+
+  /**
+  * Indicates if a property value is required in order to save
+  */
+  required?: boolean;
+
+  /**
+  * If true, the property cannot be edited via the dynamically generated create/update end-points:
+  * - property should not be listed on create/update end-points
+  * - should be set to 'True' and not editable for read-only properties of domain classes
+  */
+  readOnly?: boolean;
+
+  /**
+  * Equivalent to Audited attribute on the property
+  */
+  audited?: boolean;
+
+  /**
+  * Validation min
+  */
+  min?: number;
+  /**
+  * Validation max
+  */
+  max?: number;
+
+  /**
+  * Validation min length
+  */
+  minLength?: number;
+  /**
+  * Validation max length
+  */
+  maxLength?: number;
+
+  /**
+  * Validation RegularExpression 
+  */
+  regExp?: string;
+
+  /**
+  * Validation message
+  */
+  validationMessage?: string;
+
+  suppressHardcoded?: boolean;
+
+  requiredHardcoded?: boolean;
+
+  readOnlyHardcoded?: boolean;
+
+  auditedHardcoded?: boolean;
+
+  sizeHardcoded?: boolean;
+
+  regExpHardcoded?: boolean;
 }
 
 /**
@@ -65,7 +127,21 @@ export interface ModelConfigurationDto {
   id?: string;
   className?: string | null;
   namespace?: string | null;
+  permission?: PermissionedObjectDto | null;
+  permissionGet?: PermissionedObjectDto | null;
+  permissionCreate?: PermissionedObjectDto | null;
+  permissionUpdate?: PermissionedObjectDto | null;
+  permissionDelete?: PermissionedObjectDto | null;
   properties?: ModelPropertyDto[] | null;
+  moduleId?: string | null;
+  module?: string | null;
+  name?: string | null;
+  label?: string | null;
+  description?: string | null;
+  versionNo?: number | null;
+  versionStatus?: 1 | 2 | 3 | 4 | 5 | null;
+  suppress?: boolean | null;
+  source?: MetadataSourceType | null;
 }
 
 export interface ValidationErrorInfo {

@@ -146,3 +146,11 @@ export const OrganisationEdit = addStory(DesignerTemplate, {
 export const PermissionedObjects = addStory(DesignerTemplate, {
   formId: { name: '/permissionedObject/webapi' },
 });
+
+export const ModelConfigurationEdit = addStory(DesignerTemplate, {
+  formId: { name: 'model-configuration-edit' }
+});
+
+export const PermissionEdit = addStory(DesignerTemplate, {
+  formId: { name: 'permission-edit' }
+});

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Get, GetProps, useGet, UseGetProps, Mutate, MutateProps, useMutate, UseMutateProps } from 'restful-react';
+import { MetadataSourceType } from '../interfaces/metadata';
 
 import * as RestfulShesha from '../utils/fetchers';
 export const SPEC_VERSION = 'v1';
@@ -16,6 +17,8 @@ export interface EntityConfigDto {
   className?: string | null;
   namespace?: string | null;
   discriminatorValue?: string | null;
+  source?: MetadataSourceType | null;
+  suppress?: boolean | null;
 }
 
 export interface ValidationErrorInfo {

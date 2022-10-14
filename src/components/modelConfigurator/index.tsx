@@ -20,7 +20,7 @@ export const ModelConfigurator: FC<IModelConfiguratorProps> = (props) => {
       form={form}
       configuratorRef={props.configuratorRef}
     >
-      <ModelConfiguratorRenderer />
+      {props.id != null && <ModelConfiguratorRenderer />}
     </ModelConfiguratorProvider>
   );
 };

@@ -27,6 +27,35 @@ const mapPropertyToModelItem = (property: ModelPropertyDto): IModelItem => {
 
 const modelReducer = handleActions<IModelConfiguratorStateContext, any>(
   {
+    [ModelActionEnums.CreateNew]: (
+      state: IModelConfiguratorStateContext,
+      action: ReduxActions.Action<ModelConfigurationDto>
+    ) => {
+      return {
+        ...state,
+        modelConfiguration: action.payload,
+        id: ''
+      };
+    },
+
+    [ModelActionEnums.ChangeModelId]: (
+      state: IModelConfiguratorStateContext,
+      action: ReduxActions.Action<string>
+    ) => {
+      if (action.payload)
+      {
+        return {
+          ...state,
+          id: action.payload
+        };
+      }
+      return {
+        ...state,
+        modelConfiguration: {},
+        id: action.payload
+      };
+    },
+
     [ModelActionEnums.LoadRequest]: (state: IModelConfiguratorStateContext) => {
       return {
         ...state,

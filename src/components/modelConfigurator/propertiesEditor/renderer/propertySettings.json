@@ -1,6 +1,33 @@
 {
   "components": [
     {
+      "id": "-X1emhZPx1rM7w22GOc11",
+      "type": "checkbox",
+      "name": "suppress",
+      "label": "Suppress",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "customEnabled": "return !data.suppressHardcoded;",
+      "description": null,
+      "validate": {},
+      "settingsValidationErrors": [],
+      "maxLength": null
+    },
+    {
+      "id": "UIUv_8sUeAdK_JQqdFm1e",
+      "type": "sectionSeparator",
+      "name": "sectionSeparator1",
+      "label": "Display",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "visibility": "Yes",
+      "customVisibility": null,
+      "isDynamic": false
+    },    
+    {
       "id": "aYeIfcjqrSZpmuKd6Fijn",
       "type": "textField",
       "name": "name",
@@ -54,6 +81,18 @@
       "maxLength": null,
       "parentId": "root"
     },
+    {
+      "id": "UIUv_8sUeAdK_JQqdFm11",
+      "type": "sectionSeparator",
+      "name": "sectionSeparator1",
+      "label": "Data type and format",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "visibility": "Yes",
+      "customVisibility": null,
+      "isDynamic": false
+    },    
     {
       "id": "F7W3qRl8P_Jdv_R2Q-f3u",
       "type": "dropdown",
@@ -200,7 +239,76 @@
               "value": "phone"
             }
           ]
-        }
+        },
+        {
+          "id": "XEyIWE4U614Ip_x0FqViL",
+          "type": "numberField",
+          "name": "minLength",
+          "label": "Min Length",
+          "labelAlign": "right",
+          "parentId": "7cYicDJe6G4QZySqcHoIM",
+          "hidden": false,
+          "visibility": "Yes",
+          "customVisibility": null,
+          "customEnabled": "return !data.sizeHardcoded;",
+          "isDynamic": false,
+          "placeholder": "",
+          "description": "",
+          "highPrecision": false,
+          "stepNumeric": 1,
+          "stepString": "1",
+          "defaultValue": "",
+          "validate": {
+            "minValue": "",
+            "maxValue": ""
+          },
+          "settingsValidationErrors": []
+        },
+        {
+          "id": "XEyIWE4U614Ip_x0FqVi1",
+          "type": "numberField",
+          "name": "maxLength",
+          "label": "Max Length",
+          "labelAlign": "right",
+          "parentId": "7cYicDJe6G4QZySqcHoIM",
+          "hidden": false,
+          "visibility": "Yes",
+          "customVisibility": null,
+          "customEnabled": "return !data.sizeHardcoded;",
+          "isDynamic": false,
+          "placeholder": "",
+          "description": "",
+          "highPrecision": false,
+          "stepNumeric": 1,
+          "stepString": "1",
+          "defaultValue": "",
+          "validate": {
+            "minValue": "",
+            "maxValue": ""
+          },
+          "settingsValidationErrors": []
+        },
+        {
+          "id": "aYeIfcjqrSZpmuKd6Fij1",
+          "type": "textField",
+          "name": "regExp",
+          "label": "Regular Expression",
+          "labelAlign": "right",
+          "hidden": false,
+          "customVisibility": null,
+          "customEnabled": "return !data.regExpHardcoded;",
+          "autoSize": false,
+          "showCount": false,
+          "allowClear": false,
+          "description": null,
+          "maxLength": null,
+          "parentId": "7cYicDJe6G4QZySqcHoIM",
+          "validate": {
+            "required": false
+          },
+          "settingsValidationErrors": [],
+          "textType": "text"
+        }     
       ]
     },
     {
@@ -253,7 +361,55 @@
               "value": "int64"
             }
           ]
-        }
+        },
+        {
+          "id": "XEyIWE4U614Ip_x0FqV11",
+          "type": "numberField",
+          "name": "min",
+          "label": "Min",
+          "labelAlign": "right",
+          "parentId": "ipxZABhhFbnZBrO1iijxF",
+          "hidden": false,
+          "visibility": "Yes",
+          "customVisibility": null,
+          "customEnabled": "return !data.sizeHardcoded;",
+          "isDynamic": false,
+          "placeholder": "",
+          "description": "",
+          "highPrecision": false,
+          "stepNumeric": 1,
+          "stepString": "0.1",
+          "defaultValue": "",
+          "validate": {
+            "minValue": "",
+            "maxValue": ""
+          },
+          "settingsValidationErrors": []
+        },
+        {
+          "id": "XEyIWE4U614Ip_x0FqV12",
+          "type": "numberField",
+          "name": "max",
+          "label": "Max",
+          "labelAlign": "right",
+          "parentId": "ipxZABhhFbnZBrO1iijxF",
+          "hidden": false,
+          "visibility": "Yes",
+          "customVisibility": null,
+          "customEnabled": "return !data.sizeHardcoded;",
+          "isDynamic": false,
+          "placeholder": "",
+          "description": "",
+          "highPrecision": false,
+          "stepNumeric": 1,
+          "stepString": "0.1",
+          "defaultValue": "",
+          "validate": {
+            "minValue": "",
+            "maxValue": ""
+          },
+          "settingsValidationErrors": []
+        }        
       ]
     },
     {
@@ -396,6 +552,83 @@
           "textType": "text"
         }
       ]
+    },
+    {
+      "id": "aYeIfcjqrSZpmuKd6Fij2",
+      "type": "textField",
+      "name": "validationMessage",
+      "label": "Validation Message",
+      "labelAlign": "right",
+      "hidden": false,
+      "customVisibility": null,
+      "autoSize": false,
+      "showCount": false,
+      "allowClear": false,
+      "description": null,
+      "maxLength": null,
+      "parentId": "root",
+      "validate": {
+        "required": false
+      },
+      "settingsValidationErrors": [],
+      "textType": "text"
+    },
+    {
+      "id": "UIUv_8sUeAdK_JQqdFm12",
+      "type": "sectionSeparator",
+      "name": "sectionSeparator1",
+      "label": "Attributes",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "visibility": "Yes",
+      "customVisibility": null,
+      "isDynamic": false
+    },    
+    {
+      "id": "-X1emhZPx1rM7w22GOc12",
+      "type": "checkbox",
+      "name": "audited",
+      "label": "Audited",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "customEnabled": "return !data.auditedHardcoded;",
+      "description": null,
+      "validate": {},
+      "settingsValidationErrors": [],
+      "maxLength": null
+    },
+    {
+      "id": "-X1emhZPx1rM7w22GOc13",
+      "type": "checkbox",
+      "name": "required",
+      "label": "Required",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "customEnabled": "return !data.requiredHardcoded;",
+      "description": null,
+      "validate": {},
+      "settingsValidationErrors": [],
+      "maxLength": null
+    },
+    {
+      "id": "-X1emhZPx1rM7w22GOc14",
+      "type": "checkbox",
+      "name": "readOnly",
+      "label": "ReadOnly",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "customEnabled": "return !data.readOnlyHardcoded;",
+      "description": null,
+      "validate": {},
+      "settingsValidationErrors": [],
+      "maxLength": null
     }
   ],
   "formSettings": {

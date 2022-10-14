@@ -1,14 +1,11 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Collapse, Dropdown, Empty, Menu, Spin } from 'antd';
+import React, { FC, useEffect, useState } from 'react';
+import { Dropdown, Menu, Spin } from 'antd';
 import { useLocalStorage } from '../../hooks';
 import SearchBox from '../formDesigner/toolboxSearchBox';
-import ObjectsTree from './objectsTree';
+import GrouppedObjectsTree from '../grouppedObjectsTree';
 import { PermissionedObjectDto, usePermissionedObjectGetAllTree } from '../../apis/permissionedObject';
 import { DatabaseFilled, LoadingOutlined } from '@ant-design/icons';
 import { useForm } from '../..';
-import { getLastSection } from '../../utils/string';
-
-const { Panel } = Collapse;
 
 export interface IPermissionedObjectsTreeProps {
   objectsType?: string,
@@ -17,11 +14,6 @@ export interface IPermissionedObjectsTreeProps {
    * A callback for when the value of this component changes
    */
    onChange?: any;
-}
-
-interface GrouppedObjects {
-  groupName: string,
-  visibleItems: PermissionedObjectDto[],
 }
 
 export const PermissionedObjectsTree: FC<IPermissionedObjectsTreeProps> = (props) => {
@@ -67,70 +59,17 @@ export const PermissionedObjectsTree: FC<IPermissionedObjectsTreeProps> = (props
     }
   }, [isFetchingData, fetchingDataError, fetchingDataResponse])
 
-  const getVisible = (items: PermissionedObjectDto[], searchText: string): PermissionedObjectDto[] => {
-    const result: PermissionedObjectDto[] = [];
-    if (!items)
-      return result;
-      
-    items.forEach(item => {
-      if (!item.hidden){
-        const childItems = getVisible(item.child, searchText);
-        const matched = (searchText ?? '') == '' 
-                        || item.object.toLowerCase().includes(searchText.toLowerCase()) 
-                        || item.name?.toLowerCase().includes(searchText.toLowerCase());
-        
-        if (matched || childItems.length > 0) {
-          const filteredItem: PermissionedObjectDto = { ...item, child: childItems };
-          result.push(filteredItem)
-        }
-      }
-    });
-
-    return result;
-  }
-
-  const grouping = (field: string, split: boolean) => {
-    const groups = [] as GrouppedObjects[];
-    if (Boolean(allItems)){
-      allItems.forEach((item) => {
-        let name = split ? getLastSection('.', item[field]) : item[field];
-        name = Boolean(name) ? name : '-';
-        const g = groups.filter((g) => { return g.groupName === name});
-        if (g.length > 0) {
-          g[0].visibleItems.push(item);
-        } else {
-          groups.push({ groupName: name, visibleItems: [item]});
-        }
-      });
-      groups.forEach(group => { group.visibleItems = getVisible(group.visibleItems, searchText) });
-    }
-    return groups.sort((a, b) => { return a.groupName == '-' ? 1 : b.groupName == '-' ? -1 
-      : a.groupName > b.groupName ? 1 : b.groupName > a.groupName ? -1 : 0; });
-  }
-
-  const groups = useMemo<GrouppedObjects[]>(() => {
-    switch (groupBy) {
-      case 'c': return grouping('category', false);
-      case 'm': return grouping('module', true);
-      default: return [{ groupName: "-", visibleItems: getVisible(allItems, searchText) }];
-    }
-  }, [allItems, searchText, groupBy])
-
-  const onCollapseChange = (key: string | string[]) => {
-    setOpenedKeys(Array.isArray(key) ? key : [key]);
-  };
-
-  const onChangeHandler = (id: string) => {
-    setObjectId(id);
+  const onChangeHandler = (item: PermissionedObjectDto) => {
+    setObjectId(item.id);
     if (Boolean(props.onChange))
-      props.onChange(id);
+      props.onChange(item.id);
   }
 
   const menu = (
     <Menu>
       <Menu.Item key={"1"} onClick={() => {setGroupBy("-")}}>Without grouping</Menu.Item>
-      <Menu.Item key={"2"} onClick={() => {setGroupBy("m")}}>Group by Module</Menu.Item>
-      <Menu.Item key={"3"} onClick={() => {setGroupBy("c")}}>Group by Category</Menu.Item>
+      <Menu.Item key={"2"} onClick={() => {setGroupBy("module")}}>Group by Module</Menu.Item>
+      <Menu.Item key={"3"} onClick={() => {setGroupBy("category")}}>Group by Category</Menu.Item>
     </Menu>
   );
 
@@ -154,45 +93,18 @@ export const PermissionedObjectsTree: FC<IPermissionedObjectsTreeProps> = (props
         </div>
       </div>
       
-      {groups.length > 0 && (
-        <Collapse activeKey={openedKeys} onChange={onCollapseChange}>
-          {groups.map((ds, dsIndex) => {
-            const visibleItems = ds.visibleItems;
-
-            let classes = ['sha-toolbox-panel'];
-            //if (ds.datasource.id === activeDataSourceId) classes.push('active');
-            
-            return visibleItems.length === 0 ? null : (
-              ds.groupName === '-' 
-              ? (
-                <div key={dsIndex.toString()}>
-                  <ObjectsTree 
-                    items={visibleItems} 
-                    searchText={searchText} 
-                    defaultExpandAll={(searchText ?? '') !== ''}
-                    onChange={ onChangeHandler }
-                    defaultSelected={objectId}
-                    ></ObjectsTree>
-                </div>
-              )
-              : (
-              <Panel header={ds.groupName} key={dsIndex.toString()} className={classes.reduce((a, c) => a + ' ' + c)}>
-                <ObjectsTree 
-                  items={visibleItems} 
-                  searchText={searchText} 
-                  defaultExpandAll={(searchText ?? '') !== ''}
-                  onChange={ onChangeHandler }
-                  defaultSelected={objectId}
-                  ></ObjectsTree>
-              </Panel>
-              )
-            );
-          })}
-        </Collapse>
-      )}
-      {groups.length === 0 && (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Objects not found" />
-      )}
+      <GrouppedObjectsTree<PermissionedObjectDto>
+        items={allItems}
+        openedKeys={openedKeys}
+        searchText={searchText}
+        groupBy={groupBy}
+        defaultSelected={objectId}
+        isMatch={(item, searchText) => {
+          return item.object.toLowerCase().includes(searchText.toLowerCase()) 
+          || item.name?.toLowerCase().includes(searchText.toLowerCase());}}
+        setOpenedKeys={setOpenedKeys}
+        onChange={onChangeHandler}
+      />
     </Spin>
   );
 }

@@ -9,7 +9,7 @@ import { IConfigurableFormComponent } from "../../../../../../interfaces";
 import { ButtonType } from 'antd/lib/button';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 
-interface IShowModalactionArguments {
+interface IShowModalActionArguments {
     modalTitle: string;
     formId: FormIdentifier;
     showModalFooter: boolean;
@@ -84,7 +84,7 @@ export const migrateV0toV1 = (model: IToolbarPropsV0, context: SettingsMigration
 
                         const propsWithModal = buttonProps as IToolbarButtonTableDialogPropsV0;
 
-                        const modalArguments: IShowModalactionArguments = {
+                        const modalArguments: IShowModalActionArguments = {
                             modalTitle: buttonProps.modalTitle,
                             formId: buttonProps.modalFormId,
 

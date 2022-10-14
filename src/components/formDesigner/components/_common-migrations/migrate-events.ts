@@ -9,8 +9,8 @@ export const getDispatchEventReplacement = (eventCallerProps: IHasDispatchEvent)
     const eventName = eventCallerProps?.eventName === 'CUSTOM_EVENT' && eventCallerProps?.customEventNameToDispatch
         ? eventCallerProps?.customEventNameToDispatch
         : eventCallerProps?.eventName;
-    const target = eventCallerProps?.uniqueStateId;        
-    switch (eventName){
+    const target = eventCallerProps?.uniqueStateId;
+    switch (eventName) {
         case SUB_FORM_EVENT_NAMES.getFormData: {
             return {
                 actionName: 'Get form data',
@@ -35,6 +35,30 @@ export const getDispatchEventReplacement = (eventCallerProps: IHasDispatchEvent)
                 handleSuccess: false,
             }
         }
+        case ListControlEvents.refreshListItems: {
+            return {
+                actionName: 'Refresh list items',
+                actionOwner: target,
+                handleFail: false,
+                handleSuccess: false,
+            }
+        }
+        case ListControlEvents.saveListItems: {
+            return {
+                actionName: 'Save list items',
+                actionOwner: target,
+                handleFail: false,
+                handleSuccess: false,
+            }
+        }
+        case ListControlEvents.addListItems: {
+            return {
+                actionName: 'Add list items',
+                actionOwner: target,
+                handleFail: false,
+                handleSuccess: false,
+            }
+        }
     }
 
     return null;
@@ -44,4 +68,9 @@ const SUB_FORM_EVENT_NAMES = {
     getFormData: 'getFormData',
     postFormData: 'postFormData',
     updateFormData: 'updateFormData',
+};
+const ListControlEvents = {
+    refreshListItems: 'refreshListItems',
+    saveListItems: 'saveListItems',
+    addListItems: 'addListItems',
 };

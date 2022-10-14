@@ -20,8 +20,8 @@ const SubForm: FC<ISubFormProps> = ({ readOnly }) => {
   return (
     <ShaSpin spinning={isLoading}>
       <div style={{ flex: 1 }}>
-        {Object.keys(errors).map(error => (
-          <ValidationErrors error={errors[error]} />
+        {Object.keys(errors).map((error, index) => (
+          <ValidationErrors key={index} error={errors[error]} />
         ))}
 
         <div>

@@ -46,6 +46,7 @@ export interface IToolboxComponent<T = IConfigurableFormComponent> {
   ) => //settings: AuthorizationSettingsDto
   ReactNode;
   /**
+   * @deprecated - use `migrator` instead
    * Fills the component properties with some default values. Fired when the user drops a component to the form
    */
   initModel?: (model: T) => T;

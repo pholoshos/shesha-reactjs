@@ -6,7 +6,7 @@ import PropertyAutocomplete from '../../../propertyAutocomplete/propertyAutocomp
 import { IListItemsProps } from './models';
 import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
-import { AutocompleteDto, AutocompleteRaw } from '../../../autocomplete';
+import { AutocompleteRaw } from '../../../autocomplete';
 import { QueryBuilderWithModelType } from '../queryBuilder/queryBuilderWithModelType';
 import { QueryBuilderComponentRenderer } from '../queryBuilder/queryBuilderComponent';
 
@@ -21,7 +21,7 @@ export interface IListControlSettingsProps {
   onValuesChange?: (changedValues: any, values: IListItemsProps) => void;
 }
 
-interface IListSettingsState extends IListItemsProps {}
+interface IListSettingsState extends IListItemsProps { }
 
 export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, model, onValuesChange }) => {
   const [state, setState] = useState<IListSettingsState>(model);
@@ -148,11 +148,11 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
       </FormItem>
 
       <Show when={state?.renderStrategy === 'externalForm'}>
-        <FormItem name="formPath" label="Form Path">
-          <AutocompleteDto
+        <FormItem name="formId" label="Form Path">
+          <AutocompleteRaw
             dataSourceType="entitiesList"
-            dataSourceUrl="/api/Autocomplete/List"
-            typeShortAlias="Shesha.Framework.Form"
+            typeShortAlias="Shesha.Core.FormConfiguration"
+            entityDisplayProperty="configuration.name"
           />
         </FormItem>
       </Show>

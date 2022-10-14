@@ -445,7 +445,7 @@ const ListControl: FC<IListControlProps> = props => {
     return (
       <SubFormProvider
         name={localName}
-        markup={{ components: formConfiguration.markup, formSettings: formConfiguration?.settings }}
+        markup={{ components: formConfiguration?.markup, formSettings: formConfiguration?.settings }}
         properties={[]}
         labelCol={localLabelCol}
         wrapperCol={localWrapperCol}
@@ -516,6 +516,7 @@ const ListControl: FC<IListControlProps> = props => {
                     <>
                       {fields?.map((field, index) => (
                         <ConditionalWrap
+                          key={index}
                           condition={selectionMode !== 'none'}
                           wrap={children => (
                             <Checkbox

@@ -53,7 +53,7 @@ export const SubFormPage = addStory(Template, {
 
 export const PersonListPage = addStory(Template, {
   formId: { name: 'person-list' },
-  mode: 'edit',
+  //mode: 'edit',
 });
 
 

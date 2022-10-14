@@ -1,19 +1,19 @@
-import { IButtonGroupProps } from "../models";
-import { IConfigurableActionConfiguration } from "../../../../../../interfaces/configurableAction";
-import { SettingsMigrationContext } from "../../../../../../interfaces/formDesigner";
-import { IKeyValue } from "../../../../../../interfaces/keyValue";
-import { IButtonGroupButton } from "../../../../../../providers/buttonGroupConfigurator/models";
-import { IShowModalActionArguments as IShowModalActionArguments } from "../../../../../../providers/dynamicModal/configurable-actions/show-dialog-arguments";
-import { getClosestTableId } from "../../../../../../providers/form/utils";
-import { getDispatchEventReplacement } from "../../../_common-migrations/migrate-events";
+import { SettingsMigrationContext } from "../../../../..";
+import { IConfigurableActionConfiguration } from "../../../../../interfaces/configurableAction";
+import { IButtonGroupButton } from "../../../../../providers/buttonGroupConfigurator/models";
+import { getClosestTableId } from "../../../../../providers/form/utils";
+import { getDispatchEventReplacement } from "../../_common-migrations/migrate-events";
+import { IListComponentProps } from "../models";
+import { IShowModalActionArguments } from "../../../../../providers/dynamicModal/configurable-actions/show-dialog-arguments";
+import { IKeyValue } from "../../../../../interfaces/keyValue";
 
-export const migrateV0toV1 = (props: IButtonGroupProps, context: SettingsMigrationContext): IButtonGroupProps => {
-    const { items } = props;
+export const migrateV0toV1 = (props: IListComponentProps, context: SettingsMigrationContext): IListComponentProps => {
+    const { buttons } = props;
 
-    const newItems = items.map(item => {
+    const newButtons = buttons.map(item => {
         if (item.itemType !== "item")
             return item;
-
+            
         const button = item as IButtonGroupButtonV0;
         const newItem: IButtonGroupButton = { ...button };
         newItem.actionConfiguration = getActionConfiguration(button, context);
@@ -21,7 +21,15 @@ export const migrateV0toV1 = (props: IButtonGroupProps, context: SettingsMigrati
         return newItem;
     });
 
-    return { ...props, items: newItems };
+    const formId = props['formPath'] && props['formPath']['id']
+        ? props['formPath']['id']
+        : null;
+
+    return { 
+        ...props, 
+        buttons: newButtons,
+        formId: formId,
+    };
 }
 
 const getActionConfiguration = (buttonProps: IButtonGroupButtonV0, context: SettingsMigrationContext): IConfigurableActionConfiguration => {

@@ -2,7 +2,7 @@ import { IKeyValue } from "../../../interfaces/keyValue";
 import { DesignerToolbarSettings } from "../../../interfaces/toolbarSettings";
 import { FormIdentifier } from "../../form/models";
 
-export interface IShowModalactionArguments {
+export interface IShowModalActionArguments {
   modalTitle: string;
   formId: FormIdentifier;
   showModalFooter: boolean;

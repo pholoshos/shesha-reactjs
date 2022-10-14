@@ -69,24 +69,6 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           dataSourceType="entitiesList"
           typeShortAlias="Shesha.Core.FormConfiguration"
           entityDisplayProperty="configuration.name"
-          /*
-          getOptionFromFetchedItem={(item): ISelectOption<IDtoType> => {
-            return {
-              value: item['value'],
-              label: item['displayText'],
-              data: item['displayText']
-            }}}
-            getLabeledValue={(
-              itemValue: IGuidNullableEntityWithDisplayNameDto,
-              _options: ISelectOption<IDtoType>[]
-            ) => {
-              return {
-                value: itemValue.id,
-                label: itemValue.displayText,
-                data: itemValue,
-              };
-            }}
-          */
         />
       </FormItem>
 

@@ -1,7 +1,7 @@
 import { SettingsMigrationContext } from "../../../../../..";
 import { IConfigurableActionConfiguration } from "../../../../../../interfaces/configurableAction";
 import { IConfigurableActionColumnsProps, IConfigurableColumnsProps } from "../../../../../../providers/datatableColumnsConfigurator/models";
-import { IShowModalactionArguments } from "../../../../../../providers/dynamicModal/configurable-actions/show-dialog-arguments";
+import { IShowModalActionArguments } from "../../../../../../providers/dynamicModal/configurable-actions/show-dialog-arguments";
 import { IModalProps } from "../../../../../../providers/dynamicModal/models";
 import { getClosestTableId } from "../../../../../../providers/form/utils";
 import { ITableComponentProps } from "../models";
@@ -129,7 +129,7 @@ const getShowDialogActionConfig = (oldColumn: IConfigurableActionColumnsPropsV0)
     };
     const convertedProps = oldColumn as Omit<IModalProps, 'formId'>; // very strange code, took it from column renderer
 
-    const modalArguments: IShowModalactionArguments = {
+    const modalArguments: IShowModalActionArguments = {
         modalTitle: oldColumn.modalTitle,
         formId: oldColumn.modalFormId,
         additionalProperties: oldColumn.additionalProperties,

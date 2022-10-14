@@ -1,4 +1,5 @@
 import { IConfigurableFormComponent, IFormItem } from '../../../../interfaces';
+import { ButtonGroupItemProps } from '../../../../providers/buttonGroupConfigurator/models';
 import { FormIdentifier } from '../../../../providers/form/models';
 
 export interface IListItemsProps {
@@ -19,7 +20,7 @@ export interface IListItemsProps {
   showPagination?: boolean;
   showQuickSearch?: boolean;
   paginationDefaultPageSize: number;
-  buttons?: any[];
+  buttons?: ButtonGroupItemProps[];
   maxHeight?: number;
   labelCol?: number;
   wrapperCol?: number;

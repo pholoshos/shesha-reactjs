@@ -10,6 +10,7 @@ import { ListControlSettings } from './settingsv2';
 import { IListComponentProps, IListItemsProps } from './models';
 import { nanoid } from 'nanoid';
 import ListControl from './listControl';
+import { migrateV0toV1 } from './migrations/migrate-v1';
 
 const ListComponent: IToolboxComponent<IListComponentProps> = {
   type: 'list',
@@ -46,19 +47,19 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
       />
     );
   },
-  initModel: model => {
+  migrator: m => m.add<IListComponentProps>(0, prev => {
     const uniqueStateId = `FORM_LIST_${nanoid()}`;
 
     const customProps: IListComponentProps = {
-      ...model,
-      showPagination: true,
-      hideLabel: true,
-      uniqueStateId,
-      labelCol: 5,
-      wrapperCol: 13,
-      selectionMode: 'single',
-      deleteConfirmMessage: 'Are you sure you want to delete this item? Please note this action cannot be reversed',
-      buttons: [
+      ...prev,
+      showPagination: prev['showPagination'] ?? true,
+      hideLabel: prev['hideLabel'] ?? true,
+      uniqueStateId: prev['uniqueStateId'] ?? uniqueStateId,
+      labelCol: prev['labelCol'] ?? 5,
+      wrapperCol: prev['wrapperCol'] ?? 13,
+      selectionMode: prev['selectionMode'] ?? 'single',
+      deleteConfirmMessage: prev['deleteConfirmMessage'] ?? 'Are you sure you want to delete this item? Please note this action cannot be reversed',
+      buttons: prev['buttons'] ?? [
         {
           id: nanoid(),
           itemType: 'item',
@@ -75,9 +76,11 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
           buttonType: 'link',
         },
       ],
+      paginationDefaultPageSize: 10,
     };
-    return customProps;
-  },
+      return customProps;
+  })
+  .add<IListComponentProps>(1, migrateV0toV1),
   validateSettings: model => validateConfigurableComponentSettings(listSettingsForm, model),
 };
 

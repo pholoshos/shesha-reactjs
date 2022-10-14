@@ -16,7 +16,7 @@ import {
 import { IModalProps } from './models';
 import { DynamicModal } from '../../components/dynamicModal';
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
-import { dialogArgumentsForm, IShowModalactionArguments } from './configurable-actions/show-dialog-arguments';
+import { dialogArgumentsForm, IShowModalActionArguments } from './configurable-actions/show-dialog-arguments';
 import { IShowConfigrmationArguments, showConfirmationArgumentsForm } from './configurable-actions/show-confirmation-arguments';
 import { nanoid } from 'nanoid/non-secure';
 import { evaluateKeyValuesToObject } from '../form/utils';
@@ -55,7 +55,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
       },
       argumentsFormMarkup: showConfirmationArgumentsForm
     });
-    registerAction<IShowModalactionArguments>({
+    registerAction<IShowModalActionArguments>({
       name: 'Show Dialog',
       owner: 'Common',
       hasArguments: true,

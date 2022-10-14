@@ -223,9 +223,9 @@ const ReactTable: FC<IReactTableProps> = ({
   useEffect(() => {
     if (selectedRowIds && typeof onSelectedIdsChanged === 'function') {
       const arrays: string[] = allRows
-        ?.map(({ Id }, index) => {
+        ?.map(({ id }, index) => {
           if (selectedRowIds[index]) {
-            return Id;
+            return id;
           }
 
           return null;

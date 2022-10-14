@@ -16,7 +16,7 @@ export interface IEntityPickerComponentProps extends IConfigurableFormComponent 
   hideBorder?: boolean;
   disabled?: boolean;
   tableId: string;
-  mode?:string;
+  mode?: 'single' | 'multiple' | 'tags';
   entityType: string;
   title?: string;
   displayEntityKey?: string;
@@ -62,6 +62,7 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
           tableId={model?.tableId}
           displayEntityKey={model?.displayEntityKey}
           entityType={model?.entityType}
+          mode={model?.mode}
         
           addNewRecordsProps={
             model?.allowNewRecord

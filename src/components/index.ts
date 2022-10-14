@@ -52,7 +52,7 @@ export { default as DateDisplay, IDateDisplayProps } from './dateDisplay';
 export { default as EditableDisplayFormItem, IEditableDisplayLabelProps } from './editableDisplayFormItem';
 export { default as DisplayFormItem, IDisplayFormItemProps } from './displayFormItem';
 export { default as EntityDropdown, IEntityDropdownProps } from './entityDropdown';
-export { default as EntityPicker, IEntityPickerProps } from './entityPicker';
+export { default as EntityPicker } from './entityPicker';
 export { default as FormComponent, IFormComponentProps } from './formComponent';
 export { default as GlobalTableFilter, IGlobalTableFilterProps } from './globalTableFilter';
 export { default as GlobalTableFilterBase, IGlobalTableFilterBaseProps } from './globalTableFilterBase';

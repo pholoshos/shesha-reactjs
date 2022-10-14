@@ -1,69 +1,24 @@
-import React, { CSSProperties, FC, Fragment, ReactNode, useEffect, useMemo, useState } from 'react';
-import { Modal, Input, Button, ButtonProps, Select } from 'antd';
-import IndexTable from '../indexTable';
-import { IAnyObject } from '../../interfaces';
-import DataTableProvider, { useDataTable } from '../../providers/dataTable';
-import GlobalTableFilter from '../globalTableFilter';
-import TablePager from '../tablePager';
-import _ from 'lodash';
-import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { EllipsisOutlined } from '@ant-design/icons';
-import { IConfigurableColumnsBase } from '../../providers/datatableColumnsConfigurator/models';
-import { IModalProps } from '../../providers/dynamicModal/models';
-import { useModal } from '../../providers';
-import { useSelectedTableRow } from './useSelectedTableRow';
-import { usePublish } from '../../hooks';
-import Show from '../show';
-import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
+import { Button, Modal, Select } from 'antd';
+import _, { camelCase, snakeCase } from 'lodash';
+import React, { FC, Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useMedia } from 'react-use';
+import { usePublish } from '../../hooks';
+import { IAnyObject } from '../../interfaces';
+import { useModal } from '../../providers';
+import DataTableProvider, { useDataTable } from '../../providers/dataTable';
+import { IModalProps } from '../../providers/dynamicModal/models';
 import { useEntityDisplayText } from '../../utils/entity';
+import GlobalTableFilter from '../globalTableFilter';
+import IndexTable from '../indexTable';
+import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
+import Show from '../show';
+import TablePager from '../tablePager';
+import { IEntityPickerProps, IEntityPickerState, ISelectedProps } from './models';
+import { useSelectedTableRow } from './useSelectedTableRow';
 
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
 
-interface IWrappedEntityPickerProps {
-  tableId?: string;
-  entityType?: string;
-  allowNewRecord?: boolean;
-  parentEntityId?: string;
-  onDblClick?: (data: any) => void;
-}
-
-interface IAddNewRecordProps {
-  modalFormId?: string;
-  modalTitle?: string;
-  showModalFooter?: boolean;
-  submitHttpVerb?: 'POST' | 'PUT';
-  onSuccessRedirectUrl?: string;
-}
-
-export interface IEntityPickerProps extends Omit<IWrappedEntityPickerProps, 'onDblClick'> {
-  modalId?: string;
-  onChange?: (value: string, data: IAnyObject) => void;
-  onSelect?: (data: IAnyObject) => void;
-  value?: any;
-  displayEntityKey?: string;
-  disabled?: boolean;
-  loading?: boolean;
-  name?: string;
-  size?: SizeType;
-  title?: string;
-  useButtonPicker?: boolean;
-  pickerButtonProps?: ButtonProps;
-  defaultValue?: string;
-  entityFooter?: ReactNode;
-  configurableColumns?: IConfigurableColumnsBase[]; // Type it later
-  addNewRecordsProps?: IAddNewRecordProps;
-  style?: CSSProperties;
-  readOnly?: boolean;
-}
-
-export interface IEntityPickerState {
-  showModal?: boolean;
-  selectedRowIndex?: number;
-  // selectedValue?: string;
-  selectedRow?: IAnyObject;
-  globalStateKey?: string;
-}
 
 export const COLUMNS_CHANGED_EVENT_NAME = 'EntityPickerColumnsConfigChanged';
 
@@ -75,7 +30,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   disabled,
   loading,
   value,
-  name,
+  mode,
   size,
   useButtonPicker,
   pickerButtonProps,
@@ -90,6 +45,8 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   const [state, setState] = useState<IEntityPickerState>({
     showModal: false,
   });
+  const [selectedRows, setSelectedRows] = useState<ISelectedProps[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const isSmall = useMedia('(max-width: 480px)');
 
   const {
@@ -99,12 +56,27 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     selectedStoredFilterIds,
     columns,
   } = useDataTable();
+  const selectRef = useRef(undefined);
 
   usePublish(COLUMNS_CHANGED_EVENT_NAME, () => ({ stateId: 'NOT_PROVIDED', state: columns }), [columns]);
 
   const showPickerDialog = () => setState(prev => ({ ...prev, showModal: true }));
 
   const hidePickerDialog = () => setState(prev => ({ ...prev, showModal: false }));
+  const storedId = useMemo(() => {
+    if (typeof value == 'object') {
+      return value;
+    } else if (!!value) {
+      return (value as string).split(',');
+    }
+    return value;
+  }, [value]);
+
+  const displayName = useEntityDisplayText({
+    entityType: entityType,
+    propertyName: displayEntityKey,
+    entityId: storedId,
+  });
 
   const modalProps: IModalProps = {
     id: modalId,
@@ -125,9 +97,39 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
 
   const { data } = useSelectedTableRow(value);
 
+  const selectedMode = mode === 'single' ? undefined : mode;
+
+  const isMultiple = mode === 'multiple';
+
   const records = useMemo(() => {
     return data ? [...tableData, data] : tableData;
   }, [tableData, data]);
+
+  useEffect(() => {
+    // This is important for form designer configured picker
+    // register columns
+    if (formId && configurableColumns) {
+      registerConfigurableColumns(formId, configurableColumns);
+    }
+  }, [formId, configurableColumns]);
+
+  useEffect(() => {
+    if (!!value && !selectedRows.length && displayName) {
+      const labelNames = displayName.split(',');
+      let initialValue: ISelectedProps[] = [];
+
+      for (let i = 0; i < storedId.length; i++) {
+        initialValue.push({ displayName: labelNames[i], id: storedId[i] });
+      }
+      setSelectedRows(() => initialValue);
+    }
+  }, [displayName]);
+
+  useEffect(() => {
+    if (!!selectRef) {
+      setSelectedIds(() => selectedRows.map(({ id }) => id));
+    }
+  }, [selectedRows]);
 
   useEffect(() => {
     const { showModal } = state;
@@ -135,17 +137,8 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
       if (selectedStoredFilterIds?.length && selectedStoredFilterIds?.includes(UNIQUE_ID)) {
         changeSelectedStoredFilterIds([]);
       }
-    } else {
     }
   }, [state?.showModal]);
-
-  useEffect(() => {
-    // This is important for form designer configured picker
-    // register columns
-    if (modalId && configurableColumns) {
-      registerConfigurableColumns(modalId, configurableColumns);
-    }
-  }, [modalId, configurableColumns]);
 
   if (!tableId && !entityType) {
     throw new Error(
@@ -163,7 +156,17 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     if (onSelect) {
       onSelect(row);
     } else {
-      handleOnChange(row);
+      let isNewRow = !selectedRows?.map(({ id }) => id)?.includes(row?.id);
+
+      let propertyName = camelCase(snakeCase(displayEntityKey));
+
+      if (isNewRow && isMultiple) {
+        setSelectedRows(prev => [...prev, { id: row?.id, displayName: row[propertyName] }]);
+        onChange([...selectedIds, row?.id].toString(), null);
+      } else {
+        setSelectedRows(() => [{ id: row?.id, displayName: row[propertyName] }]);
+        onChange(row?.id, null);
+    }
     }
 
     hidePickerDialog();
@@ -179,6 +182,11 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     }
   };
 
+  const handleMultiChange = value => {
+    setSelectedRows(() => selectedRows?.filter(row => value?.includes(row?.id)));
+    setSelectedIds(() => value);
+    onChange(value, null);
+  };
   const onModalOk = () => {
     if (onSelect && state?.selectedRow) {
       onSelect(state?.selectedRow);
@@ -190,8 +198,6 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   const handleCancel = () => {
     hidePickerDialog();
   };
-
-  const displayName = useEntityDisplayText({ entityType: entityType, propertyName: displayEntityKey, entityId: value });
 
   const handleButtonPickerClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event?.stopPropagation();
@@ -207,6 +213,10 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     return -1;
   }, [value, records]);
 
+  const options = useMemo(() => {
+    return selectedRows.map(({ displayName, id }) => ({ label: displayName, value: id, key: id }));
+  }, [selectedRows]);
+
   const footer = (
     <Fragment>
       <Button type="primary" onClick={onAddNew} size={size}>
@@ -218,12 +228,6 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
       </Button>
     </Fragment>
   );
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event?.target?.value?.trim()) {
-      onChange('', null);
-    }
-  };
 
   if (readOnly) {
     return <ReadOnlyDisplayFormItem value={displayName} />;
@@ -237,27 +241,26 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
             {title}
           </Button>
         ) : (
-          <Input.Group compact className="picker-input-group">
+          <>
             <Show when={true}>
-              <Input
-                allowClear
-                className="picker-input-group-input"
-                value={displayName}
-                disabled={disabled}
-                name={name}
+              <Select
                 size={size}
+                onFocus={() => {
+                  selectRef.current.blur();
+                  showPickerDialog();
+                }}
+                value={selectedIds}
+                notFoundContent={''}
                 defaultValue={defaultValue}
-                onChange={handleChange}
-              />
-            </Show>
-
-            <Show when={false}>
-              <Select style={{ width: 200 }}>
-                {columns?.map(({ caption, id }) => (
-                  <Select.Option key={id} value={id}>
-                    {caption}
-                  </Select.Option>
-                ))}
+                disabled={disabled}
+                ref={selectRef}
+                allowClear
+                mode={selectedMode}
+                options={options}
+                showArrow={false}
+                onChange={handleMultiChange}
+              >
+                {''}
               </Select>
             </Show>
 
@@ -269,7 +272,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
               size={size}
               icon={<EllipsisOutlined />}
             />
-          </Input.Group>
+          </>
         )}
       </div>
 

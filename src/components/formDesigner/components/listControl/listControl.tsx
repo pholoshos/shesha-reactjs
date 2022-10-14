@@ -36,6 +36,7 @@ import classNames from 'classnames';
 import SectionSeparator from '../../../sectionSeparator';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import ConditionalWrap from '../../../conditionalWrapper';
+import moment from 'moment';
 import { useFormConfiguration } from '../../../../providers/form/api';
 import { useConfigurableActionDispatcher } from '../../../../providers/configurableActionsDispatcher';
 
@@ -69,6 +70,7 @@ const ListControl: FC<IListControlProps> = props => {
   allowRemoteDelete,
   selectionMode,
     namePrefix,
+    customVisibility,
   } = props;
 
   const { formConfiguration, error: fetchFormError } = useFormConfiguration({ formId: formId, lazy: !Boolean(formId) });
@@ -385,22 +387,6 @@ const ListControl: FC<IListControlProps> = props => {
     }
   }, 500);
 
-  const renderSubForm = (localName?: string, localLabelCol?: ColProps, localWrapperCol?: ColProps) => {
-    // Note we do not pass the name. The name will be provided by the List component
-
-    return (
-      <SubFormProvider
-        name={localName}
-        markup={ formConfiguration ? { components: formConfiguration?.markup, formSettings: formConfiguration?.settings } : null}
-        properties={[]}
-        labelCol={localLabelCol}
-        wrapperCol={localWrapperCol}
-      >
-        <SubForm />
-      </SubFormProvider>
-    );
-  };
-
   const isSpinning = submitting || isDeleting || isFetchingEntities;
 
   const hasNoData = value?.length === 0 && !isFetchingEntities;
@@ -421,6 +407,53 @@ const ListControl: FC<IListControlProps> = props => {
     },
     [state, selectionMode]
   );
+
+  const isHidden = useMemo(() => {
+    if (!customVisibility) return false;
+
+    const executeExpression = (returnBoolean = true) => {
+      if (!customVisibility) {
+        if (returnBoolean) {
+          return true;
+        } else {
+          console.error('Expected expression to be defined but it was found to be empty.');
+
+          return false;
+        }
+      }
+
+      /* tslint:disable:function-constructor */
+      const evaluated = new Function('data, formMode, globalState, moment', customVisibility)(
+        formData,
+        formMode,
+        globalState,
+        moment
+      );
+
+      // tslint:disable-next-line:function-constructor
+      return typeof evaluated === 'boolean' ? evaluated : true;
+    };
+
+    return executeExpression();
+  }, [value]);
+
+  if (isHidden && formMode === 'designer') return null;
+
+  const renderSubForm = (localName?: string, localLabelCol?: ColProps, localWrapperCol?: ColProps) => {
+    // Note we do not pass the name. The name will be provided by the List component
+
+    return (
+      <SubFormProvider
+        name={localName}
+        markup={markup}
+        properties={[]}
+        labelCol={localLabelCol}
+        wrapperCol={localWrapperCol}
+      >
+        <SubForm />
+      </SubFormProvider>
+    );
+  };
 
   const onSelectAll = (e: CheckboxChangeEvent) => {
     setState(prev => ({ ...prev, selectedItemIndexes: e?.target?.checked ? value?.map((_, index) => index) : [] }));

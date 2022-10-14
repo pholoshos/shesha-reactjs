@@ -32,7 +32,7 @@ export const migrateV0toV1 = (props: ITableComponentProps, context: SettingsMigr
                             break;
                         }
                         case "executeFormAction": {
-
+                            
                         }
                         case "executeScript": {
                             actonColumn.actionConfiguration = getExecuteScriptActionConfig(oldColumn);

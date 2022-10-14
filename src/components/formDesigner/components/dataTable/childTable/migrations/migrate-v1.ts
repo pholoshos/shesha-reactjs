@@ -124,6 +124,14 @@ const getActionConfiguration = (buttonProps: IButtonGroupButtonV0, context: Sett
             };
         }
         case "executeFormAction": {
+            if (buttonProps.formAction === 'exportToExcel' || buttonProps.formAction === 'EXPORT_TO_EXCEL'){
+                return {
+                    actionOwner: getClosestTableId(context),
+                    actionName: 'Export to Excel',
+                    handleFail: false,
+                    handleSuccess: false,
+                };
+            }
         }
         case "customAction": {
 

@@ -842,17 +842,17 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   }, [state, uniqueStateId]);
 
   const { registerAction } = useConfigurableActionDispatcher();
-
+  
   useEffect(() => {
-    registerAction({
-      name: 'Test failed action',
-      owner: uniqueStateId,
-      hasArguments: false,
-      executer: () => {
-        console.log('Test failed action')
-        return Promise.reject({ message: 'my failed action response' });
-      }
-    });
+    // registerAction({
+    //   name: 'Test failed action',
+    //   owner: uniqueStateId,
+    //   hasArguments: false,
+    //   executer: () => {
+    //     console.log('Test failed action')
+    //     return Promise.reject({ message: 'my failed action response' });
+    //   }
+    // });
 
     registerAction({
       name: 'Refresh table',

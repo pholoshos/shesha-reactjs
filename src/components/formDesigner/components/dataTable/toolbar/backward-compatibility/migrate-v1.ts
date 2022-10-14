@@ -118,11 +118,25 @@ export const migrateV0toV1 = (model: IToolbarPropsV0, context: SettingsMigration
                         }
                     }
                     case "executeScript": {
-
+                        actionConfig = {
+                            actionOwner: 'Common',
+                            actionName: 'Execute Script',
+                            actionArguments: {
+                                expression: buttonProps.actionScript ?? ''
+                            },
+                            handleFail: false,
+                            handleSuccess: false,
+                        };
                     }
                     case "executeFormAction": {
-                        //buttonProps.event
-                        //eventName
+                        if (buttonProps.formAction === 'exportToExcel' || buttonProps.formAction === 'EXPORT_TO_EXCEL'){
+                            actionConfig = {
+                                actionOwner: getClosestTableId(context),
+                                actionName: 'Export to Excel',
+                                handleFail: false,
+                                handleSuccess: false,
+                            };
+                        }
                     }
                     case "customAction": {
 

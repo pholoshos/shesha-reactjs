@@ -9,7 +9,7 @@ import { getClosestTableId } from "../../../../../../providers/form/utils";
 export const migrateV0toV1 = (props: IChildTableComponentProps, context: SettingsMigrationContext): IChildTableComponentProps => {
     const { toolbarItems } = props;
 
-    const newToolbarItems = toolbarItems.map(item => {
+    const newToolbarItems = toolbarItems?.map(item => {
         if (item.itemType !== "item")
             return item;
 
@@ -20,7 +20,7 @@ export const migrateV0toV1 = (props: IChildTableComponentProps, context: Setting
         return newItem;
     });
 
-    return { ...props, toolbarItems: newToolbarItems };
+    return { ...props, toolbarItems: newToolbarItems ?? [] };
 }
 
 const getActionConfiguration = (buttonProps: IButtonGroupButtonV0, context: SettingsMigrationContext): IConfigurableActionConfiguration => {

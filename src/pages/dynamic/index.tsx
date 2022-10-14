@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GetDataError, useGet, useMutate } from 'restful-react';
 import { axiosHttp } from '../../apis/axios';
 import { ConfigurableForm, ValidationErrors } from '../../components';
-import { useSubscribe, usePubSub } from '../../hooks';
+import { usePubSub } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
 import { IAjaxResponseBase } from '../../interfaces/ajaxResponse';
 import { useGlobalState, useSheshaApplication, MetadataProvider, useMetadataDispatcher } from '../../providers';
@@ -317,14 +317,6 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
       description: <ValidationErrors error={error} renderMode="raw" />,
     });
   };
-
-  useSubscribe(DynamicFormPubSubConstants.CancelFormEdit, () => {
-    form?.setFieldsValue(state?.fetchedData);
-
-    formRef?.current?.setFormData({ values: state?.fetchedData, mergeValues: true });
-
-    formRef?.current?.setFormMode('readonly');
-  });
 
   //#region Expression executor
   const getExpressionExecutor = (expression: string) => {

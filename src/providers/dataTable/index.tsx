@@ -67,7 +67,7 @@ import {
 } from './interfaces';
 import { isEmpty, isEqual, sortBy } from 'lodash';
 import { IResult } from '../../interfaces/result';
-import { useLocalStorage, usePubSub, useSubscribe } from '../../hooks';
+import { useLocalStorage } from '../../hooks';
 import { useAuth } from '../auth';
 import { nanoid } from 'nanoid/non-secure';
 import { useDebouncedCallback } from 'use-debounce';
@@ -77,15 +77,12 @@ import {
   IDataColumnsProps,
 } from '../datatableColumnsConfigurator/models';
 import { useSheshaApplication } from '../sheshaApplication';
-import { DataTablePubsubConstants } from './pubSub';
 import { useGlobalState } from '../globalState';
 import camelCaseKeys from 'camelcase-keys';
-import { useShaRouting } from '../shaRouting';
 import qs from 'qs';
 import { advancedFilter2JsonLogic } from './utils';
 import { camelcaseDotNotation, convertDotNotationPropertiesToGraphQL } from '../form/utils';
 import { GENERIC_ENTITIES_ENDPOINT } from '../../constants';
-import { getFileNameFromResponse } from '../../utils/fetchers';
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
 
 interface IDataTableProviderProps extends ICrudProps {
@@ -157,14 +154,10 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     parentEntityId,
   });
   const { setState: setGlobalState } = useGlobalState();
-  const { publish } = usePubSub();
-
   const { backendUrl } = useSheshaApplication();
   const tableIsReady = useRef(false);
   const { headers } = useAuth();
-
-  const { router } = useShaRouting();
-
+  
   const fetchDataTableDataInternal = (getDataPayload: IGetDataPayload) => {
     const getDataUrl = `${backendUrl}${getDataPath || `${GENERIC_ENTITIES_ENDPOINT}/GetAll`}?${qs.stringify(
       getDataPayload
@@ -433,14 +426,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const debouncedExportToExcel = useDebouncedCallback(
     () => {
       exportToExcel();
-    },
-    // delay in ms
-    300
-  );
-
-  const debouncedDownloadLogFile = useDebouncedCallback(
-    () => {
-      downloadLogFile();
     },
     // delay in ms
     300
@@ -810,30 +795,11 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(changePersistedFiltersToggleAction(persistSelectedFilters));
   };
 
-  const downloadLogFile = () => {
-    axios({
-      url: `${backendUrl}/api/services/Scheduler/ScheduledJobExecution/DownloadLogFile?id=${router?.query?.id}`,
-      method: 'GET',
-      responseType: 'blob',
-      headers,
-    })
-      .then(response => {
-        const fileName = getFileNameFromResponse(response) ?? 'logfile.log';
-        FileSaver.saveAs(new Blob([response.data]), fileName);
-      })
-      .catch(e => console.error(e));
-  };
   //#endregion
 
   //#region Subscriptions
   useEffect(() => {
     if (uniqueStateId) {
-      // First off, notify that the state has changed
-      publish(DataTablePubsubConstants.stateChanged, {
-        stateId: uniqueStateId,
-        state,
-      });
-
       setGlobalState({
         key: uniqueStateId,
         data: { ...state, refreshTable },
@@ -844,15 +810,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const { registerAction } = useConfigurableActionDispatcher();
   
   useEffect(() => {
-    // registerAction({
-    //   name: 'Test failed action',
-    //   owner: uniqueStateId,
-    //   hasArguments: false,
-    //   executer: () => {
-    //     console.log('Test failed action')
-    //     return Promise.reject({ message: 'my failed action response' });
-    //   }
-    // });
 
     registerAction({
       name: 'Refresh table',
@@ -904,42 +861,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       }
     });
   }, [state]);
-
-  useSubscribe(DataTablePubsubConstants.refreshTable, data => {
-    if (data.stateId === uniqueStateId) {
-      refreshTable();
-    }
-  });
-
-  useSubscribe(DataTablePubsubConstants.deleteRow, data => {
-    if (data.stateId === uniqueStateId) {
-      deleteRow();
-    }
-  });
-
-  useSubscribe(DataTablePubsubConstants.exportToExcel, data => {
-    if (data.stateId === uniqueStateId) {
-      debouncedExportToExcel();
-    }
-  });
-
-  useSubscribe(DataTablePubsubConstants.toggleAdvancedFilter, data => {
-    if (data.stateId === uniqueStateId) {
-      toggleAdvancedFilter();
-    }
-  });
-
-  useSubscribe(DataTablePubsubConstants.toggleColumnsSelector, data => {
-    if (data.stateId === uniqueStateId) {
-      toggleColumnsSelector();
-    }
-  });
-
-  useSubscribe(DataTablePubsubConstants.downloadLogFile, data => {
-    if (data.stateId === uniqueStateId) {
-      debouncedDownloadLogFile();
-    }
-  });
 
   //#endregion
 

@@ -2,8 +2,7 @@ import React, { FC, useReducer, useContext, useEffect, useMemo, useRef } from 'r
 import { useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
-import { usePubSub, useSubscribe } from '../../hooks';
-import { SUB_FORM_EVENT_NAMES } from './constants';
+import { usePubSub } from '../../hooks';
 import { uiReducer } from './reducer';
 import { getQueryParams } from '../../utils/url';
 import { FormMarkupWithSettings } from '../form/models';
@@ -279,24 +278,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     });
   }, [uniqueStateId]);
 
-  useSubscribe(SUB_FORM_EVENT_NAMES.getFormData, ({ stateId }) => {
-    if (stateId === uniqueStateId) {
-      getData();
-    }
-  });
-
-  //#region Events
-  useSubscribe(SUB_FORM_EVENT_NAMES.postFormData, ({ stateId }) => {
-    if (stateId === uniqueStateId) {
-      postData();
-    }
-  });
-
-  useSubscribe(SUB_FORM_EVENT_NAMES.updateFormData, ({ stateId }) => {
-    if (stateId === uniqueStateId) {
-      putData();
-    }
-  });
   //#endregion
 
   const getColSpan = (span: number | ColProps): ColProps => {

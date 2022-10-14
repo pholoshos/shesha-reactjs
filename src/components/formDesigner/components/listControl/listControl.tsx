@@ -7,9 +7,9 @@ import { getQueryParams } from '../../../../utils/url';
 import camelCaseKeys from 'camelcase-keys';
 import { IListControlProps, IListComponentRenderState } from './models';
 import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
-import { ListControlEvents, MAX_RESULT_COUNT } from './constants';
+import { MAX_RESULT_COUNT } from './constants';
 import { useDebouncedCallback } from 'use-debounce';
-import { useDelete, useSubscribe } from '../../../../hooks';
+import { useDelete } from '../../../../hooks';
 import {
   Button,
   Checkbox,
@@ -247,26 +247,6 @@ const ListControl: FC<IListControlProps> = props => {
       }
     });
   }, [state]);
-
-  //#region Events
-  useSubscribe(ListControlEvents.refreshListItems, ({ stateId }) => {
-    if (stateId === uniqueStateId) {
-      debouncedRefresh();
-    }
-  });
-
-  useSubscribe(ListControlEvents.saveListItems, ({ stateId }) => {
-    if (stateId === uniqueStateId) {
-      submitListItems(submitUrl);
-    }
-  });
-
-  useSubscribe(ListControlEvents.addListItems, ({ stateId, state }) => {
-    if (stateId === uniqueStateId) {
-      debouncedAddItems(state);
-    }
-  });
-  //#endregion
 
   const debouncedAddItems = useDebouncedCallback(data => {
     onChange(Array.isArray(value) ? [...value, data] : [data]);

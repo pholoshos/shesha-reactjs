@@ -42,8 +42,6 @@ import { useDebouncedCallback } from 'use-debounce';
 import {
   IConfigurableFormComponent, IFormValidationErrors,
 } from '../../interfaces';
-import { FormPubsubConstants } from './pubSub';
-import { useSubscribe } from '../../hooks';
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
 
 export interface IFormProviderProps {
@@ -68,7 +66,6 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   sections,
   context,
   formRef,
-  uniqueStateId,
   formSettings
 }) => {
   const toolboxComponents = useFormDesignerComponents();
@@ -297,20 +294,6 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
     return null;
   };
-
-  //#region PubSub
-  useSubscribe(FormPubsubConstants.setToEditMode, data => {
-    if (data.stateId === uniqueStateId) {
-      setFormMode('edit');
-    }
-  });
-
-  useSubscribe(FormPubsubConstants.exitEditMode, data => {
-    if (data.stateId === uniqueStateId) {
-      setFormMode('readonly');
-    }
-  });
-  //#endregion
 
   const configurableFormActions: IFormActionsContext = {
     ...getFlagSetters(dispatch),

@@ -6,7 +6,7 @@ import { usePubSub, useSubscribe } from '../../hooks';
 import { SUB_FORM_EVENT_NAMES } from './constants';
 import { uiReducer } from './reducer';
 import { getQueryParams } from '../../utils/url';
-import { FormIdentifier, FormMarkupWithSettings } from '../form/models';
+import { FormMarkupWithSettings } from '../form/models';
 import { setMarkupWithSettingsAction } from './actions';
 import { ISubFormProps } from './interfaces';
 import { ColProps, message, notification } from 'antd';
@@ -26,8 +26,7 @@ export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'valu
 const SubFormProvider: FC<SubFormProviderProps> = ({
   children,
   value,
-  formName,
-  formModule,
+  formId,
   getUrl,
   postUrl,
   putUrl,
@@ -50,11 +49,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   const { formData = {}, formMode } = useForm();
   const { globalState } = useGlobalState();
 
-  const formId = useMemo<FormIdentifier>(() => {
-    return formName
-      ? { module: formModule, name: formName }
-      : null;
-  }, [formModule, formName]);
   const {
     refetch: fetchForm,
     formConfiguration: fetchFormResponse,
@@ -229,14 +223,14 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   //#region Fetch Form
   useEffect(() => {
-    if (formName && !markup) {
+    if (formId && !markup) {
       fetchForm();
     }
 
-    if (!formName && markup) {
+    if (!formId && markup) {
       dispatch(setMarkupWithSettingsAction(markup));
     }
-  }, [formName, markup]); //
+  }, [formId, markup]); //
 
   useEffect(() => {
     if (!isFetchingForm && fetchFormResponse) {

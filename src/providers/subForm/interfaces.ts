@@ -1,13 +1,12 @@
 import { ColProps } from 'antd';
-import { IGuidNullableEntityWithDisplayNameDto } from '../../interfaces/shesha';
 import { IChangeable, IValuable } from '../../interfaces';
+import { FormIdentifier } from '../form/models';
 
 export interface ISubFormProps extends IValuable, IChangeable {
   dataSourceUrl?: string;
   name: string;
   uniqueStateId?: string;
-  formModule?: string;
-  formName?: string;
+  formId?: FormIdentifier;
 
   submitUrl?: string;
   onSubmit?: string;

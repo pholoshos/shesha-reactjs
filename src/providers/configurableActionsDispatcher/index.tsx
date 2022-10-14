@@ -26,22 +26,28 @@ const ConfigurableActionDispatcherProvider: FC<PropsWithChildren<IConfigurableAc
 
   const [state, _dispatch] = useThunkReducer(metadataReducer, initial);
 
-  const getConfigurableAction = (payload: IGetConfigurableActionPayload): IConfigurableActionDescriptor => {
+  const getConfigurableActionOrNull = (payload: IGetConfigurableActionPayload): IConfigurableActionDescriptor | null => {
     const { owner, name } = payload;
 
-    if (!owner || !name) {
-      console.error("Owner and action name must be specified");
+    if (!owner || !name)
       return null;
-    }
 
     // todo: search action in the dictionary and return action
     const ownerActions = actions.current[owner];
     if (!ownerActions)
-      throw `Action owner '${owner}' not found.`;
+      return null;
 
     const action = ownerActions.find(a => a.name === name);
     if (!action)
-      throw `Action '${name}' in the owner '${owner}' not found.`;
+      return null;
+
+    return action;
+  }
+
+  const getConfigurableAction = (payload: IGetConfigurableActionPayload): IConfigurableActionDescriptor => {
+    const action = getConfigurableActionOrNull(payload);
+    if (!action)
+      throw `Action '${payload.name}' in the owner '${payload.owner}' not found.`;
 
     return action;
   };
@@ -108,6 +114,7 @@ const ConfigurableActionDispatcherProvider: FC<PropsWithChildren<IConfigurableAc
   const configurableActionActions: IConfigurableActionDispatcherActionsContext = {
     registerAction,
     getConfigurableAction,
+    getConfigurableActionOrNull,
     getActions,
     prepareArguments,
     executeAction,

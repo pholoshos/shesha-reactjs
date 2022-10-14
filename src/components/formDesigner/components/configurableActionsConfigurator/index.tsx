@@ -72,7 +72,7 @@ const ConfigurableActionConfigurator: FC<IConfigurableActionConfiguratorProps> =
   const [form] = Form.useForm();
   const { formSettings } = useForm();
   const { value, onChange } = props;
-  const { getActions, getConfigurableAction } = useConfigurableActionDispatcher();
+  const { getActions, getConfigurableActionOrNull } = useConfigurableActionDispatcher();
   const actions = getActions();
 
   const formValues = useMemo<IActionFormModel>(() => {
@@ -104,7 +104,7 @@ const ConfigurableActionConfigurator: FC<IConfigurableActionConfiguratorProps> =
   const { actionName, actionOwner } = value ?? {};
   const selectedAction = useMemo(() => {
     return actionName
-      ? getConfigurableAction({ owner: actionOwner, name: actionName })
+      ? getConfigurableActionOrNull({ owner: actionOwner, name: actionName })
       : null;
   }, [actionName, actionOwner]);  
 

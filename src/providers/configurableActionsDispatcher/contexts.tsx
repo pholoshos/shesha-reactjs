@@ -26,6 +26,7 @@ export interface RegisterActionType {
 
 export interface IConfigurableActionDispatcherActionsContext {
   getConfigurableAction: (payload: IGetConfigurableActionPayload) => IConfigurableActionDescriptor;
+  getConfigurableActionOrNull: (payload: IGetConfigurableActionPayload) => IConfigurableActionDescriptor | null;
   getActions: () => IConfigurableActionDictionary;
   registerAction: RegisterActionType;//(payload: IRegisterActionPayload) => void;
   prepareArguments: (actionArguments: any) => void;

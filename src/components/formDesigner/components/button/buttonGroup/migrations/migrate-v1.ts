@@ -5,6 +5,7 @@ import { IKeyValue } from "../../../../../../interfaces/keyValue";
 import { IButtonGroupButton } from "../../../../../../providers/buttonGroupConfigurator/models";
 import { IShowModalactionArguments as IShowModalActionArguments } from "../../../../../../providers/dynamicModal/configurable-actions/show-dialog-arguments";
 import { getClosestTableId } from "../../../../../../providers/form/utils";
+import { getDispatchEventReplacement } from "../../../_common-migrations/migrate-events";
 
 export const migrateV0toV1 = (props: IButtonGroupProps, context: SettingsMigrationContext): IButtonGroupProps => {
     const { items } = props;
@@ -24,6 +25,9 @@ export const migrateV0toV1 = (props: IButtonGroupProps, context: SettingsMigrati
 }
 
 const getActionConfiguration = (buttonProps: IButtonGroupButtonV0, context: SettingsMigrationContext): IConfigurableActionConfiguration => {
+    if (buttonProps['actionConfiguration'])
+        return buttonProps['actionConfiguration'] as IConfigurableActionConfiguration;
+        
     switch (buttonProps.buttonAction) {
         case "cancelFormEdit": {
             return {
@@ -124,7 +128,7 @@ const getActionConfiguration = (buttonProps: IButtonGroupButtonV0, context: Sett
             };
         }
         case "executeFormAction": {
-            if (buttonProps.formAction === 'exportToExcel' || buttonProps.formAction === 'EXPORT_TO_EXCEL'){
+            if (buttonProps.formAction === 'exportToExcel' || buttonProps.formAction === 'EXPORT_TO_EXCEL') {
                 return {
                     actionOwner: getClosestTableId(context),
                     actionName: 'Export to Excel',
@@ -135,6 +139,9 @@ const getActionConfiguration = (buttonProps: IButtonGroupButtonV0, context: Sett
         }
         case "customAction": {
 
+        }
+        case "dispatchAnEvent": {
+            return getDispatchEventReplacement(buttonProps);
         }
     }
     return null;

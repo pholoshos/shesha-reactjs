@@ -52,6 +52,7 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
 
     const name = namePrefix ? [namePrefix, model?.name]?.join('.') : model?.name;
 
+
     return (
       <ConfigurableFormItem
         model={model}

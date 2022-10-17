@@ -247,7 +247,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       const markup = result?.markup;
 
       const formDto = result as IFormDto;
-
+     
       if (markup) formDto.markup = JSON.parse(markup);
 
       dispatch(setMarkupWithSettingsAction(formDto?.markup));
@@ -287,6 +287,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     return typeof span === 'number' ? { span } : span;
   };
 
+
+
   return (
     <SubFormContext.Provider
       value={{
@@ -310,6 +312,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
           wrapperCol: getColSpan(wrapperCol) || getColSpan(state?.formSettings?.wrapperCol), // Override with the incoming one
         },
         name,
+        value:value
       }}
     >
       <SubFormActionsContext.Provider

@@ -93,9 +93,15 @@ export const MissingPage = addStory(Template, {
   mode: 'edit',
 });
 
-export const OtpSettings = addStory(Template, {
+export const WizardForm = addStory(Template, {
   formId: { name: 'mazi-form-view' },
   mode: 'edit',
+});
+
+export const WizardDebugForm = addStory(Template, {
+  formId: {
+    name: 'mazi-form-view-debug',
+  }
 });
 
 export const PersonForm = addStory(Template, {

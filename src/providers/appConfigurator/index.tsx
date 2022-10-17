@@ -11,7 +11,7 @@ import {
 import { configurableComponentGet } from '../../apis/configurableComponent';
 import { useSheshaApplication } from '../sheshaApplication';
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
-import { createNewVersion, downloadAsJson, IConfigurationFrameworkHookArguments, IHasConfigurableItemId, itemCancelVersion, publishItem, setItemReady } from '../../utils/configurationFramework/actions';
+import { createNewVersion, deleteItem, downloadAsJson, IConfigurationFrameworkHookArguments, IHasConfigurableItemId, itemCancelVersion, publishItem, setItemReady } from '../../utils/configurationFramework/actions';
 import { genericItemActionArgumentsForm } from './configurable-actions/generic-item-arguments';
 
 export interface IAppConfiguratorProviderProps {}
@@ -50,6 +50,16 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
       hasArguments: true,
       executer: (actionArgs) => {
         return setItemReady({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm
+    });
+
+    registerAction<IHasConfigurableItemId>({
+      name: 'Delete item',
+      owner: actionsOwner,
+      hasArguments: true,
+      executer: (actionArgs) => {
+        return deleteItem({ id: actionArgs.itemId, ...cfArgs });
       },
       argumentsFormMarkup: genericItemActionArgumentsForm
     });

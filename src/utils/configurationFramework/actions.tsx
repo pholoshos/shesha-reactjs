@@ -5,7 +5,7 @@ import FileSaver from "file-saver";
 import React, { FC } from "react";
 import { IAjaxResponseBase } from "../../interfaces/ajaxResponse";
 import { IErrorInfo } from "../../interfaces/errorInfo";
-import { IAbpWrappedGetEntityResponse } from "../../interfaces/gql";
+import { IAbpWrappedGetEntityResponse, IAbpWrappedResponse } from "../../interfaces/gql";
 import IRequestHeaders from "../../interfaces/requestHeaders";
 import { FormConfigurationDto } from "../../providers/form/api";
 import { getFileNameFromResponse } from "../fetchers";
@@ -124,6 +124,27 @@ export const setItemReady = (payload: ISetItemReadyPayload): Promise<ISetItemRea
             cancelText: 'No',
             onOk
         });
+    });
+}
+
+//#endregion
+
+//#region Set item ready
+export interface IDeleteItemPayload extends IHasHttpSettings {
+    id: string;
+}
+export interface IDeleteItemResponse {
+    id: string;
+}
+export const deleteItem = (payload: IDeleteItemPayload): Promise<IDeleteItemResponse> => {
+    if (!payload.id)
+        throw 'Id must not be null';
+    return new Promise<IDeleteItemResponse>((resolve) => {
+        const url = `${payload.backendUrl}/api/services/Shesha/FormConfiguration/Delete?id=${payload.id}`;
+        return axios.delete<any, AxiosResponse<IAbpWrappedResponse<string>>>(url, { headers: payload.httpHeaders })
+            .then(response => {
+                resolve({ id: response.data.result });
+            })
     });
 }
 

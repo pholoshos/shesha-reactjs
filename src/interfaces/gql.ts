@@ -38,6 +38,10 @@ export interface EntityData {
     [key: string]: any;
 }
 
+export interface IAbpWrappedResponse<TResponse, TError = ErrorInfo> extends AbpWrappedResponse<TResponse, TError> {
+    
+}
+
 export interface IAbpWrappedGetEntityResponse<TItem = EntityData, TError = ErrorInfo> extends AbpWrappedResponse<TItem, TError> {
     
 }

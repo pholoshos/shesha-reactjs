@@ -69,6 +69,12 @@ export const PersonList = addStory(DesignerTemplate, {
   }
 });
 
+export const UserManagement = addStory(DesignerTemplate, {
+  formId: {
+    name: 'user-management-new',
+  }
+});
+
 export const WizardForm = addStory(DesignerTemplate, {
   formId: {
     name: 'mazi-form-view',

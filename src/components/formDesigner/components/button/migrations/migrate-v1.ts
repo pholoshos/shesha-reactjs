@@ -1,49 +1,23 @@
-import { SettingsMigrationContext } from "../../../../../..";
-import { IConfigurableActionConfiguration } from "../../../../../../interfaces/configurableAction";
-import { IKeyValue } from "../../../../../../interfaces/keyValue";
-import { FormIdentifier } from "../../../../../../providers/form/models";
-import { getClosestTableId } from "../../../../../../providers/form/utils";
-import { ToolbarItemProps } from "../../../../../../providers/toolbarConfigurator/models";
-import { IToolbarProps } from "../models";
-import { IConfigurableFormComponent } from "../../../../../../interfaces";
-import { ButtonType } from 'antd/lib/button';
-import { SizeType } from 'antd/lib/config-provider/SizeContext';
+import { SettingsMigrationContext } from "../../../../..";
+import { IConfigurableActionConfiguration } from "../../../../../interfaces/configurableAction";
+import { IKeyValue } from "../../../../../interfaces/keyValue";
+import { IShowModalActionArguments } from "../../../../../providers/dynamicModal/configurable-actions/show-dialog-arguments";
+import { getClosestTableId } from "../../../../../providers/form/utils";
+import { getDispatchEventReplacement } from "../../_common-migrations/migrate-events";
+import { IButtonProps } from "../button";
 
-interface IShowModalActionArguments {
-    modalTitle: string;
-    formId: FormIdentifier;
-    showModalFooter: boolean;
-    additionalProperties?: IKeyValue[];
-    modalWidth?: number;
-    /**
-     * What http verb to use when submitting the form
-     */
-    submitHttpVerb?: 'POST' | 'PUT';
+export const migrateV0toV1 = (props: IButtonGroupButtonV0, context: SettingsMigrationContext): IButtonProps => {
+    const actionConfiguration = getActionConfiguration(props, context);
+
+    const result: IButtonProps = {
+        ...props,
+        actionConfiguration: actionConfiguration,
+        type: props['type'] ?? "button"
+    };
+    return result;
 }
 
-export const migrateV0toV1 = (model: IToolbarPropsV0, context: SettingsMigrationContext): IToolbarProps => {
-
-    const items = (model.items ?? []).map<ToolbarItemProps>(item => {
-        if (item.itemType === "item") {
-            if (item['actionConfiguration'])
-                return item;
-            const buttonProps = item as IToolbarButtonV0;
-            if (buttonProps.itemSubType === 'button') {
-
-                return {
-                    ...item,
-                    actionConfiguration: getActionConfiguration(buttonProps, context)
-                }
-            }
-        }
-
-        return item;
-    });
-
-    return { ...model, items: items };
-}
-
-const getActionConfiguration = (buttonProps: IToolbarButtonV0, context: SettingsMigrationContext): IConfigurableActionConfiguration => {
+const getActionConfiguration = (buttonProps: IButtonGroupButtonV0, context: SettingsMigrationContext): IConfigurableActionConfiguration => {
     if (buttonProps['actionConfiguration'])
         return buttonProps['actionConfiguration'] as IConfigurableActionConfiguration;
 
@@ -183,27 +157,15 @@ const getActionConfiguration = (buttonProps: IToolbarButtonV0, context: Settings
         case "customAction": {
 
         }
-        // case "dispatchAnEvent": {
-        //     return getDispatchEventReplacement(buttonProps);
-        // }
+        case "dispatchAnEvent": {
+            return getDispatchEventReplacement(buttonProps);
+        }
     }
     return null;
 }
 
+//#region old types
 
-//#region 
-
-export interface IToolbarPropsV0 extends IConfigurableFormComponent {
-    items: ToolbarItemPropsV0[];
-}
-
-type ToolbarItemTypeV0 = 'item' | 'group';
-
-type ButtonGroupTypeV0 = 'inline' | 'dropdown';
-
-type ToolbarItemPropsV0 = IToolbarButtonV0 | IButtonGroupV0;
-
-type ToolbarItemSubTypeV0 = 'button' | 'separator' | 'line';
 type ButtonActionTypeV0 =
     | 'navigate'
     | 'dialogue'
@@ -213,55 +175,85 @@ type ButtonActionTypeV0 =
     | 'submit'
     | 'reset'
     | 'startFormEdit'
-    | 'cancelFormEdit';
+    | 'cancelFormEdit'
+    | 'dispatchAnEvent';
+type ToolbarItemSubTypeV0 = 'button' | 'separator' | 'line';
 
-interface IToolbarItemBaseV0 {
+type SizeTypeV0 = 'small' | 'middle' | 'large';
+
+type ButtonGroupItemTypeV0 = 'item' | 'group';
+
+type ButtonGroupTypeV0 = 'inline' | 'dropdown';
+
+type ButtonTypeV0 = "default" | "primary" | "ghost" | "dashed" | "link" | "text";
+
+export interface IButtonGroupItemBaseV0 {
     id: string;
     name: string;
-    label: string;
+    label?: string;
     tooltip?: string;
     sortOrder: number;
     danger?: boolean;
-    itemType: ToolbarItemTypeV0;
+    hidden?: boolean;
+    disabled?: boolean;
+    isDynamic?: boolean;
+    itemType: ButtonGroupItemTypeV0;
     groupType?: ButtonGroupTypeV0;
     icon?: string;
-    buttonType?: ButtonType;
+    buttonType?: ButtonTypeV0;
     customVisibility?: string;
     customEnabled?: string;
     permissions?: string[];
+    style?: string;
+    size?: SizeTypeV0;
 }
 
-interface IToolbarButtonV0 extends IToolbarItemBaseV0 {
+interface IButtonGroupButtonV0 extends IButtonGroupItemBaseV0 {
     itemSubType: ToolbarItemSubTypeV0;
     buttonAction?: ButtonActionTypeV0;
-    refreshTableOnSuccess?: boolean;
+    refreshTableOnSuccess?: boolean; // TODO: Remove this and make this logic more generic
     targetUrl?: string;
 
     /**
-     * @deprecated - use customAction. It is named that way to be consistent with the 
+     * Predefined form action that gets executed via events
      */
     formAction?: string;
+
+    /**
+     * Custom form events that can be passed with parameters
+     */
+    customFormAction?: string;
+    uniqueStateId?: string;
     customAction?: string;
     customActionParameters?: string;
     actionScript?: string;
-    size?: SizeType;
+    size?: SizeTypeV0;
     modalFormId?: string;
     modalTitle?: string;
+    modalFormMode?: 'designer' | 'edit' | 'readonly';
+    skipFetchData?: boolean;
+    submitLocally?: boolean;
+
+    // This is the event that will be triggered once the form has been submitted. The event will be passed this data
+    onSubmitEvent?: string;
+
+    /** An event name to dispatch on the click of a button */
+    eventName?: string;
+
+    /** The string representing a custom event name to dispatch when the button has been dispatched
+     * in case we forgot to include it in the `eventName` dropdown
+     */
+    customEventNameToDispatch?: string;
+
     modalWidth?: number;
     modalActionOnSuccess?: 'keepOpen' | 'navigateToUrl' | 'close' | undefined;
     showConfirmDialogBeforeSubmit?: boolean;
     modalConfirmDialogMessage?: string;
-
     onSuccessScript?: string;
-
     onErrorScript?: string;
 }
 
-interface IButtonGroupV0 extends IToolbarItemBaseV0 {
-    childItems?: ToolbarItemPropsV0[];
-}
-
-interface IToolbarButtonTableDialogPropsV0 extends Omit<IModalPropsV0, 'formId' | 'isVisible'>, IToolbarButtonV0 {
+interface IToolbarButtonTableDialogPropsV0 extends Omit<IModalPropsV0, 'formId' | 'isVisible'>, IButtonGroupButtonV0 {
     modalProps?: IModalPropsV0;
     additionalProperties?: IKeyValue[];
 }
@@ -340,5 +332,4 @@ interface IModalPropsV0 {
 
     onCancel?: () => void;
 }
-
-//#endregion
+  //#endregion

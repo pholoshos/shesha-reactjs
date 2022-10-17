@@ -7,8 +7,6 @@ import { usePropertiesEditor } from '../provider';
 
 export interface IModelConfiguratorProps { }
 
-const { TabPane } = Tabs;
-
 export const PropertiesEditorRenderer: FC<IModelConfiguratorProps> = () => {
   const { items, addItem, selectedItemRef } = usePropertiesEditor();
 
@@ -35,8 +33,9 @@ const onAddClick = () => {
   }, [items]);
 
   return (
-    <Tabs>
-      <TabPane tab="Designer" key="1">
+    <Tabs items={[
+      { label: "Designer", key: "1",
+      children: <>
         <div className="sha-action-buttons" style={{ marginBottom: '8px' }}>
           <Button onClick={onAddClick} type="primary">
             Add Property
@@ -53,10 +52,9 @@ const onAddClick = () => {
             <ItemsContainer items={items} index={[]} />
           </SidebarContainer>
         </div>
-      </TabPane>
-      <TabPane tab="Schema" key="2">
-        <CodeEditor value={jsonSchema} readOnly={true} width='100%' />
-      </TabPane>
-    </Tabs>
+        </>
+      },
+      { label: "Schema", key: "2", children: <CodeEditor value={jsonSchema} readOnly={true} width='100%' /> }
+    ]} />
   );
 };

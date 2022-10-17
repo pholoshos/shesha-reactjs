@@ -95,7 +95,7 @@ const EntityConfigurationsIndexPage: PageWithLayout<IEntityConfigurationsIndexPa
           title="Create New Entity"
           visible={showCreateModal}
           formMarkup={useFormPath ? undefined : (createEntityConfigMarkup as any)}
-          formPath={useFormPath ? '/settings/entity-configs/create' : ''}
+          formId={{name: useFormPath ? '/settings/entity-configs/create' : ''}}
           updater={useEntityConfigCreate}
           onCancel={toggleCreateModalVisibility}
           onSuccess={onSuccess}

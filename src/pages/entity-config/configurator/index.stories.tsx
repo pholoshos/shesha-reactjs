@@ -13,10 +13,10 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const EntityConfiguratorTemplate: ComponentStory<typeof EntityConfiguratorPage> = (args) => (
   <StoryApp>
-    <EntityConfiguratorPage {...args} />;
+    <EntityConfiguratorPage {...args} />
   </StoryApp>
 );
 
 export const Primary = EntityConfiguratorTemplate.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = { id: '3F0C6DF1-9135-4DC6-9905-E5D1EABB87A8' };
+Primary.args = { id: null };//'3F0C6DF1-9135-4DC6-9905-E5D1EABB87A8' };

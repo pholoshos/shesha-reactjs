@@ -115,4 +115,15 @@ export const OrganisationEdit = addStory(Template, {
   mode: 'edit',
 });
 
+export const PermissionedObject = addStory(Template, {
+  formId: { name: '/permissionedObject/webapi' },
+  mode: 'edit',
+});
+
+export const ModelConfigurationEdit = addStory(Template, {
+  formId: { name: 'model-configuration-edit' },
+  id: 'BD6F85B7-43C0-411A-BFBB-67E7D5754EE8',
+  mode: 'edit',
+});
+
 Basic.args = DEFAULT_ARGS;

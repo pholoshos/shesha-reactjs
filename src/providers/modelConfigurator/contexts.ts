@@ -15,8 +15,9 @@ export interface IModelConfiguratorStateContext {
 }
 
 export interface IModelConfiguratorActionsContext {
+  changeModelId: (id: string) => void;
   load: () => void;
-  save: (value: ModelConfigurationDto) => Promise<void>;
+  save: (value: ModelConfigurationDto) => Promise<ModelConfigurationDto>;
   submit: () => void;
   getModelSettings: () => ModelConfigurationDto;
 

@@ -136,6 +136,30 @@ const getActionConfiguration = (buttonProps: IButtonGroupButtonV0, context: Sett
                     handleSuccess: false,
                 };
             }
+            if (buttonProps.formAction === 'TOGGLE_COLUMNS_SELECTOR' || buttonProps.customAction === 'toggleColumnsSelector') {
+                return {
+                    actionOwner: getClosestTableId(context),
+                    actionName: 'Toggle Columns Selector',
+                    handleFail: false,
+                    handleSuccess: false,
+                };
+            }
+            if (buttonProps.formAction === 'TOGGLE_ADVANCED_FILTER' || buttonProps.customAction === 'toggleAdvancedFilter') {
+                return {
+                    actionOwner: getClosestTableId(context),
+                    actionName: 'Toggle Advanced Filter',
+                    handleFail: false,
+                    handleSuccess: false,
+                };
+            }
+            if (buttonProps.formAction === 'REFRESH_TABLE' || buttonProps.customAction === 'refresh') {
+                return {
+                    actionOwner: getClosestTableId(context),
+                    actionName: 'Refresh table',
+                    handleFail: false,
+                    handleSuccess: false,
+                };
+            }
         }
         case "customAction": {
 

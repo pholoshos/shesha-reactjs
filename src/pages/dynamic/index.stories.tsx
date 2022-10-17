@@ -40,6 +40,10 @@ export const PersonsIndexPage = addStory(Template, {
   formId: { name: 'persons', module: 'shesha' },
 });
 
+export const UserManagementPage = addStory(Template, {
+  formId: { name: 'user-management-new' },
+});
+
 export const PersonDetailsPage = addStory(Template, {
   formId: { name: 'person-details', module: 'shesha' },
   id: '98273D2D-F59E-42A3-9D8A-0218874548A9',

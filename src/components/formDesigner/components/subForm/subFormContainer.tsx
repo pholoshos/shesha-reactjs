@@ -12,8 +12,7 @@ interface ISubFormContainerProps {
   readOnly?: boolean;
 }
 
-export const SubFormContainer: FC<ISubFormContainerProps>= ({
-  components, readOnly }) => {
+export const SubFormContainer: FC<ISubFormContainerProps> = ({ components, readOnly }) => {
   const { value } = useSubForm();
   const { globalState } = useGlobalState();
 
@@ -41,14 +40,14 @@ export const SubFormContainer: FC<ISubFormContainerProps>= ({
     <Fragment>
       {components
         ?.filter(({ customVisibility }) => {
-          return executeExpression(customVisibility,true);
+          return executeExpression(customVisibility, true);
         })
         .map(({ customEnabled, ...model }) => {
-          const disabled = !executeExpression(customEnabled,true);
+          const disabled = !executeExpression(customEnabled, true);
 
           return (
             <DynamicComponent
-              model={{ ...model, isDynamic: true, readOnly, disabled, customEnabled: null }}
+              model={{ ...model, isDynamic: true, readOnly, disabled, customEnabled: '' }}
               key={model?.id}
             />
           );

@@ -45,9 +45,9 @@ export interface IFormMarkupWithSettings {
   settings: IFormSettings;
 }
 
-export const useCreateForm = (props: UseFormCreateProps): UseMutateReturn<FormDto, FormDto, FormDto, any, void> => {
+export const useCreateForm = (props: UseFormCreateProps): UseMutateReturn<any, any, FormDto, any, void> => {
   const hook = useFormCreate(props);
-
+  
   const mutate = (data: FormDto) => {
     const json = getDefaultFormMarkup(data.type as ViewType);
 

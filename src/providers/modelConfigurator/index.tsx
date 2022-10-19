@@ -80,9 +80,9 @@ const ModelConfiguratorProvider: FC<PropsWithChildren<IModelConfiguratorProvider
         .catch(e => {
           dispatch(loadErrorAction({ message: 'Failed to load model', details: e }));
         });
-    }
+    }/*
     else
-      console.error("Failed to fetch a model configuraiton by Id - Id not specified");
+      console.error("Failed to fetch a model configuraiton by Id - Id not specified");*/
   }
 
   const submit = () => {

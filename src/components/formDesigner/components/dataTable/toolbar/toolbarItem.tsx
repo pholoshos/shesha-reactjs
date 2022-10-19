@@ -11,7 +11,7 @@ export interface IToolbarItemProps extends IToolbarButton {
 }
 
 export const ToolbarItem: FC<IToolbarItemProps> = props => {
-  const { deleteButton, selectedItemId } = useToolbarConfigurator();
+  const { deleteButton, selectedItemId, readOnly } = useToolbarConfigurator();
 
   const onDeleteClick = () => {
     deleteButton(props.id);
@@ -31,9 +31,11 @@ export const ToolbarItem: FC<IToolbarItemProps> = props => {
             <QuestionCircleOutlined className="sha-help-icon" />
           </Tooltip>
         )}
-        <div className="sha-toolbar-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
-        </div>
+        {!readOnly && (
+          <div className="sha-toolbar-item-controls">
+            <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+          </div>
+        )}
       </div>
     </div>
   );

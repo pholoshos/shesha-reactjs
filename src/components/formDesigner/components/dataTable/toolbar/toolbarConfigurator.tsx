@@ -10,9 +10,10 @@ export interface IToolbarConfiguratorProps {
   allowAddGroups?: boolean;
   render?: ReactNode | (() => ReactNode);
   heading?: ReactNode | (() => ReactNode);
+  readOnly: boolean;
 }
 
-export const ToolbarConfigurator: FC<IToolbarConfiguratorProps> = ({ allowAddGroups = true, render, heading }) => {
+export const ToolbarConfigurator: FC<IToolbarConfiguratorProps> = ({ allowAddGroups = true, render, heading, readOnly }) => {
   const { items, addButton, addGroup } = useToolbarConfigurator();
 
   const content = () => {
@@ -43,17 +44,19 @@ export const ToolbarConfigurator: FC<IToolbarConfiguratorProps> = ({ allowAddGro
     <div className="sha-toolbar-configurator">
       <Alert message={<h4>Here you can configure the toolbar by adjusting their settings and ordering.</h4>} />
 
-      <div className="sha-action-buttons">
-        {allowAddGroups && (
-          <Button onClick={addGroup} type="primary">
-            Add Group
-          </Button>
-        )}
+      {!readOnly && (
+        <div className="sha-action-buttons">
+          {allowAddGroups && (
+            <Button onClick={addGroup} type="primary">
+              Add Group
+            </Button>
+          )}
 
-        <Button onClick={addButton} type="primary">
-          Add New Item
-        </Button>
-      </div>
+          <Button onClick={addButton} type="primary">
+            Add New Item
+          </Button>
+        </div>
+      )}
       <SidebarContainer
         rightSidebarProps={{
           open: true,

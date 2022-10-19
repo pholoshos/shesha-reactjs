@@ -52,16 +52,18 @@ import {
 import { IDataSource } from '../formDesigner/models';
 import { useMetadataDispatcher } from '../../providers';
 
-export interface IFormProviderProps {
+export interface IFormDesignerProviderProps {
     uniqueStateId?: string;
     flatComponents: IFlatComponentsStructure;
     formSettings: IFormSettings;
+    readonly: boolean;
 }
 
-const FormDesignerProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
+const FormDesignerProvider: FC<PropsWithChildren<IFormDesignerProviderProps>> = ({
     children,
     flatComponents,
     formSettings,
+    readonly,
 }) => {
     const toolboxComponentGroups = useFormDesignerComponentGroups();
     const toolboxComponents = useFormDesignerComponents();
@@ -70,6 +72,7 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
     const initial: IFormDesignerStateContext = {
         ...FORM_DESIGNER_CONTEXT_INITIAL_STATE,
+        readOnly: readonly,
         toolboxComponentGroups: toolboxComponentGroups,
         ...flatComponents,
         formSettings: formSettings,

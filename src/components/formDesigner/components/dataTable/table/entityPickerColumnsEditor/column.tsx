@@ -14,7 +14,7 @@ export interface IProps extends IConfigurableColumnsProps {
 }
 
 export const Column: FC<IProps> = props => {
-  const { deleteColumn: deleteButton, selectedItemId } = useColumnsConfigurator();
+  const { deleteColumn: deleteButton, selectedItemId, readOnly } = useColumnsConfigurator();
 
   const onDeleteClick = () => {
     deleteButton(props.id);
@@ -36,9 +36,11 @@ export const Column: FC<IProps> = props => {
             <QuestionCircleOutlined className="sha-help-icon" />
           </Tooltip>
         )}
-        <div className="sha-toolbar-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
-        </div>
+        {!readOnly && (
+          <div className="sha-toolbar-item-controls">
+            <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+          </div>
+        )}
       </div>
     </div>
   );

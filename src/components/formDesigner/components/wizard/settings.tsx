@@ -12,6 +12,7 @@ import { nanoid } from 'nanoid/non-secure';
 const { Option } = Select;
 
 export interface ITabSettingsProps {
+  readOnly: boolean;
   model: ITabsComponentProps;
   onSave: (model: ITabsComponentProps) => void;
   onCancel: () => void;
@@ -64,6 +65,7 @@ const TabSettings: FC<ITabSettingsProps> = props => {
       onFinish={props.onSave}
       onValuesChange={onValuesChange}
       labelCol={{ span: 24 }}
+      disabled={props.readOnly}
     >
       <SectionSeparator sectionName="Display" />
       <Form.Item name="name" initialValue={props.model.name} label="Name" rules={[{ required: true }]}>

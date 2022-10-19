@@ -16,6 +16,7 @@ import { MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import { nanoid } from 'nanoid/non-secure';
 
 export interface IProps {
+  readOnly: boolean;
   value?: object;
   onChange?: any;
 }
@@ -120,6 +121,7 @@ const DraggableBodyRowInner = ({ columns, className, style, ...restProps }) => {
 };
 
 export const ColumnsList: FC<IProps> = ({ value, onChange }) => {
+  /*implement:readonly*/
   const columns = value as IColumnProps[];
 
   const DragHandle = props => <MenuOutlined style={{ color: '#999' }} {...props} />;

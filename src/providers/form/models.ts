@@ -262,6 +262,9 @@ export interface IFormSection {
    * Type
    */
   type?: string | null;
+  
+  versionNo?: number;
+  versionStatus?: number;
 }
 
 export interface IFormDto extends Omit<FormDto, 'markup'> {

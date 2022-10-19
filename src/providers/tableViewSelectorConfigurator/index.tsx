@@ -8,8 +8,8 @@ import {
   TOOLBAR_CONTEXT_INITIAL_STATE,
 } from './contexts';
 import {
-  addButtonAction,
-  deleteButtonAction,
+  addItemAction,
+  deleteItemAction,
   addGroupAction,
   deleteGroupAction,
   selectItemAction,
@@ -28,36 +28,41 @@ export interface ITableViewSelectorConfiguratorProviderProps {
   items: ITableViewProps[];
   value?: any;
   onChange?: (value: any) => void;
+  readOnly: boolean;
 }
 
 const TableViewSelectorConfiguratorProvider: FC<PropsWithChildren<
   ITableViewSelectorConfiguratorProviderProps
 >> = props => {
   const {
-    // onChange,
-    // value,
     children,
+    readOnly,
   } = props;
 
   const [state, dispatch] = useReducer(toolbarReducer, {
     ...TOOLBAR_CONTEXT_INITIAL_STATE,
     items: props.items,
+    readOnly: readOnly,
   });
 
-  const addButton = () => {
-    dispatch(addButtonAction());
+  const addItem = () => {
+    if (!state.readOnly)
+      dispatch(addItemAction());
   };
 
-  const deleteButton = (uid: string) => {
-    dispatch(deleteButtonAction(uid));
+  const deleteItem = (uid: string) => {
+    if (!state.readOnly)
+      dispatch(deleteItemAction(uid));
   };
 
   const addGroup = () => {
-    dispatch(addGroupAction());
+    if (!state.readOnly)
+      dispatch(addGroupAction());
   };
 
   const deleteGroup = (uid: string) => {
-    dispatch(deleteGroupAction(uid));
+    if (!state.readOnly)
+      dispatch(deleteGroupAction(uid));
   };
 
   const selectItem = (uid: string) => {
@@ -65,7 +70,8 @@ const TableViewSelectorConfiguratorProvider: FC<PropsWithChildren<
   };
 
   const updateChildItems = (payload: IUpdateChildItemsPayload) => {
-    dispatch(updateChildItemsAction(payload));
+    if (!state.readOnly)
+      dispatch(updateChildItemsAction(payload));
   };
 
   const getItem = (uid: string): ITableViewProps => {
@@ -73,7 +79,8 @@ const TableViewSelectorConfiguratorProvider: FC<PropsWithChildren<
   };
 
   const updateItem = (payload: IUpdateItemSettingsPayload) => {
-    dispatch(updateItemAction(payload));
+    if (!state.readOnly)
+      dispatch(updateItemAction(payload));
   };
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
@@ -82,15 +89,14 @@ const TableViewSelectorConfiguratorProvider: FC<PropsWithChildren<
     <TableViewSelectorConfiguratorStateContext.Provider value={{ ...state }}>
       <TableViewSelectorConfiguratorActionsContext.Provider
         value={{
-          addButton,
-          deleteButton,
+          addItem,
+          deleteItem,
           addGroup,
           deleteGroup,
           selectItem,
           updateChildItems,
           getItem,
           updateItem,
-          //getChildItems,
           /* NEW_ACTION_GOES_HERE */
         }}
       >

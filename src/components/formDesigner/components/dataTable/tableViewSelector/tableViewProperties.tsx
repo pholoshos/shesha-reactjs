@@ -9,7 +9,7 @@ import { useDebouncedCallback } from 'use-debounce';
 export interface IProps {}
 
 export const TableViewProperties: FC<IProps> = () => {
-  const { selectedItemId, getItem, updateItem } = useTableViewSelectorConfigurator();
+  const { selectedItemId, getItem, updateItem, readOnly } = useTableViewSelectorConfigurator();
   // note: we have to memoize the editor to prevent unneeded re-rendering and loosing of the focus
   const [editor, setEditor] = useState<ReactNode>(<></>);
   const [form] = Form.useForm();
@@ -37,7 +37,7 @@ export const TableViewProperties: FC<IProps> = () => {
         layout="vertical"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
-        mode="edit"
+        mode={readOnly ? 'readonly' : 'edit'}
         markup={tableViewSettingsJson as FormMarkup}
         onFinish={onSettingsSave}
         form={form}

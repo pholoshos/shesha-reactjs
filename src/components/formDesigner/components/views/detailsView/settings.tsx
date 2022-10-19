@@ -6,18 +6,19 @@ import { CodeEditor } from '../../codeEditor/codeEditor';
 import { ToolbarSettingsModal } from '../../dataTable/toolbar/toolbarSettingsModal';
 
 export interface IDetailsPageSettingsProps {
+  readOnly: boolean;
   model: IDetailsViewProps;
   onSave: (model: IDetailsViewProps) => void;
   onCancel: () => void;
   onValuesChange?: (changedValues: any, values: IDetailsViewProps) => void;
 }
 
-function DetailsViewSettings({ onSave, model, onValuesChange }: IDetailsPageSettingsProps) {
+function DetailsViewSettings({ readOnly, onSave, model, onValuesChange }: IDetailsPageSettingsProps) {
   const [toolbarModalVisible, setToolbarModalVisible] = useState(false);
   const [form] = Form.useForm();
 
   return (
-    <Form form={form} onFinish={onSave} layout="vertical" onValuesChange={onValuesChange}>
+    <Form form={form} onFinish={onSave} layout="vertical" onValuesChange={onValuesChange} disabled={readOnly}>
       <SectionSeparator sectionName={'Display'} />
 
       <Form.Item

@@ -9,7 +9,7 @@ import { PlusSquareFilled } from '@ant-design/icons';
 export interface IFilterConfiguratorProps {}
 
 export const FilterConfigurator: FC<IFilterConfiguratorProps> = () => {
-  const { items, addButton } = useTableViewSelectorConfigurator();
+  const { items, addItem: addButton } = useTableViewSelectorConfigurator();
 
   return (
     <div className="sha-toolbar-configurator">

@@ -9,6 +9,7 @@ import { CodeEditor } from './codeEditor';
 import { DataTypes, StringFormats } from '../../../../interfaces/dataTypes';
 import { ICodeEditorProps } from './models';
 import { ICodeExposedVariable } from '../../../codeVariablesTable';
+import { useForm } from '../../../..';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -28,6 +29,8 @@ const CodeEditorComponent: IToolboxComponent<ICodeEditorComponentProps> = {
       ...model,
     };
 
+    const { formMode } = useForm();
+
     return (
       <>
         <ConfigurableFormItem model={model}>
@@ -36,6 +39,7 @@ const CodeEditorComponent: IToolboxComponent<ICodeEditorComponentProps> = {
             {...editorProps}
             mode={model.mode || 'dialog'}
             setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+            readOnly={formMode === 'readonly'}
           />
         </ConfigurableFormItem>
       </>

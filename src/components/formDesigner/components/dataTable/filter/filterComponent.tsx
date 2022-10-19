@@ -35,9 +35,10 @@ interface ICustomFilter {
   value?: any;
   onChange?: any;
   target?: FilterTarget;
+  readOnly?: boolean;
 }
 
-export const CustomFilter: FC<ICustomFilter> = ({ value, onChange }) => {
+export const CustomFilter: FC<ICustomFilter> = ({ value, onChange, readOnly = false }) => {
   const [showModal, setShowModal] = useState(false);
 
   const toggleFiltersModal = () => setShowModal(prev => !prev);
@@ -47,7 +48,7 @@ export const CustomFilter: FC<ICustomFilter> = ({ value, onChange }) => {
       <Button onClick={toggleFiltersModal}>Customise Filters</Button>
 
       <QueryBuilderWrapper>
-        <TableViewSelectorConfiguratorProvider items={(value as ITableViewProps[]) || []}>
+        <TableViewSelectorConfiguratorProvider items={(value as ITableViewProps[]) || []} readOnly={readOnly}>
           <FilterSettingsModalInner visible={showModal} onChange={onChange} hideModal={toggleFiltersModal} />
         </TableViewSelectorConfiguratorProvider>
       </QueryBuilderWrapper>

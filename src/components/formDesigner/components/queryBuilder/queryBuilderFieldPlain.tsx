@@ -37,6 +37,7 @@ export const QueryBuilderPlainRenderer: FC<IQueryBuilderProps> = props => {
       useExpression={useExpression}
       onChange={props?.onChange}
       value={props?.value}
+      readOnly={props.readOnly}
     />
   );
 };

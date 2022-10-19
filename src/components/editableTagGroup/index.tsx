@@ -16,7 +16,7 @@ interface IEditableTagGroupState {
   inputValue?: string;
 }
 
-export const EditableTagGroup: FC<IEditableTagGroupProps> = ({ value = [], onChange, defaultValue, ...rest }) => {
+export const EditableTagGroup: FC<IEditableTagGroupProps> = ({ value = [], onChange, defaultValue, readOnly = false, ...rest }) => {
   const [state, setState] = useState<IEditableTagGroupState>({ inputVisible: false, inputValue: '' });
 
   const inputRef = React.useRef<any>(null);
@@ -140,7 +140,7 @@ export const EditableTagGroup: FC<IEditableTagGroupProps> = ({ value = [], onCha
         />
       </Show>
 
-      <Show when={!inputVisible && !rest?.disabled}>
+      <Show when={!inputVisible && !rest?.disabled && !readOnly}>
         <Tag onClick={showInput} className="site-tag-plus">
           <PlusOutlined /> New value
         </Tag>

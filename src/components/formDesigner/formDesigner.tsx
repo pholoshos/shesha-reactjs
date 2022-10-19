@@ -1,20 +1,14 @@
-import React, { FC, useState } from 'react';
-import { SidebarContainer, ConfigurableFormRenderer } from '../../components';
-import { Row, Col, Divider, Skeleton } from 'antd';
-import Toolbox from './toolbox';
-import FormDesignerToolbar from './formDesignerToolbar';
-import ComponentPropertiesPanel from './componentPropertiesPanel';
-import ComponentPropertiesTitle from './componentPropertiesTitle';
-import { FormProvider, useForm } from '../../providers/form';
-import { FormDesignerHeader } from './formDesignerHeader';
-import { MetadataProvider } from '../../providers';
-import ConditionalWrap from '../conditionalWrapper';
+import React, { FC } from 'react';
+import { Skeleton } from 'antd';
+import { FormProvider } from '../../providers/form';
 import { FormIdentifier } from '../../providers/form/models';
-import { FormPersisterProvider, useFormPersister } from '../../providers/formPersisterProvider';
+import { FormPersisterProvider } from '../../providers/formPersisterProvider';
 import { FormPersisterStateConsumer } from '../../providers/formPersisterProvider/contexts';
-import { FormDesignerProvider, useFormDesigner } from '../../providers/formDesigner';
+import { FormDesignerProvider } from '../../providers/formDesigner';
 import { FormDesignerStateConsumer } from '../../providers/formDesigner/contexts';
 import { FormMarkupConverter } from '../../providers/formMarkupConverter';
+import { FormDesignerRenderer } from './formDesignerRenderer';
+import { ConfigurationItemVersionStatus } from '../../utils/configurationFramework/models';
 
 export interface IFormDesignerProps {
   formId: FormIdentifier;
@@ -28,14 +22,18 @@ export const FormDesigner: FC<IFormDesignerProps> = ({ formId }) => {
           ? (
             <FormMarkupConverter markup={formStore.markup}>
               {flatComponents => (
-                <FormDesignerProvider flatComponents={flatComponents} formSettings={formStore.formSettings}>
+                <FormDesignerProvider 
+                  flatComponents={flatComponents} 
+                  formSettings={formStore.formSettings}
+                  readonly={formStore.formProps?.versionStatus !== ConfigurationItemVersionStatus.Draft}
+                >
                   <FormDesignerStateConsumer>
                     {designerState => (
                       <FormProvider mode="designer" 
                         flatComponents={{ allComponents: designerState.allComponents, componentRelations: designerState.componentRelations }} 
                         formSettings={designerState.formSettings}
                       >
-                        <FormDesignerRenderer formId={formId} />
+                        <FormDesignerRenderer />
                       </FormProvider>
                     )}
                   </FormDesignerStateConsumer>
@@ -49,71 +47,5 @@ export const FormDesigner: FC<IFormDesignerProps> = ({ formId }) => {
     </FormPersisterProvider>
   );
 }
-
-export const FormDesignerRenderer: FC<IFormDesignerProps> = ({ }) => {
-  const [widgetsOpen, setWidgetOpen] = useState(true);
-  const [fieldPropertiesOpen, setFieldPropertiesOpen] = useState(true);
-  const { } = useFormPersister();
-
-  const toggleWidgetSidebar = () => setWidgetOpen(widget => !widget);
-
-  const toggleFieldPropertiesSidebar = () => setFieldPropertiesOpen(prop => !prop);
-
-  const [formValues, setFormValues] = useState({});
-  const { formSettings } = useForm();
-  const { isDebug } = useFormDesigner();
-
-  return (
-    <div className="sha-form-designer">
-      <ConditionalWrap
-        condition={Boolean(formSettings.modelType)}
-        wrap={content => (
-          <MetadataProvider id="designer" modelType={formSettings.modelType}>
-            {content}
-          </MetadataProvider>
-        )}
-      >
-        <SidebarContainer
-          leftSidebarProps={{
-            open: widgetsOpen,
-            onOpen: toggleWidgetSidebar,
-            onClose: toggleWidgetSidebar,
-            title: 'Builder Widgets',
-            content: () => <Toolbox />,
-            placeholder: 'Builder Widgets',
-          }}
-          rightSidebarProps={{
-            open: fieldPropertiesOpen,
-            onOpen: toggleFieldPropertiesSidebar,
-            onClose: toggleFieldPropertiesSidebar,
-            title: () => <ComponentPropertiesTitle />,
-            content: () => <ComponentPropertiesPanel />,
-            placeholder: 'Properties',
-          }}
-          header={() => <FormDesignerToolbar />}
-        >
-          <FormDesignerHeader />
-
-          <ConfigurableFormRenderer
-            onValuesChange={(_changedValues, allvalues) => {
-              setFormValues(allvalues);
-            }}
-          >
-            {isDebug && (
-              <>
-                <Row>
-                  <Divider />
-                  <Col span={24}>
-                    <pre>{JSON.stringify(formValues, null, 2)}</pre>
-                  </Col>
-                </Row>
-              </>
-            )}
-          </ConfigurableFormRenderer>
-        </SidebarContainer>
-      </ConditionalWrap>
-    </div>
-  );
-};
 
 export default FormDesigner;

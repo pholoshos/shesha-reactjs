@@ -15,7 +15,7 @@ export interface ISettingsFormFactoryArgs<TModel = IConfigurableActionArguments>
   onSave: (values: TModel) => void;
   onCancel: () => void;
   onValuesChange?: (changedValues: any, values: TModel) => void;
-  //toolboxComponent: IToolboxComponent;
+  readOnly?: boolean;
 }
 
 export type IConfigurableActionArgumentsFormFactory<TModel = IConfigurableActionArguments> = (

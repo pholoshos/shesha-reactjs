@@ -23,7 +23,7 @@ const ConfigurableActionConfiguratorComponent: IToolboxComponent<IConfigurableAc
   icon: <ThunderboltOutlined />,
   isHidden: true,
   factory: (model: IConfigurableActionNamesComponentProps) => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden, formMode } = useForm();
 
     const isHidden = isComponentHidden(model);
 
@@ -31,7 +31,7 @@ const ConfigurableActionConfiguratorComponent: IToolboxComponent<IConfigurableAc
 
     return (
       <Form.Item name={model.name} labelCol={{ span: 0 }} wrapperCol={{ span: 24 }} noStyle>
-        <ConfigurableActionConfigurator editorConfig={model} level={1} />
+        <ConfigurableActionConfigurator editorConfig={model} level={1} readOnly={formMode==='readonly'}/>
       </Form.Item>
     );
   },
@@ -46,6 +46,7 @@ interface IConfigurableActionConfiguratorProps {
   value?: IConfigurableActionConfiguration;
   onChange?: (value: IConfigurableActionConfiguration) => void;
   level: number;
+  readOnly?: boolean;
 }
 
 interface IActionFormModel extends Omit<IConfigurableActionConfiguration, 'actionOwner' | 'actionName'> {
@@ -71,7 +72,7 @@ const parseActionFullName = (fullName: string): IActionIdentifier => {
 const ConfigurableActionConfigurator: FC<IConfigurableActionConfiguratorProps> = props => {
   const [form] = Form.useForm();
   const { formSettings } = useForm();
-  const { value, onChange } = props;
+  const { value, onChange, readOnly = false } = props;
   const { getActions, getConfigurableActionOrNull } = useConfigurableActionDispatcher();
   const actions = getActions();
 
@@ -120,38 +121,39 @@ const ConfigurableActionConfigurator: FC<IConfigurableActionConfiguratorProps> =
         colon={formSettings.colon}
         onValuesChange={onValuesChange}
         initialValues={formValues}
+        disabled={readOnly}
       >
         <Form.Item name="actionFullName" label="Action Name">
-          <ActionSelect actions={actions}></ActionSelect>
+          <ActionSelect actions={actions} readOnly={readOnly}></ActionSelect>
         </Form.Item>
         {selectedAction && selectedAction.hasArguments && (
           <Form.Item name="actionArguments" label={null}>
-            <ActionArgumentsEditor action={selectedAction}></ActionArgumentsEditor>
+            <ActionArgumentsEditor action={selectedAction} readOnly={readOnly}></ActionArgumentsEditor>
           </Form.Item>
         )}
         <Form.Item name="handleSuccess" label="Handle Success" valuePropName='checked'>
-          <Switch />
+          <Switch disabled={readOnly}/>
         </Form.Item >
         {
           value?.handleSuccess && (
             <Collapse defaultActiveKey={['1']}>
               <Panel header="On Success handler" key="1">
                 <Form.Item name="onSuccess">
-                  <ConfigurableActionConfigurator editorConfig={props.editorConfig} level={props.level + 1} />
+                  <ConfigurableActionConfigurator editorConfig={props.editorConfig} level={props.level + 1} readOnly={readOnly}/>
                 </Form.Item >
               </Panel>
             </Collapse>
           )
         }
         <Form.Item name="handleFail" label="Handle Fail" valuePropName='checked'>
-          <Switch />
+          <Switch disabled={readOnly}/>
         </Form.Item>
         {
           value?.handleFail && (
             <Collapse defaultActiveKey={['1']}>
               <Panel header="On Fail handler" key="1">
                 <Form.Item name="onFail">
-                  <ConfigurableActionConfigurator editorConfig={props.editorConfig} level={props.level + 1} />
+                  <ConfigurableActionConfigurator editorConfig={props.editorConfig} level={props.level + 1} readOnly={readOnly}/>
                 </Form.Item>
               </Panel>
             </Collapse>
@@ -172,6 +174,7 @@ interface IActionSelectProps {
   actions: IConfigurableActionDictionary;
   value?: string;
   onChange?: () => void;
+  readOnly?: boolean;
 }
 interface IActionSelectItem {
   title: string;
@@ -180,7 +183,7 @@ interface IActionSelectItem {
   children: IActionSelectItem[];
   selectable: boolean;
 }
-const ActionSelect: FC<IActionSelectProps> = ({ value, onChange, actions }) => {
+const ActionSelect: FC<IActionSelectProps> = ({ value, onChange, actions, readOnly = false }) => {
 
   const treeData = useMemo<IActionSelectItem[]>(() => {
     const result: IActionSelectItem[] = [];
@@ -211,6 +214,7 @@ const ActionSelect: FC<IActionSelectProps> = ({ value, onChange, actions }) => {
 
   return (
     <TreeSelect
+      disabled={readOnly}
       showSearch
       style={{
         width: '100%',

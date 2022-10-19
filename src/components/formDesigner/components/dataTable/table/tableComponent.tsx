@@ -46,8 +46,8 @@ const TableComponent: IToolboxComponent<ITableComponentProps> = {
   })
   .add<ITableComponentProps>(1, migrateV0toV1),
 
-  settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
-    return <TableSettings model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
+  settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
+    return <TableSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },
 };
 

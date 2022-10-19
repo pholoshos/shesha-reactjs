@@ -15,9 +15,10 @@ export interface IColumnsEditorModal {
   hideModal: () => void;
   value?: object;
   onChange?: any;
+  readOnly: boolean;
 }
 
-export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onChange, hideModal }) => {
+export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onChange, hideModal, readOnly }) => {
   const isSmall = useMedia('(max-width: 480px)');
   const { items } = useColumnsConfigurator();
 
@@ -31,9 +32,13 @@ export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onCh
       width={isSmall ? '90%' : '60%'}
       open={visible}
       title="Configure Columns"
-      okText="Save"
+      
       onCancel={hideModal}
+      cancelText={readOnly ? 'Close' : undefined}
+      
+      okText="Save"
       onOk={onOkClick}
+      okButtonProps={{ hidden: readOnly }}
     >
       <ColumnsConfigurator />
     </Modal>
@@ -44,7 +49,7 @@ export const ColumnsEditorModal: FC<IColumnsEditorModal> = props => {
   const { formData } = useForm();
   let modelType = (formData as IEntityPickerComponentProps)?.entityType;
   return (
-    <ColumnsConfiguratorProvider items={(props.value as IConfigurableColumnsBase[]) || []}>
+    <ColumnsConfiguratorProvider items={(props.value as IConfigurableColumnsBase[]) || []} readOnly={props.readOnly}>
       <MetadataProvider modelType={modelType}>
         <ColumnsEditorModalInner {...props} />
       </MetadataProvider>

@@ -76,7 +76,8 @@ const ComponentsContainerDesigner: FC<IComponentsContainerProps> = (props) => {
     addComponent,
     addDataProperty,
     startDragging,
-    endDragging
+    endDragging,
+    readOnly,
   } = useFormDesigner();
 
   const components = getChildComponents(containerId);
@@ -148,8 +149,7 @@ const ComponentsContainerDesigner: FC<IComponentsContainerProps> = (props) => {
       <>
         {components.length === 0 && <div className="sha-drop-hint">Drag and Drop form component</div>}
         <ReactSortable
-          // disabled
-          disabled={false}
+          disabled={readOnly}
           onStart={onDragStart}
           onEnd={onDragEnd}
           list={componentsMapped}

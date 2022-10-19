@@ -8,6 +8,7 @@ export interface IQueryBuilderProps {
     useExpression?: string | boolean;
     value?: object;
     onChange?: (value: Object) => void;
+    readOnly?: boolean;
   }
 
   export interface IQueryBuilderFieldProps {
@@ -17,6 +18,7 @@ export interface IQueryBuilderProps {
     fetchFields: (fieldNames: string[]) => void;
     value?: object;
     onChange?: (value: any) => void;
+    readOnly?: boolean;
   }
 
   export type QueryBuilderFieldType = FC<IQueryBuilderFieldProps>;

@@ -37,9 +37,10 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
     );
   },
   // settingsFormMarkup: listSettingsForm,
-  settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
+  settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
     return (
       <ListControlSettings
+        readOnly={readOnly}
         model={(model as unknown) as IListItemsProps}
         onSave={onSave as any}
         onCancel={onCancel}

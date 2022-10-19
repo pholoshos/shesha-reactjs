@@ -14,6 +14,7 @@ export interface IUpdateItemSettingsPayload {
 export interface IColumnsConfiguratorStateContext {
   items: ColumnsItemProps[];
   selectedItemId?: string;
+  readOnly: boolean;
 }
 
 export interface IColumnsConfiguratorActionsContext {
@@ -33,6 +34,7 @@ export interface IColumnsConfiguratorActionsContext {
 
 export const TOOLBAR_CONTEXT_INITIAL_STATE: IColumnsConfiguratorStateContext = {
   items: [],
+  readOnly: false,
 };
 
 export const ColumnsConfiguratorStateContext = createContext<IColumnsConfiguratorStateContext>(

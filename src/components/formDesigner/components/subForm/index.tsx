@@ -63,9 +63,10 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
     );
   },
   // settingsFormMarkup: alertSettingsForm,
-  settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
+  settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
     return (
       <SubFormSettings
+        readOnly={readOnly}
         model={model as any}
         onSave={onSave as any}
         onCancel={onCancel}

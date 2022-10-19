@@ -9,13 +9,14 @@ import { IConfigurableColumnsBase } from '../../../../../../providers/datatableC
 import { useMedia } from 'react-use';
 
 export interface IColumnsEditorModal {
+  readOnly: boolean;
   visible: boolean;
   hideModal: () => void;
   value?: object;
   onChange?: any;
 }
 
-export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onChange, hideModal }) => {
+export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onChange, hideModal, readOnly }) => {
   const isSmall = useMedia('(max-width: 480px)');
   const { items } = useColumnsConfigurator();
 
@@ -30,6 +31,9 @@ export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onCh
       open={visible}
       title="Configure Columns"
       okText="Save"
+      okButtonProps={{ hidden: readOnly }}
+      cancelText={readOnly ? 'Close' : undefined}
+
       onCancel={hideModal}
       onOk={onOkClick}
     >
@@ -40,7 +44,7 @@ export const ColumnsEditorModalInner: FC<IColumnsEditorModal> = ({ visible, onCh
 
 export const ColumnsEditorModal: FC<IColumnsEditorModal> = props => {
   return (
-    <ColumnsConfiguratorProvider items={(props.value as IConfigurableColumnsBase[]) || []}>
+    <ColumnsConfiguratorProvider items={(props.value as IConfigurableColumnsBase[]) || []} readOnly={props.readOnly}>
       <ColumnsEditorModalInner {...props} />
     </ColumnsConfiguratorProvider>
   );

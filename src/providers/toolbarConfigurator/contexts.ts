@@ -15,6 +15,7 @@ export interface IUpdateItemSettingsPayload {
 export interface IToolbarConfiguratorStateContext {
   items: ToolbarItemProps[];
   selectedItemId?: string;
+  readOnly: boolean;
 }
 
 export interface IToolbarConfiguratorActionsContext {
@@ -34,6 +35,7 @@ export interface IToolbarConfiguratorActionsContext {
 
 export const TOOLBAR_CONTEXT_INITIAL_STATE: IToolbarConfiguratorStateContext = {
   items: [],
+  readOnly: false,
 };
 
 export const ToolbarConfiguratorStateContext = createContext<IToolbarConfiguratorStateContext>(

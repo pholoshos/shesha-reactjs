@@ -28,18 +28,19 @@ export interface IColumnsConfiguratorProviderProps {
   items: ColumnsItemProps[];
   value?: any;
   onChange?: (value: any) => void;
+  readOnly: boolean;
 }
 
 const ColumnsConfiguratorProvider: FC<PropsWithChildren<IColumnsConfiguratorProviderProps>> = props => {
   const {
-    // onChange,
-    // value,
     children,
+    readOnly,
   } = props;
 
   const [state, dispatch] = useReducer(toolbarReducer, {
     ...TOOLBAR_CONTEXT_INITIAL_STATE,
     items: props.items,
+    readOnly: readOnly,
   });
 
   const addColumn = () => {
@@ -47,15 +48,18 @@ const ColumnsConfiguratorProvider: FC<PropsWithChildren<IColumnsConfiguratorProv
   };
 
   const deleteColumn = (uid: string) => {
-    dispatch(deleteColumnAction(uid));
+    if (!state.readOnly)
+      dispatch(deleteColumnAction(uid));
   };
 
   const addGroup = () => {
-    dispatch(addGroupAction());
+    if (!state.readOnly)
+      dispatch(addGroupAction());
   };
 
   const deleteGroup = (uid: string) => {
-    dispatch(deleteGroupAction(uid));
+    if (!state.readOnly)
+      dispatch(deleteGroupAction(uid));
   };
 
   const selectItem = (uid: string) => {
@@ -63,7 +67,8 @@ const ColumnsConfiguratorProvider: FC<PropsWithChildren<IColumnsConfiguratorProv
   };
 
   const updateChildItems = (payload: IUpdateChildItemsPayload) => {
-    dispatch(updateChildItemsAction(payload));
+    if (!state.readOnly)
+      dispatch(updateChildItemsAction(payload));
   };
 
   const getItem = (uid: string): ColumnsItemProps => {
@@ -71,7 +76,8 @@ const ColumnsConfiguratorProvider: FC<PropsWithChildren<IColumnsConfiguratorProv
   };
 
   const updateItem = (payload: IUpdateItemSettingsPayload) => {
-    dispatch(updateItemAction(payload));
+    if (!state.readOnly)
+      dispatch(updateItemAction(payload));
   };
   
   /* NEW_ACTION_DECLARATION_GOES_HERE */
@@ -88,7 +94,6 @@ const ColumnsConfiguratorProvider: FC<PropsWithChildren<IColumnsConfiguratorProv
           updateChildItems,
           getItem,
           updateItem,
-          //getChildItems,
           /* NEW_ACTION_GOES_HERE */
         }}
       >

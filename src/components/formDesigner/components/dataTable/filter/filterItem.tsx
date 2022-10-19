@@ -11,7 +11,7 @@ export interface IFilterItemProps extends ITableViewProps {
 }
 
 export const FilterItem: FC<IFilterItemProps> = props => {
-  const { deleteButton, selectedItemId } = useTableViewSelectorConfigurator();
+  const { deleteItem: deleteButton, selectedItemId } = useTableViewSelectorConfigurator();
 
   const onDeleteClick = () => {
     deleteButton(props.id);

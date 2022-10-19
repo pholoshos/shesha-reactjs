@@ -8,9 +8,10 @@ export interface ITableViewSortableProps {
   index?: number[];
   items: ITableViewProps[];
   onConfigClick?: (selectedItemId: string) => void;
+  readOnly: boolean;
 }
 
-export const TableViewContainer: FC<ITableViewSortableProps> = ({ onConfigClick, ...props }) => {
+export const TableViewContainer: FC<ITableViewSortableProps> = ({ onConfigClick, readOnly, ...props }) => {
   const { updateChildItems } = useTableViewSelectorConfigurator();
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
@@ -26,6 +27,7 @@ export const TableViewContainer: FC<ITableViewSortableProps> = ({ onConfigClick,
 
   return (
     <ReactSortable
+      disabled={readOnly}
       list={props.items}
       setList={onSetList}
       fallbackOnBody={true}

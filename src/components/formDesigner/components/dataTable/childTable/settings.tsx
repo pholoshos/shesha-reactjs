@@ -7,6 +7,7 @@ import { CustomFilter } from '../filter/filterComponent';
 import ButtonGroupSettingsModal from '../../button/buttonGroup/buttonGroupSettingsModal';
 
 export interface IChildDataTableSettingsProps {
+  readOnly: boolean;
   model: IChildTableSettingsProps;
   onSave: (model: IChildTableSettingsProps) => void;
   onCancel: () => void;
@@ -19,7 +20,7 @@ interface IChildDataTableSettingsState {
   data?: IChildTableSettingsProps;
 }
 
-export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ onSave, model, onValuesChange }) => {
+export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ readOnly, onSave, model, onValuesChange }) => {
   const [state, setState] = useState<IChildDataTableSettingsState>({ data: model });
   const [form] = Form.useForm();
 
@@ -54,11 +55,11 @@ export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ onSav
         initialValue={model.title}
         tooltip="This can be a literal string like below 'Details for {{data.companyName}}'"
       >
-        <Input placeholder="Details for {{data.companyName}}" />
+        <Input placeholder="Details for {{data.companyName}}" readOnly={readOnly}/>
       </Form.Item>
 
       <Form.Item name="allowQuickSearch" label="Allow Quick Search" valuePropName="checked">
-        <Checkbox checked={model?.allowQuickSearch} />
+        <Checkbox checked={model?.allowQuickSearch} disabled={readOnly}/>
       </Form.Item>
 
       <SectionSeparator sectionName="Toolbar" />
@@ -70,11 +71,11 @@ export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ onSav
       <SectionSeparator sectionName="Filter" />
 
       <Form.Item name="filters" initialValue={model.filters}>
-        <CustomFilter target="table" />
+        <CustomFilter target="table" readOnly={readOnly}/>
       </Form.Item>
 
       <Form.Item name="defaultSelectedFilterId" label="Selected filter" required>
-        <Select value={state?.data?.defaultSelectedFilterId} allowClear showSearch>
+        <Select value={state?.data?.defaultSelectedFilterId} allowClear showSearch disabled={readOnly}>
           {state?.data?.filters?.map(({ id, name }) => (
             <Select.Option value={id} key={id}>
               {name}
@@ -89,6 +90,7 @@ export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ onSav
         tooltip="Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key."
       >
         <CodeEditor
+          readOnly={readOnly}
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="customVisibility"

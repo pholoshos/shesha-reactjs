@@ -12,7 +12,7 @@ import { IPropertyMetadata } from '../../../../../../interfaces/metadata';
 export interface IProps {}
 
 export const ColumnProperties: FC<IProps> = () => {
-  const { selectedItemId, getItem, updateItem } = useColumnsConfigurator();
+  const { selectedItemId, getItem, updateItem, readOnly } = useColumnsConfigurator();
   // note: we have to memoize the editor to prevent unneeded re-rendering and loosing of the focus
   const [editor, setEditor] = useState<ReactNode>(<></>);
   const [form] = Form.useForm();
@@ -44,6 +44,8 @@ export const ColumnProperties: FC<IProps> = () => {
     const componentModel = getItem(selectedItemId);
 
     const linkToModelMetadata = (metadata: IPropertyMetadata) => {
+      if (readOnly)
+        return;
       const values = form.getFieldsValue() as IDataColumnsProps;
       const newValues: IDataColumnsProps = {
         ...values,
@@ -61,7 +63,7 @@ export const ColumnProperties: FC<IProps> = () => {
         layout="vertical"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
-        mode="edit"
+        mode={readOnly ? 'readonly' : 'edit'}
         markup={columnSettingsJson as FormMarkup}
         onFinish={onSettingsSave}
         form={form}

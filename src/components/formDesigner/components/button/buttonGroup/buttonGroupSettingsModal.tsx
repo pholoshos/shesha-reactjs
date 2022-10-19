@@ -9,6 +9,7 @@ import { ButtonGroupItemProps } from '../../../../../providers/buttonGroupConfig
 import { useMedia } from 'react-use';
 
 export interface IToolbarSettingsModal {
+  readOnly?: boolean;
   value?: object;
   onChange?: any;
   allowAddGroups?: boolean;
@@ -23,6 +24,7 @@ export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
   render,
   title = 'Configure Buttons',
   heading,
+  readOnly,
 }) => {
   const isSmall = useMedia('(max-width: 480px)');
   const [showModal, setShowModal] = useState(false);
@@ -47,7 +49,7 @@ export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
         onCancel={toggleModalVisibility}
         onOk={onOkClick}
       >
-        <ButtonGroupConfigurator allowAddGroups={allowAddGroups} heading={heading} render={render} />
+        <ButtonGroupConfigurator allowAddGroups={allowAddGroups} heading={heading} render={render} readOnly={readOnly}/>
       </Modal>
     </Fragment>
   );

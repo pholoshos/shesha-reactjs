@@ -5,6 +5,7 @@ import TableViewSelectorSettingsModal from './tableViewSelectorSettingsModal';
 import { SectionSeparator } from '../../../../..';
 
 export interface ITableViewSelectorSettingsProps {
+  readOnly: boolean;
   model: ITableViewSelectorProps;
   onSave: (model: ITableViewSelectorProps) => void;
   onCancel: () => void;
@@ -24,7 +25,7 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
     <Form form={form} onFinish={props.onSave} onValuesChange={handleValuesChange} initialValues={props.model}>
       <SectionSeparator sectionName="Filters" />
       <Form.Item name="filters">
-        <TableViewSelectorSettingsModal />
+        <TableViewSelectorSettingsModal readOnly={props.readOnly}/>
       </Form.Item>
     </Form>
   );

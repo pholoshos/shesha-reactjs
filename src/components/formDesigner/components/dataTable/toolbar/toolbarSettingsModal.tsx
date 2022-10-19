@@ -14,6 +14,7 @@ export interface IToolbarSettingsModal {
   render?: ReactNode | (() => ReactNode);
   title?: ReactNode | string;
   heading?: ReactNode | (() => ReactNode);
+  readOnly?: boolean;
 }
 
 export const ToolbarSettingsModalInner: FC<IToolbarSettingsModal> = ({
@@ -24,6 +25,7 @@ export const ToolbarSettingsModalInner: FC<IToolbarSettingsModal> = ({
   render,
   title = 'Configure Toolbar',
   heading,
+  readOnly = false,
 }) => {
   const { items } = useToolbarConfigurator();
   const isSmall = useMedia('(max-width: 480px)');
@@ -34,15 +36,24 @@ export const ToolbarSettingsModalInner: FC<IToolbarSettingsModal> = ({
   };
 
   return (
-    <Modal width={isSmall ? '90%' : '60%'} open={visible} title={title} okText="Save" onCancel={hideModal} onOk={onOkClick}>
-      <ToolbarConfigurator allowAddGroups={allowAddGroups} heading={heading} render={render} />
+    <Modal 
+      width={isSmall ? '90%' : '60%'} 
+      open={visible} 
+      title={title} 
+      okText="Save" 
+      onCancel={hideModal} 
+      cancelText={readOnly ? 'Close' : undefined}
+      onOk={onOkClick}
+      okButtonProps={{ hidden: readOnly }}
+    >
+      <ToolbarConfigurator allowAddGroups={allowAddGroups} heading={heading} render={render} readOnly={readOnly}/>
     </Modal>
   );
 };
 
 export const ToolbarSettingsModal: FC<IToolbarSettingsModal> = props => {
   return (
-    <ToolbarConfiguratorProvider items={(props.value as ToolbarItemProps[]) || []}>
+    <ToolbarConfiguratorProvider items={(props.value as ToolbarItemProps[]) || []} readOnly={props.readOnly}>
       <ToolbarSettingsModalInner {...props} />
     </ToolbarConfiguratorProvider>
   );

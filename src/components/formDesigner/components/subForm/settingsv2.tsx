@@ -12,6 +12,7 @@ const Option = Select.Option;
 const FormItem = Form.Item;
 
 export interface ISubFormSettingsProps {
+  readOnly: boolean;
   model: ISubFormProps;
   onSave: (model: ISubFormProps) => void;
   onCancel: () => void;
@@ -20,7 +21,7 @@ export interface ISubFormSettingsProps {
 
 interface ISubFormSettingsState extends ISubFormProps {}
 
-export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onValuesChange }) => {
+export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, model, onValuesChange }) => {
   const [state, setState] = useState<ISubFormSettingsState>(model);
   const [form] = Form.useForm();
 
@@ -49,19 +50,19 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
       <SectionSeparator sectionName="Display" />
 
       <FormItem name="name" label="Name">
-        <PropertyAutocomplete id="fb71cb51-884f-4f34-aa77-820c12276c95" />
+        <PropertyAutocomplete id="fb71cb51-884f-4f34-aa77-820c12276c95" readOnly={readOnly}/>
       </FormItem>
 
       <FormItem name="label" label="Label">
-        <Input />
+        <Input readOnly={readOnly}/>
       </FormItem>
 
       <FormItem name="readOnly" label="Read Only" valuePropName="checked">
-        <Checkbox />
+        <Checkbox disabled={readOnly}/>
       </FormItem>
 
       <Form.Item name="hideLabel" label="Hide Label" valuePropName="checked">
-        <Checkbox />
+        <Checkbox disabled={readOnly}/>
       </Form.Item>
 
       <FormItem name="formId" label="Form">
@@ -69,11 +70,12 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           dataSourceType="entitiesList"
           typeShortAlias="Shesha.Core.FormConfiguration"
           entityDisplayProperty="configuration.name"
+          readOnly={readOnly}
         />
       </FormItem>
 
       <FormItem name="uniqueStateId" label="Unique State ID" tooltip="Important for accessing the ">
-        <Input />
+        <Input readOnly={readOnly}/>
       </FormItem>
 
       <SectionSeparator sectionName="Data" />
@@ -84,7 +86,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         label="Data source"
         tooltip="The list data to be used can be the data that comes with the form of can be fetched from the API"
       >
-        <Select>
+        <Select disabled={readOnly}>
           <Option value="form">form</Option>
           <Option value="api">api</Option>
         </Select>
@@ -92,12 +94,13 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
 
       <Show when={state?.dataSource === 'api'}>
         <FormItem name="entityType" label="Entity type">
-          <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" />
+          <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" readOnly={readOnly}/>
         </FormItem>
 
         <Show when={Boolean(state?.entityType)}>
           <FormItem name="properties" label="Properties">
             <CodeEditor
+              readOnly={readOnly}
               mode="inline"
               setOptions={{ minLines: 15, maxLines: 500, fixedWidthGutter: true }}
               name="getUrl"
@@ -116,6 +119,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           tooltip="The code that returns the query parameters to be used to fetch the data. Ideally this should be a function that returns an object with the entity id"
         >
           <CodeEditor
+            readOnly={readOnly}
             mode="dialog"
             setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
             name="getUrl"
@@ -163,6 +167,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           tooltip="The API url that will be used to fetch the data. Write the code that returns the string"
         >
           <CodeEditor
+            readOnly={readOnly}
             mode="dialog"
             setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
             name="getUrl"
@@ -199,6 +204,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           tooltip="The API url that will be used to update data. Write the code that returns the string"
         >
           <CodeEditor
+            readOnly={readOnly}
             mode="dialog"
             setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
             name="postUrl"
@@ -235,6 +241,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
           tooltip="The API url that will be used to update data. Write the code that returns the string"
         >
           <CodeEditor
+            readOnly={readOnly}
             mode="dialog"
             setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
             name="putUrl"
@@ -274,6 +281,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         tooltip="Triggered before retrieving the sub-form object from the back-end"
       >
         <CodeEditor
+          readOnly={readOnly}
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="beforeGet"
@@ -317,6 +325,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         tooltip="Triggered after successfully creating a new sub-form object in the back-end"
       >
         <CodeEditor
+          readOnly={readOnly}
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="onCreated"
@@ -365,6 +374,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         tooltip="Triggered after successfully creating a new sub-form object in the back-end"
       >
         <CodeEditor
+          readOnly={readOnly}
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
           name="onUpdated"
@@ -410,15 +420,16 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
       <SectionSeparator sectionName="Layout" />
 
       <FormItem name="labelCol" label="Label Col">
-        <InputNumber min={1} max={24} defaultValue={5} step={1} />
+        <InputNumber min={1} max={24} defaultValue={5} step={1} readOnly={readOnly}/>
       </FormItem>
 
       <FormItem name="wrapperCol" label="Wrapper Col">
-        <InputNumber min={1} max={24} defaultValue={13} step={1} />
+        <InputNumber min={1} max={24} defaultValue={13} step={1} readOnly={readOnly}/>
       </FormItem>
 
       <FormItem name="style" label="Style">
         <CodeEditor
+          readOnly={readOnly}
           mode="dialog"
           label="Style"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
@@ -445,6 +456,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ onSave, model, onVa
         tooltip="Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key."
       >
         <CodeEditor
+          readOnly={readOnly}
           mode="dialog"
           label="Custom Visibility"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}

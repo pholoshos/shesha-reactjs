@@ -10,12 +10,14 @@ export interface IButtonGroupConfiguratorProps {
   allowAddGroups?: boolean;
   render?: ReactNode | (() => ReactNode);
   heading?: ReactNode | (() => ReactNode);
+  readOnly?: boolean;
 }
 
 export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
   allowAddGroups = true,
   render,
   heading,
+  readOnly,
 }) => {
   const { items, addButton, addGroup } = useButtonGroupConfigurator();
 
@@ -47,17 +49,19 @@ export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
     <div className="sha-button-group-configurator">
       <Alert message={<h4>Here you can configure the button group by adjusting their settings and ordering.</h4>} />
 
-      <div className="sha-action-buttons">
-        {allowAddGroups && (
-          <Button onClick={addGroup} type="primary">
-            Add Group
-          </Button>
-        )}
+      {!readOnly && (
+        <div className="sha-action-buttons">
+          {allowAddGroups && (
+            <Button onClick={addGroup} type="primary">
+              Add Group
+            </Button>
+          )}
 
-        <Button onClick={addButton} type="primary">
-          Add New Item
-        </Button>
-      </div>
+          <Button onClick={addButton} type="primary">
+            Add New Item
+          </Button>
+        </div>
+      )}
 
       <SidebarContainer
         rightSidebarProps={{

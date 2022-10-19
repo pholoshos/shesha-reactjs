@@ -69,9 +69,10 @@ const ColumnsComponent: IToolboxComponent<IColumnsComponentProps> = {
 
     return tabsModel;
   },
-  settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
+  settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
     return (
       <ColumnsSettings
+        readOnly={readOnly}
         model={model as IColumnsComponentProps}
         onSave={onSave}
         onCancel={onCancel}

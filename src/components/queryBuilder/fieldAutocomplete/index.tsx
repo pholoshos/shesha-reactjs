@@ -68,8 +68,11 @@ export const FieldAutocomplete: FC<IFieldSelectProps> = (props) => {
     if (tooltipText == selectedLabel)
         tooltipText = null;
 
+    const readOnly = config.settings.immutableFieldsMode === true;
+
     return (
         <PropertyAutocomplete
+            readOnly={readOnly}
             value={text}
             onChange={onChange}
             showFillPropsButton={false}

@@ -6,7 +6,7 @@ import { useFormDesigner } from '../../providers/formDesigner';
 export interface IProps {}
 
 export const ComponentPropertiesTitle: FC<IProps> = ({}) => {
-  const { deleteComponent, selectedComponentId } = useFormDesigner();
+  const { deleteComponent, selectedComponentId, readOnly } = useFormDesigner();
 
   const onDeleteClick = () => {
     deleteComponent({ componentId: selectedComponentId });
@@ -15,7 +15,7 @@ export const ComponentPropertiesTitle: FC<IProps> = ({}) => {
   return (
     <div className="component-properties-actions">
       Properties
-      {selectedComponentId && (
+      {selectedComponentId && !readOnly && (
         <div className="action-buttons">
           <Button
             icon={<DeleteFilled color="red" />}

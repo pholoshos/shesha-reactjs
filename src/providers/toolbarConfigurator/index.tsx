@@ -28,34 +28,38 @@ export interface IToolbarConfiguratorProviderProps {
   items: ToolbarItemProps[];
   value?: any;
   onChange?: (value: any) => void;
+  readOnly: boolean;
 }
 
 const ToolbarConfiguratorProvider: FC<PropsWithChildren<IToolbarConfiguratorProviderProps>> = props => {
   const {
-    // onChange,
-    // value,
     children,
   } = props;
 
   const [state, dispatch] = useReducer(toolbarReducer, {
     ...TOOLBAR_CONTEXT_INITIAL_STATE,
     items: props.items,
+    readOnly: props.readOnly,
   });
 
   const addButton = () => {
-    dispatch(addButtonAction());
+    if (!state.readOnly)
+      dispatch(addButtonAction());
   };
 
   const deleteButton = (uid: string) => {
-    dispatch(deleteButtonAction(uid));
+    if (!state.readOnly)
+      dispatch(deleteButtonAction(uid));
   };
 
   const addGroup = () => {
-    dispatch(addGroupAction());
+    if (!state.readOnly)
+      dispatch(addGroupAction());
   };
 
   const deleteGroup = (uid: string) => {
-    dispatch(deleteGroupAction(uid));
+    if (!state.readOnly)
+      dispatch(deleteGroupAction(uid));
   };
 
   const selectItem = (uid: string) => {
@@ -63,7 +67,8 @@ const ToolbarConfiguratorProvider: FC<PropsWithChildren<IToolbarConfiguratorProv
   };
 
   const updateChildItems = (payload: IUpdateChildItemsPayload) => {
-    dispatch(updateChildItemsAction(payload));
+    if (!state.readOnly)
+      dispatch(updateChildItemsAction(payload));
   };
 
   const getItem = (uid: string): ToolbarItemProps => {
@@ -71,21 +76,10 @@ const ToolbarConfiguratorProvider: FC<PropsWithChildren<IToolbarConfiguratorProv
   };
 
   const updateItem = (payload: IUpdateItemSettingsPayload) => {
-    dispatch(updateItemAction(payload));
+    if (!state.readOnly)
+      dispatch(updateItemAction(payload));
   };
-  /*
-  const getChildItems = (path: string[]): ToolbarItemProps[] => {
-    if (path == null || path.length === 0)
-      return state.items;
-    
-    let parent: ToolbarItemProps = null;
-    path.forEach(item => {
-      state.items
-    })
-    reduce(state.items, (prev, curr) => )
-    return null;
-  }
-  */
+
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   return (
@@ -100,7 +94,6 @@ const ToolbarConfiguratorProvider: FC<PropsWithChildren<IToolbarConfiguratorProv
           updateChildItems,
           getItem,
           updateItem,
-          //getChildItems,
           /* NEW_ACTION_GOES_HERE */
         }}
       >

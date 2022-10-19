@@ -15,7 +15,7 @@ export interface IToolbarItemsSortableProps {
 }
 
 export const ColumnsContainer: FC<IToolbarItemsSortableProps> = props => {
-  const { updateChildItems } = useColumnsConfigurator();
+  const { updateChildItems, readOnly } = useColumnsConfigurator();
 
   const renderItem = (item: IConfigurableColumnsBase, index: number) => {
     switch (item.itemType) {
@@ -42,8 +42,7 @@ export const ColumnsContainer: FC<IToolbarItemsSortableProps> = props => {
 
   return (
     <ReactSortable
-      // onStart={onDragStart}
-      // onEnd={onDragEnd}
+      disabled={readOnly}
       list={props.items}
       setList={onSetList}
       fallbackOnBody={true}

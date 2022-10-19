@@ -38,6 +38,9 @@ export interface FormConfigurationDto {
      * Version number
      */
     versionNo?: number;
+    /**
+     * Version status
+     */
     versionStatus?: number;
 }
 

@@ -14,6 +14,7 @@ export interface IProps {
 
 const getDefaultFactory = (markup: FormMarkup): ISettingsFormFactory => {
   return ({ 
+    readOnly: readonly,
     model,
     onSave,
     onCancel,
@@ -22,6 +23,7 @@ const getDefaultFactory = (markup: FormMarkup): ISettingsFormFactory => {
   }) => {
     return (
       <GenericSettingsForm
+        readonly={readonly}
         model={model}
         onSave={onSave}
         onCancel={onCancel}
@@ -35,7 +37,7 @@ const getDefaultFactory = (markup: FormMarkup): ISettingsFormFactory => {
 
 export const ComponentPropertiesPanel: FC<IProps> = () => {
   const { getToolboxComponent } = useForm();
-  const { getComponentModel, updateComponent, selectedComponentId: id } = useFormDesigner();
+  const { getComponentModel, updateComponent, selectedComponentId: id, readOnly: readonly } = useFormDesigner();
   // note: we have to memoize the editor to prevent unneeded re-rendering and loosing of the focus
   const [editor, setEditor] = useState<ReactNode>(<></>);
   
@@ -54,11 +56,13 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
   };
 
   const onSave = values => {
-    updateComponent({ componentId: id, settings: { ...values, id } });
+    if (!readonly)
+      updateComponent({ componentId: id, settings: { ...values, id } });
   };
 
   const onValuesChange = (_changedValues, values) => {
-    debouncedSave(values);
+    if (!readonly)
+      debouncedSave(values);
   };
 
   const wrapEditor = (renderEditor: () => ReactNode) => {
@@ -93,6 +97,7 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
     return wrapEditor(() =>
       <>
         {settingsFormFactory({
+          readOnly: readonly,
           model: componentModel,
           onSave,
           onCancel,
@@ -111,7 +116,7 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
   if (!Boolean(id))
     return (
       <>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing" />
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={ readonly ? "Please select a component to view settings" : "Please select a component to begin editing" } />
       </>
     );
 

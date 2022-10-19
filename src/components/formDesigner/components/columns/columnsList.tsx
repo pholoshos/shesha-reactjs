@@ -120,8 +120,7 @@ const DraggableBodyRowInner = ({ columns, className, style, ...restProps }) => {
   );
 };
 
-export const ColumnsList: FC<IProps> = ({ value, onChange }) => {
-  /*implement:readonly*/
+export const ColumnsList: FC<IProps> = ({ value, onChange, readOnly }) => {
   const columns = value as IColumnProps[];
 
   const DragHandle = props => <MenuOutlined style={{ color: '#999' }} {...props} />;
@@ -154,50 +153,55 @@ export const ColumnsList: FC<IProps> = ({ value, onChange }) => {
   };
 
   const cols = [
-    {
-      title: '',
-      dataIndex: 'sort',
-      width: 30,
-      render: (_text, _record, _index) => {
-        const dragHandleProps = useContext(DragHandleContext);
-        return <DragHandle {...dragHandleProps} />;
-      },
-    },
+    !readOnly
+      ? {
+        title: '',
+        dataIndex: 'sort',
+        width: 30,
+        render: (_text, _record, _index) => {
+          const dragHandleProps = useContext(DragHandleContext);
+          return <DragHandle {...dragHandleProps} />;
+        },
+      }
+      : null,
     {
       title: 'Width',
       dataIndex: 'flex',
-      editable: true,
+      editable: !readOnly,
       width: '20%',
     },
     {
       title: 'Offset',
       dataIndex: 'offset',
       width: '20%',
-      editable: true,
+      editable: !readOnly,
     },
     {
       title: 'Push',
       dataIndex: 'push',
       width: '20%',
-      editable: true,
+      editable: !readOnly,
     },
     {
       title: 'Pull',
       dataIndex: 'pull',
       width: '20%',
-      editable: true,
+      editable: !readOnly,
     },
-    {
-      title: '',
-      dataIndex: 'operations',
-      render: (_, record) =>
-        columns.length >= 1 ? (
-          <Popconfirm title="Are you sure want to delete this tab?" onConfirm={() => handleDeleteTab(record.id)}>
-            <a>Delete</a>
-          </Popconfirm>
-        ) : null,
-    },
-  ];
+    !readOnly
+      ? {
+        title: '',
+        dataIndex: 'operations',
+        render: (_, record) =>
+          columns.length >= 1 ? (
+            <Popconfirm title="Are you sure want to delete this tab?" onConfirm={() => handleDeleteTab(record.id)}>
+              <a>Delete</a>
+            </Popconfirm>
+          ) : null,
+      }
+      : null,
+  ].filter(c => Boolean(c));
+
   const tableColumns = cols.map(col => {
     if (!col.editable) {
       return col;
@@ -250,9 +254,19 @@ export const ColumnsList: FC<IProps> = ({ value, onChange }) => {
 
   return (
     <Fragment>
-      <Button onClick={toggleModal}>Configure Columns</Button>
+      <Button onClick={toggleModal}>{ readOnly ? 'View Columns' : 'Configure Columns' }</Button>
 
-      <Modal title="Configure Columns" open={showDialog} onOk={toggleModal} onCancel={toggleModal} width="650px">
+      <Modal 
+        title={ readOnly ? 'View Columns' : 'Configure Columns' } 
+        open={showDialog} 
+        width="650px"
+        
+        onOk={toggleModal} 
+        okButtonProps={{ hidden: readOnly }}
+
+        onCancel={toggleModal} 
+        cancelText={readOnly ? 'Close' : undefined}
+      >
         <Space direction="vertical" style={{ width: '100%' }}>
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId={'columns'}>
@@ -279,11 +293,13 @@ export const ColumnsList: FC<IProps> = ({ value, onChange }) => {
               )}
             </Droppable>
           </DragDropContext>
-          <div>
-            <Button type="default" onClick={handleAddColumn} icon={<PlusOutlined />}>
-              Add Column
-            </Button>
-          </div>
+          {!readOnly && (
+            <div>
+              <Button type="default" onClick={handleAddColumn} icon={<PlusOutlined />}>
+                Add Column
+              </Button>
+            </div>
+          )}
         </Space>
       </Modal>
     </Fragment>

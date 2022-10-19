@@ -65,7 +65,7 @@ export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ readO
       <SectionSeparator sectionName="Toolbar" />
 
       <Form.Item name="toolbarItems" initialValue={model.toolbarItems}>
-        <ButtonGroupSettingsModal />
+        <ButtonGroupSettingsModal readOnly={readOnly}/>
       </Form.Item>
 
       <SectionSeparator sectionName="Filter" />

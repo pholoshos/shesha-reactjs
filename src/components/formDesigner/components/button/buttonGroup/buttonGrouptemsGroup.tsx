@@ -12,7 +12,7 @@ export interface IProps extends IButtonGroup {
 }
 
 export const ButtonGroupItemsGroup: FC<IProps> = props => {
-  const { deleteGroup, selectedItemId } = useButtonGroupConfigurator();
+  const { deleteGroup, selectedItemId, readOnly } = useButtonGroupConfigurator();
 
   const onDeleteClick = () => {
     deleteGroup(props.id);
@@ -27,9 +27,11 @@ export const ButtonGroupItemsGroup: FC<IProps> = props => {
         <DragHandle id={props.id} />
         {props.icon && <ShaIcon iconName={props.icon as IconType} />}
         <span className="sha-button-group-item-name">{props.label || props.name}</span>
-        <div className="sha-button-group-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
-        </div>
+        {!readOnly && (
+          <div className="sha-button-group-item-controls">
+            <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+          </div>
+        )}
       </div>
       <div className="sha-button-group-group-container">
         <ButtonGroupItemsContainer index={props.index} items={props.childItems || []} id={props.id} />

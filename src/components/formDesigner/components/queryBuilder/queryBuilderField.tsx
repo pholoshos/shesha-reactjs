@@ -67,7 +67,7 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
                 {`Query Builder ${hasValue ? '(applied)' : ''}`.trim()}
               </Button>
 
-              <Show when={hasValue}>
+              <Show when={hasValue && !readOnly}>
                 <Button
                   type="primary"
                   size="small"

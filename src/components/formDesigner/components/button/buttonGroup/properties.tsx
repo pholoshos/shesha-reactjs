@@ -11,7 +11,7 @@ import { ConfigurableFormInstance } from '../../../../../providers/form/contexts
 export interface IButtonGroupPropertiesProps {}
 
 export const ButtonGroupProperties: FC<IButtonGroupPropertiesProps> = () => {
-  const { selectedItemId, getItem, updateItem } = useButtonGroupConfigurator();
+  const { selectedItemId, getItem, updateItem, readOnly } = useButtonGroupConfigurator();
   // note: we have to memoize the editor to prevent unneeded re-rendering and loosing of the focus
   const [editor, setEditor] = useState<ReactNode>(<></>);
   const [form] = Form.useForm();
@@ -58,7 +58,7 @@ export const ButtonGroupProperties: FC<IButtonGroupPropertiesProps> = () => {
         layout="vertical"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
-        mode="edit"
+        mode={ readOnly ? 'readonly' : 'edit' }
         markup={markup}
         onFinish={onSettingsSave}
         form={form}
@@ -71,7 +71,7 @@ export const ButtonGroupProperties: FC<IButtonGroupPropertiesProps> = () => {
   if (!Boolean(selectedItemId)) {
     return (
       <div>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Please select a component to begin editing" />
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={readOnly ? 'Please select a component to view properties' : 'Please select a component to begin editing'} />
       </div>
     );
   }

@@ -9,7 +9,7 @@ import { ButtonGroupItemProps } from '../../../../../providers/buttonGroupConfig
 import { useMedia } from 'react-use';
 
 export interface IToolbarSettingsModal {
-  readOnly?: boolean;
+  readOnly: boolean;
   value?: object;
   onChange?: any;
   allowAddGroups?: boolean;
@@ -18,17 +18,20 @@ export interface IToolbarSettingsModal {
   heading?: ReactNode | (() => ReactNode);
 }
 
-export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
+interface ButtonGroupSettingsModalInner extends Omit<IToolbarSettingsModal, 'readOnly'>{
+
+}
+
+export const ButtonGroupSettingsModalInner: FC<ButtonGroupSettingsModalInner> = ({
   onChange,
   allowAddGroups,
   render,
-  title = 'Configure Buttons',
-  heading,
-  readOnly,
+  title = 'Buttons Configuration',
+  heading,  
 }) => {
   const isSmall = useMedia('(max-width: 480px)');
   const [showModal, setShowModal] = useState(false);
-  const { items } = useButtonGroupConfigurator();
+  const { items, readOnly } = useButtonGroupConfigurator();
 
   const toggleModalVisibility = () => setShowModal(prev => !prev);
 
@@ -39,17 +42,21 @@ export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
 
   return (
     <Fragment>
-      <Button onClick={toggleModalVisibility}>Customize Button Group</Button>
+      <Button onClick={toggleModalVisibility}>{ readOnly ? 'View Button Group' : 'Customize Button Group' }</Button>
 
       <Modal
         width={isSmall ? '90%' : '60%'}
         open={showModal}
         title={title}
-        okText="Save"
+        
         onCancel={toggleModalVisibility}
+        cancelText={readOnly ? 'Close' : undefined}
+        
+        okText="Save"
         onOk={onOkClick}
+        okButtonProps={{ hidden: readOnly }}
       >
-        <ButtonGroupConfigurator allowAddGroups={allowAddGroups} heading={heading} render={render} readOnly={readOnly}/>
+        <ButtonGroupConfigurator allowAddGroups={allowAddGroups} heading={heading} render={render} />
       </Modal>
     </Fragment>
   );
@@ -57,7 +64,7 @@ export const ButtonGroupSettingsModalInner: FC<IToolbarSettingsModal> = ({
 
 export const ButtonGroupSettingsModal: FC<IToolbarSettingsModal> = props => {
   return (
-    <ButtonGroupConfiguratorProvider items={(props.value as ButtonGroupItemProps[]) || []}>
+    <ButtonGroupConfiguratorProvider items={(props.value as ButtonGroupItemProps[]) || []} readOnly={props.readOnly}>
       <ButtonGroupSettingsModalInner {...props} />
     </ButtonGroupConfiguratorProvider>
   );

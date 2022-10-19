@@ -10,16 +10,14 @@ export interface IButtonGroupConfiguratorProps {
   allowAddGroups?: boolean;
   render?: ReactNode | (() => ReactNode);
   heading?: ReactNode | (() => ReactNode);
-  readOnly?: boolean;
 }
 
 export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
   allowAddGroups = true,
   render,
   heading,
-  readOnly,
 }) => {
-  const { items, addButton, addGroup } = useButtonGroupConfigurator();
+  const { items, addButton, addGroup, readOnly } = useButtonGroupConfigurator();
 
   const content = () => {
     if (Boolean(render)) {
@@ -47,7 +45,7 @@ export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
 
   return (
     <div className="sha-button-group-configurator">
-      <Alert message={<h4>Here you can configure the button group by adjusting their settings and ordering.</h4>} />
+      <Alert message={<h4>{readOnly ? 'Here you can view buttons configuration.' : 'Here you can configure the button group by adjusting their settings and ordering.'}</h4>} />
 
       {!readOnly && (
         <div className="sha-action-buttons">

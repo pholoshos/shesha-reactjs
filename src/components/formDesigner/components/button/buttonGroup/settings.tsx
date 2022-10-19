@@ -60,7 +60,7 @@ const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
       <SectionSeparator sectionName="Customization" />
 
       <Form.Item name="items" initialValue={props.model.items}>
-        <ButtonGroupSettingsModal />
+        <ButtonGroupSettingsModal readOnly={props.readOnly}/>
       </Form.Item>
 
       <SectionSeparator sectionName="Security" />

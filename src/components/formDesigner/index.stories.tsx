@@ -107,10 +107,13 @@ export const FormCreate = addStory(DesignerTemplate, {
 });
 
 export const FormDetails = addStory(DesignerTemplate, {
+  /*
   formId: {
     name: 'form-details',
     module: 'shesha',
   }
+  */
+  formId: '567b9f53-a9be-48f1-8ea8-d4626edf78fd'
 });
 
 export const Modules = addStory(DesignerTemplate, {

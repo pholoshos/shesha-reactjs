@@ -20,6 +20,7 @@ import {
 } from '../form/models';
 import { getFlagSetters } from '../utils/flagsSetters';
 import {
+    setReadOnlyAction,
     setFlatComponentsAction,
     componentAddAction,
     componentDeleteAction,
@@ -56,14 +57,14 @@ export interface IFormDesignerProviderProps {
     uniqueStateId?: string;
     flatComponents: IFlatComponentsStructure;
     formSettings: IFormSettings;
-    readonly: boolean;
+    readOnly: boolean;
 }
 
 const FormDesignerProvider: FC<PropsWithChildren<IFormDesignerProviderProps>> = ({
     children,
     flatComponents,
     formSettings,
-    readonly,
+    readOnly,
 }) => {
     const toolboxComponentGroups = useFormDesignerComponentGroups();
     const toolboxComponents = useFormDesignerComponents();
@@ -72,7 +73,7 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormDesignerProviderProps>> = 
 
     const initial: IFormDesignerStateContext = {
         ...FORM_DESIGNER_CONTEXT_INITIAL_STATE,
-        readOnly: readonly,
+        readOnly: readOnly,
         toolboxComponentGroups: toolboxComponentGroups,
         ...flatComponents,
         formSettings: formSettings,
@@ -92,7 +93,15 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormDesignerProviderProps>> = 
         }
     }, [flatComponents]);
 
+    useEffect(() => {
+        setReadOnly(readOnly);
+    }, [readOnly]);
+
     /* NEW_ACTION_DECLARATION_GOES_HERE */
+
+    const setReadOnly = (value: boolean) => {
+        dispatch(setReadOnlyAction(value));
+    };
 
     const addDataProperty = (payload: IAddDataPropertyPayload) => {
         dispatch(dataPropertyAddAction(payload));
@@ -232,6 +241,7 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormDesignerProviderProps>> = 
         removeDataSource,
         setActiveDataSource,
         getActiveDataSource,
+        setReadOnly,
         /* NEW_ACTION_GOES_HERE */
     };
 

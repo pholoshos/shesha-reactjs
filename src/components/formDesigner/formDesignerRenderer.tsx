@@ -52,7 +52,7 @@ export const FormDesignerRenderer: FC = ({ }) => {
             <div className="sha-page-heading">
                 <div className="sha-page-title" style={{ justifyContent: 'left' }}>
                     <Space>
-                        {title && <Title level={4} style={{ margin: 'unset' }}>{title}</Title>}
+                        {title && <Title level={4} style={{ margin: 'unset' }}>{title} v{formProps.versionNo}</Title>}
                         {formProps.description && (<Tooltip title={formProps.description}>
                             <QuestionCircleOutlined className="sha-help-icon" />
                         </Tooltip>)}

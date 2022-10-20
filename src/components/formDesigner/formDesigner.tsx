@@ -25,7 +25,7 @@ export const FormDesigner: FC<IFormDesignerProps> = ({ formId }) => {
                 <FormDesignerProvider 
                   flatComponents={flatComponents} 
                   formSettings={formStore.formSettings}
-                  readonly={formStore.formProps?.versionStatus !== ConfigurationItemVersionStatus.Draft}
+                  readOnly={formStore.formProps?.versionStatus !== ConfigurationItemVersionStatus.Draft}
                 >
                   <FormDesignerStateConsumer>
                     {designerState => (

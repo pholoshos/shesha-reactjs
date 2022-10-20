@@ -130,6 +130,8 @@ export interface IFormDesignerActionsContext
   setActiveDataSource: (id: string) => void;
   getActiveDataSource: () => IDataSource | null;
 
+  setReadOnly: (value: boolean) => void;
+
   undo: () => void;
   redo: () => void;
 }

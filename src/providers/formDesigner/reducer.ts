@@ -79,6 +79,14 @@ const addComponentToFlatStructure = (
 
 const reducer = handleActions<IFormDesignerStateContext, any>(
   {
+    [FormActionEnums.SetReadOnly]: (state: IFormDesignerStateContext, action: ReduxActions.Action<boolean>) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        readOnly: payload,
+      };
+    },
     [FormActionEnums.SetFlatComponentsAction]: (state: IFormDesignerStateContext, action: ReduxActions.Action<IFlatComponentsStructure>) => {
       const { payload } = action;
 

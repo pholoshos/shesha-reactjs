@@ -1,27 +1,27 @@
-import React, { FC } from 'react';
-import { Button, Radio, message } from 'antd';
+import React, { FC, useState } from 'react';
+import { Button, message } from 'antd';
 import {
   SaveOutlined,
   UndoOutlined,
   RedoOutlined,
   BugOutlined,
   EyeOutlined,
-  CloseCircleOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { useForm } from '../../providers/form';
-import { useShaRouting } from '../../providers/shaRouting';
 import { useFormPersister } from '../../providers/formPersisterProvider';
 import { useFormDesigner } from '../../providers/formDesigner';
 import { componentsFlatStructureToTree, useFormDesignerComponents } from '../../providers/form/utils';
 import { FormMarkupWithSettings } from '../../providers/form/models';
+import FormSettingsEditor from './formSettingsEditor';
 
-export interface IProps {}
+export interface IProps { }
 
 export const FormDesignerToolbar: FC<IProps> = () => {
   const { saveForm } = useFormPersister();
   const { setFormMode, formMode } = useForm();
-  const { setDebugMode, isDebug, undo, redo, canUndo, canRedo } = useFormDesigner();
-  const { router } = useShaRouting();
+  const { setDebugMode, isDebug, undo, redo, canUndo, canRedo, readOnly } = useFormDesigner();
+  const [settingsVisible, setSettingsVisible] = useState(false);
 
   const { allComponents, componentRelations, formSettings } = useFormDesigner();
   const toolboxComponents = useFormDesignerComponents();
@@ -36,10 +36,6 @@ export const FormDesignerToolbar: FC<IProps> = () => {
       .catch(() => message.error('Failed to save form'));
   };
 
-  const onModeChange = e => {
-    setFormMode(e.target.value);
-  };
-
   const onUndoClick = () => {
     undo();
   };
@@ -48,53 +44,41 @@ export const FormDesignerToolbar: FC<IProps> = () => {
     redo();
   };
 
-  const onCancelClick = () => {
-    router?.back();
+  const onSettingsClick = () => {
+    setSettingsVisible(true);
   };
 
   return (
     <div className="sha-designer-toolbar">
       <div className="sha-designer-toolbar-left">
-        <Button key="undo" shape="circle" onClick={onUndoClick} disabled={!canUndo} title="Undo">
-          <UndoOutlined />
-        </Button>
-        <Button key="redo" shape="circle" onClick={onRedoClick} disabled={!canRedo} title="Redo">
-          <RedoOutlined />
-        </Button>
+        {!readOnly && (
+          <Button key="save" onClick={onSaveClick} type="primary">
+            <SaveOutlined /> Save
+          </Button>
+        )}
+
       </div>
       <div className="sha-designer-toolbar-right">
+        <Button icon={<SettingOutlined />} type="link" onClick={onSettingsClick}>
+          Settings
+        </Button>
+        <FormSettingsEditor
+          readOnly={readOnly}
+          isVisible={settingsVisible}
+          close={() => {
+            setSettingsVisible(false);
+          }}
+        />
         <Button
           onClick={() => {
             setFormMode(formMode === 'designer' ? 'edit' : 'designer');
           }}
           type={formMode === 'designer' ? 'default' : 'primary'}
+          shape="circle"
+          title='Preview'
         >
-          <EyeOutlined /> Preview
+          <EyeOutlined />
         </Button>
-        {/* <Button
-          onClick={() => {
-            setFormMode(formMode === 'designer' ? 'edit' : 'designer');
-          }}
-          type={formMode === 'designer' ? 'default' : 'primary'}
-        >
-          <EyeOutlined /> JSON
-        </Button> */}
-        <Button onClick={onCancelClick} type="primary" danger>
-          <CloseCircleOutlined /> Cancel
-        </Button>
-        <Button key="save" onClick={onSaveClick} type="primary">
-          <SaveOutlined /> Save
-        </Button>
-      </div>
-
-      {false && (
-        <Radio.Group value={formMode} onChange={onModeChange}>
-          <Radio.Button value="designer">designer</Radio.Button>
-          <Radio.Button value="edit">edit</Radio.Button>
-          <Radio.Button value="readonly">readonly</Radio.Button>
-        </Radio.Group>
-      )}
-      {true && (
         <Button
           key="debug"
           onClick={() => {
@@ -106,7 +90,18 @@ export const FormDesignerToolbar: FC<IProps> = () => {
         >
           <BugOutlined />
         </Button>
-      )}
+
+        {!readOnly && (
+          <>
+            <Button key="undo" shape="circle" onClick={onUndoClick} disabled={!canUndo} title="Undo">
+              <UndoOutlined />
+            </Button>
+            <Button key="redo" shape="circle" onClick={onRedoClick} disabled={!canRedo} title="Redo">
+              <RedoOutlined />
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 };

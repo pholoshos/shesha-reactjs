@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useContext, useState, Fragment } from 'react';
+import React, { FC, useEffect, useRef, useContext, useState, Fragment, useMemo } from 'react';
 import {
   DragDropContext,
   DropResult,
@@ -38,18 +38,29 @@ export interface ILabelValueEditorProps extends ILabelValueEditorPropsBase {
   exposedVariables?: ICodeExposedVariable[];
 
   description?: string;
+
+  readOnly?: boolean;
 }
 
 const EditableContext = React.createContext(null);
 const DragHandleContext = React.createContext(null);
 
-const EditableCell = ({ title, editable, children, dataIndex, record, handleSave, ...restProps }) => {
+interface EditableCellProps {
+  title: React.ReactNode;
+  editable: boolean;
+  children: React.ReactNode;
+  dataIndex: keyof IItemProps;
+  record: IItemProps;
+  handleSave: (record: IItemProps) => void;
+}
+
+const EditableCell: FC<EditableCellProps> = ({ title, editable, children, dataIndex, record, handleSave, ...restProps }) => {
   const [editing, setEditing] = useState(false);
   const inputRef = useRef(null);
   const form = useContext(EditableContext);
   useEffect(() => {
     if (editing) {
-      inputRef.current.focus();
+      inputRef.current?.focus();
     }
   }, [editing]);
 
@@ -154,6 +165,7 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
   description,
   mode = 'dialog',
   exposedVariables,
+  readOnly = false,
 }) => {
   const [showModal, setShowModal] = useState(false);
 
@@ -186,57 +198,65 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
     onChange(newData);
   };
 
-  const cols = [
-    {
-      title: '',
-      dataIndex: 'sort',
-      width: '30',
-      render: (_text, _record, _index) => {
-        const dragHandleProps = useContext(DragHandleContext);
-        return <DragHandle {...dragHandleProps} />;
+  const columns = useMemo(() => {
+    const cols = [
+      readOnly
+        ? null
+        : {
+          title: '',
+          dataIndex: 'sort',
+          width: '30',
+          render: (_text, _record, _index) => {
+            const dragHandleProps = useContext(DragHandleContext);
+            return <DragHandle {...dragHandleProps} />;
+          },
+        },
+      {
+        title: labelTitle,
+        dataIndex: labelName,
+        editable: !readOnly,
+        width: '30%',
       },
-    },
-    {
-      title: labelTitle,
-      dataIndex: labelName,
-      editable: true,
-      // width: '30%',
-    },
-    {
-      title: valueTitle,
-      dataIndex: valueName,
-      // width: '30%',
-      editable: true,
-    },
-    {
-      title: '',
-      dataIndex: 'operations',
-      width: '30',
-      render: (_, record) =>
-        items.length >= 1 ? (
-          <Popconfirm title="Are you sure want to delete this item?" onConfirm={() => handleDeleteRow(record.id)}>
-            <DeleteOutlined />
-          </Popconfirm>
-        ) : null,
-    },
-  ];
-
-  const columns = cols.map(col => {
-    if (!col.editable) {
-      return col;
-    }
-
-    return {
-      ...col,
-      onCell: record => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        handleSave: handleSaveCell,
-      }),
-    };
-  });
+      {
+        title: valueTitle,
+        dataIndex: valueName,
+        width: '30%',
+        editable: !readOnly,
+      },
+      readOnly
+        ? null
+        : {
+          title: '',
+          dataIndex: 'operations',
+          width: '30',
+          render: (_, record) =>
+            items.length >= 1 ? (
+              <Popconfirm title="Are you sure want to delete this item?" onConfirm={() => handleDeleteRow(record.id)}>
+                <DeleteOutlined />
+              </Popconfirm>
+            ) : null,
+        },
+    ];
+  
+    const result = cols.filter(c => Boolean(c)).map(col => {
+      if (!col.editable) {
+        return col;
+      }
+  
+      return {
+        ...col,
+        onCell: record => ({
+          record,
+          editable: col.editable,
+          dataIndex: col.dataIndex,
+          title: col.title,
+          handleSave: handleSaveCell,
+        }),
+      };
+    });
+  
+    return result;
+  }, [readOnly, labelTitle, labelName, valueTitle, valueName]);
 
   const toggleModal = () => setShowModal(currentVisible => !currentVisible);
 
@@ -275,10 +295,20 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
       wrap={children => (
         <Fragment>
           <Button onClick={toggleModal} size="small" icon={<BorderlessTableOutlined />}>
-            Click to Add Items
+            { readOnly ? 'Click to View Items' : 'Click to Add Items' }
           </Button>
 
-          <Modal title="Add Items" open={showModal} onCancel={toggleModal} onOk={toggleModal} width={650}>
+          <Modal 
+            title={ readOnly ? 'View Items' : 'Add Items' } 
+            open={showModal} 
+            width={650}
+
+            onOk={toggleModal} 
+            okButtonProps={{ hidden: readOnly }}
+
+            onCancel={toggleModal} 
+            cancelText={ readOnly ? 'Close' : undefined }
+          >
             <Show when={!!description}>
               <Alert type="info" message={description} />
               <br />
@@ -298,7 +328,7 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
     >
       <div className="sha-labelvalueeditor">
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId={'keyValueItems'}>
+          <Droppable droppableId={'keyValueItems'} isDropDisabled={readOnly}>
             {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
               <div ref={provided.innerRef} {...provided.droppableProps} style={getListStyle(snapshot.isDraggingOver)}>
                 <Table
@@ -329,11 +359,13 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
           </Droppable>
         </DragDropContext>
 
-        <div className="sha-labelvalueeditor-buttons">
-          <Button type="default" onClick={handleAddRow} icon={<PlusOutlined />}>
-            Add Item
-          </Button>
-        </div>
+        {!readOnly && (
+          <div className="sha-labelvalueeditor-buttons">
+            <Button type="default" onClick={handleAddRow} icon={<PlusOutlined />}>
+              Add Item
+            </Button>
+          </div>
+        )}
       </div>
     </ConditionalWrap>
   );

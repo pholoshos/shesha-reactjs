@@ -6,6 +6,7 @@
     font-size: 14px;
     color: #aaa;
   }
+
   &.sha-dragging {
     .sha-form {
       .sha-component-drag-handle {
@@ -17,6 +18,7 @@
   .sha-component-drag-handle {
     top: 0px;
     left: 0px;
+
     &:hover {
       background-color: #ddd;
     }
@@ -32,7 +34,13 @@
       }
     }
   }
+
   .sha-designer-toolbar {
+    background: white;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+
     .sha-designer-toolbar-left {
       float: left;
 
@@ -40,6 +48,7 @@
         margin-right: 2px;
       }
     }
+
     .sha-designer-toolbar-right {
       float: right;
 
@@ -48,11 +57,13 @@
       }
     }
   }
+
   .sha-designer-toolbox {
     .sha-datasource-tree {
       .ant-tree-switcher-noop {
         display: none;
       }
+
       .sha-toolbox-component {
         margin: 0;
         display: block;
@@ -62,12 +73,13 @@
         text-overflow: ellipsis;
 
         .sha-component-title {
-        
+
           margin-right: 10px;
-         
-    
+
+
         }
       }
+
       .site-tree-search-value {
         background-color: chartreuse;
         color: #f50;
@@ -87,23 +99,26 @@
         }
       }
     }
+
     .sha-component-search {
       margin-bottom: 4px;
     }
 
     .sha-toolbox-panel {
-      .ant-collapse-header-text{
+      .ant-collapse-header-text {
         white-space: nowrap;
         overflow: hidden;
         width: 300px;
         text-overflow: ellipsis;
       }
+
       &.active {
         // border: #61affe 1px dashed;
         // border-radius: 4px;
         background-color: #ebf3fb;
       }
     }
+
     .sha-toolbox-component {
       display: flex;
       user-select: none;
@@ -142,6 +157,7 @@
         .ant-btn {
           margin-left: 2px;
         }
+
         .ant-btn-dangerous {
           margin-left: 10px;
         }
@@ -278,6 +294,7 @@
 .sha-form {
   .sha-components-container {
     min-height: 32px;
+
     &.horizontal {
       .sha-components-container-inner {
         display: flex;

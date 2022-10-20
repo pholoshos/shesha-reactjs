@@ -61,6 +61,8 @@ export const FormDesignerRenderer: FC = ({ }) => {
                 </div>
             </div>
             <div className="sha-form-designer">
+                <FormDesignerToolbar />
+
                 <ConditionalWrap
                     condition={Boolean(formSettings.modelType)}
                     wrap={content => (
@@ -89,7 +91,7 @@ export const FormDesignerRenderer: FC = ({ }) => {
                             content: () => <ComponentPropertiesPanel />,
                             placeholder: 'Properties',
                         }}
-                        header={() => readOnly ? null : <FormDesignerToolbar />}
+                    //header={() => readOnly ? null : <FormDesignerToolbar />}
                     >
                         {/* <FormDesignerHeader /> */}
 

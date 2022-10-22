@@ -160,10 +160,11 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
       </Fragment>
     );
   },
-  // settingsFormMarkup: settingsForm, QueryBuilderTableWrapper
-  settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
+
+  settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
     return (
       <ChildDataTableSettings
+        readOnly={readOnly}
         model={(model as unknown) as IChildTableSettingsProps}
         onSave={onSave as any}
         onCancel={onCancel}

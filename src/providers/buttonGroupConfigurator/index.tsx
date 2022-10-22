@@ -28,34 +28,39 @@ export interface IButtonGroupConfiguratorProviderProps {
   items: ButtonGroupItemProps[];
   value?: any;
   onChange?: (value: any) => void;
+  readOnly: boolean;
 }
 
 const ButtonGroupConfiguratorProvider: FC<PropsWithChildren<IButtonGroupConfiguratorProviderProps>> = props => {
   const {
-    // onChange,
-    // value,
     children,
+    readOnly,
   } = props;
 
   const [state, dispatch] = useReducer(buttonGroupReducer, {
     ...BUTTON_GROUP_CONTEXT_INITIAL_STATE,
     items: props.items,
+    readOnly: readOnly,
   });
 
   const addButton = () => {
-    dispatch(addButtonAction());
+    if (!state.readOnly)
+      dispatch(addButtonAction());
   };
 
   const deleteButton = (uid: string) => {
-    dispatch(deleteButtonAction(uid));
+    if (!state.readOnly)
+      dispatch(deleteButtonAction(uid));
   };
 
   const addGroup = () => {
-    dispatch(addGroupAction());
+    if (!state.readOnly)
+      dispatch(addGroupAction());
   };
 
   const deleteGroup = (uid: string) => {
-    dispatch(deleteGroupAction(uid));
+    if (!state.readOnly)
+      dispatch(deleteGroupAction(uid));
   };
 
   const selectItem = (uid: string) => {
@@ -63,7 +68,8 @@ const ButtonGroupConfiguratorProvider: FC<PropsWithChildren<IButtonGroupConfigur
   };
 
   const updateChildItems = (payload: IUpdateChildItemsPayload) => {
-    dispatch(updateChildItemsAction(payload));
+    if (!state.readOnly)
+      dispatch(updateChildItemsAction(payload));
   };
 
   const getItem = (uid: string): ButtonGroupItemProps => {
@@ -71,21 +77,10 @@ const ButtonGroupConfiguratorProvider: FC<PropsWithChildren<IButtonGroupConfigur
   };
 
   const updateItem = (payload: IUpdateItemSettingsPayload) => {
-    dispatch(updateItemAction(payload));
+    if (!state.readOnly)
+      dispatch(updateItemAction(payload));
   };
-  /*
-  const getChildItems = (path: string[]): ButtonGroupItemProps[] => {
-    if (path == null || path.length === 0)
-      return state.items;
-    
-    let parent: ButtonGroupItemProps = null;
-    path.forEach(item => {
-      state.items
-    })
-    reduce(state.items, (prev, curr) => )
-    return null;
-  }
-  */
+
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   return (

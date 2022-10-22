@@ -41,8 +41,8 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
     };
   })
   .add<IButtonGroupProps>(1, migrateV0toV1),
-  settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
-    return <ToolbarSettings model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
+  settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
+    return <ToolbarSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },
 };
 

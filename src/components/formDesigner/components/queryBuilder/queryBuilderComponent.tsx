@@ -24,7 +24,10 @@ const QueryBuilderComponent: IToolboxComponent<IQueryBuilderProps> = {
   name: 'Query Builder',
   icon: <FilterOutlined />,
   //dataTypes: [DataTypes.string],
-  factory: (model: IQueryBuilderProps) => <QueryBuilder {...model}></QueryBuilder>,
+  factory: (model: IQueryBuilderProps) => {
+    const { formMode } = useForm();
+    return (<QueryBuilder {...model} readOnly={ formMode ==='readonly' }></QueryBuilder>);
+  },
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
 };
@@ -79,6 +82,7 @@ export const QueryBuilderComponentRenderer: FC<IQueryBuilderProps> = props => {
         fetchFields={fetchFields}
         jsonExpanded={props.jsonExpanded}
         useExpression={useExpression}
+        readOnly={props.readOnly}
       />
     </ConfigurableFormItem>
   );

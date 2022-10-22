@@ -9,11 +9,11 @@ import {
 } from '../../interfaces';
 import defaultToolboxComponents from '../form/defaults/toolboxComponents';
 import {
-  IFormProps,
   IConfigurableFormComponent,
   ROOT_COMPONENT_KEY,
   IFormSettings,
   DEFAULT_FORM_SETTINGS,
+  IFlatComponentsStructure,
 } from '../form/models';
 import { StateWithHistory } from 'redux-undo';
 import { IDataSource } from '../formDesigner/models';
@@ -36,7 +36,7 @@ export type IFlagErrorFlags =
   | 'moveComponent';
 export type IFlagActionedFlags = '__DEFAULT__' /* NEW_ACTIONED_FLAG_GOES_HERE */;
 
-export interface IUndoableFormDesignerStateContext extends StateWithHistory<IFormDesignerStateContext> {}
+export interface IUndoableFormDesignerStateContext extends StateWithHistory<IFormDesignerStateContext> { }
 
 export interface IHasComponentGroups {
   toolboxComponentGroups: IToolboxComponentGroup[];
@@ -44,17 +44,18 @@ export interface IHasComponentGroups {
 
 export interface IFormDesignerStateContext
   extends IFlagsState<IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags>,
-    IHasComponentGroups,
-    IFormProps {
-  
-  validationErrors?: IFormValidationErrors; // todo: move to the designer level
+  IHasComponentGroups,
+  IFlatComponentsStructure {
 
-  selectedComponentId?: string; // todo: move to the designer level
-  selectedComponentRef?: MutableRefObject<any>; // todo: move to the designer level
-  isDragging: boolean; // todo: move to the designer level
-  dataSources: IDataSource[]; // todo: move to the designer level
-  activeDataSourceId: string; // todo: move to the designer level
-  isDebug: boolean; // todo: move to the designer level
+  validationErrors?: IFormValidationErrors;
+
+  selectedComponentId?: string;
+  selectedComponentRef?: MutableRefObject<any>;
+  isDragging: boolean;
+  dataSources: IDataSource[];
+  activeDataSourceId: string;
+  isDebug: boolean;
+  readOnly: boolean;
 
   // todo: move to persister
   formSettings: IFormSettings;
@@ -69,7 +70,7 @@ export interface IComponentAddPayload extends AddComonentPayloadBase {
   componentType: string;
 }
 
-export interface IComponentAddFromTemplatePayload extends AddComonentPayloadBase {}
+export interface IComponentAddFromTemplatePayload extends AddComonentPayloadBase { }
 
 export interface IAddDataPropertyPayload {
   propertyMetadata: IPropertyMetadata;
@@ -129,6 +130,8 @@ export interface IFormDesignerActionsContext
   setActiveDataSource: (id: string) => void;
   getActiveDataSource: () => IDataSource | null;
 
+  setReadOnly: (value: boolean) => void;
+
   undo: () => void;
   redo: () => void;
 }
@@ -147,6 +150,7 @@ export const FORM_DESIGNER_CONTEXT_INITIAL_STATE: IFormDesignerStateContext = {
   toolboxComponentGroups: defaultToolboxComponents,
   dataSources: [],
   activeDataSourceId: null,
+  readOnly: true,
 };
 
 export const UndoableFormDesignerStateContext = createContext<IUndoableFormDesignerStateContext>({
@@ -155,7 +159,7 @@ export const UndoableFormDesignerStateContext = createContext<IUndoableFormDesig
   future: [],
 });
 
-export interface ConfigurableFormInstance extends IFormDesignerActionsContext, IFormDesignerStateContext {}
+export interface ConfigurableFormInstance extends IFormDesignerActionsContext, IFormDesignerStateContext { }
 
 export const FormDesignerStateContext = createContext<IFormDesignerStateContext>(FORM_DESIGNER_CONTEXT_INITIAL_STATE);
 

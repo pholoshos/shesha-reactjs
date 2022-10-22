@@ -121,8 +121,8 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
     return tabsModel;
   },
   // settingsFormMarkup: settingsForm,
-  settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
-    return <TabSettings model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
+  settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
+    return <TabSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
   customContainerNames: ['tabs'],

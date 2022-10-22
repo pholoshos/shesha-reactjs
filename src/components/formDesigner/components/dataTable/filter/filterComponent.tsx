@@ -35,19 +35,20 @@ interface ICustomFilter {
   value?: any;
   onChange?: any;
   target?: FilterTarget;
+  readOnly?: boolean;
 }
 
-export const CustomFilter: FC<ICustomFilter> = ({ value, onChange }) => {
+export const CustomFilter: FC<ICustomFilter> = ({ value, onChange, readOnly = false }) => {
   const [showModal, setShowModal] = useState(false);
 
   const toggleFiltersModal = () => setShowModal(prev => !prev);
 
   return (
     <Fragment>
-      <Button onClick={toggleFiltersModal}>Customise Filters</Button>
+      <Button onClick={toggleFiltersModal}>{ readOnly ? 'View Filters' : 'Customise Filters' }</Button>
 
       <QueryBuilderWrapper>
-        <TableViewSelectorConfiguratorProvider items={(value as ITableViewProps[]) || []}>
+        <TableViewSelectorConfiguratorProvider items={(value as ITableViewProps[]) || []} readOnly={readOnly}>
           <FilterSettingsModalInner visible={showModal} onChange={onChange} hideModal={toggleFiltersModal} />
         </TableViewSelectorConfiguratorProvider>
       </QueryBuilderWrapper>
@@ -66,7 +67,7 @@ export interface IFilterSettingsModal {
 }
 
 export const FilterSettingsModalInner: FC<IFilterSettingsModal> = ({ visible, onChange, hideModal }) => {
-  const { items } = useTableViewSelectorConfigurator();
+  const { items, readOnly } = useTableViewSelectorConfigurator();
   const isSmall = useMedia('(max-width: 480px)');
 
   const onOkClick = () => {
@@ -78,10 +79,14 @@ export const FilterSettingsModalInner: FC<IFilterSettingsModal> = ({ visible, on
     <Modal
       width={isSmall ? '90%' : '60%'}
       open={visible}
-      title="Configure Filters"
-      okText="Save"
+      title={readOnly ? 'View Filters' : 'Configure Filters'}
+      
       onCancel={hideModal}
+      cancelText={ readOnly ? 'Close' : undefined }
+
+      okText="Save"
       onOk={onOkClick}
+      okButtonProps={{ hidden: readOnly }}
     >
       <FilterConfigurator />
     </Modal>

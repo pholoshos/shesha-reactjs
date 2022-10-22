@@ -8,6 +8,7 @@ import { IPropertyMetadata } from '../../interfaces/metadata';
 import { listComponentToModelMetadata } from '../../providers/form/utils';
 
 export interface IProps<TModel extends IConfigurableFormComponent> {
+  readonly: boolean;
   model: TModel;
   markup: FormMarkup;
   onSave: (model: TModel) => void;
@@ -17,6 +18,7 @@ export interface IProps<TModel extends IConfigurableFormComponent> {
 }
 
 function GenericSettingsForm<TModel extends IConfigurableFormComponent>({
+  readonly,
   onSave,
   model,
   markup,
@@ -53,7 +55,7 @@ function GenericSettingsForm<TModel extends IConfigurableFormComponent>({
       layout="vertical"
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
-      mode="edit"
+      mode={readonly ? "readonly" : "edit"}
       form={form}
       onFinish={onSave}
       markup={markup}

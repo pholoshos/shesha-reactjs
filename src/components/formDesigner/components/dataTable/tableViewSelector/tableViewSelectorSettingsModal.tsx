@@ -12,10 +12,11 @@ import { useDeepCompareEffect } from 'react-use';
 interface IFiltersListProps {
   filters?: ITableViewProps[];
   showModal?: () => void;
+  readOnly?: boolean;
 }
 
-const FiltersListInner: FC<Omit<IFiltersListProps, 'filters'>> = ({ showModal }) => {
-  const { items, addButton, selectItem } = useTableViewSelectorConfigurator();
+const FiltersListInner: FC<Omit<IFiltersListProps, 'filters'>> = ({ showModal, readOnly = false }) => {
+  const { items, addItem: addButton, selectItem } = useTableViewSelectorConfigurator();
 
   const onConfigClick = (localSelectedId: string) => {
     selectItem(localSelectedId);
@@ -25,15 +26,19 @@ const FiltersListInner: FC<Omit<IFiltersListProps, 'filters'>> = ({ showModal })
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button onClick={addButton} size="small" type="primary">
-          Add Filter Item
-        </Button>
-      </div>
+      {!readOnly && (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button onClick={addButton} size="small" type="primary">
+              Add Filter Item
+            </Button>
+          </div>
 
-      <Divider />
+          <Divider />
+        </>
+      )}
 
-      <TableViewContainer items={items} index={[]} onConfigClick={onConfigClick} />
+      <TableViewContainer items={items} index={[]} onConfigClick={onConfigClick} readOnly={readOnly}/>
     </div>
   );
 };
@@ -43,6 +48,7 @@ export interface ITableViewSelectorSettingsModal {
   hideModal: () => void;
   value?: object;
   onChange?: any;
+  readOnly: boolean;
 }
 
 export const TableViewSelectorSettingsModalInner: FC<ITableViewSelectorSettingsModal> = ({
@@ -50,7 +56,7 @@ export const TableViewSelectorSettingsModalInner: FC<ITableViewSelectorSettingsM
   onChange,
   hideModal,
 }) => {
-  const { items } = useTableViewSelectorConfigurator();
+  const { items, readOnly } = useTableViewSelectorConfigurator();
   const configRef = useRef<ITableViewSelectorConfiguratorHandles>();
 
   useDeepCompareEffect(() => {
@@ -76,10 +82,13 @@ export const TableViewSelectorSettingsModalInner: FC<ITableViewSelectorSettingsM
     <Modal
       width="75%"
       open={visible}
-      title="Configure Filters"
-      okText="Save"
+      title={readOnly ?  'View Filter' : 'Configure Filter'}
       onCancel={hideModal}
+      cancelText={readOnly ? 'Close' : undefined}
+
+      okText="Save"
       onOk={updateFilters}
+      okButtonProps={{ hidden: readOnly }}
     >
       <TableViewSelectorConfigurator ref={configRef} />
     </Modal>
@@ -99,8 +108,8 @@ export const TableViewSelectorSettingsModal: FC<Omit<
   const items = (props.value as ITableViewProps[]) || [];
 
   return (
-    <TableViewSelectorConfiguratorProvider items={items}>
-      <FiltersListInner showModal={showModal} />
+    <TableViewSelectorConfiguratorProvider items={items} readOnly={props.readOnly}>
+      <FiltersListInner showModal={showModal} readOnly={props.readOnly}/>
 
       <TableViewSelectorSettingsModalInner {...props} visible={modalVisible} hideModal={hideModal} />
     </TableViewSelectorConfiguratorProvider>

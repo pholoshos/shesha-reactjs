@@ -10,6 +10,7 @@ import CodeEditor from '../../codeEditor/codeEditor';
 import Autocomplete from '../../../../autocomplete';
 
 export interface IProps {
+  readOnly: boolean;
   model: ITableComponentProps;
   onSave: (model: ITableComponentProps) => void;
   onCancel: () => void;
@@ -23,7 +24,7 @@ interface IColumnsSettingsState extends ITableCrudConfig {
   rowDroppedMode?: RowDroppedMode;
 }
 
-function ColumnsSettings(props: IProps) {
+function TableSettings(props: IProps) {
   const [state, setState] = useState<IColumnsSettingsState>({
     showColumnsModal: false,
     allowRowDragAndDrop: props?.model?.allowRowDragAndDrop,
@@ -56,14 +57,14 @@ function ColumnsSettings(props: IProps) {
       wrapperCol={{ span: 24 }}
       labelCol={{ span: 24 }}
     >
-      <Button onClick={toggleColumnsModal}>Customize Columns</Button>
+      <Button onClick={toggleColumnsModal}>{ props.readOnly ? 'View Columns' : 'Customize Columns' }</Button>
 
       <Form.Item name="items">
-        <ColumnsEditorModal visible={state?.showColumnsModal} hideModal={toggleColumnsModal} />
+        <ColumnsEditorModal visible={state?.showColumnsModal} hideModal={toggleColumnsModal} readOnly={props.readOnly}/>
       </Form.Item>
 
       <Form.Item name="useMultiselect" label="Use Multi-select" valuePropName="checked">
-        <Checkbox />
+        <Checkbox disabled={props.readOnly}/>
       </Form.Item>
 
       <SectionSeparator sectionName="Editing/CRUD" />
@@ -74,7 +75,7 @@ function ColumnsSettings(props: IProps) {
         valuePropName="checked"
         tooltip="Whether you should be able to perform CRUD functionalities on this table"
       >
-        <Checkbox />
+        <Checkbox disabled={props.readOnly}/>
       </Form.Item>
 
       <Form.Item
@@ -83,7 +84,7 @@ function ColumnsSettings(props: IProps) {
         valuePropName="checked"
         tooltip="By default the height of the container of the table fills the entire screen to allow for the table wrapper for columns selector and filters. Check this if you wish to override that setting"
       >
-        <Checkbox />
+        <Checkbox disabled={props.readOnly}/>
       </Form.Item>
 
       <Show when={true}>
@@ -94,24 +95,24 @@ function ColumnsSettings(props: IProps) {
             valuePropName="checked"
             tooltip="By default you get custom action columns as part of editing mode. To get full control, you can check this to rely on custom behavior you define"
           >
-            <Checkbox />
+            <Checkbox disabled={props.readOnly}/>
           </Form.Item>
         </Show>
 
         <Form.Item name="createUrl" label="Create URL">
-          <Input />
+          <Input readOnly={props.readOnly}/>
         </Form.Item>
 
         <Form.Item name="deleteUrl" label="Delete URL">
-          <Input />
+          <Input readOnly={props.readOnly}/>
         </Form.Item>
 
         <Form.Item name="detailsUrl" label="Get URL">
-          <Input />
+          <Input readOnly={props.readOnly}/>
         </Form.Item>
 
         <Form.Item name="updateUrl" label="Update URL">
-          <Input />
+          <Input readOnly={props.readOnly}/>
         </Form.Item>
 
         <SectionSeparator sectionName="Row drag and drop" />
@@ -122,12 +123,12 @@ function ColumnsSettings(props: IProps) {
           valuePropName="checked"
           tooltip="Whether rows should be dragged and dropped to rearrange them"
         >
-          <Checkbox />
+          <Checkbox disabled={props.readOnly}/>
         </Form.Item>
 
         <Show when={state?.allowRowDragAndDrop}>
           <Form.Item label="Row Dropped Mode" name="rowDroppedMode">
-            <Select>
+            <Select disabled={props.readOnly}>
               <Select.Option value="executeScript">Execute Script</Select.Option>
               <Select.Option value="showDialog">Show dialog</Select.Option>
             </Select>
@@ -137,7 +138,7 @@ function ColumnsSettings(props: IProps) {
             <SectionSeparator sectionName="Dialog settings" />
 
             <Form.Item name="dialogTitle" label="Title" tooltip="The title that will be displayed on the modal">
-              <Input />
+              <Input readOnly={props.readOnly}/>
             </Form.Item>
 
             <Form.Item
@@ -145,7 +146,7 @@ function ColumnsSettings(props: IProps) {
               label="Modal form"
               tooltip="The form that will be rendered within the dialog. Please make sure the form has been been created"
             >
-              <Autocomplete.Raw typeShortAlias="Shesha.Framework.Form" dataSourceType="entitiesList" />
+              <Autocomplete.Raw typeShortAlias="Shesha.Framework.Form" dataSourceType="entitiesList" readOnly={props.readOnly}/>
             </Form.Item>
 
             <Form.Item
@@ -154,7 +155,7 @@ function ColumnsSettings(props: IProps) {
               valuePropName="checked"
               tooltip="If specified, the form data will not be fetched, even if the GET Url has query parameters that can be used to fetch the data. This is useful in cases whereby one form is used both for create and edit mode"
             >
-              <Checkbox />
+              <Checkbox disabled={props.readOnly}/>
             </Form.Item>
 
             <Form.Item
@@ -163,11 +164,11 @@ function ColumnsSettings(props: IProps) {
               valuePropName="checked"
               tooltip="By default the modal does not show the buttons. Check this box if you wish to see the buttons"
             >
-              <Checkbox />
+              <Checkbox disabled={props.readOnly}/>
             </Form.Item>
 
             <Form.Item label="Submit HTTP Verb" name="dialogSubmitHttpVerb">
-              <Select>
+              <Select disabled={props.readOnly}>
                 <Select.Option value="POST">POST</Select.Option>
                 <Select.Option value="PUT">PUT</Select.Option>
               </Select>
@@ -175,6 +176,7 @@ function ColumnsSettings(props: IProps) {
 
             <Form.Item name="dialogOnSuccessScript" label="On Success Script">
               <CodeEditor
+                readOnly={props.readOnly}
                 mode="dialog"
                 setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
                 name="dialogOnSuccessScript"
@@ -226,6 +228,7 @@ function ColumnsSettings(props: IProps) {
 
             <Form.Item name="dialogOnErrorScript" label="On Error Script">
               <CodeEditor
+                readOnly={props.readOnly}
                 mode="dialog"
                 setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
                 name="dialogOnErrorScript"
@@ -273,6 +276,7 @@ function ColumnsSettings(props: IProps) {
           <Show when={state.rowDroppedMode === 'executeScript'}>
             <Form.Item name="onRowDropped" label="On Row Dropped">
               <CodeEditor
+                readOnly={props.readOnly}
                 mode="dialog"
                 setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
                 name="onRowDropped"
@@ -347,12 +351,13 @@ function ColumnsSettings(props: IProps) {
 
       <Form.Item name="containerStyle" label="Table container style">
         <CodeEditor
+          readOnly={props.readOnly}
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-          name="onRowDropped"
+          name="containerStyle"
           type={''}
           id={''}
-          label="On Row Dropped"
+          label="Table container style"
           description="The style that will be applied to the table container/wrapper"
           exposedVariables={[]}
         />
@@ -360,12 +365,13 @@ function ColumnsSettings(props: IProps) {
 
       <Form.Item name="tableStyle" label="Table style">
         <CodeEditor
+          readOnly={props.readOnly}
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-          name="onRowDropped"
+          name="tableStyle"
           type={''}
           id={''}
-          label="On Row Dropped"
+          label="Table style"
           description="The style that will be applied to the table"
           exposedVariables={[]}
         />
@@ -374,4 +380,4 @@ function ColumnsSettings(props: IProps) {
   );
 }
 
-export default ColumnsSettings;
+export default TableSettings;

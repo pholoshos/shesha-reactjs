@@ -11,7 +11,7 @@ export interface IProps extends IConfigurableColumnGroup {
 }
 
 export const ColumnsGroup: FC<IProps> = props => {
-  const { deleteGroup, selectedItemId } = useColumnsConfigurator();
+  const { deleteGroup, selectedItemId, readOnly } = useColumnsConfigurator();
 
   const onDeleteClick = () => {
     deleteGroup(props.id);
@@ -25,9 +25,11 @@ export const ColumnsGroup: FC<IProps> = props => {
       <div className="sha-toolbar-group-header">
         <DragHandle id={props.id} />
         <strong>{props.caption}</strong>
-        <div className="sha-toolbar-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
-        </div>
+        {!readOnly && (
+          <div className="sha-toolbar-item-controls">
+            <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+          </div>
+        )}
       </div>
       <div className="sha-toolbar-group-container">
         <ToolbarItemsContainer index={props.index} items={props.childItems || []} />

@@ -20,7 +20,7 @@ const PropertyAutocompleteComponent: IToolboxComponent<IPropertyAutocompleteComp
   name: 'Property Autocomplete',
   icon: <FileSearchOutlined />,
   factory: (model: IPropertyAutocompleteComponentProps) => {
-    const { formData } = useForm();
+    const { formData, formMode } = useForm();
     return (
       <FormItem model={model}>
         <PropertyAutocomplete
@@ -29,6 +29,7 @@ const PropertyAutocompleteComponent: IToolboxComponent<IPropertyAutocompleteComp
           dropdownStyle={getStyle(model?.dropdownStyle, formData)}
           size={model.size}
           mode={model?.mode}
+          readOnly={ formMode === 'readonly' }
         />
       </FormItem>
     );

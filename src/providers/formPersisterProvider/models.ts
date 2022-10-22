@@ -8,4 +8,17 @@ export interface IPersistedFormProps {
     description?: string;
     markup?: FormRawMarkup;
     formSettings?: IFormSettings;
+    /**
+     * Version number
+     */
+    versionNo?: number;
+    /**
+     * Version status
+     */
+    versionStatus?: number;
+
+    /**
+     * If true, indicates that it's the last version of the form
+     */
+    isLastVersion?: boolean;
 }

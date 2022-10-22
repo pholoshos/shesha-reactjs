@@ -26,6 +26,7 @@ export enum FormActionEnums {
   ComponentAddFromTemplate = 'COMPONENT_ADD_FROM_TEMPLATE',
 
   ChangeMarkup = 'CHANGE_MARKUP',
+  SetReadOnly = 'SET_READ_ONLY',
 
   SetFlatComponentsAction = 'SET_FLAT_COMPONENTS',
   SetDebugMode = 'SET_DEBUG_MODE',
@@ -43,6 +44,11 @@ export enum FormActionEnums {
 
   /* NEW_ACTION_TYPE_GOES_HERE */
 }
+
+export const setReadOnlyAction = createAction<boolean, boolean>(
+  FormActionEnums.SetReadOnly,
+  p => p
+);
 
 export const dataPropertyAddAction = createAction<IAddDataPropertyPayload, IAddDataPropertyPayload>(
   FormActionEnums.DataPropertyAdd,

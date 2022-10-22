@@ -10,10 +10,13 @@ export interface IQueryBuilderPlainProps {
   fetchFields: (fieldNames: string[]) => void;
   value?: object;
   onChange?: (value: Object) => void;
+  readOnly?: boolean;
 }
 
-export const QueryBuilderPlain: FC<IQueryBuilderPlainProps> = ({ value, fields, fetchFields, useExpression, onChange }) => {
+export const QueryBuilderPlain: FC<IQueryBuilderPlainProps> = ({ value, fields, fetchFields, useExpression, onChange, readOnly = false }) => {
   const handleChange = (jsonLogicResult: JsonLogicResult) => {
+    if (readOnly)
+      return;
     if (jsonLogicResult) {
       if (jsonLogicResult && jsonLogicResult.errors && jsonLogicResult.errors.length > 0) {
         console.log(jsonLogicResult);
@@ -35,6 +38,7 @@ export const QueryBuilderPlain: FC<IQueryBuilderPlainProps> = ({ value, fields, 
         fields={fields}
         fetchFields={fetchFields}
         useExpression={useExpression} 
+        readOnly={readOnly}
       />
     </div>
   );

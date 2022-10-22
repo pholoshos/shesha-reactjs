@@ -7,6 +7,7 @@ import { ConfigurableFormInstance } from '../providers/form/contexts';
 import { Migrator, MigratorFluent } from '../utils/fluentMigrator/migrator';
 
 export interface ISettingsFormFactoryArgs<TModel = IConfigurableFormComponent> {
+  readOnly: boolean;
   model: TModel;
   onSave: (values: TModel) => void;
   onCancel: () => void;

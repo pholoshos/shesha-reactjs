@@ -69,7 +69,7 @@ export const FormsIndexPage = addStory(Template, {
 export const FormDetailsPage = addStory(Template, {
   formId: { name: 'form-details', module: 'Shesha' },
   mode: 'edit',
-  id: '7545b898-e3b1-42a8-9404-00ee56ade384',
+  id: '567b9f53-a9be-48f1-8ea8-d4626edf78fd',
 });
 
 export const FormsTemplatesIndexPage = addStory(Template, {

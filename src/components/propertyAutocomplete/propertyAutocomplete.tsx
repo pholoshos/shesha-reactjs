@@ -20,6 +20,7 @@ export interface IPropertyAutocompleteProps {
   onPropertiesLoaded?: (properties: IPropertyMetadata[], prefix: string) => void;
   mode?: 'single' | 'multiple' | 'tags';
   showFillPropsButton?: boolean;
+  readOnly?: boolean;
 }
 
 interface IOption {
@@ -50,7 +51,7 @@ const properties2options = (properties: IPropertyMetadata[], prefix: string): IO
   });
 }
 
-export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 'single', ...props }) => {
+export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 'single', readOnly = false, ...props }) => {
   const { style = { width: '32px' } } = props;
 
   const meta = useMetadata(false);
@@ -175,10 +176,11 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
     }
   };
 
-  const showFillPropsButton = props.showFillPropsButton !== false && Boolean(form);
+  const showFillPropsButton = props.showFillPropsButton !== false && Boolean(form) && !readOnly;
 
   const autoComplete = (
     <AutoComplete
+      disabled={readOnly}
       value={props.value}
       options={state.options}
       style={showFillPropsButton ? { width: 'calc(100% - 32px)'} : props.style }
@@ -224,6 +226,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
   const multiple = (
     <>
       <AutoComplete
+        disabled={readOnly}
         value={multipleValue}
         options={state.options}
         style={showFillPropsButton ? { width: 'calc(100% - 32px)'} : props.style }
@@ -262,7 +265,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
         <>{multiple}</>
       ) :
       (
-        <Select allowClear onChange={props?.onChange} value={props.value} mode={mode} /*showSearch*/ size={props.size}>
+        <Select allowClear onChange={props?.onChange} value={props.value} mode={mode} /*showSearch*/ size={props.size} disabled={readOnly}>
           {state.options.map((option, index) => (
             <Select.Option key={index} value={camelCase(option.value)}>
               {option.label}

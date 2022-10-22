@@ -15,6 +15,7 @@ const Option = Select.Option;
 const FormItem = Form.Item;
 
 export interface IListControlSettingsProps {
+  readOnly: boolean;
   model: IListItemsProps;
   onSave: (model: IListItemsProps) => void;
   onCancel: () => void;
@@ -23,7 +24,7 @@ export interface IListControlSettingsProps {
 
 interface IListSettingsState extends IListItemsProps { }
 
-export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, model, onValuesChange }) => {
+export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, onSave, model, onValuesChange }) => {
   const [state, setState] = useState<IListSettingsState>(model);
   const [form] = Form.useForm();
 
@@ -35,6 +36,8 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
       onFinish={onSave}
       layout="vertical"
       onValuesChange={(changedValues, values: IListItemsProps) => {
+        if (readOnly)
+          return;
         const incomingState = { ...values };
 
         if (!values?.entityType) {
@@ -54,19 +57,19 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
       <SectionSeparator sectionName="Display" />
 
       <FormItem name="name" label="Name" rules={[{ required: true }]}>
-        <PropertyAutocomplete id="fb71cb51-884f-4f34-aa77-820c12276c95" />
+        <PropertyAutocomplete id="fb71cb51-884f-4f34-aa77-820c12276c95" readOnly={readOnly}/>
       </FormItem>
 
       <FormItem name="label" label="Label">
-        <Input />
+        <Input readOnly={readOnly}/>
       </FormItem>
 
       <Form.Item name="hideLabel" label="Hide Label" valuePropName="checked">
-        <Checkbox />
+        <Checkbox disabled={readOnly}/>
       </Form.Item>
 
       <FormItem name="title" label="Title">
-        <Input />
+        <Input readOnly={readOnly}/>
       </FormItem>
 
       <FormItem
@@ -74,13 +77,13 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         label="Unique State ID"
         tooltip="This is important for when you want to dispatch events that are related to the list component. In a case where you have more than one List component, you\'ll need to specify which you want to target. This ID helps identify the correct component"
       >
-        <Input />
+        <Input readOnly={readOnly}/>
       </FormItem>
 
       <SectionSeparator sectionName="Buttons" />
 
       <FormItem name="buttons" label="Buttons">
-        <ButtonGroupSettingsModal />
+        <ButtonGroupSettingsModal readOnly={readOnly}/>
       </FormItem>
 
       <SectionSeparator sectionName="Data" />
@@ -91,7 +94,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         tooltip="The list data to be used can be the data that comes with the form of can be fetched from the API"
         initialValue={['form']}
       >
-        <Select>
+        <Select disabled={readOnly}>
           <Option value="form">form</Option>
           <Option value="api">api</Option>
         </Select>
@@ -99,11 +102,12 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
       <Show when={state?.dataSource === 'api'}>
         <FormItem name="entityType" label="Entity type">
-          <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" />
+          <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" readOnly={readOnly}/>
         </FormItem>
         <Show when={Boolean(state?.entityType)}>
           <FormItem name="properties" label="Properties">
             <CodeEditor
+              readOnly={readOnly}
               mode="inline"
               setOptions={{ minLines: 15, maxLines: 500, fixedWidthGutter: true }}
               name="getUrl"
@@ -119,11 +123,12 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
           <SectionSeparator sectionName="Query builder" />
 
           <FormItem name="useExpression" label="Use Expression" valuePropName="checked">
-            <Checkbox />
+            <Checkbox disabled={readOnly}/>
           </FormItem>
 
           <QueryBuilderWithModelType modelType={state?.entityType}>
             <QueryBuilderComponentRenderer
+              readOnly={readOnly}
               name="filters"
               type={''}
               id={''}
@@ -141,7 +146,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         label="Render Strategy"
         tooltip="Which form should be used to render the data? If current form, you can drag items, else specify form path"
       >
-        <Select>
+        <Select disabled={readOnly}>
           <Option value="dragAndDrop">Drag And Drop</Option>
           <Option value="externalForm">External Form</Option>
         </Select>
@@ -150,6 +155,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
       <Show when={state?.renderStrategy === 'externalForm'}>
         <FormItem name="formId" label="Form Path">
           <AutocompleteRaw
+            readOnly={readOnly}
             dataSourceType="entitiesList"
             typeShortAlias="Shesha.Core.FormConfiguration"
             entityDisplayProperty="configuration.name"
@@ -165,7 +171,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         tooltip="How items should be selected"
         initialValue={['none']}
       >
-        <Select allowClear>
+        <Select allowClear disabled={readOnly}>
           <Option value="none">None</Option>
           <Option value="single">Single</Option>
           <Option value="multiple">Multiple</Option>
@@ -175,7 +181,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
       <SectionSeparator sectionName="Delete/Remove Items" />
 
       <FormItem name="allowDeleteItems" label="Allow Delete Items" valuePropName="checked">
-        <Checkbox />
+        <Checkbox disabled={readOnly}/>
       </FormItem>
 
       <Show when={state?.allowDeleteItems}>
@@ -185,7 +191,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
           valuePropName="checked"
           tooltip="Whether items should also be deleted remotely. If this option is selected, you need to specify the deleteUrl and also make sure the returned data has an Id property to delete against"
         >
-          <Checkbox />
+          <Checkbox disabled={readOnly}/>
         </FormItem>
 
         <Show when={state?.allowDeleteItems && state?.allowRemoteDelete}>
@@ -195,6 +201,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
             tooltip="The API url that will be used delete the list item. Write the code that returns the string"
           >
             <CodeEditor
+              readOnly={readOnly}
               mode="dialog"
               setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
               name="deleteUrl"
@@ -231,6 +238,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
             tooltip="The confirm message that will be displayed before you delete an item. Write the code that returns the string"
           >
             <CodeEditor
+              readOnly={readOnly}
               mode="dialog"
               label="Delete Confirm Message"
               setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
@@ -271,6 +279,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         tooltip="Write a code that return tha payload to be sent to the server when submitting this items"
       >
         <CodeEditor
+          readOnly={readOnly}
           label="On Submit"
           mode="dialog"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
@@ -309,6 +318,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
 
       <FormItem label="Submit URL" name="submitUrl" tooltip="The URL to submit the list items to. This is required">
         <CodeEditor
+          readOnly={readOnly}
           mode="dialog"
           label="Submit URL"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
@@ -345,7 +355,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         valuePropName="checked"
         tooltip="Write  a code that returns the string that represent the url to be used to save the items"
       >
-        <Select>
+        <Select disabled={readOnly}>
           <Option value="POST">POST</Option>
           <Option value="PUT">PUT</Option>
         </Select>
@@ -354,34 +364,34 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
       <SectionSeparator sectionName="Layout" />
 
       <FormItem name="labelCol" label="Label Col">
-        <InputNumber min={1} max={24} defaultValue={5} step={1} />
+        <InputNumber min={1} max={24} defaultValue={5} step={1} readOnly={readOnly}/>
       </FormItem>
 
       <FormItem name="wrapperCol" label="Wrapper Col">
-        <InputNumber min={1} max={24} defaultValue={13} step={1} />
+        <InputNumber min={1} max={24} defaultValue={13} step={1} readOnly={readOnly}/>
       </FormItem>
 
       <SectionSeparator sectionName="Search" />
 
       <FormItem name="showQuickSearch" label="Show Quick Search" valuePropName="checked">
-        <Checkbox />
+        <Checkbox disabled={readOnly}/>
       </FormItem>
 
       <SectionSeparator sectionName="Pagination" />
 
       <FormItem name="showPagination" label="Show pagination" valuePropName="checked">
-        <Checkbox />
+        <Checkbox disabled={readOnly}/>
       </FormItem>
 
       <Show when={state?.showPagination}>
         <FormItem name="paginationDefaultPageSize" label="Default page size">
-          <InputNumber min={5} max={50} step={5} defaultValue={10} />
+          <InputNumber min={5} max={50} step={5} defaultValue={10} readOnly={readOnly}/>
         </FormItem>
       </Show>
 
       <Show when={!state?.showPagination}>
         <FormItem name="maxHeight" label="Max height">
-          <InputNumber min={200} step={5} defaultValue={400} />
+          <InputNumber min={200} step={5} defaultValue={400} readOnly={readOnly}/>
         </FormItem>
       </Show>
 
@@ -393,6 +403,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         tooltip="Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key."
       >
         <CodeEditor
+          readOnly={readOnly}
           mode="dialog"
           label="Custom Visibility"
           setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}

@@ -25,11 +25,11 @@ const ConfigurableFormComponent: FC<IConfigurableFormComponentProps> = ({ id }) 
   const isDesignMode = formMode === 'designer';
 
   if (!designer || !isDesignMode || componentModel?.isDynamic) return (
-    <ComponentRenderer id={id} componentRef={componentRef}/>
+    <ComponentRenderer id={id} componentRef={componentRef} />
   );
 
   return (
-    <ConfigurableFormComponentDesigner 
+    <ConfigurableFormComponentDesigner
       componentModel={componentModel}
       componentRef={componentRef}
     />
@@ -60,6 +60,7 @@ const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerPr
   const {
     deleteComponent,
     selectedComponentId,
+    readOnly: readonly,
   } = useFormDesigner();
 
   const onDeleteClick = () => {
@@ -94,9 +95,11 @@ const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerPr
       </span>
 
       {invalidConfiguration && <ValidationIcon validationErrors={componentModel.settingsValidationErrors} />}
-      <div className="sha-component-controls">
-        <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
-      </div>
+      {!readonly && (
+        <div className="sha-component-controls">
+          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+        </div>
+      )}
       <div
         onKeyUp={event => {
           console.log('LOGS:: event.key ', event.key);
@@ -104,7 +107,7 @@ const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerPr
       >
         <DragHandle componentId={componentModel.id} componentRef={componentRef} />
         <div style={{ paddingLeft: '15px' }}>
-          <ComponentRenderer id={componentModel.id} componentRef={componentRef}/>
+          <ComponentRenderer id={componentModel.id} componentRef={componentRef} />
         </div>
       </div>
     </div>

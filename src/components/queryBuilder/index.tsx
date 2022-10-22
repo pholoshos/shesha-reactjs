@@ -39,6 +39,7 @@ export interface IQueryBuilderProps {
   fetchFields: (fieldNames: string[]) => void;
   showActionBtnOnHover?: boolean;
   useExpression?: boolean;
+  readOnly?: boolean;
 }
 
 export const QueryBuilder: FC<IQueryBuilderProps> = props => {
@@ -154,10 +155,16 @@ export const QueryBuilder: FC<IQueryBuilderProps> = props => {
       settings: qbSettings,
       fields: convertFields(allFields),
     };
+    if (props.readOnly){
+      conf.settings.immutableGroupsMode = true;
+      conf.settings.immutableFieldsMode = true;
+      conf.settings.immutableOpsMode = true;
+      conf.settings.immutableValuesMode = true;
+      conf.settings.canReorder = false;
+      conf.settings.canRegroup = false;
+    }
     return conf;
-  }, [allFields]);
-
-  console.log('QueryBuilder value,  missingFields, useExpression: ', value, missingFields, useExpression);
+  }, [allFields, props.readOnly]);
 
   return missingFields.length > 0 ? <Skeleton></Skeleton> : <QueryBuilderContent {...props} qbConfig={qbConfig} />;
 };
@@ -196,7 +203,7 @@ const QueryBuilderContent: FC<IQueryBuilderContentProps> = ({
     return (
       <div className="query-builder-container">
         <div className={classNames('query-builder', { 'qb-lite': showActionBtnOnHover })}>
-          <Builder {...props} />
+          <Builder {...props}/>
         </div>
       </div>
     );
@@ -210,7 +217,7 @@ const QueryBuilderContent: FC<IQueryBuilderContentProps> = ({
 
   return (
     <div className="sha-query-builder">
-      {tree && qbConfig && <Query {...qbConfig} value={tree} onChange={handleChange} renderBuilder={renderBuilder} />}
+      {tree && qbConfig && <Query {...qbConfig} value={tree} onChange={handleChange} renderBuilder={renderBuilder}/>}
     </div>
   );
 };

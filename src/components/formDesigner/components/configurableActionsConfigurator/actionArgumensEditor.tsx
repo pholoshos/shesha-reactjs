@@ -11,6 +11,7 @@ export interface IActionArgumentsEditorProps {
     action: IConfigurableActionDescriptor;
     value?: any;
     onChange?: (value: any) => void;
+    readOnly?: boolean;
 }
 
 const getDefaultFactory = (markup: FormMarkup): IConfigurableActionArgumentsFormFactory => {
@@ -32,7 +33,7 @@ const getDefaultFactory = (markup: FormMarkup): IConfigurableActionArgumentsForm
     };
 };
 
-export const ActionArgumentsEditor: FC<IActionArgumentsEditorProps> = ({ action, value, onChange }) => {
+export const ActionArgumentsEditor: FC<IActionArgumentsEditorProps> = ({ action, value, onChange, readOnly = false }) => {
 
     const argumentsEditor = useMemo(() => {
         const settingsFormFactory = action.argumentsFormFactory
@@ -61,6 +62,7 @@ export const ActionArgumentsEditor: FC<IActionArgumentsEditorProps> = ({ action,
                 onSave,
                 onCancel,
                 onValuesChange,
+                readOnly,
             })
             : null;
     }, [action]);

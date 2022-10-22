@@ -17,7 +17,7 @@ interface ITableViewState {
 }
 
 export const TableView: FC<IProps> = ({ onConfigClick, tooltip, id, name }) => {
-  const { deleteButton, selectedItemId } = useTableViewSelectorConfigurator();
+  const { deleteItem: deleteButton, selectedItemId, readOnly } = useTableViewSelectorConfigurator();
   const [] = useState<ITableViewState>();
 
   const onDeleteClick = () => {
@@ -46,7 +46,7 @@ export const TableView: FC<IProps> = ({ onConfigClick, tooltip, id, name }) => {
         <div className="sha-toolbar-item-controls">
           <Button icon={<SettingOutlined />} onClick={onEditBtnClick} size="small" />
 
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+          {!readOnly && (<Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />)}
         </div>
       </div>
     </div>

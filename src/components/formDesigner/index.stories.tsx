@@ -33,8 +33,13 @@ export const RoleAppointmentForm = addStory(DesignerTemplate, {
   formId: '7d50a512-f100-4a6c-977d-c4f39e34b637'
 });
 
-export const NewForm = addStory(DesignerTemplate, {
-  formId: '219b04eb-aa51-4f67-94ba-a299173f7c5d'
+export const TestForm = addStory(DesignerTemplate, {
+  formId: 'bb9a1ec3-c727-4fef-918e-ce1600f87d9c'
+  /*
+  formId: {
+    name: 'test-form',
+    module: 'shesha'
+  }*/
 });
 export const UserManagementForm = addStory(DesignerTemplate, {
   formId: { name: 'user-management-new' }
@@ -102,17 +107,23 @@ export const FormCreate = addStory(DesignerTemplate, {
 });
 
 export const FormDetails = addStory(DesignerTemplate, {
+  /*
   formId: {
     name: 'form-details',
     module: 'shesha',
   }
+  */
+  formId: '567b9f53-a9be-48f1-8ea8-d4626edf78fd'
 });
 
 export const Modules = addStory(DesignerTemplate, {
+  formId: '655a8f6e-89f2-48e4-a5d8-e133bab20b16'
+  /*
   formId: {
     name: 'modules',
     module: 'shesha',
   }
+  */
 });
 
 export const ModuleCreate = addStory(DesignerTemplate, {

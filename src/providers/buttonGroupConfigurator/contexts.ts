@@ -15,6 +15,7 @@ export interface IUpdateItemSettingsPayload {
 export interface IButtonGroupConfiguratorStateContext {
   items: ButtonGroupItemProps[];
   selectedItemId?: string;
+  readOnly: boolean;
 }
 
 export interface IButtonGroupConfiguratorActionsContext {
@@ -34,6 +35,7 @@ export interface IButtonGroupConfiguratorActionsContext {
 
 export const BUTTON_GROUP_CONTEXT_INITIAL_STATE: IButtonGroupConfiguratorStateContext = {
   items: [],
+  readOnly: false,
 };
 
 export const ButtonGroupConfiguratorStateContext = createContext<IButtonGroupConfiguratorStateContext>(

@@ -1,44 +1,81 @@
-import React, { FC } from 'react';
-import { Button, Radio, message } from 'antd';
+import React, { FC, useState } from 'react';
+import { Button, Dropdown, Menu, message, Modal } from 'antd';
 import {
   SaveOutlined,
   UndoOutlined,
   RedoOutlined,
   BugOutlined,
   EyeOutlined,
-  CloseCircleOutlined,
+  SettingOutlined,
+  BranchesOutlined,
+  DeploymentUnitOutlined,
+  DownOutlined,
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { useForm } from '../../providers/form';
-import { useShaRouting } from '../../providers/shaRouting';
 import { useFormPersister } from '../../providers/formPersisterProvider';
 import { useFormDesigner } from '../../providers/formDesigner';
 import { componentsFlatStructureToTree, useFormDesignerComponents } from '../../providers/form/utils';
 import { FormMarkupWithSettings } from '../../providers/form/models';
+import FormSettingsEditor from './formSettingsEditor';
+import { ConfigurationItemVersionStatus } from '../../utils/configurationFramework/models';
+import { createNewVersionRequest, showErrorDetails, updateItemStatus } from '../../utils/configurationFramework/actions';
+import { useShaRouting, useSheshaApplication } from '../..';
 
-export interface IProps {}
+export interface IProps { }
 
 export const FormDesignerToolbar: FC<IProps> = () => {
-  const { saveForm } = useFormPersister();
+  const { loadForm, saveForm, formProps } = useFormPersister();
+  const { backendUrl, httpHeaders, routes } = useSheshaApplication();
+  const { router } = useShaRouting(false) ?? {};
   const { setFormMode, formMode } = useForm();
-  const { setDebugMode, isDebug, undo, redo, canUndo, canRedo } = useFormDesigner();
-  const { router } = useShaRouting();
+  const { setDebugMode, isDebug, undo, redo, canUndo, canRedo, readOnly } = useFormDesigner();
+  const [settingsVisible, setSettingsVisible] = useState(false);
 
   const { allComponents, componentRelations, formSettings } = useFormDesigner();
   const toolboxComponents = useFormDesignerComponents();
 
-  const onSaveClick = () => {
+  const saveFormInternal = (): Promise<void> => {
     const payload: FormMarkupWithSettings = {
       components: componentsFlatStructureToTree(toolboxComponents, { allComponents, componentRelations }),
       formSettings: formSettings,
     };
-    saveForm(payload)
+    return saveForm(payload);
+  }
+
+  const onSaveClick = () => {
+    saveFormInternal()
       .then(() => message.success('Form saved successfully'))
       .catch(() => message.error('Failed to save form'));
   };
 
-  const onModeChange = e => {
-    setFormMode(e.target.value);
-  };
+  const onSaveAndSetReadyClick = () => {
+    const onOk = () => {
+      saveFormInternal()
+        .then(() => {
+          updateItemStatus({
+            backendUrl: backendUrl,
+            httpHeaders: httpHeaders,
+            id: formProps.id,
+            status: ConfigurationItemVersionStatus.Ready,
+            onSuccess: () => {
+              message.success('Form saved and set ready successfully')
+              loadForm();
+            },
+          });
+        })
+        .catch(() => message.error('Failed to save form'));
+    }
+    Modal.confirm({
+      title: 'Save and Set Ready',
+      icon: <ExclamationCircleOutlined />,
+      content: 'Are you sure you want to set this form ready?',
+      okText: 'Yes',
+      cancelText: 'No',
+      onOk
+    });
+  }
 
   const onUndoClick = () => {
     undo();
@@ -48,53 +85,131 @@ export const FormDesignerToolbar: FC<IProps> = () => {
     redo();
   };
 
-  const onCancelClick = () => {
-    router?.back();
+  const onSettingsClick = () => {
+    setSettingsVisible(true);
   };
+
+  const onCreateNewVersionClick = () => {
+    const onOk = () => {
+      return createNewVersionRequest({
+        backendUrl: backendUrl,
+        httpHeaders: httpHeaders,
+        id: formProps.id,
+      })
+        .then(response => {
+          message.destroy();
+
+          const newVersionId = response.data.result.id;
+          const url = `${routes.formsDesigner}?id=${newVersionId}`;
+          if (router)
+            router.push(url);
+          else
+            console.log('router not available, url: ', url);
+
+          message.info('New version created successfully', 3);
+        })
+        .catch(e => {
+          message.destroy();
+          showErrorDetails(e);
+        });
+    }
+    Modal.confirm({
+      title: 'Create New Version',
+      icon: <ExclamationCircleOutlined />,
+      content: 'Are you sure you want to create new version of the form?',
+      okText: 'Yes',
+      cancelText: 'No',
+      onOk
+    });
+  }
+
+  const onPublishClick = () => {
+    const onOk = () => {
+      message.loading('Publishing in progress..', 0);
+      updateItemStatus({
+        backendUrl: backendUrl,
+        httpHeaders: httpHeaders,
+        id: formProps.id,
+        status: ConfigurationItemVersionStatus.Live,
+        onSuccess: () => {
+          message.success('Form published successfully')
+          loadForm();
+        },
+      });
+    }
+    Modal.confirm({
+      title: 'Publish Item',
+      icon: <ExclamationCircleOutlined />,
+      content: 'Are you sure you want to publish this form?',
+      okText: 'Yes',
+      cancelText: 'No',
+      onOk
+    });
+  }
+
+  const saveMenu = <Menu
+    items={[
+      {
+        label: (<><SaveOutlined /> Save</>),
+        key: 'save',
+        onClick: onSaveClick,
+      },
+      {
+        label: (<><CheckCircleOutlined /> Save and Set Ready</>),
+        key: 'save-set-ready',
+        onClick: onSaveAndSetReadyClick,
+      },
+    ]}
+  />;
 
   return (
     <div className="sha-designer-toolbar">
       <div className="sha-designer-toolbar-left">
-        <Button key="undo" shape="circle" onClick={onUndoClick} disabled={!canUndo} title="Undo">
-          <UndoOutlined />
-        </Button>
-        <Button key="redo" shape="circle" onClick={onRedoClick} disabled={!canRedo} title="Redo">
-          <RedoOutlined />
-        </Button>
+        {!readOnly && (
+          <Dropdown.Button
+            icon={<DownOutlined />}
+            overlay={saveMenu}
+            onClick={onSaveClick}
+            type='primary'
+          >
+            <SaveOutlined /> Save
+          </Dropdown.Button>
+        )}
+        {formProps.isLastVersion && formProps.versionStatus === ConfigurationItemVersionStatus.Live && (
+          <Button onClick={onCreateNewVersionClick} type="link">
+            <BranchesOutlined /> Create New Version
+          </Button>
+        )}
+        {formProps.isLastVersion && formProps.versionStatus === ConfigurationItemVersionStatus.Ready && (
+          <Button onClick={onPublishClick} type="link">
+            <DeploymentUnitOutlined /> Publish
+          </Button>
+        )}
+        {/* <Button onClick={onHistoryClick} type="link">
+          History
+        </Button> */}
       </div>
       <div className="sha-designer-toolbar-right">
+        <Button icon={<SettingOutlined />} type="link" onClick={onSettingsClick}>
+          Settings
+        </Button>
+        <FormSettingsEditor
+          readOnly={readOnly}
+          isVisible={settingsVisible}
+          close={() => {
+            setSettingsVisible(false);
+          }}
+        />
         <Button
           onClick={() => {
             setFormMode(formMode === 'designer' ? 'edit' : 'designer');
           }}
           type={formMode === 'designer' ? 'default' : 'primary'}
+          shape="circle"
+          title='Preview'
         >
-          <EyeOutlined /> Preview
+          <EyeOutlined />
         </Button>
-        {/* <Button
-          onClick={() => {
-            setFormMode(formMode === 'designer' ? 'edit' : 'designer');
-          }}
-          type={formMode === 'designer' ? 'default' : 'primary'}
-        >
-          <EyeOutlined /> JSON
-        </Button> */}
-        <Button onClick={onCancelClick} type="primary" danger>
-          <CloseCircleOutlined /> Cancel
-        </Button>
-        <Button key="save" onClick={onSaveClick} type="primary">
-          <SaveOutlined /> Save
-        </Button>
-      </div>
-
-      {false && (
-        <Radio.Group value={formMode} onChange={onModeChange}>
-          <Radio.Button value="designer">designer</Radio.Button>
-          <Radio.Button value="edit">edit</Radio.Button>
-          <Radio.Button value="readonly">readonly</Radio.Button>
-        </Radio.Group>
-      )}
-      {true && (
         <Button
           key="debug"
           onClick={() => {
@@ -106,7 +221,18 @@ export const FormDesignerToolbar: FC<IProps> = () => {
         >
           <BugOutlined />
         </Button>
-      )}
+
+        {!readOnly && (
+          <>
+            <Button key="undo" shape="circle" onClick={onUndoClick} disabled={!canUndo} title="Undo">
+              <UndoOutlined />
+            </Button>
+            <Button key="redo" shape="circle" onClick={onRedoClick} disabled={!canRedo} title="Redo">
+              <RedoOutlined />
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 };

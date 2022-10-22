@@ -11,7 +11,7 @@ import { ConfigurableFormInstance } from '../../../../../providers/form/contexts
 export interface IProps {}
 
 export const ToolbarItemProperties: FC<IProps> = () => {
-  const { selectedItemId, getItem, updateItem } = useToolbarConfigurator();
+  const { selectedItemId, getItem, updateItem, readOnly } = useToolbarConfigurator();
   // note: we have to memoize the editor to prevent unneeded re-rendering and loosing of the focus
   const [editor, setEditor] = useState<ReactNode>(<></>);
   const [form] = Form.useForm();
@@ -58,7 +58,7 @@ export const ToolbarItemProperties: FC<IProps> = () => {
         layout="vertical"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
-        mode="edit"
+        mode={readOnly ? 'readonly' : 'edit'}
         markup={markup}
         onFinish={onSettingsSave}
         form={form}

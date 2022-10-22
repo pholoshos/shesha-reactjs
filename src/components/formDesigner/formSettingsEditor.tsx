@@ -9,14 +9,16 @@ import { useFormDesigner } from '../../providers/formDesigner';
 export interface IFormSettingsEditorProps {
   isVisible: boolean;
   close: () => void;
+  readOnly: boolean;
 }
 
-export const FormSettingsEditor: FC<IFormSettingsEditorProps> = ({ isVisible, close }) => {
+export const FormSettingsEditor: FC<IFormSettingsEditorProps> = ({ isVisible, close, readOnly }) => {
   const [form] = Form.useForm();
   const { formSettings, updateFormSettings } = useFormDesigner();
 
   const onSave = values => {
-    updateFormSettings(values);
+    if (!readOnly)
+      updateFormSettings(values);
     close();
   };
 
@@ -24,11 +26,15 @@ export const FormSettingsEditor: FC<IFormSettingsEditorProps> = ({ isVisible, cl
     <Modal
     open={isVisible}
       title="Form Settings"
+      width="50vw"
+
       onOk={() => {
         form.submit();
       }}
+      okButtonProps={{ hidden: readOnly }}
+
       onCancel={close}
-      width="50vw"
+      cancelText={ readOnly ? 'Close' : undefined }
     >
       <Tabs
         items={[
@@ -40,7 +46,7 @@ export const FormSettingsEditor: FC<IFormSettingsEditorProps> = ({ isVisible, cl
                 layout="horizontal"
                 labelCol={{ span: 7 }}
                 wrapperCol={{ span: 17 }}
-                mode="edit"
+                mode={ readOnly ? 'readonly' : 'edit' }
                 form={form}
                 onFinish={onSave}
                 markup={formSettingsJson as FormMarkup}

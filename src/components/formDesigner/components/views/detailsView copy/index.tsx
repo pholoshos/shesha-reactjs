@@ -61,9 +61,10 @@ const DetailsViewComponent: IToolboxComponent<IDetailsViewComponentProps> = {
     );
   },
   // settingsFormMarkup: settingsForm,
-  settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
+  settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
     return (
       <DetailsViewSettings
+        readOnly={readOnly}
         model={(model as unknown) as IDetailsViewProps}
         onSave={onSave as any}
         onCancel={onCancel}

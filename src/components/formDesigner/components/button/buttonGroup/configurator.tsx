@@ -17,7 +17,7 @@ export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
   render,
   heading,
 }) => {
-  const { items, addButton, addGroup } = useButtonGroupConfigurator();
+  const { items, addButton, addGroup, readOnly } = useButtonGroupConfigurator();
 
   const content = () => {
     if (Boolean(render)) {
@@ -45,19 +45,21 @@ export const ButtonGroupConfigurator: FC<IButtonGroupConfiguratorProps> = ({
 
   return (
     <div className="sha-button-group-configurator">
-      <Alert message={<h4>Here you can configure the button group by adjusting their settings and ordering.</h4>} />
+      <Alert message={<h4>{readOnly ? 'Here you can view buttons configuration.' : 'Here you can configure the button group by adjusting their settings and ordering.'}</h4>} />
 
-      <div className="sha-action-buttons">
-        {allowAddGroups && (
-          <Button onClick={addGroup} type="primary">
-            Add Group
+      {!readOnly && (
+        <div className="sha-action-buttons">
+          {allowAddGroups && (
+            <Button onClick={addGroup} type="primary">
+              Add Group
+            </Button>
+          )}
+
+          <Button onClick={addButton} type="primary">
+            Add New Item
           </Button>
-        )}
-
-        <Button onClick={addButton} type="primary">
-          Add New Item
-        </Button>
-      </div>
+        </div>
+      )}
 
       <SidebarContainer
         rightSidebarProps={{

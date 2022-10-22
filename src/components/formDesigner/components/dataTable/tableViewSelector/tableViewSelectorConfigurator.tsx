@@ -28,15 +28,13 @@ export const TableViewSelectorConfigurator = forwardRef<
 
   const fields = useMetadataFields();
 
-  const { selectedItemId, updateItem, items } = useTableViewSelectorConfigurator();
+  const { selectedItemId, updateItem, items, readOnly } = useTableViewSelectorConfigurator();
   const selectedItem = useMemo(() => items?.find(({ id }) => id === selectedItemId), [items, selectedItemId]);
   const [localQueryExpression, setLocalQueryExpression] = useState<any>(selectedItem?.expression);
 
   const onSet = (value) => {
     setLocalQueryExpression(value);
   }
-
-
 
   const onQueryBuilderValueChange = () => {
     // NOTE: we must save even empty filter
@@ -59,10 +57,12 @@ export const TableViewSelectorConfigurator = forwardRef<
           content: () => <TableViewProperties />,
         }}
       >
-        <Alert
-          message="Here you can create your own filters or adjust their settings and ordering"
-          className="sha-toolbar-configurator-alert"
-        />
+        {!readOnly && (
+          <Alert
+            message="Here you can adjust filter settings"
+            className="sha-toolbar-configurator-alert"
+          />
+        )}
 
         <QueryBuilderProvider fields={fields}>
           <Tabs
@@ -72,11 +72,11 @@ export const TableViewSelectorConfigurator = forwardRef<
             onChange={onQueryBuilderValueChange}
           >
             <TabPane tab="Query builder" key="queryBuilderConfigureTab">
-              <QueryBuilderPlainRenderer onChange={onSet} value={queryBuilderValue}/>
+              <QueryBuilderPlainRenderer onChange={onSet} value={queryBuilderValue} readOnly={readOnly} />
             </TabPane>
 
             <TabPane tab="Query expression viewer" key="expressionViewerTab">
-              <QueryBuilderExpressionViewer value={queryBuilderValue} jsonExpanded={true} />
+              <QueryBuilderExpressionViewer value={queryBuilderValue} />
             </TabPane>
 
             <TabPane tab="Variables" key="exposedVariables">
@@ -97,7 +97,8 @@ export const TableViewSelectorConfigurator = forwardRef<
                 ]}
               />
             </TabPane>
-          </Tabs>        </QueryBuilderProvider>
+          </Tabs>
+        </QueryBuilderProvider>
       </SidebarContainer>
     </div>
   );

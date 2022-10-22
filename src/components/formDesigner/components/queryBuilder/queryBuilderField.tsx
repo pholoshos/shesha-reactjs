@@ -13,6 +13,8 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
   const [jsonExpanded, setJsonExpanded] = useState(props.jsonExpanded ?? false);
   const isSmall = useMedia('(max-width: 480px)');
 
+  const { readOnly = false } = props;
+
   const onOkClick = () => {
     if (jsonLogicResult) {
       if (jsonLogicResult && jsonLogicResult.errors && jsonLogicResult.errors.length > 0) {
@@ -38,10 +40,6 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
 
   const hasValue = Boolean(props?.value);
 
-  const val = props.value ? JSON.stringify(props.value, null, 2) : null;
-  if (!val)
-    console.log('val is null')
-
   return (
     <>
       <Collapse
@@ -65,11 +63,11 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
         <Collapse.Panel
           header={
             <Space>
-              <Button type="primary" onClick={() => setModalVisible(true)} size="small">
+              <Button type={ readOnly ? 'default' : 'primary' } onClick={() => setModalVisible(true)} size="small">
                 {`Query Builder ${hasValue ? '(applied)' : ''}`.trim()}
               </Button>
 
-              <Show when={hasValue}>
+              <Show when={hasValue && !readOnly}>
                 <Button
                   type="primary"
                   size="small"
@@ -111,12 +109,17 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
       <Modal
         open={modalVisible}
         width={isSmall ? '90%' : '60%'}
-        title="Quick Filter Query Builder"
-        onCancel={() => setModalVisible(false)}
+        title="Query Builder"
+        
         onOk={onOkClick}
+        okButtonProps={{ hidden: readOnly }}
+        
+        onCancel={() => setModalVisible(false)}
+        cancelText={ readOnly ? 'Close' : undefined }
+
         destroyOnClose
       >
-        <h4>Here you can create your own table filters using the query builder below</h4>
+        <h4>Here you can create your own filter using the query builder below</h4>
 
         <QueryBuilder
           value={props.value}
@@ -124,6 +127,7 @@ export const QueryBuilderField: FC<IQueryBuilderFieldProps> = props => {
           fields={props.fields}
           fetchFields={props.fetchFields}
           useExpression={props?.useExpression}
+          readOnly={readOnly}
         />
       </Modal>
     </>

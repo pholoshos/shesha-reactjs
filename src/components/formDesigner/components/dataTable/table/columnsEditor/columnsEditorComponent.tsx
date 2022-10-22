@@ -50,7 +50,7 @@ const ColumnsConfig: FC<IColumnsConfigProps> = ({ value, onChange }) => {
     <Fragment>
       <Button onClick={toggleModalVisibility}>Configure Columns</Button>
 
-      <ColumnsEditorModal visible={modalVisible} hideModal={toggleModalVisibility} value={value} onChange={onChange} />
+      <ColumnsEditorModal visible={modalVisible} hideModal={toggleModalVisibility} value={value} onChange={onChange} readOnly={false}/>
     </Fragment>
   );
 };

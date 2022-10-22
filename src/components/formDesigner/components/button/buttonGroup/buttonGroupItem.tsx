@@ -11,7 +11,7 @@ export interface IButtonGroupItemProps extends IButtonGroupButton {
 }
 
 export const ButtonGroupItem: FC<IButtonGroupItemProps> = props => {
-  const { deleteButton, selectedItemId } = useButtonGroupConfigurator();
+  const { deleteButton, selectedItemId, readOnly } = useButtonGroupConfigurator();
 
   const onDeleteClick = () => {
     deleteButton(props.id);
@@ -31,9 +31,11 @@ export const ButtonGroupItem: FC<IButtonGroupItemProps> = props => {
             <QuestionCircleOutlined className="sha-help-icon" />
           </Tooltip>
         )}
-        <div className="sha-button-group-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
-        </div>
+        {!readOnly && (
+          <div className="sha-button-group-item-controls">
+            <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+          </div>
+        )}
       </div>
     </div>
   );

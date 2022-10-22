@@ -15,11 +15,12 @@ export interface ITableViewSelectorConfiguratorStateContext {
   items: ITableViewProps[];
   selectedItemId?: string;
   selectedItem?: ITableViewProps;
+  readOnly: boolean;
 }
 
 export interface ITableViewSelectorConfiguratorActionsContext {
-  addButton: () => void;
-  deleteButton: (uid: string) => void;
+  addItem: () => void;
+  deleteItem: (uid: string) => void;
 
   addGroup: () => void;
   deleteGroup: (uid: string) => void;
@@ -34,6 +35,7 @@ export interface ITableViewSelectorConfiguratorActionsContext {
 
 export const TOOLBAR_CONTEXT_INITIAL_STATE: ITableViewSelectorConfiguratorStateContext = {
   items: [],
+  readOnly: false,
 };
 
 export const TableViewSelectorConfiguratorStateContext = createContext<ITableViewSelectorConfiguratorStateContext>(

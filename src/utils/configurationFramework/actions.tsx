@@ -35,7 +35,7 @@ interface UpdateItemStatusArgs extends IHasHttpSettings {
     status: ConfigurationItemVersionStatus;
     onSuccess?: () => void;
 }
-const updateItemStatus = (props: UpdateItemStatusArgs) => {
+export const updateItemStatus = (props: UpdateItemStatusArgs) => {
     const url = `${props.backendUrl}/api/services/Shesha/FormConfiguration/UpdateStatus`;
     const httpPayload = {
         filter: getEntityFilterByIds([props.id]),
@@ -157,15 +157,21 @@ export interface ICreateNewItemVersionPayload extends IHasHttpSettings {
 export interface ICreateNewItemVersionResponse {
     id: string;
 }
+
+export const createNewVersionRequest = (payload: ICreateNewItemVersionPayload): Promise<AxiosResponse<IAbpWrappedGetEntityResponse<FormConfigurationDto>>> => {
+    const url = `${payload.backendUrl}/api/services/Shesha/FormConfiguration/CreateNewVersion`;
+    const httpPayload = {
+        id: payload.id
+    };
+    return axios.post<any, AxiosResponse<IAbpWrappedGetEntityResponse<FormConfigurationDto>>>(url, httpPayload, { headers: payload.httpHeaders })
+}
+
+
 export const createNewVersion = (payload: ICreateNewItemVersionPayload): Promise<ICreateNewItemVersionResponse> => {
     return new Promise<ICreateNewItemVersionResponse>((resolve, _reject) => {
         // todo: return a promise and handle completion on upper level
         const onOk = () => {
-            const url = `${payload.backendUrl}/api/services/Shesha/FormConfiguration/CreateNewVersion`;
-            const httpPayload = {
-                id: payload.id
-            };
-            return axios.post<any, AxiosResponse<IAbpWrappedGetEntityResponse<FormConfigurationDto>>>(url, httpPayload, { headers: payload.httpHeaders })
+            return createNewVersionRequest(payload)
                 .then(response => {
                     message.destroy();
                     resolve({ id: response.data.result.id });
@@ -173,18 +179,7 @@ export const createNewVersion = (payload: ICreateNewItemVersionPayload): Promise
                 })
                 .catch(e => {
                     message.destroy();
-                    const response = (e.response?.data as IAjaxResponseBase);
-                    if (response && response.error) {
-                        // reject(response.error);
-                        console.log('error:', response.error)
-                        notification.error({
-                            message: 'Sorry! An error occurred.',
-                            icon: null,
-                            description: <ErrorDetails error={response.error} />
-                            //description: <ValidationErrors error={response.error} renderMode="raw" />,
-                        });
-                    } else
-                        message.error('An error occurred. Message:' + e);
+                    showErrorDetails(e);
                 });
         }
         Modal.confirm({
@@ -264,10 +259,22 @@ export const downloadAsJson = (payload: IDownloadItemAsJsonPayload): Promise<IDo
 
 //#endregion
 
+export const showErrorDetails = (error: any) => {
+    const response = (error.response?.data as IAjaxResponseBase);
+    if (response && response.error) {
+        notification.error({
+            message: 'Sorry! An error occurred.',
+            icon: null,
+            description: <ErrorDetails error={response.error} />
+        });
+    } else
+        message.error('An error occurred. Message:' + error);
+}
+
 interface IErrorDetailsProps {
     error: IErrorInfo;
 }
-const ErrorDetails: FC<IErrorDetailsProps> = ({ error }) => {
+export const ErrorDetails: FC<IErrorDetailsProps> = ({ error }) => {
     return (
         <div>
             {/* <strong>{error.details}</strong> */}

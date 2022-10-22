@@ -26,9 +26,10 @@ const TableViewSelectorComponent: IToolboxComponent<ITableViewSelectorProps> = {
       filters: [],
     };
   },
-  settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
+  settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
     return (
       <TableViewSelectorSettings
+        readOnly={readOnly}
         model={model as ITableViewSelectorProps}
         onSave={onSave}
         onCancel={onCancel}

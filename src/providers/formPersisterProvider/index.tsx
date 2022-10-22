@@ -72,6 +72,9 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
           description: formConfiguration.description,
           markup: formConfiguration.markup ?? [],
           formSettings: formConfiguration.settings ?? DEFAULT_FORM_SETTINGS,
+          versionNo: formConfiguration.versionNo,
+          versionStatus: formConfiguration.versionStatus,
+          isLastVersion: formConfiguration.isLastVersion,
         };
 
         // parse json content

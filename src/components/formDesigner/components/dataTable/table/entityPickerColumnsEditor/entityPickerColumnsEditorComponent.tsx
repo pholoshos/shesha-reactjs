@@ -6,6 +6,7 @@ import { ColumnsItemProps } from '../../../../../../providers/datatableColumnsCo
 import { ITableComponentBaseProps } from '../models';
 import { ColumnsEditorModal } from './columnsEditorModal';
 import ConfigurableFormItem from '../../../formItem';
+import { useForm } from '../../../../../..';
 
 interface IColumnsEditorComponentProps extends ITableComponentBaseProps, IConfigurableFormComponent {
   items: ColumnsItemProps[];
@@ -22,9 +23,10 @@ const EntityPickerColumnsEditorComponent: IToolboxComponent<IColumnsEditorCompon
   icon: <ColumnWidthOutlined />,
   isHidden: true, // We do not want to show this on the component toolbox
   factory: (model: IColumnsEditorComponentProps) => {
+    const { formMode } = useForm();
     return (
       <ConfigurableFormItem model={model}>
-        <ColumnsConfig />
+        <ColumnsConfig readOnly={formMode === 'readonly'}/>
       </ConfigurableFormItem>
     );
   },
@@ -39,9 +41,10 @@ const EntityPickerColumnsEditorComponent: IToolboxComponent<IColumnsEditorCompon
 interface IColumnsConfigProps {
   value?: ColumnsItemProps[];
   onChange?: (value: ColumnsItemProps[]) => void;
+  readOnly: boolean;
 }
 
-const ColumnsConfig: FC<IColumnsConfigProps> = ({ value, onChange }) => {
+const ColumnsConfig: FC<IColumnsConfigProps> = ({ value, onChange, readOnly }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const toggleModalVisibility = () => setModalVisible(prev => !prev);
@@ -50,7 +53,7 @@ const ColumnsConfig: FC<IColumnsConfigProps> = ({ value, onChange }) => {
     <Fragment>
       <Button onClick={toggleModalVisibility}>Configure Columns</Button>
 
-      <ColumnsEditorModal visible={modalVisible} hideModal={toggleModalVisibility} value={value} onChange={onChange} />
+      <ColumnsEditorModal visible={modalVisible} hideModal={toggleModalVisibility} value={value} onChange={onChange} readOnly={readOnly}/>
     </Fragment>
   );
 };

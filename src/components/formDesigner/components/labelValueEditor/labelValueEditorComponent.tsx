@@ -22,14 +22,14 @@ const LabelValueEditorComponent: IToolboxComponent<ILabelValueEditorProps> = {
   name: 'Label Value editor',
   icon: <OneToOneOutlined />,
   factory: model => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden, formMode } = useForm();
     const customProps = model as ILabelValueEditorProps;
 
     if (isComponentHidden(model)) return null;
 
     return (
       <ConfigurableFormItem model={model}>
-        <LabelValueEditor {...customProps} />
+        <LabelValueEditor {...customProps} readOnly={ formMode === 'readonly' }/>
       </ConfigurableFormItem>
     );
   },

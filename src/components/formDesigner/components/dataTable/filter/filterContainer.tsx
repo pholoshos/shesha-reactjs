@@ -10,7 +10,7 @@ export interface IFilterContainerProps {
 }
 
 export const FilterContainer: FC<IFilterContainerProps> = props => {
-  const { updateChildItems } = useTableViewSelectorConfigurator();
+  const { updateChildItems, readOnly } = useTableViewSelectorConfigurator();
 
   const onSetList = (newState: ItemInterface[], _sortable, _store) => {
     // temporary commented out, the behavoiur of the sortablejs differs sometimes
@@ -25,6 +25,7 @@ export const FilterContainer: FC<IFilterContainerProps> = props => {
 
   return (
     <ReactSortable
+      disabled={readOnly}
       list={props.items}
       setList={onSetList}
       fallbackOnBody={true}

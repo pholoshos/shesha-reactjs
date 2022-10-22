@@ -11,7 +11,7 @@ export interface IFilterItemProps extends ITableViewProps {
 }
 
 export const FilterItem: FC<IFilterItemProps> = props => {
-  const { deleteButton, selectedItemId } = useTableViewSelectorConfigurator();
+  const { deleteItem: deleteButton, selectedItemId, readOnly } = useTableViewSelectorConfigurator();
 
   const onDeleteClick = () => {
     deleteButton(props.id);
@@ -27,9 +27,11 @@ export const FilterItem: FC<IFilterItemProps> = props => {
             <QuestionCircleOutlined />
           </Tooltip>
         )}
-        <div className="sha-toolbar-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
-        </div>
+        {!readOnly && (
+          <div className="sha-toolbar-item-controls">
+            <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ export interface IButtonGroupItemsSortableProps {
 }
 
 export const ButtonGroupItemsContainer: FC<IButtonGroupItemsSortableProps> = props => {
-  const { updateChildItems } = useButtonGroupConfigurator();
+  const { updateChildItems, readOnly } = useButtonGroupConfigurator();
 
   const renderItem = (item: ButtonGroupItemProps, index: number) => {
     switch (item.itemType) {
@@ -45,6 +45,7 @@ export const ButtonGroupItemsContainer: FC<IButtonGroupItemsSortableProps> = pro
 
   return (
     <ReactSortable
+      disabled={readOnly}
       list={props.items}
       setList={onSetList}
       fallbackOnBody={true}

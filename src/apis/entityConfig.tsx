@@ -9,6 +9,10 @@ export const SPEC_VERSION = 'v1';
 /**
  * Entity config DTO
  */
+export interface ConfigurationDto {
+  suppress?: boolean | null;
+}
+
 export interface EntityConfigDto {
   id?: string;
   friendlyName?: string | null;
@@ -18,6 +22,7 @@ export interface EntityConfigDto {
   namespace?: string | null;
   discriminatorValue?: string | null;
   source?: MetadataSourceType | null;
+  configuration?: ConfigurationDto | null;
   suppress?: boolean | null;
 }
 
@@ -106,6 +111,7 @@ export interface EntityConfigGetAllQueryParams {
   sorting?: string | null;
   skipCount?: number;
   maxResultCount?: number;
+  properties?: string | null;
 }
 
 export type EntityConfigGetAllProps = Omit<

@@ -24,6 +24,7 @@ const mapPropertyToModelItem = (property: ModelPropertyDto): IModelItem => {
     referenceListName: property.referenceListName,
     referenceListNamespace: property.referenceListNamespace,
     source: property.source,
+    suppress: property.suppress,
     properties: property.properties.map<IModelItem>(p => mapPropertyToModelItem(p)),
   }
 

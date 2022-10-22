@@ -30,7 +30,7 @@
               "isDynamic": false,
               "description": "",
               "validate": {},
-              "displayEntityKey": "",
+              "displayEntityKey": "name",
               "entityType": "Shesha.Domain.ConfigurationItems.Module",
               "items": [
                 {
@@ -40,7 +40,7 @@
                   "caption": "Name",
                   "columnType": "data",
                   "isVisible": true,
-                  "minWidth": 100,
+                  "minWidth": 300,
                   "propertyName": "name"
                 }
               ],

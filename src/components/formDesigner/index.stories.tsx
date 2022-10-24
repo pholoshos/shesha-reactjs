@@ -34,7 +34,7 @@ export const RoleAppointmentForm = addStory(DesignerTemplate, {
 });
 
 export const TestForm = addStory(DesignerTemplate, {
-  formId: 'bb9a1ec3-c727-4fef-918e-ce1600f87d9c'
+  formId: '80A62EAB-2771-4650-88C9-C8FC676D6A60'
   /*
   formId: {
     name: 'test-form',
@@ -93,10 +93,13 @@ export const WizardFormDebug = addStory(DesignerTemplate, {
 });
 
 export const FormsIndex = addStory(DesignerTemplate, {
+  formId: '598FF415-0826-490F-BF81-8AEE4BB98FB7'
+  /*
   formId: {
     name: 'forms',
     module: 'shesha',
   }
+  */
 });
 
 export const FormCreate = addStory(DesignerTemplate, {

@@ -54,7 +54,6 @@ import { IDataSource } from '../formDesigner/models';
 import { useMetadataDispatcher } from '../../providers';
 
 export interface IFormDesignerProviderProps {
-    uniqueStateId?: string;
     flatComponents: IFlatComponentsStructure;
     formSettings: IFormSettings;
     readOnly: boolean;

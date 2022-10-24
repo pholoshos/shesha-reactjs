@@ -45,7 +45,6 @@ import {
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
 
 export interface IFormProviderProps {
-  uniqueStateId?: string;
   flatComponents: IFlatComponentsStructure;
   formSettings: IFormSettings;
   mode: FormMode;

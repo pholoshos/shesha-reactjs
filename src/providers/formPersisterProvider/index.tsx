@@ -108,7 +108,7 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
       id: state.formProps.id,
       markup: JSON.stringify(payload, null, 2),
     };
-console.log('SAVE FORM: ', dto);
+
     await saveFormHttp(dto, {})
       .then(_response => {
         dispatch(saveSuccessAction());

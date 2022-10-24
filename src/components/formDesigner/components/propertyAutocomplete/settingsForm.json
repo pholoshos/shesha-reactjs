@@ -199,7 +199,7 @@
       "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
     },
     {
-      "id": "06ab0599-914d-4d2d-875c-765a495472f8",
+      "id": "C313065F-1F6E-4965-B5C0-87CE87F0131E",
       "type": "codeEditor",
       "name": "dropdownStyle",
       "label": "Dropdown Style",

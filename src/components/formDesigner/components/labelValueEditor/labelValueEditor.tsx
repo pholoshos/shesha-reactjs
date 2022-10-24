@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useContext, useState, Fragment, useMemo } from 'react';
+import React, { FC, useEffect, useRef, useContext, useState, Fragment } from 'react';
 import {
   DragDropContext,
   DropResult,
@@ -198,65 +198,61 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
     onChange(newData);
   };
 
-  const columns = useMemo(() => {
-    const cols = [
-      readOnly
-        ? null
-        : {
-          title: '',
-          dataIndex: 'sort',
-          width: '30',
-          render: (_text, _record, _index) => {
-            const dragHandleProps = useContext(DragHandleContext);
-            return <DragHandle {...dragHandleProps} />;
-          },
+  const cols = [
+    readOnly
+      ? null
+      : {
+        title: '',
+        dataIndex: 'sort',
+        width: '30',
+        render: (_text, _record, _index) => {
+          const dragHandleProps = useContext(DragHandleContext);
+          return <DragHandle {...dragHandleProps} />;
         },
-      {
-        title: labelTitle,
-        dataIndex: labelName,
-        editable: !readOnly,
-        width: '30%',
       },
-      {
-        title: valueTitle,
-        dataIndex: valueName,
-        width: '30%',
-        editable: !readOnly,
+    {
+      title: labelTitle,
+      dataIndex: labelName,
+      editable: !readOnly,
+      width: '30%',
+    },
+    {
+      title: valueTitle,
+      dataIndex: valueName,
+      width: '30%',
+      editable: !readOnly,
+    },
+    readOnly
+      ? null
+      : {
+        title: '',
+        dataIndex: 'operations',
+        width: '30',
+        render: (_, record) =>
+          items.length >= 1 ? (
+            <Popconfirm title="Are you sure want to delete this item?" onConfirm={() => handleDeleteRow(record.id)}>
+              <DeleteOutlined />
+            </Popconfirm>
+          ) : null,
       },
-      readOnly
-        ? null
-        : {
-          title: '',
-          dataIndex: 'operations',
-          width: '30',
-          render: (_, record) =>
-            items.length >= 1 ? (
-              <Popconfirm title="Are you sure want to delete this item?" onConfirm={() => handleDeleteRow(record.id)}>
-                <DeleteOutlined />
-              </Popconfirm>
-            ) : null,
-        },
-    ];
-  
-    const result = cols.filter(c => Boolean(c)).map(col => {
-      if (!col.editable) {
-        return col;
-      }
-  
-      return {
-        ...col,
-        onCell: record => ({
-          record,
-          editable: col.editable,
-          dataIndex: col.dataIndex,
-          title: col.title,
-          handleSave: handleSaveCell,
-        }),
-      };
-    });
-  
-    return result;
-  }, [readOnly, labelTitle, labelName, valueTitle, valueName]);
+  ];
+
+  const columns = cols.filter(c => Boolean(c)).map(col => {
+    if (!col.editable) {
+      return col;
+    }
+
+    return {
+      ...col,
+      onCell: record => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        handleSave: handleSaveCell,
+      }),
+    };
+  });
 
   const toggleModal = () => setShowModal(currentVisible => !currentVisible);
 
@@ -295,19 +291,19 @@ export const LabelValueEditor: FC<ILabelValueEditorProps> = ({
       wrap={children => (
         <Fragment>
           <Button onClick={toggleModal} size="small" icon={<BorderlessTableOutlined />}>
-            { readOnly ? 'Click to View Items' : 'Click to Add Items' }
+            {readOnly ? 'Click to View Items' : 'Click to Add Items'}
           </Button>
 
-          <Modal 
-            title={ readOnly ? 'View Items' : 'Add Items' } 
-            open={showModal} 
+          <Modal
+            title={readOnly ? 'View Items' : 'Add Items'}
+            open={showModal}
             width={650}
 
-            onOk={toggleModal} 
+            onOk={toggleModal}
             okButtonProps={{ hidden: readOnly }}
 
-            onCancel={toggleModal} 
-            cancelText={ readOnly ? 'Close' : undefined }
+            onCancel={toggleModal}
+            cancelText={readOnly ? 'Close' : undefined}
           >
             <Show when={!!description}>
               <Alert type="info" message={description} />

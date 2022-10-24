@@ -121,7 +121,6 @@ const ConfigurableActionConfigurator: FC<IConfigurableActionConfiguratorProps> =
         colon={formSettings.colon}
         onValuesChange={onValuesChange}
         initialValues={formValues}
-        disabled={readOnly}
       >
         <Form.Item name="actionFullName" label="Action Name">
           <ActionSelect actions={actions} readOnly={readOnly}></ActionSelect>

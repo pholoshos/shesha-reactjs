@@ -1,6 +1,8 @@
 .sha-icon-picker {
   .sha-icon-picker-selected-icon {
-    cursor: pointer;
+    &:not(.sha-readonly){
+      cursor: pointer;
+    }
 
     .anticon {
       margin-right: @padding-lg;

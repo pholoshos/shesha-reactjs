@@ -6,8 +6,10 @@ import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import IconPicker, { ShaIconTypes } from '../../../iconPicker';
+import { useForm } from '../../../..';
 
 export interface IIconPickerComponentProps extends IConfigurableFormComponent {
+  readOnly?: boolean;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -32,6 +34,7 @@ export interface IIconPickerWrapperProps {
   onChange?: (value?: string) => void;
 }
 export const IconPickerWrapper: FC<IIconPickerWrapperProps> = (props) => {
+  const { formMode } = useForm();
 
   const onIconChange = (_icon: ReactNode, iconName: ShaIconTypes) => {
     if (props.onChange)
@@ -42,6 +45,7 @@ export const IconPickerWrapper: FC<IIconPickerWrapperProps> = (props) => {
     <IconPicker 
       value={props.value as ShaIconTypes}
       onIconChange={onIconChange}
+      readOnly={ formMode === 'readonly' }
     />
   );  
 }

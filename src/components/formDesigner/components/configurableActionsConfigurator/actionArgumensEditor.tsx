@@ -14,7 +14,7 @@ export interface IActionArgumentsEditorProps {
     readOnly?: boolean;
 }
 
-const getDefaultFactory = (markup: FormMarkup): IConfigurableActionArgumentsFormFactory => {
+const getDefaultFactory = (markup: FormMarkup, readOnly: boolean): IConfigurableActionArgumentsFormFactory => {
     return ({
         model,
         onSave,
@@ -28,6 +28,7 @@ const getDefaultFactory = (markup: FormMarkup): IConfigurableActionArgumentsForm
                 onCancel={onCancel}
                 markup={markup}
                 onValuesChange={onValuesChange}
+                readOnly={readOnly}
             />
         );
     };
@@ -39,7 +40,7 @@ export const ActionArgumentsEditor: FC<IActionArgumentsEditorProps> = ({ action,
         const settingsFormFactory = action.argumentsFormFactory
             ? action.argumentsFormFactory
             : action.argumentsFormMarkup
-                ? getDefaultFactory(action.argumentsFormMarkup)
+                ? getDefaultFactory(action.argumentsFormMarkup, readOnly)
                 : null;
 
         const onCancel = () => {

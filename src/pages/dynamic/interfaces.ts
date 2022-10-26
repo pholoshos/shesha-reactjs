@@ -37,7 +37,12 @@ export interface IDynamicPageProps extends IDialogClosable {
    */
   entityPathId?: string;
 
-  navigationMode?: 'stacked' | 'stackedInline';
+  /**
+   * How you want the navigation to occur
+   *  - `stacked` means uses shallow routing with dialog that fills the entire screen
+   *  - `stackedInline` means uses shallow routing with dialog that only fills the content area (Currently not supported)
+   */
+  navMode?: 'stacked' | 'stackedInline';
 }
 
 export interface EntityAjaxResponse {

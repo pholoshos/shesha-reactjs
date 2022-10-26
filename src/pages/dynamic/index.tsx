@@ -140,7 +140,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   useEffect(() => {
     const stackId = nanoid();
 
-    if (props?.navigationMode === 'stacked' || navigationState) {
+    if (props?.navMode === 'stacked' || navigationState) {
       const isInitialized = state?.formId || state?.entityPathId || state?.path;
 
       if (!isInitialized) {
@@ -159,9 +159,9 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const previousRouter = usePrevious(router?.query);
 
   useEffect(() => {
-    if (!router?.query?.navigationMode && !navigationState) {
+    if (!router?.query?.navMode && !navigationState) {
       return;
-    } else if (!parentId && !router?.query?.navigationMode) {
+    } else if (!parentId && !router?.query?.navMode) {
       setNavigationState(null);
       setCurrentNavigator(state?.stackId);
       setState(prev => ({ ...prev, ...router?.query }));

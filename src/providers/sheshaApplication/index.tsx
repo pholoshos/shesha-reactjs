@@ -20,6 +20,7 @@ import { UiProvider } from '../ui';
 import { MetadataDispatcherProvider } from '../metadataDispatcher';
 import { IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
 import { ReferenceListDispatcherProvider } from '../referenceListDispatcher';
+import { StackedNavigationProvider } from '../../pages/dynamic/navigation/stakedNavigation';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -84,7 +85,9 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
                     <AppConfiguratorProvider>
                       <ReferenceListDispatcherProvider>
                         <MetadataDispatcherProvider>
-                          <DynamicModalProvider>{children}</DynamicModalProvider>
+                          <StackedNavigationProvider>
+                            <DynamicModalProvider>{children}</DynamicModalProvider>
+                          </StackedNavigationProvider>
                         </MetadataDispatcherProvider>
                       </ReferenceListDispatcherProvider>
                     </AppConfiguratorProvider>

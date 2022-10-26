@@ -1,28 +1,35 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, message, notification, Result, Spin } from 'antd';
+import classNames from 'classnames';
 import moment from 'moment';
+import { nanoid } from 'nanoid/non-secure';
 import Link from 'next/link';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { GetDataError, useGet, useMutate } from 'restful-react';
 import { axiosHttp } from '../../apis/axios';
 import { FormDto, useFormGet, useFormGetByPath } from '../../apis/form';
 import { AjaxResponseBase } from '../../apis/user';
 import { ConfigurableForm, ValidationErrors } from '../../components';
-import { useSubscribe, usePubSub } from '../../hooks';
+import { useSubscribe, usePubSub, usePrevious } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
-import { useGlobalState, useSheshaApplication } from '../../providers';
+import { useGlobalState, useShaRouting, useSheshaApplication } from '../../providers';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
 import { IFormDto } from '../../providers/form/models';
 import { evaluateComplexString, removeZeroWidthCharsFromString } from '../../providers/form/utils';
 import { getQueryParams, isValidSubmitVerb } from '../../utils/url';
-import { EntityAjaxResponse, IDynamicPageProps, IDynamicPageState } from './interfaces';
+import { EntityAjaxResponse, IDynamicPageProps, IDynamicPageState, INavigationState } from './interfaces';
 import { DynamicFormPubSubConstants } from './pubSub';
+import { useStackedModal } from './navigation/stackedNavigationModalProvider';
+import isDeepEqual from 'fast-deep-equal/react';
+import { useStackedNavigation } from './navigation/stakedNavigation';
+import StackedNavigationModal from './navigation/stackedNavigationModal';
 
 const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const { backendUrl } = useSheshaApplication();
   const [state, setState] = useState<IDynamicPageState>({});
   const formRef = useRef<ConfigurableFormInstance>();
   const { globalState } = useGlobalState();
+  const { router } = useShaRouting();
 
   const { publish } = usePubSub();
 
@@ -124,9 +131,73 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     verb: submitVerb,
   });
 
+  //#region routing
+  const { setCurrentNavigator, navigator } = useStackedNavigation();
+  const [navigationState, setNavigationState] = useState<INavigationState>();
+  const { parentId } = useStackedModal(); // If the parentId is null, we're in the root page
+  const closing = useRef(false);
+
   useEffect(() => {
-    setState(() => ({ ...props }));
+    const stackId = nanoid();
+
+    if (props?.navigationMode === 'stacked' || navigationState) {
+      const isInitialized = state?.formId || state?.entityPathId || state?.path;
+
+      if (!isInitialized) {
+        setState({ ...props, stackId });
+        setCurrentNavigator(stackId);
+      } else if (navigationState && navigationState?.closing) {
+        setNavigationState(null); // We're closing the dialog
+      }
+    } else {
+      setState({ ...props, stackId });
+      setCurrentNavigator(stackId);
+    }
   }, [props]);
+
+  const previousProps = usePrevious(props);
+  const previousRouter = usePrevious(router?.query);
+
+  useEffect(() => {
+    if (!router?.query?.navigationMode && !navigationState) {
+      return;
+    } else if (!parentId && !router?.query?.navigationMode) {
+      setNavigationState(null);
+      setCurrentNavigator(state?.stackId);
+      setState(prev => ({ ...prev, ...router?.query }));
+      closing.current = false;
+      return;
+    }
+
+    if (
+      navigator &&
+      state?.stackId === navigator &&
+      !navigationState &&
+      !closing?.current &&
+      !isDeepEqual(previousProps, router?.query) &&
+      !isDeepEqual(previousRouter, router?.query)
+    ) {
+      setNavigationState(router?.query);
+      closing.current = false;
+    }
+    closing.current = false;
+  }, [router]);
+
+  useEffect(() => {
+    if (navigationState?.closing) {
+      router?.back();
+    }
+  }, [navigationState?.closing]);
+
+  const onStackedDialogClose = () => {
+    closing.current = true;
+
+    setNavigationState(prev => ({ ...prev, closing: true }));
+    setCurrentNavigator(state?.stackId);
+  };
+
+  const hasDialog = Boolean(props?.onCloseDialog);
+  //#endregion
 
   //#region get form data
   useEffect(() => {
@@ -312,21 +383,34 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   };
 
   return (
-    <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
-      <ConfigurableForm
-        path={path}
-        id={formId}
-        formRef={formRef}
-        mode={state?.mode}
-        form={form}
-        actions={{ onChangeId, onChangeFormData }}
-        onFinish={onFinish}
-        initialValues={state?.fetchedData}
-        skipPostOnFinish
-        skipFetchData
-        className="sha-dynamic-page"
-      />
-    </Spin>
+    <Fragment>
+      <div id="modalContainerId" className={classNames('sha-dynamic-page', { 'has-dialog': hasDialog })}>
+        <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
+          <ConfigurableForm
+            path={path}
+            id={formId}
+            formRef={formRef}
+            mode={state?.mode}
+            form={form}
+            actions={{ onChangeId, onChangeFormData }}
+            onFinish={onFinish}
+            initialValues={state?.fetchedData}
+            skipPostOnFinish
+            skipFetchData
+            className="sha-dynamic-page"
+          />
+        </Spin>
+      </div>
+
+      <StackedNavigationModal
+        onCancel={onStackedDialogClose}
+        title="NAVIGATE"
+        visible={Boolean(navigationState)}
+        parentId={state?.stackId}
+      >
+        <DynamicPage onCloseDialog={onStackedDialogClose} {...navigationState} />
+      </StackedNavigationModal>
+    </Fragment>
   );
 };
 export default DynamicPage;

@@ -2,7 +2,11 @@ import { IFormDto } from '../../providers/form/models';
 
 export type FormMode = 'designer' | 'edit' | 'readonly';
 
-export interface IDynamicPageProps {
+interface IDialogClosable {
+  onCloseDialog?: () => void;
+}
+
+export interface IDynamicPageProps extends IDialogClosable {
   /**
    * Form path. You can pass either this or `formId`. This is required if `formId` is not provided
    */
@@ -32,6 +36,8 @@ export interface IDynamicPageProps {
    * Required if the id is not provided
    */
   entityPathId?: string;
+
+  navigationMode?: 'stacked' | 'stackedInline';
 }
 
 export interface EntityAjaxResponse {
@@ -48,7 +54,12 @@ export interface IEntity {
   [name: string]: unknown;
 }
 
+export interface INavigationState extends IDialogClosable, Omit<IDynamicPageState, 'navigationState'> {
+  closing?: boolean;
+}
+
 export interface IDynamicPageState extends IDynamicPageProps {
+  stackId?: string;
   formResponse?: IFormDto;
   fetchedData?: IEntity;
   mode?: FormMode;

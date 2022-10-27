@@ -10,6 +10,7 @@ export interface IProps<TModel extends IConfigurableActionArguments> {
   onSave: (model: TModel) => void;
   onCancel: () => void;
   onValuesChange?: (changedValues: any, values: TModel) => void;
+  readOnly?: boolean;
 }
 
 function GenericArgumentsEditor<TModel extends IConfigurableActionArguments>({
@@ -17,6 +18,7 @@ function GenericArgumentsEditor<TModel extends IConfigurableActionArguments>({
   model,
   markup,
   onValuesChange,
+  readOnly = false,
 }: IProps<TModel>) {
   const [form] = Form.useForm();
   const formRef = useRef<ConfigurableFormInstance>(null);
@@ -31,7 +33,7 @@ function GenericArgumentsEditor<TModel extends IConfigurableActionArguments>({
       layout="vertical"
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
-      mode="edit"
+      mode={readOnly ? "readonly" : "edit"}
       form={form}
       onFinish={onSave}
       markup={markup}

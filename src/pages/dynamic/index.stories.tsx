@@ -68,8 +68,8 @@ export const FormsIndexPage = addStory(Template, {
 
 export const FormDetailsPage = addStory(Template, {
   formId: { name: 'form-details', module: 'Shesha' },
-  mode: 'edit',
-  id: '567b9f53-a9be-48f1-8ea8-d4626edf78fd',
+  mode: 'readonly',
+  id: '80a62eab-2771-4650-88c9-c8fc676d6a60',
 });
 
 export const FormsTemplatesIndexPage = addStory(Template, {
@@ -109,8 +109,9 @@ export const WizardDebugForm = addStory(Template, {
 });
 
 export const PersonForm = addStory(Template, {
-  formId: { name: 'person-form' },
+  formId: { name: '/persons/edit' },
   mode: 'edit',
+  id: 'a13c1379-263f-4ec6-ab6b-1f3066f49ef1',
 });
 
 export const OrganisationEdit = addStory(Template, {

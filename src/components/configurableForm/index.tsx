@@ -12,7 +12,7 @@ import { FormRawMarkup, IFormSettings } from '../../providers/form/models';
 import { convertToMarkupWithSettings } from '../../providers/form/utils';
 
 export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
-  const { formId, markup, mode, actions, sections, context, formRef, ...restProps } = props;
+  const { formId, markup, mode, actions, sections, context, formRef, refetchData, ...restProps } = props;
   const { switchApplicationMode } = useAppConfigurator();
   const app = useSheshaApplication();
 
@@ -39,6 +39,7 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
             context={context}
             formRef={formRef}
             onValuesChange={restProps.onValuesChange}
+            refetchData={refetchData}
           >
             <ConfigurableFormRenderer {...restProps} />
           </FormProvider>

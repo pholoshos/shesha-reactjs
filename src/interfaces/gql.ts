@@ -1,3 +1,10 @@
+interface IHasEntityType {
+    entityType: string;
+}
+
+/**
+ * Get All payload
+ */
 export interface IGetAllPayload {
     readonly maxResultCount: number;
     readonly skipCount: number;
@@ -6,6 +13,22 @@ export interface IGetAllPayload {
     readonly filter?: string;
     readonly quickSearch?: string;
 }
+/**
+ * Generic get all payload, is used for the generic entpoint like `/api/services/app/Entities/GetAll`
+ */
+export interface IGenericGetAllPayload extends IGetAllPayload, IHasEntityType {}
+
+/**
+ * Get entity payload
+ */
+export interface IGetPayload {
+    readonly properties: string;
+    readonly id: string;
+}
+/**
+ * Generic get entity payload, is used for the generic entpoint like `/api/services/app/Entities/Get`
+ */
+export interface IGenericGetPayload extends IGetPayload, IHasEntityType {}
 
 export interface ValidationErrorInfo {
     message?: string | null;

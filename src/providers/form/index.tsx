@@ -45,7 +45,6 @@ import {
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
 
 export interface IFormProviderProps {
-  uniqueStateId?: string;
   flatComponents: IFlatComponentsStructure;
   formSettings: IFormSettings;
   mode: FormMode;
@@ -55,6 +54,10 @@ export interface IFormProviderProps {
   context?: any; // todo: make generic
   formRef?: MutableRefObject<Partial<ConfigurableFormInstance> | null>;
   onValuesChange?: (changedValues: any, values: any /*Values*/) => void;
+  /**
+ * External data fetcher, is used to refresh form data from the back-end. 
+ */
+  refetchData?: () => Promise<any>;
 }
 
 const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
@@ -66,13 +69,24 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   sections,
   context,
   formRef,
-  formSettings
+  formSettings,
+  refetchData,
 }) => {
   const toolboxComponents = useFormDesignerComponents();
 
   const getToolboxComponent = (type: string) => toolboxComponents[type];
 
   const { registerAction } = useConfigurableActionDispatcher();
+
+  //#region data fetcher
+
+  const fetchData = (): Promise<any> => {
+    return refetchData
+      ? refetchData()
+      : Promise.reject('fetcher not specified');
+  }
+
+  //#endregion
 
   const actionsOwner = 'Form';
   useEffect(() => {
@@ -110,6 +124,15 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
       executer: () => {
         form.resetFields();
         return Promise.resolve()
+      }
+    });
+    registerAction({
+      name: 'Refresh',
+      description: 'Refresh the form data by fetching it from the back-end',
+      owner: actionsOwner,
+      hasArguments: false,
+      executer: () => {
+        return fetchData();
       }
     });
   }, []);
@@ -313,9 +336,9 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   if (formRef) formRef.current = { ...configurableFormActions, ...state };
 
   return (
-      <FormStateContext.Provider value={state}>
-        <FormActionsContext.Provider value={configurableFormActions}>{children}</FormActionsContext.Provider>
-      </FormStateContext.Provider>
+    <FormStateContext.Provider value={state}>
+      <FormActionsContext.Provider value={configurableFormActions}>{children}</FormActionsContext.Provider>
+    </FormStateContext.Provider>
   );
 };
 
@@ -348,7 +371,7 @@ function useForm(require: boolean = true) {
   // so we must return value only when both context are available
   return actionsContext !== undefined && stateContext !== undefined
     ? { ...actionsContext, ...stateContext }
-    : undefined; 
+    : undefined;
 }
 
 const isInDesignerMode = () => {

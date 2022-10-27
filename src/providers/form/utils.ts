@@ -1203,7 +1203,6 @@ export const genericActionArgumentsEvaluator = <TArguments = ActionParametersDic
     return Promise.resolve(null);
 
   return new Promise<TArguments>((resolve) => {
-    console.log('LOG: generic arguments evaluation')
     const evaluated = evaluateRecursive(argumentsConfiguration, evaluationContext);
     resolve(evaluated as TArguments);
   });

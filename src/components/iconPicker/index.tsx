@@ -9,6 +9,7 @@ import { OutlinedIconTypes, OUTLINED_ICON_GROUPS } from './iconNamesOutlined';
 import SectionSeparator from '../sectionSeparator';
 import { TwoToneIconTypes, TWO_FACED_ICON_GROUPS } from './iconNamesTwoTone';
 import { humanizeString } from '../../utils/string';
+import classNames from 'classnames';
 
 export type ShaIconTypes = FilledIconTypes | OutlinedIconTypes | TwoToneIconTypes;
 type IconModes = 'outlined' | 'filled' | 'twoFaced';
@@ -40,6 +41,9 @@ export interface IIconPickerProps extends IconBaseProps {
 
   /** The size of the select button */
   selectBtnSize?: SizeType;
+
+  /** if true, indicates that the picker is readonly */
+  readOnly?: boolean;
 }
 
 interface IOption {
@@ -50,7 +54,7 @@ interface IOption {
 /**
  * A component for selecting icons, usually for form
  */
-const IconPicker: FC<IIconPickerProps> = ({ selectBtnSize = 'middle', value, onIconChange, ...props }) => {
+const IconPicker: FC<IIconPickerProps> = ({ selectBtnSize = 'middle', value, onIconChange, readOnly = false, ...props }) => {
   const [localSelectedIcon, setLocalSelectedIcon] = useState<ShaIconTypes>(value);
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,7 +63,10 @@ const IconPicker: FC<IIconPickerProps> = ({ selectBtnSize = 'middle', value, onI
     group: ICON_MODE_GROUPS['outlined'],
   });
 
-  const toggleModalVisibility = () => setShowModal(visible => !visible);
+  const toggleModalVisibility = () => {
+    if (!readOnly)
+      setShowModal(visible => !visible);
+  };
 
   const changeIconModes = (e: RadioChangeEvent) => {
     const mode = e.target.value as IconModes;
@@ -70,6 +77,8 @@ const IconPicker: FC<IIconPickerProps> = ({ selectBtnSize = 'middle', value, onI
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(event?.target?.value);
 
   const handleIconSelection = (selected: ShaIconTypes) => {
+    if (readOnly)
+      return;
     setLocalSelectedIcon(selected);
     toggleModalVisibility();
 
@@ -79,6 +88,8 @@ const IconPicker: FC<IIconPickerProps> = ({ selectBtnSize = 'middle', value, onI
   };
 
   const onClear = () => {
+    if (readOnly)
+      return;
     setLocalSelectedIcon(null);
     toggleModalVisibility();
 
@@ -108,15 +119,20 @@ const IconPicker: FC<IIconPickerProps> = ({ selectBtnSize = 'middle', value, onI
   return (
     <div className="sha-icon-picker">
       <div>
-        {localSelectedIcon ? (
-          <span onClick={toggleModalVisibility} className="sha-icon-picker-selected-icon">
-            <ShaIcon iconName={localSelectedIcon} style={{ fontSize: 24 }} {...props} name={localSelectedIcon} />
-          </span>
-        ) : (
-          <Button size={selectBtnSize} icon={<SelectOutlined />} onClick={toggleModalVisibility}>
-            Select Icon
-          </Button>
-        )}
+        {localSelectedIcon
+          ? (
+            <span onClick={toggleModalVisibility} className={classNames("sha-icon-picker-selected-icon", readOnly ? "sha-readonly" : "")}>
+              <ShaIcon iconName={localSelectedIcon} style={{ fontSize: 24 }} {...props} name={localSelectedIcon} />
+            </span>
+          )
+          : !readOnly
+            ? (
+              <Button size={selectBtnSize} icon={<SelectOutlined />} onClick={toggleModalVisibility}>
+                Select Icon
+              </Button>
+            )
+            : <span>none</span>
+        }
       </div>
       <Modal
         onCancel={toggleModalVisibility}

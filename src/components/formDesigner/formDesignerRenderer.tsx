@@ -41,11 +41,14 @@ export const FormDesignerRenderer: FC = ({ }) => {
     const { formSettings } = useForm();
     const { isDebug, readOnly } = useFormDesigner();
 
-    const title = formProps
+    const fullName = formProps
         ? formProps.module
             ? `${formProps.module}/${formProps.name}`
             : formProps.name
         : null;
+    const title = formProps?.label
+        ? `${formProps.label} (${fullName})`
+        : fullName;
 
     return (
         <div className="sha-page">
@@ -53,6 +56,9 @@ export const FormDesignerRenderer: FC = ({ }) => {
                 <div className="sha-page-title" style={{ justifyContent: 'left' }}>
                     <Space>
                         {title && <Title level={4} style={{ margin: 'unset' }}>{title} v{formProps.versionNo}</Title>}
+                        {/* {formProps.label && (
+                            <Title level={4} style={{ margin: 'unset' }}>({formProps.label})</Title>
+                        )} */}
                         {formProps.description && (<Tooltip title={formProps.description}>
                             <QuestionCircleOutlined className="sha-help-icon" />
                         </Tooltip>)}

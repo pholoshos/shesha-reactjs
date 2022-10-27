@@ -42,33 +42,33 @@ import { useConfigurableActionDispatcher } from '../../../../providers/configura
 
 const ListControl: FC<IListControlProps> = props => {
   const {
-  containerId,
-  dataSource,
-  showPagination,
-  paginationDefaultPageSize = 5,
-  formId, // Render embedded form if this option is provided
-  value,
-  name,
-  onChange,
-  allowDeleteItems,
-  deleteUrl,
-  deleteConfirmMessage,
-  buttons,
-  title,
-  maxHeight,
-  filters,
-  properties,
-  renderStrategy,
-  uniqueStateId,
-  submitHttpVerb = 'POST',
-  onSubmit,
-  submitUrl,
-  entityType,
-  showQuickSearch,
-  labelCol,
-  wrapperCol,
-  allowRemoteDelete,
-  selectionMode,
+    containerId,
+    dataSource,
+    showPagination,
+    paginationDefaultPageSize = 5,
+    formId, // Render embedded form if this option is provided
+    value,
+    name,
+    onChange,
+    allowDeleteItems,
+    deleteUrl,
+    deleteConfirmMessage,
+    buttons,
+    title,
+    maxHeight,
+    filters,
+    properties,
+    renderStrategy,
+    uniqueStateId,
+    submitHttpVerb = 'POST',
+    onSubmit,
+    submitUrl,
+    entityType,
+    showQuickSearch,
+    labelCol,
+    wrapperCol,
+    allowRemoteDelete,
+    selectionMode,
     namePrefix,
     customVisibility,
   } = props;
@@ -217,7 +217,7 @@ const ListControl: FC<IListControlProps> = props => {
   }, [value]);
 
   const { registerAction } = useConfigurableActionDispatcher();
-  
+
   useEffect(() => {
     registerAction({
       name: 'Refresh list items',

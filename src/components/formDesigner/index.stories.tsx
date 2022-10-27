@@ -34,7 +34,8 @@ export const RoleAppointmentForm = addStory(DesignerTemplate, {
 });
 
 export const TestForm = addStory(DesignerTemplate, {
-  formId: 'bb9a1ec3-c727-4fef-918e-ce1600f87d9c'
+  formId: '80A62EAB-2771-4650-88C9-C8FC676D6A60'
+  //formId: '7b8562c7-1aed-4818-b830-1dd04c789f20'
   /*
   formId: {
     name: 'test-form',
@@ -93,10 +94,13 @@ export const WizardFormDebug = addStory(DesignerTemplate, {
 });
 
 export const FormsIndex = addStory(DesignerTemplate, {
+  formId: 'FE6A8C1E-C94B-46E3-AE93-FC20390C2905'
+  /*
   formId: {
     name: 'forms',
     module: 'shesha',
   }
+  */
 });
 
 export const FormCreate = addStory(DesignerTemplate, {
@@ -113,7 +117,7 @@ export const FormDetails = addStory(DesignerTemplate, {
     module: 'shesha',
   }
   */
-  formId: '567b9f53-a9be-48f1-8ea8-d4626edf78fd'
+  formId: '483BC7C3-8EF3-4481-86C9-E1BED37162D2'
 });
 
 export const Modules = addStory(DesignerTemplate, {

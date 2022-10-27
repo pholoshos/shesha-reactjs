@@ -123,8 +123,42 @@
           "label": "Reference List",
           "value": "referenceList",
           "id": "447171c1-5d69-404b-bf58-1db2c28882a0"
+        },
+        {
+          "label": "API",
+          "value": "api",
+          "id": "02501feb-f369-4306-a0fd-50f8c96410f8"
         }
       ]
+    },
+    {
+      "id": "366f360b-a37b-4803-a2c2-8637208caa9d",
+      "type": "codeEditor",
+      "name": "dataSourceUrl",
+      "label": "Data Source Url",
+      "parentId": "root",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "Write a code that returns the URL to be used to fetch Data for the Radio.",
+      "exposedVariables": [
+        { "name": "data", "description": "Form values", "type": "object" },
+        { "name": "globalState", "description": "The global state", "type": "object" }
+      ],
+      "customVisibility": "return data.dataSourceType === 'api'"
+    },
+    {
+      "id": "c153b326-7ff2-4bb0-af21-45f80e8cd6e0",
+      "type": "codeEditor",
+      "name": "reducerFunc",
+      "label": "Reducer function",
+      "parentId": "root",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A reducer function for the data returned from the server. The function should return an array of object of this format: { value, label }",
+      "exposedVariables": [
+        { "name": "data", "description": "Data returned from the server. This should is an array", "type": "array" }
+      ],
+      "customVisibility": "return data.dataSourceType === 'api'"
     },
     {
       "id": "8c45d055-8cae-499c-a129-aa34facef0d0",

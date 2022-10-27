@@ -45,6 +45,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const { excludeFormFieldsInPayload, onDataLoaded, onUpdate, formKeysToPersist, uniqueFormId } = formSettings;
   const { globalState } = useGlobalState();
   const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);
+  console.log('point1', { submitUrl, httpVerb })
   const { backendUrl } = useSheshaApplication();
   const [lastTruthyPersistedValue, setLastTruthyPersistedValue] = useState<IAnyObject>(null);
   const { refetch: fetchEntity, data: fetchedEntity } = useGet({
@@ -88,10 +89,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     // update validation rules
   };
 
-  const getUrl = formSettings?.getUrl;
-
-  const previousUrl = usePrevious(getUrl);
-
   const initialValuesFromSettings = useMemo(() => {
     const computedInitialValues = {} as object;
 
@@ -111,11 +108,10 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     return computedInitialValues;
   }, [formSettings?.initialValues]);
 
-  useEffect(() => {
-    if (skipFetchData) {
-      return;
-    }
+  const getUrl = formSettings?.getUrl;
 
+  const previousUrl = usePrevious(getUrl);
+  const fetchFormData = () => {
     if (
       _.isEqual(previousUrl, getUrl)
       // !_.isEqual(previousFormData, formData) ||
@@ -151,6 +147,11 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
         });
       }
     }
+  }
+
+  useEffect(() => {
+    if (!skipFetchData) 
+      fetchFormData();
   }, [getUrl, formData, globalState, parentFormValues, skipFetchData]);
 
   const fetchedFormEntity = fetchedEntity?.result as object;

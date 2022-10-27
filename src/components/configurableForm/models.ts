@@ -63,6 +63,11 @@ export interface IConfigurableFormRendererProps<Values = any, FieldData = any> e
    */
   skipFetchData?: boolean;
 
+  /**
+   * External data fetcher, is used to refresh form data from the back-end. 
+   */
+  refetchData?: () => Promise<any>;
+
   //onFinishFailed?: (errorInfo: ValidateErrorEntity<Values>) => void;
 }
 

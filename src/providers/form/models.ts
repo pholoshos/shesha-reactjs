@@ -188,7 +188,6 @@ export type FormIdentifier = FormFullName | FormUid;
 export interface IConfigurableFormBaseProps {
   formId?: FormIdentifier;
   markup?: FormMarkup;
-  //formSettings?: IFormSettings;
 }
 
 export type FormAction = (values?: any, parameters?: any) => void;

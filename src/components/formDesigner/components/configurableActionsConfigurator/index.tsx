@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, ReactNode, useMemo } from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { ThunderboltOutlined } from '@ant-design/icons';
@@ -10,6 +10,7 @@ import { configurableActionsConfiguratorSettingsForm } from './settings';
 import { IConfigurableActionConfiguration } from '../../../../interfaces/configurableAction';
 import { IConfigurableActionDictionary } from '../../../../providers/configurableActionsDispatcher/models';
 import ActionArgumentsEditor from './actionArgumensEditor';
+import HelpTextPopover from '../../../helpTextPopover';
 
 export interface IConfigurableActionNamesComponentProps extends IConfigurableFormComponent {
 
@@ -31,7 +32,7 @@ const ConfigurableActionConfiguratorComponent: IToolboxComponent<IConfigurableAc
 
     return (
       <Form.Item name={model.name} labelCol={{ span: 0 }} wrapperCol={{ span: 24 }} noStyle>
-        <ConfigurableActionConfigurator editorConfig={model} level={1} readOnly={formMode==='readonly'}/>
+        <ConfigurableActionConfigurator editorConfig={model} level={1} readOnly={formMode === 'readonly'} />
       </Form.Item>
     );
   },
@@ -107,7 +108,7 @@ const ConfigurableActionConfigurator: FC<IConfigurableActionConfiguratorProps> =
     return actionName
       ? getConfigurableActionOrNull({ owner: actionOwner, name: actionName })
       : null;
-  }, [actionName, actionOwner]);  
+  }, [actionName, actionOwner]);
 
   return (
     <div
@@ -131,28 +132,28 @@ const ConfigurableActionConfigurator: FC<IConfigurableActionConfiguratorProps> =
           </Form.Item>
         )}
         <Form.Item name="handleSuccess" label="Handle Success" valuePropName='checked'>
-          <Switch disabled={readOnly}/>
+          <Switch disabled={readOnly} />
         </Form.Item >
         {
           value?.handleSuccess && (
             <Collapse defaultActiveKey={['1']}>
               <Panel header="On Success handler" key="1">
                 <Form.Item name="onSuccess">
-                  <ConfigurableActionConfigurator editorConfig={props.editorConfig} level={props.level + 1} readOnly={readOnly}/>
+                  <ConfigurableActionConfigurator editorConfig={props.editorConfig} level={props.level + 1} readOnly={readOnly} />
                 </Form.Item >
               </Panel>
             </Collapse>
           )
         }
         <Form.Item name="handleFail" label="Handle Fail" valuePropName='checked'>
-          <Switch disabled={readOnly}/>
+          <Switch disabled={readOnly} />
         </Form.Item>
         {
           value?.handleFail && (
             <Collapse defaultActiveKey={['1']}>
               <Panel header="On Fail handler" key="1">
                 <Form.Item name="onFail">
-                  <ConfigurableActionConfigurator editorConfig={props.editorConfig} level={props.level + 1} readOnly={readOnly}/>
+                  <ConfigurableActionConfigurator editorConfig={props.editorConfig} level={props.level + 1} readOnly={readOnly} />
                 </Form.Item>
               </Panel>
             </Collapse>
@@ -176,7 +177,7 @@ interface IActionSelectProps {
   readOnly?: boolean;
 }
 interface IActionSelectItem {
-  title: string;
+  title: string | ReactNode;
   value: string;
   displayText: string;
   children: IActionSelectItem[];
@@ -192,7 +193,18 @@ const ActionSelect: FC<IActionSelectProps> = ({ value, onChange, actions, readOn
       const ownerNodes: IActionSelectItem[] = [];
       ownerActions.forEach(action => {
         ownerNodes.push({
-          title: action.name,
+          title: (
+            <div>
+              <HelpTextPopover content={action.description}>
+                {action.name}
+              </HelpTextPopover>
+              {/* {action.description && (
+                <Tooltip title={action.description}>
+                  <QuestionCircleOutlined className="sha-help-icon" />
+                </Tooltip>
+              )} */}
+            </div>
+          ),
           displayText: `${owner}: ${action.name}`,
           value: getConfigurableActionFullName(owner, action.name),
           children: null,
@@ -202,7 +214,7 @@ const ActionSelect: FC<IActionSelectProps> = ({ value, onChange, actions, readOn
 
       result.push({
         title: owner,
-        value: null,
+        value: owner,
         displayText: owner,
         children: ownerNodes,
         selectable: false,
@@ -225,7 +237,7 @@ const ActionSelect: FC<IActionSelectProps> = ({ value, onChange, actions, readOn
       }}
       placeholder="Please select"
       allowClear
-      treeDefaultExpandAll
+      //treeDefaultExpandAll
       onChange={onChange}
       treeNodeLabelProp='displayText'
       treeData={treeData}

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useGet } from 'restful-react';
 import { GENERIC_ENTITIES_ENDPOINT } from '../constants';
-import { IAbpWrappedGetEntityListResponse, EntityData, IGetAllPayload } from '../interfaces/gql';
+import { IAbpWrappedGetEntityListResponse, EntityData, IGenericGetAllPayload } from '../interfaces/gql';
 import { convertDotNotationPropertiesToGraphQL } from '../providers/form/utils';
 import { getEntityFilterByIds } from './graphQl';
 
@@ -10,10 +10,6 @@ interface AutocompleteReturn {
   error: any;
   search: (term: string) => void;
   loading: boolean;
-}
-
-interface IAutocompletePayload extends IGetAllPayload {
-  entityType: string;
 }
 
 export type AutocompleteValueType = string | string[];
@@ -40,7 +36,7 @@ const buildFilterById = (value: AutocompleteValueType): string => {
 export const useEntityAutocomplete = (props: IAutocompleteProps): AutocompleteReturn => {
   const displayProperty = props.displayProperty || '_displayName';
   const properties = convertDotNotationPropertiesToGraphQL(['id', displayProperty], []);
-  const getListFetcherQueryParams = (term: string): IAutocompletePayload => {
+  const getListFetcherQueryParams = (term: string): IGenericGetAllPayload => {
     return {
       skipCount: 0,
       maxResultCount: props.maxResultCount ?? 10,
@@ -54,7 +50,7 @@ export const useEntityAutocomplete = (props: IAutocompleteProps): AutocompleteRe
 
   // current value can be already loaded as part of list! check it and skip fetching
 
-  const getValuePayload: IAutocompletePayload = {
+  const getValuePayload: IGenericGetAllPayload = {
     skipCount: 0,
     maxResultCount: 1000,
     entityType: props.entityType,
@@ -62,7 +58,7 @@ export const useEntityAutocomplete = (props: IAutocompleteProps): AutocompleteRe
     sorting: displayProperty,
     filter: buildFilterById(props.value),
   };
-  const valueFetcher = useGet<IAbpWrappedGetEntityListResponse, any, IAutocompletePayload>(
+  const valueFetcher = useGet<IAbpWrappedGetEntityListResponse, any, IGenericGetAllPayload>(
     `${GENERIC_ENTITIES_ENDPOINT}/GetAll`,
     {
       lazy: !props.value,
@@ -70,7 +66,7 @@ export const useEntityAutocomplete = (props: IAutocompleteProps): AutocompleteRe
     }
   );
 
-  const listFetcher = useGet<IAbpWrappedGetEntityListResponse, any, IAutocompletePayload>(
+  const listFetcher = useGet<IAbpWrappedGetEntityListResponse, any, IGenericGetAllPayload>(
     `${GENERIC_ENTITIES_ENDPOINT}/GetAll`,
     {
       lazy: props.lazy ?? true,

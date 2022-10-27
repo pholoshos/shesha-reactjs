@@ -237,6 +237,12 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [metadataFetchCount]);
 
   //#region get form data
+
+  const fetcherRef = useRef<() => Promise<EntityAjaxResponse>>();
+  const fetchFormData = () => {
+    return fetchData({ queryParams: entityPathId || !id ? {} : { id, properties: fetchFields } });
+  }
+
   useEffect(() => {
     // The mismatch happens if you're drilled down to a page and then click the back button on the browser
     // When you land, because you'd still be having the formResponse, before the correct form is being fetched
@@ -246,7 +252,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     
     // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
     if (fetchDataPath && correctForm && fetchFields) {
-      fetchData({ queryParams: entityPathId || !id ? {} : { id, properties: fetchFields } });
+      fetcherRef.current = fetchFormData;
+      fetchFormData();
     }
   }, [id, fetchFields, formSettings?.getUrl, entityPathId, fetchDataPath]);
 
@@ -372,6 +379,12 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     }
   };
 
+  const refetchFormData = () => {
+    return fetcherRef.current
+      ? fetcherRef.current()
+      : Promise.reject('Fetcher is not ready');
+  }
+
   return (
     <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
       <MetadataProvider id="dynamic" modelType={formSettings?.modelType}>
@@ -386,6 +399,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         initialValues={state?.fetchedData}
         skipPostOnFinish
         skipFetchData
+        refetchData={() => refetchFormData()}
         className="sha-dynamic-page"
       />
       </MetadataProvider>

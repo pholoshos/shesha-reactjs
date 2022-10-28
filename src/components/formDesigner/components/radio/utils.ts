@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid/non-secure';
 import { CSSProperties } from 'react';
 import { RadioChangeEvent, SpaceProps } from 'antd';
 import { ReferenceListItemDto } from '../../../../apis/referenceList';
@@ -13,25 +14,23 @@ export interface IRadioProps extends Omit<IConfigurableFormComponent, 'style'> {
   value?: any;
   onChange?: (e: RadioChangeEvent) => void;
   style?: CSSProperties;
+  dataSourceUrl?: string;
+  reducerFunc?: string; // The function that receives data from the API and returns it in the format { value, label }
 }
 
 export const getDataSourceList = (
   dataSource: DataSourceType,
   values: ILabelValue[],
   refList: ReferenceListItemDto[],
-  urlList: any[] = []
+  urlList: ILabelValue<any>[] = []
 ): ILabelValue[] => {
   switch (dataSource) {
     case 'values':
       return values;
 
     case 'referenceList':
-      return (refList || []).map(({ id, item, itemValue }) => ({ id, value: itemValue, label: item }));
+      return (refList || [])?.map(({ id, item, itemValue }) => ({ id, value: itemValue, label: item }));
     case 'url':
-      return (urlList || []).map(i => ({
-        id: i?.id,
-        value: i?.id || i?.itemValue,
-        label: i?.displayName || i?.name || i?.item,
-      }));
+      return urlList?.map(props => (props?.id ? props : { ...props, id: nanoid() }));
   }
 };

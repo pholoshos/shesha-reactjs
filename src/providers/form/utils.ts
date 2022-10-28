@@ -951,6 +951,7 @@ export const createComponentModelForDataProperty = (
     customVisibility: null,
     visibilityFunc: _data => true,
     isDynamic: false,
+    validate: {}
   };
   if (toolboxComponent.initModel) componentModel = toolboxComponent.initModel(componentModel);
 

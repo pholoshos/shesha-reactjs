@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid/non-secure';
 import { CSSProperties } from 'react';
 import { RadioChangeEvent, SpaceProps } from 'antd';
 import { ReferenceListItemDto } from '../../../../apis/referenceList';
@@ -30,6 +31,6 @@ export const getDataSourceList = (
     case 'referenceList':
       return (refList || [])?.map(({ id, item, itemValue }) => ({ id, value: itemValue, label: item }));
     case 'url':
-      return urlList;
+      return urlList?.map(props => (props?.id ? props : { ...props, id: nanoid() }));
   }
 };

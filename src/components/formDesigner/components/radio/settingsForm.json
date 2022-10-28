@@ -125,8 +125,8 @@
           "id": "447171c1-5d69-404b-bf58-1db2c28882a0"
         },
         {
-          "label": "API",
-          "value": "api",
+          "label": "API Url",
+          "value": "url",
           "id": "02501feb-f369-4306-a0fd-50f8c96410f8"
         }
       ]
@@ -144,7 +144,7 @@
         { "name": "data", "description": "Form values", "type": "object" },
         { "name": "globalState", "description": "The global state", "type": "object" }
       ],
-      "customVisibility": "return data.dataSourceType === 'api'"
+      "customVisibility": "return data.dataSourceType === 'url'"
     },
     {
       "id": "c153b326-7ff2-4bb0-af21-45f80e8cd6e0",
@@ -154,11 +154,11 @@
       "parentId": "root",
       "validate": {},
       "settingsValidationErrors": [],
-      "description": "A reducer function for the data returned from the server. The function should return an array of object of this format: { value, label }",
+      "description": "A reducer function for the data returned from the server. The function is responsible for value and label props. The function should return an array of object of this format: { value, label }",
       "exposedVariables": [
         { "name": "data", "description": "Data returned from the server. This should is an array", "type": "array" }
       ],
-      "customVisibility": "return data.dataSourceType === 'api'"
+      "customVisibility": "return data.dataSourceType === 'url'"
     },
     {
       "id": "8c45d055-8cae-499c-a129-aa34facef0d0",

@@ -15,6 +15,8 @@ export interface ICheckboxGroupProps extends Omit<IConfigurableFormComponent, 's
   value?: CheckboxValueType[] | any;
   onChange?: (checkedValue: Array<CheckboxValueType> | RadioChangeEvent) => void;
   style?: CSSProperties;
+  dataSourceUrl?: string;
+  reducerFunc?: string;
 }
 
 export const getSpan = (direction: SpaceProps['direction'], size: number) =>

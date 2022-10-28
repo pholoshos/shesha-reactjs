@@ -57,6 +57,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
   const meta = useMetadata(false);
   const { getContainerProperties } = useMetadataDispatcher();
   const { metadata } = meta || {};
+  console.log('meta!', meta);
 
   const initialProperties = metadata?.properties ?? [];
   const [state, setState] = useState<IAutocompleteState>({ options: properties2options(initialProperties, null), properties: initialProperties });

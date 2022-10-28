@@ -10,7 +10,6 @@ import { validateConfigurableComponentSettings } from '../../../../../providers/
 import ComponentsContainer from '../../../componentsContainer';
 import ImportConfigModal from './modal/importConfigModal';
 import settingsFormJson from './settingsForm.json';
-import { useConfig } from './useConfig';
 
 export interface ITableContextComponentProps extends IConfigurableFormComponent {
   entityType?: string;
@@ -102,8 +101,7 @@ console.log('table action owner', {
 const TableContextAccessor: FC<ITableContextComponentProps> = ({ id }) => {
   const { registerActions } = useForm();
   const { refreshTable, exportToExcel, tableConfigLoaded, setIsInProgressFlag } = useDataTableStore();
-  const { selectedRow, selectedRows } = useDataTableSelection();
-  const { deleteConfigs, duplicateConfigs, exportConfigs, publishConfigs, setConfigsReady } = useConfig({ selectedRow, selectedRows, onRefresh: refreshTable });
+  const { selectedRow } = useDataTableSelection();
 
   const [{ visible }, setState] = useState({ visible: false });
 
@@ -133,11 +131,6 @@ const TableContextAccessor: FC<ITableContextComponentProps> = ({ id }) => {
         exportToExcel,
         deleteRow,
         setToEditMode,
-        deleteConfigs,
-        duplicateConfigs,
-        exportConfigs,
-        publishConfigs,
-        setConfigsReady,
         importConfigs,
       }),
     [tableConfigLoaded, selectedRow]

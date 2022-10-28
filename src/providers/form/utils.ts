@@ -151,7 +151,7 @@ export const getClosestComponent = (componentId: string, context: SettingsMigrat
 export const getClosestTableId = (context: SettingsMigrationContext) => {
   const table = getClosestComponent(context.componentId, context, 'datatableContext');
   return table
-      ? table['uniqueStateId']
+      ? table['uniqueStateId'] ?? table.name
       : null;
 }
 

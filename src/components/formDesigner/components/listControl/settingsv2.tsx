@@ -9,6 +9,7 @@ import Show from '../../../show';
 import { AutocompleteRaw } from '../../../autocomplete';
 import { QueryBuilderWithModelType } from '../queryBuilder/queryBuilderWithModelType';
 import { QueryBuilderComponentRenderer } from '../queryBuilder/queryBuilderComponent';
+import FormAutocomplete from '../../../formAutocomplete';
 
 const Option = Select.Option;
 
@@ -154,11 +155,9 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
 
       <Show when={state?.renderStrategy === 'externalForm'}>
         <FormItem name="formId" label="Form Path">
-          <AutocompleteRaw
+          <FormAutocomplete 
             readOnly={readOnly}
-            dataSourceType="entitiesList"
-            typeShortAlias="Shesha.Core.FormConfiguration"
-            entityDisplayProperty="configuration.name"
+            convertToFullId={true}
           />
         </FormItem>
       </Show>

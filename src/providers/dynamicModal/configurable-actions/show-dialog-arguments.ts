@@ -27,19 +27,15 @@ export const dialogArgumentsForm = new DesignerToolbarSettings()
     label: 'Title',
     validate: { required: true },
   })
-  .addAutocomplete({
+  .addFormAutocomplete({
     id: "adbc3b29-9a53-4305-869a-f37ba6e8bb94",
     name: "formId",
     label: "Modal form",
     validate: {
       required: true
     },
-    dataSourceType: "entitiesList",
-    entityTypeShortAlias: "Shesha.Core.FormConfiguration",
-    entityDisplayProperty: "configuration.name",
-    useRawValues: true,
-    queryParams: null,
-  })
+    convertToFullId: true,
+  }) 
   .addCheckbox({
     id: "c815c322-ba5d-4062-9736-e5d03c724134",
     name: "showModalFooter",

@@ -14,6 +14,7 @@ import { ICodeEditorComponentProps } from '../components/formDesigner/components
 import { IContainerComponentProps } from '../components/formDesigner/components/container/containerComponent';
 import { IPropertyAutocompleteProps } from '../components/propertyAutocomplete/propertyAutocomplete';
 import { ICustomFilterProps } from '../components/formDesigner/components/dataTable/filter/models';
+import { IFormAutocompleteProps } from '../components/formDesigner/components/formAutocomplete';
 
 interface ToolbarSettingsProp extends Omit<IConfigurableFormComponent, 'type'> {}
 
@@ -30,6 +31,8 @@ type TextAreaType = ToolbarSettingsProp & Omit<ITextAreaProps, 'type'>;
 type IconPickerType = ToolbarSettingsProp & Omit<IIconPickerComponentProps, 'type'>;
 
 type AutocompleteType = ToolbarSettingsProp & Omit<IAutocompleteProps, 'type'>;
+
+type FormAutocompleteType = ToolbarSettingsProp & Omit<IFormAutocompleteProps, 'type'>;
 
 type CheckboxType = ToolbarSettingsProp & Omit<ICheckboxProps, 'type'>;
 
@@ -98,6 +101,12 @@ export class DesignerToolbarSettings {
 
   public addAutocomplete(props: AutocompleteType) {
     this.form.push({ ...props, type: 'autocomplete' });
+
+    return this;
+  }
+
+  public addFormAutocomplete(props: FormAutocompleteType) {
+    this.form.push({ ...props, type: 'formAutocomplete' });
 
     return this;
   }

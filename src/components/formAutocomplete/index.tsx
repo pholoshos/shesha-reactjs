@@ -2,18 +2,19 @@ import { AutoComplete, Empty, Spin, Typography } from 'antd';
 import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { FC } from 'react';
 import { useGet } from 'restful-react';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 import { GENERIC_ENTITIES_ENDPOINT } from '../../constants';
 import { IAbpWrappedGetEntityListResponse, IGenericGetAllPayload } from '../../interfaces/gql';
 import { FormFullName, FormIdentifier } from '../../providers/form/models';
 import { asFormFullName, asFormRawId } from '../../providers/form/utils';
 import HelpTextPopover from '../helpTextPopover';
 
-export interface IFormAutocompleteProps {
+export interface IFormAutocompleteRuntimeProps {
     value?: FormIdentifier;
     onChange?: (value?: FormIdentifier) => void;
     readOnly?: boolean;
     maxResultCount?: number;
+    convertToFullId: boolean;
 }
 
 interface IOption {
@@ -141,7 +142,7 @@ const getDisplayText = (item: IResponseItem) => {
         : null;
 }
 
-export const FormAutocomplete: FC<IFormAutocompleteProps> = (props) => {
+export const FormAutocomplete: FC<IFormAutocompleteRuntimeProps> = (props) => {
     const selectedValue = useRef(null);
     const [autocompleteText, setAutocompleteText] = useState<string>(null);
     const {
@@ -245,10 +246,17 @@ export const FormAutocomplete: FC<IFormAutocompleteProps> = (props) => {
     }
 
     const onSelect = (_value, option) => {
+        const formId = (option as IOption)?.data;
+        selectedValue.current = formId;
         if (props.onChange) {
-            const formId = (option as IOption)?.data;
-            selectedValue.current = formId;
             props.onChange(formId);
+        }
+    }
+
+    const onClear = () => {
+        selectedValue.current = null;
+        if (props.onChange) {
+            props.onChange(null);
         }
     }
 
@@ -262,13 +270,13 @@ export const FormAutocomplete: FC<IFormAutocompleteProps> = (props) => {
             options={options}
             onSearch={onSearch}
             onSelect={onSelect}
+            onClear={onClear}
             placeholder={valueFetcher.loading ? 'Loading...' : 'Type to search'}
-            disabled={valueFetcher.loading}
+            disabled={valueFetcher.loading || props.readOnly}
 
             value={autocompleteText}
             onChange={setAutocompleteText}
         >
-            {/* <Input.Search size="large" placeholder="input here" /> */}
         </AutoComplete>
     );
 }

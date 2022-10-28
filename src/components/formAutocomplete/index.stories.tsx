@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
-import { FormAutocomplete, IFormAutocompleteProps } from './';
+import { FormAutocomplete, IFormAutocompleteRuntimeProps } from './';
 import StoryApp from '../storyBookApp';
 import { Button, Form } from 'antd';
 import { addStory } from '../../stories/utils';
@@ -12,7 +12,7 @@ export default {
   component: FormAutocomplete,
 } as Meta;
 
-interface IStoryArgs extends IFormAutocompleteProps {
+interface IStoryArgs extends IFormAutocompleteRuntimeProps {
   /**
    * Test Value, is used only by this story for the `Set Test Value Button`
    */

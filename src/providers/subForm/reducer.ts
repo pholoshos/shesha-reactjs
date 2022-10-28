@@ -13,7 +13,7 @@ export function uiReducer(
   switch (type) {
     case SubFormActionEnums.SetMarkupWithSettings:
       const { components, formSettings } = payload || {};
-
+      
       return {
         ...state,
         components,

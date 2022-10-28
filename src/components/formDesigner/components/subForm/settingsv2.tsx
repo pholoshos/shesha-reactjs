@@ -6,6 +6,7 @@ import CodeEditor from '../codeEditor/codeEditor';
 import Show from '../../../show';
 import { AutocompleteRaw } from '../../../autocomplete';
 import { ISubFormProps } from '../../../../providers/subForm/interfaces';
+import FormAutocomplete from '../../../formAutocomplete';
 
 const Option = Select.Option;
 
@@ -19,7 +20,7 @@ export interface ISubFormSettingsProps {
   onValuesChange?: (changedValues: any, values: ISubFormProps) => void;
 }
 
-interface ISubFormSettingsState extends ISubFormProps {}
+interface ISubFormSettingsState extends ISubFormProps { }
 
 export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, model, onValuesChange }) => {
   const [state, setState] = useState<ISubFormSettingsState>(model);
@@ -45,37 +46,35 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
         ...model,
         properties: typeof model?.properties === 'string' ? model?.properties : model?.properties?.join(' '),
       }}
-      // initialValues={initialValues}
+    // initialValues={initialValues}
     >
       <SectionSeparator sectionName="Display" />
 
       <FormItem name="name" label="Name">
-        <PropertyAutocomplete id="fb71cb51-884f-4f34-aa77-820c12276c95" readOnly={readOnly}/>
+        <PropertyAutocomplete id="fb71cb51-884f-4f34-aa77-820c12276c95" readOnly={readOnly} />
       </FormItem>
 
       <FormItem name="label" label="Label">
-        <Input readOnly={readOnly}/>
+        <Input readOnly={readOnly} />
       </FormItem>
 
       <FormItem name="readOnly" label="Read Only" valuePropName="checked">
-        <Checkbox disabled={readOnly}/>
+        <Checkbox disabled={readOnly} />
       </FormItem>
 
       <Form.Item name="hideLabel" label="Hide Label" valuePropName="checked">
-        <Checkbox disabled={readOnly}/>
+        <Checkbox disabled={readOnly} />
       </Form.Item>
 
       <FormItem name="formId" label="Form">
-        <AutocompleteRaw
-          dataSourceType="entitiesList"
-          typeShortAlias="Shesha.Core.FormConfiguration"
-          entityDisplayProperty="configuration.name"
+        <FormAutocomplete
           readOnly={readOnly}
+          convertToFullId={true}
         />
       </FormItem>
 
       <FormItem name="uniqueStateId" label="Unique State ID" tooltip="Important for accessing the ">
-        <Input readOnly={readOnly}/>
+        <Input readOnly={readOnly} />
       </FormItem>
 
       <SectionSeparator sectionName="Data" />
@@ -94,7 +93,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
 
       <Show when={state?.dataSource === 'api'}>
         <FormItem name="entityType" label="Entity type">
-          <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" readOnly={readOnly}/>
+          <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" readOnly={readOnly} />
         </FormItem>
 
         <Show when={Boolean(state?.entityType)}>
@@ -420,11 +419,11 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
       <SectionSeparator sectionName="Layout" />
 
       <FormItem name="labelCol" label="Label Col">
-        <InputNumber min={1} max={24} defaultValue={5} step={1} readOnly={readOnly}/>
+        <InputNumber min={1} max={24} defaultValue={5} step={1} readOnly={readOnly} />
       </FormItem>
 
       <FormItem name="wrapperCol" label="Wrapper Col">
-        <InputNumber min={1} max={24} defaultValue={13} step={1} readOnly={readOnly}/>
+        <InputNumber min={1} max={24} defaultValue={13} step={1} readOnly={readOnly} />
       </FormItem>
 
       <FormItem name="style" label="Style">

@@ -45,7 +45,6 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const { excludeFormFieldsInPayload, onDataLoaded, onUpdate, formKeysToPersist, uniqueFormId } = formSettings;
   const { globalState } = useGlobalState();
   const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);
-  console.log('point1', { submitUrl, httpVerb })
   const { backendUrl } = useSheshaApplication();
   const [lastTruthyPersistedValue, setLastTruthyPersistedValue] = useState<IAnyObject>(null);
   const { refetch: fetchEntity, data: fetchedEntity } = useGet({

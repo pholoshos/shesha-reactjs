@@ -833,6 +833,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
     registerAction({
       name: 'Export to Excel',
+      description: 'Export current table view to Excel',
       owner: uniqueStateId,
       hasArguments: false,
       executer: () => {

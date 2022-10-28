@@ -42,6 +42,11 @@ export const TestForm = addStory(DesignerTemplate, {
     module: 'shesha'
   }*/
 });
+
+export const AutocompleteSettingsForm = addStory(DesignerTemplate, {
+  formId: '7c19404f-7c6f-4cee-9af7-6b82b7be3982'
+});
+
 export const UserManagementForm = addStory(DesignerTemplate, {
   formId: { name: 'user-management-new' }
 });
@@ -64,9 +69,12 @@ export const PersonsIndex = addStory(DesignerTemplate, {
 });
 
 export const SubForm = addStory(DesignerTemplate, {
+  /*
   formId: {
     name: 'sub-form',
   }
+  */
+  formId: '363C7F25-4C09-4708-BCCC-9043160C416D'
 });
 
 export const PersonList = addStory(DesignerTemplate, {

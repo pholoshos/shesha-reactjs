@@ -5,7 +5,7 @@ import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE }
 import { usePubSub } from '../../hooks';
 import { uiReducer } from './reducer';
 import { getQueryParams } from '../../utils/url';
-import { FormMarkupWithSettings } from '../form/models';
+import { DEFAULT_FORM_SETTINGS, FormMarkupWithSettings } from '../form/models';
 import { setMarkupWithSettingsAction } from './actions';
 import { ISubFormProps } from './interfaces';
 import { ColProps, message, notification } from 'antd';
@@ -50,7 +50,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   const {
     refetch: fetchForm,
-    formConfiguration: fetchFormResponse,
+    //formConfiguration: fetchFormResponse,
     loading: isFetchingForm,
     error: fetchFormError
    } = useFormConfiguration({ formId: formId, lazy: true });
@@ -223,19 +223,19 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   //#region Fetch Form
   useEffect(() => {
     if (formId && !markup) {
-      fetchForm();
+      fetchForm().then(response => {
+        dispatch(setMarkupWithSettingsAction({ components: response.components, formSettings: response.formSettings }));
+      });
     }
 
     if (!formId && markup) {
       dispatch(setMarkupWithSettingsAction(markup));
     }
-  }, [formId, markup]); //
 
-  useEffect(() => {
-    if (!isFetchingForm && fetchFormResponse) {
-      dispatch(setMarkupWithSettingsAction({ components: fetchFormResponse.markup, formSettings: fetchFormResponse.settings }));
-    }
-  }, [fetchFormResponse, isFetchingForm]);
+    if (!formId && !markup){
+      dispatch(setMarkupWithSettingsAction({ components: [], formSettings: DEFAULT_FORM_SETTINGS }));
+    }      
+  }, [formId, markup]); //
 
   useEffect(() => {
     if (markup) {

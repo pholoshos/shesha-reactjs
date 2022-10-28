@@ -192,7 +192,7 @@ export const Playground = addStory(DesignerTemplate, {
 });
 
 export const OrganisationEdit = addStory(DesignerTemplate, {
-  formId: { name: '/organisations/edit' },
+  formId: { name: '/organisations/edit', version: 1 },
 });
 
 export const PermissionedObjects = addStory(DesignerTemplate, {

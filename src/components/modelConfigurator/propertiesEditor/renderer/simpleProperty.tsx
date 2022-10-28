@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Button, Tooltip, Tag } from 'antd';
-import { DeleteFilled, QuestionCircleOutlined } from '@ant-design/icons';
+import { DeleteFilled, EyeInvisibleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { usePropertiesEditor } from '../provider';
 import DragHandle from './dragHandle';
 import classNames from 'classnames';
@@ -26,7 +26,7 @@ export const SimpleProperty: FC<IProps> = props => {
     <div className={classNames('sha-sidebar-item', { selected: selectedItemId === props.id })} ref={selectedItemId === props.id ? selectedItemRef : undefined}>
       <div className="sha-sidebar-item-header">
         <DragHandle id={props.id} />
-        
+        {props.suppress && <span><EyeInvisibleOutlined /> </span>}
         {icon && <ShaIcon iconName={icon} />}
         
         <span className="sha-sidebar-item-name">{props.name}</span>

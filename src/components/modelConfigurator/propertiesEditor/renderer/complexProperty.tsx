@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Button, Tooltip } from 'antd';
-import { DeleteFilled, QuestionCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteFilled, QuestionCircleOutlined, PlusOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { usePropertiesEditor } from '../provider';
 import DragHandle from './dragHandle';
 import { IModelItem } from '../../../../interfaces/modelConfigurator';
@@ -34,6 +34,7 @@ export const ComplexProperty: FC<IProps> = props => {
     <div className={classes.reduce((a, c) => a + ' ' + c)} ref={selectedItemId === props.id ? selectedItemRef : undefined}>
       <div className="sha-sidebar-item-header">
         <DragHandle id={props.id} />
+        {props.suppress && <span><EyeInvisibleOutlined /> </span>}
         {icon && <ShaIcon iconName={icon} />}
         <span className="sha-sidebar-item-name">{props.name}</span>
         {props.description && (

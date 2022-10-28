@@ -18,7 +18,6 @@ export interface ITextAreaProps extends IConfigurableFormComponent {
   placeholder?: string;
   showCount: boolean;
   autoSize: boolean;
-  maxLength?: number;
   allowClear: boolean;
   hideBorder?: boolean;
   initialValue?: string;
@@ -43,7 +42,7 @@ const TextField: IToolboxComponent<ITextAreaProps> = {
       disabled: model.disabled,
       autoSize: model.autoSize ? { minRows: 2 } : false,
       showCount: model.showCount,
-      maxLength: model.maxLength,
+      maxLength: model.validate?.maxLength,
       allowClear: model.allowClear,
       bordered: !model.hideBorder,
       size: model?.size,
@@ -94,12 +93,6 @@ const TextField: IToolboxComponent<ITextAreaProps> = {
   },
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
-  linkToModelMetadata: (model, metadata): ITextAreaProps => {
-    return {
-      ...model,
-      maxLength: metadata.maxLength,
-    };
-  },
 };
 
 export default TextField;

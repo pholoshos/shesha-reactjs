@@ -73,13 +73,13 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         <Input readOnly={readOnly}/>
       </FormItem>
 
-      <FormItem
+      {/* <FormItem
         name="uniqueStateId"
         label="Unique State ID"
         tooltip="This is important for when you want to dispatch events that are related to the list component. In a case where you have more than one List component, you\'ll need to specify which you want to target. This ID helps identify the correct component"
       >
         <Input readOnly={readOnly}/>
-      </FormItem>
+      </FormItem> */}
 
       <SectionSeparator sectionName="Buttons" />
 

@@ -98,7 +98,8 @@ interface IDataTableProviderProps extends ICrudProps {
    * Used for storing the data table state in the global store and publishing and listening to events
    * If not provided, the state will not be saved globally and the user cannot listen to and publish events
    */
-  uniqueStateId?: string;
+  actionOwnerId?: string;
+  actionOwnerName?: string;
 
   /** Table title */
   title?: string;
@@ -143,7 +144,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   defaultFilter,
   entityType,
   configurableColumns,
-  uniqueStateId,
+  actionOwnerId,
+  actionOwnerName,
   onFetchDataSuccess,
 }) => {
   const [state, dispatch] = useThunkReducer(dataTableReducer, {
@@ -799,13 +801,14 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   //#region Subscriptions
   useEffect(() => {
-    if (uniqueStateId) {
+    // write state by name
+    if (actionOwnerName) {
       setGlobalState({
-        key: uniqueStateId,
+        key: actionOwnerName,
         data: { ...state, refreshTable },
       });
     }
-  }, [state, uniqueStateId]);
+  }, [state, actionOwnerName]);
 
   const { registerAction } = useConfigurableActionDispatcher();
   
@@ -813,7 +816,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
     registerAction({
       name: 'Refresh table',
-      owner: uniqueStateId,
+      owner: actionOwnerName,
+      ownerUid: actionOwnerId,
       hasArguments: false,
       executer: () => {
         refreshTable(); // todo: return correct promise
@@ -823,7 +827,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
     registerAction({
       name: 'Delete row',
-      owner: uniqueStateId,
+      owner: actionOwnerName,
+      ownerUid: actionOwnerId,
       hasArguments: false,
       executer: () => {
         deleteRow(); // todo: return correct promise
@@ -834,7 +839,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     registerAction({
       name: 'Export to Excel',
       description: 'Export current table view to Excel',
-      owner: uniqueStateId,
+      owner: actionOwnerName,
+      ownerUid: actionOwnerId,
       hasArguments: false,
       executer: () => {
         debouncedExportToExcel(); // return real promise
@@ -844,7 +850,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
     registerAction({
       name: 'Toggle Advanced Filter',
-      owner: uniqueStateId,
+      owner: actionOwnerName,
+      ownerUid: actionOwnerId,
       hasArguments: false,
       executer: () => {
         toggleAdvancedFilter(); // return real promise
@@ -854,7 +861,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
     registerAction({
       name: 'Toggle Columns Selector',
-      owner: uniqueStateId,
+      owner: actionOwnerName,
+      ownerUid: actionOwnerId,
       hasArguments: false,
       executer: () => {
         toggleColumnsSelector(); // return real promise

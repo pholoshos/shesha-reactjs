@@ -12,6 +12,7 @@ import moment from 'moment';
 import { executeExpression, getStyle } from '../../../../../providers/form/utils';
 import { getButtonGroupMenuItem } from './utils';
 import { migrateV0toV1 } from './migrations/migrate-v1';
+import { migrateV1toV2 } from './migrations/migrate-v2';
 
 const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
   type: 'buttonGroup',
@@ -35,12 +36,13 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
     };
   },
   migrator: m => m.add<IButtonGroupProps>(0, prev => {
-    return { 
-      ...prev,
-      items: prev['items'] ?? [],
-    };
-  })
-  .add<IButtonGroupProps>(1, migrateV0toV1),
+      return {
+        ...prev,
+        items: prev['items'] ?? [],
+      };
+    })
+    .add<IButtonGroupProps>(1, migrateV0toV1)
+    .add<IButtonGroupProps>(2, migrateV1toV2),
   settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
     return <ToolbarSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },

@@ -8,7 +8,7 @@ import { useConfigurableActionDispatcher } from '../../../../providers/configura
 import { validateConfigurableComponentSettings } from '../../../..';
 import { configurableActionsConfiguratorSettingsForm } from './settings';
 import { IConfigurableActionConfiguration } from '../../../../interfaces/configurableAction';
-import { IConfigurableActionDictionary } from '../../../../providers/configurableActionsDispatcher/models';
+import { IConfigurableActionGroupDictionary } from '../../../../providers/configurableActionsDispatcher/models';
 import ActionArgumentsEditor from './actionArgumensEditor';
 import HelpTextPopover from '../../../helpTextPopover';
 
@@ -39,8 +39,6 @@ const ConfigurableActionConfiguratorComponent: IToolboxComponent<IConfigurableAc
   settingsFormMarkup: configurableActionsConfiguratorSettingsForm,
   validateSettings: model => validateConfigurableComponentSettings(configurableActionsConfiguratorSettingsForm, model),
 };
-
-//interface IConfigurableActionConfiguratorProps extends IFormItem { }
 
 interface IConfigurableActionConfiguratorProps {
   editorConfig: IConfigurableActionNamesComponentProps;
@@ -171,7 +169,7 @@ const getConfigurableActionFullName = (owner: string, name: string) => {
 }
 
 interface IActionSelectProps {
-  actions: IConfigurableActionDictionary;
+  actions: IConfigurableActionGroupDictionary;
   value?: string;
   onChange?: () => void;
   readOnly?: boolean;
@@ -187,25 +185,22 @@ const ActionSelect: FC<IActionSelectProps> = ({ value, onChange, actions, readOn
 
   const treeData = useMemo<IActionSelectItem[]>(() => {
     const result: IActionSelectItem[] = [];
+    
+    console.log('build actions', actions)
 
     for (const owner in actions) {
       const ownerActions = actions[owner];
       const ownerNodes: IActionSelectItem[] = [];
-      ownerActions.forEach(action => {
+      ownerActions.actions.forEach(action => {
         ownerNodes.push({
           title: (
             <div>
               <HelpTextPopover content={action.description}>
                 {action.name}
               </HelpTextPopover>
-              {/* {action.description && (
-                <Tooltip title={action.description}>
-                  <QuestionCircleOutlined className="sha-help-icon" />
-                </Tooltip>
-              )} */}
             </div>
           ),
-          displayText: `${owner}: ${action.name}`,
+          displayText: `${ownerActions.ownerName}: ${action.name}`,
           value: getConfigurableActionFullName(owner, action.name),
           children: null,
           selectable: true,
@@ -213,7 +208,7 @@ const ActionSelect: FC<IActionSelectProps> = ({ value, onChange, actions, readOn
       });
 
       result.push({
-        title: owner,
+        title: ownerActions.ownerName,
         value: owner,
         displayText: owner,
         children: ownerNodes,

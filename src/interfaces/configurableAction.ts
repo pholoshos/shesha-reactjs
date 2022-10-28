@@ -27,9 +27,15 @@ export type IConfigurableActionArgumentsFormFactory<TModel = IConfigurableAction
  */
 export interface IConfigurableActionDescriptor<TArguments = IConfigurableActionArguments, TReponse = any> {
   /**
-   * Action owner (component responsible for the action execution)
+   * Action owner name (component responsible for the action execution)
    */
   owner: string;
+
+  /**
+   * Action owner Uid
+   */
+  ownerUid: string;
+
   /**
    * Action Name
    */

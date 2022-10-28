@@ -5,7 +5,7 @@ import { FormIdentifier } from '../form/models';
 export interface ISubFormProps extends IValuable, IChangeable {
   dataSourceUrl?: string;
   name: string;
-  uniqueStateId?: string;
+  actionsOwnerId?: string;
   formId?: FormIdentifier;
 
   submitUrl?: string;

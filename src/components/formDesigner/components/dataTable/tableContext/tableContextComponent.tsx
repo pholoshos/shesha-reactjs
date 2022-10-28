@@ -15,7 +15,6 @@ import { useConfig } from './useConfig';
 export interface ITableContextComponentProps extends IConfigurableFormComponent {
   entityType?: string;
   endpoint?: string;
-  uniqueStateId?: string;
   components?: IConfigurableFormComponent[]; // If isDynamic we wanna
 }
 
@@ -28,12 +27,12 @@ const TableContextComponent: IToolboxComponent<ITableContextComponentProps> = {
   factory: (model: ITableContextComponentProps) => {
     return <TableContext {...model} />;
   },
-  initModel: (model: ITableContextComponentProps) => {
+  migrator: m => m.add<ITableContextComponentProps>(0, prev => {
     return {
-      ...model,
-      items: [],
+      ...prev,
+      name: prev['uniqueStateId'] ?? prev.name,
     };
-  },
+  }),
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
 };
@@ -57,7 +56,7 @@ export const TableContext: FC<ITableContextComponentProps> = props => {
 };
 
 export const TableContextInner: FC<ITableContextComponentProps> = props => {
-  const { entityType, endpoint, label, uniqueStateId } = props;
+  const { entityType, endpoint, label, id, name } = props;
   const { formMode } = useForm();
   const [selectedRow, setSelectedRow] = useState(-1);
   const isDesignMode = formMode === 'designer';
@@ -77,6 +76,11 @@ export const TableContextInner: FC<ITableContextComponentProps> = props => {
     setSelectedRow(index);
   };
 
+console.log('table action owner', {
+  actionOwnerId: id,
+  actionOwnerName: name,
+});
+
   return (
     <DataTableSelectionProvider>
       <DataTableProvider
@@ -86,7 +90,8 @@ export const TableContextInner: FC<ITableContextComponentProps> = props => {
         title={label}
         selectedRow={selectedRow}
         onSelectRow={onSelectRow}
-        uniqueStateId={uniqueStateId}
+        actionOwnerId={id}
+        actionOwnerName={name}
       >
         <TableContextAccessor {...props} />
       </DataTableProvider>

@@ -13,7 +13,6 @@ export interface ISubFormProps
   extends Omit<SubFormProviderProps, 'labelCol' | 'wrapperCol'>,
     IConfigurableFormComponent {
   name: string;
-  uniqueStateId?: string;
   labelCol?: number;
   wrapperCol?: number;
 }
@@ -86,13 +85,13 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
   validateSettings: model => validateConfigurableComponentSettings(alertSettingsForm, model),
 };
 
-interface ISubFormWrapperProps extends Omit<ISubFormProps, 'id' | 'type' | 'style'>, IStylable {
+interface ISubFormWrapperProps extends Omit<ISubFormProps, 'id' | 'type' | 'style' | 'labelCol' | 'wrapperCol'>, IStylable {
   id: string;
 }
 
 const SubFormWrapper: FC<ISubFormWrapperProps> = ({ style, readOnly, ...props }) => {
   return (
-    <SubFormProvider {...props}>
+    <SubFormProvider {...props} actionsOwnerId={props.id} actionOwnerName={props.name}>
       <SubForm style={style} readOnly={readOnly} />
     </SubFormProvider>
   );

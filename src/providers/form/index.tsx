@@ -43,8 +43,10 @@ import {
   IConfigurableFormComponent, IFormValidationErrors,
 } from '../../interfaces';
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
+import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
 
 export interface IFormProviderProps {
+  name: string;
   flatComponents: IFlatComponentsStructure;
   formSettings: IFormSettings;
   mode: FormMode;
@@ -61,6 +63,7 @@ export interface IFormProviderProps {
 }
 
 const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
+  name,
   children,
   flatComponents,
   mode = 'readonly',
@@ -88,11 +91,11 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   //#endregion
 
-  const actionsOwner = 'Form';
   useEffect(() => {
     registerAction({
       name: 'Start Edit',
-      owner: actionsOwner,
+      owner: name,
+      ownerUid: SheshaActionOwners.Form,
       hasArguments: false,
       executer: () => {
         setFormMode('edit');
@@ -101,7 +104,8 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     });
     registerAction({
       name: 'Cancel Edit',
-      owner: actionsOwner,
+      owner: name,
+      ownerUid: SheshaActionOwners.Form,
       hasArguments: false,
       executer: () => {
         setFormMode('readonly');
@@ -110,7 +114,8 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     });
     registerAction({
       name: 'Submit',
-      owner: actionsOwner,
+      owner: name,
+      ownerUid: SheshaActionOwners.Form,
       hasArguments: false,
       executer: () => {
         form.submit();
@@ -119,7 +124,8 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     });
     registerAction({
       name: 'Reset',
-      owner: actionsOwner,
+      owner: name,
+      ownerUid: SheshaActionOwners.Form,
       hasArguments: false,
       executer: () => {
         form.resetFields();
@@ -129,7 +135,8 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     registerAction({
       name: 'Refresh',
       description: 'Refresh the form data by fetching it from the back-end',
-      owner: actionsOwner,
+      owner: name,
+      ownerUid: SheshaActionOwners.Form,
       hasArguments: false,
       executer: () => {
         return fetchData();

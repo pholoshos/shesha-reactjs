@@ -16,6 +16,7 @@ import { ButtonGroup } from '../../button/buttonGroup/buttonGroupComponent';
 import camelCaseKeys from 'camelcase-keys';
 import _, { isEmpty } from 'lodash';
 import { migrateV0toV1 } from './migrations/migrate-v1';
+import { migrateV1toV2 } from './migrations/migrate-v2';
 
 export interface IChildTableComponentProps extends IChildTableSettingsProps, IConfigurableFormComponent {
   components?: IConfigurableFormComponent[];
@@ -184,7 +185,8 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
         defaultSelectedFilterId: null,
       };
     })
-    .add<IChildTableComponentProps>(1, migrateV0toV1),
+    .add<IChildTableComponentProps>(1, migrateV0toV1)
+    .add<IChildTableComponentProps>(2, migrateV1toV2),
 };
 
 export default ChildTableComponent;

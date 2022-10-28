@@ -26,6 +26,7 @@ import { ConfigurableActionDispatcherConsumer, ConfigurableActionDispatcherProvi
 import { IConfigurableActionDispatcherActionsContext } from '../configurableActionsDispatcher/contexts';
 import { executeScriptArgumentsForm, IExecuteScriptArguments } from './configurable-actions/execute-script';
 import { executeScript } from '../form/utils';
+import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -71,6 +72,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
   const registerSystemActions = (dispatcherContext: IConfigurableActionDispatcherActionsContext) => {
     dispatcherContext.registerAction<IExecuteScriptArguments>({
       owner: 'Common',
+      ownerUid: SheshaActionOwners.Common,
       name: 'Execute Script',
       hasArguments: true,
       argumentsFormMarkup: executeScriptArgumentsForm,

@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { IConfigurableActionArguments, IConfigurableActionConfiguration, IConfigurableActionDescriptor } from '../../interfaces/configurableAction';
 import { GenericDictionary } from '../form/models';
-import { IConfigurableActionDictionary } from './models';
+import { IConfigurableActionGroupDictionary } from './models';
 
 export interface IConfigurableActionDispatcherStateContext {
 }
@@ -27,8 +27,8 @@ export interface RegisterActionType {
 export interface IConfigurableActionDispatcherActionsContext {
   getConfigurableAction: (payload: IGetConfigurableActionPayload) => IConfigurableActionDescriptor;
   getConfigurableActionOrNull: (payload: IGetConfigurableActionPayload) => IConfigurableActionDescriptor | null;
-  getActions: () => IConfigurableActionDictionary;
-  registerAction: RegisterActionType;//(payload: IRegisterActionPayload) => void;
+  getActions: () => IConfigurableActionGroupDictionary;
+  registerAction: RegisterActionType;
   prepareArguments: (actionArguments: any) => void;
   executeAction: (payload: IExecuteActionPayload) => Promise<void>;
 }

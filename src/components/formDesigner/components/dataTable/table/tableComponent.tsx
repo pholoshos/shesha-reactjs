@@ -20,6 +20,7 @@ import { ITableComponentProps } from './models';
 import { IModalProps } from '../../../../../providers/dynamicModal/models';
 import { getStyle } from '../../../../../providers/form/utils';
 import { migrateV0toV1 } from './migrations/migrate-v1';
+import { migrateV1toV2 } from './migrations/migrate-v2';
 
 const TableComponent: IToolboxComponent<ITableComponentProps> = {
   type: 'datatable',
@@ -36,15 +37,16 @@ const TableComponent: IToolboxComponent<ITableComponentProps> = {
   },
   migrator: m => m.add<ITableComponentProps>(0, prev => {
     const items = prev['items'] && Array.isArray(prev['items']) ? prev['items'] : [];
-    return { 
-      ...prev, 
+    return {
+      ...prev,
       items: items,
       useMultiselect: prev['useMultiselect'] ?? false,
       crud: prev['crud'] ?? false,
       flexibleHeight: prev['flexibleHeight'] ?? false,
     };
   })
-  .add<ITableComponentProps>(1, migrateV0toV1),
+    .add<ITableComponentProps>(1, migrateV0toV1)
+    .add<ITableComponentProps>(2, migrateV1toV2),
 
   settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
     return <TableSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
@@ -249,7 +251,7 @@ export const TableWrapper: FC<ITableComponentProps> = ({
         onRowDropped={handleOnRowDropped}
         tableStyle={getStyle(tableStyle, formData, globalState)}
         containerStyle={getStyle(containerStyle, formData, globalState)}
-        // crudMode="dialog"
+      // crudMode="dialog"
       />
     </CollapsibleSidebarContainer>
   );

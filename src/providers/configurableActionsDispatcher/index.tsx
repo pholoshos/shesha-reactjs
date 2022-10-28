@@ -11,7 +11,7 @@ import {
   IExecuteActionPayload,
 } from './contexts';
 import useThunkReducer from 'react-hook-thunk-reducer';
-import { IConfigurableActionDictionary } from './models';
+import { IConfigurableActionGroupDictionary } from './models';
 import { IConfigurableActionDescriptor } from '../../interfaces/configurableAction';
 import { genericActionArgumentsEvaluator } from '../form/utils';
 
@@ -22,7 +22,7 @@ const ConfigurableActionDispatcherProvider: FC<PropsWithChildren<IConfigurableAc
     ...CONFIGURABLE_ACTION_DISPATCHER_CONTEXT_INITIAL_STATE,
   };
 
-  const actions = useRef<IConfigurableActionDictionary>({});
+  const actions = useRef<IConfigurableActionGroupDictionary>({});
 
   const [state, _dispatch] = useThunkReducer(metadataReducer, initial);
 
@@ -33,11 +33,11 @@ const ConfigurableActionDispatcherProvider: FC<PropsWithChildren<IConfigurableAc
       return null;
 
     // todo: search action in the dictionary and return action
-    const ownerActions = actions.current[owner];
-    if (!ownerActions)
+    const actionsGroup = actions.current[owner];
+    if (!actionsGroup?.actions)
       return null;
 
-    const action = ownerActions.find(a => a.name === name);
+    const action = actionsGroup.actions.find(a => a.name === name);
     if (!action)
       return null;
 
@@ -57,12 +57,15 @@ const ConfigurableActionDispatcherProvider: FC<PropsWithChildren<IConfigurableAc
   }
 
   const registerAction = (payload: IRegisterActionPayload) => {
-    //console.log('registerAction')
-    const ownerActions = actions.current[payload.owner] ?? [];
-    const newActions = ownerActions.filter(action => action.name !== payload.name);
+    const ownerActions = actions.current[payload.ownerUid] ?? { ownerName: payload.owner, actions: [] };
+
+    const newActions = ownerActions.actions.filter(action => action.name !== payload.name);
     newActions.push(payload);
 
-    actions.current = { ...actions.current, [payload.owner]: newActions };
+    actions.current = { 
+      ...actions.current, 
+      [payload.ownerUid]: { ...ownerActions, actions: newActions } 
+    };
   };
 
   const prepareArguments =  (_actionArguments: any) => {

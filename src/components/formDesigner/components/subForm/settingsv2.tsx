@@ -73,10 +73,6 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
         />
       </FormItem>
 
-      <FormItem name="uniqueStateId" label="Unique State ID" tooltip="Important for accessing the ">
-        <Input readOnly={readOnly} />
-      </FormItem>
-
       <SectionSeparator sectionName="Data" />
 
       <FormItem

@@ -13,7 +13,8 @@ import { ShaIcon } from '../../../..';
 import { IconType } from '../../../../shaIcon';
 import { useAuth } from '../../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
-import { migrateV0toV1, IToolbarPropsV0 } from './backward-compatibility/migrate-v1';
+import { migrateV0toV1, IToolbarPropsV0 } from './migrations/migrate-v1';
+import { migrateV1toV2 } from './migrations/migrate-v2';
 
 const ToolbarComponent: IToolboxComponent<IToolbarProps> = {
   type: 'toolbar',
@@ -32,7 +33,8 @@ const ToolbarComponent: IToolboxComponent<IToolbarProps> = {
       const items = prev['items'] && Array.isArray(prev['items']) ? prev['items'] : [];
       return { ...prev, items: items };
     })
-    .add<IToolbarProps>(1, migrateV0toV1),
+    .add<IToolbarProps>(1, migrateV0toV1)
+    .add<IToolbarProps>(2, migrateV1toV2),
   settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
     return <ToolbarSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },

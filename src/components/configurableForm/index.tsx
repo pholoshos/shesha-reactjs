@@ -30,6 +30,7 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
       <FormMarkupConverter markup={providedMarkup}>
         {(flatComponents) =>
           <FormProvider
+            name="Form"
             flatComponents={flatComponents}
             formSettings={formSettings}
             mode={mode}

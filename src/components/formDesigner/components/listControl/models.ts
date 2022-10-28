@@ -4,6 +4,9 @@ import { FormIdentifier } from '../../../../providers/form/models';
 
 export interface IListItemsProps {
   name: string;
+  /**
+   * deprecated
+   */
   uniqueStateId?: string;
   queryParamsExpression?: string;
   title?: string;

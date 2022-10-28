@@ -11,6 +11,7 @@ import {
 import { configurableComponentGet } from '../../apis/configurableComponent';
 import { useSheshaApplication } from '../sheshaApplication';
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
+import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
 import { createNewVersion, deleteItem, downloadAsJson, IConfigurationFrameworkHookArguments, IHasConfigurableItemId, itemCancelVersion, publishItem, setItemReady } from '../../utils/configurationFramework/actions';
 import { genericItemActionArgumentsForm } from './configurable-actions/generic-item-arguments';
 
@@ -37,6 +38,7 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
     registerAction<IHasConfigurableItemId>({
       name: 'Create new item version',
       owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
       hasArguments: true,
       executer: (actionArgs) => {
         return createNewVersion({ id: actionArgs.itemId, ...cfArgs });
@@ -47,6 +49,7 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
     registerAction<IHasConfigurableItemId>({
       name: 'Set Item Ready',
       owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
       hasArguments: true,
       executer: (actionArgs) => {
         return setItemReady({ id: actionArgs.itemId, ...cfArgs });
@@ -57,6 +60,7 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
     registerAction<IHasConfigurableItemId>({
       name: 'Delete item',
       owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
       hasArguments: true,
       executer: (actionArgs) => {
         return deleteItem({ id: actionArgs.itemId, ...cfArgs });
@@ -67,6 +71,7 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
     registerAction<IHasConfigurableItemId>({
       name: 'Publish Item',
       owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
       hasArguments: true,
       executer: (actionArgs) => {
         return publishItem({ id: actionArgs.itemId, ...cfArgs });
@@ -77,6 +82,7 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
     registerAction<IHasConfigurableItemId>({
       name: 'Cancel item version',
       owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
       hasArguments: true,
       executer: (actionArgs) => {
         return itemCancelVersion({ id: actionArgs.itemId, ...cfArgs });
@@ -87,6 +93,7 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
     registerAction<IHasConfigurableItemId>({
       name: 'Download as JSON',
       owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
       hasArguments: true,
       executer: (actionArgs) => {
         return downloadAsJson({ id: actionArgs.itemId, ...cfArgs });

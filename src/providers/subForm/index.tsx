@@ -16,7 +16,8 @@ import { useFormConfiguration } from '../form/api';
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
-  uniqueStateId?: string;
+  actionsOwnerId?: string;
+  actionOwnerName?: string;
   name?: string;
   markup?: FormMarkupWithSettings;
   value?: string | { id: string; [key: string]: any };
@@ -32,7 +33,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   beforeGet,
   onCreated,
   onUpdated,
-  uniqueStateId,
+  actionsOwnerId,
+  actionOwnerName,
   dataSource,
   markup,
   properties,
@@ -247,9 +249,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   const { registerAction } = useConfigurableActionDispatcher();
   
   useEffect(() => {
+    if (!actionOwnerName || !actionsOwnerId)
+      return;
     registerAction({
       name: 'Get form data',
-      owner: uniqueStateId,
+      owner: actionOwnerName,
+      ownerUid: actionsOwnerId,
       hasArguments: false,
       executer: () => {
         getData(); // todo: return real promise
@@ -259,7 +264,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
     registerAction({
       name: 'Post form data',
-      owner: uniqueStateId,
+      owner: actionOwnerName,
+      ownerUid: actionsOwnerId,
       hasArguments: false,
       executer: () => {
         postData(); // todo: return real promise
@@ -269,14 +275,15 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
     registerAction({
       name: 'Update form data',
-      owner: uniqueStateId,
+      owner: actionOwnerName,
+      ownerUid: actionsOwnerId,
       hasArguments: false,
       executer: () => {
         putData(); // todo: return real promise
         return Promise.resolve();
       }
     });
-  }, [uniqueStateId]);
+  }, [actionsOwnerId]);
 
   //#endregion
 

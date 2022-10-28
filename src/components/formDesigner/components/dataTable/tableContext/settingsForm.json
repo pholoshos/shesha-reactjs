@@ -8,6 +8,16 @@
       "label": "Display"
     },
     {
+      "id": "5c813b1a-04c5-4658-ac0f-cbcbae6b3bd4",
+      "type": "textField",
+      "name": "name",
+      "parentId": "root",
+      "label": "Name",
+      "validate": {
+        "required": true
+      }
+    },
+    {
       "id": "46d07439-4c18-468c-89e1-60c002ce96c5",
       "type": "textField",
       "name": "label",
@@ -21,18 +31,6 @@
       "name": "description",
       "parentId": "root",
       "label": "Description"
-    },
-    {
-      "id": "880f31ea-2a86-40a5-83ef-ccbe88aa0140",
-      "type": "textField",
-      "name": "uniqueStateId",
-      "label": "Unique State ID",
-      "labelAlign": "right",
-      "parentId": "root",
-      "hidden": false,
-      "customVisibility": null,
-      "description": "This is the unique state id to execute an action against. This is very important if you want to execute a predefined action, which is attached to the global state. This actions are executed using PubSub mechanism, which needs a unique ID of the provider you want to manipulate. Without this, an action will not be executed.",
-      "validate": {}
     },
     {
       "id": "df8a8f35-a50b-42f9-9642-73d390ceddbf",

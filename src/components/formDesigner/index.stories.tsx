@@ -62,10 +62,13 @@ export const PersonDetails = addStory(DesignerTemplate, {
 });
 
 export const PersonsIndex = addStory(DesignerTemplate, {
+  /*
   formId: {
     name: 'persons',
     module: 'shesha',
   }
+  */
+  formId: '870DB6DA-A59D-4F92-B16E-5714AF0EB43F'
 });
 
 export const SubForm = addStory(DesignerTemplate, {
@@ -78,9 +81,12 @@ export const SubForm = addStory(DesignerTemplate, {
 });
 
 export const PersonList = addStory(DesignerTemplate, {
+  formId: 'D35B5C3C-F9A0-44B4-82F9-8DDE9E4458EE'
+  /*
   formId: {
     name: 'person-list',
   }
+  */
 });
 
 export const UserManagement = addStory(DesignerTemplate, {

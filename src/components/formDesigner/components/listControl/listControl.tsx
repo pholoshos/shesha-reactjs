@@ -221,7 +221,8 @@ const ListControl: FC<IListControlProps> = props => {
   useEffect(() => {
     registerAction({
       name: 'Refresh list items',
-      owner: uniqueStateId,
+      owner: name,
+      ownerUid: uniqueStateId,
       hasArguments: false,
       executer: () => {
         debouncedRefresh(); // todo: return real promise
@@ -230,7 +231,8 @@ const ListControl: FC<IListControlProps> = props => {
     });
     registerAction({
       name: 'Save list items',
-      owner: uniqueStateId,
+      owner: name,
+      ownerUid: uniqueStateId,
       hasArguments: false,
       executer: () => {
         submitListItems(submitUrl); // todo: return real promise
@@ -239,7 +241,8 @@ const ListControl: FC<IListControlProps> = props => {
     });
     registerAction({
       name: 'Add list items',
-      owner: uniqueStateId,
+      owner: name,
+      ownerUid: uniqueStateId,
       hasArguments: false,
       executer: () => {
         debouncedAddItems(state); // todo: return real promise

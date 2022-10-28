@@ -9,6 +9,7 @@ import ConfigurableButton from './configurableButton';
 import { IButtonGroupButton } from '../../../../providers/buttonGroupConfigurator/models';
 import { useAuth, useForm } from '../../../..';
 import { IButtonGroupItemBaseV0, migrateV0toV1 } from './migrations/migrate-v1';
+import { migrateV1toV2 } from './migrations/migrate-v2';
 
 export type IActionParameters = [{ key: string; value: string }];
 
@@ -79,7 +80,8 @@ const ButtonField: IToolboxComponent<IButtonProps> = {
     };
     return buttonModel;
   })
-  .add<IButtonProps>(1, migrateV0toV1),
+  .add<IButtonProps>(1, migrateV0toV1)
+  .add<IButtonProps>(2, migrateV1toV2),
 };
 
 export default ButtonField;

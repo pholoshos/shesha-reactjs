@@ -5,6 +5,7 @@ import { getFlagSetters } from '../utils/flagsSetters';
 import { Router } from 'next/router';
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
 import { navigateArgumentsForm } from './actions/navigate-arguments';
+import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
 
 export interface IRoutingProviderProvider {
   router: Router;
@@ -27,6 +28,7 @@ const ShaRoutingProvider: FC<PropsWithChildren<any>> = ({ children, router }) =>
     registerAction<INavigateActoinArguments>({
       name: 'Navigate',
       owner: 'Common',
+      ownerUid: SheshaActionOwners.Common,
       hasArguments: true,
       executer: (request) => {
         if (state?.router){

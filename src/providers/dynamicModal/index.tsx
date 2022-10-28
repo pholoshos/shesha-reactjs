@@ -21,6 +21,7 @@ import { IShowConfigrmationArguments, showConfirmationArgumentsForm } from './co
 import { nanoid } from 'nanoid/non-secure';
 import { evaluateKeyValuesToObject } from '../form/utils';
 import { Modal } from 'antd';
+import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
 
 export interface IDynamicModalProviderProps { }
 
@@ -34,6 +35,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
     registerAction<IShowConfigrmationArguments>({
       name: 'Show Confirmation Dialog',
       owner: 'Common',
+      ownerUid: SheshaActionOwners.Common,
       hasArguments: true,
       executer: (actionArgs, _context) => {
         return new Promise((resolve, _reject) => {
@@ -58,6 +60,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
     registerAction<IShowModalActionArguments>({
       name: 'Show Dialog',
       owner: 'Common',
+      ownerUid: SheshaActionOwners.Common,
       hasArguments: true,
       executer: (actionArgs, context) => {
         console.log('show dialog')
@@ -83,13 +86,6 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
               console.log('dialog success:', { values });
               resolve(values); // todo: return result e.g. we may need to handle created entity id and navigate to edit/details page
             },
-            /*
-            onFailed: (error) => {
-              removeModal(modalId);
-
-              console.log('dialog failed:', { error });
-              reject(); // todo: return error
-            },*/
           };
           console.log('modalProps', { modalProps, context })
           createModal({ ...modalProps, isVisible: true });
@@ -98,21 +94,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
       argumentsFormMarkup: dialogArgumentsForm
     });
   }, []);
-  /*
-      const modalProps: IModalProps = {
-      id: props.id, // link modal to the current form component by id
-      isVisible: false,
-      formId: props.modalFormId,
-      title: props.modalTitle,
-      showModalFooter: convertedProps?.showModalFooter,
-      submitHttpVerb: convertedProps?.submitHttpVerb,
-      onSuccessRedirectUrl: convertedProps?.onSuccessRedirectUrl,
-      destroyOnClose: true,
-      width: props?.modalWidth,
-      initialValues: evaluateKeyValuesToObject(convertedProps?.additionalProperties, formData),
-      parentFormValues: formData,
-    };
- */
+  
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   const toggle = (id: string, isVisible: boolean) => {

@@ -29,7 +29,9 @@ export const FormDesigner: FC<IFormDesignerProps> = ({ formId }) => {
                 >
                   <FormDesignerStateConsumer>
                     {designerState => (
-                      <FormProvider mode="designer" 
+                      <FormProvider 
+                        name="Form"
+                        mode="designer" 
                         flatComponents={{ allComponents: designerState.allComponents, componentRelations: designerState.componentRelations }} 
                         formSettings={designerState.formSettings}
                       >

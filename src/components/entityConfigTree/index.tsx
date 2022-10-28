@@ -33,7 +33,7 @@ export const EntityConfigTree: FC<IEntityConfigTreeProps> = (props) => {
 
   const [response, setResponse] = useState<EntityConfigDtoPagedResultDto>();
 
-  const fetcher = useEntityConfigGetAll({queryParams: {maxResultCount: 10000, sorting: 'className'}, lazy: true });
+  const fetcher = useEntityConfigGetAll({queryParams: {maxResultCount: 10000, sorting: 'className', properties: 'id className friendlyName source configuration {suppress}'}, lazy: true });
   const { loading: isFetchingData, error: fetchingDataError, data: fetchingDataResponse } = fetcher;
 
   const [objectId, setObjectId] = useState(null);

@@ -817,6 +817,16 @@ export function listComponentToModelMetadata<TModel extends IConfigurableFormCom
   if (metadata.label) mappedModel.label = metadata.label;
   if (metadata.description) mappedModel.description = metadata.description;
 
+  // map configurable properties
+  if (metadata.readonly === true) mappedModel.readOnly = true;
+  if (metadata.isVisible === false) mappedModel.hidden = true;
+  if (metadata.max) mappedModel.validate.maxValue = metadata.max;
+  if (metadata.min) mappedModel.validate.minValue = metadata.min;
+  if (metadata.maxLength) mappedModel.validate.maxLength = metadata.maxLength;
+  if (metadata.minLength) mappedModel.validate.minLength = metadata.minLength;
+  if (metadata.required === true) mappedModel.validate.required = true;
+  if (metadata.validationMessage) mappedModel.validate.message = metadata.validationMessage;
+
   // map component-specific properties
   if (component.linkToModelMetadata) mappedModel = component.linkToModelMetadata(model, metadata);
 
@@ -941,6 +951,7 @@ export const createComponentModelForDataProperty = (
     customVisibility: null,
     visibilityFunc: _data => true,
     isDynamic: false,
+    validate: {}
   };
   if (toolboxComponent.initModel) componentModel = toolboxComponent.initModel(componentModel);
 

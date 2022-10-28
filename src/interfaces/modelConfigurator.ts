@@ -37,6 +37,8 @@ export interface IModelItem {
 
     source?: MetadataSourceType;
 
+    suppress?: boolean;
+    
     properties?: IModelItem[];
 
     /**

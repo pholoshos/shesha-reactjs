@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react';
 import { Tree } from 'antd';
 import { DataNode } from 'antd/lib/tree';
 import ShaIcon, { IconType } from '../shaIcon';
@@ -21,22 +21,20 @@ interface DataNodeWithObject<TItem> extends DataNode {
     object: TItem;
 }
 
-interface NodesWithExpanded<TItem> {
-    nodes: DataNodeWithObject<TItem>[],
-    expandedKeys: string[],
-}
-
 export const ObjectsTree = <TItem,>(props: IProps<TItem>) => {
     
-    const [manuallyExpanded, setManuallyExpanded] = useState<string[]>(null);
+    const [manuallyExpanded, setManuallyExpanded] = useState<string[]>([]);
     const [scrollId, setScrollId] = useState<string>(null);
+    //const [nodes, setNodes] = useState<DataNode[]>([]);
+    const [nodes, setNodes] = useState<DataNodeWithObject<TItem>[]>([]);
     
     const getName = (item: TItem) => { return Boolean(props.nameFieldName) ? item[props.nameFieldName] : item['name'] ?? item['className'] ?? item }
+    const getId = (item: TItem) => { return Boolean(props.idFieldName) ? item[props.idFieldName] : item['id'] ?? item['key'] ?? item }
 
     const getTreeData = (item: TItem, onAddItem: (item: TItem) => void): DataNodeWithObject<TItem> => {
         const nested = Boolean(props.getChildren) ? props.getChildren(item) : item['children'];
         const node: DataNodeWithObject<TItem> = {
-            key: (Boolean(props.idFieldName) ? item[props.idFieldName] : item['id'] ?? item['key'] ?? item)?.toLowerCase(),
+            key: (getId(item))?.toLowerCase(),
             title: getName(item),
             isLeaf: Boolean(props.getIsLeaf) ? props.getIsLeaf(item) : (!Boolean(nested) || Array.isArray(nested) || nested.length === 0),
             selectable: false,
@@ -50,11 +48,46 @@ export const ObjectsTree = <TItem,>(props: IProps<TItem>) => {
         return node;
     }
     
-    const treeData = useMemo<NodesWithExpanded<TItem>>(() => {
-        const expanded: string[] = [];
-        const nodes = props.items.map(item => getTreeData(item, (item) => { expanded.push(item['id'] ?? item); }));
-        return { nodes: nodes, expandedKeys: expanded } as NodesWithExpanded<TItem> ;
-    }, [props.items]);
+    useEffect(() => {
+        // update experiments
+        /*setNodes((ns) =>{
+            ns = ns.filter(n => props.items.find(p => getId(p) === getId(n.object)));
+            props.items.filter(n => !ns.find(p => getId(n) === getId(p.object)))
+                .forEach(p => ns.push(getTreeData(p, (item) => { 
+                    setManuallyExpanded((state) => {
+                            state.push(getId(item));
+                            return state;
+                        })
+                    })));
+
+            return [...ns];
+        });*/
+
+        /*setNodes(ns => {
+            const nss =  props.items.map(i => {
+                const n = ns.find(p => getId(i) === p.key);
+                return n 
+                    ? n 
+                    : getTreeData(i, (item) => { 
+                        setManuallyExpanded((state) => {
+                            state.push(getId(item));
+                            return state;
+                        })
+                    }) as DataNode;
+            });
+            return nss;
+        })*/
+
+        setNodes([...props.items.map(item => 
+            getTreeData(item, (item) => { 
+                setManuallyExpanded((state) => {
+                        state?.push(getId(item));
+                        return state;
+                    })
+                })
+            )]
+        );
+    }, [props.items])
 
     useEffect(() => {
         if (props.defaultExpandAll)
@@ -79,7 +112,7 @@ export const ObjectsTree = <TItem,>(props: IProps<TItem>) => {
         );
     }
 
-    const refs = treeData.nodes.reduce((ref, value) => {
+    const refs = nodes.reduce((ref, value) => {
       ref[value.key] = React.createRef();
       return ref;
     }, {});
@@ -120,17 +153,19 @@ export const ObjectsTree = <TItem,>(props: IProps<TItem>) => {
         setManuallyExpanded(expandedKeys);
     };
 
+    useEffect(() => {console.log("Mount ")} , [])
+//DataNodeWithObject<TItem>>
     return (
-        <Tree<DataNodeWithObject<TItem>>
+        <Tree<DataNodeWithObject<TItem>> 
             className='sha-datasource-tree'
             showIcon
-            treeData={treeData.nodes}
-            expandedKeys={props.defaultExpandAll && !Boolean(manuallyExpanded) ? treeData.expandedKeys : manuallyExpanded}
+            treeData={nodes}
+            expandedKeys={manuallyExpanded}
             onExpand={onExpand}
             draggable={false}
             selectable={true}
             titleRender={renderTitle}
-            onClick={ (_, node) => { props.onChange(node['object']) } }
+            onClick={ (_, node) => { props.onChange(node['object']) }}//props.items.find(x => getId(x) == node.key)) } }
             selectedKeys={props.defaultSelected != '' ? [props.defaultSelected?.toLowerCase()] : null}
         />
     );

@@ -6,6 +6,7 @@ export interface IPropertyMetadata {
   maxLength?: number | null;
   min?: number | null;
   max?: number | null;
+  validationMessage?: string | null;
   path?: string | null;
   label?: string | null;
   description?: string | null;

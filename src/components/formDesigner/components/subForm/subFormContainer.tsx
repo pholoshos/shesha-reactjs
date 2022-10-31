@@ -29,7 +29,7 @@ export const SubFormContainer: FC<ISubFormContainerProps> = ({ components, readO
       }
 
       /* tslint:disable:function-constructor */
-      const evaluated = new Function('data, globalState', expression)(value, globalState);
+      const evaluated = new Function('data, globalState', expression)(value || {}, globalState || {});
       // tslint:disable-next-line:function-constructor
       return typeof evaluated === 'boolean' ? evaluated : true;
     },

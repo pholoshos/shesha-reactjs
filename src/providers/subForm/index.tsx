@@ -43,6 +43,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   queryParams,
   entityType,
   onChange,
+  defaultValue,
 }) => {
   const getEvaluatedUrl = (url: string) => {
     if (!url) return '';
@@ -310,7 +311,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
           wrapperCol: getColSpan(wrapperCol) || getColSpan(state?.formSettings?.wrapperCol), // Override with the incoming one
         },
         name,
-        value: value,
+        value: value || defaultValue,
       }}
     >
       <SubFormActionsContext.Provider

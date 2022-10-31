@@ -19,14 +19,14 @@ const SubForm: FC<ISubFormProps> = ({ readOnly }) => {
 
   return (
     <ShaSpin spinning={isLoading}>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1 }} data-name={name}>
         {Object.keys(errors).map(error => (
           <ValidationErrors error={errors[error]} />
         ))}
 
         <div>
           <FormItemProvider namePrefix={name} labelCol={formSettings?.labelCol} wrapperCol={formSettings?.wrapperCol}>
-            <SubFormContainer components={components} readOnly={readOnly}  />
+            <SubFormContainer components={components} readOnly={readOnly} />
           </FormItemProvider>
         </div>
       </div>

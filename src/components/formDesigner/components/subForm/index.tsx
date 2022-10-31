@@ -90,8 +90,9 @@ interface ISubFormWrapperProps extends Omit<ISubFormProps, 'id' | 'type' | 'styl
 }
 
 const SubFormWrapper: FC<ISubFormWrapperProps> = ({ style, readOnly, ...props }) => {
+  const actionOwnerName=`Subform (${props.name})`;
   return (
-    <SubFormProvider {...props} actionsOwnerId={props.id} actionOwnerName={props.name}>
+    <SubFormProvider {...props} actionsOwnerId={props.id} actionOwnerName={actionOwnerName}>
       <SubForm style={style} readOnly={readOnly} />
     </SubFormProvider>
   );

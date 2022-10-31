@@ -14,7 +14,7 @@ export const upgradeActionConfig = (config: IConfigurableActionConfiguration, co
     };
 }
 
-const actionOwnerTypes = ['datatableContext', 'subForm'];
+const actionOwnerTypes = ['datatableContext', 'subForm', 'list'];
 const getActionOwner = (value: string, context: SettingsMigrationContext) => {
     if (!value)
         return value;

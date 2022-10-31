@@ -11,6 +11,7 @@ import { IListComponentProps, IListItemsProps } from './models';
 import { nanoid } from 'nanoid';
 import ListControl from './listControl';
 import { migrateV0toV1 } from './migrations/migrate-v1';
+import { migrateV1toV2 } from './migrations/migrate-v2';
 
 const ListComponent: IToolboxComponent<IListComponentProps> = {
   type: 'list',
@@ -79,9 +80,10 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
       ],
       paginationDefaultPageSize: 10,
     };
-      return customProps;
+    return customProps;
   })
-  .add<IListComponentProps>(1, migrateV0toV1),
+    .add<IListComponentProps>(1, migrateV0toV1)
+    .add<IListComponentProps>(2, migrateV1toV2),
   validateSettings: model => validateConfigurableComponentSettings(listSettingsForm, model),
 };
 

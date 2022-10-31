@@ -218,11 +218,12 @@ const ListControl: FC<IListControlProps> = props => {
 
   const { registerAction } = useConfigurableActionDispatcher();
 
+  const actionOwnerName = `List (${name})`;
   useEffect(() => {
     registerAction({
       name: 'Refresh list items',
-      owner: name,
-      ownerUid: uniqueStateId,
+      owner: actionOwnerName,
+      ownerUid: containerId,
       hasArguments: false,
       executer: () => {
         debouncedRefresh(); // todo: return real promise
@@ -231,8 +232,8 @@ const ListControl: FC<IListControlProps> = props => {
     });
     registerAction({
       name: 'Save list items',
-      owner: name,
-      ownerUid: uniqueStateId,
+      owner: actionOwnerName,
+      ownerUid: containerId,
       hasArguments: false,
       executer: () => {
         submitListItems(submitUrl); // todo: return real promise
@@ -241,8 +242,8 @@ const ListControl: FC<IListControlProps> = props => {
     });
     registerAction({
       name: 'Add list items',
-      owner: name,
-      ownerUid: uniqueStateId,
+      owner: actionOwnerName,
+      ownerUid: containerId,
       hasArguments: false,
       executer: () => {
         debouncedAddItems(state); // todo: return real promise

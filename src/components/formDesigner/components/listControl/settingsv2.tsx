@@ -27,8 +27,6 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
   const [state, setState] = useState<IListSettingsState>(model);
   const [form] = Form.useForm();
 
-  console.log('ListControlSettings model', model.filters);
-
   return (
     <Form
       form={form}

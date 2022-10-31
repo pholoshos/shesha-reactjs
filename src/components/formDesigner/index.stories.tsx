@@ -96,9 +96,12 @@ export const UserManagement = addStory(DesignerTemplate, {
 });
 
 export const WizardForm = addStory(DesignerTemplate, {
+  formId: 'A91B07FC-6F21-4FB5-A709-4F4357F1271F'
+  /*
   formId: {
     name: 'mazi-form-view',
   }
+  */
 });
 
 export const WizardFormDebug = addStory(DesignerTemplate, {

@@ -9,18 +9,20 @@ import { validateConfigurableComponentSettings } from '../../../../providers/for
 import { useAuth, useForm, useGlobalState } from '../../../../providers';
 import { useSheshaApplication } from '../../../../';
 import { nanoid } from 'nanoid/non-secure';
-import TabSettings from './settings';
-import { ITabsComponentProps } from './models';
+import WizardSettings from './settings';
+import { IWizardComponentProps } from './models';
 import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
-import { usePubSub, useSubscribe } from '../../../../hooks';
 import { axiosHttp } from '../../../../apis/axios';
+import { migrateV0toV1, IWizardComponentPropsV0 } from './migrations/migrate-v1';
+import { useConfigurableActionDispatcher } from '../../../../providers/configurableActionsDispatcher';
+import { IConfigurableActionConfiguration } from '../../../../interfaces/configurableAction';
 
 const { Step } = Steps;
 
 const settingsForm = settingsFormJson as FormMarkup;
 
-const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
+const TabsComponent: IToolboxComponent<IWizardComponentProps> = {
   type: 'wizard',
   name: 'Wizard',
   icon: <DoubleRightOutlined />,
@@ -29,52 +31,71 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState, setState: setGlobalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();
-    const { publish } = usePubSub();
+    const { executeAction, registerAction } = useConfigurableActionDispatcher();
     const [current, setCurrent] = useState(() => {
       const localCurrent = model?.defaultActiveStep
-        ? model?.tabs?.findIndex(({ id }) => id === model?.defaultActiveStep)
+        ? model?.steps?.findIndex(({ id }) => id === model?.defaultActiveStep)
         : 0;
 
       return localCurrent < 0 ? 0 : localCurrent;
     });
     const [component, setComponent] = useState(null);
 
-    const { tabs, wizardType = 'default' } = model as ITabsComponentProps;
+    const { steps: tabs, wizardType = 'default' } = model as IWizardComponentProps;
 
     useEffect(() => {
-      const defaultActiveStep = model?.tabs?.findIndex(item => item?.id === model?.defaultActiveStep);
+      const defaultActiveStep = model?.steps?.findIndex(item => item?.id === model?.defaultActiveStep);
       setCurrent(defaultActiveStep < 0 ? 0 : defaultActiveStep);
     }, [model?.defaultActiveStep]);
 
     /// EVENTS
-    useSubscribe('WIZARD_MAZI_FORM_VIEW', ({ stateId }) => {
-      console.log('WIZARD_MAZI_FORM_VIEW', stateId, model.uniqueStateId, stateId === model.uniqueStateId);
-      const uniqueStateId = tabs[current].nextUniqueStateId;
-      if (stateId === uniqueStateId) {
-        next();
-      }
-    });
+    const { name: actionOwnerName, id: actionsOwnerId } = model;
 
-    useSubscribe('WIZARD_ACTION_BUTTON_BACK', ({ stateId }) => {
-      const uniqueStateId = tabs[current].backUniqueStateId;
-      if (stateId === uniqueStateId) {
-        back();
-      }
-    });
+    useEffect(() => {
+      if (!actionOwnerName || !actionsOwnerId)
+        return;
 
-    useSubscribe('WIZARD_ACTION_BUTTON_CANCEL', ({ stateId }) => {
-      const uniqueStateId = tabs[current].cancelUniqueStateId;
-      if (stateId === uniqueStateId) {
-        cancel();
-      }
-    });
-
-    useSubscribe('WIZARD_ACTION_BUTTON_DONE', ({ stateId }) => {
-      const uniqueStateId = tabs[current].doneUniqueStateId;
-      if (stateId === uniqueStateId) {
-        done();
-      }
-    });
+      registerAction({
+        name: 'Back',
+        owner: actionOwnerName,
+        ownerUid: actionsOwnerId,
+        hasArguments: false,
+        executer: () => {
+          back();
+          return Promise.resolve();
+        }
+      });
+      registerAction({
+        name: 'Next',
+        owner: actionOwnerName,
+        ownerUid: actionsOwnerId,
+        hasArguments: false,
+        executer: () => {
+          next();
+          return Promise.resolve();
+        }
+      });
+      registerAction({
+        name: 'Cancel',
+        owner: actionOwnerName,
+        ownerUid: actionsOwnerId,
+        hasArguments: false,
+        executer: () => {
+          cancel();
+          return Promise.resolve();
+        }
+      });
+      registerAction({
+        name: 'Done',
+        owner: actionOwnerName,
+        ownerUid: actionsOwnerId,
+        hasArguments: false,
+        executer: () => {
+          done();
+          return Promise.resolve();
+        }
+      });
+    }, [actionOwnerName, actionsOwnerId, current]);
 
     if (isComponentHidden(model)) return null;
 
@@ -103,100 +124,57 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
       return typeof evaluated === 'boolean' ? evaluated : true;
     };
 
+    const actionEvaluationContext = {
+      data: formData,
+      formMode: formMode,
+      globalState: globalState,
+      http: axiosHttp(backendUrl),
+      message: message,
+      setGlobalState: setGlobalState,
+      moment: moment,
+    };
+
     /// NAVIGATION
 
-    const next = () => {
-      const buttonAction = tabs[current].nextButtonAction;
-      const actionScript = tabs[current].nextButtonActionScript;
-      const eventName = tabs[current].nextEventName;
-      const customEventNameToDispatch = tabs[current].nextCustomEventNameToDispatch;
-      const uniqueStateId = tabs[current].nextUniqueStateId;
-
-      switch (buttonAction) {
-        case 'executeScript':
-          executeScript(actionScript);
-          break;
-        case 'dispatchAnEvent':
-          dispatchAnEvent(eventName, customEventNameToDispatch, uniqueStateId);
-          break;
-        default:
-          break;
+    const executeActionIfConfigured = (accessor: (IWizardStepProps) => IConfigurableActionConfiguration) => {
+      console.log('generic action')
+      const actionConfiguration = accessor(tabs[current]);
+      if (!actionConfiguration) {
+        console.warn(`Action not configured: tab '${current}', accessor: '${accessor.toString()}'`);
+        return;
       }
+
+      executeAction({
+        actionConfiguration: actionConfiguration,
+        argumentsEvaluationContext: actionEvaluationContext
+      });
+    }
+
+    const next = () => {
+      if (current >= model.steps.length - 1)
+        return;
+      executeActionIfConfigured(tab => tab.nextButtonActionConfiguration);
 
       setCurrent(current + 1);
       setComponent(tabs[current].components);
     };
 
     const back = () => {
-      const buttonAction = tabs[current].backButtonAction;
-      const actionScript = tabs[current].backButtonActionScript;
-      const eventName = tabs[current].backEventName;
-      const customEventNameToDispatch = tabs[current].backCustomEventNameToDispatch;
-      const uniqueStateId = tabs[current].backUniqueStateId;
+      if (current <= 0)
+        return;
 
-      switch (buttonAction) {
-        case 'executeScript':
-          executeScript(actionScript);
-          break;
-        case 'dispatchAnEvent':
-          dispatchAnEvent(eventName, customEventNameToDispatch, uniqueStateId);
-        default:
-          break;
-      }
+      executeActionIfConfigured(tab => tab.backButtonActionConfiguration);
 
       setCurrent(current - 1);
       setComponent(tabs[current].components);
     };
 
     const cancel = () => {
-      const buttonAction = tabs[current].cancelButtonAction;
-      const actionScript = tabs[current].cancelButtonActionScript;
-      const eventName = tabs[current].cancelEventName;
-      const customEventNameToDispatch = tabs[current].cancelCustomEventNameToDispatch;
-      const uniqueStateId = tabs[current].cancelUniqueStateId;
-
-      switch (buttonAction) {
-        case 'executeScript':
-          executeScript(actionScript);
-          break;
-        case 'dispatchAnEvent':
-          dispatchAnEvent(eventName, customEventNameToDispatch, uniqueStateId);
-        default:
-          break;
-      }
+      executeActionIfConfigured(tab => tab.cancelButtonActionConfiguration);
     };
 
     const done = () => {
-      const buttonAction = tabs[current].doneButtonAction;
-      const actionScript = tabs[current].doneButtonActionScript;
-      const eventName = tabs[current].doneEventName;
-      const customEventNameToDispatch = tabs[current].doneCustomEventNameToDispatch;
-      const uniqueStateId = tabs[current].doneUniqueStateId;
-
-      switch (buttonAction) {
-        case 'executeScript':
-          executeScript(actionScript);
-          break;
-        case 'dispatchAnEvent':
-          dispatchAnEvent(eventName, customEventNameToDispatch, uniqueStateId);
-        default:
-          break;
-      }
-    };
-
-    /// ACTIONS
-
-    const executeScript = actionScript => {
-      if (actionScript) {
-        executeExpression(actionScript);
-      }
-    };
-
-    const dispatchAnEvent = (eventName, customEventNameToDispatch, uniqueStateId) => {
-      const EVENT_NAME =
-        eventName === 'CUSTOM_EVENT' && customEventNameToDispatch ? customEventNameToDispatch : eventName;
-
-      publish(EVENT_NAME, { stateId: uniqueStateId || 'NO_PROVIDED' });
+      executeActionIfConfigured(tab => tab.doneButtonActionConfiguration);
     };
 
     return (
@@ -265,11 +243,11 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
       </>
     );
   },
-  initModel: model => {
-    const tabsModel: ITabsComponentProps = {
-      ...model,
-      name: 'custom Name',
-      tabs: [
+  migrator: m => m.add<IWizardComponentPropsV0>(0, prev => {
+    const model: IWizardComponentPropsV0 = {
+      ...prev,
+      name: prev.name ?? 'custom Name',
+      tabs: prev['tabs'] ?? [
         {
           id: nanoid(),
           label: 'Tab 1',
@@ -287,17 +265,17 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
         },
       ],
     };
-    return tabsModel;
-  },
-  // settingsFormMarkup: settingsForm,
+    return model;
+  }).add(1, migrateV0toV1),
+
   settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
-    return <TabSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
+    return <WizardSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
   customContainerNames: ['tabs'],
   getContainers: model => {
-    const { tabs } = model as ITabsComponentProps;
-    return tabs.map<IFormComponentContainer>(t => ({ id: t.id }));
+    const { steps } = model as IWizardComponentProps;
+    return steps.map<IFormComponentContainer>(t => ({ id: t.id }));
   },
 };
 

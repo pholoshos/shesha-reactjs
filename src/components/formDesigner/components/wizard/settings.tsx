@@ -3,7 +3,7 @@ import { Form, Select, Input, RefSelectProps } from 'antd';
 import SectionSeparator from '../../../sectionSeparator';
 import CodeEditor from '../codeEditor/codeEditor';
 import EditableTagGroup from '../../../editableTagGroup';
-import { ITabPaneProps, ITabsComponentProps } from './models';
+import { IWizardStepProps, IWizardComponentProps } from './models';
 import ItemListSettingsModal from '../itemListConfigurator/itemListSettingsModal';
 import itemSettings from './itemSettings.json';
 import { FormMarkup } from '../../../../providers/form/models';
@@ -13,20 +13,20 @@ const { Option } = Select;
 
 export interface ITabSettingsProps {
   readOnly: boolean;
-  model: ITabsComponentProps;
-  onSave: (model: ITabsComponentProps) => void;
+  model: IWizardComponentProps;
+  onSave: (model: IWizardComponentProps) => void;
   onCancel: () => void;
-  onValuesChange?: (changedValues: any, values: ITabsComponentProps) => void;
+  onValuesChange?: (changedValues: any, values: IWizardComponentProps) => void;
 }
 
-const TabSettings: FC<ITabSettingsProps> = props => {
-  const [state, setState] = useState<ITabsComponentProps>(props?.model);
+const WizardSettings: FC<ITabSettingsProps> = props => {
+  const [state, setState] = useState<IWizardComponentProps>(props?.model);
   const [form] = Form.useForm();
 
-  const onValuesChange = (changedValues: any, values: ITabsComponentProps) => {
+  const onValuesChange = (changedValues: any, values: IWizardComponentProps) => {
     // whenever the tabs change, check to see if `defaultActiveStep` is still present within the tabs. If not, remove it
     const foundIndex = values?.defaultActiveStep
-      ? values?.tabs?.findIndex(item => item?.id === values?.defaultActiveStep)
+      ? values?.steps?.findIndex(item => item?.id === values?.defaultActiveStep)
       : 0;
 
     const newValues = { ...state, ...values, defaultActiveStep: foundIndex < 0 ? null : values?.defaultActiveStep };
@@ -37,7 +37,7 @@ const TabSettings: FC<ITabSettingsProps> = props => {
   };
 
   const onAddNewItem = (_, count: number) => {
-    const buttonProps: ITabPaneProps = {
+    const buttonProps: IWizardStepProps = {
       id: nanoid(),
       itemType: 'item',
       sortOrder: count,
@@ -54,7 +54,7 @@ const TabSettings: FC<ITabSettingsProps> = props => {
     return buttonProps;
   };
 
-  const tabs = props?.model?.tabs?.map(item => ({ ...item, label: item?.title }));
+  const tabs = props?.model?.steps?.map(item => ({ ...item, label: item?.title }));
 
   const selectRef = useRef<RefSelectProps>();
 
@@ -99,7 +99,7 @@ const TabSettings: FC<ITabSettingsProps> = props => {
         tooltip="This will be the default step tha"
       >
         <Select allowClear ref={selectRef} value={state?.defaultActiveStep}>
-          {state?.tabs?.map(({ id, title }) => (
+          {state?.steps?.map(({ id, title }) => (
             <Option value={id} key={id}>
               {title}
             </Option>
@@ -118,10 +118,6 @@ const TabSettings: FC<ITabSettingsProps> = props => {
           <Option value="No">No (Only include in payload)</Option>
           <Option value="Removed">Removed (Remove from UI and exlude from payload)</Option>
         </Select>
-      </Form.Item>
-
-      <Form.Item name="uniqueStateId" label="Unique State ID" tooltip="Important for accessing the ">
-        <Input />
       </Form.Item>
 
       <SectionSeparator sectionName="Configure Wizard Steps" />
@@ -167,4 +163,4 @@ const TabSettings: FC<ITabSettingsProps> = props => {
   );
 };
 
-export default TabSettings;
+export default WizardSettings;

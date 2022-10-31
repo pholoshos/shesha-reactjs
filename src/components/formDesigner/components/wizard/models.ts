@@ -1,9 +1,10 @@
 import { IConfigurableItemBase } from '../../../../providers/itemListConfigurator/contexts';
 import { IConfigurableFormComponent } from '../../../../interfaces';
+import { IConfigurableActionConfiguration } from '../../../../interfaces/configurableAction';
 
-type ButtonActionType = 'executeScript' | 'dispatchAnEvent';
+//type ButtonActionType = 'executeScript' | 'dispatchAnEvent';
 
-export interface ITabPaneProps extends IConfigurableItemBase {
+export interface IWizardStepProps extends IConfigurableItemBase {
   id: string;
   icon?: string;
   key: string;
@@ -17,43 +18,23 @@ export interface ITabPaneProps extends IConfigurableItemBase {
   backButtonText?: string;
   doneButtonText?: string;
 
-  cancelButtonAction?: ButtonActionType;
-  nextButtonAction?: ButtonActionType;
-  backButtonAction?: ButtonActionType;
-  doneButtonAction?: ButtonActionType;
-
-  cancelButtonActionScript?: string;
-  backButtonActionScript?: string;
-  nextButtonActionScript?: string;
-  doneButtonActionScript?: string;
-
-  nextEventName?: string;
-  backEventName?: string;
-  doneEventName?: string;
-  cancelEventName?: string;
-
-  cancelCustomEventNameToDispatch?: string;
-  doneCustomEventNameToDispatch?: string;
-  backCustomEventNameToDispatch?: string;
-  nextCustomEventNameToDispatch?: string;
-
-  nextUniqueStateId?: string;
-  backUniqueStateId?: string;
-  doneUniqueStateId?: string;
-  cancelUniqueStateId?: string;
+  cancelButtonActionConfiguration?: IConfigurableActionConfiguration;
+  nextButtonActionConfiguration?: IConfigurableActionConfiguration;
+  backButtonActionConfiguration?: IConfigurableActionConfiguration;
+  doneButtonActionConfiguration?: IConfigurableActionConfiguration;
 
   customVisibility?: string;
   customEnabled?: string;
   permissions?: string[];
   components?: IConfigurableFormComponent[];
-  childItems?: ITabPaneProps[];
+  childItems?: IWizardStepProps[];
 }
 
-export interface ITabsComponentProps extends IConfigurableFormComponent {
-  tabs: ITabPaneProps[];
+export interface IWizardComponentProps extends IConfigurableFormComponent {
+  steps: IWizardStepProps[];
   wizardType?: 'default' | 'navigation';
   visibility?: 'Yes' | 'No' | 'Removed';
-  uniqueStateId?: string;
+  //uniqueStateId?: string;
   permissions?: string[];
   hidden?: boolean;
   customVisibility?: string;

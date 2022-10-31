@@ -15,8 +15,6 @@ export interface IItemListConfiguratorProps {
 export const ItemListConfigurator: FC<IItemListConfiguratorProps> = ({ allowAddGroups = true, render, heading }) => {
   const { items, addItem, addGroup } = useItemListConfigurator();
 
-  console.log('items-configurator',items)
-
   const content = () => {
     if (Boolean(render)) {
       if (typeof render === 'function') {

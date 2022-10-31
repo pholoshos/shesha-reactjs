@@ -110,7 +110,7 @@ const ConfigurableActionConfigurator: FC<IConfigurableActionConfiguratorProps> =
 
   return (
     <div
-      style={{ paddingLeft: 10 }} className="sha-action-props"
+      style={ props.level > 1 ? { paddingLeft: 10 } : {}} className="sha-action-props"
     >
       <Form
         form={form}

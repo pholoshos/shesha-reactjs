@@ -423,16 +423,16 @@ const ListControl: FC<IListControlProps> = props => {
 
   if (isHidden && formMode === 'designer') return null;
 
-  const renderSubForm = (localName?: string, localLabelCol?: ColProps, localWrapperCol?: ColProps) => {
-    // Note we do not pass the name. The name will be provided by the List component
-
+  const renderSubForm = (localName?: string | number, localLabelCol?: ColProps, localWrapperCol?: ColProps) => {
     return (
       <SubFormProvider
-        name={localName}
+        name={localName as string}
+        // name={localName}
         markup={{ components: formConfiguration?.markup, formSettings: formConfiguration?.settings }}
         properties={[]}
         labelCol={localLabelCol}
         wrapperCol={localWrapperCol}
+        defaultValue={typeof localName === 'number' && Array.isArray(value) ? value[localName] : null}
       >
         <SubForm />
       </SubFormProvider>
@@ -540,11 +540,7 @@ const ListControl: FC<IListControlProps> = props => {
                             </Show>
 
                             <Show when={Boolean(formId) && Boolean(formConfiguration?.markup) && renderStrategy === 'externalForm'}>
-                              {renderSubForm(
-                                `${index}`,
-                                labelCol && { span: labelCol },
-                                wrapperCol && { span: wrapperCol }
-                              )}
+                              {renderSubForm(index, labelCol && { span: labelCol }, wrapperCol && { span: wrapperCol })}
                             </Show>
 
                             <Show when={allowDeleteItems}>

@@ -20,6 +20,7 @@ export interface ISubFormStateContext {
     postData?: boolean;
     putData?: boolean;
   };
+  value?:any;
 }
 
 export interface ISubFormActionsContext {

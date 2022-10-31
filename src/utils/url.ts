@@ -70,3 +70,25 @@ export const joinUrlAndPath = (baseUrl: string, path: string) => {
 
   return `${newBase}${newPath}`;
 };
+
+export function removeURLParameter(url: string, parameter: string) {
+  if (!url)
+    return url;
+  //prefer to use l.search if you have a location/link object
+  const urlParts = url.split('?');
+  if (urlParts.length >= 2) {
+    const prefix = encodeURIComponent(parameter) + '=';
+    const pars = urlParts[1].split(/[&;]/g);
+
+    //reverse iteration as may be destructive
+    for (let i = pars.length; i-- > 0; ) {
+      //idiom for string.startsWith
+      if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+        pars.splice(i, 1);
+      }
+    }
+
+    return urlParts[0] + (pars.length > 0 ? '?' + pars.join('&') : '');
+  }
+  return url;
+}

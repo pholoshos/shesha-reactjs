@@ -2,7 +2,11 @@ import { FormFullName, FormRawMarkup, IFormSettings } from '../../providers/form
 
 export type FormMode = 'designer' | 'edit' | 'readonly';
 
-export interface IDynamicPageProps {
+interface IDialogClosable {
+  onCloseDialog?: () => void;
+}
+
+export interface IDynamicPageProps extends IDialogClosable {
   /**
    * Form name.
    */
@@ -27,6 +31,13 @@ export interface IDynamicPageProps {
    * Required if the id is not provided
    */
   entityPathId?: string;
+
+  /**
+   * How you want the navigation to occur
+   *  - `stacked` means uses shallow routing with dialog that fills the entire screen
+   *  - `stackedInline` means uses shallow routing with dialog that only fills the content area (Currently not supported)
+   */
+  navMode?: 'stacked' | 'stackedInline';
 }
 
 export interface EntityAjaxResponse {
@@ -43,7 +54,12 @@ export interface IEntity {
   [name: string]: unknown;
 }
 
+export interface INavigationState extends IDialogClosable, Omit<IDynamicPageState, 'navigationState'> {
+  closing?: boolean;
+}
+
 export interface IDynamicPageState extends IDynamicPageProps {
+  stackId?: string;
   formMarkup?: FormRawMarkup;
   formSettings?: IFormSettings;
   fetchedData?: IEntity;

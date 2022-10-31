@@ -1,5 +1,5 @@
 import React, { FC, useReducer, useContext, useEffect, useMemo, useRef } from 'react';
-import { useMutate } from 'restful-react';
+import { useGet, useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
 import { usePubSub } from '../../hooks';
@@ -12,6 +12,7 @@ import { ColProps, message, notification } from 'antd';
 import { useGlobalState } from '../globalState';
 import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
+import { usePrevious } from 'react-use';
 import { useFormConfiguration } from '../form/api';
 import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
 
@@ -44,7 +45,15 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   queryParams,
   entityType,
   onChange,
+  defaultValue,
 }) => {
+  const getEvaluatedUrl = (url: string) => {
+    if (!url) return '';
+    return (() => {
+      // tslint:disable-next-line:function-constructor
+      return new Function('data, query, globalState', url)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+    })();
+  };
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
   const { publish } = usePubSub();
   const { formData = {}, formMode } = useForm();
@@ -64,24 +73,27 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     error: fetchEntityError,
   } = useEntitiesGet({ lazy: true });
   const { initialValues } = useSubForm();
-
-  const getEvaluatedUrl = (url: string) => {
-    if (!url) return '';
-
-    return (() => {
-      // tslint:disable-next-line:function-constructor
-      return new Function('data, query, globalState', url)(formData, getQueryParams(), globalState); // Pass data, query, globalState
-    })();
-  };
-
+  const {
+    refetch: fetchDataByUrlHttp,
+    data: fetchDataByUrl,
+    loading: isFetchingDataByUrl,
+    error: errorFetchingData,
+  } = useGet({
+    path: getEvaluatedUrl(getUrl) ?? '',
+    // queryParams:
+  });
   const previousValue = useRef(value);
-
   useEffect(() => {
     if (typeof value === 'string' && typeof previousValue === 'string' && previousValue !== value) {
       handleFetchData(value);
     }
   }, [value, globalState, formData]);
 
+  useEffect(() => {
+    if (!isFetchingDataByUrl && fetchDataByUrl && typeof onChange === 'function') {
+      onChange(fetchDataByUrl?.result);
+    }
+  }, [isFetchingDataByUrl, fetchDataByUrl]);
   const evaluatedQueryParams = useMemo(() => {
     if (formMode === 'designer') return {};
 
@@ -123,9 +135,11 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     }
   }, [queryParams, evaluatedQueryParams]);
 
+  const previousGetUrl = usePrevious(getUrl);
+
   useEffect(() => {
-    if (dataSource === 'api' && getUrl) {
-      getData();
+    if (dataSource === 'api' && getUrl && previousGetUrl !== getUrl) {
+      fetchDataByUrlHttp();
     }
   }, [properties, getUrl, dataSource]);
 
@@ -300,13 +314,13 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
         errors: {
           getForm: fetchFormError,
           postData: postError,
-          getData: fetchEntityError,
+          getData: fetchEntityError || errorFetchingData,
           putData: updateError,
         },
         loading: {
           getForm: isFetchingForm,
           postData: isPosting,
-          getData: isFetchingEntity,
+          getData: isFetchingEntity || isFetchingDataByUrl,
           putData: isUpdating,
         },
         components: state?.components,
@@ -316,6 +330,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
           wrapperCol: getColSpan(wrapperCol) || getColSpan(state?.formSettings?.wrapperCol), // Override with the incoming one
         },
         name,
+        value: value || defaultValue,
       }}
     >
       <SubFormActionsContext.Provider

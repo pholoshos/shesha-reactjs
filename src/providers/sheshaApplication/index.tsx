@@ -22,6 +22,7 @@ import { UiProvider } from '../ui';
 import { MetadataDispatcherProvider } from '../metadataDispatcher';
 import { IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
 import { ReferenceListDispatcherProvider } from '../referenceListDispatcher';
+import { StackedNavigationProvider } from '../../pages/dynamic/navigation/stakedNavigation';
 import { ConfigurableActionDispatcherConsumer, ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
 import { IConfigurableActionDispatcherActionsContext } from '../configurableActionsDispatcher/contexts';
 import { executeScriptArgumentsForm, IExecuteScriptArguments } from './configurable-actions/execute-script';
@@ -114,6 +115,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
                       <AppConfiguratorProvider>
                         <ReferenceListDispatcherProvider>
                           <MetadataDispatcherProvider>
+                           <StackedNavigationProvider>
                             <DynamicModalProvider>
                               <ConfigurableActionDispatcherConsumer>
                                 {configurableActions => {
@@ -122,6 +124,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
                                 }}
                               </ConfigurableActionDispatcherConsumer>
                             </DynamicModalProvider>
+                          </StackedNavigationProvider>
                           </MetadataDispatcherProvider>
                         </ReferenceListDispatcherProvider>
                       </AppConfiguratorProvider>

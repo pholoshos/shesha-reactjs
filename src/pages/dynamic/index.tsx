@@ -1,48 +1,55 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, message, notification, Result, Spin } from 'antd';
+import classNames from 'classnames';
 import moment from 'moment';
+import { nanoid } from 'nanoid/non-secure';
 import Link from 'next/link';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { GetDataError, useGet, useMutate } from 'restful-react';
 import { axiosHttp } from '../../apis/axios';
 import { ConfigurableForm, ValidationErrors } from '../../components';
-import { usePubSub } from '../../hooks';
+import { usePubSub, usePrevious } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
 import { IAjaxResponseBase } from '../../interfaces/ajaxResponse';
-import { useGlobalState, useSheshaApplication, MetadataProvider, useMetadataDispatcher } from '../../providers';
+import { useGlobalState, useSheshaApplication, MetadataProvider, useMetadataDispatcher, useShaRouting } from '../../providers';
 import { useFormConfiguration } from '../../providers/form/api';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
 import { FormIdentifier } from '../../providers/form/models';
 import { asFormFullName, evaluateComplexString, getComponentsFromMarkup, removeZeroWidthCharsFromString, useFormDesignerComponents } from '../../providers/form/utils';
 import { getQueryParams, isValidSubmitVerb } from '../../utils/url';
-import { EntityAjaxResponse, IDynamicPageProps, IDynamicPageState } from './interfaces';
+import { EntityAjaxResponse, IDynamicPageProps, IDynamicPageState, INavigationState } from './interfaces';
 import { DynamicFormPubSubConstants } from './pubSub';
 import { IModelMetadata, IPropertyMetadata } from '../../interfaces/metadata';
 import { componentsTreeToFlatStructure } from '../..';
+import { useStackedModal } from './navigation/stackedNavigationModalProvider';
+import isDeepEqual from 'fast-deep-equal/react';
+import { useStackedNavigation } from './navigation/stakedNavigation';
+import StackedNavigationModal from './navigation/stackedNavigationModal';
 
 const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const { backendUrl } = useSheshaApplication();
   const [state, setState] = useState<IDynamicPageState>({});
   const formRef = useRef<ConfigurableFormInstance>();
   const { globalState } = useGlobalState();
+  const { router } = useShaRouting();
 
   const { publish } = usePubSub();
 
   const { getMetadata: fetchMeta } = useMetadataDispatcher();
-  const [ metadata, setMetadata ] = useState<IModelMetadata>();
-  const [ metadataFetchCount, setMetadataFetchCount ] = useState<number>(null);
+  const [metadata, setMetadata] = useState<IModelMetadata>();
+  const [metadataFetchCount, setMetadataFetchCount] = useState<number>(null);
 
   const { id, formId, entityPathId } = state;
 
-  const { 
+  const {
     refetch: fetchFormMarkup,
     formConfiguration,
     loading: isFetchingMarkup,
     error: fetchMarkupError
-   } = useFormConfiguration({ formId, lazy: true });
+  } = useFormConfiguration({ formId, lazy: true });
   const formMarkup = formConfiguration?.markup;
   const formSettings = formConfiguration?.settings;
-  
+
   const [form] = Form.useForm();
 
   // url that is used to get form data
@@ -76,8 +83,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   // submit URL
   const submitUrl = useMemo(() => {
-    const url = formSettings 
-      ? formSettings[`${submitVerb?.toLocaleLowerCase()}Url`] 
+    const url = formSettings
+      ? formSettings[`${submitVerb?.toLocaleLowerCase()}Url`]
       : null;
 
     if (!url && formSettings) {
@@ -86,9 +93,9 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
     return url
       ? evaluateComplexString(url, [
-          { match: 'query', data: getQueryParams() },
-          { match: 'globalState', data: globalState },
-        ])
+        { match: 'query', data: getQueryParams() },
+        { match: 'globalState', data: globalState },
+      ])
       : '';
   }, [formSettings, submitVerb]);
 
@@ -107,9 +114,73 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     verb: submitVerb,
   });
 
+  //#region routing
+  const { setCurrentNavigator, navigator } = useStackedNavigation();
+  const [navigationState, setNavigationState] = useState<INavigationState>();
+  const { parentId } = useStackedModal(); // If the parentId is null, we're in the root page
+  const closing = useRef(false);
+
   useEffect(() => {
-    setState(() => ({ ...props }));
+    const stackId = nanoid();
+
+    if (props?.navMode === 'stacked' || navigationState) {
+      const isInitialized = state?.formId || state?.entityPathId;
+
+      if (!isInitialized) {
+        setState({ ...props, stackId });
+        setCurrentNavigator(stackId);
+      } else if (navigationState && navigationState?.closing) {
+        setNavigationState(null); // We're closing the dialog
+      }
+    } else {
+      setState({ ...props, stackId });
+      setCurrentNavigator(stackId);
+    }
   }, [props]);
+
+  const previousProps = usePrevious(props);
+  const previousRouter = usePrevious(router?.query);
+
+  useEffect(() => {
+    if (!router?.query?.navMode && !navigationState) {
+      return;
+    } else if (!parentId && !router?.query?.navMode) {
+      setNavigationState(null);
+      setCurrentNavigator(state?.stackId);
+      setState(prev => ({ ...prev, ...router?.query }));
+      closing.current = false;
+      return;
+    }
+
+    if (
+      navigator &&
+      state?.stackId === navigator &&
+      !navigationState &&
+      !closing?.current &&
+      !isDeepEqual(previousProps, router?.query) &&
+      !isDeepEqual(previousRouter, router?.query)
+    ) {
+      setNavigationState(router?.query);
+      closing.current = false;
+    }
+    closing.current = false;
+  }, [router]);
+
+  useEffect(() => {
+    if (navigationState?.closing) {
+      router?.back();
+    }
+  }, [navigationState?.closing]);
+
+  const onStackedDialogClose = () => {
+    closing.current = true;
+
+    setNavigationState(prev => ({ ...prev, closing: true }));
+    setCurrentNavigator(state?.stackId);
+  };
+
+  const hasDialog = Boolean(props?.onCloseDialog);
+  //#endregion
 
   const sameForm = (formId: FormIdentifier, name: string, module: string): boolean => {
     const safeStringsEqual = (a: string, b: string) => (a ?? '').toLowerCase() === (b ?? '').toLowerCase();
@@ -130,7 +201,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     name: string;
     child: IFieldData[]
     property: IPropertyMetadata;
-  } 
+  }
 
   const getProperties = (field: IFieldData) => {
     if (field.property?.dataType == 'entity') {
@@ -159,14 +230,14 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   const gqlFields = useMemo(() => {
     if (!metadata || !formMarkup) return null;
-    
+
     let fields: IFieldData[] = [];
     const components = componentsTreeToFlatStructure(toolboxComponent, getComponentsFromMarkup(formMarkup)).allComponents;
     let fieldNames = [];
-    for(const key in components){
+    for (const key in components) {
       fieldNames.push(components[key].name);
     }
-    
+
     fieldNames = fieldNames.concat(formSettings?.fieldsToFetch ?? []);
 
     formMarkup.forEach((item) => {
@@ -187,7 +258,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         let path = item.split('.');
 
         if (path.length == 1) {
-          fields.push({name: item, child: [], property: metadata?.properties.find(p => p.path.toLowerCase() == path[0].toLowerCase())});
+          fields.push({ name: item, child: [], property: metadata?.properties.find(p => p.path.toLowerCase() == path[0].toLowerCase()) });
           return;
         }
 
@@ -196,13 +267,15 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         while (i < path.length) {
           let fs = parent?.child ?? fields;
           let field = fs.find(f => f.name == path[i]);
-          if (!field){
-            field = {name: path[i], child: [],
-              property: i == 0 
-              ? metadata?.properties.find(p => p.path.toLowerCase() == path[0].toLowerCase()) 
-              : parent?.property?.dataType == 'object'
-                ? parent.property.properties?.find(p => p.path.toLowerCase() == path[i].toLowerCase())
-                : null};
+          if (!field) {
+            field = {
+              name: path[i], child: [],
+              property: i == 0
+                ? metadata?.properties.find(p => p.path.toLowerCase() == path[0].toLowerCase())
+                : parent?.property?.dataType == 'object'
+                  ? parent.property.properties?.find(p => p.path.toLowerCase() == path[i].toLowerCase())
+                  : null
+            };
             fs.push(field);
           }
           parent = field;
@@ -227,10 +300,10 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
             s += '{' + resf(item.child) + '}';
           }
         });
-  
+
         return s;
       }
-  
+
       return resf(gqlFields);
     }
     return null;
@@ -249,7 +322,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     // Data/Entity will be fetched with the previous value of the response. That is why we have to check that we don't have the old form response
     //const isPathMismatch = props?.path !== formResponse?.path;
     const correctForm = formConfiguration && sameForm(props.formId, formConfiguration.name, formConfiguration.module);
-    
+
     // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
     if (fetchDataPath && correctForm && fetchFields) {
       fetcherRef.current = fetchFormData;
@@ -386,24 +459,37 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }
 
   return (
-    <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
-      <MetadataProvider id="dynamic" modelType={formSettings?.modelType}>
-      <ConfigurableForm
-        markup={{ components: state?.formMarkup, formSettings: state?.formSettings }} // pass empty markup to prevent unneeded form fetching
-        formId={formId}
-        formRef={formRef}
-        mode={state?.mode}
-        form={form}
-        actions={{ onChangeId, onChangeFormData }}
-        onFinish={onFinish}
-        initialValues={state?.fetchedData}
-        skipPostOnFinish
-        skipFetchData
-        refetchData={() => refetchFormData()}
-        className="sha-dynamic-page"
-      />
-      </MetadataProvider>
-    </Spin>
+    <Fragment>
+      <div id="modalContainerId" className={classNames('sha-dynamic-page', { 'has-dialog': hasDialog })}>
+        <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
+          <MetadataProvider id="dynamic" modelType={formSettings?.modelType}>
+            <ConfigurableForm
+              markup={{ components: state?.formMarkup, formSettings: state?.formSettings }} // pass empty markup to prevent unneeded form fetching
+              formId={formId}
+              formRef={formRef}
+              mode={state?.mode}
+              form={form}
+              actions={{ onChangeId, onChangeFormData }}
+              onFinish={onFinish}
+              initialValues={state?.fetchedData}
+              skipPostOnFinish
+              skipFetchData
+              refetchData={() => refetchFormData()}
+              className="sha-dynamic-page"
+            />
+          </MetadataProvider>
+        </Spin>
+      </div>
+
+      <StackedNavigationModal
+        onCancel={onStackedDialogClose}
+        title="NAVIGATE"
+        visible={Boolean(navigationState)}
+        parentId={state?.stackId}
+      >
+        <DynamicPage onCloseDialog={onStackedDialogClose} {...navigationState} />
+      </StackedNavigationModal>
+    </Fragment>
   );
 };
 export default DynamicPage;

@@ -43,7 +43,7 @@ const ShaRoutingProvider: FC<PropsWithChildren<any>> = ({ children, router }) =>
   }, [state, state?.router]);
 
   return (
-    <ShaRoutingStateContext.Provider value={state}>
+    <ShaRoutingStateContext.Provider value={{ ...state, router }}>
       <ShaRoutingActionsContext.Provider
         value={{
           ...getFlagSetters(dispatch),

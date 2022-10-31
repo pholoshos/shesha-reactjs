@@ -346,7 +346,8 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
         // @ts-ignore
         const clickHandler = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, props: any) => {
           event.preventDefault();
-          const currentId = props?.row?.original?.Id;
+          const row = props?.row?.original;
+          const currentId = row?.Id || row?.id;
 
           if (localData?.type === 'update') {
             const callback = () =>

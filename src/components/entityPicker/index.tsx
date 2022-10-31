@@ -1,5 +1,5 @@
 import { EllipsisOutlined } from '@ant-design/icons';
-import { Button, Modal, Select } from 'antd';
+import { Button, Input, Modal, Select } from 'antd';
 import _, { camelCase, snakeCase } from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import React, { FC, Fragment, useEffect, useMemo, useRef, useState } from 'react';
@@ -13,7 +13,6 @@ import { useEntityDisplayText } from '../../utils/entity';
 import GlobalTableFilter from '../globalTableFilter';
 import IndexTable from '../indexTable';
 import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
-import Show from '../show';
 import TablePager from '../tablePager';
 import { IEntityPickerProps, IEntityPickerState, ISelectedProps } from './models';
 import { useSelectedTableRow } from './useSelectedTableRow';
@@ -24,9 +23,8 @@ const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
 export const COLUMNS_CHANGED_EVENT_NAME = 'EntityPickerColumnsConfigChanged';
 
 export const EntityPickerInner: FC<IEntityPickerProps> = ({
-  tableId,
   entityType,
-  displayEntityKey = 'displayName',
+  displayEntityKey = '_displayName',
   onChange,
   disabled,
   loading,
@@ -142,7 +140,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     }
   }, [state?.showModal]);
 
-  if (!tableId && !entityType) {
+  if (!entityType) {
     throw new Error(
       'Please make sure that either tableId or entityType is configured for the entity picker to work properly'
     );
@@ -168,7 +166,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
       } else {
         setSelectedRows(() => [{ id: row?.id, displayName: row[propertyName] }]);
         onChange(row?.id, null);
-    }
+      }
     }
 
     hidePickerDialog();
@@ -243,29 +241,27 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
             {title}
           </Button>
         ) : (
-          <>
-            <Show when={true}>
-              <Select
-                size={size}
-                onFocus={() => {
-                  selectRef.current.blur();
-                  showPickerDialog();
-                }}
-                value={selectedIds}
-                notFoundContent={''}
-                defaultValue={defaultValue}
-                disabled={disabled}
-                ref={selectRef}
-                allowClear
-                mode={selectedMode}
-                options={options}
-                showArrow={false}
-                onChange={handleMultiChange}
-              >
-                {''}
-              </Select>
-            </Show>
-
+          <Input.Group style={{ width: '100%' }}>
+            <Select
+              size={size}
+              onFocus={() => {
+                selectRef.current.blur();
+                showPickerDialog();
+              }}
+              value={selectedIds}
+              notFoundContent={''}
+              defaultValue={defaultValue}
+              disabled={disabled}
+              ref={selectRef}
+              allowClear
+              mode={selectedMode}
+              options={options}
+              showArrow={false}
+              onChange={handleMultiChange}
+              style={{ width: "calc(100% - 32px)" }}
+            >
+              {''}
+            </Select>
             <Button
               onClick={showPickerDialog}
               className="picker-input-group-ellipsis"
@@ -274,7 +270,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
               size={size}
               icon={<EllipsisOutlined />}
             />
-          </>
+          </Input.Group>
         )}
       </div>
 

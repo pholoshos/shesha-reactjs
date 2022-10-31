@@ -57,7 +57,6 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
   const meta = useMetadata(false);
   const { getContainerProperties } = useMetadataDispatcher();
   const { metadata } = meta || {};
-  console.log('meta!', meta);
 
   const initialProperties = metadata?.properties ?? [];
   const [state, setState] = useState<IAutocompleteState>({ options: properties2options(initialProperties, null), properties: initialProperties });
@@ -118,7 +117,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
   const onSelectMultiple = (data: string) => {
     if (data != multipleValue) {
       setMultipleValue(data);
-    } else{
+    } else {
       var list = props.value
         ? Array.isArray(props.value) ? props.value : []
         : [];
@@ -148,7 +147,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
   };
 
   const selectedProperty = useMemo(() => {
-    return typeof(props.value) === 'string'
+    return typeof (props.value) === 'string'
       ? getProperty(props.value)
       : null;
   }, [props.value, state.properties]);
@@ -184,7 +183,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
       disabled={readOnly}
       value={props.value}
       options={state.options}
-      style={showFillPropsButton ? { width: 'calc(100% - 32px)'} : props.style }
+      style={showFillPropsButton ? { width: 'calc(100% - 32px)' } : props.style}
       onSelect={onSelect}
       onSearch={onSearch}
       notFoundContent="Not found"
@@ -197,22 +196,22 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
   const forMap = (tag: string) => {
     const tagElem = (
       <>
-          <Tag
-            closable
-            onClose={e => {
-              e.preventDefault();
-              if (Array.isArray(props.value))
+        <Tag
+          closable
+          onClose={e => {
+            e.preventDefault();
+            if (Array.isArray(props.value))
               if (props.onChange) props.onChange(props.value.filter(item => item != tag));
-            }}
-            onClick={e => {
-              e.preventDefault();
-              setMultipleValue(tag);
-              if (Array.isArray(props.value))
+          }}
+          onClick={e => {
+            e.preventDefault();
+            setMultipleValue(tag);
+            if (Array.isArray(props.value))
               if (props.onChange) props.onChange(props.value.filter(item => item != tag));
-            }}
-          >
-            {tag}
-          </Tag>
+          }}
+        >
+          {tag}
+        </Tag>
       </>
     );
     return (
@@ -230,7 +229,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
         disabled={readOnly}
         value={multipleValue}
         options={state.options}
-        style={showFillPropsButton ? { width: 'calc(100% - 32px)'} : props.style }
+        style={showFillPropsButton ? { width: 'calc(100% - 32px)' } : props.style}
         //onChange={setMultipleValue}
         onSelect={onSelectMultiple}
         onSearch={onSearchMultiple}
@@ -243,7 +242,7 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
         {tagChild}
       </div>
     </>
-);
+  );
 
   return (
     <>
@@ -265,15 +264,15 @@ export const PropertyAutocomplete: FC<IPropertyAutocompleteProps> = ({ mode = 's
       ) : mode === 'multiple' ? (
         <>{multiple}</>
       ) :
-      (
-        <Select allowClear onChange={props?.onChange} value={props.value} mode={mode} /*showSearch*/ size={props.size} disabled={readOnly}>
-          {state.options.map((option, index) => (
-            <Select.Option key={index} value={camelCase(option.value)}>
-              {option.label}
-            </Select.Option>
-          ))}
-        </Select>
-      )}
+        (
+          <Select allowClear onChange={props?.onChange} value={props.value} mode={mode} /*showSearch*/ size={props.size} disabled={readOnly}>
+            {state.options.map((option, index) => (
+              <Select.Option key={index} value={camelCase(option.value)}>
+                {option.label}
+              </Select.Option>
+            ))}
+          </Select>
+        )}
     </>
   );
 };

@@ -68,7 +68,7 @@ const Template: Story<IExtendedChildTableProps> = args => {
             {
               title: 'Picker',
               render: () => (
-                <EntityPicker tableId="Students_Picker_Index" useButtonPicker pickerButtonProps={{ size: 'small' }} />
+                <EntityPicker useButtonPicker pickerButtonProps={{ size: 'small' }} />
               ),
             },
           ]}

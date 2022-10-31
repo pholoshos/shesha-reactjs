@@ -323,30 +323,27 @@
           "settingsValidationErrors": []
         },
         {
-          "textType": "text",
-          "id": "NPtPoeSHfhMP97Wzhex7X",
-          "type": "textField",
-          "name": "entityDisplayProperty",
-          "label": "Display Property",
-          "labelAlign": "right",
-          "parentId": "uEFBpy19tApJMiBuFyj9s",
-          "hidden": false,
-          "visibility": "Yes",
-          "customVisibility": null,
-          "isDynamic": false,
-          "placeholder": "",
+          "id":"hpm6rN_aj-L_KaG5MLIZt",
+          "type":"propertyAutocomplete",
+          "name":"entityDisplayProperty",
+          "label":"Display Property",
+          "labelAlign":"right",
+          "parentId":"uEFBpy19tApJMiBuFyj9s",
+          "hidden":false,
+          "visibility":"Yes",
+          "customVisibility":"return data.entityTypeShortAlias",
+          "isDynamic":false,
+          "placeholder":"",
           "description": "Name of the property that should be displayed in the autocomplete. Live empty to use default display property defined on the back-end.",
-          "validate": {
-            "minLength": "",
-            "maxLength": "",
-            "message": ""
+          "validate":{
+             
           },
-          "prefix": "",
-          "suffix": "",
-          "initialValue": "",
-          "quickviewWidth": "",
-          "settingsValidationErrors": []
-        },
+          "modelType":"{{data.entityTypeShortAlias}}",
+          "showFillPropsButton":false,
+          "settingsValidationErrors":[
+             
+          ]
+       },        
         {
           "id": "14413162-429e-451c-b3e6-b3f0ab6d7b09",
           "type": "sectionSeparator",

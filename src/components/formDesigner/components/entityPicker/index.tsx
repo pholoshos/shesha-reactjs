@@ -15,7 +15,6 @@ export interface IEntityPickerComponentProps extends IConfigurableFormComponent 
   items?: [];
   hideBorder?: boolean;
   disabled?: boolean;
-  tableId: string;
   mode?: 'single' | 'multiple' | 'tags';
   entityType: string;
   title?: string;
@@ -42,7 +41,7 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
 
     const disabled = isComponentDisabled(model);
 
-    if (formMode === 'designer' && !model?.tableId && !model?.entityType) {
+    if (formMode === 'designer' && !model?.entityType) {
       return (
         <Alert
           showIcon
@@ -59,7 +58,6 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
           formId={model?.id}
           disabled={disabled}
           readOnly={isReadOnly}
-          tableId={model?.tableId}
           displayEntityKey={model?.displayEntityKey}
           entityType={model?.entityType}
           mode={model?.mode}

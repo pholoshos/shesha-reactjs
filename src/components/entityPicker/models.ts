@@ -6,7 +6,6 @@ import { IConfigurableColumnsBase } from '../../providers/datatableColumnsConfig
 import { FormIdentifier } from '../../providers/form/models';
 
 interface IWrappedEntityPickerProps {
-  tableId?: string;
   entityType?: string;
   allowNewRecord?: boolean;
   parentEntityId?: string;

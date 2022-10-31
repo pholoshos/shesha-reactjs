@@ -6,11 +6,14 @@ import FormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { PropertyAutocomplete } from '../../../propertyAutocomplete/propertyAutocomplete';
-import { useForm } from '../../../..';
+import { evaluateString, MetadataProvider, useForm } from '../../../..';
+import ConditionalWrap from '../../../conditionalWrapper';
 
 export interface IPropertyAutocompleteComponentProps extends IConfigurableFormComponent {
   dropdownStyle?: string;
   mode?: 'single' | 'multiple';
+  modelType?: string;
+  showFillPropsButton?: boolean;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -21,17 +24,29 @@ const PropertyAutocompleteComponent: IToolboxComponent<IPropertyAutocompleteComp
   icon: <FileSearchOutlined />,
   factory: (model: IPropertyAutocompleteComponentProps) => {
     const { formData, formMode } = useForm();
+    const { modelType: modelTypeExpression } = model;
+
+    const modelType = modelTypeExpression
+      ? evaluateString(modelTypeExpression, { data: formData })
+      : null;
+
     return (
-      <FormItem model={model}>
-        <PropertyAutocomplete
-          id={model.id}
-          style={getStyle(model?.style, formData)}
-          dropdownStyle={getStyle(model?.dropdownStyle, formData)}
-          size={model.size}
-          mode={model?.mode}
-          readOnly={ formMode === 'readonly' }
-        />
-      </FormItem>
+      <ConditionalWrap
+        condition={Boolean(modelType)}
+        wrap={content => <MetadataProvider modelType={modelType}>{content}</MetadataProvider>}
+      >
+        <FormItem model={model}>
+          <PropertyAutocomplete
+            id={model.id}
+            style={getStyle(model?.style, formData)}
+            dropdownStyle={getStyle(model?.dropdownStyle, formData)}
+            size={model.size}
+            mode={model.mode}
+            readOnly={formMode === 'readonly'}
+            showFillPropsButton={model.showFillPropsButton ?? true}
+          />
+        </FormItem>
+      </ConditionalWrap>
     );
   },
   settingsFormMarkup: settingsForm,

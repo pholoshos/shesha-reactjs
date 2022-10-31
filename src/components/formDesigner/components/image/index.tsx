@@ -7,23 +7,20 @@ import { getStyle, validateConfigurableComponentSettings } from '../../../../pro
 import React from 'react';
 import { useForm } from '../../../../providers';
 
-export interface IFileUploadProps extends IConfigurableFormComponent, IFormItem {
+export interface IImageProps  extends IConfigurableFormComponent, IFormItem {
   height: number|string;
   width: number|string;
   url: string;
-  allowUpload?: boolean;
-  allowReplace?: boolean;
-  allowDelete?: boolean;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
 
-const ImageComponent: IToolboxComponent<IFileUploadProps> = {
+const ImageComponent: IToolboxComponent<IImageProps > = {
   type: 'image',
   name: 'Image Display',
   icon: <FileImageOutlined />,
 
-  factory: (model: IFileUploadProps) => {
+  factory: (model: IImageProps ) => {
     const { formData } = useForm();
    
  
@@ -32,7 +29,6 @@ const ImageComponent: IToolboxComponent<IFileUploadProps> = {
               <div className="container">
               <img src={model.url} 
                    alt="Avatar"
-                   className="image" 
                    width={model?.width} 
                    height={model?.height} 
                    style={getStyle(model.style, formData)}
@@ -42,11 +38,9 @@ const ImageComponent: IToolboxComponent<IFileUploadProps> = {
     );
   },
   initModel: model => {
-    const customModel: IFileUploadProps = {
+    const customModel: IImageProps  = {
       ...model,
-      allowReplace: true,
-      allowDelete: true,
-      allowUpload: true,
+   
 
     };
     return customModel;

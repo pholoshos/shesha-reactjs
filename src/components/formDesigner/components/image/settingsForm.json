@@ -116,26 +116,7 @@
         { "name": "data", "description": "Selected form values", "type": "object" }
       ]
     },
-    {
-      "id": "b0d75145-3f7c-424d-a1ac-c65990b4f749",
-      "type": "checkbox",
-      "name": "allowReplace",
-      "label": "Allow Replace",
-      "parentId": "root",
-      "hidden": false,
-      "customVisibility": "return !data.disabled",
-      "validate": {}
-    },
-    {
-      "id": "88697971-8945-420e-959b-46493f9955f9",
-      "type": "checkbox",
-      "name": "allowDelete",
-      "label": "Allow Delete",
-      "parentId": "root",
-      "hidden": false,
-      "customVisibility": "return !data.disabled",
-      "validate": {}
-    },
+
     {
       "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",
       "type": "sectionSeparator",

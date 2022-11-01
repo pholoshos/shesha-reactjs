@@ -409,8 +409,7 @@ const ListControl: FC<IListControlProps> = props => {
   const renderSubForm = (localName?: string | number, localLabelCol?: ColProps, localWrapperCol?: ColProps) => {
     return (
       <SubFormProvider
-        name={localName as string}
-        // name={localName}
+        name={`${localName}`}
         markup={markup}
         properties={[]}
         labelCol={localLabelCol}

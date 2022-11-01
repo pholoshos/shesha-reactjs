@@ -502,7 +502,11 @@ export const getValidationRules = (component: IConfigurableFormComponent, option
 };
 
 /* Convert string to camelCase */
-export const camelcaseDotNotation = str => str.split('.').map(s => camelcase(s)).join('.')
+export const camelcaseDotNotation = str =>
+  str
+    .split('.')
+    .map(s => camelcase(s))
+    .join('.');
 
 const DICTIONARY_ACCESSOR_REGEX = /(^[\s]*\{(?<key>[\w]+)\.(?<accessor>[^\}]+)\}[\s]*$)/;
 const NESTED_ACCESSOR_REGEX = /((?<key>[\w]+)\.(?<accessor>[^\}]+))/;
@@ -966,45 +970,41 @@ export const filterFormData = (data: any) => {
 
 /**
  * Convert list of properties in dot notation to a list of properties for fetching using GraphQL syntax
- * @param properties 
- * @returns 
+ * @param properties
+ * @returns
  */
 export const convertDotNotationPropertiesToGraphQL = (properties: string[], columns: ITableColumn[]): string => {
   const tree = {};
-  
+
   const makeProp = (container: object, name: string) => {
     let parts = name.split('.');
     let currentContainer = container;
 
     do {
       const part = parts.shift();
-      if (parts.length > 0){
+      if (parts.length > 0) {
         // current property is a container
         const existingContainer = currentContainer[part];
         // reuse if already exists, it already contains some properties
-        if (typeof existingContainer !== 'object')
-          currentContainer[part] = {};
+        if (typeof existingContainer !== 'object') currentContainer[part] = {};
 
-          currentContainer = currentContainer[part];
+        currentContainer = currentContainer[part];
       } else {
-        if (!Boolean(currentContainer[part]))
-          currentContainer[part] = true; // scalar property
-      }        
+        if (!Boolean(currentContainer[part])) currentContainer[part] = true; // scalar property
+      }
     } while (parts.length > 0);
-  }
+  };
 
   const expandedProps = [...properties];
   // add id if missing
-  if (!expandedProps.includes('id'))
-    expandedProps.push('id');
-    
+  if (!expandedProps.includes('id')) expandedProps.push('id');
+
   // special handling for entity references: expand properties list to include `id` and `_displayName`
   const entityColumns = columns.filter(c => c.dataType === 'entity');
   entityColumns.forEach(c => {
     const requiredProps = [`${c.propertyName}.Id`, `${c.propertyName}._displayName`];
     requiredProps.forEach(rp => {
-      if (!expandedProps.includes(rp))
-        expandedProps.push(rp);
+      if (!expandedProps.includes(rp)) expandedProps.push(rp);
     });
   });
 
@@ -1014,25 +1014,20 @@ export const convertDotNotationPropertiesToGraphQL = (properties: string[], colu
   });
 
   const preparePropertyName = (name: string): string => {
-    return name.startsWith('_')
-      ? name
-      : camelcase(name);
-  }
+    return name.startsWith('_') ? name : camelcase(name);
+  };
 
   const getNodes = (container: object): string => {
-    let result = "";  
-    for (const node in container){
-      if (result !== "")
-        result += " ";
+    let result = '';
+    for (const node in container) {
+      if (result !== '') result += ' ';
       const nodeValue = container[node];
-      if (typeof nodeValue === 'object')
-        result += `${preparePropertyName(node)} { ${getNodes(nodeValue)} }`;
-      else
-        result += preparePropertyName(node);
+      if (typeof nodeValue === 'object') result += `${preparePropertyName(node)} { ${getNodes(nodeValue)} }`;
+      else result += preparePropertyName(node);
     }
     return result;
-  }
+  };
 
   // convert tree to a GQL syntax
   return getNodes(tree);
-}
+};

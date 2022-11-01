@@ -9,10 +9,12 @@ import { EntityPicker } from '../../..';
 import { Alert } from 'antd';
 import { useForm } from '../../../../providers';
 import { DataTypes } from '../../../../interfaces/dataTypes';
+import { IConfigurableColumnsBase } from '../../../../providers/datatableColumnsConfigurator/models';
+import { migrateV0toV1 } from './migrations/migrate-v1';
 
 export interface IEntityPickerComponentProps extends IConfigurableFormComponent {
   placeholder?: string;
-  items?: [];
+  items?: IConfigurableColumnsBase[];
   hideBorder?: boolean;
   disabled?: boolean;
   mode?: 'single' | 'multiple' | 'tags';
@@ -79,6 +81,15 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
       </ConfigurableFormItem>
     );
   },
+  migrator: m => m.add<IEntityPickerComponentProps>(0, prev => {
+    return { 
+      ...prev,
+      items: prev['items'] ?? [],
+      mode: prev['mode'] ?? 'single',
+      entityType: prev['entityType'],
+    };
+  })
+  .add<IEntityPickerComponentProps>(1, migrateV0toV1),
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
 };

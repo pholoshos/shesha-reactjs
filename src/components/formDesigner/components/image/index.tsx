@@ -3,45 +3,45 @@ import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/fo
 import { FileImageOutlined } from '@ant-design/icons';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
-import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getString, getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import React from 'react';
 import { useForm } from '../../../../providers';
 
-export interface IImageProps  extends IConfigurableFormComponent, IFormItem {
-  height: number|string;
-  width: number|string;
+export interface IImageProps extends IConfigurableFormComponent, IFormItem {
+  height: number | string;
+  width: number | string;
   url: string;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
 
-const ImageComponent: IToolboxComponent<IImageProps > = {
+const ImageComponent: IToolboxComponent<IImageProps> = {
   type: 'image',
   name: 'Image Display',
   icon: <FileImageOutlined />,
 
-  factory: (model: IImageProps ) => {
+  factory: (model: IImageProps) => {
     const { formData } = useForm();
-   
- 
+
+    const url:string = getString(model?.url, formData) || formData?.[model.name];
+
     return (
       <ConfigurableFormItem model={model}>
-              <div className="container">
-              <img src={model.url} 
-                   alt="Avatar"
-                   width={model?.width} 
-                   height={model?.height} 
-                   style={getStyle(model.style, formData)}
-               />
-              </div>
+        <div className="container">
+          <img
+            src={url}
+            alt="Avatar"
+            width={model?.width}
+            height={model?.height}
+            style={getStyle(model.style, formData)}
+          />
+        </div>
       </ConfigurableFormItem>
     );
   },
   initModel: model => {
-    const customModel: IImageProps  = {
+    const customModel: IImageProps = {
       ...model,
-   
-
     };
     return customModel;
   },

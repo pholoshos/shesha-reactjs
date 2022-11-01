@@ -171,12 +171,16 @@
       "label": "Width"
     },
     {
-      "id": "124a3c72-452b-4fc3-82d8-e106ef541493",
-      "type": "textField",
+      "id": "06ab0599-914d-4d2d-875c-765a495482f8",
+      "type": "codeEditor",
       "name": "url",
+      "label": "Url",
       "parentId": "root",
-      "label": "Url"
-        },
+      "validate": {},
+      "settingsValidationErrors": [],
+      "description": "A script that returns the image url as a string. This should return a string",
+      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
+    },
     {
       "id": "a59d3daa-e34f-4410-9ae1-fc1669eab5e5",
       "type": "sectionSeparator",

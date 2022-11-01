@@ -48,13 +48,21 @@ export interface IEntitySelectionResult {
     loading: boolean;
 }
 
+interface ILoadedSelectionSummary {
+    keys: string[],
+    entityType: string;
+    propertyName: string;
+}
+
 export const useEntitySelectionData = (props: IUseEntityDisplayTextProps): IEntitySelectionResult => {
     const { entityType, propertyName, selection } = props;
-    const lastSelection = useRef<string[]>();
+    const lastSelection = useRef<ILoadedSelectionSummary>();
     
     const itemsAlreadyLoaded = selection && Array.isArray(selection) 
         && lastSelection.current
-        && !Boolean(selection.find(item => !lastSelection.current.includes(item)));   
+        && lastSelection.current.entityType === entityType
+        && lastSelection.current.propertyName === propertyName
+        && !Boolean(selection.find(item => !lastSelection.current.keys.includes(item)));   
 
     const displayProperty = normalizePropertyName(propertyName) ?? '_displayName';
 
@@ -88,7 +96,11 @@ export const useEntitySelectionData = (props: IUseEntityDisplayTextProps): IEnti
             .map<EntityData>(ent => ({ id: ent.id, [propertyName]: ent[normalizePropertyName(propertyName)] ?? 'unknown' }));
         
         lastSelection.current = valueFetcher?.loading === false && selection && Array.isArray(selection)
-            ? result.map(e => e.id.toString())
+            ? {
+                keys: result.map(e => e.id.toString()),
+                entityType: entityType,
+                propertyName: propertyName,
+            }
             : null;
 
         return result;

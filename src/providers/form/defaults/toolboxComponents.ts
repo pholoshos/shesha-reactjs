@@ -56,7 +56,6 @@ import ColumnsEditor from '../../../components/formDesigner/components/dataTable
 import EntityPickerColumnsEditor from '../../../components/formDesigner/components/dataTable/table/entityPickerColumnsEditor/entityPickerColumnsEditorComponent';
 
 import ButtonGroup from '../../../components/formDesigner/components/button/buttonGroup/buttonGroupComponent';
-import ColumnsSelector from '../../../components/formDesigner/components/entityPicker/columnsSelector';
 import Filter from '../../../components/formDesigner/components/dataTable/filter/filterComponent';
 import PermissionedObjectsTree from '../../../components/formDesigner/components/permissions/permissionedObjectsTree/permissionedObjectsTree';
 import ScheduledJobExecutionLog from '../../../components/formDesigner/components/scheduledJobExecutionLog/scheduledJobExecutionLog';
@@ -151,7 +150,6 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       ChildTable,
       ColumnsEditor, // Hidden
       EntityPickerColumnsEditor,
-      ColumnsSelector, // Hidden
       DataTable,
       TableTemplate,
       Pager,

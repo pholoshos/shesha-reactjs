@@ -5,11 +5,9 @@ import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import React, { FC, Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useMedia } from 'react-use';
-import { usePublish } from '../../hooks';
 import { IAnyObject } from '../../interfaces';
 import { useModal } from '../../providers';
 import DataTableProvider, { useDataTable } from '../../providers/dataTable';
-import { IConfigurableColumnsBase, IDataColumnsProps } from '../../providers/datatableColumnsConfigurator/models';
 import { IModalProps } from '../../providers/dynamicModal/models';
 import { useEntitySelectionData } from '../../utils/entity';
 import GlobalTableFilter from '../globalTableFilter';
@@ -19,8 +17,6 @@ import TablePager from '../tablePager';
 import { IEntityPickerProps, IEntityPickerState } from './models';
 
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
-
-export const COLUMNS_CHANGED_EVENT_NAME = 'EntityPickerColumnsConfigChanged';
 
 export const EntityPicker: FC<IEntityPickerProps> = ({ displayEntityKey = '_displayName', ...restProps }) => {
   return restProps.readOnly
@@ -67,6 +63,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
     defaultValue,
     title = 'Select Item',
     addNewRecordsProps,
+    configurableColumns,
   } = props;
 
   const [modalId] = useState(nanoid()); // use generated value because formId was changed. to be reviewed
@@ -78,11 +75,13 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
   const {
     changeSelectedStoredFilterIds,
     selectedStoredFilterIds,
-    columns,
+    registerConfigurableColumns,
   } = useDataTable();
   const selectRef = useRef(undefined);
 
-  usePublish(COLUMNS_CHANGED_EVENT_NAME, () => ({ stateId: 'NOT_PROVIDED', state: columns }), [columns]);
+  useEffect(() => {
+    registerConfigurableColumns(modalId, configurableColumns);
+  }, [configurableColumns]);
 
   const showPickerDialog = () => setState(prev => ({ ...prev, showModal: true }));
 
@@ -303,31 +302,10 @@ export const EntityPickerEditable: FC<IEntityPickerProps> = props => {
     displayEntityKey,
   } = props;
 
-  const columns = useMemo<IConfigurableColumnsBase[]>(() => {
-    const cols = props.configurableColumns ?? [];
-    const displayPropertyIncluded = Boolean(cols.find(col => (col as IDataColumnsProps).propertyName === displayEntityKey));
-    if (!displayPropertyIncluded) {
-      // add invisible column
-      const displayNameColumn: IDataColumnsProps = {
-        id: nanoid(),
-        propertyName: displayEntityKey,
-        isVisible: false,
-        columnType: 'data',
-        caption: '',
-        sortOrder: 999,
-        itemType: 'item'
-      };
-      cols.push(displayNameColumn);
-    }
-
-    return cols;
-  }, [props.configurableColumns]);
-
   return (
     <DataTableProvider
       parentEntityId={parentEntityId}
       entityType={entityType}
-      configurableColumns={columns}
     >
       <EntityPickerEditableInner {...props} displayEntityKey={displayEntityKey} />
     </DataTableProvider>

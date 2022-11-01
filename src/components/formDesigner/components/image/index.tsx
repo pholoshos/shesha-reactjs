@@ -23,7 +23,7 @@ const ImageComponent: IToolboxComponent<IImageProps> = {
   factory: (model: IImageProps) => {
     const { formData } = useForm();
 
-    const url:string = getString(model?.url, formData) || formData?.[model.name];
+    const url: string = getString(model?.url, formData) || formData?.[model.name];
 
     return (
       <ConfigurableFormItem model={model}>

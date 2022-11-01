@@ -9,7 +9,8 @@ export const ComponentPropertiesTitle: FC<IProps> = ({}) => {
   const { deleteComponent, selectedComponentId, readOnly } = useFormDesigner();
 
   const onDeleteClick = () => {
-    deleteComponent({ componentId: selectedComponentId });
+    if (!readOnly)
+      deleteComponent({ componentId: selectedComponentId });
   };
 
   return (

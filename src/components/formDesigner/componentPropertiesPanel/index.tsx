@@ -37,7 +37,7 @@ const getDefaultFactory = (markup: FormMarkup): ISettingsFormFactory => {
 
 export const ComponentPropertiesPanel: FC<IProps> = () => {
   const { getToolboxComponent } = useForm();
-  const { getComponentModel, updateComponent, selectedComponentId: id, readOnly: readonly } = useFormDesigner();
+  const { getComponentModel, updateComponent, selectedComponentId: id, readOnly } = useFormDesigner();
   // note: we have to memoize the editor to prevent unneeded re-rendering and loosing of the focus
   const [editor, setEditor] = useState<ReactNode>(<></>);
   
@@ -56,12 +56,12 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
   };
 
   const onSave = values => {
-    if (!readonly)
+    if (!readOnly)
       updateComponent({ componentId: id, settings: { ...values, id } });
   };
 
   const onValuesChange = (_changedValues, values) => {
-    if (!readonly)
+    if (!readOnly)
       debouncedSave(values);
   };
 
@@ -97,7 +97,7 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
     return wrapEditor(() =>
       <>
         {settingsFormFactory({
-          readOnly: readonly,
+          readOnly: readOnly,
           model: componentModel,
           onSave,
           onCancel,
@@ -111,12 +111,12 @@ export const ComponentPropertiesPanel: FC<IProps> = () => {
   useEffect(() => {
     const currentEditor = getEditor();
     setEditor(currentEditor);
-  }, [id]);
+  }, [id, readOnly]);
 
   if (!Boolean(id))
     return (
       <>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={ readonly ? "Please select a component to view settings" : "Please select a component to begin editing" } />
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={ readOnly ? "Please select a component to view settings" : "Please select a component to begin editing" } />
       </>
     );
 

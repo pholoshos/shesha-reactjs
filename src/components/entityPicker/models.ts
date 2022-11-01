@@ -35,9 +35,9 @@ export interface IEntityPickerState {
 
 export interface IEntityPickerProps extends Omit<IWrappedEntityPickerProps, 'onDblClick'> {
   formId?: FormIdentifier;
-  onChange?: (value: string, data: IAnyObject) => void;
+  onChange?: (value: string | string[], data: IAnyObject) => void;
   onSelect?: (data: IAnyObject) => void;
-  value?: any;
+  value?: string | string[];
   displayEntityKey?: string;
   disabled?: boolean;
   loading?: boolean;

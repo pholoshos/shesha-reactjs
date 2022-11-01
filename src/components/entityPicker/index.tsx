@@ -1,6 +1,7 @@
 import { EllipsisOutlined } from '@ant-design/icons';
-import { Button, Input, Modal, Select } from 'antd';
-import _, { camelCase, snakeCase } from 'lodash';
+import { Button, Input, Modal, Select, Skeleton } from 'antd';
+import { DefaultOptionType } from 'antd/lib/select';
+import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import React, { FC, Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useMedia } from 'react-use';
@@ -8,50 +9,73 @@ import { usePublish } from '../../hooks';
 import { IAnyObject } from '../../interfaces';
 import { useModal } from '../../providers';
 import DataTableProvider, { useDataTable } from '../../providers/dataTable';
+import { IConfigurableColumnsBase, IDataColumnsProps } from '../../providers/datatableColumnsConfigurator/models';
 import { IModalProps } from '../../providers/dynamicModal/models';
-import { useEntityDisplayText } from '../../utils/entity';
+import { useEntitySelectionData } from '../../utils/entity';
 import GlobalTableFilter from '../globalTableFilter';
 import IndexTable from '../indexTable';
 import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
 import TablePager from '../tablePager';
-import { IEntityPickerProps, IEntityPickerState, ISelectedProps } from './models';
-import { useSelectedTableRow } from './useSelectedTableRow';
+import { IEntityPickerProps, IEntityPickerState } from './models';
 
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
 
-
 export const COLUMNS_CHANGED_EVENT_NAME = 'EntityPickerColumnsConfigChanged';
 
-export const EntityPickerInner: FC<IEntityPickerProps> = ({
-  entityType,
-  displayEntityKey = '_displayName',
-  onChange,
-  disabled,
-  loading,
-  value,
-  mode,
-  size,
-  useButtonPicker,
-  pickerButtonProps,
-  onSelect,
-  defaultValue,
-  title = 'Select Item',
-  configurableColumns,
-  formId,
-  addNewRecordsProps,
-  readOnly,
-}) => {
+export const EntityPicker: FC<IEntityPickerProps> = ({ displayEntityKey = '_displayName', ...restProps }) => {
+  return restProps.readOnly
+    ? <EntityPickerReadOnly {...restProps} displayEntityKey={displayEntityKey} />
+    : <EntityPickerEditable {...restProps} displayEntityKey={displayEntityKey} />;
+}
+
+export const EntityPickerReadOnly: FC<IEntityPickerProps> = (props) => {
+  const {
+    entityType,
+    displayEntityKey,
+    value,
+  } = props;
+
+  const selection = useEntitySelectionData({
+    entityType: entityType,
+    propertyName: displayEntityKey,
+    selection: value,
+  });
+  const selectedItems = selection?.rows;
+
+  const displayText = useMemo(() => {
+    return selectedItems?.map(ent => ent[displayEntityKey]).join(', ');
+  }, [selectedItems]);
+
+  return selection.loading
+    ? <Skeleton paragraph={false} active />
+    : <ReadOnlyDisplayFormItem value={displayText} />;
+}
+
+export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
+  const {
+    entityType,
+    displayEntityKey,
+    onChange,
+    disabled,
+    loading,
+    value,
+    mode,
+    size,
+    useButtonPicker,
+    pickerButtonProps,
+    onSelect,
+    defaultValue,
+    title = 'Select Item',
+    addNewRecordsProps,
+  } = props;
+
   const [modalId] = useState(nanoid()); // use generated value because formId was changed. to be reviewed
   const [state, setState] = useState<IEntityPickerState>({
     showModal: false,
   });
-  const [selectedRows, setSelectedRows] = useState<ISelectedProps[]>([]);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const isSmall = useMedia('(max-width: 480px)');
 
   const {
-    registerConfigurableColumns,
-    tableData,
     changeSelectedStoredFilterIds,
     selectedStoredFilterIds,
     columns,
@@ -63,20 +87,13 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   const showPickerDialog = () => setState(prev => ({ ...prev, showModal: true }));
 
   const hidePickerDialog = () => setState(prev => ({ ...prev, showModal: false }));
-  const storedId = useMemo(() => {
-    if (typeof value == 'object') {
-      return value;
-    } else if (!!value) {
-      return (value as string).split(',');
-    }
-    return value;
-  }, [value]);
 
-  const displayName = useEntityDisplayText({
+  const selection = useEntitySelectionData({
     entityType: entityType,
     propertyName: displayEntityKey,
-    entityId: storedId,
+    selection: value,
   });
+  const selectedItems = selection?.rows;
 
   const modalProps: IModalProps = {
     id: modalId,
@@ -95,41 +112,9 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
 
   const dynamicModal = useModal(modalProps);
 
-  const { data } = useSelectedTableRow(value);
-
   const selectedMode = mode === 'single' ? undefined : mode;
 
   const isMultiple = mode === 'multiple';
-
-  const records = useMemo(() => {
-    return data ? [...tableData, data] : tableData;
-  }, [tableData, data]);
-
-  useEffect(() => {
-    // This is important for form designer configured picker
-    // register columns
-    if (formId && configurableColumns) {
-      registerConfigurableColumns(modalId, configurableColumns);
-    }
-  }, [formId, configurableColumns]);
-
-  useEffect(() => {
-    if (!!value && !selectedRows.length && displayName) {
-      const labelNames = displayName.split(',');
-      let initialValue: ISelectedProps[] = [];
-
-      for (let i = 0; i < storedId.length; i++) {
-        initialValue.push({ displayName: labelNames[i], id: storedId[i] });
-      }
-      setSelectedRows(() => initialValue);
-    }
-  }, [displayName]);
-
-  useEffect(() => {
-    if (!!selectRef) {
-      setSelectedIds(() => selectedRows.map(({ id }) => id));
-    }
-  }, [selectedRows]);
 
   useEffect(() => {
     const { showModal } = state;
@@ -142,7 +127,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
 
   if (!entityType) {
     throw new Error(
-      'Please make sure that either tableId or entityType is configured for the entity picker to work properly'
+      'Please make sure that either entityType is configured for the entity picker to work properly'
     );
   }
 
@@ -153,19 +138,22 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   };
 
   const onDblClick = (row: IAnyObject) => {
+    if (!row)
+      return;
+
     if (onSelect) {
       onSelect(row);
     } else {
-      let isNewRow = !selectedRows?.map(({ id }) => id)?.includes(row?.id);
+      if (isMultiple) {
+        const selectedItems = value && Array.isArray(value)
+          ? value
+          : [];
+        if (!selectedItems.includes(row.id))
+          selectedItems.push(row.id);
 
-      let propertyName = camelCase(snakeCase(displayEntityKey));
-
-      if (isNewRow && isMultiple) {
-        setSelectedRows(prev => [...prev, { id: row?.id, displayName: row[propertyName] }]);
-        onChange([...selectedIds, row?.id].toString(), null);
+        onChange(selectedItems, null);
       } else {
-        setSelectedRows(() => [{ id: row?.id, displayName: row[propertyName] }]);
-        onChange(row?.id, null);
+        onChange(row.id, null);
       }
     }
 
@@ -182,10 +170,9 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     }
   };
 
-  const handleMultiChange = value => {
-    setSelectedRows(() => selectedRows?.filter(row => value?.includes(row?.id)));
-    setSelectedIds(() => value);
-    onChange(value, null);
+  const handleMultiChange = (selectedValues) => {
+    if (onChange)
+      onChange(selectedValues, null);
   };
   const onModalOk = () => {
     if (onSelect && state?.selectedRow) {
@@ -205,33 +192,36 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
     showPickerDialog();
   };
 
-  const selectedRowIndex = useMemo(() => {
-    if (records?.length && value) {
-      return records?.findIndex((item: any) => item?.Id === value);
+  const options = useMemo<DefaultOptionType[]>(() => {
+    let result: DefaultOptionType[] = null;
+    if (selection.loading){
+      const items = value
+        ? Array.isArray(value)
+          ? value
+          : [value]
+        : [];
+
+      result = items.map(item => ({ label: 'loading...', value: item, key: item }));
+    } else {
+      result = (selectedItems ?? []).map((ent) => ({ label: ent[displayEntityKey], value: ent.id, key: ent.id }));
     }
 
-    return -1;
-  }, [value, records]);
+    return result;
+  }, [selectedItems]);
 
-  const options = useMemo(() => {
-    return selectedRows.map(({ displayName, id }) => ({ label: displayName, value: id, key: id }));
-  }, [selectedRows]);
-
+  const canAddNew = Boolean(addNewRecordsProps) && addNewRecordsProps.modalFormId;
   const footer = (
     <Fragment>
-      <Button type="primary" onClick={onAddNew} size={size}>
-        Add New
-      </Button>
-
+      {canAddNew && (
+        <Button type="primary" onClick={onAddNew} size={size}>
+          Add New
+        </Button>
+      )}
       <Button onClick={handleCancel} size={size}>
         Close
       </Button>
     </Fragment>
   );
-
-  if (readOnly) {
-    return <ReadOnlyDisplayFormItem value={displayName} />;
-  }
 
   return (
     <div className="entity-picker-container">
@@ -248,10 +238,11 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
                 selectRef.current.blur();
                 showPickerDialog();
               }}
-              value={selectedIds}
+              value={ selection.loading ? undefined : value }
+              placeholder={ selection.loading ? 'Loading...' : undefined }
               notFoundContent={''}
               defaultValue={defaultValue}
-              disabled={disabled}
+              disabled={disabled || selection.loading}
               ref={selectRef}
               allowClear
               mode={selectedMode}
@@ -259,6 +250,7 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
               showArrow={false}
               onChange={handleMultiChange}
               style={{ width: "calc(100% - 32px)" }}
+              loading={selection.loading}
             >
               {''}
             </Select>
@@ -296,8 +288,6 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
           <IndexTable
             onSelectRow={onSelectRow}
             onDblClick={onDblClick}
-            selectedRowIndex={selectedRowIndex}
-            records={records}
             options={{ omitClick: true }}
           />
         </>
@@ -306,11 +296,40 @@ export const EntityPickerInner: FC<IEntityPickerProps> = ({
   );
 };
 
-export const EntityPicker: FC<IEntityPickerProps> = props => {
-  const { parentEntityId, entityType } = props;
+export const EntityPickerEditable: FC<IEntityPickerProps> = props => {
+  const {
+    parentEntityId,
+    entityType,
+    displayEntityKey,
+  } = props;
+
+  const columns = useMemo<IConfigurableColumnsBase[]>(() => {
+    const cols = props.configurableColumns ?? [];
+    const displayPropertyIncluded = Boolean(cols.find(col => (col as IDataColumnsProps).propertyName === displayEntityKey));
+    if (!displayPropertyIncluded) {
+      // add invisible column
+      const displayNameColumn: IDataColumnsProps = {
+        id: nanoid(),
+        propertyName: displayEntityKey,
+        isVisible: false,
+        columnType: 'data',
+        caption: '',
+        sortOrder: 999,
+        itemType: 'item'
+      };
+      cols.push(displayNameColumn);
+    }
+
+    return cols;
+  }, [props.configurableColumns]);
+
   return (
-    <DataTableProvider parentEntityId={parentEntityId} entityType={entityType}>
-      <EntityPickerInner {...props} />
+    <DataTableProvider
+      parentEntityId={parentEntityId}
+      entityType={entityType}
+      configurableColumns={columns}
+    >
+      <EntityPickerEditableInner {...props} displayEntityKey={displayEntityKey} />
     </DataTableProvider>
   );
 };

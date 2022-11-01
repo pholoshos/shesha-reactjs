@@ -70,6 +70,7 @@ const ListControl: FC<IListControlProps> = props => {
     selectionMode,
     namePrefix,
     customVisibility,
+    readOnly,
   } = props;
 
   const { markup, error: fetchFormError } = useFormMarkup(formPath?.id);
@@ -416,7 +417,7 @@ const ListControl: FC<IListControlProps> = props => {
         wrapperCol={localWrapperCol}
         defaultValue={typeof localName === 'number' && Array.isArray(value) ? value[localName] : null}
       >
-        <SubForm />
+        <SubForm readOnly={readOnly} />
       </SubFormProvider>
     );
   };

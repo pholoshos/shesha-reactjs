@@ -63,6 +63,10 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         <Checkbox />
       </Form.Item>
 
+      <Form.Item name="readOnly" label="Read Only" valuePropName="checked">
+        <Checkbox />
+      </Form.Item>
+
       <FormItem name="title" label="Title">
         <Input />
       </FormItem>

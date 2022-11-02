@@ -22,24 +22,29 @@ export type IConfigurableActionArgumentsFormFactory<TModel = IConfigurableAction
   props: ISettingsFormFactoryArgs<TModel>
 ) => ReactNode;
 
-/**
- * Configurable action descriptor. Is used to define consigurable actions
- */
-export interface IConfigurableActionDescriptor<TArguments = IConfigurableActionArguments, TReponse = any> {
+export interface IHasActionOwner {
   /**
-   * Action owner name (component responsible for the action execution)
-   */
+ * Action owner name (component responsible for the action execution)
+ */
   owner: string;
 
   /**
    * Action owner Uid
    */
   ownerUid: string;
+}
 
+export interface IConfigurableActionIdentifier extends IHasActionOwner {
   /**
    * Action Name
    */
-  name: string;
+   name: string;
+}
+
+/**
+ * Configurable action descriptor. Is used to define consigurable actions
+ */
+export interface IConfigurableActionDescriptor<TArguments = IConfigurableActionArguments, TReponse = any> extends IConfigurableActionIdentifier {
   /**
    * Action description
    */

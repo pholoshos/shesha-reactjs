@@ -14,7 +14,7 @@ import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
 import { usePrevious } from 'react-use';
 import { useFormConfiguration } from '../form/api';
-import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
+import { useConfigurableAction } from '../configurableActionsDispatcher';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
   actionsOwnerId?: string;
@@ -260,45 +260,40 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   }, [markup]);
   //#endregion
 
-  const { registerAction } = useConfigurableActionDispatcher();
+  const actionDependencies = [actionsOwnerId];
+  useConfigurableAction({
+    name: 'Get form data',
+    owner: actionOwnerName,
+    ownerUid: actionsOwnerId,
+    hasArguments: false,
+    executer: () => {
+      getData(); // todo: return real promise
+      return Promise.resolve();
+    }
+  }, actionDependencies);
+
+  useConfigurableAction({
+    name: 'Post form data',
+    owner: actionOwnerName,
+    ownerUid: actionsOwnerId,
+    hasArguments: false,
+    executer: () => {
+      postData(); // todo: return real promise
+      return Promise.resolve();
+    }
+  }, actionDependencies);
+
+  useConfigurableAction({
+    name: 'Update form data',
+    owner: actionOwnerName,
+    ownerUid: actionsOwnerId,
+    hasArguments: false,
+    executer: () => {
+      putData(); // todo: return real promise
+      return Promise.resolve();
+    }
+  }, actionDependencies);
   
-  useEffect(() => {
-    if (!actionOwnerName || !actionsOwnerId)
-      return;
-    registerAction({
-      name: 'Get form data',
-      owner: actionOwnerName,
-      ownerUid: actionsOwnerId,
-      hasArguments: false,
-      executer: () => {
-        getData(); // todo: return real promise
-        return Promise.resolve();
-      }
-    });
-
-    registerAction({
-      name: 'Post form data',
-      owner: actionOwnerName,
-      ownerUid: actionsOwnerId,
-      hasArguments: false,
-      executer: () => {
-        postData(); // todo: return real promise
-        return Promise.resolve();
-      }
-    });
-
-    registerAction({
-      name: 'Update form data',
-      owner: actionOwnerName,
-      ownerUid: actionsOwnerId,
-      hasArguments: false,
-      executer: () => {
-        putData(); // todo: return real promise
-        return Promise.resolve();
-      }
-    });
-  }, [actionsOwnerId]);
-
   //#endregion
 
   const getColSpan = (span: number | ColProps): ColProps => {

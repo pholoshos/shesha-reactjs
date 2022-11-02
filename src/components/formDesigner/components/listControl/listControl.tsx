@@ -38,7 +38,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import ConditionalWrap from '../../../conditionalWrapper';
 import moment from 'moment';
 import { useFormConfiguration } from '../../../../providers/form/api';
-import { useConfigurableActionDispatcher } from '../../../../providers/configurableActionsDispatcher';
+import { useConfigurableAction } from '../../../../providers/configurableActionsDispatcher';
 
 const ListControl: FC<IListControlProps> = props => {
   const {
@@ -216,40 +216,38 @@ const ListControl: FC<IListControlProps> = props => {
     }
   }, [value]);
 
-  const { registerAction } = useConfigurableActionDispatcher();
-
   const actionOwnerName = `List (${name})`;
-  useEffect(() => {
-    registerAction({
-      name: 'Refresh list items',
-      owner: actionOwnerName,
-      ownerUid: containerId,
-      hasArguments: false,
-      executer: () => {
-        debouncedRefresh(); // todo: return real promise
-        return Promise.resolve();
-      }
-    });
-    registerAction({
-      name: 'Save list items',
-      owner: actionOwnerName,
-      ownerUid: containerId,
-      hasArguments: false,
-      executer: () => {
-        submitListItems(submitUrl); // todo: return real promise
-        return Promise.resolve();
-      }
-    });
-    registerAction({
-      name: 'Add list items',
-      owner: actionOwnerName,
-      ownerUid: containerId,
-      hasArguments: false,
-      executer: () => {
-        debouncedAddItems(state); // todo: return real promise
-        return Promise.resolve();
-      }
-    });
+  useConfigurableAction({
+    name: 'Refresh list items',
+    owner: actionOwnerName,
+    ownerUid: containerId,
+    hasArguments: false,
+    executer: () => {
+      debouncedRefresh(); // todo: return real promise
+      return Promise.resolve();
+    }
+  }, [state]);
+  
+  useConfigurableAction({
+    name: 'Save list items',
+    owner: actionOwnerName,
+    ownerUid: containerId,
+    hasArguments: false,
+    executer: () => {
+      submitListItems(submitUrl); // todo: return real promise
+      return Promise.resolve();
+    }
+  }, [state]);
+
+  useConfigurableAction({
+    name: 'Add list items',
+    owner: actionOwnerName,
+    ownerUid: containerId,
+    hasArguments: false,
+    executer: () => {
+      debouncedAddItems(state); // todo: return real promise
+      return Promise.resolve();
+    }
   }, [state]);
 
   const debouncedAddItems = useDebouncedCallback(data => {

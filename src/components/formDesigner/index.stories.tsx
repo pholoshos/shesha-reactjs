@@ -111,7 +111,7 @@ export const WizardFormDebug = addStory(DesignerTemplate, {
 });
 
 export const FormsIndex = addStory(DesignerTemplate, {
-  formId: 'FE6A8C1E-C94B-46E3-AE93-FC20390C2905'
+  formId: '4E69FF2B-CDC0-417A-BE39-1BF59B74011C'
   /*
   formId: {
     name: 'forms',

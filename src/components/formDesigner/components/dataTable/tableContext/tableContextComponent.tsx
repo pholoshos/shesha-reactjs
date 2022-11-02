@@ -75,11 +75,6 @@ export const TableContextInner: FC<ITableContextComponentProps> = props => {
     setSelectedRow(index);
   };
 
-console.log('table action owner', {
-  actionOwnerId: id,
-  actionOwnerName: name,
-});
-
   return (
     <DataTableSelectionProvider>
       <DataTableProvider

@@ -42,7 +42,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import {
   IConfigurableFormComponent, IFormValidationErrors,
 } from '../../interfaces';
-import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
+import { useConfigurableAction } from '../configurableActionsDispatcher';
 import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
 
 export interface IFormProviderProps {
@@ -79,8 +79,6 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   const getToolboxComponent = (type: string) => toolboxComponents[type];
 
-  const { registerAction } = useConfigurableActionDispatcher();
-
   //#region data fetcher
 
   const fetchData = (): Promise<any> => {
@@ -91,58 +89,65 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   //#endregion
 
-  useEffect(() => {
-    registerAction({
-      name: 'Start Edit',
-      owner: name,
-      ownerUid: SheshaActionOwners.Form,
-      hasArguments: false,
-      executer: () => {
-        setFormMode('edit');
-        return Promise.resolve()
-      }
-    });
-    registerAction({
-      name: 'Cancel Edit',
-      owner: name,
-      ownerUid: SheshaActionOwners.Form,
-      hasArguments: false,
-      executer: () => {
-        setFormMode('readonly');
-        return Promise.resolve()
-      }
-    });
-    registerAction({
-      name: 'Submit',
-      owner: name,
-      ownerUid: SheshaActionOwners.Form,
-      hasArguments: false,
-      executer: () => {
-        form.submit();
-        return Promise.resolve()
-      }
-    });
-    registerAction({
-      name: 'Reset',
-      owner: name,
-      ownerUid: SheshaActionOwners.Form,
-      hasArguments: false,
-      executer: () => {
-        form.resetFields();
-        return Promise.resolve()
-      }
-    });
-    registerAction({
-      name: 'Refresh',
-      description: 'Refresh the form data by fetching it from the back-end',
-      owner: name,
-      ownerUid: SheshaActionOwners.Form,
-      hasArguments: false,
-      executer: () => {
-        return fetchData();
-      }
-    });
-  }, []);
+  //#region configurable actions
+
+  const actionDependencies = [];
+  useConfigurableAction({
+    name: 'Start Edit',
+    owner: name,
+    ownerUid: SheshaActionOwners.Form,
+    hasArguments: false,
+    executer: () => {
+      setFormMode('edit');
+      return Promise.resolve()
+    }
+  }, actionDependencies);
+
+  useConfigurableAction({
+    name: 'Cancel Edit',
+    owner: name,
+    ownerUid: SheshaActionOwners.Form,
+    hasArguments: false,
+    executer: () => {
+      setFormMode('readonly');
+      return Promise.resolve()
+    }
+  }, actionDependencies);
+
+  useConfigurableAction({
+    name: 'Submit',
+    owner: name,
+    ownerUid: SheshaActionOwners.Form,
+    hasArguments: false,
+    executer: () => {
+      form.submit();
+      return Promise.resolve()
+    }
+  }, actionDependencies);
+
+  useConfigurableAction({
+    name: 'Reset',
+    owner: name,
+    ownerUid: SheshaActionOwners.Form,
+    hasArguments: false,
+    executer: () => {
+      form.resetFields();
+      return Promise.resolve()
+    }
+  }, actionDependencies);
+
+  useConfigurableAction({
+    name: 'Refresh',
+    description: 'Refresh the form data by fetching it from the back-end',
+    owner: name,
+    ownerUid: SheshaActionOwners.Form,
+    hasArguments: false,
+    executer: () => {
+      return fetchData();
+    }
+  }, actionDependencies);
+  
+  //#endregion
 
   const initial: IFormStateContext = {
     ...FORM_CONTEXT_INITIAL_STATE,

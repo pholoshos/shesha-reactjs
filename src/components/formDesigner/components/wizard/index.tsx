@@ -15,7 +15,7 @@ import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
 import { axiosHttp } from '../../../../apis/axios';
 import { migrateV0toV1, IWizardComponentPropsV0 } from './migrations/migrate-v1';
-import { useConfigurableActionDispatcher } from '../../../../providers/configurableActionsDispatcher';
+import { useConfigurableAction, useConfigurableActionDispatcher } from '../../../../providers/configurableActionsDispatcher';
 import { IConfigurableActionConfiguration } from '../../../../interfaces/configurableAction';
 
 const { Step } = Steps;
@@ -31,7 +31,7 @@ const TabsComponent: IToolboxComponent<IWizardComponentProps> = {
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState, setState: setGlobalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();
-    const { executeAction, registerAction } = useConfigurableActionDispatcher();
+    const { executeAction } = useConfigurableActionDispatcher();
     const [current, setCurrent] = useState(() => {
       const localCurrent = model?.defaultActiveStep
         ? model?.steps?.findIndex(({ id }) => id === model?.defaultActiveStep)
@@ -48,54 +48,54 @@ const TabsComponent: IToolboxComponent<IWizardComponentProps> = {
       setCurrent(defaultActiveStep < 0 ? 0 : defaultActiveStep);
     }, [model?.defaultActiveStep]);
 
-    /// EVENTS
+    //#region configurable actions
     const { name: actionOwnerName, id: actionsOwnerId } = model;
 
-    useEffect(() => {
-      if (!actionOwnerName || !actionsOwnerId)
-        return;
+    const actionDependencies = [actionOwnerName, actionsOwnerId, current];
+    useConfigurableAction({
+      name: 'Back',
+      owner: actionOwnerName,
+      ownerUid: actionsOwnerId,
+      hasArguments: false,
+      executer: () => {
+        back();
+        return Promise.resolve();
+      }
+    }, actionDependencies);
 
-      registerAction({
-        name: 'Back',
-        owner: actionOwnerName,
-        ownerUid: actionsOwnerId,
-        hasArguments: false,
-        executer: () => {
-          back();
-          return Promise.resolve();
-        }
-      });
-      registerAction({
-        name: 'Next',
-        owner: actionOwnerName,
-        ownerUid: actionsOwnerId,
-        hasArguments: false,
-        executer: () => {
-          next();
-          return Promise.resolve();
-        }
-      });
-      registerAction({
-        name: 'Cancel',
-        owner: actionOwnerName,
-        ownerUid: actionsOwnerId,
-        hasArguments: false,
-        executer: () => {
-          cancel();
-          return Promise.resolve();
-        }
-      });
-      registerAction({
-        name: 'Done',
-        owner: actionOwnerName,
-        ownerUid: actionsOwnerId,
-        hasArguments: false,
-        executer: () => {
-          done();
-          return Promise.resolve();
-        }
-      });
-    }, [actionOwnerName, actionsOwnerId, current]);
+    useConfigurableAction({
+      name: 'Next',
+      owner: actionOwnerName,
+      ownerUid: actionsOwnerId,
+      hasArguments: false,
+      executer: () => {
+        next();
+        return Promise.resolve();
+      }
+    }, actionDependencies);
+
+    useConfigurableAction({
+      name: 'Cancel',
+      owner: actionOwnerName,
+      ownerUid: actionsOwnerId,
+      hasArguments: false,
+      executer: () => {
+        cancel();
+        return Promise.resolve();
+      }
+    }, actionDependencies);
+
+    useConfigurableAction({
+      name: 'Done',
+      owner: actionOwnerName,
+      ownerUid: actionsOwnerId,
+      hasArguments: false,
+      executer: () => {
+        done();
+        return Promise.resolve();
+      }
+    }, actionDependencies);
+    //#endregion
 
     if (isComponentHidden(model)) return null;
 

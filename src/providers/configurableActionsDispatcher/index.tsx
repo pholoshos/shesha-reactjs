@@ -1,4 +1,4 @@
-import React, { FC, useContext, PropsWithChildren, useRef } from 'react';
+import React, { FC, useContext, PropsWithChildren, useRef, useEffect } from 'react';
 import metadataReducer from './reducer';
 import {
   ConfigurableActionDispatcherActionsContext,
@@ -12,7 +12,7 @@ import {
 } from './contexts';
 import useThunkReducer from 'react-hook-thunk-reducer';
 import { IConfigurableActionGroupDictionary } from './models';
-import { IConfigurableActionDescriptor } from '../../interfaces/configurableAction';
+import { IConfigurableActionArguments, IConfigurableActionDescriptor, IConfigurableActionIdentifier } from '../../interfaces/configurableAction';
 import { genericActionArgumentsEvaluator } from '../form/utils';
 
 export interface IConfigurableActionDispatcherProviderProps { }
@@ -62,13 +62,29 @@ const ConfigurableActionDispatcherProvider: FC<PropsWithChildren<IConfigurableAc
     const newActions = ownerActions.actions.filter(action => action.name !== payload.name);
     newActions.push(payload);
 
-    actions.current = { 
-      ...actions.current, 
-      [payload.ownerUid]: { ...ownerActions, actions: newActions } 
+    actions.current = {
+      ...actions.current,
+      [payload.ownerUid]: { ...ownerActions, actions: newActions }
     };
   };
 
-  const prepareArguments =  (_actionArguments: any) => {
+  const unregisterAction = (payload: IConfigurableActionIdentifier) => {
+    const ownerActions = actions.current[payload.ownerUid];
+    if (!ownerActions)
+      return;
+
+    const newActions = ownerActions.actions.filter(action => action.name !== payload.name);
+    if (newActions.length > 0){
+      actions.current = {
+        ...actions.current,
+        [payload.ownerUid]: { ...ownerActions, actions: newActions }
+      };
+    } else {
+      delete actions.current[payload.ownerUid];
+    }
+  }
+
+  const prepareArguments = (_actionArguments: any) => {
 
   }
 
@@ -79,7 +95,7 @@ const ConfigurableActionDispatcherProvider: FC<PropsWithChildren<IConfigurableAc
     const { actionOwner, actionName, actionArguments, handleSuccess, onSuccess, handleFail, onFail } = actionConfiguration;
     if (!actionName)
       return Promise.reject('Action name is mandatory');
-    
+
     const action = getConfigurableAction({ owner: actionOwner, name: actionName });
     if (!action)
       return Promise.reject(`Action '${actionOwner}:${actionName}' not found`);
@@ -91,31 +107,32 @@ const ConfigurableActionDispatcherProvider: FC<PropsWithChildren<IConfigurableAc
       .then(preparedActionArguments => {
         console.log('preparedActionArguments', preparedActionArguments);
         return action.executer(preparedActionArguments, argumentsEvaluationContext)
-        .then(actionResponse => {
-          console.log(`Action '${actionOwner}:${actionName}' executed successfully, response:`, actionResponse);
-          if (handleSuccess){
-            if (onSuccess){
-              const onSuccessContext = { ...argumentsEvaluationContext, actionResponse: actionResponse };
-              executeAction({ actionConfiguration: onSuccess, argumentsEvaluationContext: onSuccessContext });
-            } else
-              console.warn(`onSuccess handled is not defined for action '${actionOwner}:${actionName}'`);
-          }
-        })
-        .catch(error => {
-          console.error(`Failed to execute action '${actionOwner}:${actionName}', error:`, error);
-          if (handleFail){
-            if (onFail){
-              const onFailContext = { ...argumentsEvaluationContext, actionError: error };
-              executeAction({ actionConfiguration: onFail, argumentsEvaluationContext: onFailContext });
-            } else
-              console.warn(`onSuccess handled is not defined for action '${actionOwner}:${actionName}'`);
+          .then(actionResponse => {
+            console.log(`Action '${actionOwner}:${actionName}' executed successfully, response:`, actionResponse);
+            if (handleSuccess) {
+              if (onSuccess) {
+                const onSuccessContext = { ...argumentsEvaluationContext, actionResponse: actionResponse };
+                executeAction({ actionConfiguration: onSuccess, argumentsEvaluationContext: onSuccessContext });
+              } else
+                console.warn(`onSuccess handled is not defined for action '${actionOwner}:${actionName}'`);
             }
-        });
+          })
+          .catch(error => {
+            console.error(`Failed to execute action '${actionOwner}:${actionName}', error:`, error);
+            if (handleFail) {
+              if (onFail) {
+                const onFailContext = { ...argumentsEvaluationContext, actionError: error };
+                executeAction({ actionConfiguration: onFail, argumentsEvaluationContext: onFailContext });
+              } else
+                console.warn(`onSuccess handled is not defined for action '${actionOwner}:${actionName}'`);
+            }
+          });
       });
   };
 
   const configurableActionActions: IConfigurableActionDispatcherActionsContext = {
     registerAction,
+    unregisterAction,
     getConfigurableAction,
     getConfigurableActionOrNull,
     getActions,
@@ -164,16 +181,31 @@ function useConfigurableActionDispatcher(require: boolean = true) {
     : undefined;
 }
 
-/*
-const useConfigurableAction = (owner: string, name: string): ILoadingState<IConfigurableAction> => {
-  console.log()
-}
-*/
 const ConfigurableActionDispatcherConsumer = ConfigurableActionDispatcherActionsContext.Consumer;
+
+/**
+ * Register configurable action
+ */
+function useConfigurableAction<TArguments = IConfigurableActionArguments, TResponse = any>(
+  payload: IRegisterActionPayload<TArguments, TResponse>,
+  deps?: ReadonlyArray<any>
+): void {
+  const { registerAction, unregisterAction } = useConfigurableActionDispatcher();
+
+  useEffect(() => {
+    if (!payload.owner || !payload.ownerUid)
+      return null;
+      
+    registerAction(payload);
+    return () => {
+      unregisterAction(payload);
+    };
+  }, deps);
+}
 
 export {
   ConfigurableActionDispatcherProvider,
   useConfigurableActionDispatcher,
   ConfigurableActionDispatcherConsumer,
-  //useConfigurableAction
+  useConfigurableAction,
 };

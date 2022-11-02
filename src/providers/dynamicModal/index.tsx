@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, PropsWithChildren, useEffect } from 'react';
+import React, { FC, useReducer, useContext, PropsWithChildren } from 'react';
 import DynamicModalReducer from './reducer';
 import {
   DynamicModalActionsContext,
@@ -15,7 +15,7 @@ import {
 } from './actions';
 import { IModalProps } from './models';
 import { DynamicModal } from '../../components/dynamicModal';
-import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
+import { useConfigurableAction } from '../configurableActionsDispatcher';
 import { dialogArgumentsForm, IShowModalActionArguments } from './configurable-actions/show-dialog-arguments';
 import { IShowConfigrmationArguments, showConfirmationArgumentsForm } from './configurable-actions/show-confirmation-arguments';
 import { nanoid } from 'nanoid/non-secure';
@@ -30,71 +30,70 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
     ...DYNAMIC_MODAL_CONTEXT_INITIAL_STATE,
   });
 
-  const { registerAction } = useConfigurableActionDispatcher();
-  useEffect(() => {
-    registerAction<IShowConfigrmationArguments>({
-      name: 'Show Confirmation Dialog',
-      owner: 'Common',
-      ownerUid: SheshaActionOwners.Common,
-      hasArguments: true,
-      executer: (actionArgs, _context) => {
-        return new Promise((resolve, _reject) => {
-          Modal.confirm({
-            title: actionArgs.title,
-            content: actionArgs.content,
-            okText: actionArgs.okText ?? 'Yes',
-            cancelText: actionArgs.cancelText ?? 'No',
-            okButtonProps: {
-              type: 'primary',
-              danger: true,
-            },
-            onOk: () => {
-              resolve(true);
-            },
-          });
-
+  const actionDependencies = [];
+  useConfigurableAction<IShowConfigrmationArguments>({
+    name: 'Show Confirmation Dialog',
+    owner: 'Common',
+    ownerUid: SheshaActionOwners.Common,
+    hasArguments: true,
+    executer: (actionArgs, _context) => {
+      return new Promise((resolve, _reject) => {
+        Modal.confirm({
+          title: actionArgs.title,
+          content: actionArgs.content,
+          okText: actionArgs.okText ?? 'Yes',
+          cancelText: actionArgs.cancelText ?? 'No',
+          okButtonProps: {
+            type: 'primary',
+            danger: true,
+          },
+          onOk: () => {
+            resolve(true);
+          },
         });
-      },
-      argumentsFormMarkup: showConfirmationArgumentsForm
-    });
-    registerAction<IShowModalActionArguments>({
-      name: 'Show Dialog',
-      owner: 'Common',
-      ownerUid: SheshaActionOwners.Common,
-      hasArguments: true,
-      executer: (actionArgs, context) => {
-        console.log('show dialog')
-        const modalId = nanoid();
 
-        const formData = context?.data ?? {};
-        const initialValues = evaluateKeyValuesToObject(actionArgs.additionalProperties, formData);
-        const parentFormValues = formData;
+      });
+    },
+    argumentsFormMarkup: showConfirmationArgumentsForm
+  }, actionDependencies);
 
-        return new Promise((resolve, _reject) => {
+  useConfigurableAction<IShowModalActionArguments>({
+    name: 'Show Dialog',
+    owner: 'Common',
+    ownerUid: SheshaActionOwners.Common,
+    hasArguments: true,
+    executer: (actionArgs, context) => {
+      console.log('show dialog')
+      const modalId = nanoid();
 
-          const modalProps: IModalProps = {
-            ...actionArgs,
-            id: modalId,
-            title: actionArgs.modalTitle,
-            width: actionArgs.modalWidth,
-            initialValues: initialValues,
-            parentFormValues: parentFormValues,
-            isVisible: true,
-            onSubmitted: (values) => {
-              removeModal(modalId);
+      const formData = context?.data ?? {};
+      const initialValues = evaluateKeyValuesToObject(actionArgs.additionalProperties, formData);
+      const parentFormValues = formData;
 
-              console.log('dialog success:', { values });
-              resolve(values); // todo: return result e.g. we may need to handle created entity id and navigate to edit/details page
-            },
-          };
-          console.log('modalProps', { modalProps, context })
-          createModal({ ...modalProps, isVisible: true });
-        });
-      },
-      argumentsFormMarkup: dialogArgumentsForm
-    });
-  }, []);
-  
+      return new Promise((resolve, _reject) => {
+
+        const modalProps: IModalProps = {
+          ...actionArgs,
+          id: modalId,
+          title: actionArgs.modalTitle,
+          width: actionArgs.modalWidth,
+          initialValues: initialValues,
+          parentFormValues: parentFormValues,
+          isVisible: true,
+          onSubmitted: (values) => {
+            removeModal(modalId);
+
+            console.log('dialog success:', { values });
+            resolve(values); // todo: return result e.g. we may need to handle created entity id and navigate to edit/details page
+          },
+        };
+        console.log('modalProps', { modalProps, context })
+        createModal({ ...modalProps, isVisible: true });
+      });
+    },
+    argumentsFormMarkup: dialogArgumentsForm
+  }, actionDependencies);
+
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   const toggle = (id: string, isVisible: boolean) => {

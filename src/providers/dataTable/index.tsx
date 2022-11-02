@@ -83,7 +83,7 @@ import qs from 'qs';
 import { advancedFilter2JsonLogic } from './utils';
 import { camelcaseDotNotation, convertDotNotationPropertiesToGraphQL } from '../form/utils';
 import { GENERIC_ENTITIES_ENDPOINT } from '../../constants';
-import { useConfigurableActionDispatcher } from '../configurableActionsDispatcher';
+import { useConfigurableAction } from '../configurableActionsDispatcher';
 
 interface IDataTableProviderProps extends ICrudProps {
   /** Type of entity */
@@ -810,67 +810,62 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     }
   }, [state, actionOwnerName]);
 
-  const { registerAction } = useConfigurableActionDispatcher();
-  
-  useEffect(() => {
 
-    registerAction({
-      name: 'Refresh table',
-      owner: actionOwnerName,
-      ownerUid: actionOwnerId,
-      hasArguments: false,
-      executer: () => {
-        refreshTable(); // todo: return correct promise
-        return Promise.resolve()
-      }
-    });
-
-    registerAction({
-      name: 'Delete row',
-      owner: actionOwnerName,
-      ownerUid: actionOwnerId,
-      hasArguments: false,
-      executer: () => {
-        deleteRow(); // todo: return correct promise
-        return Promise.resolve();
-      }
-    });
-
-    registerAction({
-      name: 'Export to Excel',
-      description: 'Export current table view to Excel',
-      owner: actionOwnerName,
-      ownerUid: actionOwnerId,
-      hasArguments: false,
-      executer: () => {
-        debouncedExportToExcel(); // return real promise
-        return Promise.resolve();
-      }
-    });
-
-    registerAction({
-      name: 'Toggle Advanced Filter',
-      owner: actionOwnerName,
-      ownerUid: actionOwnerId,
-      hasArguments: false,
-      executer: () => {
-        toggleAdvancedFilter(); // return real promise
-        return Promise.resolve();
-      }
-    });
-
-    registerAction({
-      name: 'Toggle Columns Selector',
-      owner: actionOwnerName,
-      ownerUid: actionOwnerId,
-      hasArguments: false,
-      executer: () => {
-        toggleColumnsSelector(); // return real promise
-        return Promise.resolve();
-      }
-    });
+  useConfigurableAction({
+    name: 'Refresh table',
+    owner: actionOwnerName,
+    ownerUid: actionOwnerId,
+    hasArguments: false,
+    executer: () => {
+      refreshTable(); // todo: return correct promise
+      return Promise.resolve()
+    }
   }, [state]);
 
+  useConfigurableAction({
+    name: 'Delete row',
+    owner: actionOwnerName,
+    ownerUid: actionOwnerId,
+    hasArguments: false,
+    executer: () => {
+      deleteRow(); // todo: return correct promise
+      return Promise.resolve();
+    }
+  }, [state]);
+
+  useConfigurableAction({
+    name: 'Export to Excel',
+    description: 'Export current table view to Excel',
+    owner: actionOwnerName,
+    ownerUid: actionOwnerId,
+    hasArguments: false,
+    executer: () => {
+      debouncedExportToExcel(); // return real promise
+      return Promise.resolve();
+    }
+  }, [state]);
+
+  useConfigurableAction({
+    name: 'Toggle Advanced Filter',
+    owner: actionOwnerName,
+    ownerUid: actionOwnerId,
+    hasArguments: false,
+    executer: () => {
+      toggleAdvancedFilter(); // return real promise
+      return Promise.resolve();
+    }
+  }, [state]);
+
+  useConfigurableAction({
+    name: 'Toggle Columns Selector',
+    owner: actionOwnerName,
+    ownerUid: actionOwnerId,
+    hasArguments: false,
+    executer: () => {
+      toggleColumnsSelector(); // return real promise
+      return Promise.resolve();
+    }
+  }, [state]);
   //#endregion
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */

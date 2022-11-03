@@ -74,7 +74,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     error: errorFetchingData,
   } = useGet({
     path: getEvaluatedUrl(getUrl),
-    // queryParams:
+    lazy: true,
   });
   const previousValue = useRef(value);
   useEffect(() => {
@@ -115,8 +115,11 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     return params;
   }, [queryParams, formMode, globalState]);
 
-  const handleFetchData = (id?: string) =>
-    fetchEntity({ queryParams: id ? { ...evaluatedQueryParams, id } : evaluatedQueryParams });
+  const handleFetchData = (id?: string) => {
+    if (id || evaluatedQueryParams?.id) {
+      fetchEntity({ queryParams: id ? { ...evaluatedQueryParams, id } : evaluatedQueryParams });
+    }
+  };
 
   useEffect(() => {
     if (queryParams && formMode !== 'designer' && dataSource === 'api') {

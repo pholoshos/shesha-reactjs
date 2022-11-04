@@ -11,11 +11,23 @@ import { ConfigurableForm, ValidationErrors } from '../../components';
 import { usePubSub, usePrevious } from '../../hooks';
 import { PageWithLayout } from '../../interfaces';
 import { IAjaxResponseBase } from '../../interfaces/ajaxResponse';
-import { useGlobalState, useSheshaApplication, MetadataProvider, useMetadataDispatcher, useShaRouting } from '../../providers';
+import {
+  useGlobalState,
+  useSheshaApplication,
+  MetadataProvider,
+  useMetadataDispatcher,
+  useShaRouting,
+} from '../../providers';
 import { useFormConfiguration } from '../../providers/form/api';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
 import { FormIdentifier } from '../../providers/form/models';
-import { asFormFullName, evaluateComplexString, getComponentsFromMarkup, removeZeroWidthCharsFromString, useFormDesignerComponents } from '../../providers/form/utils';
+import {
+  asFormFullName,
+  evaluateComplexString,
+  getComponentsFromMarkup,
+  removeZeroWidthCharsFromString,
+  useFormDesignerComponents,
+} from '../../providers/form/utils';
 import { getQueryParams, isValidSubmitVerb } from '../../utils/url';
 import { EntityAjaxResponse, IDynamicPageProps, IDynamicPageState, INavigationState } from './interfaces';
 import { DynamicFormPubSubConstants } from './pubSub';
@@ -45,7 +57,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     refetch: fetchFormMarkup,
     formConfiguration,
     loading: isFetchingMarkup,
-    error: fetchMarkupError
+    error: fetchMarkupError,
   } = useFormConfiguration({ formId, lazy: true });
   const formMarkup = formConfiguration?.markup;
   const formSettings = formConfiguration?.settings;
@@ -83,9 +95,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   // submit URL
   const submitUrl = useMemo(() => {
-    const url = formSettings
-      ? formSettings[`${submitVerb?.toLocaleLowerCase()}Url`]
-      : null;
+    const url = formSettings ? formSettings[`${submitVerb?.toLocaleLowerCase()}Url`] : null;
 
     if (!url && formSettings) {
       console.warn(`Please make sure you have specified the '${submitVerb}' URL`);
@@ -93,9 +103,9 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
     return url
       ? evaluateComplexString(url, [
-        { match: 'query', data: getQueryParams() },
-        { match: 'globalState', data: globalState },
-      ])
+          { match: 'query', data: getQueryParams() },
+          { match: 'globalState', data: globalState },
+        ])
       : '';
   }, [formSettings, submitVerb]);
 
@@ -147,6 +157,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     } else if (!parentId && !router?.query?.navMode) {
       setNavigationState(null);
       setCurrentNavigator(state?.stackId);
+
       setState(prev => ({ ...prev, ...router?.query }));
       closing.current = false;
       return;
@@ -160,7 +171,22 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
       !isDeepEqual(previousProps, router?.query) &&
       !isDeepEqual(previousRouter, router?.query)
     ) {
-      setNavigationState(router?.query);
+      const fullPath =
+        props && Array.isArray(props.path)
+          ? props.path.length === 1
+            ? [null, props.path[0]]
+            : props.path.length === 2
+            ? [props.path[0], props.path[1]]
+            : [null, null]
+          : [null, null];
+
+      setNavigationState({
+        ...router?.query,
+        formId: {
+          module: fullPath[0],
+          name: fullPath[1],
+        },
+      });
       closing.current = false;
     }
     closing.current = false;
@@ -187,31 +213,31 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
     const fullName = asFormFullName(formId);
     return fullName && safeStringsEqual(fullName.name, name) && safeStringsEqual(fullName.module, module);
-  }
+  };
 
   useEffect(() => {
     if (formSettings?.modelType)
       fetchMeta({ modelType: formSettings?.modelType }).then(meta => {
         setMetadata(meta);
       });
-  }, [formSettings?.modelType])
+  }, [formSettings?.modelType]);
 
   // just for intrenal use
   interface IFieldData {
     name: string;
-    child: IFieldData[]
+    child: IFieldData[];
     property: IPropertyMetadata;
   }
 
   const getProperties = (field: IFieldData) => {
     if (field.property?.dataType == 'entity') {
-      setMetadataFetchCount((count) => count == null ? 1 : count + 1);
+      setMetadataFetchCount(count => (count == null ? 1 : count + 1));
       fetchMeta({ modelType: field.property.entityType }).then(meta => {
-        field.child.forEach((item) => {
+        field.child.forEach(item => {
           item.property = meta.properties.find(p => p.path.toLowerCase() == item.name.toLowerCase());
           getProperties(item);
         });
-        setMetadataFetchCount((count) => count - 1);
+        setMetadataFetchCount(count => count - 1);
       });
     } else {
     }
@@ -219,12 +245,12 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   const getFieldsFromCustomEvents = (code: string) => {
     if (!code) return [];
-    const reg = new RegExp('(?<![_a-zA-Z0-9.])data\.[_a-zA-Z0-9.]+', 'g');
+    const reg = new RegExp('(?<![_a-zA-Z0-9.])data.[_a-zA-Z0-9.]+', 'g');
     const matchAll = code.matchAll(reg);
     if (!matchAll) return [];
     const match = Array.from(matchAll);
-    return match.map((item) => item[0].replace('data.', ''));
-  }
+    return match.map(item => item[0].replace('data.', ''));
+  };
 
   const toolboxComponent = useFormDesignerComponents();
 
@@ -232,7 +258,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     if (!metadata || !formMarkup) return null;
 
     let fields: IFieldData[] = [];
-    const components = componentsTreeToFlatStructure(toolboxComponent, getComponentsFromMarkup(formMarkup)).allComponents;
+    const components = componentsTreeToFlatStructure(toolboxComponent, getComponentsFromMarkup(formMarkup))
+      .allComponents;
     let fieldNames = [];
     for (const key in components) {
       fieldNames.push(components[key].name);
@@ -240,7 +267,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
     fieldNames = fieldNames.concat(formSettings?.fieldsToFetch ?? []);
 
-    formMarkup.forEach((item) => {
+    formMarkup.forEach(item => {
       fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.customEnabled));
       fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.customVisibility));
       fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.onBlurCustom));
@@ -249,16 +276,20 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     });
     fieldNames.push('id');
 
-    fieldNames = fieldNames.sort((a, b) => a < b ? -1 : a > b ? 1 : 0);
+    fieldNames = fieldNames.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
     let prevItem = null;
-    fieldNames.forEach((item) => {
+    fieldNames.forEach(item => {
       if (item && prevItem != item) {
         item = item.trim();
         prevItem = item;
         let path = item.split('.');
 
         if (path.length == 1) {
-          fields.push({ name: item, child: [], property: metadata?.properties.find(p => p.path.toLowerCase() == path[0].toLowerCase()) });
+          fields.push({
+            name: item,
+            child: [],
+            property: metadata?.properties.find(p => p.path.toLowerCase() == path[0].toLowerCase()),
+          });
           return;
         }
 
@@ -269,12 +300,14 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
           let field = fs.find(f => f.name == path[i]);
           if (!field) {
             field = {
-              name: path[i], child: [],
-              property: i == 0
-                ? metadata?.properties.find(p => p.path.toLowerCase() == path[0].toLowerCase())
-                : parent?.property?.dataType == 'object'
+              name: path[i],
+              child: [],
+              property:
+                i == 0
+                  ? metadata?.properties.find(p => p.path.toLowerCase() == path[0].toLowerCase())
+                  : parent?.property?.dataType == 'object'
                   ? parent.property.properties?.find(p => p.path.toLowerCase() == path[i].toLowerCase())
-                  : null
+                  : null,
             };
             fs.push(field);
           }
@@ -285,7 +318,9 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     });
 
     setMetadataFetchCount(0);
-    fields.forEach((item) => { getProperties(item); });
+    fields.forEach(item => {
+      getProperties(item);
+    });
     return fields;
   }, [metadata, formMarkup]);
 
@@ -293,7 +328,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
     if (metadataFetchCount == 0) {
       let resf = (items: IFieldData[]) => {
         let s = '';
-        items.forEach((item) => {
+        items.forEach(item => {
           if (!item.property) return;
           s += s ? ',' + item.name : item.name;
           if (item.child.length > 0) {
@@ -302,7 +337,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         });
 
         return s;
-      }
+      };
 
       return resf(gqlFields);
     }
@@ -314,14 +349,14 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const fetcherRef = useRef<() => Promise<EntityAjaxResponse>>();
   const fetchFormData = () => {
     return fetchData({ queryParams: entityPathId || !id ? {} : { id, properties: fetchFields } });
-  }
+  };
 
   useEffect(() => {
     // The mismatch happens if you're drilled down to a page and then click the back button on the browser
     // When you land, because you'd still be having the formResponse, before the correct form is being fetched
     // Data/Entity will be fetched with the previous value of the response. That is why we have to check that we don't have the old form response
     //const isPathMismatch = props?.path !== formResponse?.path;
-    const correctForm = formConfiguration && sameForm(props.formId, formConfiguration.name, formConfiguration.module);
+    const correctForm = formConfiguration && sameForm(formId, formConfiguration.name, formConfiguration.module);
 
     // note: fetch data if `getUrl` is set even when Id is not provided. Dynamic page can be used not only for entities
     if (fetchDataPath && correctForm && fetchFields) {
@@ -422,9 +457,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
 
   const isLoading = isFetchingData || isFetchingMarkup || isPostingData;
 
-  const markupErrorCode = fetchMarkupError
-    ? (fetchMarkupError.data as IAjaxResponseBase)?.error?.code
-    : null;
+  const markupErrorCode = fetchMarkupError ? (fetchMarkupError.data as IAjaxResponseBase)?.error?.code : null;
 
   if (!isLoading && markupErrorCode === 404) {
     return (
@@ -458,10 +491,8 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   };
 
   const refetchFormData = () => {
-    return fetcherRef.current
-      ? fetcherRef.current()
-      : Promise.reject('Fetcher is not ready');
-  }
+    return fetcherRef.current ? fetcherRef.current() : Promise.reject('Fetcher is not ready');
+  };
 
   return (
     <Fragment>

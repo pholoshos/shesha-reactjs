@@ -10,10 +10,13 @@ export default handleActions<ISheshaApplicationStateContext, any>(
       action: ReduxActions.Action<IRequestHeaders>
     ) => {
       const { payload } = action;
+      const { httpHeaders } = state;
 
+      const newHeaders = { ...httpHeaders, ...payload };
+      
       return {
         ...state,
-        httpHeaders: payload,
+        httpHeaders: newHeaders,
       };
     },
 

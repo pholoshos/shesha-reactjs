@@ -1,11 +1,15 @@
 .sidebar-container {
-  height: calc(100vh);
+  //height: calc(100vh);
+  display: grid;
+  grid-auto-flow: column;
+
   &.flexible-height {
     height: unset;
   }
 
   width: 100%;
   overflow-x: hidden;
+  
   background: @background-color;
 
   .sidebar-container-header {
@@ -26,12 +30,20 @@
 
     .sidebar-container-left,
     .sidebar-container-right {
-      display: flex;
-      flex-direction: column;
+      &.allow-full-collapse {
+        display: none;
+      }
+      
+      &.open {
+        display: block;
+        .sidebar-header {
+          .sidebar-header-title {
+            display: flex;
+          }
+        }
+      }
+      
       background: white;
-      height: 100%;
-      position: absolute;
-      top: 0;
       .transition();
 
       .sidebar-subheader {
@@ -50,7 +62,7 @@
         .sidebar-header-title {
           width: @sha-left-sidebar-width - @sha-collapsible-sidebar-btn-height;
           background: #282828;
-          display: flex;
+          display: none;
           align-items: center;
           padding: 0 @padding-lg;
           font-weight: 500;
@@ -82,16 +94,15 @@
 
         .sidebar-body-content {
           width: 100%;
+          display: none;
 
           &.open {
-            margin-left: unset;
-            margin-right: unset;
+            display: block;
           }
         }
 
         .sidebar-body-placeholder {
           width: @sha-collapsible-sidebar-btn-height;
-          margin: -@padding-lg;
 
           &.open {
             width: 0;
@@ -102,60 +113,19 @@
 
     .sidebar-container-left {
       border-right: 1px solid lightgrey;
-      left: -@sha-left-sidebar-width + @sha-collapsible-sidebar-btn-height;
-
-      &.allow-full-collapse {
-        left: -@sha-left-sidebar-width;
-      }
 
       &.open {
-        left: 0;
-
         .toggle-open-btn {
           transform: rotateX(180deg);
-        }
-      }
-
-      .sidebar-header {
-        .sidebar-header-title {
-        }
-
-        .sidebar-header-btn {
-        }
-      }
-
-      .sidebar-body {
-        .sidebar-body-content {
-          margin-left: -@sha-collapsible-sidebar-btn-height;
-
-          &.open {
-            margin-left: unset;
-          }
-        }
-
-        .sidebar-body-placeholder {
-          width: @sha-collapsible-sidebar-btn-height;
-          margin: -@padding-lg;
-
-          &.open {
-            width: 0;
-          }
         }
       }
     }
 
     .sidebar-container-right {
       border-left: 1px solid lightgrey;
-      right: -@sha-right-sidebar-width + @sha-collapsible-sidebar-btn-height;
       max-width: @sha-right-sidebar-width;
 
-      &.allow-full-collapse {
-        right: -@sha-right-sidebar-width;
-      }
-
       &.open {
-        right: 0;
-
         .toggle-open-btn {
           transform: rotateX(180deg);
         }
@@ -163,33 +133,14 @@
 
       .sidebar-header {
         flex-direction: row-reverse;
+
         .sidebar-header-title {
           justify-content: flex-end;
-        }
-
-        .sidebar-header-btn {
         }
       }
 
       .sidebar-body {
         flex-direction: row-reverse;
-
-        .sidebar-body-content {
-          margin-right: -@sha-collapsible-sidebar-btn-height;
-
-          &.open {
-            margin-right: unset;
-          }
-        }
-
-        .sidebar-body-placeholder {
-          width: @sha-collapsible-sidebar-btn-height;
-          margin: -@padding-lg;
-
-          &.open {
-            width: 0;
-          }
-        }
       }
 
       .ant-row.ant-form-item {
@@ -204,36 +155,10 @@
     .sidebar-container-main-area {
       .transition();
       width: 100%;
-      margin: 0 @sha-collapsible-sidebar-btn-height;
+      position: sticky;
 
       &::not(.no-padding) {
         padding: @padding-lg;
-      }
-
-      &.allow-full-collapse {
-        margin-left: unset;
-        margin-right: unset;
-      }
-
-      &.both-open {
-        margin-left: @sha-left-sidebar-width;
-        margin-right: @sha-right-sidebar-width;
-      }
-
-      &.left-only-open {
-        margin-left: @sha-left-sidebar-width;
-      }
-
-      &.right-only-open {
-        margin-right: @sha-right-sidebar-width;
-      }
-
-      &.no-left-panel {
-        margin-left: unset;
-      }
-
-      &.no-right-panel {
-        margin-right: unset;
       }
     }
   }

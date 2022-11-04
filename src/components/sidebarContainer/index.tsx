@@ -92,7 +92,9 @@ export const SidebarContainer: FC<ISidebarContainerProps> = ({
           <div className={classNames('sidebar-body-content', { open })}>
             {typeof content === 'function' ? content() : content}
           </div>
-          <div className={classNames('sidebar-body-placeholder', { open })} />
+          { !allowFullCollapse && (
+            <div className={classNames('sidebar-body-placeholder', { open })} />
+          ) }
         </div>
       </div>
     );

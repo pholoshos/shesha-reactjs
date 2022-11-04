@@ -62,7 +62,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     toolboxComponentGroups,
   });
 
-  const onSetRequestHeaders = (headers: IRequestHeaders) => {
+  const setRequestHeaders = (headers: IRequestHeaders) => {
     dispatch(setHeadersAction(headers));
   };
 
@@ -93,6 +93,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
       <SheshaApplicationActionsContext.Provider
         value={{
           changeBackendUrl,
+          setRequestHeaders,
         }}
       >
         <RestfulProvider
@@ -107,7 +108,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
                 <ShaRoutingProvider router={router}>
                   <AuthProvider
                     tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
-                    onSetRequestHeaders={onSetRequestHeaders}
+                    onSetRequestHeaders={setRequestHeaders}
                     unauthorizedRedirectUrl={unauthorizedRedirectUrl}
                     whitelistUrls={whitelistUrls}
                   >
@@ -141,13 +142,14 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
 };
 
 function useSheshaApplication(require: boolean = true) {
-  const context = useContext(SheshaApplicationStateContext);
+  const stateContext = useContext(SheshaApplicationStateContext);
+  const actionsContext = useContext(SheshaApplicationActionsContext);
 
-  if (context === undefined && !require) {
+  if (require && (stateContext === undefined || actionsContext === undefined)) {
     throw new Error('useSheshaApplication must be used within a SheshaApplicationStateContext');
   }
 
-  return context;
+  return { ...stateContext, ...actionsContext };
 }
 
 export { ShaApplicationProvider, useSheshaApplication };

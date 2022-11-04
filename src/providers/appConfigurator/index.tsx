@@ -1,11 +1,13 @@
 import React, { FC, useReducer, useContext, PropsWithChildren, useEffect, useRef } from 'react';
 import appConfiguratorReducer from './reducer';
 import { AppConfiguratorActionsContext, AppConfiguratorStateContext, APP_CONTEXT_INITIAL_STATE } from './contexts';
-import { ApplicationMode, IComponentSettings, IComponentSettingsDictionary } from './models';
+import { ApplicationMode, ConfigurationItemsViewMode, IComponentSettings, IComponentSettingsDictionary } from './models';
 import {
   switchApplicationModeAction,
+  toggleShowInfoBlockAction,
   toggleEditModeConfirmationAction,
   toggleCloseEditModeConfirmationAction,
+  switchConfigurationItemModeAction,
   /* NEW_ACTION_IMPORT_GOES_HERE */
 } from './actions';
 import { configurableComponentGet } from '../../apis/configurableComponent';
@@ -14,17 +16,39 @@ import { useConfigurableAction } from '../configurableActionsDispatcher';
 import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
 import { createNewVersion, deleteItem, downloadAsJson, IConfigurationFrameworkHookArguments, IHasConfigurableItemId, itemCancelVersion, publishItem, setItemReady } from '../../utils/configurationFramework/actions';
 import { genericItemActionArgumentsForm } from './configurable-actions/generic-item-arguments';
+import { useLocalStorage } from '../../hooks';
+import { useAuth } from '../..';
+import { PERM_APP_CONFIGURATOR } from '../../constants';
 
 export interface IAppConfiguratorProviderProps {}
 
 const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProps>> = ({ children }) => {
+  const [storageFormInfoVisible, setStorageFormInfoVisible] = useLocalStorage<boolean>('FORM_INFO_VISIBLE', false);
   const [state, dispatch] = useReducer(appConfiguratorReducer, {
     ...APP_CONTEXT_INITIAL_STATE,
+    formInfoBlockVisible: storageFormInfoVisible,
   });
 
   const settingsDictionary = useRef<IComponentSettingsDictionary>({});
+  const { anyOfPermissionsGranted } = useAuth();
 
-  const { backendUrl, httpHeaders } = useSheshaApplication();
+  const { backendUrl, httpHeaders, setRequestHeaders } = useSheshaApplication();
+
+  // read configurationItemsMode on start and check availability
+  const [storageConfigItemMode, setStorageConfigItemMode] = useLocalStorage<ConfigurationItemsViewMode>('CONFIGURATION_ITEM_MODE', 'live');
+  useEffect(() => {
+    const hasRights = anyOfPermissionsGranted([PERM_APP_CONFIGURATOR]);
+
+    const mode = hasRights
+      ? storageConfigItemMode
+      : APP_CONTEXT_INITIAL_STATE.configurationItemMode;
+
+    if (mode !== state.configurationItemMode)
+        switchConfigurationItemMode(mode);
+
+    if (state.formInfoBlockVisible && !hasRights)
+      toggleShowInfoBlock(false);
+  }, []);
 
   //#region Configuration Framework
 
@@ -115,8 +139,19 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
+  const toggleShowInfoBlock = (visible: boolean) => {
+    setStorageFormInfoVisible(visible);
+    dispatch(toggleShowInfoBlockAction(visible));
+  };
+
   const switchApplicationMode = (mode: ApplicationMode) => {
     dispatch(switchApplicationModeAction(mode));
+  };
+
+  const switchConfigurationItemMode = (mode: ConfigurationItemsViewMode) => {
+    setRequestHeaders({ "sha-config-item-mode": mode });
+    setStorageConfigItemMode(mode);
+    dispatch(switchConfigurationItemModeAction(mode));    
   };
 
   const toggleEditModeConfirmation = (visible: boolean) => {
@@ -175,9 +210,11 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
           switchApplicationMode,
           toggleEditModeConfirmation,
           toggleCloseEditModeConfirmation,
+          switchConfigurationItemMode,
           fetchSettings,
           getSettings,
           invalidateSettings,
+          toggleShowInfoBlock,
           /* NEW_ACTION_GOES_HERE */
         }}
       >

@@ -2,7 +2,7 @@ import React, { CSSProperties, FC, useMemo } from 'react';
 import { Tag } from 'antd';
 import { isNumeric } from '../../utils/string';
 
-interface IStatusMap {
+export interface IStatusMap {
   code?: number;
   text?: string;
   color?: string;

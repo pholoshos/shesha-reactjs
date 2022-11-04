@@ -1,4 +1,5 @@
 import { FormFullName, FormRawMarkup, IFormSettings } from '../../providers/form/models';
+import { IPersistedFormProps } from '../../providers/formPersisterProvider/models';
 
 export type FormMode = 'designer' | 'edit' | 'readonly';
 
@@ -62,6 +63,7 @@ export interface IDynamicPageState extends IDynamicPageProps {
   stackId?: string;
   formMarkup?: FormRawMarkup;
   formSettings?: IFormSettings;
+  formProps?: IPersistedFormProps;
   fetchedData?: IEntity;
   mode?: FormMode;
 }

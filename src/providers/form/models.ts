@@ -5,6 +5,7 @@ import { FormLayout } from 'antd/lib/form/Form';
 import { IKeyValue } from '../../interfaces/keyValue';
 import { ColProps } from 'antd';
 import { IHasVersion } from '../../utils/fluentMigrator/migrator';
+import { IPersistedFormProps } from '../formPersisterProvider/models';
 
 export const ROOT_COMPONENT_KEY: string = 'root'; // root key of the flat components structure
 export const TOOLBOX_COMPONENT_DROPPABLE_KEY: string = 'toolboxComponent';
@@ -188,6 +189,7 @@ export type FormIdentifier = FormFullName | FormUid;
 export interface IConfigurableFormBaseProps {
   formId?: FormIdentifier;
   markup?: FormMarkup;
+  formProps?: IPersistedFormProps;
 }
 
 export type FormAction = (values?: any, parameters?: any) => void;

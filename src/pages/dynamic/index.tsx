@@ -355,7 +355,12 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [formId]);
 
   useEffect(() => {
-    setState(prev => ({ ...prev, formMarkup: formMarkup, formSettings: formSettings }));
+    setState(prev => ({ 
+      ...prev, 
+      formMarkup: formMarkup, 
+      formSettings: formSettings,
+      formProps: formConfiguration,
+    }));
   }, [formMarkup, formSettings]);
   //#endregion
 
@@ -466,6 +471,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
             <ConfigurableForm
               markup={{ components: state?.formMarkup, formSettings: state?.formSettings }} // pass empty markup to prevent unneeded form fetching
               formId={formId}
+              formProps={state?.formProps}
               formRef={formRef}
               mode={state?.mode}
               form={form}

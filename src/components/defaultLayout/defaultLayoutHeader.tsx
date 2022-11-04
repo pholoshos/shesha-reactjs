@@ -1,12 +1,13 @@
 import React, { FC, Fragment } from 'react';
 import classNames from 'classnames';
-import { Avatar, Dropdown, Input, Menu } from 'antd';
+import { Avatar, Dropdown, Input, Menu, Space } from 'antd';
 import { nanoid } from 'nanoid/non-secure';
 import { DownOutlined, LoginOutlined, UserOutlined } from '@ant-design/icons';
 import { useAuth, useSidebarMenu } from '../../providers';
 import ShaLink from '../shaLink';
 import { ProtectedContent, AppEditModeToggler, ConfigurableLogo } from '..';
 import { PERM_APP_CONFIGURATOR } from '../../constants';
+import ConfigurationItemViewModeToggler from '../appConfigurator/configurationItemViewModeToggler';
 
 const { Search } = Input;
 
@@ -63,9 +64,10 @@ const DefaultLayoutHeader: FC<ILayoutHeaderProps> = ({ collapsed, onSearch }) =>
             </span>
           ))}
           <ProtectedContent permissionName={PERM_APP_CONFIGURATOR}>
-            <div className="header-icon">
+            <Space>
+              <ConfigurationItemViewModeToggler />
               <AppEditModeToggler />
-            </div>
+            </Space>
           </ProtectedContent>
         </div>
 

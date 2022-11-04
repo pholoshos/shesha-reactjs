@@ -1,6 +1,6 @@
 {
   "name": "@shesha/reactjs",
-  "version": "3.0.26-canary",
+  "version": "3.0.30-canary",
   "description": "The reactjs frontend application and ui for the shesha framework.",
   "license": "GPL-3.0",
   "homepage": "https://Boxfusion.github.io/shesha-reactjs",
@@ -101,7 +101,7 @@
     "@types/redux-actions": "2.6.1",
     "@types/rollup-plugin-peer-deps-external": "^2.2.0",
     "@types/uuid": "^8.3.3",
-    "antd": "^4.23.2",
+    "antd": "^4.24.0",
     "axios": "^0.21.1",
     "babel-core": "6.26.3",
     "babel-loader": "^7.1.5",

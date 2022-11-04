@@ -1,6 +1,6 @@
 import React, { FC, Fragment, ReactNode } from 'react';
 import classNames from 'classnames';
-import { Avatar, Dropdown, Input, Menu } from 'antd';
+import { Avatar, Dropdown, Input, Menu, Space } from 'antd';
 import { nanoid } from 'nanoid/non-secure';
 import { DownOutlined, LoginOutlined, UserOutlined } from '@ant-design/icons';
 import { useAuth } from '../../providers/auth';
@@ -8,6 +8,7 @@ import ShaLink from '../shaLink';
 import { ProtectedContent, AppEditModeToggler, ConfigurableLogo } from '../';
 import { PERM_APP_CONFIGURATOR } from '../../constants';
 import { useSidebarMenu } from '../../providers';
+import ConfigurationItemViewModeToggler from '../appConfigurator/configurationItemViewModeToggler';
 
 const { Search } = Input;
 
@@ -68,9 +69,10 @@ const LayoutHeader: FC<ILayoutHeaderProps> = ({ collapsed, onSearch, customCompo
           ))}
 
           <ProtectedContent permissionName={PERM_APP_CONFIGURATOR}>
-            <div className="header-icon">
+            <Space>
+              <ConfigurationItemViewModeToggler />
               <AppEditModeToggler />
-            </div>
+            </Space>
           </ProtectedContent>
         </div>
         <div className="account">

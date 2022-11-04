@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 import { IToolboxComponentGroup } from '../..';
+import IRequestHeaders from '../../interfaces/requestHeaders';
 
 export interface ISheshaRutes {
   formsDesigner: string;
@@ -26,6 +27,7 @@ export const SHESHA_APPLICATION_CONTEXT_INITIAL_STATE: ISheshaApplicationStateCo
 
 export interface ISheshaApplicationActionsContext {
   changeBackendUrl?: (backendUrl: string) => void;
+  setRequestHeaders?: (headers: IRequestHeaders) => void;
 }
 
 export const DEFAULT_ACCESS_TOKEN_NAME = 'xDFcxiooPQxazdndDsdRSerWQPlincytLDCarcxVxv';

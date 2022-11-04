@@ -276,7 +276,7 @@ export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormC
 export const evaluateString = (template: string = '', data: any) => {
   // The function throws an exception if the expression passed doesn't have a corresponding curly braces
   try {
-    return template ? Mustache.render(template, data) : template;
+    return template ? Mustache.render(template, data ?? {}) : template;
   } catch (error) {
     console.warn('evaluateString ', error);
     return template;

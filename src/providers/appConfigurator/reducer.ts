@@ -1,5 +1,5 @@
 import { APP_CONTEXT_INITIAL_STATE, IAppStateContext } from './contexts';
-import { ApplicationMode } from './models';
+import { ApplicationMode, ConfigurationItemsViewMode } from './models';
 import { AppConfiguratorActionEnums } from './actions';
 import { handleActions } from 'redux-actions';
 
@@ -42,6 +42,28 @@ export default handleActions<IAppStateContext, any>(
         editModeConfirmationVisible: !payload,
       };
     },
+    [AppConfiguratorActionEnums.SwitchConfigurationItemsMode]: (
+      state: IAppStateContext,
+      action: ReduxActions.Action<ConfigurationItemsViewMode>
+    ) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        configurationItemMode: payload,
+      };
+    },
+    [AppConfiguratorActionEnums.ToggleFormInfoBlock]: (
+      state: IAppStateContext,
+      action: ReduxActions.Action<boolean>
+    ) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        formInfoBlockVisible: payload,
+      };
+    },    
   },
 
   APP_CONTEXT_INITIAL_STATE

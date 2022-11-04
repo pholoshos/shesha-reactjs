@@ -17,3 +17,9 @@ export function addFormFieldsList<TData = any>(data: TData, form: FormInstance):
 
   return { _formFields: formFields, ...data };
 }
+
+export const getFormFullName = (moduleName: string, name: string) => {
+  return moduleName
+    ? `${moduleName}/${name}`
+    : name;
+}

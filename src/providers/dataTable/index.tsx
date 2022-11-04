@@ -155,6 +155,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     title,
     parentEntityId,
   });
+  
   const { setState: setGlobalState } = useGlobalState();
   const { backendUrl } = useSheshaApplication();
   const tableIsReady = useRef(false);

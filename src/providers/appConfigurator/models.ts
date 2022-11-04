@@ -1,4 +1,5 @@
 export type ApplicationMode = 'live' | 'edit';
+export type ConfigurationItemsViewMode = 'live' | 'ready' | 'latest';
 
 export interface IComponentSettingsDictionary {
     [key: string]: IComponentSettings;

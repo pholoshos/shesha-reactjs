@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { GetDataError, useGet } from "restful-react";
+import { useAppConfigurator } from "../..";
 import { IAjaxResponseBase } from "../../interfaces/ajaxResponse";
 import { IAbpWrappedGetEntityResponse } from "../../interfaces/gql";
 import { FormIdentifier, FormMarkupWithSettings, IFormDto } from "./models";
@@ -99,6 +100,9 @@ const getMarkupFromResponse = (data: IAbpWrappedGetEntityResponse<FormConfigurat
  * Load form markup from the back-end
  */
 export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarkupResponse => {
+
+    const { configurationItemMode } = useAppConfigurator();
+
     const requestParams = useMemo(() => {
         const formRawId = asFormRawId(args.formId);
         const formFullName = asFormFullName(args.formId);
@@ -115,15 +119,17 @@ export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarku
                 queryParams: { name: formFullName.name, module: formFullName.module, version: formFullName.version }
             };
 
-        return {
-            url: 'dont-load'
-        };
-    }, [args.formId]);
+        return null;
+    }, [args.formId, configurationItemMode]);
 
     const fetcher = useGet<IAbpWrappedGetEntityResponse<FormConfigurationDto>, IAjaxResponseBase, IGetFormByIdPayload | IGetFormByNamePayload>(
-        requestParams.url,
-        { queryParams: requestParams.queryParams, lazy: args.lazy }
+        requestParams?.url ?? '',
+        { queryParams: requestParams?.queryParams, lazy: args.lazy || !requestParams }
     );
+
+    useEffect(() => {
+        fetcher.refetch();
+    }, [configurationItemMode]);
 
     const formConfiguration = useMemo<IFormDto>(() => {
         if (fetcher?.data?.result){

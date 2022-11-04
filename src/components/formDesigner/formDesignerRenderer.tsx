@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { SidebarContainer, ConfigurableFormRenderer } from '../../components';
-import { Row, Col, Divider, Typography, Tooltip, Space } from 'antd';
+import { Row, Col, Divider, Typography, Space } from 'antd';
 import Toolbox from './toolbox';
 import FormDesignerToolbar from './formDesignerToolbar';
 import ComponentPropertiesPanel from './componentPropertiesPanel';
@@ -10,23 +10,12 @@ import { MetadataProvider } from '../../providers';
 import ConditionalWrap from '../conditionalWrapper';
 import { useFormPersister } from '../../providers/formPersisterProvider';
 import { useFormDesigner } from '../../providers/formDesigner';
-import StatusTag, { IStatusMappings } from '../statusTag';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { ConfigurationItemVersionStatus } from '../../utils/configurationFramework/models';
+import StatusTag from '../statusTag';
+import { FORM_STATUS_MAPPING } from '../../utils/configurationFramework/models';
+import { getFormFullName } from '../../utils/form';
+import HelpTextPopover from '../helpTextPopover';
 
 const { Title } = Typography;
-
-const FORM_STATUS_MAPPING: IStatusMappings = {
-    mapping: [
-        { code: ConfigurationItemVersionStatus.Draft, text: 'Draft', color: '#b4b4b4' },
-        { code: ConfigurationItemVersionStatus.Ready, text: 'Ready', color: '#4DA6FF' },
-        { code: ConfigurationItemVersionStatus.Live, text: 'Live', color: '#87d068' },
-        { code: ConfigurationItemVersionStatus.Cancelled, text: 'Cancelled', color: '#cd201f' },
-        { code: ConfigurationItemVersionStatus.Retired, text: 'Retired', color: '#FF7518' },
-    ],
-    default: { override: 'NOT RECOGNISED', text: 'NOT RECOGNISED', color: '#f50' },
-};
-
 
 export const FormDesignerRenderer: FC = ({ }) => {
     const [widgetsOpen, setWidgetOpen] = useState(true);
@@ -42,9 +31,7 @@ export const FormDesignerRenderer: FC = ({ }) => {
     const { isDebug, readOnly } = useFormDesigner();
 
     const fullName = formProps
-        ? formProps.module
-            ? `${formProps.module}/${formProps.name}`
-            : formProps.name
+        ? getFormFullName(formProps.module, formProps.name)
         : null;
     const title = formProps?.label
         ? `${formProps.label} (${fullName})`
@@ -56,12 +43,7 @@ export const FormDesignerRenderer: FC = ({ }) => {
                 <div className="sha-page-title" style={{ justifyContent: 'left' }}>
                     <Space>
                         {title && <Title level={4} style={{ margin: 'unset' }}>{title} v{formProps.versionNo}</Title>}
-                        {/* {formProps.label && (
-                            <Title level={4} style={{ margin: 'unset' }}>({formProps.label})</Title>
-                        )} */}
-                        {formProps.description && (<Tooltip title={formProps.description}>
-                            <QuestionCircleOutlined className="sha-help-icon" />
-                        </Tooltip>)}
+                        <HelpTextPopover content={formProps.description}></HelpTextPopover>
                         <StatusTag value={formProps.versionStatus} mappings={FORM_STATUS_MAPPING} color={null}></StatusTag>
                     </Space>
                 </div>

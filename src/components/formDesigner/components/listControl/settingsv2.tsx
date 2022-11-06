@@ -341,6 +341,38 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ onSave, mod
         />
       </FormItem>
 
+      <FormItem label="Target URL" name="targetUrl" tooltip="The URL to forward to after event is triggered.">
+        <CodeEditor
+          mode="dialog"
+          label="Target URL"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="targetUrl"
+          type={''}
+          id={''}
+          description="The URL to forward to after event is triggered"
+          exposedVariables={[
+            {
+              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+              name: 'data',
+              description: 'Form data',
+              type: 'object',
+            },
+            {
+              id: '65b71112-d412-401f-af15-1d3080f85319',
+              name: 'globalState',
+              description: 'The global state',
+              type: 'object',
+            },
+            {
+              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+              name: 'queryParams',
+              description: 'Query parameters',
+              type: 'object',
+            },
+          ]}
+        />
+      </FormItem>
+
       <FormItem
         name="submitHttpVerb"
         label="Submit verb"

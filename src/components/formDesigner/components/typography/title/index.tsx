@@ -4,7 +4,7 @@ import { TitleProps } from 'antd/lib/typography/Title';
 import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../interfaces/formDesigner';
-import { useForm } from '../../../../../providers';
+import { useForm, useSubForm } from '../../../../../providers';
 import { FormMarkup } from '../../../../../providers/form/models';
 import { evaluateString, getStyle } from '../../../../../providers/form/utils';
 import settingsFormJson from './settingsForm.json';
@@ -36,6 +36,8 @@ const TitleComponent: IToolboxComponent<ITitleProps> = {
   icon: <LineHeightOutlined />,
   factory: (model: ITitleProps) => {
     const { formData } = useForm();
+    const { value } = useSubForm();
+    const data = value || formData;
 
     const props: TitleProps = {
       code: model?.code,
@@ -47,10 +49,10 @@ const TitleComponent: IToolboxComponent<ITitleProps> = {
       underline: model?.underline,
       level: model?.level ? (Number(model?.level) as LevelType) : 1,
       type: model?.contentType,
-      style: getStyle(model.style, formData),
+      style: getStyle(model.style, data),
     };
 
-    const content = evaluateString(model?.content, formData);
+    const content = evaluateString(model?.content, data);
 
     return (
       <Title {...props} style={{ margin: 'unset' }}>

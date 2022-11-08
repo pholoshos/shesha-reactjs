@@ -12,6 +12,7 @@ import Checkbox from '../../../components/formDesigner/components/checkbox/check
 import CheckboxGroup from '../../../components/formDesigner/components/checkboxGroup/checkboxGroup';
 import Radio from '../../../components/formDesigner/components/radio/radio';
 import FileUpload from '../../../components/formDesigner/components/fileUpload';
+import Image from '../../../components/formDesigner/components/image';
 import AttachmentsEditor from '../../../components/formDesigner/components/attachmentsEditor/attachmentsEditor';
 import Button from '../../../components/formDesigner/components/button/button';
 import KeyValueEditor from '../../../components/formDesigner/components/labelValueEditor/labelValueEditorComponent';
@@ -116,6 +117,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       EditableTagGroup,
       EntityPickerComponent,
       FileUpload,
+      Image,
       List,
       Filter,
       SubForm,

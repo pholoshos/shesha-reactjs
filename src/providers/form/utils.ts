@@ -955,6 +955,10 @@ export const getStyle = (style: string, formData: any = {}, globalState: any = {
   return new Function('data, globalState', style)(formData, globalState);
 };
 
+export const getString=(expression:string,formData: any = {}, globalState: any = {}):string=>{
+  if(!expression)return null;
+  return new Function('data, globalState', expression)(formData, globalState);
+}
 export const filterFormData = (data: any) => {
   if (typeof data === 'object' && Object.getOwnPropertyNames(data || {}).length) {
     return Object.entries(data)

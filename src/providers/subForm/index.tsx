@@ -15,6 +15,7 @@ import { useGlobalState } from '../globalState';
 import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
 import { usePrevious } from 'react-use';
+import { IEntity } from '../../pages/dynamic/interfaces';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
   uniqueStateId?: string;
@@ -45,17 +46,33 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   onChange,
   defaultValue,
 }) => {
-  const getEvaluatedUrl = (url: string) => {
+  const { formData = {}, formMode } = useForm();
+  const { globalState } = useGlobalState();
+
+  const getEvaluatedUrl = (url: string): string => {
     if (!url) return '';
     return (() => {
       // tslint:disable-next-line:function-constructor
       return new Function('data, query, globalState', url)(formData, getQueryParams(), globalState); // Pass data, query, globalState
     })();
   };
+
+  const queryParamPayload = useMemo<IEntity>(() => {
+    const getQueryParamPayload = () => {
+      try {
+        // tslint:disable-next-line:function-constructor
+        return new Function('data, query, globalState', queryParams)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+      } catch (error) {
+        console.warn('queryParamPayload error: ', error);
+        return {};
+      }
+    };
+
+    return getQueryParamPayload();
+  }, [queryParams, formData, globalState]);
+
   const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
   const { publish } = usePubSub();
-  const { formData = {}, formMode } = useForm();
-  const { globalState } = useGlobalState();
   const { refetch: fetchForm, loading: isFetchingForm, data: fetchFormResponse, error: fetchFormError } = useFormGet({
     queryParams: { id: formPath?.id },
     lazy: true,
@@ -74,9 +91,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     error: errorFetchingData,
   } = useGet({
     path: getEvaluatedUrl(getUrl),
-    // queryParams:
+    queryParams: queryParamPayload,
+    lazy: true,
   });
+
   const previousValue = useRef(value);
+
   useEffect(() => {
     if (typeof value === 'string' && typeof previousValue === 'string' && previousValue !== value) {
       handleFetchData(value);
@@ -88,6 +108,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       onChange(fetchDataByUrl?.result);
     }
   }, [isFetchingDataByUrl, fetchDataByUrl]);
+
   const evaluatedQueryParams = useMemo(() => {
     if (formMode === 'designer') return {};
 
@@ -99,24 +120,17 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       typeof properties === 'string' ? `id ${properties}` : ['id', ...Array.from(new Set(properties || []))].join(' '); // Always include the `id` property/. Useful for deleting
 
     if (queryParams) {
-      const getOnSubmitPayload = () => {
-        try {
-          // tslint:disable-next-line:function-constructor
-          return new Function('data, query, globalState', queryParams)(formData, getQueryParams(), globalState); // Pass data, query, globalState
-        } catch (error) {
-          console.warn('SubFormProvider: ', error);
-          return {};
-        }
-      };
-
-      params = { ...params, ...(typeof getOnSubmitPayload() === 'object' ? getOnSubmitPayload() : {}) };
+      params = { ...params, ...(typeof queryParamPayload === 'object' ? queryParamPayload : {}) };
     }
 
     return params;
   }, [queryParams, formMode, globalState]);
 
-  const handleFetchData = (id?: string) =>
-    fetchEntity({ queryParams: id ? { ...evaluatedQueryParams, id } : evaluatedQueryParams });
+  const handleFetchData = (id?: string) => {
+    if (id || evaluatedQueryParams?.id) {
+      fetchEntity({ queryParams: id ? { ...evaluatedQueryParams, id } : evaluatedQueryParams });
+    }
+  };
 
   useEffect(() => {
     if (queryParams && formMode !== 'designer' && dataSource === 'api') {
@@ -132,7 +146,17 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   const previousGetUrl = usePrevious(getUrl);
 
   useEffect(() => {
-    if (dataSource === 'api' && getUrl && previousGetUrl !== getUrl) {
+    if (
+      dataSource === 'api' &&
+      getUrl &&
+      previousGetUrl !== getUrl &&
+      !getEvaluatedUrl(getUrl)?.includes('undefined')
+    ) {
+      if (Object.hasOwn(queryParamPayload, 'id') && (!queryParamPayload?.id || queryParamPayload?.id === 'undefined')) {
+        return;
+      }
+      // TODO: when the string returned by the function has undefined , this causes the call to be made and this causes server-side error
+      // TODO: Find a cleaner way to check if new Function evaluated to a string that has undefined
       fetchDataByUrlHttp();
     }
   }, [properties, getUrl, dataSource]);

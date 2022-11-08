@@ -16,6 +16,7 @@ export interface IConfigurableColumnsBase {
   minWidth?: number;
   maxWidth?: number;
   isVisible: boolean;
+  isEditable?: boolean;
   permissions?: string[];
 }
 

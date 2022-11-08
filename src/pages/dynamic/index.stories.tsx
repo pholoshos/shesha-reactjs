@@ -36,8 +36,9 @@ export const RoleDetailsPage = addStory(Template, {
   id: '81ae1b5a-4121-429b-89fa-06ec3a549e54'
 });
 
-export const PersonsIndexPage = addStory(Template, {
-  formId: { name: 'persons', module: 'shesha' },
+export const WardDetailsPage = addStory(Template, {
+  formId: { name: 'warddetails', module: 'Boxfusion.His.Clients.Houghton' } ,
+  id: '1b38f1cf-df7a-4d46-8555-4362753d8e17'
 });
 
 export const UserManagementPage = addStory(Template, {
@@ -130,5 +131,14 @@ export const ModelConfigurationEdit = addStory(Template, {
   id: 'BD6F85B7-43C0-411A-BFBB-67E7D5754EE8',
   mode: 'edit',
 });
+
+export const WardsIndex = addStory(Template, {
+  formId: {
+    module: 'Boxfusion.His.Clients.Houghton',
+    name: 'wardsTable'
+  },
+  mode: 'readonly',
+});
+
 
 Basic.args = DEFAULT_ARGS;

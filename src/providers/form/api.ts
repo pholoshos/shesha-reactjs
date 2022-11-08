@@ -122,17 +122,19 @@ export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarku
         return null;
     }, [args.formId, configurationItemMode]);
 
+    const canFetch = Boolean(requestParams && requestParams.url);
     const fetcher = useGet<IAbpWrappedGetEntityResponse<FormConfigurationDto>, IAjaxResponseBase, IGetFormByIdPayload | IGetFormByNamePayload>(
         requestParams?.url ?? '',
-        { queryParams: requestParams?.queryParams, lazy: args.lazy || !requestParams }
+        { queryParams: requestParams?.queryParams, lazy: !args.lazy || !canFetch }
     );
 
     useEffect(() => {
-        fetcher.refetch();
+        if (fetcher.data && canFetch)
+            reFetcher();
     }, [configurationItemMode]);
 
     const formConfiguration = useMemo<IFormDto>(() => {
-        if (fetcher?.data?.result){
+        if (fetcher?.data?.result) {
             const markupWithSettings = getMarkupFromResponse(fetcher?.data);
             return {
                 ...fetcher?.data?.result,
@@ -143,10 +145,16 @@ export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarku
             return null;
     }, [args.formId, fetcher?.data]);
 
+    const reFetch = () => {
+        return fetcher.refetch({ path: requestParams.url, queryParams: requestParams.queryParams });
+    }
+
     const reFetcher = () => {
-        return fetcher.refetch().then(response => {
-            return getMarkupFromResponse(response);
-        });
+        return canFetch
+            ? reFetch().then(response => {
+                return getMarkupFromResponse(response);
+            })
+            : Promise.reject('Can`t fetch form due to internal state');
     };
 
     const result: IFormMarkupResponse = {

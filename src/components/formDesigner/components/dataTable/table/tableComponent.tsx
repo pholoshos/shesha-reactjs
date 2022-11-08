@@ -65,7 +65,6 @@ export const TableWrapper: FC<ITableComponentProps> = ({
   id,
   items,
   useMultiselect,
-  overrideDefaultCrudBehavior,
   crud,
   createUrl,
   deleteUrl,
@@ -246,7 +245,6 @@ export const TableWrapper: FC<ITableComponentProps> = ({
         selectedRowIndex={selectedRow?.index}
         useMultiselect={useMultiselect}
         crud={crud}
-        overrideDefaultCrudBehavior={overrideDefaultCrudBehavior}
         allowRowDragAndDrop={allowRowDragAndDrop}
         onRowDropped={handleOnRowDropped}
         tableStyle={getStyle(tableStyle, formData, globalState)}

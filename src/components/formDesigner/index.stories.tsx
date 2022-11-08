@@ -61,14 +61,15 @@ export const PersonDetails = addStory(DesignerTemplate, {
   }
 });
 
-export const PersonsIndex = addStory(DesignerTemplate, {
+export const WardDetails = addStory(DesignerTemplate, {
   /*
   formId: {
-    name: 'persons',
-    module: 'shesha',
+    name: 'persons-index',
+    module: 'test',
   }
   */
-  formId: '870DB6DA-A59D-4F92-B16E-5714AF0EB43F'
+  //formId: '2EE5EDC5-4E56-4C8D-B5E4-D5ED067EA639'
+  formId: '361076e6-f4cc-42b0-9c7f-a6e9500cd5ef'
 });
 
 export const SubForm = addStory(DesignerTemplate, {

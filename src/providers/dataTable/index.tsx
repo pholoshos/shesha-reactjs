@@ -649,10 +649,10 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           data[column.accessor] = 0;
           break;
         case 'reference-list-item':
-          data[column.accessor] = { item: null, itemValue: null };
+          data[column.accessor] = null; //{ item: null, itemValue: null };
           break;
         case 'entity':
-          data[column.accessor] = { id: null, displayText: null };
+          data[column.accessor] = null; //{ id: null, displayText: null };
           break;
         case 'multiValueRefList':
           data[column.accessor] = [];
@@ -676,6 +676,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
    * @param newOrEditableRowData - data to update. If empty, it'll initialize new item creation
    */
   const setCrudRowData = (newOrEditableRowData?: IEditableRowState) => {
+    //console.log('setCrudRowData', newOrEditableRowData);
     if (newOrEditableRowData && typeof newOrEditableRowData !== 'function') {
       dispatch(setCreateOrEditRowDataAction(newOrEditableRowData));
     } else {

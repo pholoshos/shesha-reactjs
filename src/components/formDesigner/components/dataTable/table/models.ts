@@ -10,7 +10,6 @@ export interface ITableComponentBaseProps extends ITableCrudConfig {
   crud: boolean;
   flexibleHeight: boolean;
   crudMode?: 'inline' | 'dialog';
-  overrideDefaultCrudBehavior?: boolean;
   allowRowDragAndDrop?: boolean;
   onRowDropped?: string;
   rowDroppedMode?: RowDroppedMode;

@@ -39,11 +39,8 @@ const ReactTable: FC<IReactTableProps> = ({
   manualPagination = true,
   manualSortBy = true,
   manualFilters,
-  // defaultColumn,
-  // changeSelectedIds,
   disableSortBy = false,
   pageCount,
-  // tableRef,
   onFetchData,
   onSelectRow,
   onRowDoubleClick,
@@ -56,8 +53,8 @@ const ReactTable: FC<IReactTableProps> = ({
   allowRowDragAndDrop = false,
   onRowDropped,
   selectedRowIndex,
-  omitClick,
   containerStyle,
+  omitClick,
   tableStyle,
 }) => {
   const [componentState, setComponentState] = useState<IReactTableState>({

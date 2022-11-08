@@ -236,6 +236,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
                 propertyName: dataProps?.propertyName,
                 minWidth: column.minWidth || MIN_COLUMN_WIDTH,
                 maxWidth: column.minWidth,
+                isEditable: colProps.isEditable,
 
                 dataType: srvColumn?.dataType as IndexColumnDataType,
                 dataFormat: srvColumn?.dataFormat,

@@ -22,7 +22,7 @@ const MultiCheckbox: FC<ICheckboxGroupProps> = model => {
     })();
   };
 
-  const { refetch, data } = useGet({ path: getEvaluatedUrl(model?.dataSourceUrl) });
+  const { refetch, data } = useGet({ path: getEvaluatedUrl(model?.dataSourceUrl), lazy: true });
 
   useEffect(() => {
     if (model?.dataSourceType === 'url' && model?.dataSourceUrl) {

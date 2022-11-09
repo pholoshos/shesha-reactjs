@@ -25,7 +25,7 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
 }) => {
   const [state, dispatch] = useReducer(uiReducer, THEME_CONTEXT_INITIAL_STATE);
 
-  const { data: loadedThemeResponse } = useConfigurableComponentGet({ id: THEME_CONFIG_ID });
+  const { data: loadedThemeResponse, refetch } = useConfigurableComponentGet({ id: THEME_CONFIG_ID, lazy: true });
   const { mutate: saveTheme } = useConfigurableComponentUpdateSettings({ id: THEME_CONFIG_ID });
 
   const debouncedSave = useDebouncedCallback(themeToSave => {
@@ -40,6 +40,10 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   }, [loadedThemeResponse]);
 
   useEffect(() => {
+    refetch();
+  }, []);
+
+  useEffect(() => {
     changeTheme(loadedTheme);
   }, [loadedTheme]);
 
@@ -52,7 +56,6 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
       theme: state?.theme?.application,
       iconPrefixCls,
     });
-
   }, [state?.theme]);
 
   // Make an API Call to fetch the theme

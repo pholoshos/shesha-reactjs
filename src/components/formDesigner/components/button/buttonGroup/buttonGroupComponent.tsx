@@ -133,7 +133,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
         items={items?.filter(getIsVisible)?.map(props => renderMenuButton(props))}
         className={`sha-responsive-button-group space-${spaceSize}`}
         disabledOverflow
-        style={{width: "max-content"}}
+        style={{ width: 'max-content' }}
         onClick={event => {
           console.log('LOGS:: event.key ', event.key);
         }}

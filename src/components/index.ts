@@ -11,7 +11,6 @@ export { default as GenericEditPage, IGenericEditPageProps } from './crudViews/e
 export { default as GenericCreatePage, IGenericCreatePageProps } from './crudViews/createPage';
 export { default as FileUpload, IFileUploadProps } from './fileUpload';
 export { default as ConfigurableFormRenderer } from './configurableForm/configurableFormRenderer';
-export { default as InlineEditableChildTable, IInlineEditableChildTableProps } from './inlineEditableChildTable';
 export { default as MultiCheckBoxRefList, IMultiCheckBoxRefListProps } from './multiCheckBoxRefList';
 export {
   default as MultiReadCheckBoxRefList,

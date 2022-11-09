@@ -260,10 +260,12 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
           Cell: props => {
             const allRenderers = [...(customTypeRenders || []), ...renderers];
 
+            /*
             const localData = newOrEditableRowDataRef?.current?.data || {};
 
+            
             if (
-              props?.row?.original?.Id === newOrEditableRowData?.id &&
+              props?.row?.original?.id === newOrEditableRowData?.id &&
               crudMode === 'inline' &&
               columnItem?.isEditable
             ) {
@@ -291,6 +293,7 @@ export const IndexTable: FC<Partial<IIndexTableProps>> = ({
 
               return <ColumnEditField {...editProps} />;
             }
+            */
 
             // Allow the user to override the default render behavior of the table without having to make changes to it
             if (allRenderers) {

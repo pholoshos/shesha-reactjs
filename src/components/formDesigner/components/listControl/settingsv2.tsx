@@ -29,8 +29,6 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
   const [state, setState] = useState<IListSettingsState>(model);
   const [form] = Form.useForm();
 
-  console.log('ListControlSettings model', model.filters);
-
   return (
     <Form
       form={form}
@@ -67,6 +65,10 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
 
       <Form.Item name="hideLabel" label="Hide Label" valuePropName="checked">
         <Checkbox disabled={readOnly}/>
+      </Form.Item>
+
+      <Form.Item name="readOnly" label="Read Only" valuePropName="checked">
+        <Checkbox />
       </Form.Item>
 
       <FormItem name="title" label="Title">
@@ -325,6 +327,38 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
           type={''}
           id={''}
           description="The URL to submit the list items to"
+          exposedVariables={[
+            {
+              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+              name: 'data',
+              description: 'Form data',
+              type: 'object',
+            },
+            {
+              id: '65b71112-d412-401f-af15-1d3080f85319',
+              name: 'globalState',
+              description: 'The global state',
+              type: 'object',
+            },
+            {
+              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+              name: 'queryParams',
+              description: 'Query parameters',
+              type: 'object',
+            },
+          ]}
+        />
+      </FormItem>
+
+      <FormItem label="Target URL" name="targetUrl" tooltip="The URL to forward to after event is triggered.">
+        <CodeEditor
+          mode="dialog"
+          label="Target URL"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="targetUrl"
+          type={''}
+          id={''}
+          description="The URL to forward to after event is triggered"
           exposedVariables={[
             {
               id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',

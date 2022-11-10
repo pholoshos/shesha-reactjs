@@ -8,25 +8,26 @@ import { usePropertiesEditor } from '../provider';
 export interface IModelConfiguratorProps { }
 
 export const PropertiesEditorRenderer: FC<IModelConfiguratorProps> = () => {
+
   const { items, addItem, selectedItemRef } = usePropertiesEditor();
 
-const onAddClick = () => {
-  addItem().then(_item => {
-    const element = selectedItemRef?.current;
-    if (element) {
-      const offset = 0;
-      
-      //get how much pixels left to scrolling our ReactElement
-      const top = element.getBoundingClientRect().top;
-      const isVisible = top + offset >= 0 && top - offset <= window.innerHeight;
-      if (!isVisible)
-        element?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-    }
-  });
-}
+  const onAddClick = () => {
+    addItem().then(_item => {
+      const element = selectedItemRef?.current;
+      if (element) {
+        const offset = 0;
+        
+        //get how much pixels left to scrolling our ReactElement
+        const top = element.getBoundingClientRect().top;
+        const isVisible = top + offset >= 0 && top - offset <= window.innerHeight;
+        if (!isVisible)
+          element?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+      }
+    });
+  }
 
   const jsonSchema = useMemo(() => {
     return JSON.stringify(items, null, 2);

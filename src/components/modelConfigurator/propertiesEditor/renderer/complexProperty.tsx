@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Button, Tooltip } from 'antd';
+import { Button, Tag, Tooltip } from 'antd';
 import { DeleteFilled, QuestionCircleOutlined, PlusOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { usePropertiesEditor } from '../provider';
 import DragHandle from './dragHandle';
@@ -7,6 +7,7 @@ import { IModelItem } from '../../../../interfaces/modelConfigurator';
 import ItemsContainer from './itemsContainer';
 import { getIconByDataType } from '../../../../utils/metadata';
 import { ShaIcon } from '../../..';
+import { MetadataSourceType } from '../../../../interfaces/metadata';
 
 export interface IProps extends IModelItem {
   index: number[];
@@ -45,7 +46,11 @@ export const ComplexProperty: FC<IProps> = props => {
         <Button icon={<PlusOutlined color="red" />} onClick={onAddChildClick} size="small">Add child</Button>
 
         <div className="sha-sidebar-item-controls">
-          <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+          {
+            props.source == MetadataSourceType.UserDefined 
+              ? <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
+              : <Tag>APP</Tag>
+          }
         </div>
         <div className="sha-sidebar-group-container">
           <ItemsContainer index={props.index} items={props.properties || []} />

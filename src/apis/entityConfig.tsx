@@ -2,17 +2,42 @@
 
 import React from 'react';
 import { Get, GetProps, useGet, UseGetProps, Mutate, MutateProps, useMutate, UseMutateProps } from 'restful-react';
-import { MetadataSourceType } from '../interfaces/metadata';
 
 import * as RestfulShesha from '../utils/fetchers';
 export const SPEC_VERSION = 'v1';
+export interface AjaxResponseBase {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+}
+
+/**
+ * Generic DTO of the simple autocomplete item
+ */
+export interface AutocompleteItemDto {
+  value?: string | null;
+  displayText?: string | null;
+}
+
+export interface AutocompleteItemDtoListAjaxResponse {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+  result?: AutocompleteItemDto[] | null;
+}
+
+/**
+ * Status of the Shesha.Domain.ConfigurationItems.ConfigurationItem
+ */
+export type ConfigurationItemVersionStatus = 1 | 2 | 3 | 4 | 5;
+
 /**
  * Entity config DTO
  */
-export interface ConfigurationDto {
-  suppress?: boolean | null;
-}
-
 export interface EntityConfigDto {
   id?: string;
   friendlyName?: string | null;
@@ -21,21 +46,18 @@ export interface EntityConfigDto {
   className?: string | null;
   namespace?: string | null;
   discriminatorValue?: string | null;
-  source?: MetadataSourceType | null;
-  configuration?: ConfigurationDto | null;
-  suppress?: boolean | null;
-}
-
-export interface ValidationErrorInfo {
-  message?: string | null;
-  members?: string[] | null;
-}
-
-export interface ErrorInfo {
-  code?: number;
-  message?: string | null;
-  details?: string | null;
-  validationErrors?: ValidationErrorInfo[] | null;
+  source?: MetadataSourceType;
+  entityConfigType?: EntityConfigType;
+  generateAppService?: boolean;
+  suppress?: boolean;
+  module?: string | null;
+  name?: string | null;
+  label?: string | null;
+  notImplemented?: boolean;
+  moduleId?: string | null;
+  description?: string | null;
+  versionNo?: number;
+  versionStatus?: ConfigurationItemVersionStatus;
 }
 
 export interface EntityConfigDtoAjaxResponse {
@@ -45,14 +67,6 @@ export interface EntityConfigDtoAjaxResponse {
   unAuthorizedRequest?: boolean;
   __abp?: boolean;
   result?: EntityConfigDto;
-}
-
-export interface AjaxResponseBase {
-  targetUrl?: string | null;
-  success?: boolean;
-  error?: ErrorInfo;
-  unAuthorizedRequest?: boolean;
-  __abp?: boolean;
 }
 
 export interface EntityConfigDtoPagedResultDto {
@@ -69,49 +83,329 @@ export interface EntityConfigDtoPagedResultDtoAjaxResponse {
   result?: EntityConfigDtoPagedResultDto;
 }
 
-export interface EntityConfigGetQueryParams {
+export interface EntityConfigGraphQLDataResult {
+  viewConfigurations?: {};
+  configuration?: string | null;
+  generateAppService?: boolean | null;
+  lastModificationTime?: string | null;
+  typeShortAlias?: string;
+  itemType?: string;
+  source?: number | null;
+  tableName?: string;
+  creatorUserId?: number | null;
+  discriminatorValue?: string;
+  friendlyName?: string;
+  propertiesMD5?: string;
+  namespace?: string;
+  parent?: string | null;
+  isDeleted?: boolean | null;
+  entityConfigType?: number | null;
+  deletionTime?: string | null;
+  fullClassName?: string;
+  creationTime?: string | null;
+  lastModifierUserId?: number | null;
+  className?: string;
+  deleterUserId?: number | null;
+  _meta?: MetaDto;
+  jObject?: {
+    [key: string]: JToken;
+  };
   id?: string;
 }
 
-export type EntityConfigGetProps = Omit<
-  GetProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>,
+export interface EntityConfigGraphQLDataResultAjaxResponse {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+  result?: EntityConfigGraphQLDataResult;
+}
+
+/**
+ * NOTE: shape of the response depends on the `properties` argument
+ */
+export interface EntityConfigPagedResultDtoGraphQLDataResult {
+  totalCount?: number;
+  items?: ProxyDynamicDtoEntityConfigGuid[];
+}
+
+export interface EntityConfigPagedResultDtoGraphQLDataResultAjaxResponse {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+  result?: EntityConfigPagedResultDtoGraphQLDataResult;
+}
+
+/**
+ * Indicate the type of the entity metadata
+ */
+export type EntityConfigType = 1 | 2;
+
+export interface ErrorInfo {
+  code?: number;
+  message?: string | null;
+  details?: string | null;
+  validationErrors?: ValidationErrorInfo[] | null;
+}
+
+export interface FormIdFullNameDto {
+  name?: string | null;
+  module?: string | null;
+}
+
+export interface FormIdFullNameDtoAjaxResponse {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+  result?: FormIdFullNameDto;
+}
+
+export type JToken = JToken[];
+
+export interface MetaDto {
+  className?: string | null;
+}
+
+/**
+ * Indicate the source of the entity/property metadata
+ */
+export type MetadataSourceType = 1 | 2;
+
+export interface ProxyDynamicDtoEntityConfigGuid {
+  id?: string;
+  jObject?: {
+    [key: string]: JToken;
+  } | null;
+  viewConfigurations?: {} | null;
+  configuration?: string | null;
+  generateAppService?: boolean | null;
+  lastModificationTime?: string | null;
+  typeShortAlias?: string | null;
+  itemType?: string | null;
+  source?: number | null;
+  tableName?: string | null;
+  creatorUserId?: number | null;
+  discriminatorValue?: string | null;
+  friendlyName?: string | null;
+  propertiesMD5?: string | null;
+  namespace?: string | null;
+  parent?: string | null;
+  isDeleted?: boolean | null;
+  entityConfigType?: number | null;
+  deletionTime?: string | null;
+  fullClassName?: string | null;
+  creationTime?: string | null;
+  lastModifierUserId?: number | null;
+  className?: string | null;
+  deleterUserId?: number | null;
+  _meta?: MetaDto;
+}
+
+export interface ValidationErrorInfo {
+  message?: string | null;
+  members?: string[] | null;
+}
+
+export interface EntityConfigGetEntityConfigFormQueryParams {
+  entityConfigName?: string;
+  typeName?: string;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type EntityConfigGetEntityConfigFormProps = Omit<
+  GetProps<FormIdFullNameDtoAjaxResponse, AjaxResponseBase, EntityConfigGetEntityConfigFormQueryParams, void>,
   'path'
 >;
 
-export const EntityConfigGet = (props: EntityConfigGetProps) => (
-  <Get<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>
-    path={`/api/services/app/EntityConfig/Get`}
+export const EntityConfigGetEntityConfigForm = (props: EntityConfigGetEntityConfigFormProps) => (
+  <Get<FormIdFullNameDtoAjaxResponse, AjaxResponseBase, EntityConfigGetEntityConfigFormQueryParams, void>
+    path={`/api/services/app/EntityConfig/GetEntityConfigForm`}
     {...props}
   />
 );
 
-export type UseEntityConfigGetProps = Omit<
-  UseGetProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>,
+export type UseEntityConfigGetEntityConfigFormProps = Omit<
+  UseGetProps<FormIdFullNameDtoAjaxResponse, AjaxResponseBase, EntityConfigGetEntityConfigFormQueryParams, void>,
   'path'
 >;
 
-export const useEntityConfigGet = (props: UseEntityConfigGetProps) =>
-  useGet<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>(
-    `/api/services/app/EntityConfig/Get`,
+export const useEntityConfigGetEntityConfigForm = (props: UseEntityConfigGetEntityConfigFormProps) =>
+  useGet<FormIdFullNameDtoAjaxResponse, AjaxResponseBase, EntityConfigGetEntityConfigFormQueryParams, void>(
+    `/api/services/app/EntityConfig/GetEntityConfigForm`,
     props
   );
 
-export type entityConfigGetProps = Omit<
-  RestfulShesha.GetProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>,
+export type entityConfigGetEntityConfigFormProps = Omit<
+  RestfulShesha.GetProps<
+    FormIdFullNameDtoAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigGetEntityConfigFormQueryParams,
+    void
+  >,
   'queryParams'
 >;
-export const entityConfigGet = (queryParams: EntityConfigGetQueryParams, props: entityConfigGetProps) =>
-  RestfulShesha.get<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>(
-    `/api/services/app/EntityConfig/Get`,
+export const entityConfigGetEntityConfigForm = (
+  queryParams: EntityConfigGetEntityConfigFormQueryParams,
+  props: entityConfigGetEntityConfigFormProps
+) =>
+  RestfulShesha.get<FormIdFullNameDtoAjaxResponse, AjaxResponseBase, EntityConfigGetEntityConfigFormQueryParams, void>(
+    `/api/services/app/EntityConfig/GetEntityConfigForm`,
     queryParams,
     props
   );
 
-export interface EntityConfigGetAllQueryParams {
-  sorting?: string | null;
+export interface EntityConfigGetMainDataListQueryParams {
+  /**
+   * Filter string in JsonLogic format
+   */
+  filter?: string;
+  /**
+   * Quick search string. Is used to search entities by text
+   */
+  quickSearch?: string;
+  sorting?: string;
   skipCount?: number;
   maxResultCount?: number;
-  properties?: string | null;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type EntityConfigGetMainDataListProps = Omit<
+  GetProps<EntityConfigDtoPagedResultDtoAjaxResponse, AjaxResponseBase, EntityConfigGetMainDataListQueryParams, void>,
+  'path'
+>;
+
+export const EntityConfigGetMainDataList = (props: EntityConfigGetMainDataListProps) => (
+  <Get<EntityConfigDtoPagedResultDtoAjaxResponse, AjaxResponseBase, EntityConfigGetMainDataListQueryParams, void>
+    path={`/api/services/app/EntityConfig/GetMainDataList`}
+    {...props}
+  />
+);
+
+export type UseEntityConfigGetMainDataListProps = Omit<
+  UseGetProps<
+    EntityConfigDtoPagedResultDtoAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigGetMainDataListQueryParams,
+    void
+  >,
+  'path'
+>;
+
+export const useEntityConfigGetMainDataList = (props: UseEntityConfigGetMainDataListProps) =>
+  useGet<EntityConfigDtoPagedResultDtoAjaxResponse, AjaxResponseBase, EntityConfigGetMainDataListQueryParams, void>(
+    `/api/services/app/EntityConfig/GetMainDataList`,
+    props
+  );
+
+export type entityConfigGetMainDataListProps = Omit<
+  RestfulShesha.GetProps<
+    EntityConfigDtoPagedResultDtoAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigGetMainDataListQueryParams,
+    void
+  >,
+  'queryParams'
+>;
+export const entityConfigGetMainDataList = (
+  queryParams: EntityConfigGetMainDataListQueryParams,
+  props: entityConfigGetMainDataListProps
+) =>
+  RestfulShesha.get<
+    EntityConfigDtoPagedResultDtoAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigGetMainDataListQueryParams,
+    void
+  >(`/api/services/app/EntityConfig/GetMainDataList`, queryParams, props);
+
+export interface EntityConfigEntityConfigAutocompleteQueryParams {
+  term?: string;
+  selectedValue?: string;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type EntityConfigEntityConfigAutocompleteProps = Omit<
+  GetProps<
+    AutocompleteItemDtoListAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigEntityConfigAutocompleteQueryParams,
+    void
+  >,
+  'path'
+>;
+
+export const EntityConfigEntityConfigAutocomplete = (props: EntityConfigEntityConfigAutocompleteProps) => (
+  <Get<AutocompleteItemDtoListAjaxResponse, AjaxResponseBase, EntityConfigEntityConfigAutocompleteQueryParams, void>
+    path={`/api/services/app/EntityConfig/EntityConfigAutocomplete`}
+    {...props}
+  />
+);
+
+export type UseEntityConfigEntityConfigAutocompleteProps = Omit<
+  UseGetProps<
+    AutocompleteItemDtoListAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigEntityConfigAutocompleteQueryParams,
+    void
+  >,
+  'path'
+>;
+
+export const useEntityConfigEntityConfigAutocomplete = (props: UseEntityConfigEntityConfigAutocompleteProps) =>
+  useGet<AutocompleteItemDtoListAjaxResponse, AjaxResponseBase, EntityConfigEntityConfigAutocompleteQueryParams, void>(
+    `/api/services/app/EntityConfig/EntityConfigAutocomplete`,
+    props
+  );
+
+export type entityConfigEntityConfigAutocompleteProps = Omit<
+  RestfulShesha.GetProps<
+    AutocompleteItemDtoListAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigEntityConfigAutocompleteQueryParams,
+    void
+  >,
+  'queryParams'
+>;
+export const entityConfigEntityConfigAutocomplete = (
+  queryParams: EntityConfigEntityConfigAutocompleteQueryParams,
+  props: entityConfigEntityConfigAutocompleteProps
+) =>
+  RestfulShesha.get<
+    AutocompleteItemDtoListAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigEntityConfigAutocompleteQueryParams,
+    void
+  >(`/api/services/app/EntityConfig/EntityConfigAutocomplete`, queryParams, props);
+
+export interface EntityConfigGetAllQueryParams {
+  /**
+   * Filter string in JsonLogic format
+   */
+  filter?: string;
+  /**
+   * Quick search string. Is used to search entities by text
+   */
+  quickSearch?: string;
+  sorting?: string;
+  skipCount?: number;
+  maxResultCount?: number;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
 }
 
 export type EntityConfigGetAllProps = Omit<
@@ -153,13 +447,211 @@ export const entityConfigGetAll = (queryParams: EntityConfigGetAllQueryParams, p
     props
   );
 
+export interface EntityConfigQueryQueryParams {
+  /**
+   * List of properties to fetch in GraphQL-like syntax. Supports nested properties
+   */
+  properties?: string;
+  id?: string;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type EntityConfigQueryProps = Omit<
+  GetProps<EntityConfigGraphQLDataResultAjaxResponse, AjaxResponseBase, EntityConfigQueryQueryParams, void>,
+  'path'
+>;
+
+/**
+ * Query entity data.
+ * NOTE: don't use on prod, will be merged with the `Get`endpoint soon
+ */
+export const EntityConfigQuery = (props: EntityConfigQueryProps) => (
+  <Get<EntityConfigGraphQLDataResultAjaxResponse, AjaxResponseBase, EntityConfigQueryQueryParams, void>
+    path={`/api/services/app/EntityConfig/Query`}
+    {...props}
+  />
+);
+
+export type UseEntityConfigQueryProps = Omit<
+  UseGetProps<EntityConfigGraphQLDataResultAjaxResponse, AjaxResponseBase, EntityConfigQueryQueryParams, void>,
+  'path'
+>;
+
+/**
+ * Query entity data.
+ * NOTE: don't use on prod, will be merged with the `Get`endpoint soon
+ */
+export const useEntityConfigQuery = (props: UseEntityConfigQueryProps) =>
+  useGet<EntityConfigGraphQLDataResultAjaxResponse, AjaxResponseBase, EntityConfigQueryQueryParams, void>(
+    `/api/services/app/EntityConfig/Query`,
+    props
+  );
+
+export type entityConfigQueryProps = Omit<
+  RestfulShesha.GetProps<
+    EntityConfigGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigQueryQueryParams,
+    void
+  >,
+  'queryParams'
+>;
+/**
+ * Query entity data.
+ * NOTE: don't use on prod, will be merged with the `Get`endpoint soon
+ */
+export const entityConfigQuery = (queryParams: EntityConfigQueryQueryParams, props: entityConfigQueryProps) =>
+  RestfulShesha.get<EntityConfigGraphQLDataResultAjaxResponse, AjaxResponseBase, EntityConfigQueryQueryParams, void>(
+    `/api/services/app/EntityConfig/Query`,
+    queryParams,
+    props
+  );
+
+export interface EntityConfigQueryAllQueryParams {
+  /**
+   * List of properties to fetch in GraphQL-like syntax. Supports nested properties
+   */
+  properties?: string;
+  /**
+   * Filter string in JsonLogic format
+   */
+  filter?: string;
+  /**
+   * Quick search string. Is used to search entities by text
+   */
+  quickSearch?: string;
+  sorting?: string;
+  skipCount?: number;
+  maxResultCount?: number;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type EntityConfigQueryAllProps = Omit<
+  GetProps<
+    EntityConfigPagedResultDtoGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigQueryAllQueryParams,
+    void
+  >,
+  'path'
+>;
+
+/**
+ * Query entities list
+ * NOTE: don't use on prod, will be merged with the GetAll endpoint soon
+ */
+export const EntityConfigQueryAll = (props: EntityConfigQueryAllProps) => (
+  <Get<EntityConfigPagedResultDtoGraphQLDataResultAjaxResponse, AjaxResponseBase, EntityConfigQueryAllQueryParams, void>
+    path={`/api/services/app/EntityConfig/QueryAll`}
+    {...props}
+  />
+);
+
+export type UseEntityConfigQueryAllProps = Omit<
+  UseGetProps<
+    EntityConfigPagedResultDtoGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigQueryAllQueryParams,
+    void
+  >,
+  'path'
+>;
+
+/**
+ * Query entities list
+ * NOTE: don't use on prod, will be merged with the GetAll endpoint soon
+ */
+export const useEntityConfigQueryAll = (props: UseEntityConfigQueryAllProps) =>
+  useGet<
+    EntityConfigPagedResultDtoGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigQueryAllQueryParams,
+    void
+  >(`/api/services/app/EntityConfig/QueryAll`, props);
+
+export type entityConfigQueryAllProps = Omit<
+  RestfulShesha.GetProps<
+    EntityConfigPagedResultDtoGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigQueryAllQueryParams,
+    void
+  >,
+  'queryParams'
+>;
+/**
+ * Query entities list
+ * NOTE: don't use on prod, will be merged with the GetAll endpoint soon
+ */
+export const entityConfigQueryAll = (queryParams: EntityConfigQueryAllQueryParams, props: entityConfigQueryAllProps) =>
+  RestfulShesha.get<
+    EntityConfigPagedResultDtoGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigQueryAllQueryParams,
+    void
+  >(`/api/services/app/EntityConfig/QueryAll`, queryParams, props);
+
+export interface EntityConfigGetQueryParams {
+  id?: string;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type EntityConfigGetProps = Omit<
+  GetProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>,
+  'path'
+>;
+
+export const EntityConfigGet = (props: EntityConfigGetProps) => (
+  <Get<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>
+    path={`/api/services/app/EntityConfig/Get`}
+    {...props}
+  />
+);
+
+export type UseEntityConfigGetProps = Omit<
+  UseGetProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>,
+  'path'
+>;
+
+export const useEntityConfigGet = (props: UseEntityConfigGetProps) =>
+  useGet<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>(
+    `/api/services/app/EntityConfig/Get`,
+    props
+  );
+
+export type entityConfigGetProps = Omit<
+  RestfulShesha.GetProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>,
+  'queryParams'
+>;
+export const entityConfigGet = (queryParams: EntityConfigGetQueryParams, props: entityConfigGetProps) =>
+  RestfulShesha.get<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigGetQueryParams, void>(
+    `/api/services/app/EntityConfig/Get`,
+    queryParams,
+    props
+  );
+
+export interface EntityConfigCreateQueryParams {
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
 export type EntityConfigCreateProps = Omit<
-  MutateProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>,
+  MutateProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigCreateQueryParams, EntityConfigDto, void>,
   'path' | 'verb'
 >;
 
 export const EntityConfigCreate = (props: EntityConfigCreateProps) => (
-  <Mutate<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>
+  <Mutate<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigCreateQueryParams, EntityConfigDto, void>
     verb="POST"
     path={`/api/services/app/EntityConfig/Create`}
     {...props}
@@ -167,36 +659,50 @@ export const EntityConfigCreate = (props: EntityConfigCreateProps) => (
 );
 
 export type UseEntityConfigCreateProps = Omit<
-  UseMutateProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>,
+  UseMutateProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigCreateQueryParams, EntityConfigDto, void>,
   'path' | 'verb'
 >;
 
 export const useEntityConfigCreate = (props: UseEntityConfigCreateProps) =>
-  useMutate<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>(
+  useMutate<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigCreateQueryParams, EntityConfigDto, void>(
     'POST',
     `/api/services/app/EntityConfig/Create`,
     props
   );
 
 export type entityConfigCreateProps = Omit<
-  RestfulShesha.MutateProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>,
+  RestfulShesha.MutateProps<
+    EntityConfigDtoAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigCreateQueryParams,
+    EntityConfigDto,
+    void
+  >,
   'data'
 >;
 export const entityConfigCreate = (data: EntityConfigDto, props: entityConfigCreateProps) =>
-  RestfulShesha.mutate<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>(
-    'POST',
-    `/api/services/app/EntityConfig/Create`,
-    data,
-    props
-  );
+  RestfulShesha.mutate<
+    EntityConfigDtoAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigCreateQueryParams,
+    EntityConfigDto,
+    void
+  >('POST', `/api/services/app/EntityConfig/Create`, data, props);
+
+export interface EntityConfigUpdateQueryParams {
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
 
 export type EntityConfigUpdateProps = Omit<
-  MutateProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>,
+  MutateProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigUpdateQueryParams, EntityConfigDto, void>,
   'path' | 'verb'
 >;
 
 export const EntityConfigUpdate = (props: EntityConfigUpdateProps) => (
-  <Mutate<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>
+  <Mutate<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigUpdateQueryParams, EntityConfigDto, void>
     verb="PUT"
     path={`/api/services/app/EntityConfig/Update`}
     {...props}
@@ -204,31 +710,42 @@ export const EntityConfigUpdate = (props: EntityConfigUpdateProps) => (
 );
 
 export type UseEntityConfigUpdateProps = Omit<
-  UseMutateProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>,
+  UseMutateProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigUpdateQueryParams, EntityConfigDto, void>,
   'path' | 'verb'
 >;
 
 export const useEntityConfigUpdate = (props: UseEntityConfigUpdateProps) =>
-  useMutate<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>(
+  useMutate<EntityConfigDtoAjaxResponse, AjaxResponseBase, EntityConfigUpdateQueryParams, EntityConfigDto, void>(
     'PUT',
     `/api/services/app/EntityConfig/Update`,
     props
   );
 
 export type entityConfigUpdateProps = Omit<
-  RestfulShesha.MutateProps<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>,
+  RestfulShesha.MutateProps<
+    EntityConfigDtoAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigUpdateQueryParams,
+    EntityConfigDto,
+    void
+  >,
   'data'
 >;
 export const entityConfigUpdate = (data: EntityConfigDto, props: entityConfigUpdateProps) =>
-  RestfulShesha.mutate<EntityConfigDtoAjaxResponse, AjaxResponseBase, void, EntityConfigDto, void>(
-    'PUT',
-    `/api/services/app/EntityConfig/Update`,
-    data,
-    props
-  );
+  RestfulShesha.mutate<
+    EntityConfigDtoAjaxResponse,
+    AjaxResponseBase,
+    EntityConfigUpdateQueryParams,
+    EntityConfigDto,
+    void
+  >('PUT', `/api/services/app/EntityConfig/Update`, data, props);
 
 export interface EntityConfigDeleteQueryParams {
   id?: string;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
 }
 
 export type EntityConfigDeleteProps = Omit<

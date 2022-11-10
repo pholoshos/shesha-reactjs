@@ -210,3 +210,10 @@ export const ModelConfigurationEdit = addStory(DesignerTemplate, {
 export const PermissionEdit = addStory(DesignerTemplate, {
   formId: { name: 'permission-edit' }
 });
+
+export const PersonEdit = addStory(DesignerTemplate, {
+  formId: {
+    name: '/persons/edit',
+    version: 2
+  }
+});

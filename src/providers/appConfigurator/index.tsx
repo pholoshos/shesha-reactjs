@@ -1,7 +1,12 @@
 import React, { FC, useReducer, useContext, PropsWithChildren, useEffect, useRef } from 'react';
 import appConfiguratorReducer from './reducer';
 import { AppConfiguratorActionsContext, AppConfiguratorStateContext, APP_CONTEXT_INITIAL_STATE } from './contexts';
-import { ApplicationMode, ConfigurationItemsViewMode, IComponentSettings, IComponentSettingsDictionary } from './models';
+import {
+  ApplicationMode,
+  ConfigurationItemsViewMode,
+  IComponentSettings,
+  IComponentSettingsDictionary,
+} from './models';
 import {
   switchApplicationModeAction,
   toggleShowInfoBlockAction,
@@ -14,10 +19,18 @@ import { configurableComponentGet } from '../../apis/configurableComponent';
 import { useSheshaApplication } from '../sheshaApplication';
 import { useConfigurableAction } from '../configurableActionsDispatcher';
 import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
-import { createNewVersion, deleteItem, downloadAsJson, IConfigurationFrameworkHookArguments, IHasConfigurableItemId, itemCancelVersion, publishItem, setItemReady } from '../../utils/configurationFramework/actions';
+import {
+  createNewVersion,
+  deleteItem,
+  downloadAsJson,
+  IConfigurationFrameworkHookArguments,
+  IHasConfigurableItemId,
+  itemCancelVersion,
+  publishItem,
+  setItemReady,
+} from '../../utils/configurationFramework/actions';
 import { genericItemActionArgumentsForm } from './configurable-actions/generic-item-arguments';
 import { useLocalStorage } from '../../hooks';
-import { useAuth } from '../..';
 import { PERM_APP_CONFIGURATOR } from '../../constants';
 
 export interface IAppConfiguratorProviderProps {}
@@ -30,24 +43,23 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
   });
 
   const settingsDictionary = useRef<IComponentSettingsDictionary>({});
-  const { anyOfPermissionsGranted } = useAuth();
 
-  const { backendUrl, httpHeaders, setRequestHeaders } = useSheshaApplication();
+  const { backendUrl, httpHeaders, setRequestHeaders, anyOfPermissionsGranted } = useSheshaApplication();
 
   // read configurationItemsMode on start and check availability
-  const [storageConfigItemMode, setStorageConfigItemMode] = useLocalStorage<ConfigurationItemsViewMode>('CONFIGURATION_ITEM_MODE', 'live');
+  const [storageConfigItemMode, setStorageConfigItemMode] = useLocalStorage<ConfigurationItemsViewMode>(
+    'CONFIGURATION_ITEM_MODE',
+    'live'
+  );
   useEffect(() => {
-    const hasRights = anyOfPermissionsGranted([PERM_APP_CONFIGURATOR]);
+    const hasRights =
+      typeof anyOfPermissionsGranted === 'function' ? anyOfPermissionsGranted([PERM_APP_CONFIGURATOR]) : false;
 
-    const mode = hasRights
-      ? storageConfigItemMode
-      : APP_CONTEXT_INITIAL_STATE.configurationItemMode;
+    const mode = hasRights ? storageConfigItemMode : APP_CONTEXT_INITIAL_STATE.configurationItemMode;
 
-    if (mode !== state.configurationItemMode)
-        switchConfigurationItemMode(mode);
+    if (mode !== state.configurationItemMode) switchConfigurationItemMode(mode);
 
-    if (state.formInfoBlockVisible && !hasRights)
-      toggleShowInfoBlock(false);
+    if (state.formInfoBlockVisible && !hasRights) toggleShowInfoBlock(false);
   }, []);
 
   //#region Configuration Framework
@@ -57,74 +69,91 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
   const cfArgs: IConfigurationFrameworkHookArguments = { backendUrl: backendUrl, httpHeaders: httpHeaders };
 
   const actionDependencies = [state];
-  useConfigurableAction<IHasConfigurableItemId>({
-    name: 'Create new item version',
-    owner: actionsOwner,
-    ownerUid: SheshaActionOwners.ConfigurationFramework,
-    hasArguments: true,
-    executer: (actionArgs) => {
-      return createNewVersion({ id: actionArgs.itemId, ...cfArgs });
+  useConfigurableAction<IHasConfigurableItemId>(
+    {
+      name: 'Create new item version',
+      owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
+      hasArguments: true,
+      executer: actionArgs => {
+        return createNewVersion({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm,
     },
-    argumentsFormMarkup: genericItemActionArgumentsForm
-  }, actionDependencies);
+    actionDependencies
+  );
 
-  useConfigurableAction<IHasConfigurableItemId>({
-    name: 'Set Item Ready',
-    owner: actionsOwner,
-    ownerUid: SheshaActionOwners.ConfigurationFramework,
-    hasArguments: true,
-    executer: (actionArgs) => {
-      return setItemReady({ id: actionArgs.itemId, ...cfArgs });
+  useConfigurableAction<IHasConfigurableItemId>(
+    {
+      name: 'Set Item Ready',
+      owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
+      hasArguments: true,
+      executer: actionArgs => {
+        return setItemReady({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm,
     },
-    argumentsFormMarkup: genericItemActionArgumentsForm
-  }, actionDependencies);
+    actionDependencies
+  );
 
-  useConfigurableAction<IHasConfigurableItemId>({
-    name: 'Delete item',
-    owner: actionsOwner,
-    ownerUid: SheshaActionOwners.ConfigurationFramework,
-    hasArguments: true,
-    executer: (actionArgs) => {
-      return deleteItem({ id: actionArgs.itemId, ...cfArgs });
+  useConfigurableAction<IHasConfigurableItemId>(
+    {
+      name: 'Delete item',
+      owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
+      hasArguments: true,
+      executer: actionArgs => {
+        return deleteItem({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm,
     },
-    argumentsFormMarkup: genericItemActionArgumentsForm
-  }, actionDependencies);
+    actionDependencies
+  );
 
-  useConfigurableAction<IHasConfigurableItemId>({
-    name: 'Publish Item',
-    owner: actionsOwner,
-    ownerUid: SheshaActionOwners.ConfigurationFramework,
-    hasArguments: true,
-    executer: (actionArgs) => {
-      return publishItem({ id: actionArgs.itemId, ...cfArgs });
+  useConfigurableAction<IHasConfigurableItemId>(
+    {
+      name: 'Publish Item',
+      owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
+      hasArguments: true,
+      executer: actionArgs => {
+        return publishItem({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm,
     },
-    argumentsFormMarkup: genericItemActionArgumentsForm
-  }, actionDependencies);
+    actionDependencies
+  );
 
-  useConfigurableAction<IHasConfigurableItemId>({
-    name: 'Cancel item version',
-    owner: actionsOwner,
-    ownerUid: SheshaActionOwners.ConfigurationFramework,
-    hasArguments: true,
-    executer: (actionArgs) => {
-      return itemCancelVersion({ id: actionArgs.itemId, ...cfArgs });
+  useConfigurableAction<IHasConfigurableItemId>(
+    {
+      name: 'Cancel item version',
+      owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
+      hasArguments: true,
+      executer: actionArgs => {
+        return itemCancelVersion({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm,
     },
-    argumentsFormMarkup: genericItemActionArgumentsForm
-  }, actionDependencies);
+    actionDependencies
+  );
 
-  useConfigurableAction<IHasConfigurableItemId>({
-    name: 'Download as JSON',
-    owner: actionsOwner,
-    ownerUid: SheshaActionOwners.ConfigurationFramework,
-    hasArguments: true,
-    executer: (actionArgs) => {
-      return downloadAsJson({ id: actionArgs.itemId, ...cfArgs });
+  useConfigurableAction<IHasConfigurableItemId>(
+    {
+      name: 'Download as JSON',
+      owner: actionsOwner,
+      ownerUid: SheshaActionOwners.ConfigurationFramework,
+      hasArguments: true,
+      executer: actionArgs => {
+        return downloadAsJson({ id: actionArgs.itemId, ...cfArgs });
+      },
+      argumentsFormMarkup: genericItemActionArgumentsForm,
     },
-    argumentsFormMarkup: genericItemActionArgumentsForm
-  }, actionDependencies);
+    actionDependencies
+  );
 
   //#endregion
-
 
   useEffect(() => {
     if (!document) return;
@@ -149,9 +178,9 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
   };
 
   const switchConfigurationItemMode = (mode: ConfigurationItemsViewMode) => {
-    setRequestHeaders({ "sha-config-item-mode": mode });
+    setRequestHeaders({ 'sha-config-item-mode': mode });
     setStorageConfigItemMode(mode);
-    dispatch(switchConfigurationItemModeAction(mode));    
+    dispatch(switchConfigurationItemModeAction(mode));
   };
 
   const toggleEditModeConfirmation = (visible: boolean) => {

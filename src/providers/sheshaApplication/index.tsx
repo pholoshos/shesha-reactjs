@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, PropsWithChildren } from 'react';
+import React, { FC, useReducer, useContext, PropsWithChildren, useRef } from 'react';
 import appConfiguratorReducer from './reducer';
 import {
   DEFAULT_ACCESS_TOKEN_NAME,
@@ -20,14 +20,18 @@ import { AppConfiguratorProvider } from '../appConfigurator';
 import { DynamicModalProvider } from '../dynamicModal';
 import { UiProvider } from '../ui';
 import { MetadataDispatcherProvider } from '../metadataDispatcher';
-import { IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
+import { IAuthProviderRefProps, IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
 import { ReferenceListDispatcherProvider } from '../referenceListDispatcher';
 import { StackedNavigationProvider } from '../../pages/dynamic/navigation/stakedNavigation';
-import { ConfigurableActionDispatcherConsumer, ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
+import {
+  ConfigurableActionDispatcherConsumer,
+  ConfigurableActionDispatcherProvider,
+} from '../configurableActionsDispatcher';
 import { IConfigurableActionDispatcherActionsContext } from '../configurableActionsDispatcher/contexts';
 import { executeScriptArgumentsForm, IExecuteScriptArguments } from './configurable-actions/execute-script';
 import { executeScript } from '../form/utils';
 import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
+import ConditionalWrap from '../../components/conditionalWrapper';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -39,9 +43,10 @@ export interface IShaApplicationProviderProps {
   whitelistUrls?: string[];
   themeProps?: ThemeProviderProps;
   routes?: ISheshaRutes;
+  noAuth?: boolean;
 }
 
-const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>> = (props) => {
+const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>> = props => {
   const {
     children,
     backendUrl,
@@ -84,9 +89,11 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
         console.log('context is: ', context);
 
         return executeScript(actionArgs.expression, context);
-      }
+      },
     });
-  }
+  };
+
+  const authRef = useRef<IAuthProviderRefProps>();
 
   return (
     <SheshaApplicationStateContext.Provider value={state}>
@@ -94,6 +101,8 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
         value={{
           changeBackendUrl,
           setRequestHeaders,
+          // This will always return false if you're not authorized
+          anyOfPermissionsGranted: authRef?.current?.anyOfPermissionsGranted || (() => false),
         }}
       >
         <RestfulProvider
@@ -106,31 +115,37 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
             <UiProvider>
               <ThemeProvider {...(themeProps || {})}>
                 <ShaRoutingProvider router={router}>
-                  <AuthProvider
-                    tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
-                    onSetRequestHeaders={setRequestHeaders}
-                    unauthorizedRedirectUrl={unauthorizedRedirectUrl}
-                    whitelistUrls={whitelistUrls}
+                  <ConditionalWrap
+                    condition={!props?.noAuth}
+                    wrap={authChildren => (
+                      <AuthProvider
+                        tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
+                        onSetRequestHeaders={setRequestHeaders}
+                        unauthorizedRedirectUrl={unauthorizedRedirectUrl}
+                        whitelistUrls={whitelistUrls}
+                        authRef={authRef}
+                      >
+                        <AuthorizationSettingsProvider>{authChildren}</AuthorizationSettingsProvider>
+                      </AuthProvider>
+                    )}
                   >
-                    <AuthorizationSettingsProvider>
-                      <AppConfiguratorProvider>
-                        <ReferenceListDispatcherProvider>
-                          <MetadataDispatcherProvider>
-                           <StackedNavigationProvider>
+                    <AppConfiguratorProvider>
+                      <ReferenceListDispatcherProvider>
+                        <MetadataDispatcherProvider>
+                          <StackedNavigationProvider>
                             <DynamicModalProvider>
                               <ConfigurableActionDispatcherConsumer>
                                 {configurableActions => {
                                   registerSystemActions(configurableActions);
-                                  return <>{children}</>
+                                  return <>{children}</>;
                                 }}
                               </ConfigurableActionDispatcherConsumer>
                             </DynamicModalProvider>
                           </StackedNavigationProvider>
-                          </MetadataDispatcherProvider>
-                        </ReferenceListDispatcherProvider>
-                      </AppConfiguratorProvider>
-                    </AuthorizationSettingsProvider>
-                  </AuthProvider>
+                        </MetadataDispatcherProvider>
+                      </ReferenceListDispatcherProvider>
+                    </AppConfiguratorProvider>
+                  </ConditionalWrap>
                 </ShaRoutingProvider>
               </ThemeProvider>
             </UiProvider>

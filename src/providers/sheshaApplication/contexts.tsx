@@ -15,8 +15,8 @@ export interface ISheshaApplicationStateContext {
 }
 
 export const DEFAULT_SHESHA_ROUTES: ISheshaRutes = {
-  formsDesigner: '/shesha/forms-designer'
-}
+  formsDesigner: '/shesha/forms-designer',
+};
 
 export const SHESHA_APPLICATION_CONTEXT_INITIAL_STATE: ISheshaApplicationStateContext = {
   backendUrl: '',
@@ -28,6 +28,7 @@ export const SHESHA_APPLICATION_CONTEXT_INITIAL_STATE: ISheshaApplicationStateCo
 export interface ISheshaApplicationActionsContext {
   changeBackendUrl?: (backendUrl: string) => void;
   setRequestHeaders?: (headers: IRequestHeaders) => void;
+  anyOfPermissionsGranted?: (permissions: string[]) => boolean;
 }
 
 export const DEFAULT_ACCESS_TOKEN_NAME = 'xDFcxiooPQxazdndDsdRSerWQPlincytLDCarcxVxv';

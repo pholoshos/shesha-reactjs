@@ -9,7 +9,7 @@ import SubForm from './subForm';
 import ConfigurableFormItem from '../formItem';
 import { SubFormSettings } from './settingsv2';
 
-export interface ISubFormProps
+export interface ISubFormComponentProps
   extends Omit<SubFormProviderProps, 'labelCol' | 'wrapperCol'>,
     IConfigurableFormComponent {
   name: string;
@@ -18,11 +18,11 @@ export interface ISubFormProps
   wrapperCol?: number;
 }
 
-const SubFormComponent: IToolboxComponent<ISubFormProps> = {
+const SubFormComponent: IToolboxComponent<ISubFormComponentProps> = {
   type: 'subForm',
   name: 'Sub Form',
   icon: <FormOutlined />,
-  factory: (model: ISubFormProps) => {
+  factory: (model: ISubFormComponentProps) => {
     const { formMode, formData } = useForm();
     const { globalState } = useGlobalState();
 
@@ -75,7 +75,7 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
     );
   },
   initModel: model => {
-    const customProps: ISubFormProps = {
+    const customProps: ISubFormComponentProps = {
       ...model,
       dataSource: 'form',
       labelCol: 5,
@@ -84,9 +84,10 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
     return customProps;
   },
   validateSettings: model => validateConfigurableComponentSettings(alertSettingsForm, model),
+
 };
 
-interface ISubFormWrapperProps extends Omit<ISubFormProps, 'id' | 'type' | 'style'>, IStylable {
+interface ISubFormWrapperProps extends Omit<ISubFormComponentProps, 'id' | 'type' | 'style'>, IStylable {
   id: string;
 }
 

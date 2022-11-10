@@ -50,6 +50,7 @@ export const DataTypes = {
     boolean: 'boolean',
     array: 'array',
     object: 'object',
+    objectReference: 'object-reference',
 }
 
 export const StringFormats = {

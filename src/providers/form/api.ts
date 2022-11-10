@@ -72,6 +72,7 @@ export interface IUseFormConfigurationProps {
 export type FormProperties = Omit<FormConfigurationDto, 'markup'>;
 
 export interface IFormMarkupResponse {
+    requestParams: any;
     formConfiguration: IFormDto;
     loading: boolean;
     error: GetDataError<IAjaxResponseBase>;
@@ -99,6 +100,7 @@ const getMarkupFromResponse = (data: IAbpWrappedGetEntityResponse<FormConfigurat
  * Load form markup from the back-end
  */
 export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarkupResponse => {
+    
     const requestParams = useMemo(() => {
         const formRawId = asFormRawId(args.formId);
         const formFullName = asFormFullName(args.formId);
@@ -148,6 +150,7 @@ export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarku
         loading: fetcher.loading,
         error: fetcher.error,
         refetch: reFetcher,
+        requestParams: requestParams
     };
     return result;
 }

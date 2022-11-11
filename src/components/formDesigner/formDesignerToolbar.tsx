@@ -175,7 +175,7 @@ export const FormDesignerToolbar: FC<IProps> = () => {
             <SaveOutlined /> Save
           </Dropdown.Button>
         )}
-        {formProps.isLastVersion && formProps.versionStatus === ConfigurationItemVersionStatus.Live && (
+        {formProps.isLastVersion && (formProps.versionStatus === ConfigurationItemVersionStatus.Live || formProps.versionStatus === ConfigurationItemVersionStatus.Cancelled) && (
           <Button onClick={onCreateNewVersionClick} type="link">
             <BranchesOutlined /> Create New Version
           </Button>

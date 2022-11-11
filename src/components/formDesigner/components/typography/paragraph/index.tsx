@@ -1,5 +1,5 @@
 import { FileTextOutlined } from '@ant-design/icons';
-import { Typography } from 'antd';
+import { Alert, Typography } from 'antd';
 import { ParagraphProps } from 'antd/lib/typography/Paragraph';
 import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
@@ -52,6 +52,10 @@ const ParagraphComponent: IToolboxComponent<IParagraphProps> = {
     };
 
     const content = evaluateString(model?.content, data);
+
+    if (!content) {
+      return <Alert type="warning" message="Content will be displayed when Available" />;
+    }
 
     return <Paragraph {...props}>{content}</Paragraph>;
   },

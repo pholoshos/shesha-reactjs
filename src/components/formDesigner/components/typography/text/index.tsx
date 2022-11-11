@@ -1,5 +1,5 @@
 import { FileTextOutlined } from '@ant-design/icons';
-import { Typography } from 'antd';
+import { Alert, Typography } from 'antd';
 import { TextProps } from 'antd/lib/typography/Text';
 import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
@@ -52,6 +52,10 @@ const TextComponent: IToolboxComponent<ITextProps> = {
     };
 
     const content = evaluateString(model?.content, data);
+
+    if (!content) {
+      return <Alert type="warning" message="Content will be displayed when Available" />;
+    }
 
     return <Text {...props}>{content}</Text>;
   },

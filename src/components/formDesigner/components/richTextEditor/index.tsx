@@ -108,6 +108,9 @@ const RichTextEditorComponent: IToolboxComponent<IRichTextEditorProps> = {
       controls: undefined,
       events: undefined,
       showBrowserColorPicker: false,
+      editorClassName: '',
+      className: '',
+      containerStyle: false
     };
 
     return (

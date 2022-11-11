@@ -212,12 +212,13 @@ export const PermissionEdit = addStory(DesignerTemplate, {
 });
 
 export const UselessForm = addStory(DesignerTemplate, {
-  formId: { name: 'useless-form', module: 'Shesha' },
+  formId: '6b249510-a0de-427a-b9e8-fb66ede29b6e',
+  // formId: { name: 'useless-form', module: 'Shesha' },
 });
 
 export const PersonEdit = addStory(DesignerTemplate, {
   formId: {
     name: '/persons/edit',
-    version: 2
-  }
+    version: 2,
+  },
 });

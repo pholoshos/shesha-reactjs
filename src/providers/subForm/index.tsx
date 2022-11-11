@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { FC, useReducer, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useGet, useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
@@ -13,8 +13,11 @@ import { useGlobalState } from '../globalState';
 import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
 import { usePrevious } from 'react-use';
-import { useFormConfiguration } from '../form/api';
+import { IEntity } from '../../pages/dynamic/interfaces';
+import { useFormConfiguration, UseFormConfigurationArgs } from '../form/api';
 import { useConfigurableAction } from '../configurableActionsDispatcher';
+import { entityConfigGetEntityConfigForm } from '../../apis/entityConfig';
+import { useSheshaApplication } from '../..';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
   actionsOwnerId?: string;
@@ -25,6 +28,8 @@ export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'valu
 }
 
 const SubFormProvider: FC<SubFormProviderProps> = ({
+  formSelectionMode,
+  formType,
   children,
   value,
   formId,
@@ -47,24 +52,60 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   onChange,
   defaultValue,
 }) => {
-  const getEvaluatedUrl = (url: string) => {
+  const { backendUrl } = useSheshaApplication();
+  const [ state, dispatch ] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
+  const { publish } = usePubSub();
+  const { formData = {}, formMode } = useForm();
+  const { globalState } = useGlobalState();
+  const [ formConfig, setFormConfig ] = useState<UseFormConfigurationArgs>({ formId: formId, lazy: true })
+
+  const getEvaluatedUrl = (url: string): string => {
     if (!url) return '';
     return (() => {
       // tslint:disable-next-line:function-constructor
       return new Function('data, query, globalState', url)(formData, getQueryParams(), globalState); // Pass data, query, globalState
     })();
   };
-  const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
-  const { publish } = usePubSub();
-  const { formData = {}, formMode } = useForm();
-  const { globalState } = useGlobalState();
+
+  const queryParamPayload = useMemo<IEntity>(() => {
+    const getQueryParamPayload = () => {
+      try {
+        // tslint:disable-next-line:function-constructor
+        return new Function('data, query, globalState', queryParams)(formData, getQueryParams(), globalState); // Pass data, query, globalState
+      } catch (error) {
+        console.warn('queryParamPayload error: ', error);
+        return {};
+      }
+    };
+
+    return getQueryParamPayload();
+  }, [queryParams, formData, globalState]);
 
   const {
     refetch: fetchForm,
     //formConfiguration: fetchFormResponse,
     loading: isFetchingForm,
-    error: fetchFormError
-   } = useFormConfiguration({ formId: formId, lazy: true });
+    error: fetchFormError,
+  } = useFormConfiguration(formConfig);
+
+  useEffect(() => { 
+    setFormConfig({ formId: formId, lazy: true })
+  }, [formId])
+
+  // show form based on the entity type
+  useEffect(() => {
+    if (formData && formSelectionMode == 'dynamic') {
+      const obj = formData[name];
+      if (typeof obj === 'object' && obj['_meta'] && obj['_meta']['className'] && !formConfig?.formId)
+      {
+        entityConfigGetEntityConfigForm({entityConfigName: obj['_meta']['className'], typeName: formType}, { base: backendUrl})
+          .then(response => {
+            if (response.success) 
+              setFormConfig({formId: {name: response.result.name, module: response.result.module}, lazy: true});
+          });
+      }
+    }
+  }, [formData])
 
   const {
     refetch: fetchEntity,
@@ -72,6 +113,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     loading: isFetchingEntity,
     error: fetchEntityError,
   } = useEntitiesGet({ lazy: true });
+
   const { initialValues } = useSubForm();
   const {
     refetch: fetchDataByUrlHttp,
@@ -80,9 +122,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     error: errorFetchingData,
   } = useGet({
     path: getEvaluatedUrl(getUrl) ?? '',
-    // queryParams:
+    queryParams: queryParamPayload,
+    lazy: true,
   });
+
   const previousValue = useRef(value);
+
   useEffect(() => {
     if (typeof value === 'string' && typeof previousValue === 'string' && previousValue !== value) {
       handleFetchData(value);
@@ -94,6 +139,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       onChange(fetchDataByUrl?.result);
     }
   }, [isFetchingDataByUrl, fetchDataByUrl]);
+
   const evaluatedQueryParams = useMemo(() => {
     if (formMode === 'designer') return {};
 
@@ -105,24 +151,17 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       typeof properties === 'string' ? `id ${properties}` : ['id', ...Array.from(new Set(properties || []))].join(' '); // Always include the `id` property/. Useful for deleting
 
     if (queryParams) {
-      const getOnSubmitPayload = () => {
-        try {
-          // tslint:disable-next-line:function-constructor
-          return new Function('data, query, globalState', queryParams)(formData, getQueryParams(), globalState); // Pass data, query, globalState
-        } catch (error) {
-          console.warn('SubFormProvider: ', error);
-          return {};
+      params = { ...params, ...(typeof queryParamPayload === 'object' ? queryParamPayload : {}) };
         }
-      };
-
-      params = { ...params, ...(typeof getOnSubmitPayload() === 'object' ? getOnSubmitPayload() : {}) };
-    }
 
     return params;
   }, [queryParams, formMode, globalState]);
 
-  const handleFetchData = (id?: string) =>
+  const handleFetchData = (id?: string) => {
+    if (id || evaluatedQueryParams?.id) {
     fetchEntity({ queryParams: id ? { ...evaluatedQueryParams, id } : evaluatedQueryParams });
+    }
+  };
 
   useEffect(() => {
     if (queryParams && formMode !== 'designer' && dataSource === 'api') {
@@ -138,7 +177,17 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   const previousGetUrl = usePrevious(getUrl);
 
   useEffect(() => {
-    if (dataSource === 'api' && getUrl && previousGetUrl !== getUrl) {
+    if (
+      dataSource === 'api' &&
+      getUrl &&
+      previousGetUrl !== getUrl &&
+      !getEvaluatedUrl(getUrl)?.includes('undefined')
+    ) {
+      if (Object.hasOwn(queryParamPayload, 'id') && (!queryParamPayload?.id || queryParamPayload?.id === 'undefined')) {
+        return;
+      }
+      // TODO: when the string returned by the function has undefined , this causes the call to be made and this causes server-side error
+      // TODO: Find a cleaner way to check if new Function evaluated to a string that has undefined
       fetchDataByUrlHttp();
     }
   }, [properties, getUrl, dataSource]);
@@ -238,20 +287,20 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   //#region Fetch Form
   useEffect(() => {
-    if (formId && !markup) {
+    if (formConfig.formId && !markup) {
       fetchForm().then(response => {
         dispatch(setMarkupWithSettingsAction({ components: response.components, formSettings: response.formSettings }));
       });
     }
 
-    if (!formId && markup) {
+    if (!formConfig.formId && markup) {
       dispatch(setMarkupWithSettingsAction(markup));
     }
 
-    if (!formId && !markup){
+    if (!formConfig.formId && !markup){
       dispatch(setMarkupWithSettingsAction({ components: [], formSettings: DEFAULT_FORM_SETTINGS }));
     }      
-  }, [formId, markup]); //
+  }, [formConfig.formId, markup]);
 
   useEffect(() => {
     if (markup) {

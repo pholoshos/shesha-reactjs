@@ -65,12 +65,6 @@ export const TableWrapper: FC<ITableComponentProps> = ({
   id,
   items,
   useMultiselect,
-  crud,
-  createUrl,
-  deleteUrl,
-  detailsUrl,
-  updateUrl,
-  flexibleHeight,
   allowRowDragAndDrop,
   onRowDropped,
   rowDroppedMode,
@@ -101,15 +95,10 @@ export const TableWrapper: FC<ITableComponentProps> = ({
     isInProgress: { isFiltering, isSelectingColumns },
     setIsInProgressFlag,
     registerConfigurableColumns,
-    setCrudConfig,
     refreshTable,
     changeActionedRow,
     tableData,
   } = useDataTableStore();
-
-  useEffect(() => {
-    setCrudConfig({ createUrl, deleteUrl, detailsUrl, updateUrl });
-  }, [createUrl, deleteUrl, detailsUrl, updateUrl]);
 
   useEffect(() => {
     // register columns
@@ -237,14 +226,12 @@ export const TableWrapper: FC<ITableComponentProps> = ({
         content: renderSidebarContent,
       }}
       allowFullCollapse
-      flexibleHeight={flexibleHeight}
     >
       <IndexTable
         onSelectRow={onSelectRow}
         onMultiRowSelect={setMultiSelectedRow}
         selectedRowIndex={selectedRow?.index}
         useMultiselect={useMultiselect}
-        crud={crud}
         allowRowDragAndDrop={allowRowDragAndDrop}
         onRowDropped={handleOnRowDropped}
         tableStyle={getStyle(tableStyle, formData, globalState)}

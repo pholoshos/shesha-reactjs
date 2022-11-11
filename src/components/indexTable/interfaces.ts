@@ -1,23 +1,14 @@
 import { ITableRowDragProps } from './../reactTable/interfaces';
 import { IndexColumnDataType } from './../../providers/dataTable/interfaces';
 import { MutableRefObject, ReactNode } from 'react';
-import { ICrudProps, IDataTableInstance } from '../../providers/dataTable/interfaces';
+import { IDataTableInstance } from '../../providers/dataTable/interfaces';
 import { DataTableFullInstance } from '../../providers/dataTable/contexts';
 import { IAnyObject } from '../../interfaces';
 import { Row } from 'react-table';
 
-export type TableActionColumnType = 'create' | 'read' | 'update' | 'delete' | 'cancel'; // CRUD and cancel
-
 export interface ITableActionColumns {
   icon?: ReactNode;
-  type?: TableActionColumnType;
   onClick?: (id: string, context: IDataTableInstance, row: IAnyObject) => string | void | Promise<any>;
-
-  /**
-   * On CRUD mode, only CRUD-related action columns are preferred. To specify that the column should always show
-   * irrespective of the CRUD mode, pass the extra property and it will always show
-   */
-  extra?: boolean;
 }
 
 export interface ITableCustomTypesRender {
@@ -43,7 +34,7 @@ export interface IColumnEditFieldProps {
   onChange: (key: string, value: any) => void;
 }
 
-export interface IShaDataTableProps extends ICrudProps, ITableRowDragProps {
+export interface IShaDataTableProps extends ITableRowDragProps {
   useMultiselect?: boolean;
   disableCustomFilters?: boolean;
   actionColumns?: ITableActionColumns[];
@@ -52,7 +43,6 @@ export interface IShaDataTableProps extends ICrudProps, ITableRowDragProps {
    */
 
   header?: string;
-  deleteConfirmationMessage?: string;
   selectedRowIndex?: number;
   onSelectRow?: (index: number, row: any) => void;
   onSelectedIdsChanged?: (selectedRowIds: string[]) => void;

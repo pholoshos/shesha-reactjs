@@ -214,3 +214,10 @@ export const PermissionEdit = addStory(DesignerTemplate, {
 export const UselessForm = addStory(DesignerTemplate, {
   formId: { name: 'useless-form', module: 'Shesha' },
 });
+
+export const PersonEdit = addStory(DesignerTemplate, {
+  formId: {
+    name: '/persons/edit',
+    version: 2
+  }
+});

@@ -33,12 +33,8 @@ import {
   changeSelectedStoredFilterIdsAction,
   setPredefinedFiltersAction,
   changeSelectedIdsAction,
-  setCreateOrEditRowDataAction,
-  updateLocalTableDataAction,
-  deleteRowItemAction,
   registerConfigurableColumnsAction,
   fetchColumnsSuccessSuccessAction,
-  setCrudConfigAction,
   onSortAction,
   changeDisplayColumnAction,
   changeActionedRowAction,
@@ -52,11 +48,8 @@ import {
   IGetDataPayloadInternal,
   ColumnFilter,
   IFilterItem,
-  IEditableRowState,
-  ICrudProps,
   IStoredFilter,
   ITableFilter,
-  ITableCrudConfig,
   IColumnSorting,
   DataTableColumnDtoListAjaxResponse,
   GetColumnsInput,
@@ -69,7 +62,6 @@ import { isEmpty, isEqual, sortBy } from 'lodash';
 import { IResult } from '../../interfaces/result';
 import { useLocalStorage } from '../../hooks';
 import { useAuth } from '../auth';
-import { nanoid } from 'nanoid/non-secure';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   IConfigurableColumnsBase,
@@ -85,7 +77,7 @@ import { camelcaseDotNotation, convertDotNotationPropertiesToGraphQL } from '../
 import { GENERIC_ENTITIES_ENDPOINT } from '../../constants';
 import { useConfigurableAction } from '../configurableActionsDispatcher';
 
-interface IDataTableProviderProps extends ICrudProps {
+interface IDataTableProviderProps {
   /** Type of entity */
   entityType: string;
   /** Configurable columns. Is used in pair with entityType  */
@@ -631,71 +623,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(changeSelectedIdsAction(selectedIds));
   };
 
-  const initializeNewDataCreation = () => {
-    const id = nanoid();
-
-    const data = { Id: '' };
-
-    state?.columns?.forEach(column => {
-      switch (column.dataType) {
-        case 'boolean':
-          data[column.accessor] = false;
-          break;
-        case 'date':
-        case 'string':
-          data[column.accessor] = '';
-          break;
-        case 'number':
-          data[column.accessor] = 0;
-          break;
-        case 'reference-list-item':
-          data[column.accessor] = null; //{ item: null, itemValue: null };
-          break;
-        case 'entity':
-          data[column.accessor] = null; //{ id: null, displayText: null };
-          break;
-        case 'multiValueRefList':
-          data[column.accessor] = [];
-          break;
-        default:
-          break;
-      }
-    });
-
-    data.Id = id;
-
-    setCrudRowData({
-      id,
-      data,
-      mode: 'create',
-    });
-  };
-
-  /**
-   *
-   * @param newOrEditableRowData - data to update. If empty, it'll initialize new item creation
-   */
-  const setCrudRowData = (newOrEditableRowData?: IEditableRowState) => {
-    //console.log('setCrudRowData', newOrEditableRowData);
-    if (newOrEditableRowData && typeof newOrEditableRowData !== 'function') {
-      dispatch(setCreateOrEditRowDataAction(newOrEditableRowData));
-    } else {
-      initializeNewDataCreation();
-    }
-  };
-
-  const cancelCreateOrEditRowData = () => {
-    dispatch(setCreateOrEditRowDataAction(null));
-  };
-
-  const updateLocalTableData = () => {
-    dispatch(updateLocalTableDataAction());
-  };
-
-  const deleteRowItem = (idOfItemToDeleteOrUpdate: string) => {
-    dispatch(deleteRowItemAction(idOfItemToDeleteOrUpdate));
-  };
-
   const getDataProperties = (columns: IConfigurableColumnsBase[]) => {
     const dataFields = columns.filter(
       c =>
@@ -766,10 +693,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
 
   const getCurrentFilter = (): ITableFilter[] => {
     return state.tableFilterDirty || state.tableFilter || [];
-  };
-
-  const setCrudConfig = (config: ITableCrudConfig) => {
-    dispatch(setCrudConfigAction(config));
   };
 
   const onSort = (sorting: IColumnSorting[]) => {
@@ -899,13 +822,8 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
           setPredefinedFilters,
           changeSelectedIds,
           refreshTable,
-          setCrudRowData,
-          cancelCreateOrEditRowData,
-          updateLocalTableData,
-          deleteRowItem,
           registerConfigurableColumns,
           getCurrentFilter,
-          setCrudConfig,
           changePersistedFiltersToggle,
           /* NEW_ACTION_GOES_HERE */
         }}

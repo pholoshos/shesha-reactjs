@@ -71,6 +71,7 @@ const ListControl: FC<IListControlProps> = props => {
     selectionMode,
     namePrefix,
     customVisibility,
+    readOnly,
   } = props;
 
   const { formConfiguration, error: fetchFormError } = useFormConfiguration({ formId: formId, lazy: !Boolean(formId) });
@@ -424,15 +425,14 @@ const ListControl: FC<IListControlProps> = props => {
   const renderSubForm = (localName?: string | number, localLabelCol?: ColProps, localWrapperCol?: ColProps) => {
     return (
       <SubFormProvider
-        name={localName as string}
-        // name={localName}
+        name={`${localName}`}
         markup={{ components: formConfiguration?.markup, formSettings: formConfiguration?.settings }}
         properties={[]}
         labelCol={localLabelCol}
         wrapperCol={localWrapperCol}
         defaultValue={typeof localName === 'number' && Array.isArray(value) ? value[localName] : null}
       >
-        <SubForm />
+        <SubForm readOnly={readOnly} />
       </SubFormProvider>
     );
   };

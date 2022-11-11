@@ -14,7 +14,6 @@ export const TablePager: FC<ITablePagerProps> = () => {
     selectedPageSize,
     setCurrentPage,
     changePageSize,
-    newOrEditableRowData,
   } = useDataTable();
 
   const hideSizeChanger = useMediaQuery({
@@ -36,7 +35,6 @@ export const TablePager: FC<ITablePagerProps> = () => {
         showTotalItems: !hideTotalItems,
         setCurrentPage,
         changePageSize,
-        disabled: !!newOrEditableRowData,
       }}
     />
   );

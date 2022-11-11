@@ -30,7 +30,12 @@ export interface IPropertyMetadata {
 
 export enum MetadataSourceType {
   ApplicationCode = 1,
-  UserDefined = 2,
+  UserDefined = 2
+}
+
+export enum EntityConfigType {
+  Class = 1,
+  Interface = 2
 }
 
 export enum DataTypes {

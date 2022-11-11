@@ -1,25 +1,22 @@
 import React, { FC } from 'react';
-import { DownloadOutlined, FilterOutlined, PlusOutlined, ReloadOutlined, SlidersOutlined } from '@ant-design/icons';
+import { DownloadOutlined, FilterOutlined, ReloadOutlined, SlidersOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useDataTable } from '../../providers';
 import GlobalTableFilter from '../globalTableFilter';
 import TablePager from '../tablePager';
 import { IToolbarItem } from '../../interfaces/toolbar';
-import { ICrudState } from '../../providers/dataTable/interfaces';
 import { nanoid } from 'nanoid/non-secure';
 
 export interface IChildTableControlsProps {
   header?: string;
   showRefreshBtn?: boolean;
   showPagination?: boolean;
-  crud?: boolean | ICrudState;
   toolbarItems?: IToolbarItem[];
 }
 
 export const ChildTableControls: FC<IChildTableControlsProps> = ({
   header,
   showPagination = false,
-  crud,
   toolbarItems,
 }) => {
   const {
@@ -27,9 +24,7 @@ export const ChildTableControls: FC<IChildTableControlsProps> = ({
     setIsInProgressFlag,
     refreshTable,
     isFetchingTableData,
-    setCrudRowData,
     exportToExcel,
-    newOrEditableRowData,
   } = useDataTable();
 
   const startFilteringColumns = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -40,11 +35,6 @@ export const ChildTableControls: FC<IChildTableControlsProps> = ({
   const startTogglingColumnVisibility = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.stopPropagation();
     setIsInProgressFlag({ isSelectingColumns: true, isFiltering: false });
-  };
-
-  const startAddData = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    event.stopPropagation();
-    setCrudRowData();
   };
 
   const handleRefreshData = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -67,19 +57,6 @@ export const ChildTableControls: FC<IChildTableControlsProps> = ({
 
       <div className="index-table-controls-right">
         <GlobalTableFilter />
-
-        {((typeof crud === 'boolean' && crud) || (crud as ICrudState)?.create) && (
-          <Button
-            type="link"
-            disabled={Boolean(newOrEditableRowData?.id)}
-            onClick={startAddData}
-            className="extra-btn"
-            icon={<PlusOutlined />}
-            size="small"
-          >
-            Add
-          </Button>
-        )}
 
         {toolbarItems
           ?.filter(({ hide }) => !hide)

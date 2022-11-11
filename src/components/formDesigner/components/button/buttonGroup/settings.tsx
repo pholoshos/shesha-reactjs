@@ -9,7 +9,7 @@ import EditableTagGroup from '../../../../editableTagGroup';
 const { Option } = Select;
 
 export interface IButtonGroupSettingsProps {
-  readOnly: boolean;
+  readOnly?: boolean;
   model: IButtonGroupProps;
   onSave: (model: IButtonGroupProps) => void;
   onCancel: () => void;

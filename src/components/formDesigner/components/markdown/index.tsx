@@ -8,11 +8,15 @@ import { IConfigurableFormComponent, IToolboxComponent } from '../../../../inter
 import { evaluateString, validateConfigurableComponentSettings } from '../../../../formDesignerUtils';
 import { Alert } from 'antd';
 import { getStyle } from '../../../../providers/form/utils';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import 'github-markdown-css';
 
 export interface IMarkdownProps extends IConfigurableFormComponent {
   content: string;
   textColor?: string;
+  remarkPlugins?: string[];
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -33,10 +37,32 @@ const MarkdownComponent: IToolboxComponent<IMarkdownProps> = {
     if (!content) {
       return <Alert type="warning" message="Content will be displayed when Available" />;
     }
-    // getStyle(style, formData)
+
     return (
       <div className="markdown-body" style={getStyle(model?.style, { data, globalState })}>
-        <ReactMarkdown skipHtml>{content}</ReactMarkdown>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            code({ node, inline, className, children, ...props }) {
+              const match = /language-(\w+)/.exec(className || '');
+              return !inline && match ? (
+                <SyntaxHighlighter
+                  children={String(children).replace(/\n$/, '')}
+                  style={dark}
+                  language={match[1]}
+                  PreTag="div"
+                  {...props}
+                />
+              ) : (
+                <code className={className} {...props}>
+                  {children}
+                </code>
+              );
+            },
+          }}
+        >
+          {content}
+        </ReactMarkdown>
       </div>
     );
   },

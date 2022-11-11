@@ -210,3 +210,11 @@ export const ModelConfigurationEdit = addStory(DesignerTemplate, {
 export const PermissionEdit = addStory(DesignerTemplate, {
   formId: { name: 'permission-edit' }
 });
+
+export const StyleFixEdit = addStory(DesignerTemplate, {
+  formId: { name: 'facility-patient-flattened-table', module: 'Boxfusion.His.Clients.Houghton' }
+});
+
+export const CancelledVersion = addStory(DesignerTemplate, {
+  formId: '04450959-c281-4853-9e16-c16666436ae0'
+});

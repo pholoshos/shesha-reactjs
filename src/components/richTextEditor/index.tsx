@@ -1,16 +1,20 @@
-import React, { CSSProperties, FC, useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, FC, useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Skeleton } from 'antd';
+import { JoditProps } from 'jodit-react';
+import { Jodit } from 'jodit';
 
 const JoditEditor = React.lazy(() => {
   return import('jodit-react');
 });
 
+export type JoditConfig = JoditProps['config'];
+
 export interface IRichTextEditorProps {
   value?: string;
   onChange?: (value: string) => void;
   onBlur?: (value: string) => void;
-  config?: any;
+  config?: Partial<JoditConfig>;
   className?: string;
   style?: CSSProperties;
 }
@@ -23,6 +27,17 @@ export const RichTextEditor: FC<IRichTextEditorProps> = ({ value, onChange, conf
   const isSSR = typeof window === 'undefined';
   const editor = useRef(null);
   const [state, setState] = useState<IRichTextEditorState>({ content: value });
+
+  const fullConfig = useMemo<JoditConfig>(() => {
+    const result = {
+      ...Jodit.defaultOptions,
+      ...config
+    };
+
+    console.log('full config', result);
+
+    return result;
+  }, [config]);
 
   const { content } = state;
 
@@ -46,7 +61,7 @@ export const RichTextEditor: FC<IRichTextEditorProps> = ({ value, onChange, conf
         <JoditEditor
           ref={editor}
           value={content}
-          config={config}
+          config={fullConfig}
           onBlur={handleChange} // preferred to use only this option to update the content for performance reasons
         />
       </div>

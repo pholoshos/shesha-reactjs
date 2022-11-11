@@ -38,6 +38,8 @@ export const RichTextEditor: FC<IRichTextEditorProps> = ({ value, onChange, conf
     }
   };
 
+  console.log('LOGS:: content', content);
+
   return isSSR ? (
     <Skeleton loading={true} />
   ) : (
@@ -45,7 +47,7 @@ export const RichTextEditor: FC<IRichTextEditorProps> = ({ value, onChange, conf
       <div style={style} className={classNames('sha-rich-text-editor', className)}>
         <JoditEditor
           ref={editor}
-          value={content}
+          value={content || ''}
           config={config}
           onBlur={handleChange} // preferred to use only this option to update the content for performance reasons
         />

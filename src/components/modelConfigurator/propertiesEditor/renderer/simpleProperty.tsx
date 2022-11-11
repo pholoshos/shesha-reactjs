@@ -29,7 +29,7 @@ export const SimpleProperty: FC<IProps> = props => {
         {props.suppress && <span><EyeInvisibleOutlined /> </span>}
         {icon && <ShaIcon iconName={icon} />}
         
-        <span className="sha-sidebar-item-name">{props.name}</span>
+        <span className="sha-sidebar-item-name">{props.name} {props.label && <>({props.label})</>}</span>
 
         {props.description && (
           <Tooltip title={props.description}>

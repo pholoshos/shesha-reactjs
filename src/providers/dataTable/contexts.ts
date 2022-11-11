@@ -9,8 +9,6 @@ import {
   IndexColumnFilterOption,
   ColumnFilter,
   IGetDataPayloadInternal,
-  ITableCrudConfig,
-  IEditableRowState,
 } from './interfaces';
 
 export type IFlagProgressFlags =
@@ -116,12 +114,6 @@ export interface IDataTableStateContext
   /** List of Ids of selected rows */
   selectedIds?: string[];
 
-  /** CRUD configuration */
-  crudConfig?: ITableCrudConfig;
-
-  /** Row data, is used for CRUD operations */
-  newOrEditableRowData?: IEditableRowState;
-
   /** Dblclick handler */
   onDblClick?: (...params: any[]) => void;
   /** Select row handler */
@@ -143,8 +135,6 @@ export interface IDataTableStateContext
 export interface IPublicDataTableActions {
   refreshTable: () => void;
   exportToExcel?: () => void;
-  setCrudRowData: (newOrEditableRowData?: IEditableRowState) => void;
-  cancelCreateOrEditRowData: () => void;
   deleteRow?: () => void;
   toggleColumnsSelector?: () => void;
   toggleAdvancedFilter?: () => void;
@@ -187,16 +177,12 @@ export interface IDataTableActionsContext
   onSort?: (sorting: IColumnSorting[]) => void;
 
   changeSelectedIds?: (selectedIds: string[]) => void;
-  updateLocalTableData?: () => void;
-  deleteRowItem?: (idOfItemToDeleteOrUpdate: string) => void;
   getCurrentFilter: () => ITableFilter[];
 
   /**
    * Register columns in the table context. Is used for configurable tables
    */
   registerConfigurableColumns: (ownerId: string, columns: IConfigurableColumnsBase[]) => void;
-
-  setCrudConfig?: (config: ITableCrudConfig) => void;
 
   changeDisplayColumn: (displayColumnName: string) => void;
   changePersistedFiltersToggle: (persistSelectedFilters: boolean) => void;

@@ -14,12 +14,10 @@ import {
 import flagsReducer from '../utils/flagsReducer';
 import {
   IColumnSorting,
-  IEditableRowState,
   IGetDataPayloadInternal,
   IndexColumnDataType,
   IStoredFilter,
   ITableColumn,
-  ITableCrudConfig,
   ITableDataInternalResponse,
   ITableFilter,
 } from './interfaces';
@@ -121,17 +119,6 @@ const reducer = handleActions<IDataTableStateContext, any>(
       return {
         ...state,
         saveFilterModalVisible: payload,
-      };
-    },
-
-    [DataTableActionEnums.SetCrudRowData]: (
-      state: IDataTableStateContext,
-      action: ReduxActions.Action<IEditableRowState>
-    ) => {
-      const { payload } = action;
-      return {
-        ...state,
-        newOrEditableRowData: payload,
       };
     },
 
@@ -313,39 +300,6 @@ const reducer = handleActions<IDataTableStateContext, any>(
       };
     },
 
-    [DataTableActionEnums.UpdateLocalTableData]: (state: IDataTableStateContext) => {
-      const { tableData, newOrEditableRowData } = state;
-
-      const rows = tableData as any[];
-
-      const foundItem = rows?.find(({ Id }) => Id === newOrEditableRowData?.id);
-
-      return {
-        ...state,
-        tableData: foundItem
-          ? rows?.map(item => {
-              if (item?.Id === newOrEditableRowData?.id) {
-                return newOrEditableRowData?.data;
-              }
-
-              return item;
-            })
-          : [newOrEditableRowData?.data, ...(tableData || [])],
-        newOrEditableRowData: null,
-      };
-    },
-
-    [DataTableActionEnums.DeleteRowItem]: (state: IDataTableStateContext, action: ReduxActions.Action<string>) => {
-      const { tableData, newOrEditableRowData } = state;
-      const idOfItemToDeleteOrUpdate = action.payload;
-
-      return {
-        ...state,
-        tableData: (tableData as any[])?.filter(({ Id }) => Id !== idOfItemToDeleteOrUpdate),
-        newOrEditableRowData: idOfItemToDeleteOrUpdate === newOrEditableRowData?.id ? null : newOrEditableRowData,
-      };
-    },
-
     [DataTableActionEnums.ToggleColumnFilter]: (
       state: IDataTableStateContext,
       action: ReduxActions.Action<string[]>
@@ -494,18 +448,6 @@ const reducer = handleActions<IDataTableStateContext, any>(
       return {
         ...state,
         exportToExcelWarning: payload,
-      };
-    },
-
-    [DataTableActionEnums.SetCrudConfig]: (
-      state: IDataTableStateContext,
-      action: ReduxActions.Action<ITableCrudConfig>
-    ) => {
-      const { payload } = action;
-
-      return {
-        ...state,
-        crudConfig: payload,
       };
     },
   },

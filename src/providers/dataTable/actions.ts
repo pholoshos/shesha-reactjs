@@ -6,8 +6,6 @@ import {
   ITableFilter,
   IStoredFilter,
   IGetDataPayloadInternal,
-  IEditableRowState,
-  ITableCrudConfig,
   IColumnSorting,
   DataTableColumnDto,
   ITableDataInternalResponse,
@@ -40,14 +38,9 @@ export enum DataTableActionEnums {
   ChangeSelectedStoredFilterIds = 'CHANGE_SELECTED_STORED_FILTER_IDS',
   SetPredefinedFilters = 'REGISTER_STORED_FILTER',
   ChangeSelectedIds = 'CHANGE_SELECTED_IDS',
-  SetCrudRowData = 'SET_CRUD_ROW_DATA',
-  UpdateLocalTableData = 'UPDATE_LOCAL_TABLE_DATA',
-  DeleteRowItem = 'DELETE_ROW_ITEM',
   RegisterConfigurableColumns = 'REGISTER_CONFIGURABLE_COLUMNS',
   OnSelectRow = 'ON_SELECT_ROW',
   OnSort = 'ON_SORT',
-
-  SetCrudConfig = 'SET_CRUD_Config',
 
   ChangeDisplayColumn = 'CHANGE_DISPLAY_COLUMN',
   ChangePersistedFiltersToggle = 'CHANGE_PERSISTED_FILTERS_TOGGLE',
@@ -77,11 +70,6 @@ export const fetchColumnsSuccessSuccessAction = createAction<
   IFetchColumnsSuccessSuccessPayload,
   IFetchColumnsSuccessSuccessPayload
 >(DataTableActionEnums.FetchColumnsSuccess, p => p);
-
-export const setCreateOrEditRowDataAction = createAction<IEditableRowState, IEditableRowState>(
-  DataTableActionEnums.SetCrudRowData,
-  p => p
-);
 
 export const changePageSizeAction = createAction<number, number>(DataTableActionEnums.ChangePageSize, p => p);
 
@@ -149,10 +137,6 @@ export const exportToExcelWarningAction = createAction<string, string>(
   p => p
 );
 
-export const updateLocalTableDataAction = createAction(DataTableActionEnums.UpdateLocalTableData);
-
-export const deleteRowItemAction = createAction<string, string>(DataTableActionEnums.DeleteRowItem, p => p);
-
 export interface IRegisterConfigurableColumnsPayload {
   /** owner of the columns list, not used now and may be removed later */
   ownerId: string;
@@ -166,11 +150,6 @@ export const registerConfigurableColumnsAction = createAction<
 export const onSortAction = createAction<IColumnSorting[], IColumnSorting[]>(DataTableActionEnums.OnSort, p => p);
 
 /* NEW_ACTION_GOES_HERE */
-
-export const setCrudConfigAction = createAction<ITableCrudConfig, ITableCrudConfig>(
-  DataTableActionEnums.SetCrudConfig,
-  p => p
-);
 
 export const changeDisplayColumnAction = createAction<string, string>(DataTableActionEnums.ChangeDisplayColumn, p => p);
 

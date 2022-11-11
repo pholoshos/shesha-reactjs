@@ -69,7 +69,7 @@ const ModelConfiguratorProvider: FC<PropsWithChildren<IModelConfiguratorProvider
       dispatch(loadRequestAction());
 
       // { name: state.className, namespace: state.namespace }
-      modelConfigurationsGetById({ id: state.id, base: backendUrl })
+      modelConfigurationsGetById({}, { id: state.id, base: backendUrl})
         .then(response => {
           if (response.success) {
             dispatch(loadSuccessAction(response.result));

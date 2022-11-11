@@ -4,7 +4,7 @@ import { ParagraphProps } from 'antd/lib/typography/Paragraph';
 import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../interfaces/formDesigner';
-import { useForm } from '../../../../../providers';
+import { useForm, useSubForm } from '../../../../../providers';
 import { FormMarkup } from '../../../../../providers/form/models';
 import { evaluateString, getStyle } from '../../../../../providers/form/utils';
 import settingsFormJson from './settingsForm.json';
@@ -33,6 +33,9 @@ const ParagraphComponent: IToolboxComponent<IParagraphProps> = {
   icon: <FileTextOutlined />,
   factory: (model: IParagraphProps) => {
     const { formData } = useForm();
+    const { value } = useSubForm();
+
+    const data = value || formData;
 
     const props: ParagraphProps = {
       code: model?.code,
@@ -45,10 +48,10 @@ const ParagraphComponent: IToolboxComponent<IParagraphProps> = {
       strong: model?.strong,
       italic: model?.italic,
       type: model?.contentType,
-      style: getStyle(model.style, formData),
+      style: getStyle(model.style, data),
     };
 
-    const content = evaluateString(model?.content, formData);
+    const content = evaluateString(model?.content, data);
 
     return <Paragraph {...props}>{content}</Paragraph>;
   },

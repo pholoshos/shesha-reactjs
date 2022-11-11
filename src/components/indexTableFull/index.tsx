@@ -10,7 +10,6 @@ import TablePager from '../tablePager';
 import { IToolbarItem } from '../../interfaces';
 import IndexToolbar from '../indexToolbar';
 import { DownloadOutlined } from '@ant-design/icons';
-import { ICrudState } from '../../providers/dataTable/interfaces';
 
 export interface IIndexTableFullProps extends IShaDataTableProps {
   toolbarItems?: IToolbarItem[];
@@ -21,7 +20,6 @@ export interface IIndexTableFullProps extends IShaDataTableProps {
 export const IndexTableFull: FC<IIndexTableFullProps> = ({
   useMultiselect,
   actionColumns,
-  deleteConfirmationMessage,
   selectedRowIndex,
   onSelectRow,
   customTypeRenders,
@@ -33,16 +31,12 @@ export const IndexTableFull: FC<IIndexTableFullProps> = ({
   tableRef,
   onExportSuccess,
   onExportError,
-  crud,
-  crudMode = 'inline',
   onSelectedIdsChanged,
 }) => {
   const {
     isInProgress: { isFiltering, isSelectingColumns, exportToExcel: isExportingToExcel },
     setIsInProgressFlag,
     exportToExcel,
-    newOrEditableRowData,
-    setCrudRowData,
   } = useDataTableStore();
 
   const toggleFieldPropertiesSidebar = () =>
@@ -79,13 +73,6 @@ export const IndexTableFull: FC<IIndexTableFullProps> = ({
             onClick: exportToExcel,
             disabled: isExportingToExcel,
           },
-          {
-            title: 'Create New',
-            icon: <DownloadOutlined />,
-            onClick: () => setCrudRowData(),
-            disabled: !!newOrEditableRowData,
-            hide: !crud || (typeof crud !== 'boolean' && !(crud as ICrudState)?.create) || !!newOrEditableRowData,
-          },
         ]}
         elementsRight={toolbarExtra}
         className="sha-index-toolbar-full-table"
@@ -104,7 +91,6 @@ export const IndexTableFull: FC<IIndexTableFullProps> = ({
         <IndexTable
           useMultiselect={useMultiselect}
           actionColumns={actionColumns}
-          deleteConfirmationMessage={deleteConfirmationMessage}
           selectedRowIndex={selectedRowIndex}
           onSelectRow={onSelectRow}
           onExportSuccess={onExportSuccess}
@@ -112,8 +98,6 @@ export const IndexTableFull: FC<IIndexTableFullProps> = ({
           onSelectedIdsChanged={onSelectedIdsChanged}
           customTypeRenders={customTypeRenders}
           tableRef={tableRef}
-          crud={crud}
-          crudMode={crudMode}
         />
 
         {paginationPlacement === 'bottom' && (

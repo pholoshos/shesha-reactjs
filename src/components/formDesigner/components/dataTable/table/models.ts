@@ -1,20 +1,16 @@
 import { IConfigurableFormComponent } from '../../../../../providers/form/models';
 import { IConfigurableColumnsBase } from '../../../../../providers/datatableColumnsConfigurator/models';
-import { ITableCrudConfig } from '../../../../../providers/dataTable/interfaces';
 
 export type RowDroppedMode = 'executeScript' | 'showDialog';
 
-export interface ITableComponentBaseProps extends ITableCrudConfig {
+export interface ITableComponentBaseProps {
   items: IConfigurableColumnsBase[];
   useMultiselect: boolean;
-  crud: boolean;
-  flexibleHeight: boolean;
-  crudMode?: 'inline' | 'dialog';
   allowRowDragAndDrop?: boolean;
   onRowDropped?: string;
   rowDroppedMode?: RowDroppedMode;
 
-  //#region Dialog
+  //#region Dialog recheck!
   dialogTitle?: string;
   dialogForm?: string;
   dialogFormSkipFetchData?: boolean;

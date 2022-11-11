@@ -31,6 +31,7 @@ export interface IListItemsProps {
   renderStrategy?: 'dragAndDrop' | 'externalForm';
   entityType?: string;
   useExpression?: boolean;
+  readOnly?: boolean;
   properties?: string[];
   filters?: object;
 }

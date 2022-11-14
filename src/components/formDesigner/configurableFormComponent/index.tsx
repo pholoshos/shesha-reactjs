@@ -100,11 +100,7 @@ const ConfigurableFormComponentDesigner: FC<IConfigurableFormComponentDesignerPr
           <Button icon={<DeleteFilled color="red" />} onClick={onDeleteClick} size="small" danger />
         </div>
       )}
-      <div
-        onKeyUp={event => {
-          console.log('LOGS:: event.key ', event.key);
-        }}
-      >
+      <div>
         <DragHandle componentId={componentModel.id} componentRef={componentRef} />
         <div style={{ paddingLeft: '15px' }}>
           <ComponentRenderer id={componentModel.id} componentRef={componentRef} />

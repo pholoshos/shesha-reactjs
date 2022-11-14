@@ -32,7 +32,7 @@ const TextComponent: IToolboxComponent<ITextProps> = {
   name: 'Text',
   icon: <FileTextOutlined />,
   factory: (model: ITextProps) => {
-    const { formData } = useForm();
+    const { formData, formMode } = useForm();
     const { value } = useSubForm();
 
     const data = value || formData;
@@ -53,7 +53,7 @@ const TextComponent: IToolboxComponent<ITextProps> = {
 
     const content = evaluateString(model?.content, data);
 
-    if (!content) {
+    if (!content && formMode === 'designer') {
       return <Alert type="warning" message="Content will be displayed when Available" />;
     }
 

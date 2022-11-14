@@ -26,7 +26,7 @@ const MarkdownComponent: IToolboxComponent<IMarkdownProps> = {
   name: 'Markdown',
   icon: <EditOutlined />,
   factory: (model: IMarkdownProps) => {
-    const { formData } = useForm();
+    const { formData, formMode } = useForm();
     const { value } = useSubForm();
     const { globalState } = useGlobalState();
 
@@ -34,7 +34,7 @@ const MarkdownComponent: IToolboxComponent<IMarkdownProps> = {
 
     const content = evaluateString(model?.content, { data, globalState });
 
-    if (!content) {
+    if (!content && formMode === 'designer') {
       return <Alert type="warning" message="Content will be displayed when Available" />;
     }
 

@@ -5,9 +5,8 @@ import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../interfaces/formDesigner';
 import { useForm, useSubForm } from '../../../../../providers';
-import { FormMarkup } from '../../../../../providers/form/models';
 import { evaluateString, getStyle } from '../../../../../providers/form/utils';
-import settingsFormJson from './settingsForm.json';
+import { settingsFormMarkup } from './settings';
 
 const { Text } = Typography;
 
@@ -24,8 +23,6 @@ export interface ITextProps extends IConfigurableFormComponent {
   strong?: boolean;
   underline?: boolean;
 }
-
-const settingsForm = settingsFormJson as FormMarkup;
 
 const TextComponent: IToolboxComponent<ITextProps> = {
   type: 'text',
@@ -48,19 +45,19 @@ const TextComponent: IToolboxComponent<ITextProps> = {
       strong: model?.strong,
       italic: model?.italic,
       type: model?.contentType,
-      style: getStyle(model.style, data),
+      style: { margin: 'unset', ...(getStyle(model.style, data) || {}) },
     };
 
     const content = evaluateString(model?.content, data);
 
     if (!content && formMode === 'designer') {
-      return <Alert type="warning" message="Content will be displayed when Available" />;
+      return <Alert type="warning" message="Please make sure you enter the content to be displayed here!" />;
     }
 
     return <Text {...props}>{content}</Text>;
   },
-  settingsFormMarkup: settingsForm,
-  validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
+  settingsFormMarkup,
+  validateSettings: model => validateConfigurableComponentSettings(settingsFormMarkup, model),
   initModel: model => ({
     code: false,
     copyable: false,

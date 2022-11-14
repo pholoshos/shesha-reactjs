@@ -5,10 +5,11 @@ import { validateConfigurableComponentSettings } from '../../../../formDesignerU
 import { IToolboxComponent } from '../../../../interfaces/formDesigner';
 import { FormMarkup } from '../../../../providers/form/models';
 import settingsFormJson from './settingsForm.json';
-import RichTextEditor, { JoditConfig } from '../../../richTextEditor';
+import RichTextEditor from '../../../richTextEditor';
 import { useForm } from '../../../..';
 import { IRichTextEditorProps } from './interfaces';
 import { getStyle } from '../../../../providers/form/utils';
+import { JoditProps } from 'jodit-react';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -23,7 +24,7 @@ const RichTextEditorComponent: IToolboxComponent<IRichTextEditorProps> = {
 
     const readOnly = formMode === 'readonly' || model.readOnly;
 
-    const config: Partial<JoditConfig> = {
+    const config: Partial<JoditProps['config']> = {
       toolbar: model?.toolbar,
       preset: model?.preset,
       textIcons: model?.textIcons,

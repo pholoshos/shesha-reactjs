@@ -74,7 +74,10 @@ const ListControl: FC<IListControlProps> = props => {
     readOnly,
   } = props;
 
-  const { formConfiguration, error: fetchFormError } = useFormConfiguration({ formId: formId, lazy: !Boolean(formId) });
+  const { formConfiguration, refetch: refetchFormConfig, error: fetchFormError } = useFormConfiguration({
+    formId: formId,
+    lazy: !Boolean(formId),
+  });
   const [state, setState] = useState<IListComponentRenderState>({
     maxResultCount: paginationDefaultPageSize,
     selectedItemIndexes: [],
@@ -85,11 +88,8 @@ const ListControl: FC<IListControlProps> = props => {
   const { refetch: fetchEntities, loading: isFetchingEntities, data, error: fetchEntitiesError } = useEntitiesGetAll({
     lazy: true,
   });
-  const isInDesignerMode = formMode === 'designer';
 
-  if (name === 'selectedMedicalAidId') {
-    console.log('LOGS:: ListControl props: ', props, data);
-  }
+  const isInDesignerMode = formMode === 'designer';
 
   const getEvaluatedUrl = (url: string) => {
     if (!url) return '';
@@ -99,6 +99,12 @@ const ListControl: FC<IListControlProps> = props => {
       return new Function('data, query, globalState', url)(formData, queryParamsFromBrowser, globalState); // Pass data, query, globalState
     })();
   };
+
+  useEffect(() => {
+    if (formId) {
+      refetchFormConfig();
+    }
+  }, [formId]);
 
   const { mutate: deleteHttp, loading: isDeleting, error: deleteError } = useDelete();
 
@@ -218,38 +224,47 @@ const ListControl: FC<IListControlProps> = props => {
   }, [value]);
 
   const actionOwnerName = `List (${name})`;
-  useConfigurableAction({
-    name: 'Refresh list items',
-    owner: actionOwnerName,
-    ownerUid: containerId,
-    hasArguments: false,
-    executer: () => {
-      debouncedRefresh(); // todo: return real promise
-      return Promise.resolve();
-    }
-  }, [state]);
-  
-  useConfigurableAction({
-    name: 'Save list items',
-    owner: actionOwnerName,
-    ownerUid: containerId,
-    hasArguments: false,
-    executer: () => {
-      submitListItems(submitUrl); // todo: return real promise
-      return Promise.resolve();
-    }
-  }, [state]);
+  useConfigurableAction(
+    {
+      name: 'Refresh list items',
+      owner: actionOwnerName,
+      ownerUid: containerId,
+      hasArguments: false,
+      executer: () => {
+        debouncedRefresh(); // todo: return real promise
+        return Promise.resolve();
+      },
+    },
+    [state]
+  );
 
-  useConfigurableAction({
-    name: 'Add list items',
-    owner: actionOwnerName,
-    ownerUid: containerId,
-    hasArguments: false,
-    executer: () => {
-      debouncedAddItems(state); // todo: return real promise
-      return Promise.resolve();
-    }
-  }, [state]);
+  useConfigurableAction(
+    {
+      name: 'Save list items',
+      owner: actionOwnerName,
+      ownerUid: containerId,
+      hasArguments: false,
+      executer: () => {
+        submitListItems(submitUrl); // todo: return real promise
+        return Promise.resolve();
+      },
+    },
+    [state]
+  );
+
+  useConfigurableAction(
+    {
+      name: 'Add list items',
+      owner: actionOwnerName,
+      ownerUid: containerId,
+      hasArguments: false,
+      executer: () => {
+        debouncedAddItems(state); // todo: return real promise
+        return Promise.resolve();
+      },
+    },
+    [state]
+  );
 
   const debouncedAddItems = useDebouncedCallback(data => {
     onChange(Array.isArray(value) ? [...value, data] : [data]);
@@ -537,7 +552,13 @@ const ListControl: FC<IListControlProps> = props => {
                               </FormItemProvider>
                             </Show>
 
-                            <Show when={Boolean(formId) && Boolean(formConfiguration?.markup) && renderStrategy === 'externalForm'}>
+                            <Show
+                              when={
+                                Boolean(formId) &&
+                                Boolean(formConfiguration?.markup) &&
+                                renderStrategy === 'externalForm'
+                              }
+                            >
                               {renderSubForm(index, labelCol && { span: labelCol }, wrapperCol && { span: wrapperCol })}
                             </Show>
 

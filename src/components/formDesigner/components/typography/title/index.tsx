@@ -5,9 +5,8 @@ import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../interfaces/formDesigner';
 import { useForm, useSubForm } from '../../../../../providers';
-import { FormMarkup } from '../../../../../providers/form/models';
 import { evaluateString, getStyle } from '../../../../../providers/form/utils';
-import settingsFormJson from './settingsForm.json';
+import { settingsFormMarkup } from './settings';
 
 const { Title } = Typography;
 
@@ -28,8 +27,6 @@ export interface ITitleProps extends IConfigurableFormComponent {
   level?: LevelType;
 }
 
-const settingsForm = settingsFormJson as FormMarkup;
-
 const TitleComponent: IToolboxComponent<ITitleProps> = {
   type: 'title',
   name: 'Title',
@@ -49,13 +46,13 @@ const TitleComponent: IToolboxComponent<ITitleProps> = {
       underline: model?.underline,
       level: model?.level ? (Number(model?.level) as LevelType) : 1,
       type: model?.contentType,
-      style: getStyle(model.style, data),
+      style: { margin: 'unset', ...(getStyle(model.style, data) || {}) },
     };
 
     const content = evaluateString(model?.content, data);
 
     if (!content && formMode === 'designer') {
-      return <Alert type="warning" message="Content will be displayed when Available" />;
+      return <Alert type="warning" message="Please make sure you enter the content to be displayed here!" />;
     }
 
     return (
@@ -64,8 +61,8 @@ const TitleComponent: IToolboxComponent<ITitleProps> = {
       </Title>
     );
   },
-  settingsFormMarkup: settingsForm,
-  validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
+  settingsFormMarkup,
+  validateSettings: model => validateConfigurableComponentSettings(settingsFormMarkup, model),
   initModel: model => ({
     code: false,
     copyable: false,

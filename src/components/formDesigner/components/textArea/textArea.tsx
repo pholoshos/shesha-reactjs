@@ -16,9 +16,9 @@ import moment from 'moment';
 
 export interface ITextAreaProps extends IConfigurableFormComponent {
   placeholder?: string;
-  showCount: boolean;
-  autoSize: boolean;
-  allowClear: boolean;
+  showCount?: boolean;
+  autoSize?: boolean;
+  allowClear?: boolean;
   hideBorder?: boolean;
   initialValue?: string;
   passEmptyStringByDefault?: boolean;

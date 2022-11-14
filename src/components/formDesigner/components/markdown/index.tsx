@@ -35,7 +35,7 @@ const MarkdownComponent: IToolboxComponent<IMarkdownProps> = {
     const content = evaluateString(model?.content, { data, globalState });
 
     if (!content && formMode === 'designer') {
-      return <Alert type="warning" message="Content will be displayed when Available" />;
+      return <Alert type="warning" message="Please make sure you enter the content to be displayed here!" />;
     }
 
     return (

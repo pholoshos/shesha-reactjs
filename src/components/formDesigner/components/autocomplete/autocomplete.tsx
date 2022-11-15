@@ -47,7 +47,7 @@ export interface IAutocompleteProps extends IConfigurableFormComponent {
   valuePropName?: string;
   filter?: string;
   disableSearch?: boolean;
-
+  placeholder?: string;
   quickviewEnabled?: boolean;
   quickviewFormPath?: string;
   quickviewDisplayPropertyName?: string;
@@ -174,6 +174,7 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       dataSourceUrl,
       dataSourceType: model.dataSourceType,
       mode: model?.mode,
+      placeholder:model?.placeholder,
       queryParams: getQueryParams(),
       readOnly: model?.readOnly || formMode === 'readonly',
       defaultValue: evaluateString(model?.defaultValue, { formData, formMode, globalState }) as any,

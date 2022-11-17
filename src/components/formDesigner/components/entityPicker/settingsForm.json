@@ -119,6 +119,47 @@
         ]
      },
      {
+      "id": "14413162-429e-451c-b3e6-b3f0ab6d7b09",
+      "type": "sectionSeparator",
+      "name": "sectionFilters",
+      "parentId": "root",
+      "label": "Filters"
+    },
+    {
+      "id": "3ef48a94-a16a-4e89-a514-7713348b560e",
+      "type": "checkbox",
+      "name": "useExpression",
+      "label": "Use Expression",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return Boolean(data.entityType);",
+      "validate": {}
+    },
+    {
+      "id": "n4enebtmhFgvkP5ukQK1f",
+      "type": "queryBuilder",
+      "name": "filters",
+      "label": "Entity Filter",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "return Boolean(data.entityType);",
+      "isDynamic": false,
+      "validate": {},
+      "settingsValidationErrors": [],
+      "useExpression": "{{data.useExpression}}",
+      "modelType": "{{data.entityType}}",
+      "fieldsUnavailableHint": "Please select `Entity Type` to be able to configure this filter."
+    },
+    {
+      "id": "253ee0fd-9916-4728-9f93-16ecc1ca3bb9",
+      "type": "sectionSeparator",
+      "name": "sectionFilters",
+      "parentId": "root",
+      "label": ""
+    }
+  ,
+     {
         "id":"2a6ee3b0-15f1-4521-cc6e-6a1c9d192ce2",
         "type":"entityPickerColumnsEditorComponent",
         "name":"items",

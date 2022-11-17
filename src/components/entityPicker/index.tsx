@@ -1,16 +1,18 @@
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Button, Input, Modal, Select, Skeleton } from 'antd';
 import { DefaultOptionType } from 'antd/lib/select';
-import _ from 'lodash';
+import _, { isEmpty } from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import React, { FC, Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useMedia } from 'react-use';
 import { IAnyObject } from '../../interfaces';
-import { useModal } from '../../providers';
+import { useForm, useGlobalState, useModal } from '../../providers';
 import DataTableProvider, { useDataTable } from '../../providers/dataTable';
+import { evaluateDynamicFilters, hasDynamicFilter } from '../../providers/dataTable/utils';
 import { IModalProps } from '../../providers/dynamicModal/models';
 import { useEntitySelectionData } from '../../utils/entity';
 import GlobalTableFilter from '../globalTableFilter';
+import camelCaseKeys from 'camelcase-keys';
 import IndexTable from '../indexTable';
 import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
 import TablePager from '../tablePager';
@@ -19,17 +21,15 @@ import { IEntityPickerProps, IEntityPickerState } from './models';
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
 
 export const EntityPicker: FC<IEntityPickerProps> = ({ displayEntityKey = '_displayName', ...restProps }) => {
-  return restProps.readOnly
-    ? <EntityPickerReadOnly {...restProps} displayEntityKey={displayEntityKey} />
-    : <EntityPickerEditable {...restProps} displayEntityKey={displayEntityKey} />;
-}
+  return restProps.readOnly ? (
+    <EntityPickerReadOnly {...restProps} displayEntityKey={displayEntityKey} />
+  ) : (
+    <EntityPickerEditable {...restProps} displayEntityKey={displayEntityKey} />
+  );
+};
 
-export const EntityPickerReadOnly: FC<IEntityPickerProps> = (props) => {
-  const {
-    entityType,
-    displayEntityKey,
-    value,
-  } = props;
+export const EntityPickerReadOnly: FC<IEntityPickerProps> = props => {
+  const { entityType, displayEntityKey, value } = props;
 
   const selection = useEntitySelectionData({
     entityType: entityType,
@@ -42,15 +42,14 @@ export const EntityPickerReadOnly: FC<IEntityPickerProps> = (props) => {
     return selectedItems?.map(ent => ent[displayEntityKey]).join(', ');
   }, [selectedItems]);
 
-  return selection.loading
-    ? <Skeleton paragraph={false} active />
-    : <ReadOnlyDisplayFormItem value={displayText} />;
-}
+  return selection.loading ? <Skeleton paragraph={false} active /> : <ReadOnlyDisplayFormItem value={displayText} />;
+};
 
-export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
+export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
   const {
     entityType,
     displayEntityKey,
+    filters,
     onChange,
     disabled,
     loading,
@@ -76,7 +75,10 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
     changeSelectedStoredFilterIds,
     selectedStoredFilterIds,
     registerConfigurableColumns,
+    setPredefinedFilters,
   } = useDataTable();
+  const { globalState } = useGlobalState();
+  const { formData } = useForm();
   const selectRef = useRef(undefined);
 
   useEffect(() => {
@@ -115,6 +117,57 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
 
   const isMultiple = mode === 'multiple';
 
+  const hasFilters = filters?.length > 0;
+
+  const foundDynamicFilter = hasDynamicFilter(filters);
+
+  const hasFormData = !isEmpty(formData);
+  const hasGlobalState = !isEmpty(formData);
+
+  const evaluateDynamicFiltersHelper = () => {
+    const data = !isEmpty(formData) ? camelCaseKeys(formData, { deep: true, pascalCase: true }) : formData;
+
+    const evaluatedFilters = evaluateDynamicFilters(filters, [
+      {
+        match: 'data',
+        data: data,
+      },
+      {
+        match: 'globalState',
+        data: globalState,
+      },
+      {
+        match: '', // For backward compatibility. It's also important that the empty one is the last one as it's a fallback
+        data,
+      },
+    ]);
+
+    let parsedFilters = evaluatedFilters;
+
+    const firstElement = evaluatedFilters[0];
+
+    firstElement.defaultSelected = true;
+    firstElement.selected = true;
+
+    evaluatedFilters[0] = firstElement;
+
+    if (hasFormData || hasGlobalState) {
+      // Here we know we have evaluated our filters
+
+      // TODO: Deal with the situation whereby the expression value evaluated to empty string because the action GetData will fail
+      setPredefinedFilters(parsedFilters);
+    } else if (!foundDynamicFilter) {
+      // Here we do not need dynamic filters
+      setPredefinedFilters(parsedFilters);
+    }
+  };
+
+  useEffect(() => {
+    if (hasFilters) {
+      evaluateDynamicFiltersHelper();
+    }
+  }, [filters, formData, globalState]);
+
   useEffect(() => {
     const { showModal } = state;
     if (showModal) {
@@ -125,9 +178,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
   }, [state?.showModal]);
 
   if (!entityType) {
-    throw new Error(
-      'Please make sure that either entityType is configured for the entity picker to work properly'
-    );
+    throw new Error('Please make sure that either entityType is configured for the entity picker to work properly');
   }
 
   const onAddNew = () => {
@@ -137,18 +188,14 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
   };
 
   const onDblClick = (row: IAnyObject) => {
-    if (!row)
-      return;
+    if (!row) return;
 
     if (onSelect) {
       onSelect(row);
     } else {
       if (isMultiple) {
-        const selectedItems = value && Array.isArray(value)
-          ? value
-          : [];
-        if (!selectedItems.includes(row.id))
-          selectedItems.push(row.id);
+        const selectedItems = value && Array.isArray(value) ? value : [];
+        if (!selectedItems.includes(row.id)) selectedItems.push(row.id);
 
         onChange(selectedItems, null);
       } else {
@@ -169,9 +216,8 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
     }
   };
 
-  const handleMultiChange = (selectedValues) => {
-    if (onChange)
-      onChange(selectedValues, null);
+  const handleMultiChange = selectedValues => {
+    if (onChange) onChange(selectedValues, null);
   };
   const onModalOk = () => {
     if (onSelect && state?.selectedRow) {
@@ -193,16 +239,12 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
 
   const options = useMemo<DefaultOptionType[]>(() => {
     let result: DefaultOptionType[] = null;
-    if (selection.loading){
-      const items = value
-        ? Array.isArray(value)
-          ? value
-          : [value]
-        : [];
+    if (selection.loading) {
+      const items = value ? (Array.isArray(value) ? value : [value]) : [];
 
       result = items.map(item => ({ label: 'loading...', value: item, key: item }));
     } else {
-      result = (selectedItems ?? []).map((ent) => ({ label: ent[displayEntityKey], value: ent.id, key: ent.id }));
+      result = (selectedItems ?? []).map(ent => ({ label: ent[displayEntityKey], value: ent.id, key: ent.id }));
     }
 
     return result;
@@ -237,8 +279,8 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
                 selectRef.current.blur();
                 showPickerDialog();
               }}
-              value={ selection.loading ? undefined : value }
-              placeholder={ selection.loading ? 'Loading...' : undefined }
+              value={selection.loading ? undefined : value}
+              placeholder={selection.loading ? 'Loading...' : undefined}
               notFoundContent={''}
               defaultValue={defaultValue}
               disabled={disabled || selection.loading}
@@ -248,7 +290,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
               options={options}
               showArrow={false}
               onChange={handleMultiChange}
-              style={{ width: "calc(100% - 32px)" }}
+              style={{ width: 'calc(100% - 32px)' }}
               loading={selection.loading}
             >
               {''}
@@ -284,11 +326,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
             <TablePager />
           </div>
 
-          <IndexTable
-            onSelectRow={onSelectRow}
-            onDblClick={onDblClick}
-            options={{ omitClick: true }}
-          />
+          <IndexTable onSelectRow={onSelectRow} onDblClick={onDblClick} options={{ omitClick: true }} />
         </>
       </Modal>
     </div>
@@ -296,17 +334,9 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
 };
 
 export const EntityPickerEditable: FC<IEntityPickerProps> = props => {
-  const {
-    parentEntityId,
-    entityType,
-    displayEntityKey,
-  } = props;
-
+  const { parentEntityId, entityType, displayEntityKey } = props;
   return (
-    <DataTableProvider
-      parentEntityId={parentEntityId}
-      entityType={entityType}
-    >
+    <DataTableProvider parentEntityId={parentEntityId} entityType={entityType}>
       <EntityPickerEditableInner {...props} displayEntityKey={displayEntityKey} />
     </DataTableProvider>
   );

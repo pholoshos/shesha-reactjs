@@ -40,7 +40,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
 
       return localCurrent < 0 ? 0 : localCurrent;
     });
-    const [hiddenSteps] = useState();
+
     const [component, setComponent] = useState(null);
 
     useEffect(() => {
@@ -262,25 +262,40 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
           <Col span={24}>
             <Space>
               {tabs[current].allowCancel === true && (
-                <Button onClick={() => cancel()}>
+                <Button
+                  onClick={() => cancel()}
+                  disabled={!executeExpression(tabs[current]?.cancelButtonCustomEnabled, true)}
+                >
                   {tabs[current].cancelButtonText ? tabs[current].cancelButtonText : 'Cancel'}
                 </Button>
               )}
 
               {current > 0 && (
-                <Button style={{ margin: '0 8px' }} onClick={() => back()}>
+                <Button
+                  style={{ margin: '0 8px' }}
+                  onClick={() => back()}
+                  disabled={!executeExpression(tabs[current]?.backButtonCustomEnabled, true)}
+                >
                   {tabs[current].backButtonText ? tabs[current].backButtonText : 'Back'}
                 </Button>
               )}
 
               {current < tabs.length - 1 && (
-                <Button type="primary" onClick={() => next()}>
+                <Button
+                  type="primary"
+                  onClick={() => next()}
+                  disabled={!executeExpression(tabs[current]?.nextButtonCustomEnabled, true)}
+                >
                   {tabs[current].nextButtonText ? tabs[current].nextButtonText : 'Next'}
                 </Button>
               )}
 
               {current === tabs.length - 1 && (
-                <Button type="primary" onClick={() => done()}>
+                <Button
+                  type="primary"
+                  onClick={() => done()}
+                  disabled={!executeExpression(tabs[current]?.doneButtonCustomEnabled, true)}
+                >
                   {tabs[current].doneButtonText ? tabs[current].doneButtonText : 'Done'}
                 </Button>
               )}

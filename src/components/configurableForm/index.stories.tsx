@@ -161,14 +161,14 @@ const DualModeForm: Story<IConfigurableFormProps> = ({ formId, mode = 'readonly'
 export const Basic = addStory(BasicTemplate, {
   ...configurableFormProps,
   formId: {
-    name: '/settings/forms/playground'
-  }
+    name: '/settings/forms/playground',
+  },
 });
 
 export const ReadOnly = addStory(DualModeForm, {
   // ...configurableFormProps,
   formId: {
-    name: '/settings/forms/playground'
+    name: '/settings/forms/playground',
   },
   mode: 'readonly',
 });

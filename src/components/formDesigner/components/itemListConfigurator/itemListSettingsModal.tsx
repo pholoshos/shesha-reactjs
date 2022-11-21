@@ -5,6 +5,7 @@ import { ItemListConfiguratorProvider, useItemListConfigurator } from '../../../
 import { IConfigurableItemBase, IItemsOptions } from '../../../../providers/itemListConfigurator/contexts';
 import { FormMarkup } from '../../../../providers/form/models';
 import { useMedia } from 'react-use';
+import { InsertMode } from '../../../../interfaces';
 
 export interface IItemListSettingsModalProps {
   value?: object;
@@ -17,6 +18,7 @@ export interface IItemListSettingsModalProps {
   callToAction?: string;
   itemTypeMarkup?: FormMarkup;
   groupTypeMarkup?: FormMarkup;
+  insertMode?: InsertMode;
 }
 
 export const ItemListSettingsModalInner: FC<Omit<
@@ -56,6 +58,7 @@ export const ItemListSettingsModal: FC<IItemListSettingsModalProps> = ({
   options,
   itemTypeMarkup,
   groupTypeMarkup,
+  insertMode,
   ...rest
 }) => {
   return (
@@ -64,6 +67,7 @@ export const ItemListSettingsModal: FC<IItemListSettingsModalProps> = ({
       options={options}
       itemTypeMarkup={itemTypeMarkup}
       groupTypeMarkup={groupTypeMarkup}
+      insertMode={insertMode}
     >
       <ItemListSettingsModalInner {...rest} />
     </ItemListConfiguratorProvider>

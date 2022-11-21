@@ -38,8 +38,6 @@ export const RichTextEditor: FC<IRichTextEditorProps> = ({ value, onChange, conf
     }
   };
 
-  console.log('LOGS:: content', content);
-
   return isSSR ? (
     <Skeleton loading={true} />
   ) : (

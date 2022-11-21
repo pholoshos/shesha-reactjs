@@ -19,6 +19,11 @@ export interface IWizardStepProps extends IConfigurableItemBase {
   backButtonText?: string;
   doneButtonText?: string;
 
+  cancelButtonCustomEnabled?: string;
+  nextButtonCustomEnabled?: string;
+  backButtonCustomEnabled?: string;
+  doneButtonCustomEnabled?: string;
+
   cancelButtonActionConfiguration?: IConfigurableActionConfiguration;
   nextButtonActionConfiguration?: IConfigurableActionConfiguration;
   backButtonActionConfiguration?: IConfigurableActionConfiguration;

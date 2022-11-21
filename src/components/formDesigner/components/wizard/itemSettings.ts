@@ -118,6 +118,15 @@ export const getSettings = (_data?: IWizardStepProps) =>
       labelAlign: 'right',
       parentId: 'root',
     })
+    .addCodeEditor({
+      id: 'f39e604f-b2c9-4e6a-9101-fc12d32b7b3a',
+      name: 'nextButtonCustomEnabled',
+      label: 'Custom Enabled',
+      description: 'Write the code that returns whether this button is enabled',
+      labelAlign: 'right',
+      parentId: 'root',
+      exposedVariables: [],
+    })
     .addConfigurableActionConfigurator({
       id: 'F3B46A95-703F-4465-96CA-A58496A5F78C',
       name: 'nextButtonActionConfiguration',
@@ -142,6 +151,16 @@ export const getSettings = (_data?: IWizardStepProps) =>
       labelAlign: 'right',
       parentId: 'root',
     })
+
+    .addCodeEditor({
+      id: 'fbc47133-caf4-45c7-bebf-ddc54159bfeb',
+      name: 'backButtonCustomEnabled',
+      description: 'Write the code that returns whether this button is enabled',
+      label: 'Custom Enabled',
+      labelAlign: 'right',
+      parentId: 'root',
+      exposedVariables: [],
+    })
     .addConfigurableActionConfigurator({
       id: '8CC6A43F-54EE-4756-9B87-6E9204F5AEFB',
       name: 'backButtonActionConfiguration',
@@ -165,6 +184,15 @@ export const getSettings = (_data?: IWizardStepProps) =>
       labelAlign: 'right',
       parentId: 'root',
     })
+    .addCodeEditor({
+      id: 'fc29b440-9f26-4546-826f-900b058a36f6',
+      name: 'doneButtonCustomEnabled',
+      label: 'Custom Enabled',
+      description: 'Write the code that returns whether this button is enabled',
+      labelAlign: 'right',
+      parentId: 'root',
+      exposedVariables: [],
+    })
     .addConfigurableActionConfigurator({
       id: 'D5133335-4349-459A-8E9E-4371C814CE1A',
       name: 'doneButtonActionConfiguration',
@@ -186,6 +214,15 @@ export const getSettings = (_data?: IWizardStepProps) =>
       label: 'Text',
       labelAlign: 'right',
       parentId: 'root',
+    })
+    .addCodeEditor({
+      id: '4a2af13f-2f16-4b05-b66f-b0d236988e5e',
+      name: 'cancelButtonCustomEnabled',
+      label: 'Custom Enabled',
+      description: 'Write the code that returns whether this button is enabled',
+      labelAlign: 'right',
+      parentId: 'root',
+      exposedVariables: [],
     })
     .addConfigurableActionConfigurator({
       id: 'F940D7A0-AA6D-4368-A745-E130F8627472',

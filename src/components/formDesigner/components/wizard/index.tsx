@@ -3,7 +3,7 @@ import { IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
 import { Steps, Button, Space, message, Col, Row } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth, useForm, useGlobalState } from '../../../../providers';
 import { useSheshaApplication } from '../../../../';
 import { nanoid } from 'nanoid/non-secure';
@@ -20,6 +20,7 @@ import {
 import { IConfigurableActionConfiguration } from '../../../../interfaces/configurableAction';
 import './styles.less';
 import classNames from 'classnames';
+import { findLastIndex } from 'lodash';
 
 const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
   type: 'wizard',
@@ -39,7 +40,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
 
       return localCurrent < 0 ? 0 : localCurrent;
     });
-
+    const [hiddenSteps] = useState();
     const [component, setComponent] = useState(null);
 
     useEffect(() => {
@@ -163,8 +164,13 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
       if (current >= model.steps.length - 1) return;
       executeActionIfConfigured(tab => tab.nextButtonActionConfiguration);
 
-      setCurrent(current + 1);
-      setComponent(tabs[current].components);
+      const nextStep = getNextStep();
+
+      if (nextStep >= 0) {
+        setCurrent(nextStep);
+      }
+
+      setComponent(tabs[current]?.components);
     };
 
     const back = () => {
@@ -172,8 +178,13 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
 
       executeActionIfConfigured(tab => tab.backButtonActionConfiguration);
 
-      setCurrent(current - 1);
-      setComponent(tabs[current].components);
+      const prevStep = getPrevStep();
+
+      if (prevStep >= 0) {
+        setCurrent(prevStep);
+      }
+
+      setComponent(tabs[current]?.components);
     };
 
     const cancel = () => {
@@ -184,13 +195,40 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
       executeActionIfConfigured(tab => tab.doneButtonActionConfiguration);
     };
 
-    const steps = tabs?.map<IStepProps>(
-      ({ id, title, subTitle, description, icon, permissions, customVisibility, customEnabled }) => {
+    //#region Get next and previous steps
+    // Factor in the fact that some steps will be hidden by condition
+    const visibleSteps = useMemo(
+      () =>
+        tabs?.map(({ customVisibility, permissions }, index) => {
+          const granted = anyOfPermissionsGranted(permissions || []);
+          const isVisibleByCondition = executeExpression(customVisibility, true);
+
+          const hidden = (!granted || !isVisibleByCondition) && formMode !== 'designer';
+
+          return {
+            index,
+            visible: !hidden,
+          };
+        }),
+      [tabs]
+    );
+
+    const getNextStep = () => visibleSteps?.findIndex(({ index, visible }) => index > current && visible);
+
+    const getPrevStep = () => findLastIndex(visibleSteps, ({ index, visible }) => visible && index < current);
+    //#endregion
+
+    const steps = tabs
+      ?.filter(({ customVisibility, permissions }) => {
         const granted = anyOfPermissionsGranted(permissions || []);
         const isVisibleByCondition = executeExpression(customVisibility, true);
-        const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
 
-        if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
+        const hidden = (!granted || !isVisibleByCondition) && formMode !== 'designer';
+
+        return !hidden;
+      })
+      ?.map<IStepProps>(({ id, title, subTitle, description, icon, customEnabled }) => {
+        const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
 
         const iconProps = icon ? { icon: <ShaIcon iconName={icon as any} /> } : {};
 
@@ -203,8 +241,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
           ...iconProps,
           content: <ComponentsContainer containerId={id} dynamicComponents={model?.isDynamic ? component : []} />,
         };
-      }
-    );
+      });
 
     return (
       <>
@@ -218,7 +255,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
             labelPlacement={model?.labelPlacement}
           />
 
-          <div className="sha-steps-content">{steps[current].content}</div>
+          <div className="sha-steps-content">{steps[current]?.content}</div>
         </div>
 
         <Row>
@@ -241,6 +278,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
                   {tabs[current].nextButtonText ? tabs[current].nextButtonText : 'Next'}
                 </Button>
               )}
+
               {current === tabs.length - 1 && (
                 <Button type="primary" onClick={() => done()}>
                   {tabs[current].doneButtonText ? tabs[current].doneButtonText : 'Done'}

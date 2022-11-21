@@ -1,3 +1,4 @@
+import { InsertMode } from './../../interfaces/insertMode';
 import { createContext } from 'react';
 import { FormMarkup } from '../form/models';
 
@@ -64,6 +65,7 @@ export interface IItemListConfiguratorStateContext {
   childrenKey?: string;
   itemTypeMarkup?: FormMarkup;
   groupTypeMarkup?: FormMarkup;
+  insertMode?: InsertMode;
 }
 
 export interface IItemListConfiguratorActionsContext {
@@ -79,6 +81,7 @@ export interface IItemListConfiguratorActionsContext {
 
 export const ITEM_LIST_CONFIGURATOR_CONTEXT_INITIAL_STATE: IItemListConfiguratorStateContext = {
   items: [],
+  insertMode: 'before',
 };
 
 export const ItemListConfiguratorStateContext = createContext<IItemListConfiguratorStateContext>(

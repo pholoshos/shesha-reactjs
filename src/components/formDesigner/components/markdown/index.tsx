@@ -11,7 +11,7 @@ import { getStyle } from '../../../../providers/form/utils';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import 'github-markdown-css';
+import './styles.less'; // This manually loads github-markdown-css, as per https://raw.githubusercontent.com/sindresorhus/github-markdown-css/gh-pages/github-markdown.css
 
 export interface IMarkdownProps extends IConfigurableFormComponent {
   content: string;

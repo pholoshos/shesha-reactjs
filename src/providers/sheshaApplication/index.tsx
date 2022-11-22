@@ -23,15 +23,9 @@ import { MetadataDispatcherProvider } from '../metadataDispatcher';
 import { IAuthProviderRefProps, IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
 import { ReferenceListDispatcherProvider } from '../referenceListDispatcher';
 import { StackedNavigationProvider } from '../../pages/dynamic/navigation/stakedNavigation';
-import {
-  ConfigurableActionDispatcherConsumer,
-  ConfigurableActionDispatcherProvider,
-} from '../configurableActionsDispatcher';
-import { IConfigurableActionDispatcherActionsContext } from '../configurableActionsDispatcher/contexts';
-import { executeScriptArgumentsForm, IExecuteScriptArguments } from './configurable-actions/execute-script';
-import { executeScript } from '../form/utils';
-import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
 import ConditionalWrap from '../../components/conditionalWrapper';
+import { ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
+import { ApplicationActionsProcessor } from './configurable-actions/applicationActionsProcessor';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -75,24 +69,6 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     dispatch(setBackendUrlAction(newBackendUrl));
   };
 
-  const registerSystemActions = (dispatcherContext: IConfigurableActionDispatcherActionsContext) => {
-    dispatcherContext.registerAction<IExecuteScriptArguments>({
-      owner: 'Common',
-      ownerUid: SheshaActionOwners.Common,
-      name: 'Execute Script',
-      hasArguments: true,
-      argumentsFormMarkup: executeScriptArgumentsForm,
-      executer: (actionArgs, context) => {
-        if (!actionArgs.expression)
-          return Promise.reject('Expected expression to be defined but it was found to be empty.');
-
-        console.log('context is: ', context);
-
-        return executeScript(actionArgs.expression, context);
-      },
-    });
-  };
-
   const authRef = useRef<IAuthProviderRefProps>();
 
   return (
@@ -134,12 +110,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
                         <MetadataDispatcherProvider>
                           <StackedNavigationProvider>
                             <DynamicModalProvider>
-                              <ConfigurableActionDispatcherConsumer>
-                                {configurableActions => {
-                                  registerSystemActions(configurableActions);
-                                  return <>{children}</>;
-                                }}
-                              </ConfigurableActionDispatcherConsumer>
+                              <ApplicationActionsProcessor>{children}</ApplicationActionsProcessor>
                             </DynamicModalProvider>
                           </StackedNavigationProvider>
                         </MetadataDispatcherProvider>

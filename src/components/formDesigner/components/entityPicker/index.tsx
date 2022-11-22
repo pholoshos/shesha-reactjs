@@ -1,6 +1,6 @@
 import React from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
-import { FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
+import { FormIdentifier, FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { EllipsisOutlined } from '@ant-design/icons';
 import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
@@ -22,7 +22,7 @@ export interface IEntityPickerComponentProps extends IConfigurableFormComponent 
   title?: string;
   displayEntityKey?: string;
   allowNewRecord?: boolean;
-  modalFormId?: string;
+  modalFormId?: FormIdentifier;
   modalTitle?: string;
   showModalFooter?: boolean;
   onSuccessRedirectUrl?: string;

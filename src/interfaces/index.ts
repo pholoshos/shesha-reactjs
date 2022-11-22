@@ -33,5 +33,6 @@ export { INamed } from './named';
 export { IStylable } from './stylable';
 export { ITableColumn, ICustomFilter, IDataTableInstance } from '../providers/dataTable/interfaces';
 export type { PageWithLayout } from './pageWithLayout';
+export type { InsertMode } from './insertMode';
 export * from './formDesigner';
 export * from './shesha';

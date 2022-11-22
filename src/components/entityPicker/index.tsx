@@ -19,17 +19,15 @@ import { IEntityPickerProps, IEntityPickerState } from './models';
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
 
 export const EntityPicker: FC<IEntityPickerProps> = ({ displayEntityKey = '_displayName', ...restProps }) => {
-  return restProps.readOnly
-    ? <EntityPickerReadOnly {...restProps} displayEntityKey={displayEntityKey} />
-    : <EntityPickerEditable {...restProps} displayEntityKey={displayEntityKey} />;
-}
+  return restProps.readOnly ? (
+    <EntityPickerReadOnly {...restProps} displayEntityKey={displayEntityKey} />
+  ) : (
+    <EntityPickerEditable {...restProps} displayEntityKey={displayEntityKey} />
+  );
+};
 
-export const EntityPickerReadOnly: FC<IEntityPickerProps> = (props) => {
-  const {
-    entityType,
-    displayEntityKey,
-    value,
-  } = props;
+export const EntityPickerReadOnly: FC<IEntityPickerProps> = props => {
+  const { entityType, displayEntityKey, value } = props;
 
   const selection = useEntitySelectionData({
     entityType: entityType,
@@ -42,12 +40,10 @@ export const EntityPickerReadOnly: FC<IEntityPickerProps> = (props) => {
     return selectedItems?.map(ent => ent[displayEntityKey]).join(', ');
   }, [selectedItems]);
 
-  return selection.loading
-    ? <Skeleton paragraph={false} active />
-    : <ReadOnlyDisplayFormItem value={displayText} />;
-}
+  return selection.loading ? <Skeleton paragraph={false} active /> : <ReadOnlyDisplayFormItem value={displayText} />;
+};
 
-export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
+export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
   const {
     entityType,
     displayEntityKey,
@@ -72,11 +68,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
   });
   const isSmall = useMedia('(max-width: 480px)');
 
-  const {
-    changeSelectedStoredFilterIds,
-    selectedStoredFilterIds,
-    registerConfigurableColumns,
-  } = useDataTable();
+  const { changeSelectedStoredFilterIds, selectedStoredFilterIds, registerConfigurableColumns } = useDataTable();
   const selectRef = useRef(undefined);
 
   useEffect(() => {
@@ -125,9 +117,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
   }, [state?.showModal]);
 
   if (!entityType) {
-    throw new Error(
-      'Please make sure that either entityType is configured for the entity picker to work properly'
-    );
+    throw new Error('Please make sure that either entityType is configured for the entity picker to work properly');
   }
 
   const onAddNew = () => {
@@ -137,18 +127,14 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
   };
 
   const onDblClick = (row: IAnyObject) => {
-    if (!row)
-      return;
+    if (!row) return;
 
     if (onSelect) {
       onSelect(row);
     } else {
       if (isMultiple) {
-        const selectedItems = value && Array.isArray(value)
-          ? value
-          : [];
-        if (!selectedItems.includes(row.id))
-          selectedItems.push(row.id);
+        const selectedItems = value && Array.isArray(value) ? value : [];
+        if (!selectedItems.includes(row.id)) selectedItems.push(row.id);
 
         onChange(selectedItems, null);
       } else {
@@ -169,9 +155,8 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
     }
   };
 
-  const handleMultiChange = (selectedValues) => {
-    if (onChange)
-      onChange(selectedValues, null);
+  const handleMultiChange = selectedValues => {
+    if (onChange) onChange(selectedValues, null);
   };
   const onModalOk = () => {
     if (onSelect && state?.selectedRow) {
@@ -193,16 +178,12 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
 
   const options = useMemo<DefaultOptionType[]>(() => {
     let result: DefaultOptionType[] = null;
-    if (selection.loading){
-      const items = value
-        ? Array.isArray(value)
-          ? value
-          : [value]
-        : [];
+    if (selection.loading) {
+      const items = value ? (Array.isArray(value) ? value : [value]) : [];
 
       result = items.map(item => ({ label: 'loading...', value: item, key: item }));
     } else {
-      result = (selectedItems ?? []).map((ent) => ({ label: ent[displayEntityKey], value: ent.id, key: ent.id }));
+      result = (selectedItems ?? []).map(ent => ({ label: ent[displayEntityKey], value: ent.id, key: ent.id }));
     }
 
     return result;
@@ -237,8 +218,8 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
                 selectRef.current.blur();
                 showPickerDialog();
               }}
-              value={ selection.loading ? undefined : value }
-              placeholder={ selection.loading ? 'Loading...' : undefined }
+              value={selection.loading ? undefined : value}
+              placeholder={selection.loading ? 'Loading...' : undefined}
               notFoundContent={''}
               defaultValue={defaultValue}
               disabled={disabled || selection.loading}
@@ -248,7 +229,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
               options={options}
               showArrow={false}
               onChange={handleMultiChange}
-              style={{ width: "calc(100% - 32px)" }}
+              style={{ width: 'calc(100% - 32px)' }}
               loading={selection.loading}
             >
               {''}
@@ -284,11 +265,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
             <TablePager />
           </div>
 
-          <IndexTable
-            onSelectRow={onSelectRow}
-            onDblClick={onDblClick}
-            options={{ omitClick: true }}
-          />
+          <IndexTable onSelectRow={onSelectRow} onDblClick={onDblClick} options={{ omitClick: true }} />
         </>
       </Modal>
     </div>
@@ -296,17 +273,10 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = (props) => {
 };
 
 export const EntityPickerEditable: FC<IEntityPickerProps> = props => {
-  const {
-    parentEntityId,
-    entityType,
-    displayEntityKey,
-  } = props;
+  const { parentEntityId, entityType, displayEntityKey } = props;
 
   return (
-    <DataTableProvider
-      parentEntityId={parentEntityId}
-      entityType={entityType}
-    >
+    <DataTableProvider parentEntityId={parentEntityId} entityType={entityType}>
       <EntityPickerEditableInner {...props} displayEntityKey={displayEntityKey} />
     </DataTableProvider>
   );

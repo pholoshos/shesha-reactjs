@@ -63,7 +63,6 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
     ownerUid: SheshaActionOwners.Common,
     hasArguments: true,
     executer: (actionArgs, context) => {
-      console.log('show dialog')
       const modalId = nanoid();
 
       const formData = context?.data ?? {};

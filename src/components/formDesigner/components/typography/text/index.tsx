@@ -1,13 +1,12 @@
 import { FileTextOutlined } from '@ant-design/icons';
-import { Typography } from 'antd';
+import { Alert, Typography } from 'antd';
 import { TextProps } from 'antd/lib/typography/Text';
 import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../interfaces/formDesigner';
-import { useForm } from '../../../../../providers';
-import { FormMarkup } from '../../../../../providers/form/models';
+import { useForm, useSubForm } from '../../../../../providers';
 import { evaluateString, getStyle } from '../../../../../providers/form/utils';
-import settingsFormJson from './settingsForm.json';
+import { settingsFormMarkup } from './settings';
 
 const { Text } = Typography;
 
@@ -25,14 +24,15 @@ export interface ITextProps extends IConfigurableFormComponent {
   underline?: boolean;
 }
 
-const settingsForm = settingsFormJson as FormMarkup;
-
 const TextComponent: IToolboxComponent<ITextProps> = {
   type: 'text',
   name: 'Text',
   icon: <FileTextOutlined />,
   factory: (model: ITextProps) => {
-    const { formData } = useForm();
+    const { formData, formMode } = useForm();
+    const { value } = useSubForm();
+
+    const data = value || formData;
 
     const props: TextProps = {
       code: model?.code,
@@ -45,15 +45,19 @@ const TextComponent: IToolboxComponent<ITextProps> = {
       strong: model?.strong,
       italic: model?.italic,
       type: model?.contentType,
-      style: getStyle(model.style, formData),
+      style: { margin: 'unset', ...(getStyle(model.style, data) || {}) },
     };
 
-    const content = evaluateString(model?.content, formData);
+    const content = evaluateString(model?.content, data);
+
+    if (!content && formMode === 'designer') {
+      return <Alert type="warning" message="Please make sure you enter the content to be displayed here!" />;
+    }
 
     return <Text {...props}>{content}</Text>;
   },
-  settingsFormMarkup: settingsForm,
-  validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
+  settingsFormMarkup,
+  validateSettings: model => validateConfigurableComponentSettings(settingsFormMarkup, model),
   initModel: model => ({
     code: false,
     copyable: false,

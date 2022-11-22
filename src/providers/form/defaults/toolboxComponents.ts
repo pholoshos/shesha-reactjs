@@ -12,6 +12,7 @@ import Checkbox from '../../../components/formDesigner/components/checkbox/check
 import CheckboxGroup from '../../../components/formDesigner/components/checkboxGroup/checkboxGroup';
 import Radio from '../../../components/formDesigner/components/radio/radio';
 import FileUpload from '../../../components/formDesigner/components/fileUpload';
+import Image from '../../../components/formDesigner/components/image';
 import AttachmentsEditor from '../../../components/formDesigner/components/attachmentsEditor/attachmentsEditor';
 import Button from '../../../components/formDesigner/components/button/button';
 import KeyValueEditor from '../../../components/formDesigner/components/labelValueEditor/labelValueEditorComponent';
@@ -72,6 +73,7 @@ import Link from '../../../components/formDesigner/components/link';
 import EventNames from '../../../components/formDesigner/components/eventNamesList';
 import ConfigurableActionConfigurator from '../../../components/formDesigner/components/configurableActionsConfigurator';
 import FormAutocompleteComponent from '../../../components/formDesigner/components/formAutocomplete';
+// import Markdown from '../../../components/formDesigner/components/markdown';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -117,6 +119,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       EditableTagGroup,
       EntityPickerComponent,
       FileUpload,
+      Image,
       List,
       Filter,
       SubForm,

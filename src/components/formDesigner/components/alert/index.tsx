@@ -5,7 +5,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Alert } from 'antd';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm } from '../../../../providers';
-import { alertSettingsForm } from './settings';
+import { getSettings } from './settings';
 import ShaIcon from '../../../shaIcon';
 
 export interface IAlertProps extends IConfigurableFormComponent {
@@ -41,8 +41,8 @@ const AlertComponent: IToolboxComponent<IAlertProps> = {
       />
     );
   },
-  settingsFormMarkup: alertSettingsForm,
-  validateSettings: model => validateConfigurableComponentSettings(alertSettingsForm, model),
+  settingsFormMarkup: data => getSettings(data),
+  validateSettings: model => validateConfigurableComponentSettings(getSettings(model), model),
 };
 
 export default AlertComponent;

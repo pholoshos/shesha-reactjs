@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import moment from 'moment';
 import { ITableCustomTypesRender } from './interfaces';
 import { IConfigurableActionColumnsProps } from '../../providers/datatableColumnsConfigurator/models';
 import ShaIcon, { IconType } from '../shaIcon';
-import { useDataTable, useForm, useGlobalState, useModal, useSheshaApplication } from '../../providers';
-import { message, notification } from 'antd';
-import { useGet } from 'restful-react';
-import { IModalProps } from '../../providers/dynamicModal/models';
-import ValidationErrors from '../validationErrors';
+import { useDataTable, useForm, useGlobalState, useSheshaApplication } from '../../providers';
+import { message } from 'antd';
 import { axiosHttp } from '../../apis/axios';
-import { usePrevious } from 'react-use';
 import { useReferenceListItem } from '../../providers/referenceListDispatcher';
 import { useConfigurableActionDispatcher } from '../../providers/configurableActionsDispatcher';
 
@@ -76,61 +72,12 @@ export const renderers: ITableCustomTypesRender[] = [
   {
     key: 'action',
     render: props => {
-      const { crudConfig, changeActionedRow } = useDataTable();
+      const { changeActionedRow } = useDataTable();
       const { backendUrl } = useSheshaApplication();
       const { formData, formMode } = useForm();
       const { globalState } = useGlobalState();
 
       const { executeAction } = useConfigurableActionDispatcher();
-
-      const [state, setState] = useState<{
-        modalProps?: IModalProps;
-        entityId?: string;
-        entity?: any;
-        additionalProperties?: any; // These props will be passed as initialization properties to the modal
-      }>({});
-
-      const { refetch: fetchEntity, loading, data: fetchEntityResponse, error: fetchEntityError } = useGet({
-        path: crudConfig?.detailsUrl || '',
-        queryParams: { id: state?.entityId },
-        lazy: true,
-      });
-
-      const dynamicModal = useModal({ ...state?.modalProps, initialValues: state?.entity, parentFormValues: formData });
-
-      useEffect(() => {
-        if (state?.entityId) {
-          fetchEntity();
-        }
-      }, [state?.entityId]);
-
-      const previousEntityId = usePrevious(state?.entityId);
-
-      useEffect(() => {
-        const hasNewEntityId = state?.entityId && state?.entityId !== previousEntityId;
-
-        if (state?.modalProps && !hasNewEntityId) {
-          dynamicModal?.open();
-        }
-      }, [state?.modalProps]);
-
-      useEffect(() => {
-        if (!loading && fetchEntityResponse) {
-          setState(prev => ({ ...prev, entity: fetchEntityResponse?.result }));
-        }
-      }, [loading]);
-
-      useEffect(() => {
-        if (state?.entity && state?.modalProps) {
-          dynamicModal?.open();
-        }
-      }, [state?.entity]);
-
-      useEffect(() => {
-        if (fetchEntityError) {
-          notification.error({ message: <ValidationErrors error={fetchEntityError} renderMode="raw" /> });
-        }
-      }, [fetchEntityError]);
 
       const getActionProps = (data): IConfigurableActionColumnsProps => {
         return data?.column?.actionProps as IConfigurableActionColumnsProps;

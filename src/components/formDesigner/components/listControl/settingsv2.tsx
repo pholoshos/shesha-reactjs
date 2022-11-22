@@ -23,13 +23,11 @@ export interface IListControlSettingsProps {
   onValuesChange?: (changedValues: any, values: IListItemsProps) => void;
 }
 
-interface IListSettingsState extends IListItemsProps { }
+interface IListSettingsState extends IListItemsProps {}
 
 export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, onSave, model, onValuesChange }) => {
   const [state, setState] = useState<IListSettingsState>(model);
   const [form] = Form.useForm();
-
-  console.log('ListControlSettings model', model.filters);
 
   return (
     <Form
@@ -37,8 +35,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
       onFinish={onSave}
       layout="vertical"
       onValuesChange={(changedValues, values: IListItemsProps) => {
-        if (readOnly)
-          return;
+        if (readOnly) return;
         const incomingState = { ...values };
 
         if (!values?.entityType) {
@@ -58,19 +55,23 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
       <SectionSeparator sectionName="Display" />
 
       <FormItem name="name" label="Name" rules={[{ required: true }]}>
-        <PropertyAutocomplete id="fb71cb51-884f-4f34-aa77-820c12276c95" readOnly={readOnly}/>
+        <PropertyAutocomplete id="fb71cb51-884f-4f34-aa77-820c12276c95" readOnly={readOnly} />
       </FormItem>
 
       <FormItem name="label" label="Label">
-        <Input readOnly={readOnly}/>
+        <Input readOnly={readOnly} />
       </FormItem>
 
       <Form.Item name="hideLabel" label="Hide Label" valuePropName="checked">
-        <Checkbox disabled={readOnly}/>
+        <Checkbox disabled={readOnly} />
+      </Form.Item>
+
+      <Form.Item name="readOnly" label="Read Only" valuePropName="checked">
+        <Checkbox />
       </Form.Item>
 
       <FormItem name="title" label="Title">
-        <Input readOnly={readOnly}/>
+        <Input readOnly={readOnly} />
       </FormItem>
 
       <FormItem
@@ -78,13 +79,13 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         label="Unique State ID"
         tooltip="This is important for when you want to dispatch events that are related to the list component. In a case where you have more than one List component, you\'ll need to specify which you want to target. This ID helps identify the correct component"
       >
-        <Input readOnly={readOnly}/>
+        <Input readOnly={readOnly} />
       </FormItem>
 
       <SectionSeparator sectionName="Buttons" />
 
       <FormItem name="buttons" label="Buttons">
-        <ButtonGroupSettingsModal readOnly={readOnly}/>
+        <ButtonGroupSettingsModal readOnly={readOnly} />
       </FormItem>
 
       <SectionSeparator sectionName="Data" />
@@ -103,7 +104,11 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
 
       <Show when={state?.dataSource === 'api'}>
         <FormItem name="entityType" label="Entity type">
-          <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" readOnly={readOnly}/>
+          <AutocompleteRaw
+            dataSourceType="url"
+            dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete"
+            readOnly={readOnly}
+          />
         </FormItem>
         <Show when={Boolean(state?.entityType)}>
           <FormItem name="properties" label="Properties">
@@ -124,7 +129,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
           <SectionSeparator sectionName="Query builder" />
 
           <FormItem name="useExpression" label="Use Expression" valuePropName="checked">
-            <Checkbox disabled={readOnly}/>
+            <Checkbox disabled={readOnly} />
           </FormItem>
 
           <QueryBuilderWithModelType modelType={state?.entityType}>
@@ -155,10 +160,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
 
       <Show when={state?.renderStrategy === 'externalForm'}>
         <FormItem name="formId" label="Form Path">
-          <FormAutocomplete 
-            readOnly={readOnly}
-            convertToFullId={true}
-          />
+          <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
         </FormItem>
       </Show>
 
@@ -180,7 +182,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
       <SectionSeparator sectionName="Delete/Remove Items" />
 
       <FormItem name="allowDeleteItems" label="Allow Delete Items" valuePropName="checked">
-        <Checkbox disabled={readOnly}/>
+        <Checkbox disabled={readOnly} />
       </FormItem>
 
       <Show when={state?.allowDeleteItems}>
@@ -190,7 +192,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
           valuePropName="checked"
           tooltip="Whether items should also be deleted remotely. If this option is selected, you need to specify the deleteUrl and also make sure the returned data has an Id property to delete against"
         >
-          <Checkbox disabled={readOnly}/>
+          <Checkbox disabled={readOnly} />
         </FormItem>
 
         <Show when={state?.allowDeleteItems && state?.allowRemoteDelete}>
@@ -348,6 +350,38 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         />
       </FormItem>
 
+      <FormItem label="Target URL" name="targetUrl" tooltip="The URL to forward to after event is triggered.">
+        <CodeEditor
+          mode="dialog"
+          label="Target URL"
+          setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+          name="targetUrl"
+          type={''}
+          id={''}
+          description="The URL to forward to after event is triggered"
+          exposedVariables={[
+            {
+              id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+              name: 'data',
+              description: 'Form data',
+              type: 'object',
+            },
+            {
+              id: '65b71112-d412-401f-af15-1d3080f85319',
+              name: 'globalState',
+              description: 'The global state',
+              type: 'object',
+            },
+            {
+              id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+              name: 'queryParams',
+              description: 'Query parameters',
+              type: 'object',
+            },
+          ]}
+        />
+      </FormItem>
+
       <FormItem
         name="submitHttpVerb"
         label="Submit verb"
@@ -363,34 +397,34 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
       <SectionSeparator sectionName="Layout" />
 
       <FormItem name="labelCol" label="Label Col">
-        <InputNumber min={1} max={24} defaultValue={5} step={1} readOnly={readOnly}/>
+        <InputNumber min={0} max={24} defaultValue={5} step={1} readOnly={readOnly} />
       </FormItem>
 
       <FormItem name="wrapperCol" label="Wrapper Col">
-        <InputNumber min={1} max={24} defaultValue={13} step={1} readOnly={readOnly}/>
+        <InputNumber min={0} max={24} defaultValue={13} step={1} readOnly={readOnly} />
       </FormItem>
 
       <SectionSeparator sectionName="Search" />
 
       <FormItem name="showQuickSearch" label="Show Quick Search" valuePropName="checked">
-        <Checkbox disabled={readOnly}/>
+        <Checkbox disabled={readOnly} />
       </FormItem>
 
       <SectionSeparator sectionName="Pagination" />
 
       <FormItem name="showPagination" label="Show pagination" valuePropName="checked">
-        <Checkbox disabled={readOnly}/>
+        <Checkbox disabled={readOnly} />
       </FormItem>
 
       <Show when={state?.showPagination}>
         <FormItem name="paginationDefaultPageSize" label="Default page size">
-          <InputNumber min={5} max={50} step={5} defaultValue={10} readOnly={readOnly}/>
+          <InputNumber min={5} max={50} step={5} defaultValue={10} readOnly={readOnly} />
         </FormItem>
       </Show>
 
       <Show when={!state?.showPagination}>
         <FormItem name="maxHeight" label="Max height">
-          <InputNumber min={200} step={5} defaultValue={400} readOnly={readOnly}/>
+          <InputNumber min={200} step={5} defaultValue={400} readOnly={readOnly} />
         </FormItem>
       </Show>
 

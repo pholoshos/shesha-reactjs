@@ -32,6 +32,10 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
     saveTheme({ id: THEME_CONFIG_ID, settings: JSON.stringify(themeToSave) });
   }, 300);
 
+  useEffect(() => {
+    refetch;
+  }, []);
+
   const loadedTheme = useMemo(() => {
     if (!loadedThemeResponse) return THEME_CONTEXT_INITIAL_STATE.theme;
     const themeJson = JSON.parse(loadedThemeResponse.result.settings) as IApplicationTheme;

@@ -194,52 +194,6 @@ export interface ITableDataInternalResponse {
 
 export interface IDataTableInstance extends IPublicDataTableActions { }
 
-export interface ITableCrudConfig {
-  createUrl?: string;
-  deleteUrl?: string;
-  detailsUrl?: string;
-  updateUrl?: string;
-}
-
-export interface IEditableRowState {
-  id?: string;
-  data?: any;
-  mode: 'create' | 'edit' | 'read';
-}
-
-export interface ICrudState {
-  create?: boolean;
-  // read?: boolean; // You don't need this
-  update?: boolean;
-  delete?: boolean;
-}
-
-export interface ICrudProps {
-  /**
-   * whether this table supports CRUD functionality or not
-   *
-   * This should be removed later in favor of just checking the crud-related properties of the config
-   */
-  crud?: boolean | ICrudState;
-
-  /**
-   * Whether saving of table row items should be locally or not.
-   *
-   * This is especially useful in instances where the parentEntityId is not yet available and the items should be saved against that particular
-   * entity
-   */
-  saveLocally?: boolean;
-
-  /**
-   * Whether you want the inline editing to be in the form of inline ot dialog
-   */
-  crudMode?: 'inline' | 'dialog';
-
-  pickerOptions?: boolean;
-
-  crudParentEntityKey?: string;
-}
-
 export interface IFormDataPayload {
   formData?: any;
 }

@@ -5,8 +5,7 @@ import CodeEditor from '../codeEditor/codeEditor';
 import EditableTagGroup from '../../../editableTagGroup';
 import { IWizardStepProps, IWizardComponentProps } from './models';
 import ItemListSettingsModal from '../itemListConfigurator/itemListSettingsModal';
-import itemSettings from './itemSettings.json';
-import { FormMarkup } from '../../../../providers/form/models';
+import { getSettings } from './itemSettings';
 import { nanoid } from 'nanoid/non-secure';
 
 const { Option } = Select;
@@ -41,11 +40,12 @@ const WizardSettings: FC<ITabSettingsProps> = props => {
       id: nanoid(),
       itemType: 'item',
       sortOrder: count,
-      name: `Tab${count + 1}`,
-      key: `tabKey${count + 1}`,
-      title: `Tab ${count + 1}`,
-      subTitle: `Tab ${count + 1}`,
-      description: `Tab ${count + 1}`,
+      name: `step${count + 1}`,
+      label: `Step ${count + 1}`,
+      key: `stepKey${count + 1}`,
+      title: `Step ${count + 1}`,
+      subTitle: `Sub title ${count + 1}`,
+      description: `Description ${count + 1}`,
       nextButtonText: 'Next',
       backButtonText: 'Back',
       components: [],
@@ -54,7 +54,7 @@ const WizardSettings: FC<ITabSettingsProps> = props => {
     return buttonProps;
   };
 
-  const tabs = props?.model?.steps?.map(item => ({ ...item, label: item?.title }));
+  const steps = props?.model?.steps?.map(item => ({ ...item, label: item?.title }));
 
   const selectRef = useRef<RefSelectProps>();
 
@@ -86,9 +86,32 @@ const WizardSettings: FC<ITabSettingsProps> = props => {
         tooltip="This will set the size for all buttons"
       >
         <Select>
-          <Option value="small">Small</Option>
-          <Option value="middle">Middle</Option>
-          <Option value="large">Large</Option>
+          <Option value="default">default</Option>
+          <Option value="small">small</Option>
+        </Select>
+      </Form.Item>
+
+      <Form.Item
+        name="direction"
+        initialValue={props.model.size}
+        label="Direction"
+        tooltip="To specify the direction of the step bar"
+      >
+        <Select>
+          <Option value="vertical">vertical</Option>
+          <Option value="horizontal">horizontal</Option>
+        </Select>
+      </Form.Item>
+
+      <Form.Item
+        name="labelPlacement"
+        initialValue={props.model.labelPlacement}
+        label="Label Placement"
+        tooltip="To specify the label placement"
+      >
+        <Select>
+          <Option value="vertical">vertical</Option>
+          <Option value="horizontal">horizontal</Option>
         </Select>
       </Form.Item>
 
@@ -122,14 +145,15 @@ const WizardSettings: FC<ITabSettingsProps> = props => {
 
       <SectionSeparator sectionName="Configure Wizard Steps" />
 
-      <Form.Item name="tabs" initialValue={tabs}>
+      <Form.Item name="steps" initialValue={steps}>
         <ItemListSettingsModal
           options={{ onAddNewItem }}
           title="Configure Wizard Steps"
           heading="Settings"
           callToAction="Configure Wizard Steps"
-          itemTypeMarkup={itemSettings as FormMarkup}
+          itemTypeMarkup={getSettings()}
           allowAddGroups={false}
+          insertMode="after"
         />
       </Form.Item>
 

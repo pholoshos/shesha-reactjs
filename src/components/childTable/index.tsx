@@ -1,6 +1,6 @@
 import React, { FC, MutableRefObject, Fragment } from 'react';
 import { useDataTableStore } from '../../providers';
-import { ICrudProps, IDataTableInstance } from '../../providers/dataTable/interfaces';
+import { IDataTableInstance } from '../../providers/dataTable/interfaces';
 import IndexTable from '../indexTable';
 import { ITableActionColumns, ITableCustomTypeEditor } from '../indexTable/interfaces';
 import CollapsiblePanel from '../panel';
@@ -10,7 +10,7 @@ import IndexTableColumnVisibilityToggle from '../indexTableColumnVisibilityToggl
 import { Alert, Drawer } from 'antd';
 import { IToolbarItem } from '../../interfaces';
 
-export interface IChildTableProps extends ICrudProps {
+export interface IChildTableProps {
   //entityType: string;
   toolbarItems?: IToolbarItem[];
   header?: string;
@@ -41,10 +41,7 @@ export interface IChildTableProps extends ICrudProps {
 export const ChildDataTable: FC<IChildTableProps> = ({
   header,
   actionColumns,
-  crud,
-  saveLocally,
   tableRef,
-  crudMode,
   onRowsChanged,
   onDblClick,
   alert,
@@ -88,7 +85,6 @@ export const ChildDataTable: FC<IChildTableProps> = ({
         extra={
           <div className="sha-child-table-extra">
             <ChildTableControls
-              crud={crud}
               showPagination={paginationMode === 'pagination'}
               toolbarItems={toolbarItems}
             />
@@ -101,12 +97,9 @@ export const ChildDataTable: FC<IChildTableProps> = ({
 
         <IndexTable
           actionColumns={actionColumns}
-          crud={crud}
-          saveLocally={saveLocally}
           tableRef={tableRef}
           onRowsChanged={onRowsChanged}
           onDblClick={onDblClick}
-          crudMode={crudMode}
           customTypeEditors={customTypeEditors}
           onExportSuccess={onExportSuccess}
           onFetchDataSuccess={onFetchDataSuccess}

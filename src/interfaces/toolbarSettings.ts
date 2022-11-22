@@ -15,6 +15,8 @@ import { IContainerComponentProps } from '../components/formDesigner/components/
 import { IPropertyAutocompleteProps } from '../components/propertyAutocomplete/propertyAutocomplete';
 import { ICustomFilterProps } from '../components/formDesigner/components/dataTable/filter/models';
 import { IFormAutocompleteProps } from '../components/formDesigner/components/formAutocomplete';
+import { IConfigurableActionNamesComponentProps } from '../components/formDesigner/components/configurableActionsConfigurator';
+import { IEditableTagGroupProps } from '../components/formDesigner/components/editableTagGroup';
 
 interface ToolbarSettingsProp extends Omit<IConfigurableFormComponent, 'type'> {}
 
@@ -50,111 +52,172 @@ type ButtonGroupType = ToolbarSettingsProp & Omit<IButtonsProps, 'type'>;
 
 type CustomFilterType = ToolbarSettingsProp & Omit<ICustomFilterProps, 'type'>;
 
-export class DesignerToolbarSettings {
-  protected form: IConfigurableFormComponent[];
+type ConfigurableActionConfiguratorType = ToolbarSettingsProp & Omit<IConfigurableActionNamesComponentProps, 'type'>;
 
-  constructor() {
+type EditableTagGroupType = ToolbarSettingsProp & Omit<IEditableTagGroupProps, 'type'>;
+
+export class DesignerToolbarSettings<T> {
+  protected readonly form: IConfigurableFormComponent[];
+  protected readonly data?: T;
+
+  constructor();
+  constructor(model: T);
+  constructor(model?: T) {
+    this.data = model;
     this.form = [];
   }
+  public addButtons(props: ButtonGroupType | ((data: T) => ButtonGroupType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
 
-  public addButtons(props: ButtonGroupType) {
-    this.form.push({ ...props, type: 'buttons' });
-
-    return this;
-  }
-
-  public addDropdown(props: DropdownType) {
-    this.form.push({ ...props, type: 'dropdown' });
+    this.form.push({ ...obj, type: 'buttons' });
 
     return this;
   }
 
-  public addSectionSeparator(props: SectionSeparatorType) {
-    this.form.push({ ...props, type: 'sectionSeparator' });
+  public addDropdown(props: DropdownType | ((data: T) => DropdownType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'dropdown' });
 
     return this;
   }
 
-  public addTextField(props: TextFieldType) {
-    this.form.push({ ...props, type: 'textField' });
+  public addSectionSeparator(props: SectionSeparatorType | ((data: T) => SectionSeparatorType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'sectionSeparator' });
 
     return this;
   }
 
-  public addPropertyAutocomplete(props: PropertyAutocompleteType) {
-    this.form.push({ ...props, type: 'propertyAutocomplete' });
+  public addTextField(props: TextFieldType | ((data: T) => TextFieldType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'textField' });
 
     return this;
   }
 
-  public addTextArea(props: TextAreaType) {
-    this.form.push({ ...props, type: 'textArea' });
+  public addPropertyAutocomplete(props: PropertyAutocompleteType | ((data: T) => PropertyAutocompleteType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'propertyAutocomplete' });
 
     return this;
   }
 
-  public addIconPicker(props: IconPickerType) {
-    this.form.push({ ...props, type: 'iconPicker' });
+  public addTextArea(props: TextAreaType | ((data: T) => TextAreaType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'textArea' });
 
     return this;
   }
 
-  public addAutocomplete(props: AutocompleteType) {
-    this.form.push({ ...props, type: 'autocomplete' });
+  public addIconPicker(props: IconPickerType | ((data: T) => IconPickerType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'iconPicker' });
 
     return this;
   }
 
-  public addFormAutocomplete(props: FormAutocompleteType) {
-    this.form.push({ ...props, type: 'formAutocomplete' });
+  public addAutocomplete(props: AutocompleteType | ((data: T) => AutocompleteType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'autocomplete' });
 
     return this;
   }
 
-  public addCheckbox(props: CheckboxType) {
-    this.form.push({ ...props, type: 'checkbox' });
+  public addFormAutocomplete(props: FormAutocompleteType | ((data: T) => FormAutocompleteType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'formAutocomplete' });
 
     return this;
   }
 
-  public addCodeEditor(props: CodeEditorType) {
-    this.form.push({ ...props, type: 'codeEditor' });
+  public addCheckbox(props: CheckboxType | ((data: T) => CheckboxType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'checkbox' });
 
     return this;
   }
 
-  public addContainer(props: ContainerType) {
-    this.form.push({ ...props, type: 'container' });
+  public addCodeEditor(props: CodeEditorType | ((data: T) => CodeEditorType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'codeEditor' });
 
     return this;
   }
 
-  public addNumberField(props: NumberFieldType) {
-    this.form.push({ ...props, type: 'numberField' });
+  public addContainer(props: ContainerType | ((data: T) => ContainerType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'container' });
 
     return this;
   }
 
-  public addLabelValueEditor(props: LabelValueEditorType) {
-    this.form.push({ ...props, type: 'labelValueEditor' });
+  public addNumberField(props: NumberFieldType | ((data: T) => NumberFieldType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'numberField' });
 
     return this;
   }
 
-  public addQueryBuilder(props: QueryBuilderType) {
-    this.form.push({ ...props, type: 'queryBuilder' });
+  public addLabelValueEditor(props: LabelValueEditorType | ((data: T) => LabelValueEditorType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'labelValueEditor' });
 
     return this;
   }
 
-  public addCustomFilter(props: CustomFilterType) {
-    this.form.push({ ...props, type: 'filter' });
+  public addQueryBuilder(props: QueryBuilderType | ((data: T) => QueryBuilderType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'queryBuilder' });
+
+    return this;
+  }
+
+  public addCustomFilter(props: CustomFilterType | ((data: T) => CustomFilterType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'filter' });
+
+    return this;
+  }
+
+  public addConfigurableActionConfigurator(
+    props: ConfigurableActionConfiguratorType | ((data: T) => ConfigurableActionConfiguratorType)
+  ) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'configurableActionConfigurator' });
+
+    return this;
+  }
+
+  public addEditableTagGroupProps(props: EditableTagGroupType | ((data: T) => EditableTagGroupType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'editableTagGroup' });
 
     return this;
   }
 
   get settings() {
     return this.form;
+  }
+
+  get model() {
+    return this.model;
   }
 
   public toJson() {

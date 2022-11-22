@@ -137,9 +137,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
         mode="horizontal"
         items={items?.filter(getIsVisible)?.map(props => renderMenuButton(props))}
         className={`sha-responsive-button-group space-${spaceSize}`}
-        onClick={event => {
-          console.log('LOGS:: event.key ', event.key);
-        }}
+        style={{ minWidth: '50rem' }}
       />
     </div>
   );

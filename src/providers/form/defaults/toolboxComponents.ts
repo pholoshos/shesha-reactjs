@@ -73,7 +73,7 @@ import Link from '../../../components/formDesigner/components/link';
 import EventNames from '../../../components/formDesigner/components/eventNamesList';
 import ConfigurableActionConfigurator from '../../../components/formDesigner/components/configurableActionsConfigurator';
 import FormAutocompleteComponent from '../../../components/formDesigner/components/formAutocomplete';
-import Markdown from '../../../components/formDesigner/components/markdown';
+// import Markdown from '../../../components/formDesigner/components/markdown';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -166,7 +166,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
     visible: true,
     name: 'Typography',
-    components: [Paragraph, Text, Title, Markdown],
+    components: [Paragraph, Text, Title],
   },
 
   // {

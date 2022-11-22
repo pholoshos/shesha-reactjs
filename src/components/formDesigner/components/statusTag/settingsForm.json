@@ -103,6 +103,38 @@
       "label": "Default Mappings",
       "description": "Enter the JSON object that should match the structure of the default one provided",
       "validate": {}
+    },
+    {
+      "id": "6befdd49-41aa-41d6-a29e-76fa00590b74",
+      "type": "sectionSeparator",
+      "name": "sectionVisibility",
+      "parentId": "root",
+      "label": "Visibility"
+    },
+    {
+      "id": "205fc274-395c-4120-94ea-e9669470b194",
+      "type": "codeEditor",
+      "name": "customVisibility",
+      "label": "Custom Visibility",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": null,
+      "description": "Enter custom visibility code.  You must return true to show the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        {
+          "name": "value",
+          "description": "Component current value",
+          "type": "string | any"
+        },
+        {
+          "name": "data",
+          "description": "Selected form values",
+          "type": "object"
+        }
+      ]
     }
   ],
   "formSettings": {

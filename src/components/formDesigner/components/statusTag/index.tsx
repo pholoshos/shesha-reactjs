@@ -1,6 +1,7 @@
 import { ArrowsAltOutlined } from '@ant-design/icons';
 import { Alert } from 'antd';
 import React from 'react';
+import { useGlobalState } from '../../../..';
 import { evaluateString, validateConfigurableComponentSettings } from '../../../../formDesignerUtils';
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../interfaces/formDesigner';
 import { useForm } from '../../../../providers/form';
@@ -23,6 +24,7 @@ const StatusTagComponent: IToolboxComponent<IStatusTagProps> = {
   icon: <ArrowsAltOutlined />,
   factory: (model: IStatusTagProps) => {
     const { formData, formMode } = useForm();
+    const { globalState } = useGlobalState();
 
     const getExpressionExecutor = (expression: string) => {
       if (!expression) {
@@ -82,6 +84,28 @@ const StatusTagComponent: IToolboxComponent<IStatusTagProps> = {
       color: computedColorByCode || localColorByExpression,
       mappings: getParsedMappings(),
     };
+
+    const executeExpression = (expression: string, returnBoolean = false) => {
+      if (!expression) {
+        if (returnBoolean) {
+          return true;
+        } else {
+          console.error('Expected expression to be defined but it was found to be empty.');
+
+          return false;
+        }
+      }
+
+      /* tslint:disable:function-constructor */
+      const evaluated = new Function('data, globalState', expression)(formData, globalState);
+
+      // tslint:disable-next-line:function-constructor
+      return typeof evaluated === 'boolean' ? evaluated : true;
+    };
+
+    const isVisibleByCondition = executeExpression(model.customVisibility, true);
+
+    if (!isVisibleByCondition && formMode !== 'designer') return null;
 
     return <StatusTag {...props} />;
   },

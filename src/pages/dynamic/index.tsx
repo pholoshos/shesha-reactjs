@@ -20,7 +20,7 @@ import {
 } from '../../providers';
 import { useFormConfiguration } from '../../providers/form/api';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
-import { FormIdentifier, IFormSettings } from '../../providers/form/models';
+import { FormIdentifier } from '../../providers/form/models';
 import {
   asFormFullName,
   evaluateComplexString,

@@ -52,6 +52,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
     const { name: actionOwnerName, id: actionsOwnerId } = model;
 
     const actionDependencies = [actionOwnerName, actionsOwnerId, current];
+
     useConfigurableAction(
       {
         name: 'Back',
@@ -109,8 +110,6 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
     );
     //#endregion
 
-    if (isComponentHidden(model)) return null;
-
     const executeExpression = (expression: string, returnBoolean = true) => {
       if (!expression) {
         if (returnBoolean) {
@@ -135,6 +134,31 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
       // tslint:disable-next-line:function-constructor
       return typeof evaluated === 'boolean' ? evaluated : true;
     };
+
+    //#region Get next and previous steps
+    // Factor in the fact that some steps will be hidden by condition
+    const visibleSteps = useMemo(
+      () =>
+        tabs?.map(({ customVisibility, permissions }, index) => {
+          const granted = anyOfPermissionsGranted(permissions || []);
+          const isVisibleByCondition = executeExpression(customVisibility, true);
+
+          const hidden = (!granted || !isVisibleByCondition) && formMode !== 'designer';
+
+          return {
+            index,
+            visible: !hidden,
+          };
+        }),
+      [tabs]
+    );
+
+    const getNextStep = () => visibleSteps?.findIndex(({ index, visible }) => index > current && visible);
+
+    const getPrevStep = () => findLastIndex(visibleSteps, ({ index, visible }) => visible && index < current);
+    //#endregion
+
+    if (isComponentHidden(model)) return null;
 
     const actionEvaluationContext = {
       data: formData,
@@ -194,29 +218,6 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
     const done = () => {
       executeActionIfConfigured(tab => tab.doneButtonActionConfiguration);
     };
-
-    //#region Get next and previous steps
-    // Factor in the fact that some steps will be hidden by condition
-    const visibleSteps = useMemo(
-      () =>
-        tabs?.map(({ customVisibility, permissions }, index) => {
-          const granted = anyOfPermissionsGranted(permissions || []);
-          const isVisibleByCondition = executeExpression(customVisibility, true);
-
-          const hidden = (!granted || !isVisibleByCondition) && formMode !== 'designer';
-
-          return {
-            index,
-            visible: !hidden,
-          };
-        }),
-      [tabs]
-    );
-
-    const getNextStep = () => visibleSteps?.findIndex(({ index, visible }) => index > current && visible);
-
-    const getPrevStep = () => findLastIndex(visibleSteps, ({ index, visible }) => visible && index < current);
-    //#endregion
 
     const steps = tabs
       ?.filter(({ customVisibility, permissions }) => {

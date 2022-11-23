@@ -1,15 +1,22 @@
 .sha-wizard-container {
-  margin-bottom: 30px;
+  margin: unset;
+
+  .sha-steps-content {
+    margin: 20px 0;
+  }
 
   &.vertical {
     display: flex;
     flex-direction: row;
+    margin-bottom: 20px;
+
     .ant-steps-vertical {
       width: 150px;
     }
 
     .sha-steps-content {
       flex: 1;
+      margin: unset;
     }
   }
 }

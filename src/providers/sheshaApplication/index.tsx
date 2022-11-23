@@ -71,6 +71,11 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     dispatch(setBackendUrlAction(newBackendUrl));
   };
 
+  const anyOfPermissionsGranted = (permissions: string[]) => {
+    const authorizer = authRef?.current?.anyOfPermissionsGranted;
+    return authorizer && authorizer(permissions);
+  }
+
   return (
     <SheshaApplicationStateContext.Provider value={state}>
       <SheshaApplicationActionsContext.Provider
@@ -78,7 +83,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
           changeBackendUrl,
           setRequestHeaders,
           // This will always return false if you're not authorized
-          anyOfPermissionsGranted: authRef?.current?.anyOfPermissionsGranted || ((_: string[]) => false),
+          anyOfPermissionsGranted: anyOfPermissionsGranted, // NOTE: don't pass ref directly here, it leads to bugs because some of components use old reference even when authRef is updated
         }}
       >
         <RestfulProvider

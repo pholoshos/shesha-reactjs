@@ -6,7 +6,7 @@ import ComponentsContainer from '../../componentsContainer';
 import settingsFormJson from './settingsForm.json';
 import React, { Fragment } from 'react';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useAuth, useForm, useGlobalState } from '../../../../providers';
+import { useForm, useGlobalState, useSheshaApplication } from '../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
 import TabSettings from './settings';
 import { ITabsComponentProps } from './models';
@@ -22,7 +22,7 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
   name: 'Tabs',
   icon: <FolderOutlined />,
   factory: model => {
-    const { anyOfPermissionsGranted } = useAuth();
+    const { anyOfPermissionsGranted } = useSheshaApplication();
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState } = useGlobalState();
 
@@ -122,7 +122,15 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
   },
   // settingsFormMarkup: settingsForm,
   settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
-    return <TabSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
+    return (
+      <TabSettings
+        readOnly={readOnly}
+        model={model}
+        onSave={onSave}
+        onCancel={onCancel}
+        onValuesChange={onValuesChange}
+      />
+    );
   },
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
   customContainerNames: ['tabs'],

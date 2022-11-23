@@ -13,10 +13,11 @@ export default handleActions<ISheshaApplicationStateContext, any>(
       const { httpHeaders } = state;
 
       const newHeaders = { ...httpHeaders, ...payload };
-      
+
       return {
         ...state,
         httpHeaders: newHeaders,
+        headers: newHeaders,
       };
     },
 

@@ -61,7 +61,6 @@ import {
 import { isEmpty, isEqual, sortBy } from 'lodash';
 import { IResult } from '../../interfaces/result';
 import { useLocalStorage } from '../../hooks';
-import { useAuth } from '../auth';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   IConfigurableColumnsBase,
@@ -147,12 +146,12 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     title,
     parentEntityId,
   });
-  
+
   const { setState: setGlobalState } = useGlobalState();
   const { backendUrl } = useSheshaApplication();
   const tableIsReady = useRef(false);
-  const { headers } = useAuth();
-  
+  const { headers } = useSheshaApplication();
+
   const fetchDataTableDataInternal = (getDataPayload: IGetDataPayload) => {
     const getDataUrl = `${backendUrl}${getDataPath || `${GENERIC_ENTITIES_ENDPOINT}/GetAll`}?${qs.stringify(
       getDataPayload
@@ -735,62 +734,76 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     }
   }, [state, actionOwnerName]);
 
+  useConfigurableAction(
+    {
+      name: 'Refresh table',
+      owner: actionOwnerName,
+      ownerUid: actionOwnerId,
+      hasArguments: false,
+      executer: () => {
+        refreshTable(); // todo: return correct promise
+        return Promise.resolve();
+      },
+    },
+    [state]
+  );
 
-  useConfigurableAction({
-    name: 'Refresh table',
-    owner: actionOwnerName,
-    ownerUid: actionOwnerId,
-    hasArguments: false,
-    executer: () => {
-      refreshTable(); // todo: return correct promise
-      return Promise.resolve()
-    }
-  }, [state]);
+  useConfigurableAction(
+    {
+      name: 'Delete row',
+      owner: actionOwnerName,
+      ownerUid: actionOwnerId,
+      hasArguments: false,
+      executer: () => {
+        deleteRow(); // todo: return correct promise
+        return Promise.resolve();
+      },
+    },
+    [state]
+  );
 
-  useConfigurableAction({
-    name: 'Delete row',
-    owner: actionOwnerName,
-    ownerUid: actionOwnerId,
-    hasArguments: false,
-    executer: () => {
-      deleteRow(); // todo: return correct promise
-      return Promise.resolve();
-    }
-  }, [state]);
+  useConfigurableAction(
+    {
+      name: 'Export to Excel',
+      description: 'Export current table view to Excel',
+      owner: actionOwnerName,
+      ownerUid: actionOwnerId,
+      hasArguments: false,
+      executer: () => {
+        debouncedExportToExcel(); // return real promise
+        return Promise.resolve();
+      },
+    },
+    [state]
+  );
 
-  useConfigurableAction({
-    name: 'Export to Excel',
-    description: 'Export current table view to Excel',
-    owner: actionOwnerName,
-    ownerUid: actionOwnerId,
-    hasArguments: false,
-    executer: () => {
-      debouncedExportToExcel(); // return real promise
-      return Promise.resolve();
-    }
-  }, [state]);
+  useConfigurableAction(
+    {
+      name: 'Toggle Advanced Filter',
+      owner: actionOwnerName,
+      ownerUid: actionOwnerId,
+      hasArguments: false,
+      executer: () => {
+        toggleAdvancedFilter(); // return real promise
+        return Promise.resolve();
+      },
+    },
+    [state]
+  );
 
-  useConfigurableAction({
-    name: 'Toggle Advanced Filter',
-    owner: actionOwnerName,
-    ownerUid: actionOwnerId,
-    hasArguments: false,
-    executer: () => {
-      toggleAdvancedFilter(); // return real promise
-      return Promise.resolve();
-    }
-  }, [state]);
-
-  useConfigurableAction({
-    name: 'Toggle Columns Selector',
-    owner: actionOwnerName,
-    ownerUid: actionOwnerId,
-    hasArguments: false,
-    executer: () => {
-      toggleColumnsSelector(); // return real promise
-      return Promise.resolve();
-    }
-  }, [state]);
+  useConfigurableAction(
+    {
+      name: 'Toggle Columns Selector',
+      owner: actionOwnerName,
+      ownerUid: actionOwnerId,
+      hasArguments: false,
+      executer: () => {
+        toggleColumnsSelector(); // return real promise
+        return Promise.resolve();
+      },
+    },
+    [state]
+  );
   //#endregion
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */

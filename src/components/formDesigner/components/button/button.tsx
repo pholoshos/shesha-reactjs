@@ -7,7 +7,7 @@ import settingsFormJson from './settingsForm.json';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import ConfigurableButton from './configurableButton';
 import { IButtonGroupButton } from '../../../../providers/buttonGroupConfigurator/models';
-import { useAuth, useForm } from '../../../..';
+import { useSheshaApplication, useForm } from '../../../..';
 import { IButtonGroupItemBaseV0, migrateV0toV1 } from './migrations/migrate-v1';
 import { migrateV1toV2 } from './migrations/migrate-v2';
 
@@ -23,7 +23,7 @@ const ButtonField: IToolboxComponent<IButtonProps> = {
   icon: <BorderOutlined />,
   factory: ({ style, ...model }: IButtonProps) => {
     const { isComponentDisabled, isComponentHidden, formMode, formData } = useForm();
-    const { anyOfPermissionsGranted } = useAuth();
+    const { anyOfPermissionsGranted } = useSheshaApplication();
 
     const { id, isDynamic, hidden, disabled } = model;
 
@@ -71,17 +71,19 @@ const ButtonField: IToolboxComponent<IButtonProps> = {
     };
     return buttonModel;
   },
-  migrator: m => m.add<IButtonGroupItemBaseV0>(0, prev => {
-    const buttonModel: IButtonGroupItemBaseV0 = {
-      ...prev,
-      label: prev.label ?? 'Submit',
-      sortOrder: 0,
-      itemType: 'item'
-    };
-    return buttonModel;
-  })
-  .add<IButtonProps>(1, migrateV0toV1)
-  .add<IButtonProps>(2, migrateV1toV2),
+  migrator: m =>
+    m
+      .add<IButtonGroupItemBaseV0>(0, prev => {
+        const buttonModel: IButtonGroupItemBaseV0 = {
+          ...prev,
+          label: prev.label ?? 'Submit',
+          sortOrder: 0,
+          itemType: 'item',
+        };
+        return buttonModel;
+      })
+      .add<IButtonProps>(1, migrateV0toV1)
+      .add<IButtonProps>(2, migrateV1toV2),
 };
 
 export default ButtonField;

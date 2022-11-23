@@ -7,7 +7,7 @@ import { Alert, Menu } from 'antd';
 import { IButtonGroupButton, ButtonGroupItemProps } from '../../../../../providers/buttonGroupConfigurator/models';
 import { useForm } from '../../../../../providers/form';
 import { ConfigurableButton } from '../configurableButton';
-import { useAuth, useDataTableSelection, useGlobalState } from '../../../../../providers';
+import { useSheshaApplication, useDataTableSelection, useGlobalState } from '../../../../../providers';
 import moment from 'moment';
 import { executeExpression, getStyle } from '../../../../../providers/form/utils';
 import { getButtonGroupMenuItem } from './utils';
@@ -20,7 +20,7 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
   icon: <GroupOutlined />,
   factory: (model: IButtonGroupProps) => {
     const { isComponentHidden, formMode } = useForm();
-    const { anyOfPermissionsGranted } = useAuth();
+    const { anyOfPermissionsGranted } = useSheshaApplication();
     const hidden = isComponentHidden({ id: model?.id, isDynamic: model?.isDynamic, hidden: model?.hidden });
     const granted = anyOfPermissionsGranted(model?.permissions || []);
 
@@ -35,16 +35,26 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
       items: [],
     };
   },
-  migrator: m => m.add<IButtonGroupProps>(0, prev => {
-      return {
-        ...prev,
-        items: prev['items'] ?? [],
-      };
-    })
-    .add<IButtonGroupProps>(1, migrateV0toV1)
-    .add<IButtonGroupProps>(2, migrateV1toV2),
+  migrator: m =>
+    m
+      .add<IButtonGroupProps>(0, prev => {
+        return {
+          ...prev,
+          items: prev['items'] ?? [],
+        };
+      })
+      .add<IButtonGroupProps>(1, migrateV0toV1)
+      .add<IButtonGroupProps>(2, migrateV1toV2),
   settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
-    return <ToolbarSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
+    return (
+      <ToolbarSettings
+        readOnly={readOnly}
+        model={model}
+        onSave={onSave}
+        onCancel={onCancel}
+        onValuesChange={onValuesChange}
+      />
+    );
   },
 };
 
@@ -54,7 +64,7 @@ type MenuButton = ButtonGroupItemProps & {
 
 export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize = 'middle' }) => {
   const { formMode, formData, form } = useForm();
-  const { anyOfPermissionsGranted } = useAuth();
+  const { anyOfPermissionsGranted } = useSheshaApplication();
   const { globalState } = useGlobalState();
   const { selectedRow } = useDataTableSelection(false) ?? {}; // todo: move to a generic context provider
 
@@ -69,13 +79,10 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
       moment: moment,
       context: { selectedRow },
     };
-    return executeExpression<boolean>(expression,
-      expressionArgs,
-      true,
-      (error) => {
-        console.error(error);
-        return true;
-      });
+    return executeExpression<boolean>(expression, expressionArgs, true, error => {
+      console.error(error);
+      return true;
+    });
   };
 
   /**

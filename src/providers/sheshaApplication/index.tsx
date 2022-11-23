@@ -12,7 +12,6 @@ import { RestfulProvider } from 'restful-react';
 import IRequestHeaders from '../../interfaces/requestHeaders';
 import { setBackendUrlAction, setHeadersAction } from './actions';
 import { Router } from 'next/router';
-
 import AuthProvider from '../auth';
 import AuthorizationSettingsProvider from '../authorizationSettings';
 import ShaRoutingProvider from '../shaRouting';
@@ -61,6 +60,8 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     toolboxComponentGroups,
   });
 
+  const authRef = useRef<IAuthProviderRefProps>();
+
   const setRequestHeaders = (headers: IRequestHeaders) => {
     dispatch(setHeadersAction(headers));
   };
@@ -68,8 +69,6 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
   const changeBackendUrl = (newBackendUrl: string) => {
     dispatch(setBackendUrlAction(newBackendUrl));
   };
-
-  const authRef = useRef<IAuthProviderRefProps>();
 
   return (
     <SheshaApplicationStateContext.Provider value={state}>

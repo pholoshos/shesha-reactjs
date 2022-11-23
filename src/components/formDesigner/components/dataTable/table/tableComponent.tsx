@@ -8,7 +8,6 @@ import {
   CollapsibleSidebarContainer,
   IndexTableColumnFilters,
   IndexTableColumnVisibilityToggle,
-  useAuth,
   axiosHttp,
   useSheshaApplication,
   useModal,
@@ -35,21 +34,31 @@ const TableComponent: IToolboxComponent<ITableComponentProps> = {
       items: [],
     };
   },
-  migrator: m => m.add<ITableComponentProps>(0, prev => {
-    const items = prev['items'] && Array.isArray(prev['items']) ? prev['items'] : [];
-    return {
-      ...prev,
-      items: items,
-      useMultiselect: prev['useMultiselect'] ?? false,
-      crud: prev['crud'] ?? false,
-      flexibleHeight: prev['flexibleHeight'] ?? false,
-    };
-  })
-    .add<ITableComponentProps>(1, migrateV0toV1)
-    .add<ITableComponentProps>(2, migrateV1toV2),
+  migrator: m =>
+    m
+      .add<ITableComponentProps>(0, prev => {
+        const items = prev['items'] && Array.isArray(prev['items']) ? prev['items'] : [];
+        return {
+          ...prev,
+          items: items,
+          useMultiselect: prev['useMultiselect'] ?? false,
+          crud: prev['crud'] ?? false,
+          flexibleHeight: prev['flexibleHeight'] ?? false,
+        };
+      })
+      .add<ITableComponentProps>(1, migrateV0toV1)
+      .add<ITableComponentProps>(2, migrateV1toV2),
 
   settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
-    return <TableSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
+    return (
+      <TableSettings
+        readOnly={readOnly}
+        model={model}
+        onSave={onSave}
+        onCancel={onCancel}
+        onValuesChange={onValuesChange}
+      />
+    );
   },
 };
 
@@ -80,7 +89,7 @@ export const TableWrapper: FC<ITableComponentProps> = ({
 }) => {
   const { formMode, formData } = useForm();
   const { globalState } = useGlobalState();
-  const { anyOfPermissionsGranted } = useAuth();
+  const { anyOfPermissionsGranted } = useSheshaApplication();
   const { backendUrl } = useSheshaApplication();
   const [state, setState] = useState<ITableWrapperState>({
     modalProps: null,
@@ -236,7 +245,7 @@ export const TableWrapper: FC<ITableComponentProps> = ({
         onRowDropped={handleOnRowDropped}
         tableStyle={getStyle(tableStyle, formData, globalState)}
         containerStyle={getStyle(containerStyle, formData, globalState)}
-      // crudMode="dialog"
+        // crudMode="dialog"
       />
     </CollapsibleSidebarContainer>
   );

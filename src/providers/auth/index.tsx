@@ -53,6 +53,7 @@ const DEFAULT_HOME_PAGE = '/';
 
 export interface IAuthProviderRefProps {
   anyOfPermissionsGranted?: (permissions: string[]) => boolean;
+  headers?: any;
 }
 
 interface IAuthProviderProps {
@@ -324,9 +325,7 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
     return permissions.some(p => granted.includes(p));
   };
 
-  console.log('AuthProvider');
-
-  if (authRef) authRef.current = { anyOfPermissionsGranted };
+  if (authRef) authRef.current = { anyOfPermissionsGranted, headers: state?.headers };
 
   const anyOfPermissionsGrantedWrapper = (permissions: string[]) => {
     if (permissions?.length === 0) return true;

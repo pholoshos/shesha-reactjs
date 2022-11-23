@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react';
-import { useAuth } from '../../providers';
+import { useSheshaApplication } from '../../providers';
 
 export interface IProtectedContentProps {
   permissionName: string;
@@ -7,7 +7,7 @@ export interface IProtectedContentProps {
 }
 
 export const ProtectedContent: FC<IProtectedContentProps> = ({ permissionName, children }) => {
-  const { anyOfPermissionsGranted } = useAuth();
+  const { anyOfPermissionsGranted } = useSheshaApplication();
 
   const hasRights = !permissionName || anyOfPermissionsGranted([permissionName]);
 

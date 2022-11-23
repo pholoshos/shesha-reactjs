@@ -10,6 +10,7 @@ export interface ISheshaApplicationStateContext {
   applicationName?: string;
   backendUrl: string;
   httpHeaders: { [key: string]: string };
+  headers?: { [key: string]: string };
   toolboxComponentGroups?: IToolboxComponentGroup[];
   routes: ISheshaRutes;
 }
@@ -21,6 +22,7 @@ export const DEFAULT_SHESHA_ROUTES: ISheshaRutes = {
 export const SHESHA_APPLICATION_CONTEXT_INITIAL_STATE: ISheshaApplicationStateContext = {
   backendUrl: '',
   httpHeaders: {},
+  headers: {},
   toolboxComponentGroups: [],
   routes: DEFAULT_SHESHA_ROUTES,
 };

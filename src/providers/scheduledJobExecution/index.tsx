@@ -24,7 +24,6 @@ import { HubConnectionBuilder } from '@microsoft/signalr';
 import axios from 'axios';
 import FileSaver from 'file-saver';
 import { useSheshaApplication } from '../sheshaApplication';
-import { useAuth } from '../auth';
 import { getFileNameFromResponse } from '../../utils/fetchers';
 
 export interface IScheduledJobExecutionProviderProps {
@@ -43,7 +42,7 @@ const ScheduledJobExecutionProvider: FC<PropsWithChildren<IScheduledJobExecution
     id,
   });
   const { backendUrl } = useSheshaApplication();
-  const { headers } = useAuth();
+  const { headers } = useSheshaApplication();
 
   const {
     loading: isFetchingExecutionLog,

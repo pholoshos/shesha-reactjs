@@ -4,7 +4,7 @@ import { DoubleRightOutlined } from '@ant-design/icons';
 import { Steps, Button, Space, message, Col, Row } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useAuth, useForm, useGlobalState } from '../../../../providers';
+import { useForm, useGlobalState } from '../../../../providers';
 import { useSheshaApplication } from '../../../../';
 import { nanoid } from 'nanoid/non-secure';
 import WizardSettings from './settings';
@@ -27,7 +27,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
   name: 'Wizard',
   icon: <DoubleRightOutlined />,
   factory: model => {
-    const { anyOfPermissionsGranted } = useAuth();
+    const { anyOfPermissionsGranted } = useSheshaApplication();
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState, setState: setGlobalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();

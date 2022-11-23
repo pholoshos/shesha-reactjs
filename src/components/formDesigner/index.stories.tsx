@@ -239,3 +239,10 @@ export const PersonEdit = addStory(DesignerTemplate, {
     version: 2,
   },
 });
+
+export const ComplexModel = addStory(DesignerTemplate, {
+  formId: {
+    name: 'test-nested',
+    module: 'test'
+  }
+});

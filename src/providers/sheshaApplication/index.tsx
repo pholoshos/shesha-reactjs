@@ -25,6 +25,7 @@ import { StackedNavigationProvider } from '../../pages/dynamic/navigation/staked
 import ConditionalWrap from '../../components/conditionalWrapper';
 import { ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
 import { ApplicationActionsProcessor } from './configurable-actions/applicationActionsProcessor';
+import { ConfigurationItemsLoaderProvider } from '../configurationItemsLoader';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -104,25 +105,27 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
                       </AuthProvider>
                     )}
                   >
-                    <AppConfiguratorProvider>
-                      <ReferenceListDispatcherProvider>
-                        <MetadataDispatcherProvider>
-                          <StackedNavigationProvider>
-                            <DynamicModalProvider>
-                              <ApplicationActionsProcessor>{children}</ApplicationActionsProcessor>
-                            </DynamicModalProvider>
-                          </StackedNavigationProvider>
-                        </MetadataDispatcherProvider>
-                      </ReferenceListDispatcherProvider>
-                    </AppConfiguratorProvider>
+                    <ConfigurationItemsLoaderProvider>
+                      <AppConfiguratorProvider>
+                        <ReferenceListDispatcherProvider>
+                          <MetadataDispatcherProvider>
+                            <StackedNavigationProvider>
+                              <DynamicModalProvider>
+                                <ApplicationActionsProcessor>{children}</ApplicationActionsProcessor>
+                              </DynamicModalProvider>
+                            </StackedNavigationProvider>
+                          </MetadataDispatcherProvider>
+                        </ReferenceListDispatcherProvider>
+                      </AppConfiguratorProvider>
+                    </ConfigurationItemsLoaderProvider>
                   </ConditionalWrap>
                 </ShaRoutingProvider>
               </ThemeProvider>
             </UiProvider>
           </ConfigurableActionDispatcherProvider>
         </RestfulProvider>
-      </SheshaApplicationActionsContext.Provider>
-    </SheshaApplicationStateContext.Provider>
+      </SheshaApplicationActionsContext.Provider >
+    </SheshaApplicationStateContext.Provider >
   );
 };
 

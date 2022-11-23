@@ -5,6 +5,24 @@ import { Get, GetProps, useGet, UseGetProps, Mutate, MutateProps, useMutate, Use
 
 import * as RestfulShesha from '../utils/fetchers';
 export const SPEC_VERSION = 'v1';
+export interface AjaxResponseBase {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+}
+
+/**
+ * Cancel version input
+ */
+export interface CancelVersionInput {
+  /**
+   * Id of the current version
+   */
+  id?: string;
+}
+
 /**
  * Status of the Shesha.Domain.ConfigurationItems.ConfigurationItem
  */
@@ -13,7 +31,7 @@ export type ConfigurationItemVersionStatus = 1 | 2 | 3 | 4 | 5;
 /**
  * Form configuration DTO
  */
-export interface FormConfigurationDto {
+export interface CreateFormConfigurationDto {
   id?: string;
   /**
    * Form path/id is used to identify a form
@@ -40,10 +58,147 @@ export interface FormConfigurationDto {
    */
   modelType?: string | null;
   /**
+   * Type of form (index, detail etc)
+   */
+  type?: string | null;
+  /**
+   * Template that is used for the form creation
+   */
+  templateId?: string | null;
+  /**
+   * If true, indeicates that the form is a template
+   */
+  isTemplate?: boolean;
+}
+
+/**
+ * Create new version input
+ */
+export interface CreateNewVersionInput {
+  /**
+   * Id of the current version
+   */
+  id?: string;
+}
+
+export interface ErrorInfo {
+  code?: number;
+  message?: string | null;
+  details?: string | null;
+  validationErrors?: ValidationErrorInfo[] | null;
+}
+
+export interface FileContentResultAjaxResponse {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+  result?: string | null;
+}
+
+/**
+ * Form configuration DTO
+ */
+export interface FormConfigurationDto {
+  id?: string;
+  /**
+   * Module Id
+   */
+  moduleId?: string | null;
+  /**
+   * Origin id
+   */
+  originId?: string | null;
+  /**
+   * Module name
+   */
+  module?: string | null;
+  /**
+   * Form name
+   */
+  name?: string | null;
+  /**
+   * Label
+   */
+  label?: string | null;
+  /**
+   * Description
+   */
+  description?: string | null;
+  /**
+   * Markup in JSON format
+   */
+  markup?: string | null;
+  /**
+   * Type of the form model
+   */
+  modelType?: string | null;
+  /**
    * Version number
    */
   versionNo?: number;
+  /**
+   * If true, indicates that this is a last version of the form
+   */
+  isLastVersion?: boolean;
   versionStatus?: ConfigurationItemVersionStatus;
+  suppress?: boolean;
+}
+
+export interface FormConfigurationDtoAjaxResponse {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+  result?: FormConfigurationDto;
+}
+
+export interface FormConfigurationDtoPagedResultDto {
+  items?: FormConfigurationDto[] | null;
+  totalCount?: number;
+}
+
+export interface FormConfigurationDtoPagedResultDtoAjaxResponse {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+  result?: FormConfigurationDtoPagedResultDto;
+}
+
+export interface FormConfigurationGraphQLDataResult {
+  contentType?: string | null;
+  serializerSettings?: {} | null;
+  statusCode?: number | null;
+  value?: {} | null;
+}
+
+export interface FormConfigurationGraphQLDataResultAjaxResponse {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+  result?: FormConfigurationGraphQLDataResult;
+}
+
+export interface FormConfigurationPagedResultDtoGraphQLDataResult {
+  contentType?: string | null;
+  serializerSettings?: {} | null;
+  statusCode?: number | null;
+  value?: {} | null;
+}
+
+export interface FormConfigurationPagedResultDtoGraphQLDataResultAjaxResponse {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+  result?: FormConfigurationPagedResultDtoGraphQLDataResult;
 }
 
 /**
@@ -57,13 +212,57 @@ export interface FormUpdateMarkupInput {
   markup?: string | null;
 }
 
-export interface GuidEntityDto {
-  id?: string;
+/**
+ * Move item to module input
+ */
+export interface MoveToModuleInput {
+  /**
+   * Item id
+   */
+  itemId?: string;
+  /**
+   * Module Id
+   */
+  moduleId?: string;
 }
 
-export interface GuidEntityDtoPagedResultDto {
-  items?: GuidEntityDto[] | null;
-  totalCount?: number;
+/**
+ * Update configuration status import
+ */
+export interface UpdateConfigurationStatusInput {
+  /**
+   * Filter string in JsonLogic format
+   */
+  filter: string;
+  status: ConfigurationItemVersionStatus;
+}
+
+/**
+ * Form configuration DTO
+ */
+export interface UpdateFormConfigurationDto {
+  id?: string;
+  /**
+   * Label
+   */
+  label?: string | null;
+  /**
+   * Description
+   */
+  description?: string | null;
+  /**
+   * Markup in JSON format
+   */
+  markup?: string | null;
+  /**
+   * Type of the form model
+   */
+  modelType?: string | null;
+}
+
+export interface ValidationErrorInfo {
+  message?: string | null;
+  members?: string[] | null;
 }
 
 export interface FormConfigurationGetByNameQueryParams {
@@ -79,11 +278,14 @@ export interface FormConfigurationGetByNameQueryParams {
    * Form version number. Last published form is used when missing
    */
   version?: number;
+  /**
+   * The requested API version
+   */
   'api-version'?: string;
 }
 
 export type FormConfigurationGetByNameProps = Omit<
-  GetProps<FormConfigurationDto, unknown, FormConfigurationGetByNameQueryParams, void>,
+  GetProps<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetByNameQueryParams, void>,
   'path'
 >;
 
@@ -91,14 +293,14 @@ export type FormConfigurationGetByNameProps = Omit<
  * Get current form configuration by name
  */
 export const FormConfigurationGetByName = (props: FormConfigurationGetByNameProps) => (
-  <Get<FormConfigurationDto, unknown, FormConfigurationGetByNameQueryParams, void>
+  <Get<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetByNameQueryParams, void>
     path={`/api/services/Shesha/FormConfiguration/GetByName`}
     {...props}
   />
 );
 
 export type UseFormConfigurationGetByNameProps = Omit<
-  UseGetProps<FormConfigurationDto, unknown, FormConfigurationGetByNameQueryParams, void>,
+  UseGetProps<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetByNameQueryParams, void>,
   'path'
 >;
 
@@ -106,13 +308,18 @@ export type UseFormConfigurationGetByNameProps = Omit<
  * Get current form configuration by name
  */
 export const useFormConfigurationGetByName = (props: UseFormConfigurationGetByNameProps) =>
-  useGet<FormConfigurationDto, unknown, FormConfigurationGetByNameQueryParams, void>(
+  useGet<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetByNameQueryParams, void>(
     `/api/services/Shesha/FormConfiguration/GetByName`,
     props
   );
 
 export type formConfigurationGetByNameProps = Omit<
-  RestfulShesha.GetProps<FormConfigurationDto, unknown, FormConfigurationGetByNameQueryParams, void>,
+  RestfulShesha.GetProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationGetByNameQueryParams,
+    void
+  >,
   'queryParams'
 >;
 /**
@@ -122,13 +329,58 @@ export const formConfigurationGetByName = (
   queryParams: FormConfigurationGetByNameQueryParams,
   props: formConfigurationGetByNameProps
 ) =>
-  RestfulShesha.get<FormConfigurationDto, unknown, FormConfigurationGetByNameQueryParams, void>(
+  RestfulShesha.get<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetByNameQueryParams, void>(
     `/api/services/Shesha/FormConfiguration/GetByName`,
     queryParams,
     props
   );
 
+export interface FormConfigurationGetQueryParams {
+  id?: string;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type FormConfigurationGetProps = Omit<
+  GetProps<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetQueryParams, void>,
+  'path'
+>;
+
+export const FormConfigurationGet = (props: FormConfigurationGetProps) => (
+  <Get<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetQueryParams, void>
+    path={`/api/services/Shesha/FormConfiguration/Get`}
+    {...props}
+  />
+);
+
+export type UseFormConfigurationGetProps = Omit<
+  UseGetProps<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetQueryParams, void>,
+  'path'
+>;
+
+export const useFormConfigurationGet = (props: UseFormConfigurationGetProps) =>
+  useGet<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetQueryParams, void>(
+    `/api/services/Shesha/FormConfiguration/Get`,
+    props
+  );
+
+export type formConfigurationGetProps = Omit<
+  RestfulShesha.GetProps<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetQueryParams, void>,
+  'queryParams'
+>;
+export const formConfigurationGet = (queryParams: FormConfigurationGetQueryParams, props: formConfigurationGetProps) =>
+  RestfulShesha.get<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetQueryParams, void>(
+    `/api/services/Shesha/FormConfiguration/Get`,
+    queryParams,
+    props
+  );
+
 export interface FormConfigurationUpdateMarkupQueryParams {
+  /**
+   * The requested API version
+   */
   'api-version'?: string;
 }
 
@@ -178,16 +430,81 @@ export const formConfigurationUpdateMarkup = (data: FormUpdateMarkupInput, props
     props
   );
 
+export interface FormConfigurationUpdateStatusQueryParams {
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type FormConfigurationUpdateStatusProps = Omit<
+  MutateProps<void, unknown, FormConfigurationUpdateStatusQueryParams, UpdateConfigurationStatusInput, void>,
+  'path' | 'verb'
+>;
+
+/**
+ * Update form markup
+ */
+export const FormConfigurationUpdateStatus = (props: FormConfigurationUpdateStatusProps) => (
+  <Mutate<void, unknown, FormConfigurationUpdateStatusQueryParams, UpdateConfigurationStatusInput, void>
+    verb="PUT"
+    path={`/api/services/Shesha/FormConfiguration/UpdateStatus`}
+    {...props}
+  />
+);
+
+export type UseFormConfigurationUpdateStatusProps = Omit<
+  UseMutateProps<void, unknown, FormConfigurationUpdateStatusQueryParams, UpdateConfigurationStatusInput, void>,
+  'path' | 'verb'
+>;
+
+/**
+ * Update form markup
+ */
+export const useFormConfigurationUpdateStatus = (props: UseFormConfigurationUpdateStatusProps) =>
+  useMutate<void, unknown, FormConfigurationUpdateStatusQueryParams, UpdateConfigurationStatusInput, void>(
+    'PUT',
+    `/api/services/Shesha/FormConfiguration/UpdateStatus`,
+    props
+  );
+
+export type formConfigurationUpdateStatusProps = Omit<
+  RestfulShesha.MutateProps<
+    void,
+    unknown,
+    FormConfigurationUpdateStatusQueryParams,
+    UpdateConfigurationStatusInput,
+    void
+  >,
+  'data'
+>;
+/**
+ * Update form markup
+ */
+export const formConfigurationUpdateStatus = (
+  data: UpdateConfigurationStatusInput,
+  props: formConfigurationUpdateStatusProps
+) =>
+  RestfulShesha.mutate<void, unknown, FormConfigurationUpdateStatusQueryParams, UpdateConfigurationStatusInput, void>(
+    'PUT',
+    `/api/services/Shesha/FormConfiguration/UpdateStatus`,
+    data,
+    props
+  );
+
 export interface FormConfigurationExportQueryParams {
   /**
    * Filter string in JsonLogic format
    */
   filter?: string;
+  /**
+   * The requested API version
+   */
   'api-version'?: string;
 }
 
 export type FormConfigurationExportProps = Omit<
-  GetProps<void, unknown, FormConfigurationExportQueryParams, void>,
+  GetProps<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>,
   'path'
 >;
 
@@ -195,14 +512,14 @@ export type FormConfigurationExportProps = Omit<
  * Export form
  */
 export const FormConfigurationExport = (props: FormConfigurationExportProps) => (
-  <Get<void, unknown, FormConfigurationExportQueryParams, void>
+  <Get<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>
     path={`/api/services/Shesha/FormConfiguration/Export`}
     {...props}
   />
 );
 
 export type UseFormConfigurationExportProps = Omit<
-  UseGetProps<void, unknown, FormConfigurationExportQueryParams, void>,
+  UseGetProps<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>,
   'path'
 >;
 
@@ -210,13 +527,13 @@ export type UseFormConfigurationExportProps = Omit<
  * Export form
  */
 export const useFormConfigurationExport = (props: UseFormConfigurationExportProps) =>
-  useGet<void, unknown, FormConfigurationExportQueryParams, void>(
+  useGet<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>(
     `/api/services/Shesha/FormConfiguration/Export`,
     props
   );
 
 export type formConfigurationExportProps = Omit<
-  RestfulShesha.GetProps<void, unknown, FormConfigurationExportQueryParams, void>,
+  RestfulShesha.GetProps<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>,
   'queryParams'
 >;
 /**
@@ -226,9 +543,493 @@ export const formConfigurationExport = (
   queryParams: FormConfigurationExportQueryParams,
   props: formConfigurationExportProps
 ) =>
-  RestfulShesha.get<void, unknown, FormConfigurationExportQueryParams, void>(
+  RestfulShesha.get<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>(
     `/api/services/Shesha/FormConfiguration/Export`,
     queryParams,
+    props
+  );
+
+export interface FormConfigurationCreateQueryParams {
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type FormConfigurationCreateProps = Omit<
+  MutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateQueryParams,
+    CreateFormConfigurationDto,
+    void
+  >,
+  'path' | 'verb'
+>;
+
+/**
+ * Create new form configuration
+ */
+export const FormConfigurationCreate = (props: FormConfigurationCreateProps) => (
+  <Mutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateQueryParams,
+    CreateFormConfigurationDto,
+    void
+  >
+    verb="POST"
+    path={`/api/services/Shesha/FormConfiguration/Create`}
+    {...props}
+  />
+);
+
+export type UseFormConfigurationCreateProps = Omit<
+  UseMutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateQueryParams,
+    CreateFormConfigurationDto,
+    void
+  >,
+  'path' | 'verb'
+>;
+
+/**
+ * Create new form configuration
+ */
+export const useFormConfigurationCreate = (props: UseFormConfigurationCreateProps) =>
+  useMutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateQueryParams,
+    CreateFormConfigurationDto,
+    void
+  >('POST', `/api/services/Shesha/FormConfiguration/Create`, props);
+
+export type formConfigurationCreateProps = Omit<
+  RestfulShesha.MutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateQueryParams,
+    CreateFormConfigurationDto,
+    void
+  >,
+  'data'
+>;
+/**
+ * Create new form configuration
+ */
+export const formConfigurationCreate = (data: CreateFormConfigurationDto, props: formConfigurationCreateProps) =>
+  RestfulShesha.mutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateQueryParams,
+    CreateFormConfigurationDto,
+    void
+  >('POST', `/api/services/Shesha/FormConfiguration/Create`, data, props);
+
+export interface FormConfigurationCreateNewVersionQueryParams {
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type FormConfigurationCreateNewVersionProps = Omit<
+  MutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateNewVersionQueryParams,
+    CreateNewVersionInput,
+    void
+  >,
+  'path' | 'verb'
+>;
+
+/**
+ * Create new version of form configuration
+ */
+export const FormConfigurationCreateNewVersion = (props: FormConfigurationCreateNewVersionProps) => (
+  <Mutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateNewVersionQueryParams,
+    CreateNewVersionInput,
+    void
+  >
+    verb="POST"
+    path={`/api/services/Shesha/FormConfiguration/CreateNewVersion`}
+    {...props}
+  />
+);
+
+export type UseFormConfigurationCreateNewVersionProps = Omit<
+  UseMutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateNewVersionQueryParams,
+    CreateNewVersionInput,
+    void
+  >,
+  'path' | 'verb'
+>;
+
+/**
+ * Create new version of form configuration
+ */
+export const useFormConfigurationCreateNewVersion = (props: UseFormConfigurationCreateNewVersionProps) =>
+  useMutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateNewVersionQueryParams,
+    CreateNewVersionInput,
+    void
+  >('POST', `/api/services/Shesha/FormConfiguration/CreateNewVersion`, props);
+
+export type formConfigurationCreateNewVersionProps = Omit<
+  RestfulShesha.MutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateNewVersionQueryParams,
+    CreateNewVersionInput,
+    void
+  >,
+  'data'
+>;
+/**
+ * Create new version of form configuration
+ */
+export const formConfigurationCreateNewVersion = (
+  data: CreateNewVersionInput,
+  props: formConfigurationCreateNewVersionProps
+) =>
+  RestfulShesha.mutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCreateNewVersionQueryParams,
+    CreateNewVersionInput,
+    void
+  >('POST', `/api/services/Shesha/FormConfiguration/CreateNewVersion`, data, props);
+
+export interface FormConfigurationCancelVersionQueryParams {
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type FormConfigurationCancelVersionProps = Omit<
+  MutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCancelVersionQueryParams,
+    CancelVersionInput,
+    void
+  >,
+  'path' | 'verb'
+>;
+
+/**
+ * Cancel version
+ */
+export const FormConfigurationCancelVersion = (props: FormConfigurationCancelVersionProps) => (
+  <Mutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCancelVersionQueryParams,
+    CancelVersionInput,
+    void
+  >
+    verb="POST"
+    path={`/api/services/Shesha/FormConfiguration/CancelVersion`}
+    {...props}
+  />
+);
+
+export type UseFormConfigurationCancelVersionProps = Omit<
+  UseMutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCancelVersionQueryParams,
+    CancelVersionInput,
+    void
+  >,
+  'path' | 'verb'
+>;
+
+/**
+ * Cancel version
+ */
+export const useFormConfigurationCancelVersion = (props: UseFormConfigurationCancelVersionProps) =>
+  useMutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCancelVersionQueryParams,
+    CancelVersionInput,
+    void
+  >('POST', `/api/services/Shesha/FormConfiguration/CancelVersion`, props);
+
+export type formConfigurationCancelVersionProps = Omit<
+  RestfulShesha.MutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCancelVersionQueryParams,
+    CancelVersionInput,
+    void
+  >,
+  'data'
+>;
+/**
+ * Cancel version
+ */
+export const formConfigurationCancelVersion = (data: CancelVersionInput, props: formConfigurationCancelVersionProps) =>
+  RestfulShesha.mutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCancelVersionQueryParams,
+    CancelVersionInput,
+    void
+  >('POST', `/api/services/Shesha/FormConfiguration/CancelVersion`, data, props);
+
+export interface FormConfigurationGetJsonQueryParams {
+  id?: string;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type FormConfigurationGetJsonProps = Omit<
+  GetProps<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationGetJsonQueryParams, void>,
+  'path'
+>;
+
+/**
+ * Get form in JSON format
+ */
+export const FormConfigurationGetJson = (props: FormConfigurationGetJsonProps) => (
+  <Get<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationGetJsonQueryParams, void>
+    path={`/api/services/Shesha/FormConfiguration/GetJson`}
+    {...props}
+  />
+);
+
+export type UseFormConfigurationGetJsonProps = Omit<
+  UseGetProps<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationGetJsonQueryParams, void>,
+  'path'
+>;
+
+/**
+ * Get form in JSON format
+ */
+export const useFormConfigurationGetJson = (props: UseFormConfigurationGetJsonProps) =>
+  useGet<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationGetJsonQueryParams, void>(
+    `/api/services/Shesha/FormConfiguration/GetJson`,
+    props
+  );
+
+export type formConfigurationGetJsonProps = Omit<
+  RestfulShesha.GetProps<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationGetJsonQueryParams, void>,
+  'queryParams'
+>;
+/**
+ * Get form in JSON format
+ */
+export const formConfigurationGetJson = (
+  queryParams: FormConfigurationGetJsonQueryParams,
+  props: formConfigurationGetJsonProps
+) =>
+  RestfulShesha.get<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationGetJsonQueryParams, void>(
+    `/api/services/Shesha/FormConfiguration/GetJson`,
+    queryParams,
+    props
+  );
+
+export interface FormConfigurationUpdateQueryParams {
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type FormConfigurationUpdateProps = Omit<
+  MutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationUpdateQueryParams,
+    UpdateFormConfigurationDto,
+    void
+  >,
+  'path' | 'verb'
+>;
+
+/**
+ * Update form configuration
+ */
+export const FormConfigurationUpdate = (props: FormConfigurationUpdateProps) => (
+  <Mutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationUpdateQueryParams,
+    UpdateFormConfigurationDto,
+    void
+  >
+    verb="PUT"
+    path={`/api/services/Shesha/FormConfiguration/Update`}
+    {...props}
+  />
+);
+
+export type UseFormConfigurationUpdateProps = Omit<
+  UseMutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationUpdateQueryParams,
+    UpdateFormConfigurationDto,
+    void
+  >,
+  'path' | 'verb'
+>;
+
+/**
+ * Update form configuration
+ */
+export const useFormConfigurationUpdate = (props: UseFormConfigurationUpdateProps) =>
+  useMutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationUpdateQueryParams,
+    UpdateFormConfigurationDto,
+    void
+  >('PUT', `/api/services/Shesha/FormConfiguration/Update`, props);
+
+export type formConfigurationUpdateProps = Omit<
+  RestfulShesha.MutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationUpdateQueryParams,
+    UpdateFormConfigurationDto,
+    void
+  >,
+  'data'
+>;
+/**
+ * Update form configuration
+ */
+export const formConfigurationUpdate = (data: UpdateFormConfigurationDto, props: formConfigurationUpdateProps) =>
+  RestfulShesha.mutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationUpdateQueryParams,
+    UpdateFormConfigurationDto,
+    void
+  >('PUT', `/api/services/Shesha/FormConfiguration/Update`, data, props);
+
+export interface FormConfigurationDeleteQueryParams {
+  id?: string;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type FormConfigurationDeleteProps = Omit<
+  MutateProps<void, unknown, FormConfigurationDeleteQueryParams, void, void>,
+  'path' | 'verb'
+>;
+
+/**
+ * Delete form
+ */
+export const FormConfigurationDelete = (props: FormConfigurationDeleteProps) => (
+  <Mutate<void, unknown, FormConfigurationDeleteQueryParams, void, void>
+    verb="DELETE"
+    path={`/api/services/Shesha/FormConfiguration/Delete`}
+    {...props}
+  />
+);
+
+export type UseFormConfigurationDeleteProps = Omit<
+  UseMutateProps<void, unknown, FormConfigurationDeleteQueryParams, void, void>,
+  'path' | 'verb'
+>;
+
+/**
+ * Delete form
+ */
+export const useFormConfigurationDelete = (props: UseFormConfigurationDeleteProps) =>
+  useMutate<void, unknown, FormConfigurationDeleteQueryParams, void, void>(
+    'DELETE',
+    `/api/services/Shesha/FormConfiguration/Delete`,
+    { ...props }
+  );
+
+export type formConfigurationDeleteProps = Omit<
+  RestfulShesha.MutateProps<void, unknown, FormConfigurationDeleteQueryParams, void, void>,
+  'data'
+>;
+/**
+ * Delete form
+ */
+export const formConfigurationDelete = (props: formConfigurationDeleteProps) =>
+  RestfulShesha.mutate<void, unknown, FormConfigurationDeleteQueryParams, void, void>(
+    'DELETE',
+    `/api/services/Shesha/FormConfiguration/Delete`,
+    undefined,
+    props
+  );
+
+export interface FormConfigurationMoveToModuleQueryParams {
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type FormConfigurationMoveToModuleProps = Omit<
+  MutateProps<void, unknown, FormConfigurationMoveToModuleQueryParams, MoveToModuleInput, void>,
+  'path' | 'verb'
+>;
+
+/**
+ * Move form to another module
+ */
+export const FormConfigurationMoveToModule = (props: FormConfigurationMoveToModuleProps) => (
+  <Mutate<void, unknown, FormConfigurationMoveToModuleQueryParams, MoveToModuleInput, void>
+    verb="POST"
+    path={`/api/services/Shesha/FormConfiguration/MoveToModule`}
+    {...props}
+  />
+);
+
+export type UseFormConfigurationMoveToModuleProps = Omit<
+  UseMutateProps<void, unknown, FormConfigurationMoveToModuleQueryParams, MoveToModuleInput, void>,
+  'path' | 'verb'
+>;
+
+/**
+ * Move form to another module
+ */
+export const useFormConfigurationMoveToModule = (props: UseFormConfigurationMoveToModuleProps) =>
+  useMutate<void, unknown, FormConfigurationMoveToModuleQueryParams, MoveToModuleInput, void>(
+    'POST',
+    `/api/services/Shesha/FormConfiguration/MoveToModule`,
+    props
+  );
+
+export type formConfigurationMoveToModuleProps = Omit<
+  RestfulShesha.MutateProps<void, unknown, FormConfigurationMoveToModuleQueryParams, MoveToModuleInput, void>,
+  'data'
+>;
+/**
+ * Move form to another module
+ */
+export const formConfigurationMoveToModule = (data: MoveToModuleInput, props: formConfigurationMoveToModuleProps) =>
+  RestfulShesha.mutate<void, unknown, FormConfigurationMoveToModuleQueryParams, MoveToModuleInput, void>(
+    'POST',
+    `/api/services/Shesha/FormConfiguration/MoveToModule`,
+    data,
     props
   );
 
@@ -244,45 +1045,59 @@ export interface FormConfigurationGetAllQueryParams {
   sorting?: string;
   skipCount?: number;
   maxResultCount?: number;
+  /**
+   * The requested API version
+   */
   'api-version'?: string;
 }
 
 export type FormConfigurationGetAllProps = Omit<
-  GetProps<GuidEntityDtoPagedResultDto, unknown, FormConfigurationGetAllQueryParams, void>,
+  GetProps<FormConfigurationDtoPagedResultDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetAllQueryParams, void>,
   'path'
 >;
 
 export const FormConfigurationGetAll = (props: FormConfigurationGetAllProps) => (
-  <Get<GuidEntityDtoPagedResultDto, unknown, FormConfigurationGetAllQueryParams, void>
+  <Get<FormConfigurationDtoPagedResultDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetAllQueryParams, void>
     path={`/api/services/Shesha/FormConfiguration/GetAll`}
     {...props}
   />
 );
 
 export type UseFormConfigurationGetAllProps = Omit<
-  UseGetProps<GuidEntityDtoPagedResultDto, unknown, FormConfigurationGetAllQueryParams, void>,
+  UseGetProps<
+    FormConfigurationDtoPagedResultDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationGetAllQueryParams,
+    void
+  >,
   'path'
 >;
 
 export const useFormConfigurationGetAll = (props: UseFormConfigurationGetAllProps) =>
-  useGet<GuidEntityDtoPagedResultDto, unknown, FormConfigurationGetAllQueryParams, void>(
+  useGet<FormConfigurationDtoPagedResultDtoAjaxResponse, AjaxResponseBase, FormConfigurationGetAllQueryParams, void>(
     `/api/services/Shesha/FormConfiguration/GetAll`,
     props
   );
 
 export type formConfigurationGetAllProps = Omit<
-  RestfulShesha.GetProps<GuidEntityDtoPagedResultDto, unknown, FormConfigurationGetAllQueryParams, void>,
+  RestfulShesha.GetProps<
+    FormConfigurationDtoPagedResultDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationGetAllQueryParams,
+    void
+  >,
   'queryParams'
 >;
 export const formConfigurationGetAll = (
   queryParams: FormConfigurationGetAllQueryParams,
   props: formConfigurationGetAllProps
 ) =>
-  RestfulShesha.get<GuidEntityDtoPagedResultDto, unknown, FormConfigurationGetAllQueryParams, void>(
-    `/api/services/Shesha/FormConfiguration/GetAll`,
-    queryParams,
-    props
-  );
+  RestfulShesha.get<
+    FormConfigurationDtoPagedResultDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationGetAllQueryParams,
+    void
+  >(`/api/services/Shesha/FormConfiguration/GetAll`, queryParams, props);
 
 export interface FormConfigurationQueryQueryParams {
   /**
@@ -290,11 +1105,14 @@ export interface FormConfigurationQueryQueryParams {
    */
   properties?: string;
   id?: string;
+  /**
+   * The requested API version
+   */
   'api-version'?: string;
 }
 
 export type FormConfigurationQueryProps = Omit<
-  GetProps<void, unknown, FormConfigurationQueryQueryParams, void>,
+  GetProps<FormConfigurationGraphQLDataResultAjaxResponse, AjaxResponseBase, FormConfigurationQueryQueryParams, void>,
   'path'
 >;
 
@@ -303,14 +1121,19 @@ export type FormConfigurationQueryProps = Omit<
  * NOTE: don't use on prod, will be merged with the `Get`endpoint soon
  */
 export const FormConfigurationQuery = (props: FormConfigurationQueryProps) => (
-  <Get<void, unknown, FormConfigurationQueryQueryParams, void>
+  <Get<FormConfigurationGraphQLDataResultAjaxResponse, AjaxResponseBase, FormConfigurationQueryQueryParams, void>
     path={`/api/services/Shesha/FormConfiguration/Query`}
     {...props}
   />
 );
 
 export type UseFormConfigurationQueryProps = Omit<
-  UseGetProps<void, unknown, FormConfigurationQueryQueryParams, void>,
+  UseGetProps<
+    FormConfigurationGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationQueryQueryParams,
+    void
+  >,
   'path'
 >;
 
@@ -319,10 +1142,18 @@ export type UseFormConfigurationQueryProps = Omit<
  * NOTE: don't use on prod, will be merged with the `Get`endpoint soon
  */
 export const useFormConfigurationQuery = (props: UseFormConfigurationQueryProps) =>
-  useGet<void, unknown, FormConfigurationQueryQueryParams, void>(`/api/services/Shesha/FormConfiguration/Query`, props);
+  useGet<FormConfigurationGraphQLDataResultAjaxResponse, AjaxResponseBase, FormConfigurationQueryQueryParams, void>(
+    `/api/services/Shesha/FormConfiguration/Query`,
+    props
+  );
 
 export type formConfigurationQueryProps = Omit<
-  RestfulShesha.GetProps<void, unknown, FormConfigurationQueryQueryParams, void>,
+  RestfulShesha.GetProps<
+    FormConfigurationGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationQueryQueryParams,
+    void
+  >,
   'queryParams'
 >;
 /**
@@ -333,11 +1164,12 @@ export const formConfigurationQuery = (
   queryParams: FormConfigurationQueryQueryParams,
   props: formConfigurationQueryProps
 ) =>
-  RestfulShesha.get<void, unknown, FormConfigurationQueryQueryParams, void>(
-    `/api/services/Shesha/FormConfiguration/Query`,
-    queryParams,
-    props
-  );
+  RestfulShesha.get<
+    FormConfigurationGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationQueryQueryParams,
+    void
+  >(`/api/services/Shesha/FormConfiguration/Query`, queryParams, props);
 
 export interface FormConfigurationQueryAllQueryParams {
   /**
@@ -355,11 +1187,19 @@ export interface FormConfigurationQueryAllQueryParams {
   sorting?: string;
   skipCount?: number;
   maxResultCount?: number;
+  /**
+   * The requested API version
+   */
   'api-version'?: string;
 }
 
 export type FormConfigurationQueryAllProps = Omit<
-  GetProps<void, unknown, FormConfigurationQueryAllQueryParams, void>,
+  GetProps<
+    FormConfigurationPagedResultDtoGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationQueryAllQueryParams,
+    void
+  >,
   'path'
 >;
 
@@ -368,14 +1208,24 @@ export type FormConfigurationQueryAllProps = Omit<
  * NOTE: don't use on prod, will be merged with the GetAll endpoint soon
  */
 export const FormConfigurationQueryAll = (props: FormConfigurationQueryAllProps) => (
-  <Get<void, unknown, FormConfigurationQueryAllQueryParams, void>
+  <Get<
+    FormConfigurationPagedResultDtoGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationQueryAllQueryParams,
+    void
+  >
     path={`/api/services/Shesha/FormConfiguration/QueryAll`}
     {...props}
   />
 );
 
 export type UseFormConfigurationQueryAllProps = Omit<
-  UseGetProps<void, unknown, FormConfigurationQueryAllQueryParams, void>,
+  UseGetProps<
+    FormConfigurationPagedResultDtoGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationQueryAllQueryParams,
+    void
+  >,
   'path'
 >;
 
@@ -384,13 +1234,20 @@ export type UseFormConfigurationQueryAllProps = Omit<
  * NOTE: don't use on prod, will be merged with the GetAll endpoint soon
  */
 export const useFormConfigurationQueryAll = (props: UseFormConfigurationQueryAllProps) =>
-  useGet<void, unknown, FormConfigurationQueryAllQueryParams, void>(
-    `/api/services/Shesha/FormConfiguration/QueryAll`,
-    props
-  );
+  useGet<
+    FormConfigurationPagedResultDtoGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationQueryAllQueryParams,
+    void
+  >(`/api/services/Shesha/FormConfiguration/QueryAll`, props);
 
 export type formConfigurationQueryAllProps = Omit<
-  RestfulShesha.GetProps<void, unknown, FormConfigurationQueryAllQueryParams, void>,
+  RestfulShesha.GetProps<
+    FormConfigurationPagedResultDtoGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationQueryAllQueryParams,
+    void
+  >,
   'queryParams'
 >;
 /**
@@ -401,171 +1258,9 @@ export const formConfigurationQueryAll = (
   queryParams: FormConfigurationQueryAllQueryParams,
   props: formConfigurationQueryAllProps
 ) =>
-  RestfulShesha.get<void, unknown, FormConfigurationQueryAllQueryParams, void>(
-    `/api/services/Shesha/FormConfiguration/QueryAll`,
-    queryParams,
-    props
-  );
-
-export interface FormConfigurationGetQueryParams {
-  id?: string;
-  'api-version'?: string;
-}
-
-export type FormConfigurationGetProps = Omit<
-  GetProps<GuidEntityDto, unknown, FormConfigurationGetQueryParams, void>,
-  'path'
->;
-
-export const FormConfigurationGet = (props: FormConfigurationGetProps) => (
-  <Get<GuidEntityDto, unknown, FormConfigurationGetQueryParams, void>
-    path={`/api/services/Shesha/FormConfiguration/Get`}
-    {...props}
-  />
-);
-
-export type UseFormConfigurationGetProps = Omit<
-  UseGetProps<GuidEntityDto, unknown, FormConfigurationGetQueryParams, void>,
-  'path'
->;
-
-export const useFormConfigurationGet = (props: UseFormConfigurationGetProps) =>
-  useGet<GuidEntityDto, unknown, FormConfigurationGetQueryParams, void>(
-    `/api/services/Shesha/FormConfiguration/Get`,
-    props
-  );
-
-export type formConfigurationGetProps = Omit<
-  RestfulShesha.GetProps<GuidEntityDto, unknown, FormConfigurationGetQueryParams, void>,
-  'queryParams'
->;
-export const formConfigurationGet = (queryParams: FormConfigurationGetQueryParams, props: formConfigurationGetProps) =>
-  RestfulShesha.get<GuidEntityDto, unknown, FormConfigurationGetQueryParams, void>(
-    `/api/services/Shesha/FormConfiguration/Get`,
-    queryParams,
-    props
-  );
-
-export interface FormConfigurationCreateQueryParams {
-  'api-version'?: string;
-}
-
-export type FormConfigurationCreateProps = Omit<
-  MutateProps<GuidEntityDto, unknown, FormConfigurationCreateQueryParams, GuidEntityDto, void>,
-  'path' | 'verb'
->;
-
-export const FormConfigurationCreate = (props: FormConfigurationCreateProps) => (
-  <Mutate<GuidEntityDto, unknown, FormConfigurationCreateQueryParams, GuidEntityDto, void>
-    verb="POST"
-    path={`/api/services/Shesha/FormConfiguration/Create`}
-    {...props}
-  />
-);
-
-export type UseFormConfigurationCreateProps = Omit<
-  UseMutateProps<GuidEntityDto, unknown, FormConfigurationCreateQueryParams, GuidEntityDto, void>,
-  'path' | 'verb'
->;
-
-export const useFormConfigurationCreate = (props: UseFormConfigurationCreateProps) =>
-  useMutate<GuidEntityDto, unknown, FormConfigurationCreateQueryParams, GuidEntityDto, void>(
-    'POST',
-    `/api/services/Shesha/FormConfiguration/Create`,
-    props
-  );
-
-export type formConfigurationCreateProps = Omit<
-  RestfulShesha.MutateProps<GuidEntityDto, unknown, FormConfigurationCreateQueryParams, GuidEntityDto, void>,
-  'data'
->;
-export const formConfigurationCreate = (data: GuidEntityDto, props: formConfigurationCreateProps) =>
-  RestfulShesha.mutate<GuidEntityDto, unknown, FormConfigurationCreateQueryParams, GuidEntityDto, void>(
-    'POST',
-    `/api/services/Shesha/FormConfiguration/Create`,
-    data,
-    props
-  );
-
-export interface FormConfigurationUpdateQueryParams {
-  'api-version'?: string;
-}
-
-export type FormConfigurationUpdateProps = Omit<
-  MutateProps<GuidEntityDto, unknown, FormConfigurationUpdateQueryParams, GuidEntityDto, void>,
-  'path' | 'verb'
->;
-
-export const FormConfigurationUpdate = (props: FormConfigurationUpdateProps) => (
-  <Mutate<GuidEntityDto, unknown, FormConfigurationUpdateQueryParams, GuidEntityDto, void>
-    verb="PUT"
-    path={`/api/services/Shesha/FormConfiguration/Update`}
-    {...props}
-  />
-);
-
-export type UseFormConfigurationUpdateProps = Omit<
-  UseMutateProps<GuidEntityDto, unknown, FormConfigurationUpdateQueryParams, GuidEntityDto, void>,
-  'path' | 'verb'
->;
-
-export const useFormConfigurationUpdate = (props: UseFormConfigurationUpdateProps) =>
-  useMutate<GuidEntityDto, unknown, FormConfigurationUpdateQueryParams, GuidEntityDto, void>(
-    'PUT',
-    `/api/services/Shesha/FormConfiguration/Update`,
-    props
-  );
-
-export type formConfigurationUpdateProps = Omit<
-  RestfulShesha.MutateProps<GuidEntityDto, unknown, FormConfigurationUpdateQueryParams, GuidEntityDto, void>,
-  'data'
->;
-export const formConfigurationUpdate = (data: GuidEntityDto, props: formConfigurationUpdateProps) =>
-  RestfulShesha.mutate<GuidEntityDto, unknown, FormConfigurationUpdateQueryParams, GuidEntityDto, void>(
-    'PUT',
-    `/api/services/Shesha/FormConfiguration/Update`,
-    data,
-    props
-  );
-
-export interface FormConfigurationDeleteQueryParams {
-  id?: string;
-  'api-version'?: string;
-}
-
-export type FormConfigurationDeleteProps = Omit<
-  MutateProps<void, unknown, FormConfigurationDeleteQueryParams, void, void>,
-  'path' | 'verb'
->;
-
-export const FormConfigurationDelete = (props: FormConfigurationDeleteProps) => (
-  <Mutate<void, unknown, FormConfigurationDeleteQueryParams, void, void>
-    verb="DELETE"
-    path={`/api/services/Shesha/FormConfiguration/Delete`}
-    {...props}
-  />
-);
-
-export type UseFormConfigurationDeleteProps = Omit<
-  UseMutateProps<void, unknown, FormConfigurationDeleteQueryParams, void, void>,
-  'path' | 'verb'
->;
-
-export const useFormConfigurationDelete = (props: UseFormConfigurationDeleteProps) =>
-  useMutate<void, unknown, FormConfigurationDeleteQueryParams, void, void>(
-    'DELETE',
-    `/api/services/Shesha/FormConfiguration/Delete`,
-    { ...props }
-  );
-
-export type formConfigurationDeleteProps = Omit<
-  RestfulShesha.MutateProps<void, unknown, FormConfigurationDeleteQueryParams, void, void>,
-  'data'
->;
-export const formConfigurationDelete = (props: formConfigurationDeleteProps) =>
-  RestfulShesha.mutate<void, unknown, FormConfigurationDeleteQueryParams, void, void>(
-    'DELETE',
-    `/api/services/Shesha/FormConfiguration/Delete`,
-    undefined,
-    props
-  );
+  RestfulShesha.get<
+    FormConfigurationPagedResultDtoGraphQLDataResultAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationQueryAllQueryParams,
+    void
+  >(`/api/services/Shesha/FormConfiguration/QueryAll`, queryParams, props);

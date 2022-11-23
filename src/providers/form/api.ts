@@ -1,10 +1,17 @@
-import { useEffect, useMemo } from "react";
+import { nanoid } from "nanoid";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GetDataError, useGet } from "restful-react";
-import { useAppConfigurator } from "../..";
+import { componentsTreeToFlatStructure, IToolboxComponents, removeZeroWidthCharsFromString, useAppConfigurator, useMetadataDispatcher, useSheshaApplication } from "../..";
 import { IAjaxResponseBase } from "../../interfaces/ajaxResponse";
+import { IErrorInfo } from "../../interfaces/errorInfo";
 import { IAbpWrappedGetEntityResponse } from "../../interfaces/gql";
-import { FormIdentifier, FormMarkupWithSettings, IFormDto } from "./models";
-import { asFormFullName, asFormRawId } from "./utils";
+import { IPropertyMetadata } from "../../interfaces/metadata";
+import { EntityAjaxResponse, IEntity } from "../../pages/dynamic/interfaces";
+import { useConfigurationItemsLoader } from "../configurationItemsLoader";
+import { IMetadataDispatcherActionsContext } from "../metadataDispatcher/contexts";
+import { FormIdentifier, FormMarkupWithSettings, FormRawMarkup, IFormDto, IFormSettings } from "./models";
+import { asFormFullName, asFormRawId, getComponentsFromMarkup, useFormDesignerComponents } from "./utils";
+import * as RestfulShesha from '../../utils/fetchers';
 
 /**
  * Form configuration DTO
@@ -165,3 +172,297 @@ export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarku
     };
     return result;
 }
+
+export interface UseFormWitgDataArgs {
+    formId?: FormIdentifier;
+    dataId?: string;
+    onFormLoaded?: (form: IFormDto) => void;
+    onDataLoaded?: (data: any) => void;
+}
+export interface FormWithDataResponse {
+    form?: IFormDto;
+    fetchedData?: IEntity;
+    loadingState: LoadingState;
+    loaderHint?: string;
+    error?: IErrorInfo;
+    dataFetcher?: () => Promise<EntityAjaxResponse | void>; 
+}
+export interface FormWithDataState {
+    loaderHint?: string;
+    loadingState: LoadingState;
+    fetchedData?: IEntity;
+    form?: IFormDto;
+    error?: IErrorInfo;
+    dataFetcher?: () => Promise<EntityAjaxResponse | void>; 
+}
+
+export type LoadingState = 'waiting' | 'loading' | 'ready' | 'failed';
+
+export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse => {
+    const { formId, dataId } = args;
+    const { getForm } = useConfigurationItemsLoader();
+    const { backendUrl, httpHeaders } = useSheshaApplication();
+
+    const [state, setState] = useState<FormWithDataState>({ loadingState: 'waiting' });
+    const { getMetadata, getContainerProperties } = useMetadataDispatcher();
+    const toolboxComponents = useFormDesignerComponents();
+
+    const formRequestRef = useRef<string>();
+
+    useEffect(() => {
+        //console.log('PERF: API effect', { formId, dataId })
+        const requestId = nanoid();
+        formRequestRef.current = requestId;
+        if (formId) {
+            //console.log('PERF: fetch form markup');
+            setState(prev => ({ ...prev, loadingState: 'loading', loaderHint: 'Fetching form...', error: null, dataFetcher: null, form: null, fetchedData: null }));
+
+            getForm({ formId }).then(form => {
+                if (formRequestRef.current !== requestId)
+                    return;
+
+                //console.log('PERF: form loaded');
+
+                // apply loaded form
+                setState(prev => ({ ...prev, form: form }));
+
+                const getDataUrl = (removeZeroWidthCharsFromString(form.settings?.getUrl) || '').trim();
+
+                if (dataId && Boolean(getDataUrl)) {
+                    //console.log('PERF: data id specified');
+
+                    setState(prev => ({ ...prev, loaderHint: 'Fetching metadata...' }));
+
+                    //console.log('PERF: compute GQL properties list');
+                    // fetch meta before the data
+                    getGqlFields({
+                        formMarkup: form.markup,
+                        formSettings: form.settings,
+                        toolboxComponents,
+                        getContainerProperties,
+                        getMetadata,
+                    }).then(gqlFieldsList => {
+                        if (formRequestRef.current !== requestId)
+                            return;
+
+                        var gqlFields = gqlFieldsToString(gqlFieldsList);
+                        //console.log('PERF: GQL properties are ready', { gqlFields, gqlFieldsList });
+
+                        // fetch data
+                        //console.log('PERF: fetch data');
+
+                        // fetch data and resolve
+                        const queryParams = { id: dataId, properties: gqlFields };
+
+                        const dataFetcher = () => RestfulShesha.get<EntityAjaxResponse, any, any, any>(
+                            getDataUrl,
+                            queryParams,
+                            { base: backendUrl, headers: httpHeaders }
+                        ).then(dataResponse => {
+                            if (formRequestRef.current !== requestId)
+                                return null; // todo: cancel data request
+
+                            //console.log('PERF: data fetching finished');
+                            if (dataResponse.success) {
+                                setState(prev => ({
+                                    ...prev,
+                                    loadingState: 'ready',
+                                    loaderHint: null,
+                                    fetchedData: dataResponse.result,
+                                }));
+                            } else {
+                                setState(prev => ({
+                                    ...prev,
+                                    loadingState: 'failed',
+                                    loaderHint: null,
+                                    fetchedData: null,
+                                    error: dataResponse.error
+                                }));
+                            }
+                            return dataResponse;
+                        })
+                            .catch(e => {
+                                const error = (e as IAjaxResponseBase)?.error;
+                                setState(prev => ({ ...prev, loadingState: 'failed', loaderHint: null, error: error }));
+                            });
+
+                        setState(prev => ({ ...prev, loaderHint: 'Fetching data...', dataFetcher: dataFetcher }));
+                        dataFetcher();
+                    });
+                } else {
+                    //console.log('PERF: data id is not specified - mark as ready');
+                    // data loading is not required
+                    setState(prev => ({ ...prev, loadingState: 'ready', loaderHint: null }));
+                }
+            }).catch(e => {
+                //console.log('PERF: failed to fetch form')
+                setState(prev => ({ ...prev, loadingState: 'failed', loaderHint: null, error: e }));
+            });
+        } else {
+            //console.log('PERF: prefetch form markup - skipped');
+            setState(prev => ({ 
+                ...prev, 
+                loadingState: 'waiting', 
+                loaderHint: null, 
+                error: null, 
+                form: null, 
+                dataFetcher: null, 
+                fetchedData: null 
+            }));
+        }
+        // return cleanup: clean up form and data
+    }, [formId, dataId]);
+
+    // todo: return errors
+
+    const result: FormWithDataResponse = {
+        loaderHint: state.loaderHint,
+        loadingState: state.loadingState,
+        form: state.form,
+        fetchedData: state.fetchedData,
+        error: state.error,
+        dataFetcher: state.dataFetcher,
+    };
+
+    return result;
+}
+
+// just for intrenal use
+interface IFieldData {
+    name: string;
+    child: IFieldData[];
+    property: IPropertyMetadata;
+}
+
+const getFieldsFromCustomEvents = (code: string) => {
+    if (!code) return [];
+    const reg = new RegExp('(?<![_a-zA-Z0-9.])data.[_a-zA-Z0-9.]+', 'g');
+    const matchAll = code.matchAll(reg);
+    if (!matchAll) return [];
+    const match = Array.from(matchAll);
+    return match.map(item => item[0].replace('data.', ''));
+};
+
+const gqlFieldsToString = (fields: IFieldData[]): string => {
+    const resf = (items: IFieldData[]) => {
+        let s = '';
+        items.forEach(item => {
+            if (!item.property) return;
+            s += s ? ',' + item.name : item.name;
+            if (item.child.length > 0) {
+                s += '{' + resf(item.child) + '}';
+            }
+        });
+
+        return s;
+    };
+
+    return resf(fields);
+};
+
+interface GetFormFieldsPayload {
+    formMarkup: FormRawMarkup;
+    formSettings: IFormSettings;
+    toolboxComponents: IToolboxComponents;
+}
+const getFormFields = (payload: GetFormFieldsPayload): string[] => {
+    const { formMarkup, formSettings, toolboxComponents } = payload;
+    if (!formMarkup) return null;
+
+    const components = componentsTreeToFlatStructure(toolboxComponents, getComponentsFromMarkup(formMarkup))
+        .allComponents;
+    let fieldNames = [];
+    for (const key in components) {
+        fieldNames.push(components[key].name);
+    }
+
+    fieldNames = fieldNames.concat(formSettings?.fieldsToFetch ?? []);
+
+    formMarkup.forEach(item => {
+        fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.customEnabled));
+        fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.customVisibility));
+        fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.onBlurCustom));
+        fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.onChangeCustom));
+        fieldNames = fieldNames.concat(getFieldsFromCustomEvents(item.onFocusCustom));
+    });
+    fieldNames.push('id');
+
+    fieldNames = [...new Set(fieldNames)];
+    fieldNames = fieldNames.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+
+    return fieldNames;
+}
+
+interface GetGqlFieldsPayload extends GetFormFieldsPayload {
+    getContainerProperties: IMetadataDispatcherActionsContext['getContainerProperties'];
+    getMetadata: IMetadataDispatcherActionsContext['getMetadata'];
+}
+const getGqlFields = (payload: GetGqlFieldsPayload): Promise<IFieldData[]> => {
+    const { formMarkup, formSettings, getMetadata, getContainerProperties } = payload;
+
+    if (!formMarkup || !formSettings.modelType)
+        return Promise.resolve([]);
+
+    return getMetadata({ modelType: formSettings.modelType }).then(metadata => {
+        let fields: IFieldData[] = [];
+
+        const fieldNames = getFormFields(payload);
+        //console.log('PERF: field names', fieldNames)
+
+        // create list of promises
+        const promises: Promise<any>[] = [];
+
+        fieldNames.forEach(item => {
+            if (item) {
+                item = item.trim();
+                const pathParts = item.split('.');
+
+                if (pathParts.length == 1) {
+                    fields.push({
+                        name: item,
+                        child: [],
+                        property: metadata.properties.find(p => p.path.toLowerCase() == pathParts[0].toLowerCase()),
+                    });
+                    return;
+                }
+
+                let parent: IFieldData = null;
+                let containerPath = "";
+                pathParts.forEach((part, idx) => {
+                    let levelChilds = parent?.child ?? fields;
+                    let field = levelChilds.find(f => f.name == part);
+                    if (!field) {
+                        field = {
+                            name: part,
+                            child: [],
+                            property: idx == 0
+                                ? metadata.properties.find(p => p.path.toLowerCase() == part.toLowerCase())
+                                : parent?.property?.dataType == 'object'
+                                    ? parent.property.properties?.find(p => p.path.toLowerCase() == part.toLowerCase())
+                                    : null,
+                        };
+                        // If property metadata is not set - fetch it using dispatcher.
+                        // Note: it's safe to fetch the same container multiple times because the dispatcher returns the same promise for all requests
+                        if (!field.property) {
+                            const metaPromise = getContainerProperties({ metadata: metadata, containerPath: containerPath }).then(response => {
+                                field.property = response.find(p => p.path.toLowerCase() == field.name.toLowerCase());
+                            });
+                            // add promise to list
+                            promises.push(metaPromise);
+                        }
+
+                        levelChilds.push(field);
+                    }
+                    containerPath += (Boolean(containerPath) ? '.' : '') + part;
+                    parent = field;
+                });
+            }
+        });
+
+        return new Promise<IFieldData[]>((resolve) => {
+            Promise.allSettled(promises).then(() => {
+                resolve(fields);
+            })
+        });
+    });
+};

@@ -318,7 +318,7 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
     const { loginInfo } = state;
     if (!loginInfo) return false;
 
-    if (!permissions) return true;
+    if (!permissions || permissions.length === 0) return true;
 
     const granted = loginInfo.grantedPermissions || [];
 

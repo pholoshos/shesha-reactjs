@@ -299,6 +299,7 @@ export interface IFormSettings {
   excludeFormFieldsInPayload?: string;
   uniqueFormId?: string;
   onDataLoaded?: string;
+  onInitialized?: string;
   onUpdate?: string;
   initialValues?: IKeyValue[];
 }

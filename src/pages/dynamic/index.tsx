@@ -20,7 +20,7 @@ import {
 } from '../../providers';
 import { useFormConfiguration } from '../../providers/form/api';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
-import { FormIdentifier } from '../../providers/form/models';
+import { FormIdentifier, IFormSettings } from '../../providers/form/models';
 import {
   asFormFullName,
   evaluateComplexString,
@@ -390,9 +390,9 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   }, [formId]);
 
   useEffect(() => {
-    setState(prev => ({ 
-      ...prev, 
-      formMarkup: formMarkup, 
+    setState(prev => ({
+      ...prev,
+      formMarkup: formMarkup,
       formSettings: formSettings,
       formProps: formConfiguration,
     }));
@@ -427,6 +427,12 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
       displayNotificationError(fetchMarkupError);
     }
   }, [fetchMarkupError]);
+
+  useEffect(() => {
+    if (state?.formSettings?.onInitialized) {
+      getExpressionExecutor(state?.formSettings?.onInitialized);
+    }
+  }, [state?.formSettings?.onInitialized]);
 
   //#endregion
 
@@ -500,7 +506,10 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
         <Spin spinning={isLoading} tip={getLoadingHint()} indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}>
           <MetadataProvider id="dynamic" modelType={formSettings?.modelType}>
             <ConfigurableForm
-              markup={{ components: state?.formMarkup, formSettings: state?.formSettings }} // pass empty markup to prevent unneeded form fetching
+              markup={{
+                components: state?.formMarkup,
+                formSettings: state?.formSettings ? { ...state?.formSettings, onInitialized: null } : null,
+              }} // pass empty markup to prevent unneeded form fetching
               formId={formId}
               formProps={state?.formProps}
               formRef={formRef}

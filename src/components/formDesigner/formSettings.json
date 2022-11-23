@@ -254,6 +254,37 @@
       "description": "Write a code that allows you to return an object whose values will be merged with the form state before submit. Check the variables tab for exposed variables"
     },
     {
+      "id": "5092dd2b-c514-4b06-bfb5-546ce94fab97",
+      "type": "codeEditor",
+      "name": "onInitialized",
+      "label": "On Initialized",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customVisibility": "",
+      "autoSize": false,
+      "showCount": false,
+      "allowClear": false,
+      "validate": {},
+      "exposedVariables": [
+        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        {
+          "name": "parentFormValues",
+          "description": "Parent form values. The values of the form rendering the dialog.",
+          "type": "object"
+        },
+        { "name": "globalState", "description": "The global state of the application", "type": "object" },
+        { "name": "initialValues", "description": "Initial values", "type": "object" },
+        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "message",
+          "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
+          "type": "object"
+        }
+      ],
+      "description": "This action will be executed the first time the form loads. Just before any API call has been made. At this stage, the form has no data except for initialValues if passed"
+    },
+    {
       "id": "087a4e7d-ff28-4175-9221-61bef0bbaea2",
       "type": "codeEditor",
       "name": "onDataLoaded",

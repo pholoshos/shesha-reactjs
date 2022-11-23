@@ -25,6 +25,7 @@ import { ReferenceListDispatcherProvider } from '../referenceListDispatcher';
 import { StackedNavigationProvider } from '../../pages/dynamic/navigation/stakedNavigation';
 import { ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
 import { ApplicationActionsProcessor } from './configurable-actions/applicationActionsProcessor';
+import { ConfigurationItemsLoaderProvider } from '../configurationItemsLoader';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -92,19 +93,21 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
                     whitelistUrls={whitelistUrls}
                   >
                     <AuthorizationSettingsProvider>
-                      <AppConfiguratorProvider>
-                        <ReferenceListDispatcherProvider>
-                          <MetadataDispatcherProvider>
-                           <StackedNavigationProvider>
-                            <DynamicModalProvider>
-                              <ApplicationActionsProcessor>
-                                {children}
-                              </ApplicationActionsProcessor>
-                            </DynamicModalProvider>
-                          </StackedNavigationProvider>
-                          </MetadataDispatcherProvider>
-                        </ReferenceListDispatcherProvider>
-                      </AppConfiguratorProvider>
+                      <ConfigurationItemsLoaderProvider>
+                        <AppConfiguratorProvider>
+                          <ReferenceListDispatcherProvider>
+                            <MetadataDispatcherProvider>
+                              <StackedNavigationProvider>
+                                <DynamicModalProvider>
+                                  <ApplicationActionsProcessor>
+                                    {children}
+                                  </ApplicationActionsProcessor>
+                                </DynamicModalProvider>
+                              </StackedNavigationProvider>
+                            </MetadataDispatcherProvider>
+                          </ReferenceListDispatcherProvider>
+                        </AppConfiguratorProvider>
+                      </ConfigurationItemsLoaderProvider>
                     </AuthorizationSettingsProvider>
                   </AuthProvider>
                 </ShaRoutingProvider>

@@ -218,3 +218,10 @@ export const StyleFixEdit = addStory(DesignerTemplate, {
 export const CancelledVersion = addStory(DesignerTemplate, {
   formId: '04450959-c281-4853-9e16-c16666436ae0'
 });
+
+export const ComplexModel = addStory(DesignerTemplate, {
+  formId: {
+    name: 'test-nested',
+    module: 'test'
+  }
+});

@@ -1,5 +1,4 @@
-import { FormFullName, FormRawMarkup, IFormSettings } from '../../providers/form/models';
-import { IPersistedFormProps } from '../../providers/formPersisterProvider/models';
+import { FormFullName } from '../../providers/form/models';
 
 export type FormMode = 'designer' | 'edit' | 'readonly';
 
@@ -24,14 +23,6 @@ export interface IDynamicPageProps extends IDialogClosable {
   mode?: FormMode;
 
   submitVerb?: 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-
-  /**
-   * This tells the dynamic page that the id should be passed as a path and not as a query parameter
-   * this is the id for fetching the entity
-   *
-   * Required if the id is not provided
-   */
-  entityPathId?: string;
 
   path?: string | string[];
 
@@ -63,9 +54,11 @@ export interface INavigationState extends IDialogClosable, Omit<IDynamicPageStat
 
 export interface IDynamicPageState extends IDynamicPageProps {
   stackId?: string;
+  /*
   formMarkup?: FormRawMarkup;
   formSettings?: IFormSettings;
   formProps?: IPersistedFormProps;
   fetchedData?: IEntity;
   mode?: FormMode;
+  */
 }

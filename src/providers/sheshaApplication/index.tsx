@@ -77,7 +77,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
           changeBackendUrl,
           setRequestHeaders,
           // This will always return false if you're not authorized
-          anyOfPermissionsGranted: authRef?.current?.anyOfPermissionsGranted || (() => false),
+          anyOfPermissionsGranted: authRef?.current?.anyOfPermissionsGranted || ((_: string[]) => false),
         }}
       >
         <RestfulProvider

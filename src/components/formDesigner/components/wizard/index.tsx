@@ -1,7 +1,7 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
-import { Steps, Button, Space, message, Col, Row } from 'antd';
+import { Steps, Button, Space, message } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm, useGlobalState } from '../../../../providers';
@@ -21,6 +21,7 @@ import { IConfigurableActionConfiguration } from '../../../../interfaces/configu
 import './styles.less';
 import classNames from 'classnames';
 import { findLastIndex } from 'lodash';
+import ConditionalWrap from '../../../conditionalWrapper';
 
 const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
   type: 'wizard',
@@ -244,8 +245,14 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
         };
       });
 
+    const { buttonsLayout = 'left' } = model;
+
+    const splitButtons = buttonsLayout === 'spaceBetween';
+
+    console.log('LOGS:: buttonsLayout', buttonsLayout);
+
     return (
-      <>
+      <div className="sha-wizard">
         <div className={classNames('sha-wizard-container', { vertical: model?.direction === 'vertical' })}>
           <Steps
             type={wizardType}
@@ -259,18 +266,22 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
           <div className="sha-steps-content">{steps[current]?.content}</div>
         </div>
 
-        <Row>
-          <Col span={24}>
-            <Space>
-              {tabs[current].allowCancel === true && (
-                <Button
-                  onClick={() => cancel()}
-                  disabled={!executeExpression(tabs[current]?.cancelButtonCustomEnabled, true)}
-                >
-                  {tabs[current].cancelButtonText ? tabs[current].cancelButtonText : 'Cancel'}
-                </Button>
+        <ConditionalWrap condition={buttonsLayout === 'left'} wrap={children => <Space>{children}</Space>}>
+          <div
+            className={classNames('sha-steps-buttons-container', {
+              split: splitButtons,
+              left: buttonsLayout === 'left',
+              right: buttonsLayout === 'right',
+            })}
+          >
+            <ConditionalWrap
+              condition={splitButtons}
+              wrap={children => (
+                <Space>
+                  <div className={classNames('sha-steps-buttons')}>{children}</div>
+                </Space>
               )}
-
+            >
               {current > 0 && (
                 <Button
                   style={{ margin: '0 8px' }}
@@ -281,6 +292,24 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
                 </Button>
               )}
 
+              {tabs[current].allowCancel === true && (
+                <Button
+                  onClick={() => cancel()}
+                  disabled={!executeExpression(tabs[current]?.cancelButtonCustomEnabled, true)}
+                >
+                  {tabs[current].cancelButtonText ? tabs[current].cancelButtonText : 'Cancel'}
+                </Button>
+              )}
+            </ConditionalWrap>
+
+            <ConditionalWrap
+              condition={splitButtons}
+              wrap={children => (
+                <Space>
+                  <div className={classNames('sha-steps-buttons')}>{children}</div>
+                </Space>
+              )}
+            >
               {current < tabs.length - 1 && (
                 <Button
                   type="primary"
@@ -300,10 +329,10 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
                   {tabs[current].doneButtonText ? tabs[current].doneButtonText : 'Done'}
                 </Button>
               )}
-            </Space>
-          </Col>
-        </Row>
-      </>
+            </ConditionalWrap>
+          </div>
+        </ConditionalWrap>
+      </div>
     );
   },
   migrator: m =>

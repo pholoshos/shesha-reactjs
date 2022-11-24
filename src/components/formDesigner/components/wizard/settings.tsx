@@ -131,6 +131,19 @@ const WizardSettings: FC<ITabSettingsProps> = props => {
       </Form.Item>
 
       <Form.Item
+        name="buttonsLayout"
+        initialValue={props.model.buttonsLayout}
+        label="Buttons Layout"
+        tooltip="How you want the steps buttons to be aligned"
+      >
+        <Select>
+          <Option value="left">Left</Option>
+          <Option value="right">Right</Option>
+          <Option value="spaceBetween">Space Between</Option>
+        </Select>
+      </Form.Item>
+
+      <Form.Item
         name="visibility"
         initialValue={props.model.visibility}
         label="Visibility"

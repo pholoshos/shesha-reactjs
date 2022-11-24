@@ -50,7 +50,7 @@ export interface ICommonAutocompleteProps<TValue = any> extends IReadOnly {
   /**
    * The placeholder to display on the autocomplete
    */
-  placeHolder?: string;
+   placeholder?: string;
 
   /**
    * A callback for when the value of this component changes

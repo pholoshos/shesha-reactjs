@@ -15,7 +15,7 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
   const {
     value,
     defaultValue,
-    placeHolder,
+    placeholder,
     typeShortAlias,
     entityDisplayProperty,
     //allowInherited,
@@ -164,7 +164,8 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
 
   const dataLoaded = fetchedData && fetchedData.length > 0;
   const autocompleteValue = value || dataLoaded || fetchError ? wrapValue(value) : undefined;
-  const selectPlaceholder = value && !dataLoaded && loading ? 'Loading...' : placeHolder ?? 'Type to search';
+  const selectPlaceholder = value && !dataLoaded && loading ? 'Loading...' : placeholder ?? '';
+
 
   if (readOnly || disabled) {
     return (

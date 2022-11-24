@@ -49,12 +49,12 @@
       "type": "dropdown",
       "name": "mode",
       "parentId": "root",
-      "label": "Mode",
+      "label": "Selection Mode",
       "values": [
         {
-          "label": "tags",
-          "value": "tags",
-          "id": "f01e54aa-a1a4-4bd6-ba73-c395e48af8ce"
+          "label": "single",
+          "value": "single",
+          "id": "b920ef96-ae27-4a01-bfad-b5b7d07238da"
         },
         {
           "label": "multiple",
@@ -62,7 +62,8 @@
           "id": "b920ef96-ae27-4a01-bfad-b5b7d07218da"
         }
       ],
-      "dataSourceType": "values"
+      "dataSourceType": "values",
+      "defaultValue": ["single"]
     },
     {
       "id": "fbdb6bb1-5994-4205-86b4-236ca61ae54e",
@@ -104,13 +105,6 @@
         }
       ],
       "dataSourceType": "values"
-    },
-    {
-      "id": "cfd7d45e-c7e3-4a27-987b-dc525c412448",
-      "type": "checkbox",
-      "name": "hidden",
-      "parentId": "root",
-      "label": "Hidden"
     },
     {
       "id": "733811b4-d7c0-4447-bba0-a9fb7d6d5f05",
@@ -156,16 +150,6 @@
       "name": "separator3",
       "parentId": "root",
       "label": "Data"
-    },
-    {
-      "id": "748aca71-77d6-4890-a498-aace4849e109",
-      "type": "numberField",
-      "name": "defaultValue",
-      "parentId": "root",
-      "label": "Default Value",
-      "validate": {},
-      "settingsValidationErrors": [],
-      "description": "Enter default value of component. (formData, formMode, globalState) are exposed"
     },
     {
       "id": "028b4eaf-8830-4dcd-b54f-422c72b25418",

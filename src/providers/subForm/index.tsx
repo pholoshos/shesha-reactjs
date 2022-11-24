@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { FC, useReducer, useContext, useMemo, useRef } from 'react';
 import { useGet, useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
@@ -12,7 +12,7 @@ import { ColProps, message, notification } from 'antd';
 import { useGlobalState } from '../globalState';
 import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
-import { usePrevious } from 'react-use';
+import { useDeepCompareEffect, usePrevious } from 'react-use';
 import { IEntity } from '../../pages/dynamic/interfaces';
 import { useFormConfiguration } from '../form/api';
 import { useConfigurableAction } from '../configurableActionsDispatcher';
@@ -80,8 +80,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     refetch: fetchForm,
     //formConfiguration: fetchFormResponse,
     loading: isFetchingForm,
-    error: fetchFormError
-   } = useFormConfiguration({ formId: formId, lazy: true });
+    error: fetchFormError,
+  } = useFormConfiguration({ formId: formId, lazy: true });
 
   const {
     refetch: fetchEntity,
@@ -89,7 +89,9 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     loading: isFetchingEntity,
     error: fetchEntityError,
   } = useEntitiesGet({ lazy: true });
+
   const { initialValues } = useSubForm();
+
   const {
     refetch: fetchDataByUrlHttp,
     data: fetchDataByUrl,
@@ -103,13 +105,13 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   const previousValue = useRef(value);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (typeof value === 'string' && typeof previousValue === 'string' && previousValue !== value) {
       handleFetchData(value);
     }
   }, [value, globalState, formData]);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (!isFetchingDataByUrl && fetchDataByUrl && typeof onChange === 'function') {
       onChange(fetchDataByUrl?.result);
     }
@@ -127,18 +129,18 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
     if (queryParams) {
       params = { ...params, ...(typeof queryParamPayload === 'object' ? queryParamPayload : {}) };
-        }
+    }
 
     return params;
   }, [queryParams, formMode, globalState]);
 
   const handleFetchData = (id?: string) => {
     if (id || evaluatedQueryParams?.id) {
-    fetchEntity({ queryParams: id ? { ...evaluatedQueryParams, id } : evaluatedQueryParams });
+      fetchEntity({ queryParams: id ? { ...evaluatedQueryParams, id } : evaluatedQueryParams });
     }
   };
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (queryParams && formMode !== 'designer' && dataSource === 'api') {
       if (evaluatedQueryParams?.id || getUrl) {
         // Only fetch when there's an `Id`. Ideally an API that is used to fetch data should have an id
@@ -151,7 +153,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   const previousGetUrl = usePrevious(getUrl);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (
       dataSource === 'api' &&
       getUrl &&
@@ -178,7 +180,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   });
 
   //#region get data
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (!isFetchingEntity && fetchEntityResponse) {
       onChange(fetchEntityResponse?.result);
     }
@@ -261,7 +263,7 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   //#endregion
 
   //#region Fetch Form
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (formId && !markup) {
       fetchForm().then(response => {
         dispatch(setMarkupWithSettingsAction({ components: response.components, formSettings: response.formSettings }));
@@ -272,12 +274,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       dispatch(setMarkupWithSettingsAction(markup));
     }
 
-    if (!formId && !markup){
+    if (!formId && !markup) {
       dispatch(setMarkupWithSettingsAction({ components: [], formSettings: DEFAULT_FORM_SETTINGS }));
-    }      
+    }
   }, [formId, markup]); //
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (markup) {
       dispatch(setMarkupWithSettingsAction(markup));
     }
@@ -285,39 +287,48 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   //#endregion
 
   const actionDependencies = [actionsOwnerId];
-  useConfigurableAction({
-    name: 'Get form data',
-    owner: actionOwnerName,
-    ownerUid: actionsOwnerId,
-    hasArguments: false,
-    executer: () => {
-      getData(); // todo: return real promise
-      return Promise.resolve();
-    }
-  }, actionDependencies);
+  useConfigurableAction(
+    {
+      name: 'Get form data',
+      owner: actionOwnerName,
+      ownerUid: actionsOwnerId,
+      hasArguments: false,
+      executer: () => {
+        getData(); // todo: return real promise
+        return Promise.resolve();
+      },
+    },
+    actionDependencies
+  );
 
-  useConfigurableAction({
-    name: 'Post form data',
-    owner: actionOwnerName,
-    ownerUid: actionsOwnerId,
-    hasArguments: false,
-    executer: () => {
-      postData(); // todo: return real promise
-      return Promise.resolve();
-    }
-  }, actionDependencies);
+  useConfigurableAction(
+    {
+      name: 'Post form data',
+      owner: actionOwnerName,
+      ownerUid: actionsOwnerId,
+      hasArguments: false,
+      executer: () => {
+        postData(); // todo: return real promise
+        return Promise.resolve();
+      },
+    },
+    actionDependencies
+  );
 
-  useConfigurableAction({
-    name: 'Update form data',
-    owner: actionOwnerName,
-    ownerUid: actionsOwnerId,
-    hasArguments: false,
-    executer: () => {
-      putData(); // todo: return real promise
-      return Promise.resolve();
-    }
-  }, actionDependencies);
-  
+  useConfigurableAction(
+    {
+      name: 'Update form data',
+      owner: actionOwnerName,
+      ownerUid: actionsOwnerId,
+      hasArguments: false,
+      executer: () => {
+        putData(); // todo: return real promise
+        return Promise.resolve();
+      },
+    },
+    actionDependencies
+  );
+
   //#endregion
 
   const getColSpan = (span: number | ColProps): ColProps => {

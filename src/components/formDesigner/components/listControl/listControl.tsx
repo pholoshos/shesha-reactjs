@@ -479,7 +479,15 @@ const ListControl: FC<IListControlProps> = props => {
             {renderPagination()}
 
             <Show when={showQuickSearch}>
-              <Input.Search onSearch={setQuickSearch} size="small" />
+              <Input.Search
+                onSearch={(t, e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+
+                  setQuickSearch(t);
+                }}
+                size="small"
+              />
             </Show>
 
             <ButtonGroup items={buttons || []} name={''} type={''} id={containerId} size="small" />

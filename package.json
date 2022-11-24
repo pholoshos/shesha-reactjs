@@ -221,7 +221,8 @@
     "remark-gfm": "^3.0.1",
     "tree-to-list": "^3.0.2",
     "tslib": "^2.4.0",
-    "use-debounce": "^6.0.1"
+    "use-debounce": "^6.0.1",
+    "use-deep-compare": "^1.1.0"
   },
   "config": {
     "commitizen": {

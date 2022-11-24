@@ -1,3 +1,4 @@
+import { string } from 'prop-types';
 import { IConfigurableFormComponent, IFormItem } from '../../../../interfaces';
 import { ButtonGroupItemProps } from '../../../../providers/buttonGroupConfigurator/models';
 import { FormIdentifier } from '../../../../providers/form/models';
@@ -57,4 +58,9 @@ export interface IListComponentRenderState {
   maxResultCount?: number;
   selectedItemIndexes?: number[];
   selectedItemIndex?: number;
+}
+
+export interface IEvaluatedFilters {
+  filter: string;
+  ready: boolean;
 }

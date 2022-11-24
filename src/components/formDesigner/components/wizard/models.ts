@@ -1,6 +1,7 @@
 import { IConfigurableItemBase } from '../../../../providers/itemListConfigurator/contexts';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 import { IConfigurableActionConfiguration } from '../../../../interfaces/configurableAction';
+import { StepProps } from 'antd';
 
 //type ButtonActionType = 'executeScript' | 'dispatchAnEvent';
 
@@ -18,6 +19,11 @@ export interface IWizardStepProps extends IConfigurableItemBase {
   backButtonText?: string;
   doneButtonText?: string;
 
+  cancelButtonCustomEnabled?: string;
+  nextButtonCustomEnabled?: string;
+  backButtonCustomEnabled?: string;
+  doneButtonCustomEnabled?: string;
+
   cancelButtonActionConfiguration?: IConfigurableActionConfiguration;
   nextButtonActionConfiguration?: IConfigurableActionConfiguration;
   backButtonActionConfiguration?: IConfigurableActionConfiguration;
@@ -28,9 +34,14 @@ export interface IWizardStepProps extends IConfigurableItemBase {
   permissions?: string[];
   components?: IConfigurableFormComponent[];
   childItems?: IWizardStepProps[];
+  status?: StepProps['status'];
 }
 
-export interface IWizardComponentProps extends IConfigurableFormComponent {
+export interface IStepProps extends StepProps {
+  content?: JSX.Element;
+}
+
+export interface IWizardComponentProps extends Omit<IConfigurableFormComponent, 'size'>, Pick<StepProps, 'status'> {
   steps: IWizardStepProps[];
   wizardType?: 'default' | 'navigation';
   visibility?: 'Yes' | 'No' | 'Removed';
@@ -39,4 +50,7 @@ export interface IWizardComponentProps extends IConfigurableFormComponent {
   hidden?: boolean;
   customVisibility?: string;
   defaultActiveStep?: string;
+  direction?: 'vertical' | 'horizontal';
+  labelPlacement?: 'vertical' | 'horizontal';
+  size?: 'default' | 'small';
 }

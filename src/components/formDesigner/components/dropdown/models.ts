@@ -20,5 +20,5 @@ export interface IDropdownProps extends IConfigurableFormComponent {
   mode?: 'single' | 'multiple' | 'tags';
   ignoredValues?: number[];
   placeholder?: string;
-  useRawValues: boolean;
+  useRawValues?: boolean;
 }

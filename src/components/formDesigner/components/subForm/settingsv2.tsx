@@ -20,7 +20,7 @@ export interface ISubFormSettingsProps {
   onValuesChange?: (changedValues: any, values: ISubFormProps) => void;
 }
 
-interface ISubFormSettingsState extends ISubFormProps { }
+interface ISubFormSettingsState extends ISubFormProps {}
 
 export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, model, onValuesChange }) => {
   const [state, setState] = useState<ISubFormSettingsState>(model);
@@ -46,7 +46,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
         ...model,
         properties: typeof model?.properties === 'string' ? model?.properties : model?.properties?.join(' '),
       }}
-    // initialValues={initialValues}
+      // initialValues={initialValues}
     >
       <SectionSeparator sectionName="Display" />
 
@@ -67,10 +67,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
       </Form.Item>
 
       <FormItem name="formId" label="Form">
-        <FormAutocomplete
-          readOnly={readOnly}
-          convertToFullId={true}
-        />
+        <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
       </FormItem>
 
       <SectionSeparator sectionName="Data" />
@@ -89,7 +86,11 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
 
       <Show when={state?.dataSource === 'api'}>
         <FormItem name="entityType" label="Entity type">
-          <AutocompleteRaw dataSourceType="url" dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete" readOnly={readOnly} />
+          <AutocompleteRaw
+            dataSourceType="url"
+            dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete"
+            readOnly={readOnly}
+          />
         </FormItem>
 
         <Show when={Boolean(state?.entityType)}>
@@ -415,11 +416,11 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
       <SectionSeparator sectionName="Layout" />
 
       <FormItem name="labelCol" label="Label Col">
-        <InputNumber min={1} max={24} defaultValue={5} step={1} readOnly={readOnly} />
+        <InputNumber min={0} max={24} defaultValue={5} step={1} readOnly={readOnly} />
       </FormItem>
 
       <FormItem name="wrapperCol" label="Wrapper Col">
-        <InputNumber min={1} max={24} defaultValue={13} step={1} readOnly={readOnly} />
+        <InputNumber min={0} max={24} defaultValue={13} step={1} readOnly={readOnly} />
       </FormItem>
 
       <FormItem name="style" label="Style">

@@ -335,6 +335,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
 
 export const EntityPickerEditable: FC<IEntityPickerProps> = props => {
   const { parentEntityId, entityType, displayEntityKey } = props;
+
   return (
     <DataTableProvider parentEntityId={parentEntityId} entityType={entityType}>
       <EntityPickerEditableInner {...props} displayEntityKey={displayEntityKey} />

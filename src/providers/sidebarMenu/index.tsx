@@ -11,9 +11,9 @@ import {
   toggleSidebarAction,
   /* NEW_ACTION_IMPORT_GOES_HERE */
 } from './actions';
-import { useAuth } from '../auth';
 import { IHeaderAction } from './models';
 import { ISidebarMenuItem } from '../../interfaces/sidebar';
+import { useSheshaApplication } from '../..';
 
 export interface ISidebarMenuProviderProps {
   items: ISidebarMenuItem[];
@@ -27,7 +27,7 @@ const SidebarMenuProvider: FC<PropsWithChildren<ISidebarMenuProviderProps>> = ({
   items,
   children,
 }) => {
-  const { anyOfPermissionsGranted } = useAuth();
+  const { anyOfPermissionsGranted } = useSheshaApplication();
 
   const [state, dispatch] = useReducer(SidebarMenuReducer, {
     ...SIDEBAR_MENU_CONTEXT_INITIAL_STATE,
@@ -107,7 +107,7 @@ function useSidebarMenu(require: boolean = true) {
   // so we must return value only when both context are available
   return actionsContext !== undefined && stateContext !== undefined
     ? { ...actionsContext, ...stateContext }
-    : undefined;  
+    : undefined;
 }
 
 //#region temporary defaults provider

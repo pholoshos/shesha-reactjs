@@ -27,12 +27,12 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
   const { router } = useShaRouting(false) ?? {};
 
   const getDesignerUrl = (fId: FormIdentifier) => {
-    return typeof (fId) === 'string'
+    return typeof fId === 'string'
       ? `${app.routes.formsDesigner}?id=${fId}`
       : Boolean(fId?.name)
-        ? `${app.routes.formsDesigner}?module=${fId.module}&name=${fId.name}`
-        : null;
-  }
+      ? `${app.routes.formsDesigner}?module=${fId.module}&name=${fId.name}`
+      : null;
+  };
   const formDesignerUrl = getDesignerUrl(formId);
   const openInDesigner = () => {
     if (formDesignerUrl && router) {
@@ -42,9 +42,12 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
 
   const markupWithSettings = convertToMarkupWithSettings(markup);
 
-  const renderWithMarkup = (providedMarkup: FormRawMarkup, formSettings: IFormSettings, persistedFormProps?: IPersistedFormProps) => {
-    if (!providedMarkup)
-      return null;
+  const renderWithMarkup = (
+    providedMarkup: FormRawMarkup,
+    formSettings: IFormSettings,
+    persistedFormProps?: IPersistedFormProps
+  ) => {
+    if (!providedMarkup) return null;
 
     const formStatusInfo = persistedFormProps?.versionStatus
       ? ConfigurationItemVersionStatusMap[persistedFormProps.versionStatus]
@@ -54,7 +57,7 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
 
     return (
       <FormMarkupConverter markup={providedMarkup}>
-        {(flatComponents) =>
+        {flatComponents => (
           <FormProvider
             name="Form"
             flatComponents={flatComponents}
@@ -70,9 +73,9 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
           >
             {showFormInfo && (
               <Card
-                className='sha-form-info-card'
+                className="sha-form-info-card"
                 bordered
-                title={(
+                title={
                   <>
                     {persistedFormProps.id && (
                       <a target="_blank" href={getDesignerUrl(persistedFormProps.id)}>
@@ -80,46 +83,44 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
                       </a>
                     )}
                     <span className="sha-form-info-card-title">
-                      Form: {getFormFullName(persistedFormProps.module, persistedFormProps.name)} v{persistedFormProps.versionNo}
+                      Form: {getFormFullName(persistedFormProps.module, persistedFormProps.name)} v
+                      {persistedFormProps.versionNo}
                     </span>
                     {false && <HelpTextPopover content={persistedFormProps.description}></HelpTextPopover>}
-                    <StatusTag value={persistedFormProps.versionStatus} mappings={FORM_STATUS_MAPPING} color={null}></StatusTag>
+                    <StatusTag
+                      value={persistedFormProps.versionStatus}
+                      mappings={FORM_STATUS_MAPPING}
+                      color={null}
+                    ></StatusTag>
                   </>
-                )}
-                extra={(
-                  <CloseOutlined onClick={() => toggleShowInfoBlock(false)} title="Click to hide form info" />
-                )}
+                }
+                extra={<CloseOutlined onClick={() => toggleShowInfoBlock(false)} title="Click to hide form info" />}
                 size="small"
-              >
-              </Card>
+              ></Card>
             )}
             <ConfigurableFormRenderer {...restProps} />
           </FormProvider>
-        }
+        )}
       </FormMarkupConverter>
     );
-  }
+  };
 
   return (
-    <ConfigurableComponent
-      canConfigure={canConfigure}
-      onStartEdit={openInDesigner}
-    >
+    <ConfigurableComponent canConfigure={canConfigure} onStartEdit={openInDesigner}>
       {(componentState, BlockOverlay) => (
         <div className={classNames(componentState.wrapperClassName, props?.className)}>
           <BlockOverlay>
             <EditViewMsg />
           </BlockOverlay>
-          {markup
-            ? renderWithMarkup(markupWithSettings.components, markupWithSettings.formSettings, formProps)
-            : (
-              <FormPersisterProvider formId={formId}>
-                <FormPersisterConsumer>
-                  {persister => renderWithMarkup(persister.markup, persister.formSettings, persister.formProps)}
-                </FormPersisterConsumer>
-              </FormPersisterProvider>
-            )
-          }
+          {markup ? (
+            renderWithMarkup(markupWithSettings.components, markupWithSettings.formSettings, formProps)
+          ) : (
+            <FormPersisterProvider formId={formId}>
+              <FormPersisterConsumer>
+                {persister => renderWithMarkup(persister.markup, persister.formSettings, persister.formProps)}
+              </FormPersisterConsumer>
+            </FormPersisterProvider>
+          )}
         </div>
       )}
     </ConfigurableComponent>

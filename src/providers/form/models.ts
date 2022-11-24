@@ -176,7 +176,10 @@ export interface FormMarkupWithSettings {
   components: IConfigurableFormComponent[];
 }
 export type FormRawMarkup = IConfigurableFormComponent[];
-export type FormMarkup = FormRawMarkup | FormMarkupWithSettings;
+export type FormMarkup =
+  | FormRawMarkup
+  | FormMarkupWithSettings
+  | ((data: any) => FormRawMarkup | FormMarkupWithSettings);
 
 export interface FormFullName {
   readonly name: string;
@@ -232,7 +235,7 @@ export interface IFormSection {
 /**
  * Form DTO
  */
- export interface FormDto {
+export interface FormDto {
   id?: string;
   /**
    * Form name
@@ -263,7 +266,7 @@ export interface IFormSection {
    * Type
    */
   type?: string | null;
-  
+
   versionNo?: number;
   versionStatus?: number;
   isLastVersion?: boolean;
@@ -296,6 +299,7 @@ export interface IFormSettings {
   excludeFormFieldsInPayload?: string;
   uniqueFormId?: string;
   onDataLoaded?: string;
+  onInitialized?: string;
   onUpdate?: string;
   initialValues?: IKeyValue[];
 }

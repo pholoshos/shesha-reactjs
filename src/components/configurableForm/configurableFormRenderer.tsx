@@ -42,7 +42,14 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 }) => {
   const { setFormData, formData, allComponents, formMode, formSettings, setValidationErrors } = useForm();
   const { isDragging = false } = useFormDesigner(false) ?? {};
-  const { excludeFormFieldsInPayload, onDataLoaded, onUpdate, formKeysToPersist, uniqueFormId } = formSettings;
+  const {
+    excludeFormFieldsInPayload,
+    onDataLoaded,
+    onUpdate,
+    onInitialized,
+    formKeysToPersist,
+    uniqueFormId,
+  } = formSettings;
   const { globalState } = useGlobalState();
   const submitUrl = useSubmitUrl(formSettings, httpVerb, formData, parentFormValues, globalState);
   const { backendUrl } = useSheshaApplication();
@@ -53,6 +60,13 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   });
 
   const queryParamsFromAddressBar = useMemo(() => getQueryParams(), []);
+
+  // Execute onInitialized if provided
+  useEffect(() => {
+    if (onInitialized) {
+      getExpressionExecutor(onInitialized);
+    }
+  }, [onInitialized]);
 
   //#region PERSISTED FORM VALUES
   // I decided to do the persisting manually since the hook way fails in prod. Only works perfectly, but on Storybook
@@ -94,12 +108,12 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     formSettings?.initialValues?.forEach(({ key, value }) => {
       const evaluatedValue = value?.includes('{{')
         ? evaluateComplexString(value, [
-          { match: 'data', data: formData },
-          { match: 'parentFormValues', data: parentFormValues },
-          { match: 'globalState', data: globalState },
-          { match: 'query', data: queryParamsFromAddressBar },
-          { match: 'initialValues', data: initialValues },
-        ])
+            { match: 'data', data: formData },
+            { match: 'parentFormValues', data: parentFormValues },
+            { match: 'globalState', data: globalState },
+            { match: 'query', data: queryParamsFromAddressBar },
+            { match: 'initialValues', data: initialValues },
+          ])
         : value;
       _.set(computedInitialValues, key, evaluatedValue);
     });
@@ -123,11 +137,11 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     if (getUrl) {
       const evaluatedGetUrl = getUrl?.includes('{{')
         ? evaluateComplexString(getUrl, [
-          { match: 'data', data: formData },
-          { match: 'parentFormValues', data: parentFormValues },
-          { match: 'globalState', data: globalState },
-          { match: 'query', data: queryParamsFromAddressBar },
-        ])
+            { match: 'data', data: formData },
+            { match: 'parentFormValues', data: parentFormValues },
+            { match: 'globalState', data: globalState },
+            { match: 'query', data: queryParamsFromAddressBar },
+          ])
         : getUrl;
 
       const fullUrl = `${backendUrl}${evaluatedGetUrl}`;
@@ -146,11 +160,10 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
         });
       }
     }
-  }
+  };
 
   useEffect(() => {
-    if (!skipFetchData) 
-      fetchFormData();
+    if (!skipFetchData) fetchFormData();
   }, [getUrl, formData, globalState, parentFormValues, skipFetchData]);
 
   const fetchedFormEntity = fetchedEntity?.result as object;
@@ -219,27 +232,25 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
   const sheshaUtils = {
     prepareTemplate: (templateId: string, replacements: object): Promise<string> => {
-      if (!templateId)
-        return Promise.resolve(null);
+      if (!templateId) return Promise.resolve(null);
 
-        const payload = {
-          id: templateId,
-          properties: 'markup'
-        };
+      const payload = {
+        id: templateId,
+        properties: 'markup',
+      };
       const url = `${backendUrl}/api/services/Shesha/FormConfiguration/Query?${qs.stringify(payload)}`;
-      return axios.get<any, AxiosResponse<IAbpWrappedGetEntityResponse<FormConfigurationDto>>>(url)
-        .then(response => {
-          const markup = response.data.result.markup;
+      return axios.get<any, AxiosResponse<IAbpWrappedGetEntityResponse<FormConfigurationDto>>>(url).then(response => {
+        const markup = response.data.result.markup;
 
-          const preparedMarkup = evaluateString(markup, { 
-            NEW_KEY: nanoid(), 
-            GEN_KEY: nanoid(),
-            ...(replacements ?? {}),
-          });
-
-          return preparedMarkup;
+        const preparedMarkup = evaluateString(markup, {
+          NEW_KEY: nanoid(),
+          GEN_KEY: nanoid(),
+          ...(replacements ?? {}),
         });
-    }
+
+        return preparedMarkup;
+      });
+    },
   };
 
   const getExpressionExecutor = (
@@ -255,7 +266,10 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
     }
 
     // tslint:disable-next-line:function-constructor
-    return new Function('data, parentFormValues, initialValues, globalState, moment, http, message, shesha', expression)(
+    return new Function(
+      'data, parentFormValues, initialValues, globalState, moment, http, message, shesha',
+      expression
+    )(
       exposedData || formData,
       parentFormValues,
       includeInitialValues ? initialValues : undefined,
@@ -270,7 +284,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   const getDynamicPreparedValues = (): Promise<object> => {
     const { preparedValues } = formSettings;
 
-    return Promise.resolve(preparedValues ? getExpressionExecutor(preparedValues) : {})
+    return Promise.resolve(preparedValues ? getExpressionExecutor(preparedValues) : {});
   };
 
   const getInitialValuesFromFormSettings = () => {

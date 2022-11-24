@@ -11,7 +11,7 @@ import { useDataTableSelection } from '../../../../../providers/dataTableSelecti
 import { ToolbarButton } from './toolbarButton';
 import { ShaIcon } from '../../../..';
 import { IconType } from '../../../../shaIcon';
-import { useAuth } from '../../../../../providers';
+import { useSheshaApplication } from '../../../../../providers';
 import { nanoid } from 'nanoid/non-secure';
 import { migrateV0toV1, IToolbarPropsV0 } from './migrations/migrate-v1';
 import { migrateV1toV2 } from './migrations/migrate-v2';
@@ -29,20 +29,30 @@ const ToolbarComponent: IToolboxComponent<IToolbarProps> = {
       items: [],
     };
   },
-  migrator: m => m.add<IToolbarPropsV0>(0, prev => {
-      const items = prev['items'] && Array.isArray(prev['items']) ? prev['items'] : [];
-      return { ...prev, items: items };
-    })
-    .add<IToolbarProps>(1, migrateV0toV1)
-    .add<IToolbarProps>(2, migrateV1toV2),
+  migrator: m =>
+    m
+      .add<IToolbarPropsV0>(0, prev => {
+        const items = prev['items'] && Array.isArray(prev['items']) ? prev['items'] : [];
+        return { ...prev, items: items };
+      })
+      .add<IToolbarProps>(1, migrateV0toV1)
+      .add<IToolbarProps>(2, migrateV1toV2),
   settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
-    return <ToolbarSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
+    return (
+      <ToolbarSettings
+        readOnly={readOnly}
+        model={model}
+        onSave={onSave}
+        onCancel={onCancel}
+        onValuesChange={onValuesChange}
+      />
+    );
   },
 };
 
 export const Toolbar: FC<IToolbarProps> = ({ items, id }) => {
   const { formMode } = useForm();
-  const { anyOfPermissionsGranted } = useAuth();
+  const { anyOfPermissionsGranted } = useSheshaApplication();
   const { selectedRow } = useDataTableSelection(false) ?? {};
   const isDesignMode = formMode === 'designer';
 

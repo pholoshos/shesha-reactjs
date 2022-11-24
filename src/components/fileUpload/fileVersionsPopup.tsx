@@ -4,24 +4,24 @@ import { Popover, Skeleton, Button } from 'antd';
 import { DateDisplay } from '../';
 import { useStoredFileGetFileVersions, StoredFileVersionInfoDto } from '../../apis/storedFile';
 import filesize from 'filesize';
-import { useAuth, useStoredFile } from '../../providers';
+import { useSheshaApplication, useStoredFile } from '../../providers';
 
 interface IProps {
   readonly fileId: string;
 }
 
 export const FileVersionsPopup: FC<IProps> = ({ fileId }) => {
-  const { headers } = useAuth();
-  
+  const { httpHeaders } = useSheshaApplication();
+
   const {
     loading: loading,
     refetch: fetchHistory,
     /*error: fetchError, */ data: serverData,
-  } = useStoredFileGetFileVersions({ 
-    fileId, 
-    lazy: true, 
+  } = useStoredFileGetFileVersions({
+    fileId,
+    lazy: true,
     requestOptions: {
-      headers,
+      headers: httpHeaders,
     },
   });
 

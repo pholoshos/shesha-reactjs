@@ -1,37 +1,38 @@
 import { IToolboxComponent } from '../../../../interfaces';
-import { FormMarkup, IFormComponentContainer } from '../../../../providers/form/models';
+import { IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
 import { Steps, Button, Space, message, Col, Row } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
-import settingsFormJson from './settingsForm.json';
-import React, { Fragment, useEffect, useState } from 'react';
-import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
-import { useAuth, useForm, useGlobalState } from '../../../../providers';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useForm, useGlobalState } from '../../../../providers';
 import { useSheshaApplication } from '../../../../';
 import { nanoid } from 'nanoid/non-secure';
 import WizardSettings from './settings';
-import { IWizardComponentProps } from './models';
+import { IStepProps, IWizardComponentProps } from './models';
 import ShaIcon from '../../../shaIcon';
 import moment from 'moment';
 import { axiosHttp } from '../../../../apis/axios';
 import { migrateV0toV1, IWizardComponentPropsV0 } from './migrations/migrate-v1';
-import { useConfigurableAction, useConfigurableActionDispatcher } from '../../../../providers/configurableActionsDispatcher';
+import {
+  useConfigurableAction,
+  useConfigurableActionDispatcher,
+} from '../../../../providers/configurableActionsDispatcher';
 import { IConfigurableActionConfiguration } from '../../../../interfaces/configurableAction';
+import './styles.less';
+import classNames from 'classnames';
+import { findLastIndex } from 'lodash';
 
-const { Step } = Steps;
-
-const settingsForm = settingsFormJson as FormMarkup;
-
-const TabsComponent: IToolboxComponent<IWizardComponentProps> = {
+const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
   type: 'wizard',
   name: 'Wizard',
   icon: <DoubleRightOutlined />,
   factory: model => {
-    const { anyOfPermissionsGranted } = useAuth();
+    const { anyOfPermissionsGranted } = useSheshaApplication();
     const { isComponentHidden, formMode, formData } = useForm();
     const { globalState, setState: setGlobalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();
     const { executeAction } = useConfigurableActionDispatcher();
+    const { steps: tabs, wizardType = 'default' } = model as IWizardComponentProps;
     const [current, setCurrent] = useState(() => {
       const localCurrent = model?.defaultActiveStep
         ? model?.steps?.findIndex(({ id }) => id === model?.defaultActiveStep)
@@ -39,9 +40,8 @@ const TabsComponent: IToolboxComponent<IWizardComponentProps> = {
 
       return localCurrent < 0 ? 0 : localCurrent;
     });
-    const [component, setComponent] = useState(null);
 
-    const { steps: tabs, wizardType = 'default' } = model as IWizardComponentProps;
+    const [component, setComponent] = useState(null);
 
     useEffect(() => {
       const defaultActiveStep = model?.steps?.findIndex(item => item?.id === model?.defaultActiveStep);
@@ -52,52 +52,63 @@ const TabsComponent: IToolboxComponent<IWizardComponentProps> = {
     const { name: actionOwnerName, id: actionsOwnerId } = model;
 
     const actionDependencies = [actionOwnerName, actionsOwnerId, current];
-    useConfigurableAction({
-      name: 'Back',
-      owner: actionOwnerName,
-      ownerUid: actionsOwnerId,
-      hasArguments: false,
-      executer: () => {
-        back();
-        return Promise.resolve();
-      }
-    }, actionDependencies);
 
-    useConfigurableAction({
-      name: 'Next',
-      owner: actionOwnerName,
-      ownerUid: actionsOwnerId,
-      hasArguments: false,
-      executer: () => {
-        next();
-        return Promise.resolve();
-      }
-    }, actionDependencies);
+    useConfigurableAction(
+      {
+        name: 'Back',
+        owner: actionOwnerName,
+        ownerUid: actionsOwnerId,
+        hasArguments: false,
+        executer: () => {
+          back();
+          return Promise.resolve();
+        },
+      },
+      actionDependencies
+    );
 
-    useConfigurableAction({
-      name: 'Cancel',
-      owner: actionOwnerName,
-      ownerUid: actionsOwnerId,
-      hasArguments: false,
-      executer: () => {
-        cancel();
-        return Promise.resolve();
-      }
-    }, actionDependencies);
+    useConfigurableAction(
+      {
+        name: 'Next',
+        owner: actionOwnerName,
+        ownerUid: actionsOwnerId,
+        hasArguments: false,
+        executer: () => {
+          next();
+          return Promise.resolve();
+        },
+      },
+      actionDependencies
+    );
 
-    useConfigurableAction({
-      name: 'Done',
-      owner: actionOwnerName,
-      ownerUid: actionsOwnerId,
-      hasArguments: false,
-      executer: () => {
-        done();
-        return Promise.resolve();
-      }
-    }, actionDependencies);
+    useConfigurableAction(
+      {
+        name: 'Cancel',
+        owner: actionOwnerName,
+        ownerUid: actionsOwnerId,
+        hasArguments: false,
+        executer: () => {
+          cancel();
+          return Promise.resolve();
+        },
+      },
+      actionDependencies
+    );
+
+    useConfigurableAction(
+      {
+        name: 'Done',
+        owner: actionOwnerName,
+        ownerUid: actionsOwnerId,
+        hasArguments: false,
+        executer: () => {
+          done();
+          return Promise.resolve();
+        },
+      },
+      actionDependencies
+    );
     //#endregion
-
-    if (isComponentHidden(model)) return null;
 
     const executeExpression = (expression: string, returnBoolean = true) => {
       if (!expression) {
@@ -124,6 +135,31 @@ const TabsComponent: IToolboxComponent<IWizardComponentProps> = {
       return typeof evaluated === 'boolean' ? evaluated : true;
     };
 
+    //#region Get next and previous steps
+    // Factor in the fact that some steps will be hidden by condition
+    const visibleSteps = useMemo(
+      () =>
+        tabs?.map(({ customVisibility, permissions }, index) => {
+          const granted = anyOfPermissionsGranted(permissions || []);
+          const isVisibleByCondition = executeExpression(customVisibility, true);
+
+          const hidden = (!granted || !isVisibleByCondition) && formMode !== 'designer';
+
+          return {
+            index,
+            visible: !hidden,
+          };
+        }),
+      [tabs]
+    );
+
+    const getNextStep = () => visibleSteps?.findIndex(({ index, visible }) => index > current && visible);
+
+    const getPrevStep = () => findLastIndex(visibleSteps, ({ index, visible }) => visible && index < current);
+    //#endregion
+
+    if (isComponentHidden(model)) return null;
+
     const actionEvaluationContext = {
       data: formData,
       formMode: formMode,
@@ -135,9 +171,7 @@ const TabsComponent: IToolboxComponent<IWizardComponentProps> = {
     };
 
     /// NAVIGATION
-
     const executeActionIfConfigured = (accessor: (IWizardStepProps) => IConfigurableActionConfiguration) => {
-      console.log('generic action')
       const actionConfiguration = accessor(tabs[current]);
       if (!actionConfiguration) {
         console.warn(`Action not configured: tab '${current}', accessor: '${accessor.toString()}'`);
@@ -146,27 +180,35 @@ const TabsComponent: IToolboxComponent<IWizardComponentProps> = {
 
       executeAction({
         actionConfiguration: actionConfiguration,
-        argumentsEvaluationContext: actionEvaluationContext
+        argumentsEvaluationContext: actionEvaluationContext,
       });
-    }
+    };
 
     const next = () => {
-      if (current >= model.steps.length - 1)
-        return;
+      if (current >= model.steps.length - 1) return;
       executeActionIfConfigured(tab => tab.nextButtonActionConfiguration);
 
-      setCurrent(current + 1);
-      setComponent(tabs[current].components);
+      const nextStep = getNextStep();
+
+      if (nextStep >= 0) {
+        setCurrent(nextStep);
+      }
+
+      setComponent(tabs[current]?.components);
     };
 
     const back = () => {
-      if (current <= 0)
-        return;
+      if (current <= 0) return;
 
       executeActionIfConfigured(tab => tab.backButtonActionConfiguration);
 
-      setCurrent(current - 1);
-      setComponent(tabs[current].components);
+      const prevStep = getPrevStep();
+
+      if (prevStep >= 0) {
+        setCurrent(prevStep);
+      }
+
+      setComponent(tabs[current]?.components);
     };
 
     const cancel = () => {
@@ -177,63 +219,84 @@ const TabsComponent: IToolboxComponent<IWizardComponentProps> = {
       executeActionIfConfigured(tab => tab.doneButtonActionConfiguration);
     };
 
+    const steps = tabs
+      ?.filter(({ customVisibility, permissions }) => {
+        const granted = anyOfPermissionsGranted(permissions || []);
+        const isVisibleByCondition = executeExpression(customVisibility, true);
+
+        const hidden = (!granted || !isVisibleByCondition) && formMode !== 'designer';
+
+        return !hidden;
+      })
+      ?.map<IStepProps>(({ id, title, subTitle, description, icon, customEnabled }) => {
+        const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
+
+        const iconProps = icon ? { icon: <ShaIcon iconName={icon as any} /> } : {};
+
+        return {
+          id,
+          title,
+          subTitle,
+          description,
+          disabled: isDisabledByCondition,
+          ...iconProps,
+          content: <ComponentsContainer containerId={id} dynamicComponents={model?.isDynamic ? component : []} />,
+        };
+      });
+
     return (
       <>
-        <Steps type={wizardType} current={current} style={{ marginBottom: '25px' }}>
-          {tabs?.map(({ key, title, subTitle, description, icon, permissions, customVisibility, customEnabled }) => {
-            const granted = anyOfPermissionsGranted(permissions || []);
-            const isVisibleByCondition = executeExpression(customVisibility, true);
-            const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
+        <div className={classNames('sha-wizard-container', { vertical: model?.direction === 'vertical' })}>
+          <Steps
+            type={wizardType}
+            current={current}
+            items={steps}
+            size={model['size']}
+            direction={model?.direction}
+            labelPlacement={model?.labelPlacement}
+          />
 
-            if ((!granted || !isVisibleByCondition) && formMode !== 'designer') return null;
-
-            return (
-              <Step
-                key={key}
-                disabled={isDisabledByCondition}
-                title={title}
-                subTitle={subTitle}
-                description={description}
-                icon={
-                  icon ? (
-                    <Fragment>
-                      <ShaIcon iconName={icon as any} />
-                    </Fragment>
-                  ) : (
-                    <Fragment>{icon}</Fragment>
-                  )
-                }
-              />
-            );
-          })}
-        </Steps>
-
-        <ComponentsContainer containerId={tabs[current].id} dynamicComponents={model?.isDynamic ? component : []} />
+          <div className="sha-steps-content">{steps[current]?.content}</div>
+        </div>
 
         <Row>
-          <Col span={12}>
-            <Space size={'middle'}>
+          <Col span={24}>
+            <Space>
               {tabs[current].allowCancel === true && (
-                <Button onClick={() => cancel()}>
+                <Button
+                  onClick={() => cancel()}
+                  disabled={!executeExpression(tabs[current]?.cancelButtonCustomEnabled, true)}
+                >
                   {tabs[current].cancelButtonText ? tabs[current].cancelButtonText : 'Cancel'}
                 </Button>
               )}
+
               {current > 0 && (
-                <Button style={{ margin: '0 8px' }} onClick={() => back()}>
+                <Button
+                  style={{ margin: '0 8px' }}
+                  onClick={() => back()}
+                  disabled={!executeExpression(tabs[current]?.backButtonCustomEnabled, true)}
+                >
                   {tabs[current].backButtonText ? tabs[current].backButtonText : 'Back'}
                 </Button>
               )}
-            </Space>
-          </Col>
-          <Col span={12}>
-            <Space size={'middle'} style={{ width: '100%', justifyContent: 'right' }}>
+
               {current < tabs.length - 1 && (
-                <Button type="primary" onClick={() => next()}>
+                <Button
+                  type="primary"
+                  onClick={() => next()}
+                  disabled={!executeExpression(tabs[current]?.nextButtonCustomEnabled, true)}
+                >
                   {tabs[current].nextButtonText ? tabs[current].nextButtonText : 'Next'}
                 </Button>
               )}
+
               {current === tabs.length - 1 && (
-                <Button type="primary" onClick={() => done()}>
+                <Button
+                  type="primary"
+                  onClick={() => done()}
+                  disabled={!executeExpression(tabs[current]?.doneButtonCustomEnabled, true)}
+                >
                   {tabs[current].doneButtonText ? tabs[current].doneButtonText : 'Done'}
                 </Button>
               )}
@@ -243,38 +306,52 @@ const TabsComponent: IToolboxComponent<IWizardComponentProps> = {
       </>
     );
   },
-  migrator: m => m.add<IWizardComponentPropsV0>(0, prev => {
-    const model: IWizardComponentPropsV0 = {
-      ...prev,
-      name: prev.name ?? 'custom Name',
-      tabs: prev['tabs'] ?? [
-        {
-          id: nanoid(),
-          label: 'Tab 1',
-          title: 'Tab 1',
-          subTitle: 'Tab 1',
-          description: 'Tab 1',
-          allowCancel: false,
-          cancelButtonText: 'Cancel',
-          nextButtonText: 'Next',
-          backButtonText: 'Back',
-          doneButtonText: 'Done',
-          key: 'tab1',
-          components: [],
-          itemType: 'item',
-        },
-      ],
-    };
-    return model;
-  }).add(1, migrateV0toV1),
+  migrator: m =>
+    m
+      .add<IWizardComponentPropsV0>(0, prev => {
+        const model: IWizardComponentPropsV0 = {
+          ...prev,
+          name: prev.name ?? 'custom Name',
+          tabs: prev['tabs'] ?? [
+            {
+              id: nanoid(),
+              name: 'step1',
+              label: 'Step 1',
+              title: 'Step 1',
+              subTitle: 'Sub title 1',
+              description: 'Description 1',
+              sortOrder: 0,
+              allowCancel: false,
+              cancelButtonText: 'Cancel',
+              nextButtonText: 'Next',
+              backButtonText: 'Back',
+              doneButtonText: 'Done',
+              key: 'step1',
+              components: [],
+              itemType: 'item',
+            },
+          ],
+        };
+        return model;
+      })
+      .add(1, migrateV0toV1),
 
   settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
-    return <WizardSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
+    return (
+      <WizardSettings
+        readOnly={readOnly}
+        model={model}
+        onSave={onSave}
+        onCancel={onCancel}
+        onValuesChange={onValuesChange}
+      />
+    );
   },
-  validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
-  customContainerNames: ['tabs'],
+  // validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
+  customContainerNames: ['steps'],
   getContainers: model => {
     const { steps } = model as IWizardComponentProps;
+
     return steps.map<IFormComponentContainer>(t => ({ id: t.id }));
   },
 };

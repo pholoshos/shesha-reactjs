@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, PropsWithChildren } from 'react';
+import React, { FC, useReducer, useContext, PropsWithChildren, useRef } from 'react';
 import appConfiguratorReducer from './reducer';
 import {
   DEFAULT_ACCESS_TOKEN_NAME,
@@ -12,7 +12,6 @@ import { RestfulProvider } from 'restful-react';
 import IRequestHeaders from '../../interfaces/requestHeaders';
 import { setBackendUrlAction, setHeadersAction } from './actions';
 import { Router } from 'next/router';
-
 import AuthProvider from '../auth';
 import AuthorizationSettingsProvider from '../authorizationSettings';
 import ShaRoutingProvider from '../shaRouting';
@@ -20,11 +19,13 @@ import { AppConfiguratorProvider } from '../appConfigurator';
 import { DynamicModalProvider } from '../dynamicModal';
 import { UiProvider } from '../ui';
 import { MetadataDispatcherProvider } from '../metadataDispatcher';
-import { IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
+import { IAuthProviderRefProps, IToolboxComponentGroup, ThemeProvider, ThemeProviderProps } from '../..';
 import { ReferenceListDispatcherProvider } from '../referenceListDispatcher';
 import { StackedNavigationProvider } from '../../pages/dynamic/navigation/stakedNavigation';
+import ConditionalWrap from '../../components/conditionalWrapper';
 import { ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
 import { ApplicationActionsProcessor } from './configurable-actions/applicationActionsProcessor';
+import { ConfigurationItemsLoaderProvider } from '../configurationItemsLoader';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -36,9 +37,10 @@ export interface IShaApplicationProviderProps {
   whitelistUrls?: string[];
   themeProps?: ThemeProviderProps;
   routes?: ISheshaRutes;
+  noAuth?: boolean;
 }
 
-const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>> = (props) => {
+const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>> = props => {
   const {
     children,
     backendUrl,
@@ -59,6 +61,8 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     toolboxComponentGroups,
   });
 
+  const authRef = useRef<IAuthProviderRefProps>();
+
   const setRequestHeaders = (headers: IRequestHeaders) => {
     dispatch(setHeadersAction(headers));
   };
@@ -67,12 +71,19 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     dispatch(setBackendUrlAction(newBackendUrl));
   };
 
+  const anyOfPermissionsGranted = (permissions: string[]) => {
+    const authorizer = authRef?.current?.anyOfPermissionsGranted;
+    return authorizer && authorizer(permissions);
+  }
+
   return (
     <SheshaApplicationStateContext.Provider value={state}>
       <SheshaApplicationActionsContext.Provider
         value={{
           changeBackendUrl,
           setRequestHeaders,
+          // This will always return false if you're not authorized
+          anyOfPermissionsGranted: anyOfPermissionsGranted, // NOTE: don't pass ref directly here, it leads to bugs because some of components use old reference even when authRef is updated
         }}
       >
         <RestfulProvider
@@ -85,35 +96,41 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
             <UiProvider>
               <ThemeProvider {...(themeProps || {})}>
                 <ShaRoutingProvider router={router}>
-                  <AuthProvider
-                    tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
-                    onSetRequestHeaders={setRequestHeaders}
-                    unauthorizedRedirectUrl={unauthorizedRedirectUrl}
-                    whitelistUrls={whitelistUrls}
+                  <ConditionalWrap
+                    condition={!props?.noAuth}
+                    wrap={authChildren => (
+                      <AuthProvider
+                        tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
+                        onSetRequestHeaders={setRequestHeaders}
+                        unauthorizedRedirectUrl={unauthorizedRedirectUrl}
+                        whitelistUrls={whitelistUrls}
+                        authRef={authRef}
+                      >
+                        <AuthorizationSettingsProvider>{authChildren}</AuthorizationSettingsProvider>
+                      </AuthProvider>
+                    )}
                   >
-                    <AuthorizationSettingsProvider>
+                    <ConfigurationItemsLoaderProvider>
                       <AppConfiguratorProvider>
                         <ReferenceListDispatcherProvider>
                           <MetadataDispatcherProvider>
-                           <StackedNavigationProvider>
-                            <DynamicModalProvider>
-                              <ApplicationActionsProcessor>
-                                {children}
-                              </ApplicationActionsProcessor>
-                            </DynamicModalProvider>
-                          </StackedNavigationProvider>
+                            <StackedNavigationProvider>
+                              <DynamicModalProvider>
+                                <ApplicationActionsProcessor>{children}</ApplicationActionsProcessor>
+                              </DynamicModalProvider>
+                            </StackedNavigationProvider>
                           </MetadataDispatcherProvider>
                         </ReferenceListDispatcherProvider>
                       </AppConfiguratorProvider>
-                    </AuthorizationSettingsProvider>
-                  </AuthProvider>
+                    </ConfigurationItemsLoaderProvider>
+                  </ConditionalWrap>
                 </ShaRoutingProvider>
               </ThemeProvider>
             </UiProvider>
           </ConfigurableActionDispatcherProvider>
         </RestfulProvider>
-      </SheshaApplicationActionsContext.Provider>
-    </SheshaApplicationStateContext.Provider>
+      </SheshaApplicationActionsContext.Provider >
+    </SheshaApplicationStateContext.Provider >
   );
 };
 

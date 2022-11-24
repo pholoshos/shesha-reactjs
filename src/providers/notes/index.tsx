@@ -28,7 +28,7 @@ import { useNoteGetList, useNoteCreate, CreateNoteDto, NoteDto } from '../../api
 import { useMutate } from 'restful-react';
 import { useSignalR } from '../signalR';
 import { IShaHttpResponse } from '../../interfaces/shaHttpResponse';
-import { useAuth } from '../auth';
+import { useSheshaApplication } from '../..';
 
 const NotesProvider: FC<PropsWithChildren<INoteSettings>> = ({
   children,
@@ -40,7 +40,7 @@ const NotesProvider: FC<PropsWithChildren<INoteSettings>> = ({
   const [state, dispatch] = useReducer(notesReducer, COMMENTS_CONTEXT_INITIAL_STATE);
 
   const { connection } = useSignalR(false) ?? {};
-  const { headers } = useAuth();
+  const { headers } = useSheshaApplication();
 
   //#region Register signal r events
   useEffect(() => {

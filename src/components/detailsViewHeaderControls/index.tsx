@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react';
 import CancelButton from '../cancelButton';
-import { useAuth, useShaRouting } from '../../providers';
+import { useSheshaApplication, useShaRouting } from '../../providers';
 
 export interface IControlItemData {
   readonly name: string;
@@ -16,7 +16,7 @@ interface IProps {
 
 export const DetailsViewHeaderControls: FC<IProps> = ({ items, backUrl }) => {
   const { router } = useShaRouting();
-  const { anyOfPermissionsGranted } = useAuth();
+  const { anyOfPermissionsGranted } = useSheshaApplication();
 
   let i = 0;
 

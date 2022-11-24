@@ -1,13 +1,12 @@
 import { FileTextOutlined } from '@ant-design/icons';
-import { Typography } from 'antd';
+import { Alert, Typography } from 'antd';
 import { ParagraphProps } from 'antd/lib/typography/Paragraph';
 import React from 'react';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../interfaces/formDesigner';
 import { useForm, useSubForm } from '../../../../../providers';
-import { FormMarkup } from '../../../../../providers/form/models';
 import { evaluateString, getStyle } from '../../../../../providers/form/utils';
-import settingsFormJson from './settingsForm.json';
+import { settingsFormMarkup } from './settings';
 
 const { Paragraph } = Typography;
 
@@ -25,14 +24,12 @@ export interface IParagraphProps extends IConfigurableFormComponent {
   underline?: boolean;
 }
 
-const settingsForm = settingsFormJson as FormMarkup;
-
 const ParagraphComponent: IToolboxComponent<IParagraphProps> = {
   type: 'paragraph',
   name: 'Paragraph',
   icon: <FileTextOutlined />,
   factory: (model: IParagraphProps) => {
-    const { formData } = useForm();
+    const { formData, formMode } = useForm();
     const { value } = useSubForm();
 
     const data = value || formData;
@@ -48,15 +45,19 @@ const ParagraphComponent: IToolboxComponent<IParagraphProps> = {
       strong: model?.strong,
       italic: model?.italic,
       type: model?.contentType,
-      style: getStyle(model.style, data),
+      style: { margin: 'unset', ...(getStyle(model.style, data) || {}) },
     };
 
     const content = evaluateString(model?.content, data);
 
+    if (!content && formMode === 'designer') {
+      return <Alert type="warning" message="Please make sure you enter the content to be displayed here!" />;
+    }
+
     return <Paragraph {...props}>{content}</Paragraph>;
   },
-  settingsFormMarkup: settingsForm,
-  validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
+  settingsFormMarkup,
+  validateSettings: model => validateConfigurableComponentSettings(settingsFormMarkup, model),
   initModel: model => ({
     code: false,
     copyable: false,

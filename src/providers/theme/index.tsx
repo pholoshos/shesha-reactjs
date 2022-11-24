@@ -44,6 +44,10 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   }, [loadedThemeResponse]);
 
   useEffect(() => {
+    refetch();
+  }, []);
+
+  useEffect(() => {
     changeTheme(loadedTheme);
   }, [loadedTheme]);
 

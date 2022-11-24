@@ -6,6 +6,7 @@ import { IAjaxResponseBase } from '../../interfaces/ajaxResponse';
 export interface IValidationErrorsProps {
   error: string | IErrorInfo | IAjaxResponseBase;
   renderMode?: 'alert' | 'raw';
+  defaultMessage?: string;
 }
 
 const DEFAULT_ERROR_MSG = 'Sorry, an error has occurred. Please try again later';
@@ -13,7 +14,7 @@ const DEFAULT_ERROR_MSG = 'Sorry, an error has occurred. Please try again later'
 /**
  * A component for displaying validation errors
  */
-export const ValidationErrors: FC<IValidationErrorsProps> = ({ error, renderMode = 'alert' }) => {
+export const ValidationErrors: FC<IValidationErrorsProps> = ({ error, renderMode = 'alert', defaultMessage = 'Please correct the errors and try again:' }) => {
   if (!error) return null;
 
   const renderValidationErrors = (props: AlertProps) => {
@@ -21,7 +22,17 @@ export const ValidationErrors: FC<IValidationErrorsProps> = ({ error, renderMode
       return <Alert className="sha-validation-error-alert" type="error" showIcon closable {...props} />;
     }
 
-    return <Fragment>{props?.message}</Fragment>;
+    return (
+      <Fragment>
+        {props?.message}
+        {props?.description && (
+          <>
+            <br/>
+            {props.description}
+          </>
+        )}
+      </Fragment>
+    );
   };
 
   let errorObj = error as IErrorInfo;
@@ -54,7 +65,7 @@ export const ValidationErrors: FC<IValidationErrorsProps> = ({ error, renderMode
       </ul>
     );
 
-    return renderValidationErrors({ message: 'Please correct the errors and try again:', description: violations });
+    return renderValidationErrors({ message: defaultMessage, description: violations });
   }
 
   if (message) {

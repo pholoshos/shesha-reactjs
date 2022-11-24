@@ -25,6 +25,7 @@ import { usePrevious } from 'react-use';
 import { nanoid } from 'nanoid/non-secure';
 import { FormMarkup } from '../form/models';
 import { treeToList } from '../../utils/tree';
+import { InsertMode } from '../../interfaces';
 
 export interface IItemListConfiguratorProviderPropsBase {
   baseUrl?: string;
@@ -35,6 +36,7 @@ export interface IItemListConfiguratorProviderProps {
   options: IItemsOptions;
   itemTypeMarkup?: FormMarkup;
   groupTypeMarkup?: FormMarkup;
+  insertMode?: InsertMode;
 }
 
 const ItemListConfiguratorProvider: FC<PropsWithChildren<IItemListConfiguratorProviderProps>> = ({
@@ -43,10 +45,12 @@ const ItemListConfiguratorProvider: FC<PropsWithChildren<IItemListConfiguratorPr
   children,
   itemTypeMarkup,
   groupTypeMarkup,
+  insertMode = 'before',
 }) => {
   const [state, dispatch] = useReducer(itemListConfiguratorReducer, {
     ...ITEM_LIST_CONFIGURATOR_CONTEXT_INITIAL_STATE,
     items: items || [],
+    insertMode,
   });
 
   // We don't wanna rerender if selectItem is called with the same selected value

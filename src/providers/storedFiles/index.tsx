@@ -33,7 +33,7 @@ import { useMutate } from 'restful-react';
 import { useStoredFileFilesList } from '../../apis/storedFile';
 import { useSignalR } from '../signalR';
 import { useApplicationConfiguration } from '../../hooks';
-import { useAuth } from '../auth';
+import { useSheshaApplication } from '../sheshaApplication';
 export interface IStoredFilesProviderProps {
   ownerId: string;
   ownerType: string;
@@ -68,10 +68,10 @@ const StoredFilesProvider: FC<PropsWithChildren<IStoredFilesProviderProps>> = ({
   });
 
   const { connection } = useSignalR(false) ?? {};
-  const { headers } = useAuth();
+  const { headers } = useSheshaApplication();
 
   const { config } = useApplicationConfiguration();
- 
+
   const { loading: isFetchingFileList, refetch: fetchFileListHttp, data: fileListResponse } = useStoredFileFilesList({
     queryParams: {
       ownerId,

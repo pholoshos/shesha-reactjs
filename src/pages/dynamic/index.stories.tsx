@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import { Story } from '@storybook/react';
 import StoryApp from '../../components/storyBookApp';
@@ -6,6 +6,7 @@ import DynamicPage from './';
 import { addStory } from '../../stories/utils';
 import { IDynamicPageProps } from './interfaces';
 import { MainLayout } from '../..';
+import { Button } from 'antd';
 
 export default {
   title: 'Pages/DynamicPage',
@@ -33,12 +34,12 @@ export const Basic = Template.bind({});
 
 export const RoleDetailsPage = addStory(Template, {
   formId: { name: 'role-details' },
-  id: '81ae1b5a-4121-429b-89fa-06ec3a549e54'
+  id: '81ae1b5a-4121-429b-89fa-06ec3a549e54',
 });
 
 export const WardDetailsPage = addStory(Template, {
-  formId: { name: 'warddetails', module: 'Boxfusion.His.Clients.Houghton' } ,
-  id: '1b38f1cf-df7a-4d46-8555-4362753d8e17'
+  formId: { name: 'warddetails', module: 'Boxfusion.His.Clients.Houghton' },
+  id: '1b38f1cf-df7a-4d46-8555-4362753d8e17',
 });
 
 export const UserManagementPage = addStory(Template, {
@@ -60,7 +61,6 @@ export const PersonListPage = addStory(Template, {
   formId: { name: 'person-list' },
   //mode: 'edit',
 });
-
 
 export const FormsIndexPage = addStory(Template, {
   formId: { name: 'forms', module: 'shesha' },
@@ -106,7 +106,7 @@ export const WizardForm = addStory(Template, {
 export const WizardDebugForm = addStory(Template, {
   formId: {
     name: 'mazi-form-view-debug',
-  }
+  },
 });
 
 export const PersonForm = addStory(Template, {
@@ -135,10 +135,93 @@ export const ModelConfigurationEdit = addStory(Template, {
 export const WardsIndex = addStory(Template, {
   formId: {
     module: 'Boxfusion.His.Clients.Houghton',
-    name: 'wardsTable'
+    name: 'wardsTable',
   },
   mode: 'readonly',
 });
 
+export const Performance = addStory(Template, {
+  formId: {
+    module: 'Boxfusion.His.Clients.Houghton',
+    name: 'billing-management-details',
+  },
+  mode: 'readonly',
+  id: '0dee0b4a-48eb-4a81-86f1-192175c284ae',
+});
+
+export const ComplexModel = addStory(Template, {
+  formId: {
+    module: 'test',
+    name: 'test-nested',
+  },
+  mode: 'readonly',
+  id: '6a8c3704-8aca-4878-8db6-f4f55d5cc5d5',
+});
+
+export const MissingForm = addStory(Template, {
+  formId: {
+    module: 'test',
+    name: 'test-nested1',
+  },
+  mode: 'readonly',
+  id: '6a8c3704-8aca-4878-8db6-f4f55d5cc5d5',
+});
+
+export const MissingEntity = addStory(Template, {
+  formId: {
+    module: 'test',
+    name: 'test-nested',
+  },
+  mode: 'readonly',
+  id: '6a8c3704-8aca-4878-8db6-f4f55d5cc555',
+});
 
 Basic.args = DEFAULT_ARGS;
+
+const Template2: Story<{}> = () => {
+  const pages: IDynamicPageProps[] = [
+    /*{
+      formId: {
+        module: 'test',
+        name: 'test-nested'
+      },
+      mode: 'readonly',
+      id: '6a8c3704-8aca-4878-8db6-f4f55d5cc5d5'
+    },*/
+    {
+      formId: { name: 'modules', module: 'Shesha' },
+      mode: 'edit',
+    },
+    {
+      formId: { name: 'module-details', module: 'Shesha' },
+      mode: 'edit',
+      id: '8ab76d87-9c37-41ce-9919-34d7fc8828b3',
+    },
+    {
+      formId: { name: 'forms', module: 'Shesha' },
+      mode: 'edit',
+    },
+    {
+      formId: { name: 'form-details', module: 'Shesha' },
+      mode: 'edit',
+      id: '4e8c53ea-1257-4f82-bafb-021f11b0dbfc',
+    },
+  ];
+  const [page, setPage] = useState(0);
+
+  const onClick = () => {
+    const nextPage = page >= pages.length - 1 ? 0 : page + 1;
+    setPage(nextPage);
+  };
+
+  return (
+    <StoryApp>
+      <MainLayout>
+        <Button onClick={onClick}>Change</Button>
+        <DynamicPage {...pages[page]} />
+      </MainLayout>
+    </StoryApp>
+  );
+};
+
+export const Pages = addStory(Template2, {});

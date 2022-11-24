@@ -28,8 +28,8 @@ import { useStoredFileGet, useStoredFileGetEntityProperty, StoredFileDeleteQuery
 import axios from 'axios';
 import FileSaver from 'file-saver';
 import qs from 'qs';
-import { useAuth } from '../auth';
 import { useMutate } from 'restful-react';
+import { useSheshaApplication } from '../..';
 
 export interface IStoredFileProviderPropsBase {
   baseUrl?: string;
@@ -79,7 +79,7 @@ const StoredFileProvider: FC<PropsWithChildren<IStoredFileProviderProps>> = prop
     fileId,
   });
 
-  const { headers } = useAuth();
+  const { headers } = useSheshaApplication();
 
   const fileFetcher = useStoredFileGet({
     lazy: true,

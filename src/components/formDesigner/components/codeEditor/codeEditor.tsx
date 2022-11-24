@@ -97,32 +97,36 @@ export const CodeEditor: FC<ICodeEditorProps> = ({
 
       <Show when={mode === 'dialog'}>
         <Button icon={<CodeOutlined />} onClick={openEditorDialog} size="small">
-          { disabled || readOnly ? "View Code" : "Launch Code Editor" }          
+          {disabled || readOnly ? 'View Code' : 'Launch Code Editor'}
         </Button>
       </Show>
 
-      <Modal 
-        open={showDialog} 
-        onCancel={closeEditorDialog} 
-        onOk={closeEditorDialog} 
-        width={650} 
+      <Modal
+        open={showDialog}
+        onCancel={closeEditorDialog}
+        onOk={closeEditorDialog}
+        width={650}
         title={props.label}
         okButtonProps={{ hidden: disabled || readOnly }}
-        cancelText={disabled || readOnly ? "Close" : undefined}
+        cancelText={disabled || readOnly ? 'Close' : undefined}
       >
         <Show when={!!props?.description}>
           <Alert message={props?.description} />
           <br />
         </Show>
 
-        <Tabs>
-          <TabPane tab="Code" key="code">
-            {renderCodeEditor()}
-          </TabPane>
-          <TabPane tab="Variables" key="variable">
-            <CodeVariablesTables data={exposedVariables} />
-          </TabPane>
-        </Tabs>
+        {exposedVariables?.length ? (
+          <Tabs>
+            <TabPane tab="Code" key="code">
+              {renderCodeEditor()}
+            </TabPane>
+            <TabPane tab="Variables" key="variable">
+              <CodeVariablesTables data={exposedVariables} />
+            </TabPane>
+          </Tabs>
+        ) : (
+          <Fragment>{renderCodeEditor()}</Fragment>
+        )}
       </Modal>
     </Fragment>
   );

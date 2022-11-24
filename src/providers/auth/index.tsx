@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, PropsWithChildren, useMemo } from 'react';
+import React, { FC, useContext, useEffect, PropsWithChildren, useMemo, MutableRefObject } from 'react';
 import { authReducer } from './reducer';
 import useThunkReducer from 'react-hook-thunk-reducer';
 import {
@@ -51,6 +51,11 @@ import { IErrorInfo } from '../../interfaces/errorInfo';
 
 const DEFAULT_HOME_PAGE = '/';
 
+export interface IAuthProviderRefProps {
+  anyOfPermissionsGranted?: (permissions: string[]) => boolean;
+  headers?: any;
+}
+
 interface IAuthProviderProps {
   /**
    * What the token name should be
@@ -83,6 +88,8 @@ interface IAuthProviderProps {
    * @deprecated - use `withAuth` instead. Any page that doesn't require Auth will be rendered without being wrapped inside `withAuth`
    */
   whitelistUrls?: string[];
+
+  authRef?: MutableRefObject<IAuthProviderRefProps>;
 }
 
 const ASPNET_CORE_CULTURE = '.AspNetCore.Culture';
@@ -95,6 +102,7 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
   changePasswordUrl = URL_CHANGE_PASSWORD,
   homePageUrl = URL_HOME_PAGE,
   whitelistUrls,
+  authRef,
 }) => {
   const { router } = useShaRouting();
   const { backendUrl } = useSheshaApplication();
@@ -310,12 +318,14 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
     const { loginInfo } = state;
     if (!loginInfo) return false;
 
-    if (!permissions) return true;
+    if (!permissions || permissions.length === 0) return true;
 
     const granted = loginInfo.grantedPermissions || [];
 
     return permissions.some(p => granted.includes(p));
   };
+
+  if (authRef) authRef.current = { anyOfPermissionsGranted, headers: state?.headers };
 
   const anyOfPermissionsGrantedWrapper = (permissions: string[]) => {
     if (permissions?.length === 0) return true;

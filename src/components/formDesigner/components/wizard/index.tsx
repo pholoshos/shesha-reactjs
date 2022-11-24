@@ -3,7 +3,7 @@ import { IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
 import { Steps, Button, Space, message } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useForm, useGlobalState } from '../../../../providers';
 import { useSheshaApplication } from '../../../../';
 import { nanoid } from 'nanoid/non-secure';
@@ -22,6 +22,7 @@ import './styles.less';
 import classNames from 'classnames';
 import { findLastIndex } from 'lodash';
 import ConditionalWrap from '../../../conditionalWrapper';
+import { useDeepCompareEffect } from 'react-use';
 
 const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
   type: 'wizard',
@@ -44,7 +45,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
 
     const [component, setComponent] = useState(null);
 
-    useEffect(() => {
+    useDeepCompareEffect(() => {
       const defaultActiveStep = model?.steps?.findIndex(item => item?.id === model?.defaultActiveStep);
       setCurrent(defaultActiveStep < 0 ? 0 : defaultActiveStep);
     }, [model?.defaultActiveStep]);

@@ -4,9 +4,11 @@ import { CSSProperties, ReactNode } from 'react';
 import { IAnyObject } from '../../interfaces';
 import { IConfigurableColumnsBase } from '../../providers/datatableColumnsConfigurator/models';
 import { FormIdentifier } from '../../providers/form/models';
+import { ITableViewProps } from '../../providers/tableViewSelectorConfigurator/models';
 
 interface IWrappedEntityPickerProps {
   entityType?: string;
+  filters?: ITableViewProps[];
   allowNewRecord?: boolean;
   parentEntityId?: string;
   onDblClick?: (data: any) => void;

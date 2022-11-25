@@ -1,16 +1,18 @@
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Button, Input, Modal, Select, Skeleton } from 'antd';
 import { DefaultOptionType } from 'antd/lib/select';
-import _ from 'lodash';
+import _, { isEmpty } from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import React, { FC, Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useMedia } from 'react-use';
 import { IAnyObject } from '../../interfaces';
-import { useModal } from '../../providers';
+import { useForm, useGlobalState, useModal } from '../../providers';
 import DataTableProvider, { useDataTable } from '../../providers/dataTable';
+import { evaluateDynamicFilters, hasDynamicFilter } from '../../providers/dataTable/utils';
 import { IModalProps } from '../../providers/dynamicModal/models';
 import { useEntitySelectionData } from '../../utils/entity';
 import GlobalTableFilter from '../globalTableFilter';
+import camelCaseKeys from 'camelcase-keys';
 import IndexTable from '../indexTable';
 import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
 import TablePager from '../tablePager';
@@ -47,6 +49,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
   const {
     entityType,
     displayEntityKey,
+    filters,
     onChange,
     disabled,
     loading,
@@ -68,7 +71,14 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
   });
   const isSmall = useMedia('(max-width: 480px)');
 
-  const { changeSelectedStoredFilterIds, selectedStoredFilterIds, registerConfigurableColumns } = useDataTable();
+  const {
+    changeSelectedStoredFilterIds,
+    selectedStoredFilterIds,
+    registerConfigurableColumns,
+    setPredefinedFilters,
+  } = useDataTable();
+  const { globalState } = useGlobalState();
+  const { formData } = useForm();
   const selectRef = useRef(undefined);
 
   useEffect(() => {
@@ -106,6 +116,57 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
   const selectedMode = mode === 'single' ? undefined : mode;
 
   const isMultiple = mode === 'multiple';
+
+  const hasFilters = filters?.length > 0;
+
+  const foundDynamicFilter = hasDynamicFilter(filters);
+
+  const hasFormData = !isEmpty(formData);
+  const hasGlobalState = !isEmpty(formData);
+
+  const evaluateDynamicFiltersHelper = () => {
+    const data = !isEmpty(formData) ? camelCaseKeys(formData, { deep: true, pascalCase: true }) : formData;
+
+    const evaluatedFilters = evaluateDynamicFilters(filters, [
+      {
+        match: 'data',
+        data: data,
+      },
+      {
+        match: 'globalState',
+        data: globalState,
+      },
+      {
+        match: '', // For backward compatibility. It's also important that the empty one is the last one as it's a fallback
+        data,
+      },
+    ]);
+
+    let parsedFilters = evaluatedFilters;
+
+    const firstElement = evaluatedFilters[0];
+
+    firstElement.defaultSelected = true;
+    firstElement.selected = true;
+
+    evaluatedFilters[0] = firstElement;
+
+    if (hasFormData || hasGlobalState) {
+      // Here we know we have evaluated our filters
+
+      // TODO: Deal with the situation whereby the expression value evaluated to empty string because the action GetData will fail
+      setPredefinedFilters(parsedFilters);
+    } else if (!foundDynamicFilter) {
+      // Here we do not need dynamic filters
+      setPredefinedFilters(parsedFilters);
+    }
+  };
+
+  useEffect(() => {
+    if (hasFilters) {
+      evaluateDynamicFiltersHelper();
+    }
+  }, [filters, formData, globalState]);
 
   useEffect(() => {
     const { showModal } = state;

@@ -11,6 +11,7 @@ import { useForm } from '../../../../providers';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { IConfigurableColumnsBase } from '../../../../providers/datatableColumnsConfigurator/models';
 import { migrateV0toV1 } from './migrations/migrate-v1';
+import { ITableViewProps } from '../../../../providers/tableViewSelectorConfigurator/models';
 
 export interface IEntityPickerComponentProps extends IConfigurableFormComponent {
   placeholder?: string;
@@ -19,6 +20,7 @@ export interface IEntityPickerComponentProps extends IConfigurableFormComponent 
   disabled?: boolean;
   mode?: 'single' | 'multiple' | 'tags';
   entityType: string;
+  filters?: object;
   title?: string;
   displayEntityKey?: string;
   allowNewRecord?: boolean;
@@ -37,6 +39,7 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
   icon: <EllipsisOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.entityReference,
   factory: (model: IEntityPickerComponentProps) => {
+    const { filters } = model;
     const { formMode, isComponentDisabled } = useForm();
 
     const isReadOnly = model?.readOnly || formMode === 'readonly';
@@ -54,6 +57,18 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
       );
     }
 
+    const entityPickerFilter: ITableViewProps[] = [
+      {
+        defaultSelected: true,
+        expression: { ...filters },
+        filterType: 'queryBuilder',
+        id: 'uZ4sjEhzO7joxO6kUvwdb',
+        name: 'entity Picker',
+        selected: true,
+        sortOrder: 0,
+      },
+    ];
+
     return (
       <ConfigurableFormItem model={model} initialValue={model?.defaultValue}>
         <EntityPicker
@@ -62,8 +77,8 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
           readOnly={isReadOnly}
           displayEntityKey={model?.displayEntityKey}
           entityType={model?.entityType}
+          filters={entityPickerFilter}
           mode={model?.mode}
-        
           addNewRecordsProps={
             model?.allowNewRecord
               ? {
@@ -81,15 +96,17 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
       </ConfigurableFormItem>
     );
   },
-  migrator: m => m.add<IEntityPickerComponentProps>(0, prev => {
-    return { 
-      ...prev,
-      items: prev['items'] ?? [],
-      mode: prev['mode'] ?? 'single',
-      entityType: prev['entityType'],
-    };
-  })
-  .add<IEntityPickerComponentProps>(1, migrateV0toV1),
+  migrator: m =>
+    m
+      .add<IEntityPickerComponentProps>(0, prev => {
+        return {
+          ...prev,
+          items: prev['items'] ?? [],
+          mode: prev['mode'] ?? 'single',
+          entityType: prev['entityType'],
+        };
+      })
+      .add<IEntityPickerComponentProps>(1, migrateV0toV1),
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
 };

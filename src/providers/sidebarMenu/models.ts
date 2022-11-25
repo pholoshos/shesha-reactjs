@@ -30,5 +30,5 @@ export interface IHeaderAction {
    *
    * Usually handy for `actions`
    */
-  placeHolder?: ReactNode;
+  placeholder?: ReactNode;
 }

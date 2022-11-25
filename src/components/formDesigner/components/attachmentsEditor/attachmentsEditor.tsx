@@ -6,7 +6,7 @@ import ConfigurableFormItem from '../formItem';
 import settingsFormJson from './settingsForm.json';
 import StoredFilesProvider from '../../../../providers/storedFiles';
 import { CustomFile } from '../../../';
-import { useForm, useSheshaApplication } from '../../../../providers';
+import { useForm, useGlobalState, useSheshaApplication } from '../../../../providers';
 import { evaluateValue, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 
 export interface IAttachmentsEditorProps extends IConfigurableFormComponent {
@@ -30,7 +30,8 @@ const AttachmentsEditor: IToolboxComponent<IAttachmentsEditorProps> = {
     const { backendUrl } = useSheshaApplication();
 
     const { formData } = useForm();
-    const ownerId = evaluateValue(model.ownerId, { data: formData });
+    const { globalState } = useGlobalState();
+    const ownerId = evaluateValue(model.ownerId, { data: formData, globalState });
 
     return (
       <ConfigurableFormItem model={model}>

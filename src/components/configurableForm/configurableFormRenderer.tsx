@@ -40,7 +40,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   skipFetchData,
   ...props
 }) => {
-  const { setFormData, formData, formMode, formSettings, setValidationErrors } = useForm();
+  const { setFormData, formData, allComponents, formMode, formSettings, setValidationErrors } = useForm();
   const { isDragging = false } = useFormDesigner(false) ?? {};
   const {
     excludeFormFieldsInPayload,
@@ -184,11 +184,12 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
   useEffect(() => {
     setFormData({ values: initialValues, mergeValues: true });
 
+    if (fetchedFormEntity) return;
+
     if (form) {
       form.resetFields();
     }
-  }, [initialValues]);
-  // }, [allComponents, initialValues]);
+  }, [allComponents, initialValues]);
 
   useEffect(() => {
     let incomingInitialValues = null;

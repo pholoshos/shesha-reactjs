@@ -15,7 +15,6 @@ import {
   Checkbox,
   ColProps,
   Divider,
-  Empty,
   Form,
   Input,
   message,
@@ -73,6 +72,7 @@ const ListControl: FC<IListControlProps> = props => {
     namePrefix,
     customVisibility,
     readOnly,
+    placeholder,
   } = props;
 
   const { formConfiguration, refetch: refetchFormConfig, error: fetchFormError } = useFormConfiguration({
@@ -607,7 +607,7 @@ const ListControl: FC<IListControlProps> = props => {
               </Form.List>
 
               <Show when={hasNoData}>
-                <Empty description="There are no items found." />
+                <div style={{ textAlign: 'center' }}>{placeholder ?? 'There are no items found.'}</div>
               </Show>
             </div>
           </Show>

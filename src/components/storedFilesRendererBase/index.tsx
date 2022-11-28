@@ -29,12 +29,6 @@ export interface IStoredFilesRendererBaseProps {
   maxFileLength?: number;
   isDragger?: boolean;
   disabled?: boolean;
-
-  /**
-   * Whether when there are no files uploaded there should be a text to indicate that
-   */
-  noFilesCaption?: ReactNode;
-
   uploadBtnProps?: ButtonProps;
 }
 
@@ -56,9 +50,6 @@ export const StoredFilesRendererBase: FC<IStoredFilesRendererBaseProps> = ({
   maxFileLength = 0,
   isDragger = true,
   disabled,
-  noFilesCaption = (
-    <Alert className="stored-files-renderer-no-files" message="You currently do not have files" type="info" />
-  ),
 }) => {
   const hasFiles = !!fileList.length;
 
@@ -136,8 +127,6 @@ export const StoredFilesRendererBase: FC<IStoredFilesRendererBaseProps> = ({
             <InboxOutlined />
           </p>
 
-          {!hasFiles && noFilesCaption}
-
           <p className="ant-upload-text">Click or drag file to this area to upload</p>
         </Dragger>
       ) : (
@@ -146,7 +135,6 @@ export const StoredFilesRendererBase: FC<IStoredFilesRendererBaseProps> = ({
             (press to upload)
           </Button>
 
-          {!hasFiles && noFilesCaption}
         </Upload>
       )}
 

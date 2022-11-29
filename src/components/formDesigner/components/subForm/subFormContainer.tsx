@@ -42,8 +42,8 @@ export const SubFormContainer: FC<ISubFormContainerProps> = ({ components, readO
         ?.filter(({ customVisibility }) => {
           return executeExpression(customVisibility, true);
         })
-        .map(({ customEnabled, ...model }) => {
-          const disabled = !executeExpression(customEnabled, true);
+        .map(({ customEnabled, disabled: notabled, ...model }) => {
+          const disabled = !executeExpression(customEnabled, true) || notabled;
 
           return (
             <DynamicComponent

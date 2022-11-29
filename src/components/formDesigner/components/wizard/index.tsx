@@ -246,11 +246,9 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
         };
       });
 
-    const { buttonsLayout = 'left' } = model;
+    const { buttonsLayout = 'spaceBetween' } = model;
 
     const splitButtons = buttonsLayout === 'spaceBetween';
-
-    console.log('LOGS:: buttonsLayout', buttonsLayout);
 
     return (
       <div className="sha-wizard">

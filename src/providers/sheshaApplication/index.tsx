@@ -72,9 +72,11 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
   };
 
   const anyOfPermissionsGranted = (permissions: string[]) => {
+    if (permissions?.length === 0) return true;
+
     const authorizer = authRef?.current?.anyOfPermissionsGranted;
     return authorizer && authorizer(permissions);
-  }
+  };
 
   return (
     <SheshaApplicationStateContext.Provider value={state}>
@@ -129,8 +131,8 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
             </UiProvider>
           </ConfigurableActionDispatcherProvider>
         </RestfulProvider>
-      </SheshaApplicationActionsContext.Provider >
-    </SheshaApplicationStateContext.Provider >
+      </SheshaApplicationActionsContext.Provider>
+    </SheshaApplicationStateContext.Provider>
   );
 };
 

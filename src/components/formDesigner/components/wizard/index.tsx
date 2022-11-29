@@ -5,7 +5,7 @@ import { Steps, Button, Space, message } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
 import React, { useMemo, useState } from 'react';
 import { useForm, useGlobalState } from '../../../../providers';
-import { useSheshaApplication } from '../../../../';
+import { IConfigurableFormComponent, useSheshaApplication } from '../../../../';
 import { nanoid } from 'nanoid/non-secure';
 import WizardSettings from './settings';
 import { IStepProps, IWizardComponentProps } from './models';
@@ -43,7 +43,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
       return localCurrent < 0 ? 0 : localCurrent;
     });
 
-    const [component, setComponent] = useState(null);
+    const [components, setComponents] = useState<IConfigurableFormComponent[]>();
 
     useDeepCompareEffect(() => {
       const defaultActiveStep = model?.steps?.findIndex(item => item?.id === model?.defaultActiveStep);
@@ -196,7 +196,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
         setCurrent(nextStep);
       }
 
-      setComponent(tabs[current]?.components);
+      setComponents(tabs[current]?.components);
     };
 
     const back = () => {
@@ -210,7 +210,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
         setCurrent(prevStep);
       }
 
-      setComponent(tabs[current]?.components);
+      setComponents(tabs[current]?.components);
     };
 
     const cancel = () => {
@@ -242,7 +242,12 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
           description,
           disabled: isDisabledByCondition,
           ...iconProps,
-          content: <ComponentsContainer containerId={id} dynamicComponents={model?.isDynamic ? component : []} />,
+          content: (
+            <ComponentsContainer
+              containerId={id}
+              dynamicComponents={model?.isDynamic ? components?.map(c => ({ ...c, readOnly: model?.readOnly })) : []}
+            />
+          ),
         };
       });
 

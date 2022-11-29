@@ -153,7 +153,12 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
             noContentPadding
             className="sha-form-designer-child-table"
           >
-            <ComponentsContainer containerId={model.id} dynamicComponents={model?.isDynamic ? model?.components : []} />
+            <ComponentsContainer
+              containerId={model.id}
+              dynamicComponents={
+                model?.isDynamic ? model?.components?.map(c => ({ ...c, readOnly: model?.readOnly })) : []
+              }
+            />
           </CollapsiblePanel>
         </Show>
       </Fragment>

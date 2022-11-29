@@ -104,7 +104,12 @@ const TabsComponent: IToolboxComponent<ITabsComponentProps> = {
                   )
                 }
               >
-                <ComponentsContainer containerId={id} dynamicComponents={model?.isDynamic ? components : []} />
+                <ComponentsContainer
+                  containerId={id}
+                  dynamicComponents={
+                    model?.isDynamic ? components?.map(c => ({ ...c, readOnly: model?.readOnly })) : []
+                  }
+                />
               </TabPane>
             );
           }

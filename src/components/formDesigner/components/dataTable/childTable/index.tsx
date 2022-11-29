@@ -1,6 +1,6 @@
 import { TableOutlined } from '@ant-design/icons';
 import { Alert, Space } from 'antd';
-import React, { Fragment, MutableRefObject, useEffect } from 'react';
+import React, { Fragment, MutableRefObject } from 'react';
 import { CollapsiblePanel, GlobalTableFilter, Show, TablePager } from '../../../..';
 import { evaluateString, useDataTable, useForm, useGlobalState } from '../../../../..';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
@@ -17,6 +17,7 @@ import camelCaseKeys from 'camelcase-keys';
 import _, { isEmpty } from 'lodash';
 import { migrateV0toV1 } from './migrations/migrate-v1';
 import { migrateV1toV2 } from './migrations/migrate-v2';
+import { useDeepCompareEffect } from 'react-use';
 
 export interface IChildTableComponentProps extends IChildTableSettingsProps, IConfigurableFormComponent {
   components?: IConfigurableFormComponent[];
@@ -101,7 +102,7 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
       }
     };
 
-    useEffect(() => {
+    useDeepCompareEffect(() => {
       if (hasFilters) {
         evaluateDynamicFiltersHelper();
       }
@@ -152,10 +153,7 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
             noContentPadding
             className="sha-form-designer-child-table"
           >
-            <ComponentsContainer
-              containerId={model.id}
-               dynamicComponents={model?.isDynamic ? model?.components : []}
-            />
+            <ComponentsContainer containerId={model.id} dynamicComponents={model?.isDynamic ? model?.components : []} />
           </CollapsiblePanel>
         </Show>
       </Fragment>
@@ -178,15 +176,17 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
     ...model,
     isNotWrapped: true,
   }),
-  migrator: m => m.add<IChildTableComponentProps>(0, prev => {
-      return { 
-        ...prev,
-        isNotWrapped: prev['isNotWrapped'] ?? true,
-        defaultSelectedFilterId: null,
-      };
-    })
-    .add<IChildTableComponentProps>(1, migrateV0toV1)
-    .add<IChildTableComponentProps>(2, migrateV1toV2),
+  migrator: m =>
+    m
+      .add<IChildTableComponentProps>(0, prev => {
+        return {
+          ...prev,
+          isNotWrapped: prev['isNotWrapped'] ?? true,
+          defaultSelectedFilterId: null,
+        };
+      })
+      .add<IChildTableComponentProps>(1, migrateV0toV1)
+      .add<IChildTableComponentProps>(2, migrateV1toV2),
 };
 
 export default ChildTableComponent;

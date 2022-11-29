@@ -180,7 +180,7 @@ const ListControl: FC<IListControlProps> = props => {
     if (dataSource === 'api') {
       debouncedRefresh();
     }
-  }, [isInDesignerMode, dataSource, evaluatedFilters]);
+  }, [isInDesignerMode, dataSource, evaluatedFilters, queryParams]);
 
   useDeepCompareEffect(() => {
     if (uniqueStateId && Array.isArray(value) && value.length) {

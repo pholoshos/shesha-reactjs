@@ -31,7 +31,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     initialValues,
     destroyOnClose,
     parentFormValues,
-    width = 800,
+    width,
     modalConfirmDialogMessage,
     onFailed,
     prepareInitialValues,
@@ -44,7 +44,6 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
   const [form] = Form.useForm();
   const { hide, removeModal } = useDynamicModals();
   const { router } = useShaRouting();
-  const isSmall = useMedia('(max-width: 480px)');
 
   const onOk = () => {
     //console.log('LOG:onOk')
@@ -115,7 +114,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
       onCancel={hideForm} // not used
       {...footerProps}
       destroyOnClose
-      width={isSmall ? width : '60%'}
+      width={width ? `${width}%` : '60%'}
       maskClosable={false}
     >
       <ConfigurableForm

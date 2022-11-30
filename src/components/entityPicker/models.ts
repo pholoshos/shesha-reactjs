@@ -25,6 +25,7 @@ interface IAddNewRecordProps {
   showModalFooter?: boolean;
   submitHttpVerb?: 'POST' | 'PUT';
   onSuccessRedirectUrl?: string;
+  modalWidth?: number;
 }
 
 export interface IEntityPickerState {

@@ -104,6 +104,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
     showModalFooter: addNewRecordsProps?.showModalFooter,
     submitHttpVerb: addNewRecordsProps?.submitHttpVerb,
     onSuccessRedirectUrl: addNewRecordsProps?.onSuccessRedirectUrl,
+    width: addNewRecordsProps?.modalWidth,
     onSubmitted: (localValue: any) => {
       if (onDblClick) {
         onDblClick(localValue);
@@ -251,6 +252,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
   }, [selectedItems]);
 
   const canAddNew = Boolean(addNewRecordsProps) && addNewRecordsProps.modalFormId;
+
   const footer = (
     <Fragment>
       {canAddNew && (

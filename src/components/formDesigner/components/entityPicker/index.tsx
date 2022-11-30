@@ -29,6 +29,7 @@ export interface IEntityPickerComponentProps extends IConfigurableFormComponent 
   showModalFooter?: boolean;
   onSuccessRedirectUrl?: string;
   submitHttpVerb?: 'POST' | 'PUT';
+  modalWidth?: number;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -82,12 +83,13 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
           addNewRecordsProps={
             model?.allowNewRecord
               ? {
-                  modalFormId: model?.modalFormId,
-                  modalTitle: model?.modalTitle,
-                  showModalFooter: model?.showModalFooter,
-                  submitHttpVerb: model?.submitHttpVerb,
-                  onSuccessRedirectUrl: model?.onSuccessRedirectUrl,
-                }
+                modalFormId: model?.modalFormId,
+                modalTitle: model?.modalTitle,
+                showModalFooter: model?.showModalFooter,
+                submitHttpVerb: model?.submitHttpVerb,
+                onSuccessRedirectUrl: model?.onSuccessRedirectUrl,
+                modalWidth: model?.modalWidth
+              }
               : undefined
           }
           name={model?.name}

@@ -35,7 +35,7 @@ export const dialogArgumentsForm = new DesignerToolbarSettings()
       required: true
     },
     convertToFullId: true,
-  }) 
+  })
   .addCheckbox({
     id: "c815c322-ba5d-4062-9736-e5d03c724134",
     name: "showModalFooter",
@@ -72,10 +72,28 @@ export const dialogArgumentsForm = new DesignerToolbarSettings()
     valueName: "value",
     description: "Additional properties you want to be passed when the form gets submitted like parentId in the case where the modal is used in a childTable. Also note you can use Mustache expression like {{id}} for value property"
   })
-  .addNumberField({
+  .addDropdown({
     id: "264903ff-b525-4a6e-893f-d560b219df9d",
     name: "modalWidth",
-    label: "Width",
-    customVisibility: "return data.showModalFooter === true"
+    label: "Dialog Width",
+    allowClear: true,
+    values: [
+      {
+        label: "Small",
+        value: 40,
+        id: "2f56ae38-e5f3-40ff-9830-bc048736ddb4"
+      },
+      {
+        label: "Medium",
+        value: 60,
+        id: "470d820b-7cd7-439c-8e95-1f5b3134f80c"
+      },
+      {
+        label: "Large",
+        value: 80,
+        id: "1f2ac3db-3b3f-486c-991f-ad703088ab2d"
+      }
+    ],
+    dataSourceType: "values"
   })
   .toJson();

@@ -122,7 +122,7 @@ export interface IGrouppedObjectsTreeProps<TItem> {
                       searchText={props?.searchText} 
                       defaultExpandAll={(props?.searchText ?? '') !== ''}
                       onChange={ onChangeHandler }
-                      defaultSelected={props?.openedKeys.find(key => key == ds.groupName) ? props.defaultSelected?.toLowerCase() : null}
+                      defaultSelected={props?.openedKeys?.find(key => key == ds.groupName) ? props.defaultSelected?.toLowerCase() : null}
                       onRenterItem={props?.onRenterItem}
                     />
                   </Panel>

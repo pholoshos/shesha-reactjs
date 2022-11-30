@@ -1,11 +1,11 @@
 import { IToolboxComponent } from '../../../../interfaces';
 import { IFormComponentContainer } from '../../../../providers/form/models';
 import { DoubleRightOutlined } from '@ant-design/icons';
-import { Steps, Button, Space, message, Col, Row } from 'antd';
+import { Steps, Button, Space, message } from 'antd';
 import ComponentsContainer from '../../componentsContainer';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useForm, useGlobalState } from '../../../../providers';
-import { useSheshaApplication } from '../../../../';
+import { IConfigurableFormComponent, useSheshaApplication } from '../../../../';
 import { nanoid } from 'nanoid/non-secure';
 import WizardSettings from './settings';
 import { IStepProps, IWizardComponentProps } from './models';
@@ -21,6 +21,8 @@ import { IConfigurableActionConfiguration } from '../../../../interfaces/configu
 import './styles.less';
 import classNames from 'classnames';
 import { findLastIndex } from 'lodash';
+import ConditionalWrap from '../../../conditionalWrapper';
+import { useDeepCompareEffect } from 'react-use';
 
 const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
   type: 'wizard',
@@ -41,9 +43,9 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
       return localCurrent < 0 ? 0 : localCurrent;
     });
 
-    const [component, setComponent] = useState(null);
+    const [components, setComponents] = useState<IConfigurableFormComponent[]>();
 
-    useEffect(() => {
+    useDeepCompareEffect(() => {
       const defaultActiveStep = model?.steps?.findIndex(item => item?.id === model?.defaultActiveStep);
       setCurrent(defaultActiveStep < 0 ? 0 : defaultActiveStep);
     }, [model?.defaultActiveStep]);
@@ -194,7 +196,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
         setCurrent(nextStep);
       }
 
-      setComponent(tabs[current]?.components);
+      setComponents(tabs[current]?.components);
     };
 
     const back = () => {
@@ -208,7 +210,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
         setCurrent(prevStep);
       }
 
-      setComponent(tabs[current]?.components);
+      setComponents(tabs[current]?.components);
     };
 
     const cancel = () => {
@@ -240,12 +242,23 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
           description,
           disabled: isDisabledByCondition,
           ...iconProps,
-          content: <ComponentsContainer containerId={id} dynamicComponents={model?.isDynamic ? component : []} />,
+          content: (
+            <ComponentsContainer
+              containerId={id}
+              dynamicComponents={model?.isDynamic ? components?.map(c => ({ ...c, readOnly: model?.readOnly })) : []}
+            />
+          ),
         };
       });
 
+    const { buttonsLayout = 'left' } = model;
+
+    const splitButtons = buttonsLayout === 'spaceBetween';
+
+    console.log('LOGS:: buttonsLayout', buttonsLayout);
+
     return (
-      <>
+      <div className="sha-wizard">
         <div className={classNames('sha-wizard-container', { vertical: model?.direction === 'vertical' })}>
           <Steps
             type={wizardType}
@@ -259,18 +272,22 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
           <div className="sha-steps-content">{steps[current]?.content}</div>
         </div>
 
-        <Row>
-          <Col span={24}>
-            <Space>
-              {tabs[current].allowCancel === true && (
-                <Button
-                  onClick={() => cancel()}
-                  disabled={!executeExpression(tabs[current]?.cancelButtonCustomEnabled, true)}
-                >
-                  {tabs[current].cancelButtonText ? tabs[current].cancelButtonText : 'Cancel'}
-                </Button>
+        <ConditionalWrap condition={buttonsLayout === 'left'} wrap={children => <Space>{children}</Space>}>
+          <div
+            className={classNames('sha-steps-buttons-container', {
+              split: splitButtons,
+              left: buttonsLayout === 'left',
+              right: buttonsLayout === 'right',
+            })}
+          >
+            <ConditionalWrap
+              condition={splitButtons}
+              wrap={children => (
+                <Space>
+                  <div className={classNames('sha-steps-buttons')}>{children}</div>
+                </Space>
               )}
-
+            >
               {current > 0 && (
                 <Button
                   style={{ margin: '0 8px' }}
@@ -281,6 +298,24 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
                 </Button>
               )}
 
+              {tabs[current].allowCancel === true && (
+                <Button
+                  onClick={() => cancel()}
+                  disabled={!executeExpression(tabs[current]?.cancelButtonCustomEnabled, true)}
+                >
+                  {tabs[current].cancelButtonText ? tabs[current].cancelButtonText : 'Cancel'}
+                </Button>
+              )}
+            </ConditionalWrap>
+
+            <ConditionalWrap
+              condition={splitButtons}
+              wrap={children => (
+                <Space>
+                  <div className={classNames('sha-steps-buttons')}>{children}</div>
+                </Space>
+              )}
+            >
               {current < tabs.length - 1 && (
                 <Button
                   type="primary"
@@ -300,10 +335,10 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
                   {tabs[current].doneButtonText ? tabs[current].doneButtonText : 'Done'}
                 </Button>
               )}
-            </Space>
-          </Col>
-        </Row>
-      </>
+            </ConditionalWrap>
+          </div>
+        </ConditionalWrap>
+      </div>
     );
   },
   migrator: m =>

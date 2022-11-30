@@ -231,7 +231,17 @@ export const DatePickerWrapper: FC<IDateFieldProps> = props => {
   }
 
   if (isReadOnly) {
-    return <ReadOnlyDisplayFormItem value={formattedValue?.toISOString()} disabled={isDisabled} type="datetime" />;
+    const format = `${dateFormat}${showTime ? timeFormat : ''}`;
+
+    return (
+      <ReadOnlyDisplayFormItem
+        value={formattedValue?.toISOString()}
+        disabled={isDisabled}
+        type="datetime"
+        dateFormat={format}
+        timeFormat={timeFormat}
+      />
+    );
   }
 
   if (range) {

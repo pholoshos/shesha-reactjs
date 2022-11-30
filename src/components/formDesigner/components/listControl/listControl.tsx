@@ -1,11 +1,11 @@
 import { isEmpty } from 'lodash';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useMutate } from 'restful-react';
 import { EntitiesGetAllQueryParams, useEntitiesGetAll } from '../../../../apis/entities';
 import { FormItemProvider, SubFormProvider, useForm, useGlobalState } from '../../../../providers';
 import { getQueryParams } from '../../../../utils/url';
 import camelCaseKeys from 'camelcase-keys';
-import { IListControlProps, IListComponentRenderState } from './models';
+import { IListControlProps, IListComponentRenderState, IEvaluatedFilters } from './models';
 import { evaluateDynamicFilters } from '../../../../providers/dataTable/utils';
 import { MAX_RESULT_COUNT } from './constants';
 import { useDebouncedCallback } from 'use-debounce';
@@ -39,6 +39,7 @@ import ConditionalWrap from '../../../conditionalWrapper';
 import moment from 'moment';
 import { useFormConfiguration } from '../../../../providers/form/api';
 import { useConfigurableAction } from '../../../../providers/configurableActionsDispatcher';
+import { useDeepCompareEffect } from 'react-use';
 
 const ListControl: FC<IListControlProps> = props => {
   const {
@@ -100,7 +101,7 @@ const ListControl: FC<IListControlProps> = props => {
     })();
   };
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (formId) {
       refetchFormConfig();
     }
@@ -113,8 +114,12 @@ const ListControl: FC<IListControlProps> = props => {
     verb: submitHttpVerb,
   });
 
-  const evaluatedFilters = useMemo(() => {
-    if (!filters) return '';
+  const evaluatedFilters = useMemo<IEvaluatedFilters>(() => {
+    if (!filters)
+      return {
+        ready: true,
+        filter: null,
+      };
 
     const localFormData = !isEmpty(formData) ? camelCaseKeys(formData, { deep: true, pascalCase: true }) : formData;
 
@@ -132,9 +137,12 @@ const ListControl: FC<IListControlProps> = props => {
       ]
     );
 
-    if (_response.find(f => f?.unevaluatedExpressions?.length)) return '';
+    return {
+      ready: !_response.some(f => f?.unevaluatedExpressions?.length),
+      filter: JSON.stringify(_response[0]?.expression) || '',
+    };
 
-    return JSON.stringify(_response[0]?.expression) || '';
+    // return JSON.stringify(_response[0]?.expression) || '';
   }, [filters, formData, globalState]);
 
   const queryParams = useMemo(() => {
@@ -149,8 +157,8 @@ const ListControl: FC<IListControlProps> = props => {
     _queryParams.properties =
       typeof properties === 'string' ? `id ${properties}` : ['id', ...Array.from(new Set(properties || []))].join(' '); // Always include the `id` property/. Useful for deleting
 
-    if (filters && evaluatedFilters) {
-      _queryParams.filter = evaluatedFilters;
+    if (filters && evaluatedFilters?.filter) {
+      _queryParams.filter = evaluatedFilters?.filter;
     }
 
     return _queryParams;
@@ -158,21 +166,23 @@ const ListControl: FC<IListControlProps> = props => {
 
   const debouncedRefresh = useDebouncedCallback(
     () => {
-      fetchEntities({ queryParams });
+      if (evaluatedFilters?.ready) {
+        fetchEntities({ queryParams });
+      }
     },
     // delay in ms
     300
   );
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (isInDesignerMode) return;
 
     if (dataSource === 'api') {
       debouncedRefresh();
     }
-  }, [isInDesignerMode, dataSource, evaluatedFilters]);
+  }, [isInDesignerMode, dataSource, evaluatedFilters, queryParams]);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (uniqueStateId && Array.isArray(value) && value.length) {
       setGlobalStateState({
         key: uniqueStateId,
@@ -195,11 +205,11 @@ const ListControl: FC<IListControlProps> = props => {
     };
   }, [state, uniqueStateId, value]);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     setState(prev => ({ ...prev, selectedItemIndexes: [] }));
   }, [value]);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (isInDesignerMode) return;
 
     if (!isFetchingEntities && typeof onChange === 'function' && data && dataSource === 'api') {
@@ -211,13 +221,13 @@ const ListControl: FC<IListControlProps> = props => {
     }
   }, [data, isInDesignerMode, isFetchingEntities]);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (value && !Array.isArray(value) && typeof onChange === 'function' && !isInDesignerMode) {
       onChange([]);
     }
   }, [value, isInDesignerMode]);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (!value) {
       onChange([]); // Make sure the form is not undefined
     }
@@ -287,7 +297,9 @@ const ListControl: FC<IListControlProps> = props => {
 
           setState(prev => ({ ...prev, skipCount, maxResultCount: pageSize }));
 
-          fetchEntities({ queryParams: { ...queryParams, skipCount: skipCount, maxResultCount: pageSize } });
+          if (evaluatedFilters?.ready) {
+            fetchEntities({ queryParams: { ...queryParams, skipCount: skipCount, maxResultCount: pageSize } });
+          }
         }}
       />
     );
@@ -456,6 +468,8 @@ const ListControl: FC<IListControlProps> = props => {
     setState(prev => ({ ...prev, selectedItemIndexes: e?.target?.checked ? value?.map((_, index) => index) : [] }));
   };
 
+  console.log('LOGS:: selectionMode', selectionMode);
+
   return (
     <CollapsiblePanel
       header={title}
@@ -467,7 +481,15 @@ const ListControl: FC<IListControlProps> = props => {
             {renderPagination()}
 
             <Show when={showQuickSearch}>
-              <Input.Search onSearch={setQuickSearch} size="small" />
+              <Input.Search
+                onSearch={(t, e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+
+                  setQuickSearch(t);
+                }}
+                size="small"
+              />
             </Show>
 
             <ButtonGroup items={buttons || []} name={''} type={''} id={containerId} size="small" />

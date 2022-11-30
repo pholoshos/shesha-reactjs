@@ -53,4 +53,5 @@ export interface IWizardComponentProps extends Omit<IConfigurableFormComponent, 
   direction?: 'vertical' | 'horizontal';
   labelPlacement?: 'vertical' | 'horizontal';
   size?: 'default' | 'small';
+  buttonsLayout?: 'left' | 'right' | 'spaceBetween';
 }

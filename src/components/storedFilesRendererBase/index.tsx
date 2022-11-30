@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import Dragger, { DraggerProps } from 'antd/lib/upload/Dragger';
 import { InboxOutlined, FileZipOutlined, UploadOutlined } from '@ant-design/icons';
 import { message, Button, notification, Alert, Upload, ButtonProps } from 'antd';
@@ -134,7 +134,6 @@ export const StoredFilesRendererBase: FC<IStoredFilesRendererBaseProps> = ({
           <Button type="link" icon={<UploadOutlined />} {...uploadBtnProps}>
             (press to upload)
           </Button>
-
         </Upload>
       )}
 

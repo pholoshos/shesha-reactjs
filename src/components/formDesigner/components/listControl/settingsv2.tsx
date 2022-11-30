@@ -23,7 +23,7 @@ export interface IListControlSettingsProps {
   onValuesChange?: (changedValues: any, values: IListItemsProps) => void;
 }
 
-interface IListSettingsState extends IListItemsProps {}
+interface IListSettingsState extends IListItemsProps { }
 
 export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, onSave, model, onValuesChange }) => {
   const [state, setState] = useState<IListSettingsState>(model);
@@ -71,6 +71,10 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
       </Form.Item>
 
       <FormItem name="title" label="Title">
+        <Input readOnly={readOnly} />
+      </FormItem>
+
+      <FormItem name="placeholder" label="Placeholder">
         <Input readOnly={readOnly} />
       </FormItem>
 

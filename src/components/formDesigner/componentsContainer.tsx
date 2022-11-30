@@ -23,11 +23,12 @@ export interface IComponentsContainerProps {
   render?: (components: JSX.Element[]) => ReactNode;
   itemsLimit?: number;
   plainWrapper?: boolean;
+  readOnly?: boolean;
   dynamicComponents?: IConfigurableFormComponent[];
   wrapperStyle?: CSSProperties;
   style?: CSSProperties;
 }
-const ComponentsContainer: FC<IComponentsContainerProps> = (props) => {
+const ComponentsContainer: FC<IComponentsContainerProps> = props => {
   const { formMode } = useForm();
   const designer = useFormDesigner(false);
 
@@ -43,13 +44,16 @@ const ComponentsContainer: FC<IComponentsContainerProps> = (props) => {
   }
 
   const useDesigner = formMode === 'designer' && Boolean(designer);
-  return useDesigner
-    ? <ComponentsContainerDesigner {...props} />
-    : <ComponentsContainerLive {...props} />;
+  return useDesigner ? <ComponentsContainerDesigner {...props} /> : <ComponentsContainerLive {...props} />;
 };
 
-type AlignmentProps = Pick<IComponentsContainerProps, "direction" | "justifyContent" | "alignItems" | "justifyItems">;
-const getAlignmentStyle = ({ direction = 'vertical', justifyContent, alignItems, justifyItems }: AlignmentProps): CSSProperties => {
+type AlignmentProps = Pick<IComponentsContainerProps, 'direction' | 'justifyContent' | 'alignItems' | 'justifyItems'>;
+const getAlignmentStyle = ({
+  direction = 'vertical',
+  justifyContent,
+  alignItems,
+  justifyItems,
+}: AlignmentProps): CSSProperties => {
   const style: CSSProperties = {};
   if (direction === 'horizontal' && justifyContent) {
     style['justifyContent'] = justifyContent;
@@ -57,10 +61,11 @@ const getAlignmentStyle = ({ direction = 'vertical', justifyContent, alignItems,
     style['justifyItems'] = justifyItems;
   }
   return style;
-}
+};
 
-const ComponentsContainerDesigner: FC<IComponentsContainerProps> = (props) => {
-  const { containerId,
+const ComponentsContainerDesigner: FC<IComponentsContainerProps> = props => {
+  const {
+    containerId,
     children,
     direction = 'vertical',
     className,
@@ -180,7 +185,7 @@ const ComponentsContainerDesigner: FC<IComponentsContainerProps> = (props) => {
   );
 };
 
-const ComponentsContainerLive: FC<IComponentsContainerProps> = (props) => {
+const ComponentsContainerLive: FC<IComponentsContainerProps> = props => {
   const {
     containerId,
     children,
@@ -191,9 +196,7 @@ const ComponentsContainerLive: FC<IComponentsContainerProps> = (props) => {
     wrapperStyle,
     style: incomingStyle,
   } = props;
-  const {
-    getChildComponents,
-  } = useForm();
+  const { getChildComponents } = useForm();
 
   const components = getChildComponents(containerId);
 
@@ -205,18 +208,18 @@ const ComponentsContainerLive: FC<IComponentsContainerProps> = (props) => {
     return typeof render === 'function' ? render(renderedComponents) : renderedComponents;
   };
 
-  const style = {...getAlignmentStyle(props), ...incomingStyle};
+  const style = { ...getAlignmentStyle(props), ...incomingStyle };
 
-  return plainWrapper
-    ? <>{renderComponents()}</>
-    : (
-      <div className={joinStringValues(['sha-components-container', direction, className])} style={wrapperStyle}>
-        <div className="sha-components-container-inner" style={style}>
-          {renderComponents()}
-        </div>
-        {children}
+  return plainWrapper ? (
+    <>{renderComponents()}</>
+  ) : (
+    <div className={joinStringValues(['sha-components-container', direction, className])} style={wrapperStyle}>
+      <div className="sha-components-container-inner" style={style}>
+        {renderComponents()}
       </div>
-    );
+      {children}
+    </div>
+  );
 };
 
 export default ComponentsContainer;

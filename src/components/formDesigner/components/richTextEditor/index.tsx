@@ -45,7 +45,6 @@ const RichTextEditorComponent: IToolboxComponent<IRichTextEditorProps> = {
       colorPickerDefaultTab: 'color',
     };
 
-
     return (
       <ConfigurableFormItem model={model}>
         <RichTextEditor config={config} />

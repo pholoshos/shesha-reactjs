@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { IModalInstance, IModalProps } from './models';
+import { ICommonModalProps, IModalInstance } from './models';
 
 export interface IDynamicModalStateContext {
   //instances: IModalInstance[];
@@ -10,10 +10,10 @@ export interface IDynamicModalActionsContext {
   toggle: (id: string, visible: boolean) => void;
   show: (id: string) => void;
   hide: (id: string) => void;
-  open: (modalProps: IModalProps) => void;
+  open: (modalProps: ICommonModalProps) => void;
 
   modalExists: (id: string) => boolean;
-  createModal: (modalProps: IModalProps) => void;
+  createModal: (modalProps: ICommonModalProps) => void;
   removeModal: (id: string) => void;
 
   /* NEW_ACTION_ACTION_DECLARATIO_GOES_HERE */

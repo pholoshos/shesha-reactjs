@@ -70,7 +70,7 @@ export const FormsIndexPage = addStory(Template, {
 export const FormDetailsPage = addStory(Template, {
   formId: { name: 'form-details', module: 'Shesha' },
   mode: 'readonly',
-  id: '7c19404f-7c6f-4cee-9af7-6b82b7be3982',
+  id: 'ca8eb327-c110-41f5-be92-06c0afa7a6d8',
 });
 
 export const FormsTemplatesIndexPage = addStory(Template, {
@@ -140,6 +140,14 @@ export const WardsIndex = addStory(Template, {
   mode: 'readonly',
 });
 
+export const FormDesigner = addStory(Template, {
+  formId: {
+    module: 'Boxfusion.His.Clients.Houghton',
+    name: 'wardsTable'
+  },
+  mode: 'readonly',
+});
+
 export const Performance = addStory(Template, {
   formId: {
     module: 'Boxfusion.His.Clients.Houghton',
@@ -148,6 +156,7 @@ export const Performance = addStory(Template, {
   mode: 'readonly',
   id: '0dee0b4a-48eb-4a81-86f1-192175c284ae',
 });
+
 
 export const ComplexModel = addStory(Template, {
   formId: {

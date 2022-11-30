@@ -88,6 +88,25 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         <ButtonGroupSettingsModal readOnly={readOnly} />
       </FormItem>
 
+      <SectionSeparator sectionName="Render" />
+
+      <FormItem
+        name="renderStrategy"
+        label="Render Strategy"
+        tooltip="Which form should be used to render the data? If current form, you can drag items, else specify form path"
+      >
+        <Select disabled={readOnly}>
+          <Option value="dragAndDrop">Drag And Drop</Option>
+          <Option value="externalForm">External Form</Option>
+        </Select>
+      </FormItem>
+
+      <Show when={state?.renderStrategy === 'externalForm'}>
+        <FormItem name="formId" label="Form Path">
+          <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
+        </FormItem>
+      </Show>
+
       <SectionSeparator sectionName="Data" />
 
       <FormItem
@@ -143,25 +162,6 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
             />
           </QueryBuilderWithModelType>
         </Show>
-      </Show>
-
-      <SectionSeparator sectionName="Render" />
-
-      <FormItem
-        name="renderStrategy"
-        label="Render Strategy"
-        tooltip="Which form should be used to render the data? If current form, you can drag items, else specify form path"
-      >
-        <Select disabled={readOnly}>
-          <Option value="dragAndDrop">Drag And Drop</Option>
-          <Option value="externalForm">External Form</Option>
-        </Select>
-      </FormItem>
-
-      <Show when={state?.renderStrategy === 'externalForm'}>
-        <FormItem name="formId" label="Form Path">
-          <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
-        </FormItem>
       </Show>
 
       <SectionSeparator sectionName="Selection" />

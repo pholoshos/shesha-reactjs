@@ -180,7 +180,7 @@ const ListControl: FC<IListControlProps> = props => {
     if (dataSource === 'api') {
       debouncedRefresh();
     }
-  }, [isInDesignerMode, dataSource, evaluatedFilters]);
+  }, [isInDesignerMode, dataSource, evaluatedFilters, queryParams]);
 
   useDeepCompareEffect(() => {
     if (uniqueStateId && Array.isArray(value) && value.length) {
@@ -467,6 +467,8 @@ const ListControl: FC<IListControlProps> = props => {
   const onSelectAll = (e: CheckboxChangeEvent) => {
     setState(prev => ({ ...prev, selectedItemIndexes: e?.target?.checked ? value?.map((_, index) => index) : [] }));
   };
+
+  console.log('LOGS:: selectionMode', selectionMode);
 
   return (
     <CollapsiblePanel

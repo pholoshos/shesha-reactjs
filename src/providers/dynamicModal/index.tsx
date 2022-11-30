@@ -126,6 +126,8 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
     for (const id in state.instances) {
       if (state.instances.hasOwnProperty(id)) {
         const instance = state.instances[id];
+
+        const instanceProps = instance.props;
         rendered.push(
           <DynamicModalInstanceContext.Provider
             key={instance.id}
@@ -137,26 +139,11 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
             }}
           >
             <DynamicModal
+              {...instanceProps}
+
               key={instance.id}
               id={instance.id}
-              title={instance.props.title}
               isVisible={instance.isVisible}
-              mode={instance?.props?.mode}
-              formId={instance.props.formId}
-              onSubmitted={instance.props.onSubmitted}
-              onFailed={instance.props.onFailed}
-              showModalFooter={instance?.props?.showModalFooter}
-              submitHttpVerb={instance?.props?.submitHttpVerb}
-              onSuccessRedirectUrl={instance?.props?.onSuccessRedirectUrl}
-              initialValues={instance?.props?.initialValues}
-              parentFormValues={instance?.props?.parentFormValues}
-              destroyOnClose={instance?.props?.destroyOnClose}
-              skipFetchData={instance?.props?.skipFetchData}
-              width={instance?.props?.width}
-              submitLocally={instance?.props?.submitLocally}
-              modalConfirmDialogMessage={instance?.props?.modalConfirmDialogMessage}
-              prepareInitialValues={instance?.props?.prepareInitialValues}
-              onCancel={instance?.props?.onCancel}
             />
           </DynamicModalInstanceContext.Provider>
         );

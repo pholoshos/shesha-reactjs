@@ -1,9 +1,10 @@
 import { ExportOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { Button, notification } from "antd";
 import { nanoid } from "nanoid";
 import React, { FC, MutableRefObject, useRef, useState } from "react";
-import { useAppConfiguratorState, useDynamicModals } from "../../..";
-import ConfigurationItemsExport, { IExportInterface } from "../../../components/configurationItemsExport";
+import { useAppConfiguratorState, useDynamicModals, ValidationErrors } from "../../..";
+import ConfigurationItemsExport, { IExportInterface } from "../../../components/configurationFramework/itemsExport";
+import { IErrorInfo } from "../../../interfaces/errorInfo";
 import { useConfigurableAction } from "../../configurableActionsDispatcher";
 import { SheshaActionOwners } from "../../configurableActionsDispatcher/models";
 import { ICommonModalProps } from "../../dynamicModal/models";
@@ -55,6 +56,15 @@ interface IConfigurationItemsExportFooterProps {
   hideModal: () => void;
   exporterRef: MutableRefObject<IExportInterface>;
 }
+
+const displayNotificationError = (message: string, error: IErrorInfo) => {
+  notification.error({
+      message: message,
+      icon: null,
+      description: <ValidationErrors error={error} renderMode="raw" defaultMessage={null} />,
+  });
+};
+
 export const ConfigurationItemsExportFooter: FC<IConfigurationItemsExportFooterProps> = (props) => {
   const [inProgress, setInProgress] = useState(false);
   const { hideModal, exporterRef } = props;
@@ -63,8 +73,11 @@ export const ConfigurationItemsExportFooter: FC<IConfigurationItemsExportFooterP
     setInProgress(true);
 
     exporterRef.current.exportExecuter().then(() => {
+      console.log('then in footer');
       hideModal();
-    }).catch(() => {
+    }).catch((e) => {
+      console.log('catch in footer');
+      displayNotificationError('Failed to export package', e);
       setInProgress(false);
     });
   }

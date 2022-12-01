@@ -1,4 +1,3 @@
-import { string } from 'prop-types';
 import { IConfigurableFormComponent, IFormItem } from '../../../../interfaces';
 import { ButtonGroupItemProps } from '../../../../providers/buttonGroupConfigurator/models';
 import { FormIdentifier } from '../../../../providers/form/models';
@@ -35,6 +34,7 @@ export interface IListItemsProps {
   readOnly?: boolean;
   properties?: string[];
   filters?: object;
+  placeholder?: string;
 }
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {

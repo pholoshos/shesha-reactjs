@@ -13,7 +13,6 @@ import { FormIdentifier, FormMarkupWithSettings, FormRawMarkup, IFormDto, IFormS
 import { asFormFullName, asFormRawId, getComponentsFromMarkup, useFormDesignerComponents } from "./utils";
 import * as RestfulShesha from '../../utils/fetchers';
 import { ConfigurationItemsViewMode } from "../appConfigurator/models";
-import { areaGet } from "../../apis/area";
 
 /**
  * Form configuration DTO

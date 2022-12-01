@@ -6,6 +6,7 @@ import { evaluateString, validateConfigurableComponentSettings } from '../../../
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../interfaces/formDesigner';
 import { useForm } from '../../../../providers/form';
 import { FormMarkup } from '../../../../providers/form/models';
+import { executeCustomExpression } from '../../../../providers/form/utils';
 import StatusTag, { DEFAULT_STATUS_TAG_MAPPINGS, IStatusTagProps as ITagProps } from '../../../statusTag';
 import settingsFormJson from './settingsForm.json';
 
@@ -85,25 +86,7 @@ const StatusTagComponent: IToolboxComponent<IStatusTagProps> = {
       mappings: getParsedMappings(),
     };
 
-    const executeExpression = (expression: string, returnBoolean = false) => {
-      if (!expression) {
-        if (returnBoolean) {
-          return true;
-        } else {
-          console.error('Expected expression to be defined but it was found to be empty.');
-
-          return false;
-        }
-      }
-
-      /* tslint:disable:function-constructor */
-      const evaluated = new Function('data, globalState', expression)(formData, globalState);
-
-      // tslint:disable-next-line:function-constructor
-      return typeof evaluated === 'boolean' ? evaluated : true;
-    };
-
-    const isVisibleByCondition = executeExpression(model.customVisibility, true);
+    const isVisibleByCondition = executeCustomExpression(model.customVisibility, true, formData, globalState);
 
     if (!isVisibleByCondition && formMode !== 'designer') return null;
 

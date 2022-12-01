@@ -280,7 +280,7 @@ export const evaluateString = (template: string = '', data: any) => {
       //adding a function to the data object that will format datetime
       data.dateFormat = function () {
         return function (timestamp, render) {
-          return new Date(render(timestamp).trim()).toDateString();
+          return new Date(render(timestamp).trim()).toLocaleDateString('en-us', { year: "numeric", month: "short", day: "numeric" });
         };
       }
     }
@@ -1257,3 +1257,21 @@ export const getFormActionArguments = (params: ActionParameters, evaluationConte
     resolve(actionArgs);
   });
 }
+
+export const executeCustomExpression = (expression: string, returnBoolean = false, formData, globalState) => {
+  if (!expression) {
+    if (returnBoolean) {
+      return true;
+    } else {
+      console.error('Expected expression to be defined but it was found to be empty.');
+
+      return false;
+    }
+  }
+
+  /* tslint:disable:function-constructor */
+  const evaluated = new Function('data, globalState', expression)(formData, globalState);
+
+  // tslint:disable-next-line:function-constructor
+  return typeof evaluated === 'boolean' ? evaluated : true;
+};

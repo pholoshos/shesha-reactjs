@@ -7,13 +7,12 @@ import settingsFormJson from './settingsForm.json';
 import StoredFilesProvider from '../../../../providers/storedFiles';
 import { CustomFile } from '../../../';
 import { useForm, useGlobalState, useSheshaApplication } from '../../../../providers';
-import { evaluateValue, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { evaluateValue, executeCustomExpression, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 
 export interface IAttachmentsEditorProps extends IConfigurableFormComponent {
   ownerId: string;
   ownerType: string;
   filesCategory?: number;
-
   allowAdd: boolean;
   allowDelete: boolean;
   allowReplace: boolean;
@@ -33,6 +32,8 @@ const AttachmentsEditor: IToolboxComponent<IAttachmentsEditorProps> = {
     const { globalState } = useGlobalState();
     const ownerId = evaluateValue(model.ownerId, { data: formData, globalState });
 
+    const isEnabledByCondition = executeCustomExpression(model.customEnabled, true, formData, globalState);
+
     return (
       <ConfigurableFormItem model={model}>
         <StoredFilesProvider
@@ -42,10 +43,10 @@ const AttachmentsEditor: IToolboxComponent<IAttachmentsEditorProps> = {
           baseUrl={backendUrl}
         >
           <CustomFile
-          // allowAdd={!customProps.disabled && customProps.allowAdd}
-          // allowDelete={!customProps.disabled && customProps.allowDelete}
-          // allowReplace={!customProps.disabled && customProps.allowReplace}
-          // allowRename={!customProps.disabled && customProps.allowRename}
+            allowAdd={!model.disabled && model.allowAdd && isEnabledByCondition}
+            allowDelete={!model.disabled && model.allowDelete}
+            allowReplace={!model.disabled && model.allowReplace}
+            allowRename={!model.disabled && model.allowRename}
           />
         </StoredFilesProvider>
       </ConfigurableFormItem>

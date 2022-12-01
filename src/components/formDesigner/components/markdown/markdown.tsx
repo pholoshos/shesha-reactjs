@@ -12,7 +12,7 @@ let remarkGfm;
 
 const ReactMarkdown = lazy(async () => {
   import('remark-gfm').then(module => {
-    remarkGfm = module;
+    remarkGfm = module?.default;
   });
 
   import('react-syntax-highlighter').then(module => {

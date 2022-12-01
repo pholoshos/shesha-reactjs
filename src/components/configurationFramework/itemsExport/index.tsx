@@ -20,7 +20,6 @@ export interface IExportInterface {
 }
 
 export interface IConfigurationItemsExportProps {
-    onCancel?: () => void;
     onExported?: () => void;
     exportRef: MutableRefObject<IExportInterface>;
 }

@@ -122,7 +122,7 @@ const IconPicker: FC<IIconPickerProps> = ({ selectBtnSize = 'middle', value, onI
         {localSelectedIcon
           ? (
             <span onClick={toggleModalVisibility} className={classNames("sha-icon-picker-selected-icon", readOnly ? "sha-readonly" : "")}>
-              <ShaIcon iconName={localSelectedIcon} style={{ fontSize: 24 }} {...props} name={localSelectedIcon} />
+              <ShaIcon iconName={localSelectedIcon} style={{ fontSize: 24 }} {...props} name={localSelectedIcon} title={localSelectedIcon} />
             </span>
           )
           : !readOnly

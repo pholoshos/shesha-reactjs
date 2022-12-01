@@ -23,3 +23,13 @@ export const getFormFullName = (moduleName: string, name: string) => {
     ? `${moduleName}/${name}`
     : name;
 }
+
+export const appendFormData = (formData: FormData, key: string, data: any) => {
+  if (data === Object(data) || Array.isArray(data)) {
+      for (var i in data) {
+        appendFormData(formData, key + '[' + i + ']', data[i]);
+      }
+  } else {
+      formData.append(key, data);
+  }
+}

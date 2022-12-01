@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { MutableRefObject, useState } from 'react';
 import { FC } from 'react';
 import { Form, Spin, Upload } from 'antd';
 import { useSheshaApplication } from '../../..';
@@ -11,17 +11,17 @@ import ItemsTree from '../itemsTree';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { nanoid } from 'nanoid';
 import { getIndexesList } from '../treeUtils';
+import { appendFormData } from '../../../utils/form';
 
 const { Dragger } = Upload;
 
-export interface IExportInterface {
-    exportExecuter: () => Promise<any>;
-    canExport: boolean;
-    exportInProgress: boolean;
+export interface IImportInterface {
+    importExecuter: () => Promise<any>;
 }
 
 export interface IConfigurationItemsImportProps {
-
+    onImported?: () => void;
+    importRef: MutableRefObject<IImportInterface>;
 }
 
 interface IItemInfo {
@@ -72,7 +72,7 @@ const packageInfo2TreeState = (pack: IPackageInfo): ITreeState => {
 
         treeNodes.push(moduleNode);
     });
-    
+
     return {
         treeNodes: treeNodes,
         itemsCount: itemsCount,
@@ -80,7 +80,7 @@ const packageInfo2TreeState = (pack: IPackageInfo): ITreeState => {
     };
 }
 
-export const ConfigurationItemsImport: FC<IConfigurationItemsImportProps> = () => {
+export const ConfigurationItemsImport: FC<IConfigurationItemsImportProps> = (props) => {
     const { backendUrl, httpHeaders } = useSheshaApplication();
 
     const [uploadFile, setUploadFile] = useState<UploadFile>(null);
@@ -118,7 +118,7 @@ export const ConfigurationItemsImport: FC<IConfigurationItemsImportProps> = () =
                 const packageInfo = response.data.result as IPackageInfo;
 
                 const loadedTreeState = packageInfo2TreeState(packageInfo);
-                setTreeState(loadedTreeState);                
+                setTreeState(loadedTreeState);
 
                 payload.onSuccess({});
                 setIsPackLoading(false);
@@ -161,6 +161,43 @@ export const ConfigurationItemsImport: FC<IConfigurationItemsImportProps> = () =
         );
         // {filesize(file.size)}
     }
+
+    const importExecuter = () => {
+        if (!uploadFile?.originFileObj)
+            return Promise.reject('Please upload a file for import');
+        if (checkedIds.length === 0)
+            return Promise.reject('Please select items to import');
+
+        setIsImporting(true);
+
+        const formData = new FormData();
+        formData.append('file', uploadFile.originFileObj);
+        appendFormData(formData, 'itemsToImport', checkedIds);        
+
+        return axios
+            .post(`${backendUrl}/api/services/app/ConfigurationItem/ImportPackage`,
+                formData,
+                {
+                    headers: httpHeaders,
+                }
+            )
+            .then((response: any) => {
+                const responseData = response.data.result;
+
+                console.log('import response', responseData);
+
+                setIsImporting(false);
+            })
+            .catch(e => {
+                setIsImporting(false);
+                throw e;
+            });
+    }
+
+    if (props.importRef)
+        props.importRef.current = {
+            importExecuter: importExecuter,
+        };
 
     return (
         <Spin spinning={isImporting} tip="Importing...">

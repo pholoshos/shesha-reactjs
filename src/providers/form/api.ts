@@ -12,6 +12,8 @@ import { IMetadataDispatcherActionsContext } from "../metadataDispatcher/context
 import { FormIdentifier, FormMarkupWithSettings, FormRawMarkup, IFormDto, IFormSettings } from "./models";
 import { asFormFullName, asFormRawId, getComponentsFromMarkup, useFormDesignerComponents } from "./utils";
 import * as RestfulShesha from '../../utils/fetchers';
+import { ConfigurationItemsViewMode } from "../appConfigurator/models";
+import { areaGet } from "../../apis/area";
 
 /**
  * Form configuration DTO
@@ -176,6 +178,7 @@ export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarku
 export interface UseFormWitgDataArgs {
     formId?: FormIdentifier;
     dataId?: string;
+    configurationItemMode?: ConfigurationItemsViewMode;
     onFormLoaded?: (form: IFormDto) => void;
     onDataLoaded?: (data: any) => void;
 }
@@ -199,7 +202,7 @@ export interface FormWithDataState {
 export type LoadingState = 'waiting' | 'loading' | 'ready' | 'failed';
 
 export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse => {
-    const { formId, dataId } = args;
+    const { formId, dataId, configurationItemMode } = args;
     const { getForm } = useConfigurationItemsLoader();
     const { backendUrl, httpHeaders } = useSheshaApplication();
 
@@ -217,7 +220,7 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
             //console.log('PERF: fetch form markup');
             setState(prev => ({ ...prev, loadingState: 'loading', loaderHint: 'Fetching form...', error: null, dataFetcher: null, form: null, fetchedData: null }));
 
-            getForm({ formId }).then(form => {
+            getForm({ formId, configurationItemMode: args.configurationItemMode }).then(form => {
                 if (formRequestRef.current !== requestId)
                     return;
 
@@ -311,7 +314,7 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
             }));
         }
         // return cleanup: clean up form and data
-    }, [formId, dataId]);
+    }, [formId, dataId, configurationItemMode]);
 
     // todo: return errors
 

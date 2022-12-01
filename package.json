@@ -58,7 +58,8 @@
     "react-sortablejs": "^6.0.0",
     "react-use": "^17.3.1",
     "restful-react": "^15.9.2",
-    "sortablejs": "^1.14.0"
+    "sortablejs": "^1.14.0",
+    "react-markdown": "^8.0.3"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",

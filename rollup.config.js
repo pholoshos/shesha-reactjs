@@ -59,6 +59,8 @@ export default {
     'react-calendar-timeline',
     'invert-color',
     'use-debounce',
+    'react-markdown',
+    'react-syntax-highlighter',
   ],
   plugins: [
     // alias({

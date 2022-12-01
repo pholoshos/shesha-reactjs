@@ -13,6 +13,7 @@ import {
   MetadataProvider,
   useShaRouting,
   useSheshaApplication,
+  useAppConfigurator,
 } from '../../providers';
 import { ConfigurableFormInstance, ISetFormDataPayload } from '../../providers/form/contexts';
 import {
@@ -37,12 +38,13 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
   const formRef = useRef<ConfigurableFormInstance>();
   const { globalState } = useGlobalState();
   const { router } = useShaRouting();
+  const { configurationItemMode } = useAppConfigurator();
 
   const { publish } = usePubSub();
 
   const { id, formId } = state;
 
-  const formWithData = useFormWithData({ formId: formId, dataId: id });
+  const formWithData = useFormWithData({ formId: formId, dataId: id, configurationItemMode: configurationItemMode });
   //console.log('PERF: hook', formWithData)
   const formSettings = formWithData.loadingState === 'ready'
     ? formWithData.form?.settings ?? DEFAULT_FORM_SETTINGS

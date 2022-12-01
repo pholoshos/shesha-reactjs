@@ -1,9 +1,9 @@
-import { ExportOutlined } from "@ant-design/icons";
-import { Button, notification } from "antd";
+import { ImportOutlined } from "@ant-design/icons";
+import { Button, message, notification } from "antd";
 import { nanoid } from "nanoid";
 import React, { FC, MutableRefObject, useRef, useState } from "react";
 import { useAppConfiguratorState, useDynamicModals, ValidationErrors } from "../../..";
-import ConfigurationItemsExport, { IExportInterface } from "../../../components/configurationFramework/itemsExport";
+import ConfigurationItemsImport, { IImportInterface } from "../../../components/configurationFramework/itemsImport";
 import { IErrorInfo } from "../../../interfaces/errorInfo";
 import { useConfigurableAction } from "../../configurableActionsDispatcher";
 import { SheshaActionOwners } from "../../configurableActionsDispatcher/models";
@@ -11,13 +11,13 @@ import { ICommonModalProps } from "../../dynamicModal/models";
 
 const actionsOwner = 'Configuration Framework';
 
-export const useConfigurationItemsExportAction = () => {
+export const useConfigurationItemsImportAction = () => {
   const { createModal, removeModal } = useDynamicModals();
   const appConfigState = useAppConfiguratorState();
-  const exporterRef = useRef<IExportInterface>();
+  const exporterRef = useRef<IImportInterface>();
 
   useConfigurableAction({
-    name: 'Export items',
+    name: 'Import items',
     owner: actionsOwner,
     ownerUid: SheshaActionOwners.ConfigurationFramework,
     hasArguments: false,
@@ -30,8 +30,8 @@ export const useConfigurationItemsExportAction = () => {
           removeModal(modalId);
         }
 
-        const onExported = () => {
-          console.log('onExported');
+        const onImported = () => {
+          console.log('onImported');
           removeModal(modalId);
           resolve(true);
         }
@@ -39,11 +39,11 @@ export const useConfigurationItemsExportAction = () => {
         const modalProps: ICommonModalProps = {
           ...actionArgs,
           id: modalId,
-          title: "Export Configuration Items",
+          title: "Import Configuration Items",
           isVisible: true,
           showModalFooter: false,
-          content: <ConfigurationItemsExport onExported={onExported} exportRef={exporterRef}/>,
-          footer: <ConfigurationItemsExportFooter hideModal={hideModal} exporterRef={exporterRef} />
+          content: <ConfigurationItemsImport onImported={onImported} importRef={exporterRef} />,
+          footer: <ConfigurationItemsExportFooter hideModal={hideModal} importerRef={exporterRef} />
         };
         createModal({ ...modalProps, isVisible: true });
       });
@@ -54,7 +54,7 @@ export const useConfigurationItemsExportAction = () => {
 
 interface IConfigurationItemsExportFooterProps {
   hideModal: () => void;
-  exporterRef: MutableRefObject<IExportInterface>;
+  importerRef: MutableRefObject<IImportInterface>;
 }
 
 const displayNotificationError = (message: string, error: IErrorInfo) => {
@@ -67,17 +67,17 @@ const displayNotificationError = (message: string, error: IErrorInfo) => {
 
 export const ConfigurationItemsExportFooter: FC<IConfigurationItemsExportFooterProps> = (props) => {
   const [inProgress, setInProgress] = useState(false);
-  const { hideModal, exporterRef } = props;
+  const { hideModal, importerRef: exporterRef } = props;
 
-  const onExport = () => {
+  const onImport = () => {
     setInProgress(true);
 
-    exporterRef.current.exportExecuter().then(() => {
-      console.log('then in footer');
+    exporterRef.current.importExecuter().then(() => {
+      message.info('Items imported successfully');
       hideModal();
     }).catch((e) => {
       console.log('catch in footer');
-      displayNotificationError('Failed to export package', e);
+      displayNotificationError('Failed to import package', e);
       setInProgress(false);
     });
   }
@@ -85,7 +85,7 @@ export const ConfigurationItemsExportFooter: FC<IConfigurationItemsExportFooterP
   return (
     <>
       <Button type='default' onClick={hideModal}>Cancel</Button>
-      <Button type='primary' icon={<ExportOutlined />} onClick={onExport} loading={inProgress}>Export</Button>
+      <Button type='primary' icon={<ImportOutlined />} onClick={onImport} loading={inProgress}>Import</Button>
     </>
   );
 }

@@ -34,13 +34,7 @@ export const RoleAppointmentForm = addStory(DesignerTemplate, {
 });
 
 export const TestForm = addStory(DesignerTemplate, {
-  formId: '1385826b-b888-4977-bcee-0d0146a1b5b2',
-  //formId: '7b8562c7-1aed-4818-b830-1dd04c789f20'
-  /*
-  formId: {
-    name: 'test-form',
-    module: 'shesha'
-  }*/
+  formId: 'af71fb89-a41d-4db5-801a-ab4eda601e48',
 });
 
 export const AutocompleteSettingsForm = addStory(DesignerTemplate, {
@@ -240,9 +234,3 @@ export const PersonEdit = addStory(DesignerTemplate, {
   },
 });
 
-export const ComplexModel = addStory(DesignerTemplate, {
-  formId: {
-    name: 'test-nested',
-    module: 'test'
-  }
-});

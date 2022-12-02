@@ -55,7 +55,7 @@ const TextField: IToolboxComponent<ITextFieldProps> = {
 
     const disabled = isComponentDisabled(model);
 
-    console.log('LOGS:: model?.readOnly', model?.readOnly, model?.type, model);
+    //console.log('LOGS:: model?.readOnly', model?.readOnly, model?.type, model);
 
     const readOnly = model?.readOnly || (formMode === 'readonly' && model.textType !== 'password');
 

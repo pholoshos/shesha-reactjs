@@ -32,7 +32,6 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   const makeFormLoadingKey = (payload: IGetFormPayload): string => {
-    console.log('makeFormLoadingKey. mode: ', payload);
     const { formId, configurationItemMode } = payload;
 
     const addMode = (key: string): string => {

@@ -34,6 +34,7 @@ export const FormDesigner: FC<IFormDesignerProps> = ({ formId }) => {
                         mode="designer" 
                         flatComponents={{ allComponents: designerState.allComponents, componentRelations: designerState.componentRelations }} 
                         formSettings={designerState.formSettings}
+                        isActionsOwner={false}
                       >
                         <FormDesignerRenderer />
                       </FormProvider>

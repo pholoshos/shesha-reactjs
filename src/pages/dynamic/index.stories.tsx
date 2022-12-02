@@ -189,14 +189,11 @@ Basic.args = DEFAULT_ARGS;
 
 const Template2: Story<{}> = () => {
   const pages: IDynamicPageProps[] = [
-    /*{
-      formId: {
-        module: 'test',
-        name: 'test-nested'
-      },
-      mode: 'readonly',
-      id: '6a8c3704-8aca-4878-8db6-f4f55d5cc5d5'
-    },*/
+    {
+      formId: { name: 'form-details', module: 'test' },
+      mode: 'edit',
+      id: '265b4645-affe-4b4e-a364-3f0e8062eb80'
+    },
     {
       formId: { name: 'modules', module: 'Shesha' },
       mode: 'edit',

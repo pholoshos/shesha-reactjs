@@ -302,6 +302,7 @@ const DynamicPage: PageWithLayout<IDynamicPageProps> = props => {
                   skipFetchData
                   refetchData={() => refetchFormData()}
                   className="sha-dynamic-page"
+                  isActionsOwner={true}
                 />
               )
               }

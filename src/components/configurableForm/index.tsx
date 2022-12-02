@@ -70,6 +70,7 @@ export const ConfigurableForm: FC<IConfigurableFormProps> = props => {
             formRef={formRef}
             onValuesChange={restProps.onValuesChange}
             refetchData={refetchData}
+            isActionsOwner={props.isActionsOwner}
           >
             {showFormInfo && (
               <Card

@@ -196,7 +196,7 @@ export const Playground = addStory(DesignerTemplate, {
 });
 
 export const OrganisationEdit = addStory(DesignerTemplate, {
-  formId: { name: '/organisations/edit', version: 1 },
+  formId: { name: '/organisations/edit', version: 2 },
 });
 
 export const PermissionedObjects = addStory(DesignerTemplate, {
@@ -208,7 +208,7 @@ export const ModelConfigurationEdit = addStory(DesignerTemplate, {
 });
 
 export const PermissionEdit = addStory(DesignerTemplate, {
-  formId: { name: 'permission-edit' }
+  formId: { name: 'permission-edit', version: 2 }
 });
 
 export const PersonEdit = addStory(DesignerTemplate, {

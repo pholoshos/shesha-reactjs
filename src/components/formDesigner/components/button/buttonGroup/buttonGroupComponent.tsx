@@ -7,12 +7,10 @@ import { Alert, Menu } from 'antd';
 import { IButtonGroupButton, ButtonGroupItemProps } from '../../../../../providers/buttonGroupConfigurator/models';
 import { useForm } from '../../../../../providers/form';
 import { ConfigurableButton } from '../configurableButton';
-import { useAuth, useDataTableSelection, useGlobalState } from '../../../../../providers';
+import { useAuth, useGlobalState } from '../../../../../providers';
 import moment from 'moment';
-import { executeExpression, getStyle } from '../../../../../providers/form/utils';
+import { getStyle } from '../../../../../providers/form/utils';
 import { getButtonGroupMenuItem } from './utils';
-import { migrateV0toV1 } from './migrations/migrate-v1';
-import { migrateV1toV2 } from './migrations/migrate-v2';
 
 const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
   type: 'buttonGroup',
@@ -35,16 +33,8 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
       items: [],
     };
   },
-  migrator: m => m.add<IButtonGroupProps>(0, prev => {
-      return {
-        ...prev,
-        items: prev['items'] ?? [],
-      };
-    })
-    .add<IButtonGroupProps>(1, migrateV0toV1)
-    .add<IButtonGroupProps>(2, migrateV1toV2),
-  settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
-    return <ToolbarSettings readOnly={readOnly} model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
+  settingsFormFactory: ({ model, onSave, onCancel, onValuesChange }) => {
+    return <ToolbarSettings model={model} onSave={onSave} onCancel={onCancel} onValuesChange={onValuesChange} />;
   },
 };
 
@@ -56,26 +46,31 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
   const { formMode, formData, form } = useForm();
   const { anyOfPermissionsGranted } = useAuth();
   const { globalState } = useGlobalState();
-  const { selectedRow } = useDataTableSelection(false) ?? {}; // todo: move to a generic context provider
 
   const isDesignMode = formMode === 'designer';
 
-  const localexecuteExpression = (expression: string) => {
-    const expressionArgs = {
-      data: formData,
-      form: form,
-      formMode: formMode,
-      globalState: globalState,
-      moment: moment,
-      context: { selectedRow },
-    };
-    return executeExpression<boolean>(expression,
-      expressionArgs,
-      true,
-      (error) => {
-        console.error(error);
+  const executeExpression = (expression: string, returnBoolean = false) => {
+    if (!expression) {
+      if (returnBoolean) {
         return true;
-      });
+      } else {
+        console.error('Expected expression to be defined but it was found to be empty.');
+
+        return false;
+      }
+    }
+
+    /* tslint:disable:function-constructor */
+    const evaluated = new Function('data, form, formMode, globalState, moment', expression)(
+      formData,
+      form,
+      formMode,
+      globalState,
+      moment
+    );
+
+    // tslint:disable-next-line:function-constructor
+    return typeof evaluated === 'boolean' ? evaluated : true;
   };
 
   /**
@@ -86,7 +81,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
   const getIsVisible = (item: ButtonGroupItemProps) => {
     const { permissions, hidden } = item;
 
-    const isVisibleByCondition = localexecuteExpression(item.customVisibility);
+    const isVisibleByCondition = executeExpression(item.customVisibility, true);
 
     const granted = anyOfPermissionsGranted(permissions || []);
 
@@ -96,7 +91,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
   const renderMenuButton = (props: MenuButton, isChild = false) => {
     const hasChildren = props?.childItems?.length > 0;
 
-    const disabled = !localexecuteExpression(props.customEnabled);
+    const disabled = !executeExpression(props.customEnabled, true);
 
     return getButtonGroupMenuItem(
       renderButtonItem(props, props?.id, disabled),
@@ -137,7 +132,8 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
         mode="horizontal"
         items={items?.filter(getIsVisible)?.map(props => renderMenuButton(props))}
         className={`sha-responsive-button-group space-${spaceSize}`}
-        style={{ minWidth: '50rem' }}
+        disabledOverflow
+        style={{ width: 'max-content' }}
         onClick={event => {
           console.log('LOGS:: event.key ', event.key);
         }}

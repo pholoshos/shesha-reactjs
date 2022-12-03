@@ -9,7 +9,7 @@ import { validateConfigurableComponentSettings } from '../../../../providers/for
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { useForm } from '../../../../providers';
 
-export interface ITagsOutlinedComponentProps extends IConfigurableFormComponent {
+export interface IEditableTagGroupProps extends IConfigurableFormComponent {
   value?: string[];
   defaultValue?: string;
   onChange?: (values?: string[]) => void;
@@ -17,16 +17,21 @@ export interface ITagsOutlinedComponentProps extends IConfigurableFormComponent 
 
 const settingsForm = settingsFormJson as FormMarkup;
 
-const EditableTagGroupComponent: IToolboxComponent<ITagsOutlinedComponentProps> = {
+const EditableTagGroupComponent: IToolboxComponent<IEditableTagGroupProps> = {
   type: 'editableTagGroup',
   name: 'TagsOutlined',
   icon: <HomeOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.array,
-  factory: (model: ITagsOutlinedComponentProps) => {
+  factory: (model: IEditableTagGroupProps) => {
     const { formMode } = useForm();
     return (
       <ConfigurableFormItem model={model}>
-        <EditableTagGroup value={model?.value} defaultValue={model?.defaultValue} onChange={model?.onChange} readOnly={formMode === 'readonly'}/>
+        <EditableTagGroup
+          value={model?.value}
+          defaultValue={model?.defaultValue}
+          onChange={model?.onChange}
+          readOnly={formMode === 'readonly'}
+        />
       </ConfigurableFormItem>
     );
   },

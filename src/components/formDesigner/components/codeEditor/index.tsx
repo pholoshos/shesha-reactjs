@@ -14,7 +14,7 @@ import { useForm } from '../../../..';
 const settingsForm = settingsFormJson as FormMarkup;
 
 export interface ICodeEditorComponentProps extends IConfigurableFormComponent {
-  mode: 'dialog' | 'inline';
+  mode?: 'dialog' | 'inline';
   exposedVariables?: ICodeExposedVariable[];
 }
 

@@ -49,7 +49,7 @@ Basic.args = {};
 export interface IConfiguratorTemplateProps {}
 
 // Create a master template for mapping args to render the component
-const ConfiguratorTemplate: Story<IConfiguratorTemplateProps> = props => (
+const ConfiguratorTemplate: Story<IConfiguratorTemplateProps> = _props => (
   <StoryApp>
     <SidebarMenuConfiguratorProvider items={[]}>
       <SidebarConfigurator />

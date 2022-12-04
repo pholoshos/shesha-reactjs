@@ -28,18 +28,24 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
   const [state, _dispatch] = useThunkReducer(metadataReducer, initial);
 
   const { backendUrl, httpHeaders } = useSheshaApplication();
+  
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   const makeFormLoadingKey = (payload: IGetFormPayload): string => {
-    const { formId } = payload;
+    const { formId, configurationItemMode } = payload;
+
+    const addMode = (key: string): string => {
+      return `${key}:${configurationItemMode}`
+    }
+
     const rawId = asFormRawId(formId);
     if (rawId) {
-      return rawId;
+      return addMode(rawId);
     }
 
     const fullName = asFormFullName(formId);
     if (fullName) {
-      return `${fullName.module}/${fullName.name}`;
+      return addMode(`${fullName.module}/${fullName.name}`);
     }
     return null;
   }

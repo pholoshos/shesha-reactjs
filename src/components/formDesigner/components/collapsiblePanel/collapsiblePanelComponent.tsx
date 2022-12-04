@@ -11,6 +11,7 @@ import { validateConfigurableComponentSettings } from '../../../../providers/for
 
 export interface ICollapsiblePanelProps extends IConfigurableFormComponent {
   expandIconPosition?: ExpandIconPosition;
+  components?: IConfigurableFormComponent[];
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -29,7 +30,7 @@ const ColapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelProps> = {
       <CollapsiblePanel header={label} expandIconPosition={expandIconPosition}>
         <ComponentsContainer
           containerId={model.id}
-          dynamicComponents={model?.isDynamic ? (model as any)?.components : []}
+          dynamicComponents={model?.isDynamic ? model?.components?.map(c => ({ ...c, readOnly: model?.readOnly })) : []}
         />
       </CollapsiblePanel>
     );

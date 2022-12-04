@@ -1,8 +1,8 @@
 import React, { FC, useRef } from 'react';
 import { useStoredFile } from '../../providers';
-import { Upload, message } from 'antd';
+import { Upload, message, Button } from 'antd';
 import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
-import { InfoCircleOutlined, SyncOutlined, DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, SyncOutlined, DeleteOutlined, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
 import { UploadProps } from 'antd/lib/upload/Upload';
 import filesize from 'filesize';
 import { FileVersionsPopup } from './fileVersionsPopup';
@@ -120,9 +120,9 @@ export const FileUpload: FC<IFileUploadProps> = ({
   const classes = fileInfo || isUploading ? 'sha-upload sha-upload-has-file' : 'sha-upload';
   return (
     <Upload {...fileProps} className={classes}>
-      <a ref={uploadButtonRef} style={{ display: !showUploadButton ? 'none' : '' }}>
+      <Button icon={<UploadOutlined />} type="link" ref={uploadButtonRef} style={{ display: !showUploadButton ? 'none' : '' }} >
         (press to upload)
-      </a>
+      </Button>
     </Upload>
   );
 };

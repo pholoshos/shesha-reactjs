@@ -18,7 +18,6 @@ export const StoredFilesRenderer: FC<IStoredFilesRendererProps> = ({
   isDragger,
   uploadBtnProps,
   disabled,
-  noFilesCaption,
 }) => {
   const {
     fileList,
@@ -44,7 +43,7 @@ export const StoredFilesRenderer: FC<IStoredFilesRendererProps> = ({
       isDragger={isDragger}
       uploadBtnProps={uploadBtnProps}
       disabled={disabled}
-      noFilesCaption={noFilesCaption}
+      // noFilesCaption={noFilesCaption}
     />
   );
 };

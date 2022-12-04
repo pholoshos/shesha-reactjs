@@ -138,21 +138,21 @@ export const upgradeComponent = (componentModel: IConfigurableFormComponent, def
 export const getClosestComponent = (componentId: string, context: SettingsMigrationContext, componentType: string) => {
   let component = context.flatStructure.allComponents[componentId];
   do {
-      component = component?.parentId
-          ? context.flatStructure.allComponents[component.parentId]
-          : null;
-  } while(component && component.type !== componentType);
+    component = component?.parentId
+      ? context.flatStructure.allComponents[component.parentId]
+      : null;
+  } while (component && component.type !== componentType);
 
   return component?.type === componentType
-      ? component
-      : null;
+    ? component
+    : null;
 }
 
 export const getClosestTableId = (context: SettingsMigrationContext) => {
   const table = getClosestComponent(context.componentId, context, 'datatableContext');
   return table
-      ? table['uniqueStateId'] ?? table.name
-      : null;
+    ? table['uniqueStateId'] ?? table.name
+    : null;
 }
 
 //#endregion
@@ -276,6 +276,14 @@ export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormC
 export const evaluateString = (template: string = '', data: any) => {
   // The function throws an exception if the expression passed doesn't have a corresponding curly braces
   try {
+    if (data) {
+      //adding a function to the data object that will format datetime
+      data.dateFormat = function () {
+        return function (timestamp, render) {
+          return new Date(render(timestamp).trim()).toDateString();
+        };
+      }
+    }
     return template ? Mustache.render(template, data ?? {}) : template;
   } catch (error) {
     console.warn('evaluateString ', error);
@@ -1073,8 +1081,8 @@ export const getStyle = (style: string, formData: any = {}, globalState: any = {
   return new Function('data, globalState', style)(formData, globalState);
 };
 
-export const getString=(expression:string,formData: any = {}, globalState: any = {}):string=>{
-  if(!expression)return null;
+export const getString = (expression: string, formData: any = {}, globalState: any = {}): string => {
+  if (!expression) return null;
   return new Function('data, globalState', expression)(formData, globalState);
 }
 export const filterFormData = (data: any) => {

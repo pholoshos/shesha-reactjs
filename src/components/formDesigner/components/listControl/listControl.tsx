@@ -15,7 +15,6 @@ import {
   Checkbox,
   ColProps,
   Divider,
-  Empty,
   Form,
   Input,
   message,
@@ -73,6 +72,7 @@ const ListControl: FC<IListControlProps> = props => {
     namePrefix,
     customVisibility,
     readOnly,
+    placeholder,
   } = props;
 
   const { formConfiguration, refetch: refetchFormConfig, error: fetchFormError } = useFormConfiguration({
@@ -180,7 +180,7 @@ const ListControl: FC<IListControlProps> = props => {
     if (dataSource === 'api') {
       debouncedRefresh();
     }
-  }, [isInDesignerMode, dataSource, evaluatedFilters]);
+  }, [isInDesignerMode, dataSource, evaluatedFilters, queryParams]);
 
   useDeepCompareEffect(() => {
     if (uniqueStateId && Array.isArray(value) && value.length) {
@@ -468,6 +468,8 @@ const ListControl: FC<IListControlProps> = props => {
     setState(prev => ({ ...prev, selectedItemIndexes: e?.target?.checked ? value?.map((_, index) => index) : [] }));
   };
 
+  console.log('LOGS:: selectionMode', selectionMode);
+
   return (
     <CollapsiblePanel
       header={title}
@@ -607,7 +609,7 @@ const ListControl: FC<IListControlProps> = props => {
               </Form.List>
 
               <Show when={hasNoData}>
-                <Empty description="There are no items found." />
+                <div style={{ textAlign: 'center' }}>{placeholder ?? 'There are no items found.'}</div>
               </Show>
             </div>
           </Show>

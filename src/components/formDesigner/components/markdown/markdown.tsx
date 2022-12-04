@@ -47,11 +47,11 @@ const Markdown: FC<IMarkdownProps> = model => {
     <React.Suspense fallback={<div>Loading editor...</div>}>
       <div className="markdown-body" style={getStyle(model?.style, { data, globalState })}>
         <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
+          remarkPlugins={[remarkGfm]?.filter(Boolean)}
           components={{
             code({ node, inline, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || '');
-              return !inline && match ? (
+              return !inline && match && SyntaxHighlighter ? (
                 <SyntaxHighlighter
                   children={String(children).replace(/\n$/, '')}
                   style={dark}

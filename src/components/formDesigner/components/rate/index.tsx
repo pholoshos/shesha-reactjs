@@ -41,7 +41,7 @@ const RateComponent: IToolboxComponent<IRateProps> = {
     const { globalState } = useGlobalState();
     const { backendUrl } = useSheshaApplication();
 
-    const { value, allowClear, icon, disabled, count, tooltips, className, style } = model;
+    const { allowClear, icon, disabled, count, tooltips, className, style } = model;
 
     const eventProps = {
       model,
@@ -58,12 +58,11 @@ const RateComponent: IToolboxComponent<IRateProps> = {
 
     if (isHidden) return null;
 
-    const localCount = _.isNaN(count) ? count : 5;
-    console.log('count', localCount);
+    const localCount = !_.isNaN(count) ? count : 5;
+
     return (
       <ConfigurableFormItem model={model}>
         <Rate
-          value={value}
           allowClear={allowClear}
           //allowHalf={allowHalf}
           character={icon ? <ShaIcon iconName={icon as IconType} /> : <StarFilled />}

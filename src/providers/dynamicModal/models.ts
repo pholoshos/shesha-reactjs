@@ -37,7 +37,7 @@ export interface IModalProps {
   /**
    * Id of the modal to be shown
    */
-   id: string;
+  id: string;
 
   /**
    * Whether the modal is visible
@@ -78,7 +78,7 @@ export interface IModalProps {
 
   submitLocally?: boolean;
 
-  width?: number;
+  width?: number | string;
 
   modalConfirmDialogMessage?: string;
 

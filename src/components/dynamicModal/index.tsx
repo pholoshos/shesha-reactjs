@@ -6,7 +6,6 @@ import { FormIdentifier, FormMode } from '../../providers/form/models';
 import { IModalProps } from '../../providers/dynamicModal/models';
 import { evaluateString, useShaRouting } from '../..';
 import _ from 'lodash';
-import { useMedia } from 'react-use';
 
 export interface IDynamicModalProps extends Omit<IModalProps, 'fetchUrl'> {
   id: string;
@@ -114,7 +113,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
       onCancel={hideForm} // not used
       {...footerProps}
       destroyOnClose
-      width={width ? `${width}%` : '60%'}
+      width={width ? width : 800}
       maskClosable={false}
     >
       <ConfigurableForm

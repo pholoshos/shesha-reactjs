@@ -7,7 +7,8 @@ export interface IShowModalActionArguments {
   formId: FormIdentifier;
   showModalFooter: boolean;
   additionalProperties?: IKeyValue[];
-  modalWidth?: number;
+  modalWidth?: number | string;
+  customWidth?: number;
   /**
    * If specified, the form data will not be fetched, even if the GET Url has query parameters that can be used to fetch the data.
    * This is useful in cases whereby one form is used both for create and edit mode
@@ -80,20 +81,31 @@ export const dialogArgumentsForm = new DesignerToolbarSettings()
     values: [
       {
         label: "Small",
-        value: 40,
+        value: 600,
         id: "2f56ae38-e5f3-40ff-9830-bc048736ddb4"
       },
       {
         label: "Medium",
-        value: 60,
+        value: 800,
         id: "470d820b-7cd7-439c-8e95-1f5b3134f80c"
       },
       {
         label: "Large",
-        value: 80,
+        value: 1000,
         id: "1f2ac3db-3b3f-486c-991f-ad703088ab2d"
+      },
+      {
+        label: "Custom",
+        value: "custom",
+        id: "fde460b0-1f84-4b64-9a6a-e02ba862937d"
       }
     ],
     dataSourceType: "values"
+  })
+  .addNumberField({
+    id: '189ec85bb-f122-4011-bb20-981b4323cfb9',
+    name: 'customWidth',
+    label: 'Enter Custom Width',
+    customVisibility: 'return data.modalWidth === "custom"'
   })
   .toJson();

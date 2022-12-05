@@ -3,10 +3,12 @@ import { Checkbox, Dropdown, Menu, Spin } from 'antd';
 import { useLocalStorage } from '../../hooks';
 import SearchBox from '../formDesigner/toolboxSearchBox';
 import GrouppedObjectsTree from '../grouppedObjectsTree';
-import { DatabaseFilled, DatabaseOutlined, EyeInvisibleOutlined, LoadingOutlined, UserAddOutlined } from '@ant-design/icons';
+import { DatabaseFilled, EyeInvisibleOutlined, LoadingOutlined, QuestionCircleOutlined, UserAddOutlined } from '@ant-design/icons';
 import { useForm } from '../..';
-import { EntityConfigDto, EntityConfigDtoPagedResultDto, useEntityConfigGetAll } from '../../apis/entityConfig';
-import { MetadataSourceType } from '../../interfaces/metadata';
+import { EntityConfigDto, EntityConfigDtoPagedResultDto, useEntityConfigGetMainDataList } from '../../apis/entityConfig';
+import { EntityConfigType, MetadataSourceType } from '../../interfaces/metadata';
+import { InterfaceOutlined } from '../../icons/interfaceOutlined';
+import { ClassOutlined } from '../../icons/classOutlined';
 
 export interface IEntityConfigTreeInstance {
   refresh: (id: string) => void;
@@ -30,16 +32,22 @@ export const EntityConfigTree: FC<IEntityConfigTreeProps> = (props) => {
   const [searchText, setSearchText] = useLocalStorage('shaEntityConfig.toolbox.objects.search', '');
   const [groupBy, setGroupBy] = useLocalStorage('shaEntityConfig.toolbox.objects.grouping', '-');
   const [showSuppress, setShowSuppress] = useLocalStorage('shaEntityConfig.toolbox.objects.showSuppress', false);
+  const [showNotImplemented, setShowNotImplemented] = useLocalStorage('shaEntityConfig.toolbox.objects.showNotImplemented', false);
 
   const [response, setResponse] = useState<EntityConfigDtoPagedResultDto>();
 
-  const fetcher = useEntityConfigGetAll({queryParams: {maxResultCount: 10000, sorting: 'className', properties: 'id className friendlyName source configuration {suppress}'}, lazy: true });
+  const fetcher = useEntityConfigGetMainDataList({queryParams: {maxResultCount: 10000, sorting: 'className'}, lazy: true });
   const { loading: isFetchingData, error: fetchingDataError, data: fetchingDataResponse } = fetcher;
 
   const [objectId, setObjectId] = useState(null);
   const [refershId, setRefreshId] = useState(props.defaultSelected);
   
   const form = useForm(false);
+
+  useEffect(() => {
+    if (props.defaultSelected && props.defaultSelected != objectId)
+      setObjectId(props.defaultSelected);
+  }, [props.defaultSelected])
 
   useEffect(() => {
     if (Boolean(form?.getAction)){
@@ -74,12 +82,11 @@ export const EntityConfigTree: FC<IEntityConfigTreeProps> = (props) => {
   }, [isFetchingData, fetchingDataError, fetchingDataResponse])
 
   const items = useMemo(() => {
-    return response?.items 
-      ? !showSuppress
-        ? response.items.filter(item => !item.suppress)
-        : response.items
-      : [];
-  }, [response, showSuppress])
+    let list = response?.items ? response.items: [];
+    list = !showSuppress ? list.filter(item => !item.suppress) : list;
+    list = !showNotImplemented ? list.filter(item => !item.notImplemented) : list;
+    return list;
+  }, [response, showSuppress, showNotImplemented])
 
   //useEffect(() => {fetcher.refetch();}, [showSuppress])
 
@@ -90,7 +97,7 @@ export const EntityConfigTree: FC<IEntityConfigTreeProps> = (props) => {
 
   const update = (item: EntityConfigDto) => {
     setResponse((prev) => { 
-      return {...prev, items: prev.items.map(i => i.id == objectId ? {...i, className: item.className, suppress: item.suppress} : i)}
+      return {...prev, items: prev.items.map(i => i.id == objectId ? {...i, className: item.className, suppress: item.suppress, module: item.module} : i)}
     });
   }
 
@@ -111,6 +118,9 @@ export const EntityConfigTree: FC<IEntityConfigTreeProps> = (props) => {
     <Menu>
       <Menu.Item key={"1"} onClick={() => {setGroupBy('-')}}>Without grouping</Menu.Item>
       <Menu.Item key={"2"} onClick={() => {setGroupBy('namespace')}}>Group by Namespace</Menu.Item>
+      <Menu.Item key={"3"} onClick={() => {setGroupBy('module')}}>Group by Module</Menu.Item>
+      <Menu.Item key={"4"} onClick={() => {setGroupBy('source')}}>Group by Source</Menu.Item>
+      <Menu.Item key={"5"} onClick={() => {setGroupBy('entityConfigType')}}>Group by Type</Menu.Item>
     </Menu>
   );
 
@@ -126,10 +136,15 @@ export const EntityConfigTree: FC<IEntityConfigTreeProps> = (props) => {
       </div>
       <div className="sha-page-heading">
         <div className="sha-page-heading-left">
-          Show Suppress entities <Checkbox checked={showSuppress} onChange={(e) => {setShowSuppress(e.target.checked);}} />
+          Show suppressed entities <Checkbox checked={showSuppress} onChange={(e) => {setShowSuppress(e.target.checked);}} />
         </div>
       </div>
-      
+      <div className="sha-page-heading">
+        <div className="sha-page-heading-left">
+          Show not implemented entities <Checkbox checked={showNotImplemented} onChange={(e) => {setShowNotImplemented(e.target.checked);}} />
+        </div>
+      </div>
+
       <GrouppedObjectsTree<EntityConfigDto>
         items={items}
         openedKeys={openedKeys}
@@ -141,13 +156,32 @@ export const EntityConfigTree: FC<IEntityConfigTreeProps> = (props) => {
             || item.friendlyName?.toLowerCase().includes(searchText?.toLowerCase());}}
         setOpenedKeys={setOpenedKeys}
         onChange={onChangeHandler}
+        onGetGroupName={(gb, name) => {
+          if (gb == 'source'){
+            switch(name.toString()) {
+              case '1': return "Application Entities";
+              case '2': return "User defined Entities";
+            }
+          }
+          if (gb == 'entityConfigType'){
+            switch(name.toString()) {
+              case '1': return "Entities";
+              case '2': return "Json entities";
+            }
+          }
+          return name;
+        }}
         onRenterItem={(item) => { 
           return <>
             {item.suppress
               ? <EyeInvisibleOutlined />
               : item.source == MetadataSourceType.UserDefined
                 ? <UserAddOutlined />
-                : <DatabaseOutlined />
+                : item.notImplemented
+                  ? <QuestionCircleOutlined />
+                  : item.entityConfigType == EntityConfigType.Interface
+                    ? <InterfaceOutlined />
+                    : <ClassOutlined />
             }
             <span className='sha-component-title'> {item.className}</span>
           </>

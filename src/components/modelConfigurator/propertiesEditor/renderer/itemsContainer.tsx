@@ -5,6 +5,7 @@ import { ReactSortable, ItemInterface } from 'react-sortablejs';
 import { IModelItem } from '../../../../interfaces/modelConfigurator';
 import ComplexProperty from './complexProperty';
 import { DataTypes } from '../../../../interfaces/dataTypes';
+import JsonProperty from './jsonProperty';
 
 export interface IToolbarItemsSortableProps {
   index?: number[];
@@ -16,7 +17,9 @@ export const ItemsContainer: FC<IToolbarItemsSortableProps> = props => {
 
   const renderItem = (itemProps: IModelItem, index: number, key: string) => {
     if (itemProps.dataType === DataTypes.object || itemProps.dataType === DataTypes.array) {
-      return <ComplexProperty id={index} index={[...props.index, index]} {...itemProps} key={key} />;
+        return <ComplexProperty id={index} index={[...props.index, index]} {...itemProps} key={key} />;
+    } else if (itemProps.dataType === DataTypes.objectReference) {
+        return <JsonProperty id={index} index={[...props.index, index]} {...itemProps} key={key} />;
     } else {
       return <SimpleProperty id={index} index={[...props.index, index]} {...itemProps} key={key} />;
     }

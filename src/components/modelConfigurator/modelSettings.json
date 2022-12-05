@@ -1,6 +1,57 @@
 {
   "components": [
     {
+      "id": "s1GhkdPW0u1GUZOZs6MOG",
+      "type": "alert",
+      "name": "alert1",
+      "label": "Alert1",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "visibility": "Yes",
+      "customVisibility": "return data?.notImplemented;",
+      "isDynamic": false,
+      "alertType": "error",
+      "text": "Entity configuration has 'Application Code' source type but is not implemented. Please note that you will not be able to use it.",
+      "description": "",
+      "showIcon": true,
+      "icon": "CloseCircleFilled"
+    },
+    {
+      "id": "11GhkdPW0u1GUZOZs6MOG",
+      "type": "alert",
+      "name": "alert2",
+      "label": "Alert2",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "visibility": "Yes",
+      "customVisibility": "return data?.suppress;",
+      "isDynamic": false,
+      "alertType": "warning",
+      "text": "Entity configuration is suppressed and can not be used for other purposes.",
+      "description": "",
+      "showIcon": true,
+      "icon": "WarningFilled"
+    },
+    {
+      "id": "21GhkdPW0u1GUZOZs6MOG",
+      "type": "alert",
+      "name": "alert3",
+      "label": "Alert3",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "visibility": "Yes",
+      "customVisibility": "return data?.entityConfigType === 2;",
+      "isDynamic": false,
+      "alertType": "warning",
+      "text": "Entity configuration is a Json Entity and can be used only as a type of Json properties. Application services is not available for this entity type",
+      "description": "",
+      "showIcon": true,
+      "icon": "WarningFilled"
+    },
+    {
       "id": "B33BFC-6613TjXmCG6jdG",
       "type": "tabs",
       "name": "mainTab",
@@ -138,6 +189,7 @@
           "sortOrder": 5,
           "name": "",
           "key": "appService",
+          "customVisibility": "return data?.entityConfigType === 1;",
           "title": "Application Service",
           "components": [
             {
@@ -411,7 +463,31 @@
           ],
           "label": "Application Service",
           "chosen": false
-        }
+        },
+        {
+          "id": "1132kk2zE7XZCt3PB8ae1",
+          "label": "Views",
+          "title": "Views",
+          "key": "views",
+          "components": [
+            {
+              "id": "111j5d9zq8N4p6sglCvE1",
+              "type": "section",
+              "name": "viewConfigurations",
+              "label": "ViewsEditor",
+              "labelAlign": "right",
+              "parentId": "1132kk2zE7XZCt3PB8ae1",
+              "hidden": false,
+              "visibility": "Yes",
+              "customVisibility": null,
+              "isDynamic": false,
+              "settingsValidationErrors": []
+            }
+          ],
+          "itemType": "item",
+          "chosen": false,
+          "selected": false
+        }        
       ],
       "defaultActiveKey": "details",
       "tabType": "line",

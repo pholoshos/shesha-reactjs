@@ -6,7 +6,7 @@ const STORYBOOK_BASE_URL = 'http://localhost:21021';
 const ROOT_PATH = './src/apis';
 
 const API_LIST = [
-  'FormConfiguration'
+  //'FormConfiguration'
   //'Form',
   //'DataTable',
   //'PermissionedObject'
@@ -28,9 +28,9 @@ const API_LIST = [
   'User',
   'Metadata',
   */
-  // 'EntityConfig',
+  'EntityConfig',
   // 'EntityProperty',
-  // 'ModelConfigurations',
+  'ModelConfigurations',
   // 'PersonTest',
   // 'ImportResult',
   // 'Module',

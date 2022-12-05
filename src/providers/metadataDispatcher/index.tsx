@@ -20,6 +20,7 @@ import { IModelsDictionary, IProvidersDictionary } from './models';
 import { useSheshaApplication } from '../../providers';
 import { IModelMetadata, IPropertyMetadata } from '../../interfaces/metadata';
 import camelcase from 'camelcase';
+import { DataTypes } from '../../interfaces/dataTypes';
 
 export interface IMetadataDispatcherProviderProps { }
 
@@ -106,10 +107,13 @@ const MetadataDispatcherProvider: FC<PropsWithChildren<IMetadataDispatcherProvid
     if (!propMeta)
       return Promise.reject(`property '${propName}' not found`);
 
-    if (propMeta.dataType === 'entity')
+    if (propMeta.dataType === DataTypes.entityReference)
       return getMetadata({ modelType: propMeta.entityType }).then(m => m.properties);
 
-    if (propMeta.dataType === 'object')
+    if (propMeta.dataType === DataTypes.objectReference)
+      return getMetadata({ modelType: propMeta.entityType }).then(m => m.properties);
+
+    if (propMeta.dataType === DataTypes.object)
       return Promise.resolve(propMeta.properties);
 
     return Promise.reject(`data type '${propMeta.dataType}' doesn't support nested properties`);

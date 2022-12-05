@@ -1,14 +1,14 @@
 import React, { FC } from 'react';
 import modelSettingsMarkup from '../modelSettings.json';
-import permissionSettingsMarkup from '../permissionSettings.json';
 import { CustomErrorBoundary } from '../..';
 import ConfigurableForm from '../../configurableForm';
 import { FormMarkup } from '../../../providers/form/models';
 import { PropertiesEditorComponent } from '../propertiesEditor';
 import { ModelConfiguratorToolbar } from '../toolbar';
 import { useModelConfigurator } from '../../..';
-import { message, Form } from 'antd';
-import { PermissionDto } from '../../../apis/permission';
+import { message } from 'antd';
+import { PermissionEditorComponent } from '../permissionEditor';
+import { ViewsEditorComponent } from '../viewsEditor';
 
 export interface IModelConfiguratorRendererProps {}
 
@@ -21,42 +21,6 @@ export const ModelConfiguratorRenderer: FC<IModelConfiguratorRendererProps> = ()
       .then(() => message.success('Model saved successfully'))
       .catch(() => message.error('Failed to save model'));
   };
-
-  interface IPermissionEditorComponentProps {
-    name: string;
-  }
-
-  const PermissionEditorComponent: FC<IPermissionEditorComponentProps> = (props) => {
-    return (
-       <Form.Item
-           name={props.name}
-           labelCol={{ span: 0 }}
-           wrapperCol={{ span: 24 }}
-       >
-           <PermissionEditor {...props} />
-       </Form.Item>
-    );   
-  }
-
-  interface IPermissionEditorProps extends IPermissionEditorComponentProps {
-    value?: PermissionDto;
-    onChange?: (value: PermissionDto) => void;    
-  }
-  const PermissionEditor: FC<IPermissionEditorProps> = (props) => {
-    return (
-      <ConfigurableForm
-        layout="horizontal"
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 13 }}
-        mode="edit"
-        markup={permissionSettingsMarkup as FormMarkup}
-        initialValues={props?.value}
-        onValuesChange={(_, v) =>{ 
-          props?.onChange(v);
-        }}
-      />
-    );
-  }
 
   return (
     <div className="sha-model-configurator">
@@ -77,7 +41,8 @@ export const ModelConfiguratorRenderer: FC<IModelConfiguratorRendererProps> = ()
             permissionGet: () => <PermissionEditorComponent name="permissionGet" />,
             permissionCreate: () => <PermissionEditorComponent name="permissionCreate" />,
             permissionUpdate: () => <PermissionEditorComponent name="permissionUpdate" />,
-            permissionDelete: () => <PermissionEditorComponent name="permissionDelete" />
+            permissionDelete: () => <PermissionEditorComponent name="permissionDelete" />,
+            viewConfigurations: () => <ViewsEditorComponent />
           }}
         />
       </CustomErrorBoundary>

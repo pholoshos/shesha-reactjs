@@ -6,6 +6,10 @@ export interface ISubFormProps extends IValuable, IChangeable {
   dataSourceUrl?: string;
   name: string;
   actionsOwnerId?: string;
+
+  formSelectionMode?: 'name' | 'dynamic';
+  formType?: string;
+
   formId?: FormIdentifier;
 
   submitUrl?: string;

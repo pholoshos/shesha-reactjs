@@ -70,6 +70,7 @@ import Progress from '../../../components/formDesigner/components/progress';
 import Buttons from '../../../components/formDesigner/components/button/buttonGroup/buttonsComponent';
 import SubForm from '../../../components/formDesigner/components/subForm';
 import Link from '../../../components/formDesigner/components/link';
+import Rate from '../../../components/formDesigner/components/rate';
 import EventNames from '../../../components/formDesigner/components/eventNamesList';
 import ConfigurableActionConfigurator from '../../../components/formDesigner/components/configurableActionsConfigurator';
 import FormAutocompleteComponent from '../../../components/formDesigner/components/formAutocomplete';
@@ -95,6 +96,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       TextArea,
       TextField,
       Statistic,
+      Rate,
     ],
   },
   {

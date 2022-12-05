@@ -44,9 +44,9 @@ const AttachmentsEditor: IToolboxComponent<IAttachmentsEditorProps> = {
         >
           <CustomFile
             allowAdd={!model.disabled && model.allowAdd && isEnabledByCondition}
-            allowDelete={!model.disabled && model.allowDelete}
-            allowReplace={!model.disabled && model.allowReplace}
-            allowRename={!model.disabled && model.allowRename}
+            allowDelete={!model.disabled && model.allowDelete && isEnabledByCondition}
+            allowReplace={!model.disabled && model.allowReplace && isEnabledByCondition}
+            allowRename={!model.disabled && model.allowRename && isEnabledByCondition}
           />
         </StoredFilesProvider>
       </ConfigurableFormItem>

@@ -46,8 +46,8 @@ const FileUploadComponent: IToolboxComponent<IFileUploadProps> = {
         >
           <FileUpload
             allowUpload={!model.disabled && model.allowUpload && isEnabledByCondition}
-            allowDelete={!model.disabled && model.allowDelete}
-            allowReplace={!model.disabled && model.allowReplace}
+            allowDelete={!model.disabled && model.allowDelete && isEnabledByCondition}
+            allowReplace={!model.disabled && model.allowReplace && isEnabledByCondition}
           />
         </StoredFileProvider>
       </ConfigurableFormItem>

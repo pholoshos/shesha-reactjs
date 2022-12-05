@@ -228,6 +228,6 @@ export const UselessForm = addStory(DesignerTemplate, {
 export const PersonEdit = addStory(DesignerTemplate, {
   formId: {
     name: '/persons/edit',
-    version: 2,
+    version: 3,
   },
 });

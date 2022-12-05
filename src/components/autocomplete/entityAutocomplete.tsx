@@ -40,7 +40,7 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
     filter,
   } = props;
 
-  const rawValue = typeof value === 'string' ? value : undefined;
+  const rawValue = typeof value === 'string' ? value : (value as any)?.id ?? undefined;
   /* todo: uncomment and test with arrays and numbers
       : Array.isArray(value)
         ? value
@@ -173,10 +173,10 @@ export const EntityAutocomplete = <TValue,>(props: IEntityAutocompleteProps<TVal
         type={mode === 'multiple' || mode === 'tags' ? 'dropdownMultiple' : 'dropdown'}
         disabled={disabled}
         quickviewEnabled={quickviewEnabled}
-        quickviewFormPath={quickviewFormPath}
+        quickviewFormPath={{name: quickviewFormPath}}
         quickviewDisplayPropertyName={quickviewDisplayPropertyName}
         quickviewGetEntityUrl={quickviewGetEntityUrl}
-        quickviewWidth={quickviewWidth}
+        quickviewWidth={quickviewWidth ? Number(quickviewWidth) : null} // quick fix string value of quickviewWidth (from configurator)
       />
     );
   }

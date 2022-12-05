@@ -68,6 +68,8 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
       return '';
     }
 
+    const entityId = value?.id ?? value?.data?.id ?? value?.data;
+
     switch (type) {
       case 'dropdown':
         if (!Array.isArray(value)) {
@@ -75,7 +77,7 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
           if (quickviewEnabled && quickviewFormPath) {
             return (
               <QuickView
-                entityId={value?.data}
+                entityId={entityId}
                 formIdentifier={quickviewFormPath}
                 getEntityUrl={quickviewGetEntityUrl}
                 displayProperty={quickviewDisplayPropertyName}

@@ -28,13 +28,14 @@ export const EntityDtoAutocomplete = (props: IAutocompleteProps<IDtoType>) => {
     };
   };
 
-  const labeledValueGetter = (
-    itemValue: IGuidNullableEntityWithDisplayNameDto,
-    _options: ISelectOption<IDtoType>[]
-  ) => {
+  const labeledValueGetter = (itemValue: IGuidNullableEntityWithDisplayNameDto, options: ISelectOption<IDtoType>[]) => {
+    if (!Boolean(itemValue)) return null;
+    // update label value from fetched data (necessary for JsonEntity because it stores DisplayText in the Json and might be inconsistent)
+    const item = options?.find(i => i.value === itemValue.id);
+
     return {
       value: itemValue.id,
-      label: itemValue.displayText,
+      label: item?.label ?? itemValue.displayText,
       data: itemValue,
     };
   };
@@ -44,8 +45,15 @@ export const EntityDtoAutocomplete = (props: IAutocompleteProps<IDtoType>) => {
   );
 };
 
-export const RawAutocomplete = (props: IAutocompleteProps<string>) => {
-  const getDtoFromFetchedItem = (item): ISelectOption<string> => {
+
+// RawAutocomplete updated to use with input data in the IGuidNullableEntityWithDisplayNameDto format.
+// Necessary for JsonEntity because it stores EntityReference in the IGuidNullableEntityWithDisplayNameDto format
+// and form designer migth not know which exactly format should be used
+// It still returns data in the raw format
+export type IRawAutocompleteType = string | IGuidNullableEntityWithDisplayNameDto;
+
+export const RawAutocomplete = (props: IAutocompleteProps<IRawAutocompleteType>) => {
+  const getDtoFromFetchedItem = (item): ISelectOption<IRawAutocompleteType> => {
     return {
       value: item['value'],
       label: item['displayText'],
@@ -53,19 +61,20 @@ export const RawAutocomplete = (props: IAutocompleteProps<string>) => {
     };
   };
 
-  const labeledValueGetter = (itemValue: string, options: ISelectOption<string>[]) => {
-    if (!Boolean(itemValue)) return null;
-    const item = options?.find(i => i.value === itemValue);
+  const labeledValueGetter  = (itemValue: IRawAutocompleteType , options: ISelectOption<IRawAutocompleteType>[]) => {
+    var val = (itemValue as IGuidNullableEntityWithDisplayNameDto)?.id ?? itemValue as string;
+    if (!Boolean(val)) return null;
+    const item = options?.find(i => i.value === val);
 
     return {
-      value: itemValue,
-      label: item?.label ?? 'unknown',
+      value: val,
+      label: item?.label ?? (itemValue as IGuidNullableEntityWithDisplayNameDto)?.displayText ?? 'unknown',
       data: itemValue,
-    };
+    } ;
   };
 
   return (
-    <Autocomplete<string>
+    <Autocomplete<IRawAutocompleteType>
       getOptionFromFetchedItem={getDtoFromFetchedItem}
       getLabeledValue={labeledValueGetter}
       {...props}

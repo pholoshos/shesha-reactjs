@@ -81,6 +81,7 @@ export interface IUseFormConfigurationProps {
 export type FormProperties = Omit<FormConfigurationDto, 'markup'>;
 
 export interface IFormMarkupResponse {
+    requestParams: any;
     formConfiguration: IFormDto;
     loading: boolean;
     error: GetDataError<IAjaxResponseBase>;
@@ -170,6 +171,7 @@ export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarku
         loading: fetcher.loading,
         error: fetcher.error,
         refetch: reFetcher,
+        requestParams: requestParams
     };
     return result;
 }

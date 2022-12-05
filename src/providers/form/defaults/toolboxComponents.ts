@@ -169,7 +169,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
     visible: true,
     name: 'Typography',
-    components: [Paragraph, Text, Title],
+    components: [Paragraph, Text, Title, Markdown],
   },
 
   // {

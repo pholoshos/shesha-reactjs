@@ -1,4 +1,4 @@
-import { Checkbox, Form, Input, InputNumber, Select } from 'antd';
+import { AutoComplete, Checkbox, Form, Input, InputNumber, Select } from 'antd';
 import React, { FC, useState } from 'react';
 import SectionSeparator from '../../../sectionSeparator';
 import PropertyAutocomplete from '../../../propertyAutocomplete/propertyAutocomplete';
@@ -25,6 +25,9 @@ interface ISubFormSettingsState extends ISubFormProps {}
 export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, model, onValuesChange }) => {
   const [state, setState] = useState<ISubFormSettingsState>(model);
   const [form] = Form.useForm();
+  const formTypes = ['Table', 'Create', 'Edit', 'Details', 'Quickview', 'ListItem', 'Picker'];
+
+  const [formTypesOptions, setFormTypesOptions] = useState<{ value: string }[]>(formTypes.map(i => {return {value: i};}));
 
   return (
     <Form
@@ -66,6 +69,36 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
         <Checkbox disabled={readOnly} />
       </Form.Item>
 
+      <FormItem name="uniqueStateId" label="Unique State ID" tooltip="Important for accessing the ">
+        <Input readOnly={readOnly} />
+      </FormItem>
+
+      <FormItem
+        name="formSelectionMode"
+        initialValue={'name'}
+        label="Form selection mode"
+      >
+        <Select disabled={readOnly}>
+          <Option value="name">Name</Option>
+          <Option value="dynamic">Dynamic</Option>
+        </Select>
+      </FormItem>
+
+      {state?.formSelectionMode == 'dynamic' && <>
+      <FormItem
+        name="formType"
+        label="Form type"
+      >
+        <AutoComplete 
+          disabled={readOnly} 
+          options={formTypesOptions} 
+          onSearch={t => setFormTypesOptions(
+            (t ? formTypes.filter(f => { return f.toLowerCase().includes(t.toLowerCase()); }) : formTypes).map(i => {return {value: i};})
+          )}/>
+      </FormItem>
+      </>}
+
+      {(!state?.formSelectionMode || state?.formSelectionMode == 'name') && <>
       <FormItem name="formId" label="Form">
         <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
       </FormItem>
@@ -269,6 +302,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
         </FormItem>
       </Show>
 
+      </>}
       <SectionSeparator sectionName="Actions" />
 
       <FormItem

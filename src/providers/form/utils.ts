@@ -284,7 +284,7 @@ export const evaluateString = (template: string = '', data: any) => {
         };
       }
     }
-    return template ? Mustache.render(template, data ?? {}) : template;
+    return template && typeof(template) === 'string' ? Mustache.render(template, data ?? {}) : template;
   } catch (error) {
     console.warn('evaluateString ', error);
     return template;

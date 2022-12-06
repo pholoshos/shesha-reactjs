@@ -15,52 +15,136 @@
       "useRawValues": true
     },
     {
-      "id": "3c32d64a-9bda-457f-82f8-6a0f2c110430",
-      "type": "textField",
+      "id": "8sYGirE7gl_aEDrRe5TKL",
+      "type": "autocomplete",
       "name": "postUrl",
       "label": "POST Url",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
+      "visibility": "Yes",
       "customVisibility": null,
+      "isDynamic": false,
+      "dataSourceType": "url",
+      "useRawValues": true,
+      "placeholder": "",
+      "description": "Check the 'URL variables' tab for the exposed variables",
       "validate": {},
-      "description": "Check the 'URL variables' tab for the exposed variables"
+      "quickviewFormPath": "",
+      "quickviewGetEntityUrl": "",
+      "quickviewDisplayPropertyName": "",
+      "quickviewWidth": "",
+      "settingsValidationErrors": [],
+      "dataSourceUrl": "/api/services/app/Api/Endpoints",
+      "keyPropName": "",
+      "valuePropName": "",
+      "queryParams": [
+        {
+          "id": "c_96VJT3DU0ESkenzihZI",
+          "param": "verb",
+          "value": "post"
+        }
+      ],
+      "allowFreeText": true
     },
     {
-      "id": "acaefed1-f12f-4cb9-b208-b74a1cbd8c40",
-      "type": "textField",
+      "id": "Rvpx3mbz8hov2Absldvu3",
+      "type": "autocomplete",
       "name": "putUrl",
       "label": "PUT Url",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
+      "visibility": "Yes",
       "customVisibility": null,
+      "isDynamic": false,
+      "dataSourceType": "url",
+      "useRawValues": true,
+      "placeholder": "",
+      "description": "Check the 'URL variables' tab for the exposed variables",
       "validate": {},
-      "description": "Check the 'URL variables' tab for the exposed variables"
+      "quickviewFormPath": "",
+      "quickviewGetEntityUrl": "",
+      "quickviewDisplayPropertyName": "",
+      "quickviewWidth": "",
+      "settingsValidationErrors": [],
+      "dataSourceUrl": "/api/services/app/Api/Endpoints",
+      "keyPropName": "",
+      "valuePropName": "",
+      "queryParams": [
+        {
+          "id": "c_96VJT3DU0ESkenzihZI",
+          "param": "verb",
+          "value": "put"
+        }
+      ],
+      "allowFreeText": true
     },
     {
-      "id": "1d1b9011-1437-4ef2-9d52-ad32601544e9",
-      "type": "textField",
+      "id": "3I1RgIulc4Ka6jlmlLdTR",
+      "type": "autocomplete",
       "name": "deleteUrl",
       "label": "DELETE Url",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
+      "visibility": "Yes",
       "customVisibility": null,
+      "isDynamic": false,
+      "dataSourceType": "url",
+      "useRawValues": true,
+      "placeholder": "",
+      "description": "Check the 'URL variables' tab for the exposed variables",
       "validate": {},
-      "description": "Check the 'URL variables' tab for the exposed variables"
+      "quickviewFormPath": "",
+      "quickviewGetEntityUrl": "",
+      "quickviewDisplayPropertyName": "",
+      "quickviewWidth": "",
+      "settingsValidationErrors": [],
+      "dataSourceUrl": "/api/services/app/Api/Endpoints",
+      "keyPropName": "",
+      "valuePropName": "",
+      "queryParams": [
+        {
+          "id": "c_96VJT3DU0ESkenzihZI",
+          "param": "verb",
+          "value": "delete"
+        }
+      ],
+      "allowFreeText": true
     },
     {
-      "id": "ebcf09bb-8cfe-4514-9bdf-d48fd325f438",
-      "type": "textField",
+      "id": "yphyQfmUiThgONUUt7Z2r",
+      "type": "autocomplete",
       "name": "getUrl",
       "label": "GET Url",
       "labelAlign": "right",
       "parentId": "root",
       "hidden": false,
+      "visibility": "Yes",
       "customVisibility": null,
+      "isDynamic": false,
+      "dataSourceType": "url",
+      "useRawValues": true,
+      "placeholder": "",
+      "description": "Check the 'URL variables' tab for the exposed variables",
       "validate": {},
-      "description": "Check the 'URL variables' tab for the exposed variables"
+      "quickviewFormPath": "",
+      "quickviewGetEntityUrl": "",
+      "quickviewDisplayPropertyName": "",
+      "quickviewWidth": "",
+      "settingsValidationErrors": [],
+      "dataSourceUrl": "/api/services/app/Api/Endpoints",
+      "keyPropName": "",
+      "valuePropName": "",
+      "queryParams": [
+        {
+          "id": "c_96VJT3DU0ESkenzihZI",
+          "param": "verb",
+          "value": "get"
+        }
+      ],
+      "allowFreeText": true
     },
     {
       "id": "077f5a0d-d59e-44b8-bc5b-a06e18438f4d",
@@ -71,11 +155,21 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "validate": { "required": true },
+      "validate": {
+        "required": true
+      },
       "dataSourceType": "values",
       "values": [
-        { "id": "3f7bd074-37e6-450c-8106-95e8d8164ada", "label": "horizontal", "value": "horizontal" },
-        { "id": "5709e098-7c1d-4a27-92e5-f25e998c26fd", "label": "vertical", "value": "vertical" }
+        {
+          "id": "3f7bd074-37e6-450c-8106-95e8d8164ada",
+          "label": "horizontal",
+          "value": "horizontal"
+        },
+        {
+          "id": "5709e098-7c1d-4a27-92e5-f25e998c26fd",
+          "label": "vertical",
+          "value": "vertical"
+        }
       ]
     },
     {
@@ -175,7 +269,8 @@
       "customVisibility": null,
       "validate": {},
       "settingsValidationErrors": [],
-      "description": "A list of fields you want to fetch"
+      "description": "A list of fields you want to fetch",
+      "parentId": "root"
     },
     {
       "id": "52f4460d-2e64-4d79-a900-7cd28b0bebd3",
@@ -188,7 +283,8 @@
       "customVisibility": null,
       "validate": {},
       "settingsValidationErrors": [],
-      "description": "A list of form properties you want persisted"
+      "description": "A list of form properties you want persisted",
+      "parentId": "root"
     },
     {
       "id": "ad28d795-92d8-4470-a87e-603822368cc8",
@@ -202,7 +298,9 @@
       "validate": {
         "required": true
       },
-      "description": "This is very important since some form are rendered using the markup, in which case they wouldn't have the path or id that could be used as a unique id of the form"
+      "description": "This is very important since some form are rendered using the markup, in which case they wouldn't have the path or id that could be used as a unique id of the form",
+      "version": 0,
+      "textType": "text"
     },
     {
       "id": "6c121baa-57e3-4965-a429-0632dadc2a99",
@@ -216,14 +314,26 @@
       "valueName": "value",
       "ignorePrefixesOnNewItems": true,
       "exposedVariables": [
-        { "name": "data", "description": "The form data", "type": "object" },
+        {
+          "name": "data",
+          "description": "The form data",
+          "type": "object"
+        },
         {
           "name": "parentFormValues",
           "description": "Parent form values. The values of the form rendering the dialog.",
           "type": "object"
         },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" },
-        { "name": "query", "description": "Query parameters from the address bar", "type": "object" }
+        {
+          "name": "globalState",
+          "description": "The global state of the application",
+          "type": "object"
+        },
+        {
+          "name": "query",
+          "description": "Query parameters from the address bar",
+          "type": "object"
+        }
       ],
       "description": "Enter values that you would like passed to the server as payload. Note that you can also use Mustache expression as in {{parent.id}}. Also you can use dot notation such as query.name"
     },
@@ -241,15 +351,31 @@
       "allowClear": false,
       "validate": {},
       "exposedVariables": [
-        { "name": "data", "description": "The form data", "type": "object" },
-        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        {
+          "name": "data",
+          "description": "The form data",
+          "type": "object"
+        },
+        {
+          "name": "moment",
+          "description": "The moment.js object",
+          "type": "object"
+        },
         {
           "name": "parentFormValues",
           "description": "Parent form values. The values of the form rendering the dialog.",
           "type": "object"
         },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" },
-        { "name": "initialValues", "description": "Initial values", "type": "object" }
+        {
+          "name": "globalState",
+          "description": "The global state of the application",
+          "type": "object"
+        },
+        {
+          "name": "initialValues",
+          "description": "Initial values",
+          "type": "object"
+        }
       ],
       "description": "Write a code that allows you to return an object whose values will be merged with the form state before submit. Check the variables tab for exposed variables"
     },
@@ -267,15 +393,31 @@
       "allowClear": false,
       "validate": {},
       "exposedVariables": [
-        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        {
+          "name": "moment",
+          "description": "The moment.js object",
+          "type": "object"
+        },
         {
           "name": "parentFormValues",
           "description": "Parent form values. The values of the form rendering the dialog.",
           "type": "object"
         },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" },
-        { "name": "initialValues", "description": "Initial values", "type": "object" },
-        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "globalState",
+          "description": "The global state of the application",
+          "type": "object"
+        },
+        {
+          "name": "initialValues",
+          "description": "Initial values",
+          "type": "object"
+        },
+        {
+          "name": "http",
+          "description": "axios instance used to make http requests",
+          "type": "object"
+        },
         {
           "name": "message",
           "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
@@ -298,16 +440,36 @@
       "allowClear": false,
       "validate": {},
       "exposedVariables": [
-        { "name": "data", "description": "Fetched data from the server", "type": "object" },
-        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        {
+          "name": "data",
+          "description": "Fetched data from the server",
+          "type": "object"
+        },
+        {
+          "name": "moment",
+          "description": "The moment.js object",
+          "type": "object"
+        },
         {
           "name": "parentFormValues",
           "description": "Parent form values. The values of the form rendering the dialog.",
           "type": "object"
         },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" },
-        { "name": "initialValues", "description": "Initial values", "type": "object" },
-        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "globalState",
+          "description": "The global state of the application",
+          "type": "object"
+        },
+        {
+          "name": "initialValues",
+          "description": "Initial values",
+          "type": "object"
+        },
+        {
+          "name": "http",
+          "description": "axios instance used to make http requests",
+          "type": "object"
+        },
         {
           "name": "initialValues",
           "description": "Initial values passsed to the form. In most cases, it's the selected row in a case where an action column is the one triggering the form displaying on the dialog",
@@ -335,16 +497,36 @@
       "allowClear": false,
       "validate": {},
       "exposedVariables": [
-        { "name": "data", "description": "The form data", "type": "object" },
-        { "name": "moment", "description": "The moment.js object", "type": "object" },
+        {
+          "name": "data",
+          "description": "The form data",
+          "type": "object"
+        },
+        {
+          "name": "moment",
+          "description": "The moment.js object",
+          "type": "object"
+        },
         {
           "name": "parentFormValues",
           "description": "Parent form values. The values of the form rendering the dialog.",
           "type": "object"
         },
-        { "name": "globalState", "description": "The global state of the application", "type": "object" },
-        { "name": "initialValues", "description": "Initial values", "type": "object" },
-        { "name": "http", "description": "axios instance used to make http requests", "type": "object" },
+        {
+          "name": "globalState",
+          "description": "The global state of the application",
+          "type": "object"
+        },
+        {
+          "name": "initialValues",
+          "description": "Initial values",
+          "type": "object"
+        },
+        {
+          "name": "http",
+          "description": "axios instance used to make http requests",
+          "type": "object"
+        },
         {
           "name": "message",
           "description": "This is the Ant API for displaying toast messages. See: https://ant.design/components/message/#header",
@@ -354,5 +536,14 @@
       "description": "This action will be executed whenever the form updates"
     }
   ],
-  "formSettings": { "layout": "horizontal", "colon": true, "labelCol": { "span": 5 }, "wrapperCol": { "span": 19 } }
+  "formSettings": {
+    "layout": "horizontal",
+    "colon": true,
+    "labelCol": {
+      "span": 5
+    },
+    "wrapperCol": {
+      "span": 19
+    }
+  }
 }

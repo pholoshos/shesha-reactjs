@@ -56,6 +56,7 @@ export interface IAutocompleteProps extends IConfigurableFormComponent {
   width?: number;
   minWidth?: number;
   maxWidth?: number;
+  allowFreeText?: boolean;
 }
 
 const settingsForm = settingsFormJson as FormMarkup;
@@ -166,29 +167,30 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
     };
 
     const autocompleteProps = {
-      typeShortAlias: model?.entityTypeShortAlias,
-      entityDisplayProperty: model?.entityDisplayProperty,
+      typeShortAlias: model.entityTypeShortAlias,
+      entityDisplayProperty: model.entityDisplayProperty,
       allowInherited: true /*hardcoded for now*/,
       disabled,
       bordered: !model.hideBorder,
       dataSourceUrl,
       dataSourceType: model.dataSourceType,
-      mode: model?.mode,
-      placeholder:model?.placeholder,
+      mode: model.mode,
+      placeholder: model.placeholder,
       queryParams: getQueryParams(),
-      readOnly: model?.readOnly || formMode === 'readonly',
-      defaultValue: evaluateString(model?.defaultValue, { formData, formMode, globalState }) as any,
+      readOnly: model.readOnly || formMode === 'readonly',
+      defaultValue: evaluateString(model.defaultValue, { formData, formMode, globalState }) as any,
       getOptionFromFetchedItem,
-      disableSearch: model?.disableSearch,
+      disableSearch: model.disableSearch,
       filter: evaluatedFilters,
-      quickviewEnabled: model?.quickviewEnabled,
-      quickviewFormPath: model?.quickviewFormPath,
-      quickviewDisplayPropertyName: model?.quickviewDisplayPropertyName,
-      quickviewGetEntityUrl: model?.quickviewGetEntityUrl,
-      quickviewWidth: model?.quickviewWidth,
-      subscribedEventNames: model?.subscribedEventNames,
-      style: getStyle(model?.style, formData),
-      size: model?.size,
+      quickviewEnabled: model.quickviewEnabled,
+      quickviewFormPath: model.quickviewFormPath,
+      quickviewDisplayPropertyName: model.quickviewDisplayPropertyName,
+      quickviewGetEntityUrl: model.quickviewGetEntityUrl,
+      quickviewWidth: model.quickviewWidth,
+      subscribedEventNames: model.subscribedEventNames,
+      style: getStyle(model.style, formData),
+      size: model.size,
+      allowFreeText: model.allowFreeText,
     };
 
     // todo: implement other types of datasources!

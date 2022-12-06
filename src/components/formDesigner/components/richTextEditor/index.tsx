@@ -9,7 +9,7 @@ import RichTextEditor from '../../../richTextEditor';
 import { useForm } from '../../../..';
 import { IRichTextEditorProps } from './interfaces';
 import { getStyle } from '../../../../providers/form/utils';
-import { IJoditEditorProps } from 'jodit-react';
+import { IJoditEditorProps } from '../../../richTextEditor/joditEditor';
 
 const settingsForm = settingsFormJson as FormMarkup;
 

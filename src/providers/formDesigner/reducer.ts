@@ -9,12 +9,14 @@ import {
   IComponentUpdateSettingsValidationPayload,
   IAddDataPropertyPayload,
   IHasComponentGroups,
+  IComponentDuplicatePayload,
 } from './contexts';
 import {
   IConfigurableFormComponent,
   IFlatComponentsStructure,
   IComponentRelations,
   IFormSettings,
+  IComponentsDictionary,
 } from '../form/models';
 import { FormActionEnums } from './actions';
 import { handleActions } from 'redux-actions';
@@ -156,7 +158,7 @@ const reducer = handleActions<IFormDesignerStateContext, any>(
         };
         if (toolboxComponent.initModel) formComponent = toolboxComponent.initModel(formComponent);
         if (toolboxComponent.migrator) {
-          
+
           formComponent = upgradeComponent(formComponent, toolboxComponent, { allComponents: state.allComponents, componentRelations: state.componentRelations });
 
           // run migrations if available
@@ -208,6 +210,89 @@ const reducer = handleActions<IFormDesignerStateContext, any>(
         allComponents,
         componentRelations,
         selectedComponentId: state.selectedComponentId === payload.componentId ? null : state.selectedComponentId, // clear selection if we delete current component
+      };
+    },
+
+    [FormActionEnums.ComponentDuplicate]: (
+      state: IFormDesignerStateContext,
+      action: ReduxActions.Action<IComponentDuplicatePayload>
+    ) => {
+      const { payload } = action;
+
+      const cloneComponent = (component: IConfigurableFormComponent, nestedComponents: IComponentsDictionary, nestedRelations: IComponentRelations): IConfigurableFormComponent => {
+        const newId = nanoid();
+        const clone = { ...component, id: newId };
+        
+        nestedComponents[clone.id] = clone;
+        
+        const toolboxComponent = findToolboxComponent(state.toolboxComponentGroups, c => c.type === component.type);
+        const containers = toolboxComponent?.customContainerNames ?? [];
+
+        // handle nested components by id of the parent
+        const srcNestedComponents = state.componentRelations[component.id];
+        if (srcNestedComponents){
+          nestedRelations[clone.id] = [];
+          const relations = nestedRelations[clone.id];
+
+          srcNestedComponents.forEach(childId => {
+            const child = state.allComponents[childId];
+            const childClone = cloneComponent(child, nestedComponents, nestedRelations);
+            childClone.parentId = clone.id;
+
+            relations.push(childClone.id);
+          });
+        }
+
+        // handle containers
+        containers.forEach(cntName => {
+          const srcContainer = component[cntName];
+          if (srcContainer) {
+            // add clone recursively
+            nestedRelations[clone.id] = [];
+            const relations = nestedRelations[clone.id];
+
+            clone[cntName] = srcContainer.map(c => {
+              // child may be component or any object with id
+              const childClone = cloneComponent(c, nestedComponents, nestedRelations);
+              if (childClone.hasOwnProperty('parentId'))
+                childClone.parentId = clone.id;
+
+              relations.push(childClone.id);
+
+              return childClone;
+            });            
+          }
+        });
+
+        return clone;
+      }
+
+      const srcComponent = state.allComponents[payload.componentId];
+
+      const nestedComponents: IComponentsDictionary = {};
+      const nestedRelations: IComponentRelations = {};
+      const clone = cloneComponent(srcComponent, nestedComponents, nestedRelations);
+
+      const parentRelations = [...state.componentRelations[srcComponent.parentId]]; 
+      const cloneIndex = parentRelations.indexOf(srcComponent.id) + 1;
+      parentRelations.splice(cloneIndex, 0, clone.id);
+
+      const componentRelations = { 
+        ...state.componentRelations, 
+        [srcComponent.parentId]: parentRelations,
+        ...nestedRelations, 
+      };
+      const allComponents = { 
+        ...state.allComponents, 
+        [clone.id]: clone,
+        ...nestedComponents,
+      };
+
+      return {
+        ...state,
+        allComponents,
+        componentRelations,
+        selectedComponentId: clone.id,
       };
     },
 

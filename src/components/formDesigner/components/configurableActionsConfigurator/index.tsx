@@ -186,7 +186,7 @@ const ActionSelect: FC<IActionSelectProps> = ({ value, onChange, actions, readOn
   const treeData = useMemo<IActionSelectItem[]>(() => {
     const result: IActionSelectItem[] = [];
     
-    console.log('build actions', actions)
+    //console.log('build actions', actions)
 
     for (const owner in actions) {
       const ownerActions = actions[owner];

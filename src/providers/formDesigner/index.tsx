@@ -13,6 +13,7 @@ import {
     IFormDesignerActionsContext,
     IAddDataPropertyPayload,
     IComponentAddFromTemplatePayload,
+    IComponentDuplicatePayload,
 } from './contexts';
 import {
     IFormSettings,
@@ -24,6 +25,7 @@ import {
     setFlatComponentsAction,
     componentAddAction,
     componentDeleteAction,
+    componentDuplicateAction,
     componentUpdateAction,
     componentUpdateSettingsValidationAction,
     setDebugModeAction,
@@ -116,6 +118,10 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormDesignerProviderProps>> = 
 
     const deleteComponent = (payload: IComponentDeletePayload) => {
         dispatch(componentDeleteAction(payload));
+    };
+
+    const duplicateComponent = (payload: IComponentDuplicatePayload) => {
+        dispatch(componentDuplicateAction(payload));
     };
 
     const getComponentModel = componentId => {
@@ -223,6 +229,7 @@ const FormDesignerProvider: FC<PropsWithChildren<IFormDesignerProviderProps>> = 
         addComponent,
         addComponentsFromTemplate,
         deleteComponent,
+        duplicateComponent,
         getComponentModel,
         updateComponent,
         getChildComponents,

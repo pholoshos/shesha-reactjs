@@ -75,7 +75,7 @@ export const SidebarContainer: FC<ISidebarContainerProps> = ({
     const { open, onOpen, title, onClose, placeholder, content } = sidebarProps;
 
     return (
-      <div className={classNames(`sidebar-container-${side}`, { open }, { 'allow-full-collapse': allowFullCollapse })}>
+      <div style={{ minHeight: '85vh' }} className={classNames(`sidebar-container-${side}`, { open }, { 'allow-full-collapse': allowFullCollapse })}>
         <div className="sidebar-header">
           <div className={`sidebar-header-title ${side}`}>{typeof title === 'function' ? title() : title}</div>
           <div className={`sidebar-header-btn ${side}`} onClick={open ? onClose : onOpen}>
@@ -92,9 +92,9 @@ export const SidebarContainer: FC<ISidebarContainerProps> = ({
           <div className={classNames('sidebar-body-content', { open })}>
             {typeof content === 'function' ? content() : content}
           </div>
-          { !allowFullCollapse && (
+          {!allowFullCollapse && (
             <div className={classNames('sidebar-body-placeholder', { open })} />
-          ) }
+          )}
         </div>
       </div>
     );

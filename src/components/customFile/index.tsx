@@ -6,6 +6,10 @@ import { useSheshaApplication, useStoredFilesStore } from '../../providers';
 export interface ICustomFileProps {
   uploadFile?: (payload: IUploadFilePayload) => void;
   onFileListChanged?: (list: IStoredFile[]) => void;
+  allowAdd?: boolean;
+  allowReplace?: boolean;
+  allowDelete?: boolean;
+  allowRename?: boolean;
 }
 
 export const CustomFile: FC<ICustomFileProps> = props => {
@@ -29,6 +33,7 @@ export const CustomFile: FC<ICustomFileProps> = props => {
   return (
     <div className="stored-files-renderer-wrapper">
       <StoredFilesRendererBase
+        disabled={!props.allowAdd}
         isDragger={false}
         fileList={fileList.map(({ url, ...rest }) => ({ url: `${backendUrl}${url}`, ...rest }))}
         allowUpload={false}

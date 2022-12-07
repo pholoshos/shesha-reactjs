@@ -10,6 +10,7 @@ import {
   IComponentUpdateSettingsValidationPayload,
   IAddDataPropertyPayload,
   IComponentAddFromTemplatePayload,
+  IComponentDuplicatePayload,
 } from './contexts';
 import { IFlatComponentsStructure, IFormSettings } from '../form/models';
 
@@ -20,6 +21,7 @@ export enum FormActionEnums {
   DataPropertyAdd = 'DATA_PROPERTY_ADD',
   ComponentAdd = 'COMPONENT_ADD',
   ComponentDelete = 'COMPONENT_DELETE',
+  ComponentDuplicate = 'COMPONENT_DUPLICATE',
   ComponentUpdate = 'COMPONENT_UPDATE',
   ComponentUpdateSettingsValidation = 'COMPONENT_UPDATE_SETTINGS_VALIDATION',
 
@@ -67,6 +69,11 @@ export const componentAddFromTemplateAction = createAction<
 
 export const componentDeleteAction = createAction<IComponentDeletePayload, IComponentDeletePayload>(
   FormActionEnums.ComponentDelete,
+  p => p
+);
+
+export const componentDuplicateAction = createAction<IComponentDuplicatePayload, IComponentDuplicatePayload>(
+  FormActionEnums.ComponentDuplicate,
   p => p
 );
 

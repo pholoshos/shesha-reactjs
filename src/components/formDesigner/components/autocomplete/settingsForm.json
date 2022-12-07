@@ -22,7 +22,9 @@
       "type": "textField",
       "name": "label",
       "parentId": "root",
-      "label": "Label"
+      "label": "Label",
+      "version": 0,
+      "textType": "text"
     },
     {
       "id": "57a40a33-7e08-4ce4-9f08-a34d24a83338",
@@ -59,18 +61,22 @@
         {
           "label": "multiple",
           "value": "multiple",
-          "id": "b920ef96-ae27-4a01-bfad-b5b7d07218da"
+          "id": "60A17884-B7D6-4B24-BB45-A60BD17A04C5"
         }
       ],
       "dataSourceType": "values",
-      "defaultValue": ["single"]
+      "defaultValue": [
+        "single"
+      ]
     },
     {
       "id": "fbdb6bb1-5994-4205-86b4-236ca61ae54e",
       "type": "textField",
       "name": "placeholder",
       "parentId": "root",
-      "label": "Placeholder"
+      "label": "Placeholder",
+      "version": 0,
+      "textType": "text"
     },
     {
       "id": "2d32fe70-99a0-4825-ae6c-8b933004e119",
@@ -205,7 +211,9 @@
             "message": ""
           },
           "quickviewWidth": "",
-          "settingsValidationErrors": []
+          "settingsValidationErrors": [],
+          "version": 0,
+          "textType": "text"
         },
         {
           "id": "4c6133f1-8886-4527-aa6c-ae0606506a8a",
@@ -225,7 +233,9 @@
           "prefix": "",
           "suffix": "",
           "initialValue": "",
-          "quickviewWidth": ""
+          "quickviewWidth": "",
+          "version": 0,
+          "textType": "text"
         },
         {
           "id": "007e5859-9299-4434-84d9-9f7b0f7228af",
@@ -245,7 +255,9 @@
           "prefix": "",
           "suffix": "",
           "initialValue": "",
-          "quickviewWidth": ""
+          "quickviewWidth": "",
+          "version": 0,
+          "textType": "text"
         },
         {
           "id": "b395c0e9-dbc1-44f1-8fef-c18a49442871",
@@ -307,27 +319,23 @@
           "settingsValidationErrors": []
         },
         {
-          "id":"hpm6rN_aj-L_KaG5MLIZt",
-          "type":"propertyAutocomplete",
-          "name":"entityDisplayProperty",
-          "label":"Display Property",
-          "labelAlign":"right",
-          "parentId":"uEFBpy19tApJMiBuFyj9s",
-          "hidden":false,
-          "visibility":"Yes",
-          "customVisibility":"return data.entityTypeShortAlias",
-          "isDynamic":false,
-          "placeholder":"",
+          "id": "hpm6rN_aj-L_KaG5MLIZt",
+          "type": "propertyAutocomplete",
+          "name": "entityDisplayProperty",
+          "label": "Display Property",
+          "labelAlign": "right",
+          "parentId": "uEFBpy19tApJMiBuFyj9s",
+          "hidden": false,
+          "visibility": "Yes",
+          "customVisibility": "return data.entityTypeShortAlias",
+          "isDynamic": false,
+          "placeholder": "",
           "description": "Name of the property that should be displayed in the autocomplete. Live empty to use default display property defined on the back-end.",
-          "validate":{
-             
-          },
-          "modelType":"{{data.entityTypeShortAlias}}",
-          "showFillPropsButton":false,
-          "settingsValidationErrors":[
-             
-          ]
-       },        
+          "validate": {},
+          "modelType": "{{data.entityTypeShortAlias}}",
+          "showFillPropsButton": false,
+          "settingsValidationErrors": []
+        },
         {
           "id": "14413162-429e-451c-b3e6-b3f0ab6d7b09",
           "type": "sectionSeparator",
@@ -379,6 +387,21 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
+      "validate": {},
+      "settingsValidationErrors": []
+    },
+    {
+      "id": "Wda2Q9DU5DDExAb7MEEfK",
+      "type": "checkbox",
+      "name": "allowFreeText",
+      "label": "Allow Free Text",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "visibility": "Yes",
+      "customVisibility": "return data.dataSourceType === 'url' && data.useRawValues === true",
+      "isDynamic": false,
+      "description": "Allow to use free text that is missing on the source",
       "validate": {},
       "settingsValidationErrors": []
     },
@@ -495,7 +518,9 @@
       "name": "quickviewFormPath",
       "parentId": "root",
       "label": "Form Path",
-      "customVisibility": "return data.quickviewEnabled === true"
+      "customVisibility": "return data.quickviewEnabled === true",
+      "version": 0,
+      "textType": "text"
     },
     {
       "id": "c6ec53eb-3bec-40d6-b1a1-687c5d1c3d1d",
@@ -503,7 +528,9 @@
       "name": "quickviewGetEntityUrl",
       "parentId": "root",
       "label": "Get Entity Url",
-      "customVisibility": "return data.quickviewEnabled === true"
+      "customVisibility": "return data.quickviewEnabled === true",
+      "version": 0,
+      "textType": "text"
     },
     {
       "id": "b0eeb8cb-d9ad-479e-a731-10d5909a50a2",
@@ -511,7 +538,9 @@
       "name": "quickviewDisplayPropertyName",
       "parentId": "root",
       "label": "Display Property Name",
-      "customVisibility": "return data.quickviewEnabled === true"
+      "customVisibility": "return data.quickviewEnabled === true",
+      "version": 0,
+      "textType": "text"
     },
     {
       "id": "d690a0b7-a9d3-4ab2-8843-9dcfbac08adc",
@@ -519,7 +548,9 @@
       "name": "quickviewWidth",
       "parentId": "root",
       "label": "Width",
-      "customVisibility": "return data.quickviewEnabled === true"
+      "customVisibility": "return data.quickviewEnabled === true",
+      "version": 0,
+      "textType": "text"
     },
     {
       "id": "6befdd49-41aa-41d6-a29e-76fa00590b75",
@@ -566,7 +597,7 @@
         {
           "label": "Large",
           "value": "large",
-          "id": "f01e54aa-a1a4-4bd6-ba73-c395e48af8ce"
+          "id": "F4A7F447-68D6-457F-94D4-C1220C6EA630"
         }
       ],
       "dataSourceType": "values"

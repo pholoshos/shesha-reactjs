@@ -109,6 +109,23 @@
       "customVisibility": "return !data.disabled"
     },
     {
+      "id": "4b5e5951-4998-4635-b1c8-0b6d3940c300",
+      "type": "codeEditor",
+      "name": "customEnabled",
+      "label": "Custom Enabled",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "customEnabled": null,
+      "description": "Enter custom enabled code.  You must return true to enable the component. The global variable data is provided, and allows you to access the data of any form component, by using its API key.",
+      "validate": {},
+      "settingsValidationErrors": [],
+      "exposedVariables": [
+        { "name": "value", "description": "Component current value", "type": "string | any" },
+        { "name": "data", "description": "Selected form values", "type": "object" }
+      ]
+    },
+    {
       "id": "6b3d298a-0e82-4420-ae3c-38bf5a2246d4",
       "type": "checkbox",
       "name": "allowDelete",

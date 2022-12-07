@@ -6,7 +6,7 @@ import settingsFormJson from './settingsForm.json';
 import { FileUpload } from '../../..';
 import { StoredFileProvider, useGlobalState, useSheshaApplication } from '../../../../providers';
 import { useForm } from '../../../../providers/form';
-import { evaluateValue, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { evaluateValue, executeCustomExpression, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import React from 'react';
 
 export interface IFileUploadProps extends IConfigurableFormComponent, IFormItem {
@@ -33,6 +33,8 @@ const FileUploadComponent: IToolboxComponent<IFileUploadProps> = {
     const { globalState } = useGlobalState();
     const ownerId = evaluateValue(model.ownerId, { data: formData, globalState });
 
+    const isEnabledByCondition = executeCustomExpression(model.customEnabled, true, formData, globalState);
+
     return (
       <ConfigurableFormItem model={model}>
         <StoredFileProvider
@@ -43,9 +45,9 @@ const FileUploadComponent: IToolboxComponent<IFileUploadProps> = {
           uploadMode={ownerId ? 'async' : 'sync'}
         >
           <FileUpload
-            allowUpload={!model.disabled && model.allowUpload}
-            allowDelete={!model.disabled && model.allowDelete}
-            allowReplace={!model.disabled && model.allowReplace}
+            allowUpload={!model.disabled && model.allowUpload && isEnabledByCondition}
+            allowDelete={!model.disabled && model.allowDelete && isEnabledByCondition}
+            allowReplace={!model.disabled && model.allowReplace && isEnabledByCondition}
           />
         </StoredFileProvider>
       </ConfigurableFormItem>

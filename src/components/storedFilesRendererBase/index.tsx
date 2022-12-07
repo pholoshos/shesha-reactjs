@@ -131,7 +131,7 @@ export const StoredFilesRendererBase: FC<IStoredFilesRendererBaseProps> = ({
         </Dragger>
       ) : (
         <Upload {...props}>
-          <Button type="link" icon={<UploadOutlined />} {...uploadBtnProps}>
+          <Button type="link" icon={<UploadOutlined />} style={{ display: disabled ? 'none' : '' }} {...uploadBtnProps}>
             (press to upload)
           </Button>
         </Upload>

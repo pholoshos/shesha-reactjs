@@ -87,6 +87,10 @@ export interface IComponentDeletePayload {
   componentId: string;
 }
 
+export interface IComponentDuplicatePayload {
+  componentId: string;
+}
+
 export interface IComponentUpdatePayload {
   componentId: string;
   settings: IConfigurableFormComponent;
@@ -108,6 +112,7 @@ export interface IFormDesignerActionsContext
   extends IFlagsSetters<IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags> {
   getChildComponents: (id: string) => IConfigurableFormComponent[];
   deleteComponent: (payload: IComponentDeletePayload) => void;
+  duplicateComponent: (payload: IComponentDuplicatePayload) => void;
   updateComponent: (payload: IComponentUpdatePayload) => void;
   getComponentModel: (id: string) => IConfigurableFormComponent;
 

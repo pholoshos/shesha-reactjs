@@ -168,6 +168,11 @@ export interface IUrlAutocompleteProps<TValue = any> extends ICommonAutocomplete
    * Query string params
    */
   queryParams?: IQueryParams;
+
+  /**
+   * If true, autocomplete allows to use free text that is missing in the source
+   */
+  allowFreeText?: boolean;
 }
 
 export interface IUrlFetcherQueryParams {

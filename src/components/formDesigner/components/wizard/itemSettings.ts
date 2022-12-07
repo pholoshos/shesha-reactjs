@@ -125,7 +125,10 @@ export const getSettings = (_data?: IWizardStepProps) =>
       description: 'Write the code that returns whether this button is enabled',
       labelAlign: 'right',
       parentId: 'root',
-      exposedVariables: [],
+      exposedVariables: [
+        { id: "7651de1d-d1eb-490b-9349-46c55bca8322", name: "globalState", description: "The Global state", type: "object" },
+        { id: "65b0260e-a9a5-4c31-a0a1-beb76c2633c4", name: "data", description: "Selected form values", type: "object" }
+      ],
     })
     .addConfigurableActionConfigurator({
       id: 'F3B46A95-703F-4465-96CA-A58496A5F78C',
@@ -159,7 +162,10 @@ export const getSettings = (_data?: IWizardStepProps) =>
       label: 'Custom Enabled',
       labelAlign: 'right',
       parentId: 'root',
-      exposedVariables: [],
+      exposedVariables: [
+        { id: "31e69153-4b96-4532-89e9-2ace8d400f37", name: "globalState", description: "The Global state", type: "object" },
+        { id: "fa3e68a4-3f35-46e4-bfe1-2c77c7918fd5", name: "data", description: "Selected form values", type: "object" }
+      ],
     })
     .addConfigurableActionConfigurator({
       id: '8CC6A43F-54EE-4756-9B87-6E9204F5AEFB',
@@ -191,7 +197,10 @@ export const getSettings = (_data?: IWizardStepProps) =>
       description: 'Write the code that returns whether this button is enabled',
       labelAlign: 'right',
       parentId: 'root',
-      exposedVariables: [],
+      exposedVariables: [
+        { id: "f30ac175-9d29-4e15-931e-4a9680f18881", name: "globalState", description: "The Global state", type: "object" },
+        { id: "0d293f96-b668-4d4a-a76f-03596b569d53", name: "data", description: "Selected form values", type: "object" }
+      ],
     })
     .addConfigurableActionConfigurator({
       id: 'D5133335-4349-459A-8E9E-4371C814CE1A',
@@ -222,7 +231,10 @@ export const getSettings = (_data?: IWizardStepProps) =>
       description: 'Write the code that returns whether this button is enabled',
       labelAlign: 'right',
       parentId: 'root',
-      exposedVariables: [],
+      exposedVariables: [
+        { id: "d9898e43-1945-4aea-85c3-4c8829cdadea", name: "globalState", description: "The Global state", type: "object" },
+        { id: "bbb57dd2-4c07-46e6-84c6-ab559c681837", name: "data", description: "Selected form values", type: "object" }
+      ],
     })
     .addConfigurableActionConfigurator({
       id: 'F940D7A0-AA6D-4368-A745-E130F8627472',

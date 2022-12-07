@@ -68,7 +68,7 @@ export const RawAutocomplete = (props: IAutocompleteProps<IRawAutocompleteType>)
 
     return {
       value: val,
-      label: item?.label ?? (itemValue as IGuidNullableEntityWithDisplayNameDto)?.displayText ?? 'unknown',
+      label: item?.label ?? (itemValue as IGuidNullableEntityWithDisplayNameDto)?.displayText ?? (props.allowFreeText ? val : 'unknown'),
       data: itemValue,
     } ;
   };

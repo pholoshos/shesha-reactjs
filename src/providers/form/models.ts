@@ -137,6 +137,8 @@ export interface IConfigurableFormComponent extends IFormComponentContainer, IHa
   dispatchedEventNames?: string[];
   dispatchedEventDebouncedMilliseconds?: number;
   style?: string;
+
+  tooltip?: string;
 }
 
 export interface IComponentsContainer {

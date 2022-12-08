@@ -468,8 +468,6 @@ const ListControl: FC<IListControlProps> = props => {
     setState(prev => ({ ...prev, selectedItemIndexes: e?.target?.checked ? value?.map((_, index) => index) : [] }));
   };
 
-  console.log('LOGS:: selectionMode', selectionMode);
-
   return (
     <CollapsiblePanel
       header={title}

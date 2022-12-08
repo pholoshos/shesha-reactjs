@@ -45,7 +45,9 @@ export const get = <
   return fetch(url, {
     headers,
     signal
-  }).then(res => res.json());
+  }).then(res => {
+    return res.ok ? res.json() : res;
+  });
 };
 
 export interface MutateProps<
@@ -135,7 +137,7 @@ export const getFileNameFromContentDisposition = (disposition: string): string =
     const filenameStart = disposition.toLowerCase().indexOf('filename=');
     if (filenameStart >= 0) {
       const partialDisposition = disposition.slice(filenameStart);
-      const matches = asciiFilenameRegex.exec(partialDisposition );
+      const matches = asciiFilenameRegex.exec(partialDisposition);
       if (matches != null && matches[2]) {
         fileName = matches[2];
       }

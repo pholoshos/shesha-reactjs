@@ -14,6 +14,23 @@ export interface AjaxResponseBase {
 }
 
 /**
+ * Generic DTO of the simple autocomplete item
+ */
+export interface AutocompleteItemDto {
+  value?: string | null;
+  displayText?: string | null;
+}
+
+export interface AutocompleteItemDtoListAjaxResponse {
+  targetUrl?: string | null;
+  success?: boolean;
+  error?: ErrorInfo;
+  unAuthorizedRequest?: boolean;
+  __abp?: boolean;
+  result?: AutocompleteItemDto[] | null;
+}
+
+/**
  * Cancel version input
  */
 export interface CancelVersionInput {
@@ -27,6 +44,32 @@ export interface CancelVersionInput {
  * Status of the Shesha.Domain.ConfigurationItems.ConfigurationItem
  */
 export type ConfigurationItemVersionStatus = 1 | 2 | 3 | 4 | 5;
+
+/**
+ * Copy for input
+ */
+export interface CopyInput {
+  /**
+   * Item id
+   */
+  itemId?: string;
+  /**
+   * Module Id
+   */
+  moduleId?: string;
+  /**
+   * Name
+   */
+  name?: string | null;
+  /**
+   * Label
+   */
+  label?: string | null;
+  /**
+   * Description
+   */
+  description?: string | null;
+}
 
 /**
  * Form configuration DTO
@@ -144,6 +187,10 @@ export interface FormConfigurationDto {
   isLastVersion?: boolean;
   versionStatus?: ConfigurationItemVersionStatus;
   suppress?: boolean;
+  /**
+   * Cache MD5, is used for client-side caching
+   */
+  cacheMd5?: string | null;
 }
 
 export interface FormConfigurationDtoAjaxResponse {
@@ -279,6 +326,11 @@ export interface FormConfigurationGetByNameQueryParams {
    */
   version?: number;
   /**
+   * MD5 of the form configuration. Is used for the client side caching.
+   * If specified, the application should compare the value received from the client with a local cache and return http response with code 304 (not changed)
+   */
+  md5?: string;
+  /**
    * The requested API version
    */
   'api-version'?: string;
@@ -336,7 +388,15 @@ export const formConfigurationGetByName = (
   );
 
 export interface FormConfigurationGetQueryParams {
+  /**
+   * Form configuration id
+   */
   id?: string;
+  /**
+   * MD5 of the form configuration. Is used for the client side caching.
+   * If specified, the application should compare the value received from the client with a local cache and return http response with code 304 (not changed)
+   */
+  md5?: string;
   /**
    * The requested API version
    */
@@ -489,63 +549,6 @@ export const formConfigurationUpdateStatus = (
     'PUT',
     `/api/services/Shesha/FormConfiguration/UpdateStatus`,
     data,
-    props
-  );
-
-export interface FormConfigurationExportQueryParams {
-  /**
-   * Filter string in JsonLogic format
-   */
-  filter?: string;
-  /**
-   * The requested API version
-   */
-  'api-version'?: string;
-}
-
-export type FormConfigurationExportProps = Omit<
-  GetProps<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>,
-  'path'
->;
-
-/**
- * Export form
- */
-export const FormConfigurationExport = (props: FormConfigurationExportProps) => (
-  <Get<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>
-    path={`/api/services/Shesha/FormConfiguration/Export`}
-    {...props}
-  />
-);
-
-export type UseFormConfigurationExportProps = Omit<
-  UseGetProps<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>,
-  'path'
->;
-
-/**
- * Export form
- */
-export const useFormConfigurationExport = (props: UseFormConfigurationExportProps) =>
-  useGet<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>(
-    `/api/services/Shesha/FormConfiguration/Export`,
-    props
-  );
-
-export type formConfigurationExportProps = Omit<
-  RestfulShesha.GetProps<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>,
-  'queryParams'
->;
-/**
- * Export form
- */
-export const formConfigurationExport = (
-  queryParams: FormConfigurationExportQueryParams,
-  props: formConfigurationExportProps
-) =>
-  RestfulShesha.get<FileContentResultAjaxResponse, AjaxResponseBase, FormConfigurationExportQueryParams, void>(
-    `/api/services/Shesha/FormConfiguration/Export`,
-    queryParams,
     props
   );
 
@@ -1032,6 +1035,118 @@ export const formConfigurationMoveToModule = (data: MoveToModuleInput, props: fo
     data,
     props
   );
+
+export interface FormConfigurationCopyQueryParams {
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type FormConfigurationCopyProps = Omit<
+  MutateProps<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationCopyQueryParams, CopyInput, void>,
+  'path' | 'verb'
+>;
+
+/**
+ * Copy form
+ */
+export const FormConfigurationCopy = (props: FormConfigurationCopyProps) => (
+  <Mutate<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationCopyQueryParams, CopyInput, void>
+    verb="POST"
+    path={`/api/services/Shesha/FormConfiguration/Copy`}
+    {...props}
+  />
+);
+
+export type UseFormConfigurationCopyProps = Omit<
+  UseMutateProps<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationCopyQueryParams, CopyInput, void>,
+  'path' | 'verb'
+>;
+
+/**
+ * Copy form
+ */
+export const useFormConfigurationCopy = (props: UseFormConfigurationCopyProps) =>
+  useMutate<FormConfigurationDtoAjaxResponse, AjaxResponseBase, FormConfigurationCopyQueryParams, CopyInput, void>(
+    'POST',
+    `/api/services/Shesha/FormConfiguration/Copy`,
+    props
+  );
+
+export type formConfigurationCopyProps = Omit<
+  RestfulShesha.MutateProps<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCopyQueryParams,
+    CopyInput,
+    void
+  >,
+  'data'
+>;
+/**
+ * Copy form
+ */
+export const formConfigurationCopy = (data: CopyInput, props: formConfigurationCopyProps) =>
+  RestfulShesha.mutate<
+    FormConfigurationDtoAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationCopyQueryParams,
+    CopyInput,
+    void
+  >('POST', `/api/services/Shesha/FormConfiguration/Copy`, data, props);
+
+export interface FormConfigurationAutocompleteQueryParams {
+  term?: string;
+  selectedValue?: string;
+  /**
+   * The requested API version
+   */
+  'api-version'?: string;
+}
+
+export type FormConfigurationAutocompleteProps = Omit<
+  GetProps<AutocompleteItemDtoListAjaxResponse, AjaxResponseBase, FormConfigurationAutocompleteQueryParams, void>,
+  'path'
+>;
+
+export const FormConfigurationAutocomplete = (props: FormConfigurationAutocompleteProps) => (
+  <Get<AutocompleteItemDtoListAjaxResponse, AjaxResponseBase, FormConfigurationAutocompleteQueryParams, void>
+    path={`/api/services/Shesha/FormConfiguration/Autocomplete`}
+    {...props}
+  />
+);
+
+export type UseFormConfigurationAutocompleteProps = Omit<
+  UseGetProps<AutocompleteItemDtoListAjaxResponse, AjaxResponseBase, FormConfigurationAutocompleteQueryParams, void>,
+  'path'
+>;
+
+export const useFormConfigurationAutocomplete = (props: UseFormConfigurationAutocompleteProps) =>
+  useGet<AutocompleteItemDtoListAjaxResponse, AjaxResponseBase, FormConfigurationAutocompleteQueryParams, void>(
+    `/api/services/Shesha/FormConfiguration/Autocomplete`,
+    props
+  );
+
+export type formConfigurationAutocompleteProps = Omit<
+  RestfulShesha.GetProps<
+    AutocompleteItemDtoListAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationAutocompleteQueryParams,
+    void
+  >,
+  'queryParams'
+>;
+export const formConfigurationAutocomplete = (
+  queryParams: FormConfigurationAutocompleteQueryParams,
+  props: formConfigurationAutocompleteProps
+) =>
+  RestfulShesha.get<
+    AutocompleteItemDtoListAjaxResponse,
+    AjaxResponseBase,
+    FormConfigurationAutocompleteQueryParams,
+    void
+  >(`/api/services/Shesha/FormConfiguration/Autocomplete`, queryParams, props);
 
 export interface FormConfigurationGetAllQueryParams {
   /**

@@ -34,7 +34,7 @@ export const RoleAppointmentForm = addStory(DesignerTemplate, {
 });
 
 export const TestForm = addStory(DesignerTemplate, {
-  formId: 'b9fb596c-721d-4ac7-90b1-1ebc4e6aea87',
+  formId: 'd53b4917-70b8-4d05-aba3-1cbfc2d30c05',
 });
 export const TestForm2 = addStory(DesignerTemplate, {
   formId: '87fe8b73-ed32-48a1-b747-7856056129fd',

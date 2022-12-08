@@ -75,6 +75,7 @@ import EventNames from '../../../components/formDesigner/components/eventNamesLi
 import ConfigurableActionConfigurator from '../../../components/formDesigner/components/configurableActionsConfigurator';
 import FormAutocompleteComponent from '../../../components/formDesigner/components/formAutocomplete';
 import Markdown from '../../../components/formDesigner/components/markdown';
+import Drawer from '../../../components/formDesigner/components/drawer';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -107,7 +108,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
     name: 'Layout',
     visible: true,
-    components: [CollapsiblePanel, Columns, ContainerComponent, Divider, SectionSeprator, Space, Tabs, Wizard],
+    components: [CollapsiblePanel, Columns, ContainerComponent, Drawer, Divider, SectionSeprator, Space, Tabs, Wizard],
   },
   {
     name: 'Custom',

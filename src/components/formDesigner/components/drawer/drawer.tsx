@@ -8,6 +8,7 @@ import {
   useConfigurableAction,
   useConfigurableActionDispatcher,
 } from '../../../../providers/configurableActionsDispatcher';
+import { executeScriptSync } from '../../../../providers/form/utils';
 import ComponentsContainer from '../../componentsContainer';
 import { IDrawerProps } from './models';
 
@@ -31,6 +32,8 @@ const ShaDrawer: FC<IShaDrawerProps> = props => {
     cancelText,
     components,
     isDynamic,
+    okButtonCustomEnabled,
+    cancelButtonCustomEnabled,
   } = props;
   const { backendUrl } = useSheshaApplication();
   const [state, setState] = useState<IShaDrawerState>();
@@ -103,6 +106,14 @@ const ShaDrawer: FC<IShaDrawerProps> = props => {
     [state]
   );
 
+  const context = {
+    data: formData,
+    globalState,
+  };
+
+  const okButtonDisabled = !executeScriptSync<boolean>(okButtonCustomEnabled, context);
+  const cancelButtonDisabled = !executeScriptSync<boolean>(cancelButtonCustomEnabled, context);
+
   if (formMode === 'designer') {
     return (
       <Fragment>
@@ -126,8 +137,11 @@ const ShaDrawer: FC<IShaDrawerProps> = props => {
       size="large"
       footer={
         <Space>
-          <Button onClick={onCancelHandler}>{cancelText || 'Cancel'}</Button>
-          <Button type="primary" onClick={onOkHandler}>
+          <Button onClick={onCancelHandler} disabled={cancelButtonDisabled}>
+            {cancelText || 'Cancel'}
+          </Button>
+
+          <Button type="primary" onClick={onOkHandler} disabled={okButtonDisabled}>
             {okText || 'Ok'}
           </Button>
         </Space>

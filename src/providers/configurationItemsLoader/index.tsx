@@ -13,8 +13,8 @@ import { IFormsDictionary } from './models';
 import { useSheshaApplication } from '../../providers';
 import { asFormFullName, asFormRawId } from '../form/utils';
 import { FormMarkupWithSettings, IFormDto } from '../form/models';
-import { formConfigurationGet, formConfigurationGetByName } from '../../apis/formConfiguration';
-import { FormConfigurationDto } from '../form/api';
+import { FormConfigurationDto, formConfigurationGet, formConfigurationGetByName } from '../../apis/formConfiguration';
+import { getFormNotFoundMessage } from './utils';
 
 export interface IConfigurationItemsLoaderProviderProps { }
 
@@ -28,7 +28,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
   const [state, _dispatch] = useThunkReducer(metadataReducer, initial);
 
   const { backendUrl, httpHeaders } = useSheshaApplication();
-  
+
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   const makeFormLoadingKey = (payload: IGetFormPayload): string => {
@@ -57,6 +57,46 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
       : null;
   }
 
+  const getCacheKeyByFullName = (itemType: string, mode: string, module: string, name: string): string => {
+    return `${itemType}:${mode}:${module}:${name}`;
+  }
+  const getCacheKeyByRawId = (itemType: string, mode: string, rawId: string): string => {
+    return `${itemType}:${mode}:${rawId}`;
+  }
+
+  const getFromCache = <TDto extends any>(key: string): TDto => {
+    const cachedJson = window?.localStorage?.getItem(key);
+    try {
+      const dto = cachedJson
+        ? JSON.parse(cachedJson)
+        : null;
+      return dto as TDto
+    } catch (error) {
+      return null;
+    }
+  }
+
+  const convertFormConfigurationDto2FormDto = (dto: FormConfigurationDto): IFormDto => {
+    const markupWithSettings = getMarkupFromResponse(dto);
+
+    const result: IFormDto = {
+      id: dto.id,
+      name: dto.name,
+
+      module: dto.module,
+      label: dto.label,
+      description: dto.description,
+      modelType: dto.modelType,
+      versionNo: dto.versionNo,
+      versionStatus: dto.versionStatus,
+      isLastVersion: dto.isLastVersion,
+
+      markup: markupWithSettings?.components,
+      settings: markupWithSettings?.formSettings,
+    };
+    return result;
+  };
+
   const getForm = (payload: IGetFormPayload) => {
     // create a key
     const key = makeFormLoadingKey(payload);
@@ -64,40 +104,27 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     const loadedForm = forms.current[key];
     if (loadedForm) return loadedForm; // todo: check for rejection
 
-    /*
-    request types:
-    1. id + md5 ->
-        1.1 when MD5 differs: full dto + md5
-        1.2 when MD5 equals: 304
-    2. name + module + mode + md5 -> 
-        2.1 when MD5 differs: full dto + md5
-        2.2 when MD5 equals: 304
-    */
-    const { formId } = payload;
+    const { formId, configurationItemMode } = payload;
     const rawId = asFormRawId(formId);
     const fullName = asFormFullName(formId);
 
     const formPromise = new Promise<IFormDto>((resolve, reject) => {
       if (!rawId && !fullName)
-        reject("Form identifier nust be specified");
+        reject("Form identifier must be specified");
 
-      /*
-      check form in the local storage
-      if exists - extract MD5 and include into the payload
-      handle 2 possible responses:
-      1. not changed - return value from localstorage
-      2. changed - use value from response and save to local storage
+      const cacheKey = fullName
+        ? getCacheKeyByFullName('form', configurationItemMode, fullName.module, fullName.name)
+        : rawId
+          ? getCacheKeyByRawId('form', configurationItemMode, rawId)
+          : null;
+      const storage = window?.localStorage;
+      const cachedDto = cacheKey ? getFromCache<FormConfigurationDto>(cacheKey) : null;
 
-      store id for every request key
-      key -> id from local storage
-      id -> form from local storage
-      */
-      // useGet<IAbpWrappedGetEntityResponse<FormConfigurationDto>, IAjaxResponseBase, IGetFormByIdPayload | IGetFormByNamePayload>(
       const promise = Boolean(fullName)
-        ? formConfigurationGetByName({ name: fullName.name, module: fullName.module }, { base: backendUrl, headers: httpHeaders })
+        ? formConfigurationGetByName({ name: fullName.name, module: fullName.module, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ })
         : Boolean(rawId)
-          ? formConfigurationGet({ id: rawId }, { base: backendUrl, headers: httpHeaders })
-          : Promise.reject();
+          ? formConfigurationGet({ id: rawId, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ })
+          : Promise.reject("Form identifier must be specified");
 
       promise.then(response => {
         //console.log('PERF: resolve form response');
@@ -106,27 +133,26 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
           const responseData = response.result;
           if (!responseData)
             throw 'Failed to fetch form. Response is empty';
-          const markupWithSettings = getMarkupFromResponse(responseData);
 
-          const result: IFormDto = {
-            id: responseData.id,
-            name: responseData.name,
+          const dto = convertFormConfigurationDto2FormDto(responseData);
+          if (storage)
+            storage.setItem(cacheKey, JSON.stringify(responseData));
 
-            module: responseData.module,
-            label: responseData.label,
-            description: responseData.description,
-            modelType: responseData.modelType,
-            versionNo: responseData.versionNo,
-            versionStatus: responseData.versionStatus,
-            isLastVersion: responseData.isLastVersion,
+          resolve(dto);
+        } else {
+          const rawResponse = response as Response;
+          if (rawResponse && rawResponse.status === 304) {
+            // code 304 indicates that the content ws not modified - use cached value
+            const dto = convertFormConfigurationDto2FormDto(cachedDto);
+            resolve(dto);
+          } else {
+            const httpResponse = response as Response;
 
-            markup: markupWithSettings?.components,
-            settings: markupWithSettings?.formSettings,
-          };
+            const error = response.error ?? { code: httpResponse?.status, message: httpResponse?.status === 404 ? getFormNotFoundMessage(formId) : httpResponse?.statusText };
 
-          resolve(result);
-        } else
-          reject(response.error);
+            reject(error);
+          }
+        }
       })
         .catch(e => {
           reject(e);

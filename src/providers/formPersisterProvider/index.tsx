@@ -22,9 +22,10 @@ import {
 } from './actions';
 import { useFormConfigurationUpdateMarkup, FormUpdateMarkupInput } from '../../apis/formConfiguration';
 import useThunkReducer from 'react-hook-thunk-reducer';
-import { useFormConfiguration } from '../form/api';
 import { DEFAULT_FORM_SETTINGS, FormIdentifier, FormMarkupWithSettings, IFormSettings } from '../form/models';
 import { IPersistedFormProps } from './models';
+import { useConfigurationItemsLoader } from '../configurationItemsLoader';
+import { useAppConfigurator } from '../..';
 
 export interface IFormProviderProps {
   formId: FormIdentifier;
@@ -38,20 +39,38 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     ...FORM_PERSISTER_CONTEXT_INITIAL_STATE,
     formId: formId,
   };
-
+  
   const [state, dispatch] = useThunkReducer(formReducer, initial);
 
-  const {
-    refetch: fetchFormMarkup,
-    loading: isFetchingMarkup,
-    error: fetchMarkupError,
-    formConfiguration
-  } = useFormConfiguration({ formId, lazy: true });
+  const { getForm } = useConfigurationItemsLoader();
+  const { configurationItemMode } = useAppConfigurator();
 
   const doFetchFormInfo = () => {
     if (formId) {
       dispatch(loadRequestAction({ formId }));
-      fetchFormMarkup();
+      getForm({ formId, configurationItemMode: configurationItemMode })
+        .then(form => {
+          const formContent: IPersistedFormProps = {
+            id: form.id,
+            name: form.name,
+            module: form.module,
+            label: form.label,
+            description: form.description,
+            markup: form.markup ?? [],
+            formSettings: form.settings ?? DEFAULT_FORM_SETTINGS,
+            versionNo: form.versionNo,
+            versionStatus: form.versionStatus,
+            isLastVersion: form.isLastVersion,
+          };
+  
+          // parse json content
+          dispatch((dispatchThunk, _getState) => {
+            dispatchThunk(loadSuccessAction(formContent));
+          });
+        })
+        .catch(e => {
+          dispatch(loadErrorAction(e));
+        });
     }
   };
 
@@ -60,35 +79,6 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
     doFetchFormInfo();
   }, [formId]);
-
-  useEffect(() => {
-    if (!isFetchingMarkup) {
-      if (formConfiguration) {
-        const formContent: IPersistedFormProps = {
-          id: formConfiguration.id,
-          name: formConfiguration.name,
-          module: formConfiguration.module,
-          label: formConfiguration.label,
-          description: formConfiguration.description,
-          markup: formConfiguration.markup ?? [],
-          formSettings: formConfiguration.settings ?? DEFAULT_FORM_SETTINGS,
-          versionNo: formConfiguration.versionNo,
-          versionStatus: formConfiguration.versionStatus,
-          isLastVersion: formConfiguration.isLastVersion,
-        };
-
-        // parse json content
-        dispatch((dispatchThunk, _getState) => {
-          dispatchThunk(loadSuccessAction(formContent));
-        });
-      }
-
-      if (fetchMarkupError) {
-        // todo: handle error messages
-        dispatch(loadErrorAction());
-      }
-    }
-  }, [isFetchingMarkup, formConfiguration, fetchMarkupError]);
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
@@ -114,8 +104,8 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
         dispatch(saveSuccessAction());
         return Promise.resolve();
       })
-      .catch(_error => {
-        dispatch(saveErrorAction());
+      .catch(error => {
+        dispatch(saveErrorAction(error));
         return Promise.reject();
       });
   };

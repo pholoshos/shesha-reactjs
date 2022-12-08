@@ -512,7 +512,7 @@ export const ModelConfigurationsMerge = (props: ModelConfigurationsMergeProps) =
     path={`/api/ModelConfigurations/merge`}
     {...props}
   />
-  );
+);
 
 export type UseModelConfigurationsMergeProps = Omit<
   UseMutateProps<

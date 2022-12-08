@@ -51,6 +51,10 @@ export interface FormConfigurationDto {
      * Version status
      */
     versionStatus?: number;
+    /**
+     * Cache MD5, is used for client-side caching
+     */
+    cacheMd5?: string | null;
 }
 
 export interface IFormFetcherProps {
@@ -189,7 +193,7 @@ export interface FormWithDataResponse {
     loadingState: LoadingState;
     loaderHint?: string;
     error?: IErrorInfo;
-    dataFetcher?: () => Promise<EntityAjaxResponse | void>; 
+    dataFetcher?: () => Promise<EntityAjaxResponse | void>;
 }
 export interface FormWithDataState {
     loaderHint?: string;
@@ -197,7 +201,7 @@ export interface FormWithDataState {
     fetchedData?: IEntity;
     form?: IFormDto;
     error?: IErrorInfo;
-    dataFetcher?: () => Promise<EntityAjaxResponse | void>; 
+    dataFetcher?: () => Promise<EntityAjaxResponse | void>;
 }
 
 export type LoadingState = 'waiting' | 'loading' | 'ready' | 'failed';
@@ -304,14 +308,14 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
             });
         } else {
             //console.log('PERF: prefetch form markup - skipped');
-            setState(prev => ({ 
-                ...prev, 
-                loadingState: 'waiting', 
-                loaderHint: null, 
-                error: null, 
-                form: null, 
-                dataFetcher: null, 
-                fetchedData: null 
+            setState(prev => ({
+                ...prev,
+                loadingState: 'waiting',
+                loaderHint: null,
+                error: null,
+                form: null,
+                dataFetcher: null,
+                fetchedData: null
             }));
         }
         // return cleanup: clean up form and data

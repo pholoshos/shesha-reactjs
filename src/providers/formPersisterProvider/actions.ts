@@ -1,4 +1,5 @@
 import { createAction } from 'redux-actions';
+import { IErrorInfo } from '../../interfaces/errorInfo';
 import { IFlatComponentsStructure, IFormSettings } from '../form/models';
 import {
   IFormLoadPayload,
@@ -20,7 +21,7 @@ export enum FormPersisterActionEnums {
 
 export const loadRequestAction = createAction<IFormLoadPayload, IFormLoadPayload>(FormPersisterActionEnums.LoadRequest, p => p);
 export const loadSuccessAction = createAction<IPersistedFormProps, IPersistedFormProps>(FormPersisterActionEnums.LoadSuccess, p => p);
-export const loadErrorAction = createAction(FormPersisterActionEnums.LoadError, () => ({}));
+export const loadErrorAction = createAction<IErrorInfo, IErrorInfo>(FormPersisterActionEnums.LoadError, p => p);
 export const changeMarkupAction = createAction<IFlatComponentsStructure, IFlatComponentsStructure>(
   FormPersisterActionEnums.ChangeMarkup,
   p => p
@@ -28,7 +29,7 @@ export const changeMarkupAction = createAction<IFlatComponentsStructure, IFlatCo
 
 export const saveRequestAction = createAction(FormPersisterActionEnums.SaveRequest, () => ({}));
 export const saveSuccessAction = createAction(FormPersisterActionEnums.SaveSuccess, () => ({}));
-export const saveErrorAction = createAction(FormPersisterActionEnums.SaveError, () => ({}));
+export const saveErrorAction = createAction<IErrorInfo, IErrorInfo>(FormPersisterActionEnums.SaveError, p => p);
 
 export const updateFormSettingsAction = createAction<IFormSettings, IFormSettings>(
   FormPersisterActionEnums.UpdateFormSettings,

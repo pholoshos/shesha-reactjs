@@ -225,7 +225,7 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
             //console.log('PERF: fetch form markup');
             setState(prev => ({ ...prev, loadingState: 'loading', loaderHint: 'Fetching form...', error: null, dataFetcher: null, form: null, fetchedData: null }));
 
-            getForm({ formId, configurationItemMode: args.configurationItemMode }).then(form => {
+            getForm({ formId, configurationItemMode: args.configurationItemMode, skipCache: false }).then(form => {
                 if (formRequestRef.current !== requestId)
                     return;
 

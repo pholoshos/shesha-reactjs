@@ -9,6 +9,7 @@ export interface IConfigurationItemsLoaderStateContext {
 export interface IGetFormPayload {
   formId: FormIdentifier;
   configurationItemMode?: ConfigurationItemsViewMode;
+  skipCache: boolean;
 }
 
 export interface IConfigurationItemsLoaderActionsContext {

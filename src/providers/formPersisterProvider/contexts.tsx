@@ -22,12 +22,16 @@ export interface IFormPersisterStateContext {
   saveError?: IErrorInfo;
 }
 
-export interface IFormLoadPayload {
+export interface ILoadRequestPayload {
   formId: FormIdentifier;
 }
 
+export interface ILoadFormPayload {
+  skipCache: boolean;
+}
+
 export interface IFormPersisterActionsContext {
-  loadForm: () => void;
+  loadForm: (payload: ILoadFormPayload) => void;
   saveForm: (payload: FormMarkupWithSettings) => Promise<void>;
   updateFormSettings: (settings: IFormSettings) => void;
 }

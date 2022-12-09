@@ -101,8 +101,10 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     // create a key
     const key = makeFormLoadingKey(payload);
 
-    const loadedForm = forms.current[key];
-    if (loadedForm) return loadedForm; // todo: check for rejection
+    if (!payload.skipCache){
+      const loadedForm = forms.current[key];
+      if (loadedForm) return loadedForm; // todo: check for rejection
+    }
 
     const { formId, configurationItemMode } = payload;
     const rawId = asFormRawId(formId);

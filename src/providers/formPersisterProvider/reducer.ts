@@ -1,7 +1,7 @@
 import {
   FORM_PERSISTER_CONTEXT_INITIAL_STATE,
   IFormPersisterStateContext,
-  IFormLoadPayload,
+  ILoadRequestPayload,
 } from './contexts';
 import { FormPersisterActionEnums } from './actions';
 import { handleActions } from 'redux-actions';
@@ -11,14 +11,13 @@ import { IErrorInfo } from '../../interfaces/errorInfo';
 
 const reducer = handleActions<IFormPersisterStateContext, any>(
   {
-    [FormPersisterActionEnums.LoadRequest]: (state: IFormPersisterStateContext, action: ReduxActions.Action<IFormLoadPayload>) => {
+    [FormPersisterActionEnums.LoadRequest]: (state: IFormPersisterStateContext, action: ReduxActions.Action<ILoadRequestPayload>) => {
       const { payload } = action;
 
       return {
         ...state,
         formId: payload.formId,
         loading: true,
-        loaded: false,
         loadError: null,
       };
     },

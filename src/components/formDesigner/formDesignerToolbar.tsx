@@ -45,13 +45,21 @@ export const FormDesignerToolbar: FC<IProps> = () => {
   }
 
   const onSaveClick = () => {
+    message.loading('Saving..', 0);
     saveFormInternal()
-      .then(() => message.success('Form saved successfully'))
-      .catch(() => message.error('Failed to save form'));
+      .then(() => {
+        message.destroy();
+        message.success('Form saved successfully')
+      })
+      .catch(() => {
+        message.destroy();
+        message.error('Failed to save form')
+      });
   };
 
   const onSaveAndSetReadyClick = () => {
     const onOk = () => {
+      message.loading('Saving and setting ready..', 0);
       saveFormInternal()
         .then(() => {
           updateItemStatus({
@@ -60,12 +68,19 @@ export const FormDesignerToolbar: FC<IProps> = () => {
             id: formProps.id,
             status: ConfigurationItemVersionStatus.Ready,
             onSuccess: () => {
+              message.destroy();
               message.success('Form saved and set ready successfully')
-              loadForm();
+              loadForm({ skipCache: true });
             },
+          }).catch(() => {
+            message.destroy();
+            message.error('Failed to set form ready');
           });
         })
-        .catch(() => message.error('Failed to save form'));
+        .catch(() => {
+          message.destroy();
+          message.error('Failed to save form');
+        });
     }
     Modal.confirm({
       title: 'Save and Set Ready',
@@ -91,6 +106,7 @@ export const FormDesignerToolbar: FC<IProps> = () => {
 
   const onCreateNewVersionClick = () => {
     const onOk = () => {
+      message.loading('Creating new version..', 0);
       return createNewVersionRequest({
         backendUrl: backendUrl,
         httpHeaders: httpHeaders,
@@ -133,7 +149,7 @@ export const FormDesignerToolbar: FC<IProps> = () => {
         status: ConfigurationItemVersionStatus.Live,
         onSuccess: () => {
           message.success('Form published successfully')
-          loadForm();
+          loadForm({ skipCache: true });
         },
       });
     }

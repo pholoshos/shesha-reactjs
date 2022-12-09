@@ -7,6 +7,7 @@ import {
   FORM_PERSISTER_CONTEXT_INITIAL_STATE,
   IFormPersisterActionsContext,
   IFormPersisterStateContext,
+  ILoadFormPayload,
   // DEFAULT_FORM_SETTINGS,
 } from './contexts';
 import { getFlagSetters } from '../utils/flagsSetters';
@@ -45,10 +46,10 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   const { getForm } = useConfigurationItemsLoader();
   const { configurationItemMode } = useAppConfigurator();
 
-  const doFetchFormInfo = () => {
+  const doFetchFormInfo = (payload: ILoadFormPayload) => {
     if (formId) {
       dispatch(loadRequestAction({ formId }));
-      getForm({ formId, configurationItemMode: configurationItemMode })
+      getForm({ formId, configurationItemMode: configurationItemMode, skipCache: payload.skipCache })
         .then(form => {
           const formContent: IPersistedFormProps = {
             id: form.id,
@@ -77,13 +78,13 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   useEffect(() => {
     if (!formId) return;
 
-    doFetchFormInfo();
+    doFetchFormInfo({ skipCache: false });
   }, [formId]);
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
-  const loadForm = () => {
-    doFetchFormInfo();
+  const loadForm = (payload: ILoadFormPayload) => {
+    doFetchFormInfo(payload);
   };
 
   // todo: review usage of useFormUpdateMarkup after

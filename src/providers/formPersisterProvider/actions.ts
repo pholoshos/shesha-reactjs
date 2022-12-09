@@ -2,7 +2,7 @@ import { createAction } from 'redux-actions';
 import { IErrorInfo } from '../../interfaces/errorInfo';
 import { IFlatComponentsStructure, IFormSettings } from '../form/models';
 import {
-  IFormLoadPayload,
+  ILoadRequestPayload,
 } from './contexts';
 import { IPersistedFormProps } from './models';
 
@@ -19,7 +19,7 @@ export enum FormPersisterActionEnums {
   UpdateFormSettings = 'UPDATE_FORM_SETTINGS',
 }
 
-export const loadRequestAction = createAction<IFormLoadPayload, IFormLoadPayload>(FormPersisterActionEnums.LoadRequest, p => p);
+export const loadRequestAction = createAction<ILoadRequestPayload, ILoadRequestPayload>(FormPersisterActionEnums.LoadRequest, p => p);
 export const loadSuccessAction = createAction<IPersistedFormProps, IPersistedFormProps>(FormPersisterActionEnums.LoadSuccess, p => p);
 export const loadErrorAction = createAction<IErrorInfo, IErrorInfo>(FormPersisterActionEnums.LoadError, p => p);
 export const changeMarkupAction = createAction<IFlatComponentsStructure, IFlatComponentsStructure>(

@@ -184,6 +184,21 @@ export const MissingEntity = addStory(Template, {
   mode: 'readonly',
   id: '6a8c3704-8aca-4878-8db6-f4f55d5cc555',
 });
+export const SettingsPage = addStory(Template, {
+  formId: {
+    module: 'StarterTemplate',
+    name: 'settings-security',
+  },
+  mode: 'edit',
+});
+export const FormDetails = addStory(Template, {
+  formId: {
+    module: 'StarterTemplate',
+    name: 'form-details',
+  },
+  id: '7e0d0011-ed4a-4240-be39-009c68f61291',
+  mode: 'edit',
+});
 
 Basic.args = DEFAULT_ARGS;
 

@@ -2,6 +2,7 @@ import { evaluateComplexStringWithResult } from './../form/utils';
 import { ColumnSorting, IStoredFilter, ITableColumn, ITableFilter, SortDirection } from './interfaces';
 import { IMatchData } from '../form/utils';
 import moment, { Moment, isMoment, isDuration, Duration } from 'moment';
+import { IDataTableUserConfig } from './contexts';
 
 // Filters should read properties as camelCase ?:(
 export const evaluateDynamicFilters = (filters: IStoredFilter[], mappings: IMatchData[]) => {
@@ -157,4 +158,20 @@ export const advancedFilter2JsonLogic = (advancedFilter: ITableFilter[], columns
     .filter(f => Boolean(f));
 
   return filterItems;
+};
+
+export const getIncomingSelectedStoredFilterIds = (filters: IStoredFilter[], id: string) => {
+  const fallback = filters?.length ? [filters[0]?.id] : [];
+
+  try {
+    if (id && localStorage.getItem(id)) {
+      const filter = (JSON.parse(localStorage.getItem(id)) as IDataTableUserConfig)?.selectedFilterIds;
+
+      return filter?.length ? filter : fallback;
+    }
+
+    return fallback;
+  } catch (_e) {
+    return fallback;
+  }
 };

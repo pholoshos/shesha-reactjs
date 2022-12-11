@@ -29,6 +29,7 @@ import {
   exportToExcelSuccessAction,
   exportToExcelErrorAction,
   /* NEW_ACTION_IMPORT_GOES_HERE */
+  changeUserConfigIdAction,
   changeSelectedRowAction,
   changeSelectedStoredFilterIdsAction,
   setPredefinedFiltersAction,
@@ -294,6 +295,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   ): Promise<IResult<ITableDataInternalResponse>> | null => {
     // save current user configuration to local storage
     const userConfigToSave: IDataTableUserConfig = {
+      ...userDTSettingsInner,
       pageSize: payload.pageSize,
       currentPage: payload.currentPage,
       quickSearch: payload.quickSearch,
@@ -332,6 +334,12 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
       ...settingsToReturn,
     };
   }, [defaultFilter, userDTSettingsInner]);
+
+  useEffect(() => {
+    if (userConfigId && userConfigId !== state.userConfigId) {
+      dispatch(changeUserConfigIdAction(userConfigId));
+    }
+  }, [userConfigId]);
 
   // fetch table data when config is ready or something changed (selected filter, changed current page etc.)
   useEffect(() => {
@@ -606,15 +614,17 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     dispatch(changeActionedRowAction(val ? camelCaseKeys(val, { deep: true }) : null));
   };
 
-  const changeSelectedStoredFilterIds = (selectedStoredFilterIds: string[]) => {
-    dispatch(changeSelectedStoredFilterIdsAction(selectedStoredFilterIds));
+  const changeSelectedStoredFilterIds = (selectedFilterIds: string[]) => {
+    setUserDTSettings({ ...userDTSettings, selectedFilterIds });
+
+    dispatch(changeSelectedStoredFilterIdsAction(selectedFilterIds));
   };
 
-  const setPredefinedFilters = (filters: IStoredFilter[]) => {
-    const filtersChanged = !isEqual(sortBy(state?.predefinedFilters), sortBy(filters));
+  const setPredefinedFilters = (predefinedFilters: IStoredFilter[]) => {
+    const filtersChanged = !isEqual(sortBy(state?.predefinedFilters), sortBy(predefinedFilters));
 
     if (filtersChanged) {
-      dispatch(setPredefinedFiltersAction(filters));
+      dispatch(setPredefinedFiltersAction({ predefinedFilters, userConfigId }));
     }
   };
 

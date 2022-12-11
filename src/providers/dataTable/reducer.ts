@@ -16,7 +16,6 @@ import {
   IColumnSorting,
   IGetDataPayloadInternal,
   IndexColumnDataType,
-  IStoredFilter,
   ITableColumn,
   ITableDataInternalResponse,
   ITableFilter,
@@ -29,6 +28,7 @@ import {
 } from '../datatableColumnsConfigurator/models';
 import { getFilterOptions } from '../../components/columnItemFilter';
 import { camelcaseDotNotation } from '../form/utils';
+import { getIncomingSelectedStoredFilterIds } from './utils';
 
 /** get dirty filter if exists and fallback to current filter state */
 const getDirtyFilter = (state: IDataTableStateContext): ITableFilter[] => {
@@ -37,6 +37,14 @@ const getDirtyFilter = (state: IDataTableStateContext): ITableFilter[] => {
 
 const reducer = handleActions<IDataTableStateContext, any>(
   {
+    [DataTableActionEnums.ChangeUserConfigId]: (state: IDataTableStateContext, action: ReduxActions.Action<string>) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        userConfigId: payload,
+      };
+    },
     [DataTableActionEnums.ChangeSelectedRow]: (state: IDataTableStateContext, action: ReduxActions.Action<any>) => {
       const { payload } = action;
 
@@ -213,7 +221,9 @@ const reducer = handleActions<IDataTableStateContext, any>(
           switch (colProps.columnType) {
             case 'data': {
               const srvColumn = dataProps.propertyName
-                ? columns.find(c => camelcaseDotNotation(c.propertyName) === camelcaseDotNotation(dataProps.propertyName))
+                ? columns.find(
+                    c => camelcaseDotNotation(c.propertyName) === camelcaseDotNotation(dataProps.propertyName)
+                  )
                 : {};
 
               return {
@@ -391,15 +401,16 @@ const reducer = handleActions<IDataTableStateContext, any>(
 
     [DataTableActionEnums.SetPredefinedFilters]: (
       state: IDataTableStateContext,
-      action: ReduxActions.Action<IStoredFilter[]>
+      action: ReduxActions.Action<Pick<IDataTableStateContext, 'predefinedFilters' | 'userConfigId'>>
     ) => {
-      const { payload: filters } = action;
+      const { payload } = action;
       const { selectedStoredFilterIds } = state;
+      const { predefinedFilters: filters, userConfigId } = payload;
 
       // Make sure that whenever you set the `predefinedFilters` the first one is the selected
       // This is because the logic for displaying the title is that it should be a part of the filters
       // So that, by default, the first filter is the selected one
-      const incomingSelectedStoredFilterIds = filters?.length ? [filters[0]?.id] : [];
+      const incomingSelectedStoredFilterIds = getIncomingSelectedStoredFilterIds(filters, userConfigId);
 
       return {
         ...state,

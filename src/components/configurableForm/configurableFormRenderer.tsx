@@ -17,7 +17,7 @@ import {
 } from '../../providers/form/utils';
 import cleanDeep from 'clean-deep';
 import { useSubmitUrl } from './useSubmitUrl';
-import { getQueryParams } from '../../utils/url';
+import { getQueryParams, joinUrlAndPath } from '../../utils/url';
 import _ from 'lodash';
 import { usePrevious } from 'react-use';
 import { axiosHttp } from '../../apis/axios';
@@ -144,7 +144,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
           ])
         : getUrl;
 
-      const fullUrl = `${backendUrl}${evaluatedGetUrl}`;
+      const fullUrl = joinUrlAndPath(backendUrl, evaluatedGetUrl);
       const urlObj = new URL(decodeURIComponent(fullUrl));
       const queryParams = getQueryParams(fullUrl);
 

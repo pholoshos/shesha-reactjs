@@ -26,11 +26,11 @@ export const getFormFullName = (moduleName: string, name: string) => {
 
 export const appendFormData = (formData: FormData, key: string, data: any) => {
   if (data === Object(data) || Array.isArray(data)) {
-      for (var i in data) {
-        appendFormData(formData, key + '[' + i + ']', data[i]);
-      }
+    for (var i in data) {
+      appendFormData(formData, key + '[' + i + ']', data[i]);
+    }
   } else {
-      formData.append(key, data);
+    formData.append(key, data);
   }
 }
 
@@ -48,19 +48,21 @@ const buildFormData = (formData, data, parentKey) => {
 
 export const jsonToFormData = (data: any): FormData => {
   const formData = new FormData();
-  
+
   buildFormData(formData, data, undefined);
-  
+
   return formData;
 }
 
 export const hasFiles = (data: any): boolean => {
+  if (!data)
+    return false;
   if (typeof data !== 'object')
     return false;
-  
-  const file = Object.keys(data).find(key => {
-    return data[key] instanceof File || hasFiles(data[key]);
+
+  const hasFile = Object.keys(data).find(key => {
+    return Boolean(data[key] instanceof File) || Boolean(data[key]) && hasFiles(data[key]);
   });
 
-  return Boolean(file);
+  return Boolean(hasFile);
 }

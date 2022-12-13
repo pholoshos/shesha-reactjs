@@ -6,7 +6,7 @@ import { useForm } from '../../providers/form';
 import { IConfigurableFormRendererProps } from './models';
 import { useGet, useMutate } from 'restful-react';
 import { IAnyObject, ValidateErrorEntity } from '../../interfaces';
-import { addFormFieldsList } from '../../utils/form';
+import { addFormFieldsList, hasFiles, jsonToFormData } from '../../utils/form';
 import { useGlobalState, useSheshaApplication } from '../../providers';
 import moment from 'moment';
 import {
@@ -313,6 +313,12 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
   const options = { setValidationErrors };
 
+  const prepareDataToSubmit = (data: any) => {
+    return data && hasFiles(data)
+      ? jsonToFormData(data)
+      : data;
+  }
+
   const onFinish = () => {
     const initialValuesFromFormSettings = getInitialValuesFromFormSettings();
 
@@ -343,8 +349,10 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
         if (submitUrl) {
           setValidationErrors(null);
 
+          const preparedData = prepareDataToSubmit(postData);
+
           const doPost = () =>
-            doSubmit(postData)
+            doSubmit(preparedData)
               .then(response => {
                 // note: we pass merged values
                 if (props.onFinish) props.onFinish(postData, response?.result, options);

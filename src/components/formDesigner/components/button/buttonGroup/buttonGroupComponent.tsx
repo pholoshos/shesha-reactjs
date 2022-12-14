@@ -154,6 +154,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
             mode="horizontal"
             items={items?.filter(getIsVisible)?.map(props => renderMenuButton(props))}
             className={`sha-responsive-button-group space-${spaceSize}`}
+            style={{ width: '30px' }}
           />
         </div>
       )}

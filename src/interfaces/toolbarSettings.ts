@@ -17,6 +17,7 @@ import { ICustomFilterProps } from '../components/formDesigner/components/dataTa
 import { IFormAutocompleteProps } from '../components/formDesigner/components/formAutocomplete';
 import { IConfigurableActionNamesComponentProps } from '../components/formDesigner/components/configurableActionsConfigurator';
 import { IEditableTagGroupProps } from '../components/formDesigner/components/editableTagGroup';
+import { IColorPickerComponentProps } from '../components/formDesigner/components/colorPicker';
 
 interface ToolbarSettingsProp extends Omit<IConfigurableFormComponent, 'type'> {}
 
@@ -55,6 +56,8 @@ type CustomFilterType = ToolbarSettingsProp & Omit<ICustomFilterProps, 'type'>;
 type ConfigurableActionConfiguratorType = ToolbarSettingsProp & Omit<IConfigurableActionNamesComponentProps, 'type'>;
 
 type EditableTagGroupType = ToolbarSettingsProp & Omit<IEditableTagGroupProps, 'type'>;
+
+type ColorPickerType = ToolbarSettingsProp & Omit<IColorPickerComponentProps, 'type'>;
 
 export class DesignerToolbarSettings<T> {
   protected readonly form: IConfigurableFormComponent[];
@@ -102,6 +105,14 @@ export class DesignerToolbarSettings<T> {
     const obj = typeof props !== 'function' ? props : props(this.data);
 
     this.form.push({ ...obj, type: 'propertyAutocomplete' });
+
+    return this;
+  }
+
+  public addColorPicker(props: ColorPickerType | ((data: T) => PropertyAutocompleteType)) {
+    const obj = typeof props !== 'function' ? props : props(this.data);
+
+    this.form.push({ ...obj, type: 'colorPicker' });
 
     return this;
   }

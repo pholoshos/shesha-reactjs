@@ -24,6 +24,7 @@ export interface IListItemsProps {
   showQuickSearch?: boolean;
   paginationDefaultPageSize: number;
   buttons?: ButtonGroupItemProps[];
+  isButtonInline?: boolean;
   maxHeight?: number;
   labelCol?: number;
   wrapperCol?: number;

@@ -54,6 +54,7 @@ const ListControl: FC<IListControlProps> = props => {
     deleteUrl,
     deleteConfirmMessage,
     buttons,
+    isButtonInline,
     title,
     maxHeight,
     filters,
@@ -490,7 +491,14 @@ const ListControl: FC<IListControlProps> = props => {
               />
             </Show>
 
-            <ButtonGroup items={buttons || []} name={''} type={''} id={containerId} size="small" />
+            <ButtonGroup
+              items={buttons || []}
+              name={''}
+              type={''}
+              id={containerId}
+              size="small"
+              isInline={isButtonInline}
+            />
           </Space>
         </div>
       }

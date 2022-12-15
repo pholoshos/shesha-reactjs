@@ -98,6 +98,13 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
 
       <SectionSeparator sectionName="Render" />
 
+      <FormItem name="orientation" label="Orientation">
+        <Select disabled={readOnly} defaultValue="vertical">
+          <Option value="vertical">Vertical</Option>
+          <Option value="horizontal">Horizontal</Option>
+        </Select>
+      </FormItem>
+
       <FormItem
         name="renderStrategy"
         label="Render Strategy"

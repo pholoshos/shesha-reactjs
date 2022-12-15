@@ -36,6 +36,7 @@ export interface IListItemsProps {
   properties?: string[];
   filters?: object;
   placeholder?: string;
+  orientation?: 'vertical' | 'horizontal';
 }
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {

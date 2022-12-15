@@ -2,10 +2,12 @@ import { LineHeightOutlined } from '@ant-design/icons';
 import { Alert, Typography } from 'antd';
 import { TitleProps } from 'antd/lib/typography/Title';
 import React from 'react';
+import { ColorResult } from 'react-color';
 import { validateConfigurableComponentSettings } from '../../../../../formDesignerUtils';
 import { IConfigurableFormComponent, IToolboxComponent } from '../../../../../interfaces/formDesigner';
 import { useForm, useSubForm } from '../../../../../providers';
 import { evaluateString, getStyle } from '../../../../../providers/form/utils';
+import { getFontSizeStyle, TypographyFontSize } from '../utils';
 import { settingsFormMarkup } from './settings';
 
 const { Title } = Typography;
@@ -16,7 +18,8 @@ type LevelType = typeof TITLE_ELE_LIST[number];
 
 export interface ITitleProps extends IConfigurableFormComponent {
   content: string;
-  contentType: 'secondary' | 'success' | 'warning' | 'danger';
+  contentType: 'secondary' | 'success' | 'warning' | 'danger' | 'custom';
+  color?: ColorResult;
   code?: boolean;
   italic?: boolean;
   copyable?: boolean;
@@ -24,17 +27,19 @@ export interface ITitleProps extends IConfigurableFormComponent {
   ellipsis?: boolean;
   mark?: boolean;
   underline?: boolean;
-  level?: LevelType;
+  level?: LevelType | TypographyFontSize;
 }
 
 const TitleComponent: IToolboxComponent<ITitleProps> = {
   type: 'title',
   name: 'Title',
   icon: <LineHeightOutlined />,
-  factory: (model: ITitleProps) => {
+  factory: ({ contentType, color, level, ...model }: ITitleProps) => {
     const { formData, formMode } = useForm();
     const { value } = useSubForm();
     const data = value || formData;
+
+    const fontSizeStyle = typeof level === 'string' ? getFontSizeStyle(level) : {};
 
     const props: TitleProps = {
       code: model?.code,
@@ -44,9 +49,14 @@ const TitleComponent: IToolboxComponent<ITitleProps> = {
       mark: model?.mark,
       italic: model?.italic,
       underline: model?.underline,
-      level: model?.level ? (Number(model?.level) as LevelType) : 1,
-      type: model?.contentType,
-      style: { margin: 'unset', ...(getStyle(model.style, data) || {}) },
+      level: level ? (Number(level) as LevelType) : 1,
+      type: contentType !== 'custom' ? contentType : null,
+      style: {
+        margin: 'unset',
+        ...fontSizeStyle,
+        ...(getStyle(model.style, data) || {}),
+        color: contentType === 'custom' && color ? color.hex : null,
+      },
     };
 
     const content = evaluateString(model?.content, data);
@@ -55,11 +65,7 @@ const TitleComponent: IToolboxComponent<ITitleProps> = {
       return <Alert type="warning" message="Please make sure you enter the content to be displayed here!" />;
     }
 
-    return (
-      <Title {...props} style={{ margin: 'unset' }}>
-        {content}
-      </Title>
-    );
+    return <Title {...props}>{content}</Title>;
   },
   settingsFormMarkup,
   validateSettings: model => validateConfigurableComponentSettings(settingsFormMarkup, model),

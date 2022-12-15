@@ -76,6 +76,7 @@ import ConfigurableActionConfigurator from '../../../components/formDesigner/com
 import FormAutocompleteComponent from '../../../components/formDesigner/components/formAutocomplete';
 import Markdown from '../../../components/formDesigner/components/markdown';
 import Drawer from '../../../components/formDesigner/components/drawer';
+import ColorPickerComponent from '../../../components/formDesigner/components/colorPicker';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -118,6 +119,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       AttachmentsEditor,
       ChildDataTable,
       CodeEditor,
+      ColorPickerComponent,
       DynamicView,
       EditableTagGroup,
       EntityPickerComponent,

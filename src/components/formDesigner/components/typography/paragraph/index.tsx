@@ -17,14 +17,15 @@ export interface IParagraphProps extends IConfigurableFormComponent {
   contentType: 'secondary' | 'success' | 'warning' | 'danger' | 'custom';
   color?: ColorResult;
   fontSize?: TypographyFontSize;
+
   code?: boolean;
   italic?: boolean;
-  keyboard?: boolean;
   copyable?: boolean;
+  keyboard?: boolean;
+  strong?: boolean;
   delete?: boolean;
   ellipsis?: boolean;
   mark?: boolean;
-  strong?: boolean;
   underline?: boolean;
 }
 
@@ -32,6 +33,7 @@ const ParagraphComponent: IToolboxComponent<IParagraphProps> = {
   type: 'paragraph',
   name: 'Paragraph',
   icon: <FileTextOutlined />,
+  tooltip: "Deprecated! Please use 'Text (Full)'",
   factory: ({ fontSize, contentType, color, ...model }: IParagraphProps) => {
     const { formData, formMode } = useForm();
     const { value } = useSubForm();

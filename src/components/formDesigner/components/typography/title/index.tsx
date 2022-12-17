@@ -20,6 +20,7 @@ export interface ITitleProps extends IConfigurableFormComponent {
   content: string;
   contentType: 'secondary' | 'success' | 'warning' | 'danger' | 'custom';
   color?: ColorResult;
+  level?: LevelType | TypographyFontSize;
   code?: boolean;
   italic?: boolean;
   copyable?: boolean;
@@ -27,13 +28,13 @@ export interface ITitleProps extends IConfigurableFormComponent {
   ellipsis?: boolean;
   mark?: boolean;
   underline?: boolean;
-  level?: LevelType | TypographyFontSize;
 }
 
 const TitleComponent: IToolboxComponent<ITitleProps> = {
   type: 'title',
   name: 'Title',
   icon: <LineHeightOutlined />,
+  tooltip: "Deprecated! Please use 'Text (Full)'",
   factory: ({ contentType, color, level, ...model }: ITitleProps) => {
     const { formData, formMode } = useForm();
     const { value } = useSubForm();

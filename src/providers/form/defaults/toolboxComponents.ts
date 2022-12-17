@@ -77,6 +77,7 @@ import FormAutocompleteComponent from '../../../components/formDesigner/componen
 import Markdown from '../../../components/formDesigner/components/markdown';
 import Drawer from '../../../components/formDesigner/components/drawer';
 import ColorPickerComponent from '../../../components/formDesigner/components/colorPicker';
+import Typography from '../../../components/formDesigner/components/typography/textFull';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -172,7 +173,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
     visible: true,
     name: 'Typography',
-    components: [Paragraph, Text, Title, Markdown],
+    components: [Paragraph, Text, Title, Markdown, Typography],
   },
 
   // {

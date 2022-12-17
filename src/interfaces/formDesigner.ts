@@ -37,6 +37,8 @@ export interface IToolboxComponent<T extends IConfigurableFormComponent = any> {
    * Icon that is displayed on the components toolbox
    */
   icon: ReactNode;
+
+  tooltip?: ReactNode;
   /**
    * If true, indicates that the component should not be displayed on the components toolbox
    */

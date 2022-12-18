@@ -129,6 +129,8 @@ export interface IDataTableStateContext
   saveFilterModalVisible?: boolean;
 
   persistSelectedFilters?: boolean;
+
+  userConfigId?: string;
   //#endregion
 }
 
@@ -214,6 +216,7 @@ export const DATA_TABLE_CONTEXT_INITIAL_STATE: IDataTableStateContext = {
   configurableColumns: [],
   tableFilterDirty: null,
   persistSelectedFilters: true, // Persist by default
+  userConfigId: null,
 };
 
 export interface DataTableFullInstance extends IDataTableStateContext, IDataTableActionsContext {}

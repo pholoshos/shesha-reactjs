@@ -1,5 +1,10 @@
 import { ReactNode, MutableRefObject } from 'react';
-import { IConfigurableFormComponent, IFormComponentContainer, FormMarkup, IFlatComponentsStructure } from '../providers/form/models';
+import {
+  IConfigurableFormComponent,
+  IFormComponentContainer,
+  FormMarkup,
+  IFlatComponentsStructure,
+} from '../providers/form/models';
 import { FormInstance } from 'antd';
 import { InternalNamePath } from 'rc-field-form/lib/interface';
 import { IPropertyMetadata } from './metadata';
@@ -19,7 +24,7 @@ export type ISettingsFormFactory<TModel = IConfigurableFormComponent> = (
   props: ISettingsFormFactoryArgs<TModel>
 ) => ReactNode;
 
-export interface IToolboxComponent<T = IConfigurableFormComponent> {
+export interface IToolboxComponent<T extends IConfigurableFormComponent = any> {
   /**
    * Type of the component. Must be unique in the project.
    */
@@ -32,6 +37,8 @@ export interface IToolboxComponent<T = IConfigurableFormComponent> {
    * Icon that is displayed on the components toolbox
    */
   icon: ReactNode;
+
+  tooltip?: ReactNode;
   /**
    * If true, indicates that the component should not be displayed on the components toolbox
    */
@@ -98,7 +105,9 @@ export interface SettingsMigrationContext {
 /**
  * Settings migrator
  */
-export type SettingsMigrator<TSettings> = (migrator: Migrator<IConfigurableFormComponent, TSettings, SettingsMigrationContext>) => MigratorFluent<TSettings, TSettings, SettingsMigrationContext>;
+export type SettingsMigrator<TSettings> = (
+  migrator: Migrator<IConfigurableFormComponent, TSettings, SettingsMigrationContext>
+) => MigratorFluent<TSettings, TSettings, SettingsMigrationContext>;
 
 export interface IToolboxComponentGroup {
   name: string;

@@ -60,6 +60,10 @@ export interface IFormProviderProps {
  * External data fetcher, is used to refresh form data from the back-end. 
  */
   refetchData?: () => Promise<any>;
+  /**
+   * If true, form should register configurable actions. Should be enabled for main forms only
+   */
+  isActionsOwner: boolean;
 }
 
 const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
@@ -74,6 +78,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   formRef,
   formSettings,
   refetchData,
+  isActionsOwner,
 }) => {
   const toolboxComponents = useFormDesignerComponents();
 
@@ -92,10 +97,13 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   //#region configurable actions
 
   const actionDependencies = [];
+  const actionsOwnerUid = isActionsOwner
+    ?  SheshaActionOwners.Form
+    : null;
   useConfigurableAction({
     name: 'Start Edit',
     owner: name,
-    ownerUid: SheshaActionOwners.Form,
+    ownerUid: actionsOwnerUid,
     hasArguments: false,
     executer: () => {
       setFormMode('edit');
@@ -106,7 +114,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   useConfigurableAction({
     name: 'Cancel Edit',
     owner: name,
-    ownerUid: SheshaActionOwners.Form,
+    ownerUid: actionsOwnerUid,
     hasArguments: false,
     executer: () => {
       setFormMode('readonly');
@@ -117,7 +125,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   useConfigurableAction({
     name: 'Submit',
     owner: name,
-    ownerUid: SheshaActionOwners.Form,
+    ownerUid: actionsOwnerUid,
     hasArguments: false,
     executer: () => {
       form.submit();
@@ -128,7 +136,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   useConfigurableAction({
     name: 'Reset',
     owner: name,
-    ownerUid: SheshaActionOwners.Form,
+    ownerUid: actionsOwnerUid,
     hasArguments: false,
     executer: () => {
       form.resetFields();
@@ -140,7 +148,7 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     name: 'Refresh',
     description: 'Refresh the form data by fetching it from the back-end',
     owner: name,
-    ownerUid: SheshaActionOwners.Form,
+    ownerUid: actionsOwnerUid,
     hasArguments: false,
     executer: () => {
       return fetchData();

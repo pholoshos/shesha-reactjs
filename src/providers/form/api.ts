@@ -12,6 +12,7 @@ import { IMetadataDispatcherActionsContext } from "../metadataDispatcher/context
 import { FormIdentifier, FormMarkupWithSettings, FormRawMarkup, IFormDto, IFormSettings } from "./models";
 import { asFormFullName, asFormRawId, getComponentsFromMarkup, useFormDesignerComponents } from "./utils";
 import * as RestfulShesha from '../../utils/fetchers';
+import { ConfigurationItemsViewMode } from "../appConfigurator/models";
 
 /**
  * Form configuration DTO
@@ -50,6 +51,10 @@ export interface FormConfigurationDto {
      * Version status
      */
     versionStatus?: number;
+    /**
+     * Cache MD5, is used for client-side caching
+     */
+    cacheMd5?: string | null;
 }
 
 export interface IFormFetcherProps {
@@ -80,6 +85,7 @@ export interface IUseFormConfigurationProps {
 export type FormProperties = Omit<FormConfigurationDto, 'markup'>;
 
 export interface IFormMarkupResponse {
+    requestParams: any;
     formConfiguration: IFormDto;
     loading: boolean;
     error: GetDataError<IAjaxResponseBase>;
@@ -169,6 +175,7 @@ export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarku
         loading: fetcher.loading,
         error: fetcher.error,
         refetch: reFetcher,
+        requestParams: requestParams
     };
     return result;
 }
@@ -176,6 +183,7 @@ export const useFormConfiguration = (args: UseFormConfigurationArgs): IFormMarku
 export interface UseFormWitgDataArgs {
     formId?: FormIdentifier;
     dataId?: string;
+    configurationItemMode?: ConfigurationItemsViewMode;
     onFormLoaded?: (form: IFormDto) => void;
     onDataLoaded?: (data: any) => void;
 }
@@ -185,7 +193,7 @@ export interface FormWithDataResponse {
     loadingState: LoadingState;
     loaderHint?: string;
     error?: IErrorInfo;
-    dataFetcher?: () => Promise<EntityAjaxResponse | void>; 
+    dataFetcher?: () => Promise<EntityAjaxResponse | void>;
 }
 export interface FormWithDataState {
     loaderHint?: string;
@@ -193,13 +201,13 @@ export interface FormWithDataState {
     fetchedData?: IEntity;
     form?: IFormDto;
     error?: IErrorInfo;
-    dataFetcher?: () => Promise<EntityAjaxResponse | void>; 
+    dataFetcher?: () => Promise<EntityAjaxResponse | void>;
 }
 
 export type LoadingState = 'waiting' | 'loading' | 'ready' | 'failed';
 
 export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse => {
-    const { formId, dataId } = args;
+    const { formId, dataId, configurationItemMode } = args;
     const { getForm } = useConfigurationItemsLoader();
     const { backendUrl, httpHeaders } = useSheshaApplication();
 
@@ -210,30 +218,23 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
     const formRequestRef = useRef<string>();
 
     useEffect(() => {
-        //console.log('PERF: API effect', { formId, dataId })
         const requestId = nanoid();
         formRequestRef.current = requestId;
         if (formId) {
-            //console.log('PERF: fetch form markup');
             setState(prev => ({ ...prev, loadingState: 'loading', loaderHint: 'Fetching form...', error: null, dataFetcher: null, form: null, fetchedData: null }));
 
-            getForm({ formId }).then(form => {
+            getForm({ formId, configurationItemMode: args.configurationItemMode, skipCache: false }).then(form => {
                 if (formRequestRef.current !== requestId)
                     return;
-
-                //console.log('PERF: form loaded');
 
                 // apply loaded form
                 setState(prev => ({ ...prev, form: form }));
 
                 const getDataUrl = (removeZeroWidthCharsFromString(form.settings?.getUrl) || '').trim();
 
-                if (dataId && Boolean(getDataUrl)) {
-                    //console.log('PERF: data id specified');
-
+                if (Boolean(getDataUrl)) {
                     setState(prev => ({ ...prev, loaderHint: 'Fetching metadata...' }));
 
-                    //console.log('PERF: compute GQL properties list');
                     // fetch meta before the data
                     getGqlFields({
                         formMarkup: form.markup,
@@ -246,13 +247,11 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
                             return;
 
                         var gqlFields = gqlFieldsToString(gqlFieldsList);
-                        //console.log('PERF: GQL properties are ready', { gqlFields, gqlFieldsList });
-
-                        // fetch data
-                        //console.log('PERF: fetch data');
 
                         // fetch data and resolve
-                        const queryParams = { id: dataId, properties: gqlFields };
+                        const queryParams = { properties: gqlFields };
+                        if (dataId)
+                            queryParams["id"] = dataId;
 
                         const dataFetcher = () => RestfulShesha.get<EntityAjaxResponse, any, any, any>(
                             getDataUrl,
@@ -262,7 +261,6 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
                             if (formRequestRef.current !== requestId)
                                 return null; // todo: cancel data request
 
-                            //console.log('PERF: data fetching finished');
                             if (dataResponse.success) {
                                 setState(prev => ({
                                     ...prev,
@@ -290,28 +288,25 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
                         dataFetcher();
                     });
                 } else {
-                    //console.log('PERF: data id is not specified - mark as ready');
                     // data loading is not required
                     setState(prev => ({ ...prev, loadingState: 'ready', loaderHint: null }));
                 }
             }).catch(e => {
-                //console.log('PERF: failed to fetch form')
                 setState(prev => ({ ...prev, loadingState: 'failed', loaderHint: null, error: e }));
             });
         } else {
-            //console.log('PERF: prefetch form markup - skipped');
-            setState(prev => ({ 
-                ...prev, 
-                loadingState: 'waiting', 
-                loaderHint: null, 
-                error: null, 
-                form: null, 
-                dataFetcher: null, 
-                fetchedData: null 
+            setState(prev => ({
+                ...prev,
+                loadingState: 'waiting',
+                loaderHint: null,
+                error: null,
+                form: null,
+                dataFetcher: null,
+                fetchedData: null
             }));
         }
         // return cleanup: clean up form and data
-    }, [formId, dataId]);
+    }, [formId, dataId, configurationItemMode]);
 
     // todo: return errors
 
@@ -407,7 +402,6 @@ const getGqlFields = (payload: GetGqlFieldsPayload): Promise<IFieldData[]> => {
         let fields: IFieldData[] = [];
 
         const fieldNames = getFormFields(payload);
-        //console.log('PERF: field names', fieldNames)
 
         // create list of promises
         const promises: Promise<any>[] = [];

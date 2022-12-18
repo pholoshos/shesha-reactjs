@@ -32,7 +32,8 @@ const ConfigurableThemePage: FC<IConfigurableThemePageProps> = () => {
           <ColorPicker
             title={humanizeString(colorName)}
             presetColors={['#1890ff', '#25b864', '#ff6f00', '#ff4d4f', '#faad14', '#52c41a', '#1890ff']}
-            color={initialColor}
+            // @ts-ignore
+            color={{ hex: initialColor }}
             onChange={({ hex }) => {
               onColorChange({
                 [colorName]: hex,

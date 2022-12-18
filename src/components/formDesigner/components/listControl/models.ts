@@ -1,4 +1,3 @@
-import { string } from 'prop-types';
 import { IConfigurableFormComponent, IFormItem } from '../../../../interfaces';
 import { ButtonGroupItemProps } from '../../../../providers/buttonGroupConfigurator/models';
 import { FormIdentifier } from '../../../../providers/form/models';
@@ -25,6 +24,7 @@ export interface IListItemsProps {
   showQuickSearch?: boolean;
   paginationDefaultPageSize: number;
   buttons?: ButtonGroupItemProps[];
+  isButtonInline?: boolean;
   maxHeight?: number;
   labelCol?: number;
   wrapperCol?: number;
@@ -35,6 +35,8 @@ export interface IListItemsProps {
   readOnly?: boolean;
   properties?: string[];
   filters?: object;
+  placeholder?: string;
+  orientation?: 'vertical' | 'horizontal';
 }
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {

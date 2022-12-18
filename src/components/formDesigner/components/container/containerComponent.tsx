@@ -55,7 +55,7 @@ export type JustifyItems =
   | 'unset';
 
 export interface IContainerComponentProps extends IConfigurableFormComponent {
-  direction: ContainerDirection;
+  direction?: ContainerDirection;
   justifyContent?: JustifyContent;
   alignItems?: AlignItems;
   justifyItems?: JustifyItems;
@@ -85,7 +85,7 @@ const ContainerComponent: IToolboxComponent<IContainerComponentProps> = {
         className={model.className}
         wrapperStyle={getStyle(model?.wrapperStyle, formData)}
         style={getStyle(model?.style, formData)}
-         dynamicComponents={model?.isDynamic ? model?.components : []}
+        dynamicComponents={model?.isDynamic ? model?.components?.map(c => ({ ...c, readOnly: model?.readOnly })) : []}
       />
     );
   },

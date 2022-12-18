@@ -70,10 +70,14 @@ import Progress from '../../../components/formDesigner/components/progress';
 import Buttons from '../../../components/formDesigner/components/button/buttonGroup/buttonsComponent';
 import SubForm from '../../../components/formDesigner/components/subForm';
 import Link from '../../../components/formDesigner/components/link';
+import Rate from '../../../components/formDesigner/components/rate';
 import EventNames from '../../../components/formDesigner/components/eventNamesList';
 import ConfigurableActionConfigurator from '../../../components/formDesigner/components/configurableActionsConfigurator';
 import FormAutocompleteComponent from '../../../components/formDesigner/components/formAutocomplete';
-// import Markdown from '../../../components/formDesigner/components/markdown';
+import Markdown from '../../../components/formDesigner/components/markdown';
+import Drawer from '../../../components/formDesigner/components/drawer';
+import ColorPickerComponent from '../../../components/formDesigner/components/colorPicker';
+import Typography from '../../../components/formDesigner/components/typography/textFull';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -95,6 +99,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       TextArea,
       TextField,
       Statistic,
+      Rate,
     ],
   },
   {
@@ -105,7 +110,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
     name: 'Layout',
     visible: true,
-    components: [CollapsiblePanel, Columns, ContainerComponent, Divider, SectionSeprator, Space, Tabs, Wizard],
+    components: [CollapsiblePanel, Columns, ContainerComponent, Drawer, Divider, SectionSeprator, Space, Tabs, Wizard],
   },
   {
     name: 'Custom',
@@ -115,6 +120,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       AttachmentsEditor,
       ChildDataTable,
       CodeEditor,
+      ColorPickerComponent,
       DynamicView,
       EditableTagGroup,
       EntityPickerComponent,
@@ -138,6 +144,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       EventNames,
       ConfigurableActionConfigurator,
       FormAutocompleteComponent,
+      Markdown,
     ],
   },
   {
@@ -166,7 +173,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
     visible: true,
     name: 'Typography',
-    components: [Paragraph, Text, Title],
+    components: [Paragraph, Text, Title, Markdown, Typography],
   },
 
   // {

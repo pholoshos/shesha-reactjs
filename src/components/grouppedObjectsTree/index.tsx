@@ -17,6 +17,7 @@ export interface IGrouppedObjectsTreeProps<TItem> {
     isMatch?: (item: TItem, searchText: string) => void;
     setOpenedKeys?: (keys: string[]) => void;
     onRenterItem?: (item: TItem) => ReactNode;
+    onGetGroupName?: (groupBy: string, data: string) => string;
   }
   
   interface GrouppedObjects<TItem> {
@@ -50,8 +51,9 @@ export interface IGrouppedObjectsTreeProps<TItem> {
       const groups = [] as GrouppedObjects<TItem>[];
       if (Boolean(props?.items)){
         props.items?.forEach((item) => {
-          let name = split ? getLastSection('.', item[field]) : item[field];
-          name = Boolean(name) ? name : '-';
+          let name = typeof props?.onGetGroupName === 'function' ?  props?.onGetGroupName(field, item[field]) : "";
+          name = name ? name : split ? getLastSection('.', item[field]) : item[field];
+          name = name ? name : '-';
           const g = groups.filter((g) => { return g.groupName === name});
           if (g.length > 0) {
             g[0].visibleItems.push(item);
@@ -122,7 +124,7 @@ export interface IGrouppedObjectsTreeProps<TItem> {
                       searchText={props?.searchText} 
                       defaultExpandAll={(props?.searchText ?? '') !== ''}
                       onChange={ onChangeHandler }
-                      defaultSelected={props?.openedKeys.find(key => key == ds.groupName) ? props.defaultSelected?.toLowerCase() : null}
+                      defaultSelected={props?.openedKeys?.find(key => key == ds.groupName) ? props.defaultSelected?.toLowerCase() : null}
                       onRenterItem={props?.onRenterItem}
                     />
                   </Panel>

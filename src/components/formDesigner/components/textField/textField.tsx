@@ -55,6 +55,8 @@ const TextField: IToolboxComponent<ITextFieldProps> = {
 
     const disabled = isComponentDisabled(model);
 
+    //console.log('LOGS:: model?.readOnly', model?.readOnly, model?.type, model);
+
     const readOnly = model?.readOnly || (formMode === 'readonly' && model.textType !== 'password');
 
     const inputProps: InputProps = {
@@ -104,7 +106,7 @@ const TextField: IToolboxComponent<ITextFieldProps> = {
     textType: 'text',
     ...model,
   }),
-  migrator: m => m.add<ITextFieldProps>(0, prev => ({...prev, textType: 'text'})),
+  migrator: m => m.add<ITextFieldProps>(0, prev => ({ ...prev, textType: 'text' })),
   linkToModelMetadata: (model, metadata): ITextFieldProps => {
     return {
       ...model,

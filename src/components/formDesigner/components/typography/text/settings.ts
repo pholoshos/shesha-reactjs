@@ -1,4 +1,6 @@
+import { nanoid } from 'nanoid';
 import { DesignerToolbarSettings } from '../../../../../interfaces';
+import { FONT_SIZES } from '../utils';
 
 export const settingsFormMarkup = new DesignerToolbarSettings()
   .addSectionSeparator({
@@ -21,7 +23,7 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     id: '6d29cf2c-96fe-40ce-be97-32e9f5d0fe40',
     name: 'contentType',
     parentId: 'root',
-    label: 'Content type',
+    label: 'Color',
     values: [
       {
         label: 'Secondary',
@@ -43,7 +45,27 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
         value: 'danger',
         id: '4b3830fa-6b2a-4493-a049-2a4a5be4b0a4',
       },
+      {
+        label: '(Custom Color)',
+        value: 'custom',
+        id: nanoid(),
+      },
     ],
+    dataSourceType: 'values',
+  })
+  .addColorPicker({
+    id: nanoid(),
+    name: 'color',
+    label: 'Custom Color',
+    title: 'Pick Content Color',
+    customVisibility: "return data.contentType === 'custom'",
+  })
+  .addDropdown({
+    id: nanoid(),
+    name: 'fontSize',
+    parentId: 'root',
+    label: 'Font Size',
+    values: Object.keys(FONT_SIZES).map(key => ({ id: nanoid(), value: key, label: key })),
     dataSourceType: 'values',
   })
   .addCheckbox({

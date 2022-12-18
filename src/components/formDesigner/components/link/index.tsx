@@ -85,7 +85,7 @@ const LinkComponent: IToolboxComponent<ILinkProps> = {
         justifyItems={model.direction === 'horizontal' ? model?.justifyItems : null}
         className={model.className}
         itemsLimit={1}
-        dynamicComponents={model?.isDynamic ? model?.components : []}
+        dynamicComponents={model?.isDynamic ? model?.components?.map(c => ({ ...c, readOnly: model?.readOnly })) : []}
       />
     );
     if (isDesignerMode) {

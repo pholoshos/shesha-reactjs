@@ -25,7 +25,13 @@ import {
   GenericDictionary,
 } from './models';
 import Mustache from 'mustache';
-import { ITableColumn, IToolboxComponent, IToolboxComponentGroup, IToolboxComponents, SettingsMigrationContext } from '../../interfaces';
+import {
+  ITableColumn,
+  IToolboxComponent,
+  IToolboxComponentGroup,
+  IToolboxComponents,
+  SettingsMigrationContext,
+} from '../../interfaces';
 import Schema, { Rules, ValidateSource } from 'async-validator';
 import { IPropertyMetadata } from '../../interfaces/metadata';
 import { nanoid } from 'nanoid';
@@ -104,10 +110,7 @@ export const componentsTreeToFlatStructure = (
   return result;
 };
 
-export const upgradeComponents = (
-  toolboxComponents: IToolboxComponents,
-  flatStructure: IFlatComponentsStructure
-) => {
+export const upgradeComponents = (toolboxComponents: IToolboxComponents, flatStructure: IFlatComponentsStructure) => {
   const { allComponents } = flatStructure;
   for (const key in allComponents) {
     if (allComponents.hasOwnProperty(key)) {
@@ -121,42 +124,37 @@ export const upgradeComponents = (
   }
 };
 
-export const upgradeComponent = (componentModel: IConfigurableFormComponent, definition: IToolboxComponent, flatStructure: IFlatComponentsStructure) => {
-  if (!definition.migrator)
-    return componentModel;
+export const upgradeComponent = (
+  componentModel: IConfigurableFormComponent,
+  definition: IToolboxComponent,
+  flatStructure: IFlatComponentsStructure
+) => {
+  if (!definition.migrator) return componentModel;
 
   const migrator = new Migrator<IConfigurableFormComponent, IConfigurableFormComponent>();
   const fluent = definition.migrator(migrator);
-  if (componentModel.version === undefined)
-    componentModel.version = -1;
+  if (componentModel.version === undefined) componentModel.version = -1;
   const model = fluent.migrator.upgrade(componentModel, { flatStructure, componentId: componentModel.id });
   return model;
-}
+};
 
 //#region Migration utils
 
 export const getClosestComponent = (componentId: string, context: SettingsMigrationContext, componentType: string) => {
   let component = context.flatStructure.allComponents[componentId];
   do {
-      component = component?.parentId
-          ? context.flatStructure.allComponents[component.parentId]
-          : null;
-  } while(component && component.type !== componentType);
+    component = component?.parentId ? context.flatStructure.allComponents[component.parentId] : null;
+  } while (component && component.type !== componentType);
 
-  return component?.type === componentType
-      ? component
-      : null;
-}
+  return component?.type === componentType ? component : null;
+};
 
 export const getClosestTableId = (context: SettingsMigrationContext) => {
   const table = getClosestComponent(context.componentId, context, 'datatableContext');
-  return table
-      ? table['uniqueStateId'] ?? table.name
-      : null;
-}
+  return table ? table['uniqueStateId'] ?? table.name : null;
+};
 
 //#endregion
-
 
 /** Convert flat components structure to a component tree */
 export const componentsFlatStructureToTree = (
@@ -274,9 +272,23 @@ export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormC
  * @returns {string} evaluated string
  */
 export const evaluateString = (template: string = '', data: any) => {
+  const localData: IAnyObject = {};
   // The function throws an exception if the expression passed doesn't have a corresponding curly braces
   try {
-    return template ? Mustache.render(template, data ?? {}) : template;
+    if (data) {
+      //adding a function to the data object that will format datetime
+
+      localData.dateFormat = function() {
+        return function(timestamp, render) {
+          return new Date(render(timestamp).trim()).toLocaleDateString('en-us', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          });
+        };
+      };
+    }
+    return template && typeof template === 'string' ? Mustache.render(template, localData ?? {}) : template;
   } catch (error) {
     console.warn('evaluateString ', error);
     return template;
@@ -448,13 +460,17 @@ export const getVisibilityFunc2 = (expression, name) => {
   } else return () => true;
 };
 
-
 export interface IExpressionExecuterArguments {
   [key: string]: any;
 }
 export type IExpressionExecuterReturn<TResult> = () => TResult;
 export type IExpressionExecuterFailedHandler<TResult> = (error: any) => TResult;
-export function executeExpression<TResult>(expression: string, expressionArgs: IExpressionExecuterArguments, defaultValue: TResult, onFail: IExpressionExecuterFailedHandler<TResult>): IExpressionExecuterReturn<TResult> {
+export function executeExpression<TResult>(
+  expression: string,
+  expressionArgs: IExpressionExecuterArguments,
+  defaultValue: TResult,
+  onFail: IExpressionExecuterFailedHandler<TResult>
+): IExpressionExecuterReturn<TResult> {
   if (expression) {
     try {
       let argsDefinition = '';
@@ -471,12 +487,14 @@ export function executeExpression<TResult>(expression: string, expressionArgs: I
       return () => onFail(e);
     }
   } else return () => defaultValue;
-};
+}
 
-export function executeScript<TResult = any>(expression: string, expressionArgs: IExpressionExecuterArguments): Promise<TResult> {
+export function executeScript<TResult = any>(
+  expression: string,
+  expressionArgs: IExpressionExecuterArguments
+): Promise<TResult> {
   return new Promise<TResult>((resolve, reject) => {
-    if (!expression)
-      reject('Expression must be defined');
+    if (!expression) reject('Expression must be defined');
 
     let argsDefinition = '';
     const argList: any[] = [];
@@ -490,8 +508,25 @@ export function executeScript<TResult = any>(expression: string, expressionArgs:
     const result = expressionExecuter.apply(null, argList);
     resolve(result);
   });
-};
+}
 
+export function executeScriptSync<TResult = any>(
+  expression: string,
+  expressionArgs: IExpressionExecuterArguments
+): TResult {
+  if (!expression) throw new Error('Expression must be defined');
+
+  try {
+    return new Function(Object.keys(expressionArgs)?.join(', '), expression)?.apply(
+      null,
+      Object.values(expressionArgs)
+    );
+  } catch (error) {
+    console.error(`executeScriptSync error`, error);
+
+    return null;
+  }
+}
 
 /**
  * Return ids of visible components according to the custom visibility
@@ -955,7 +990,7 @@ export const createComponentModelForDataProperty = (
     customVisibility: null,
     visibilityFunc: _data => true,
     isDynamic: false,
-    validate: {}
+    validate: {},
   };
   if (toolboxComponent.initModel) componentModel = toolboxComponent.initModel(componentModel);
 
@@ -968,19 +1003,16 @@ export const useFormDesignerComponentGroups = () => {
   const app = useSheshaApplication(false);
   const appComponentGroups = app?.toolboxComponentGroups ?? [];
 
-  const toolboxComponentGroups = [
-    ...(defaultToolboxComponents || []),
-    ...(appComponentGroups),
-  ];
+  const toolboxComponentGroups = [...(defaultToolboxComponents || []), ...appComponentGroups];
   return toolboxComponentGroups;
-}
+};
 
 export const useFormDesignerComponents = () => {
   const componentGroups = useFormDesignerComponentGroups();
 
   const toolboxComponents = useMemo(() => toolbarGroupsToComponents(componentGroups), [componentGroups]);
   return toolboxComponents;
-}
+};
 
 interface IKeyValue {
   key: string;
@@ -1073,10 +1105,10 @@ export const getStyle = (style: string, formData: any = {}, globalState: any = {
   return new Function('data, globalState', style)(formData, globalState);
 };
 
-export const getString=(expression:string,formData: any = {}, globalState: any = {}):string=>{
-  if(!expression)return null;
+export const getString = (expression: string, formData: any = {}, globalState: any = {}): string => {
+  if (!expression) return null;
   return new Function('data, globalState', expression)(formData, globalState);
-}
+};
 export const filterFormData = (data: any) => {
   if (typeof data === 'object' && Object.getOwnPropertyNames(data || {}).length) {
     return Object.entries(data)
@@ -1092,8 +1124,8 @@ export const filterFormData = (data: any) => {
 
 /**
  * Convert list of properties in dot notation to a list of properties for fetching using GraphQL syntax
- * @param properties 
- * @returns 
+ * @param properties
+ * @returns
  */
 export const convertDotNotationPropertiesToGraphQL = (properties: string[], columns: ITableColumn[]): string => {
   const tree = {};
@@ -1152,41 +1184,34 @@ export const convertDotNotationPropertiesToGraphQL = (properties: string[], colu
 
   // convert tree to a GQL syntax
   return getNodes(tree);
-}
+};
 
 export const asFormRawId = (formId: FormIdentifier): FormUid | undefined => {
-  return formId && typeof (formId) === 'string'
-    ? formId as FormUid
-    : undefined;
-}
+  return formId && typeof formId === 'string' ? (formId as FormUid) : undefined;
+};
 
 export const asFormFullName = (formId: FormIdentifier): FormFullName | undefined => {
-  return formId && Boolean((formId as FormFullName)?.name)
-    ? formId as FormFullName
-    : undefined;
-}
+  return formId && Boolean((formId as FormFullName)?.name) ? (formId as FormFullName) : undefined;
+};
 
 export const convertToMarkupWithSettings = (markup: FormMarkup): FormMarkupWithSettings => {
-  if (!markup)
-    return null;
+  if (!markup) return null;
   const result = markup as FormMarkupWithSettings;
-  if (result?.components && result.formSettings)
-    return result;
-  if (Array.isArray(markup))
-    return { components: markup, formSettings: DEFAULT_FORM_SETTINGS };
+  if (result?.components && result.formSettings) return result;
+  if (Array.isArray(markup)) return { components: markup, formSettings: DEFAULT_FORM_SETTINGS };
 
   return { components: [], formSettings: DEFAULT_FORM_SETTINGS };
-}
+};
 
 const evaluateRecursive = (data: any, evaluationContext: GenericDictionary): any => {
-  if (typeof (data) === 'string') {
+  if (typeof data === 'string') {
     return evaluateString(data, evaluationContext);
   }
   if (Array.isArray(data)) {
     // note: `typeof` returns object for arrays too, we must to check isArray before `typeof`
-    return data.map(item => evaluateRecursive(item, evaluationContext))
+    return data.map(item => evaluateRecursive(item, evaluationContext));
   }
-  if (typeof (data) === 'object') {
+  if (typeof data === 'object') {
     const evaluatedObject = {};
     for (const key in data) {
       if (data.hasOwnProperty(key)) {
@@ -1196,26 +1221,30 @@ const evaluateRecursive = (data: any, evaluationContext: GenericDictionary): any
     return evaluatedObject;
   }
   return data;
-}
+};
 
-export const genericActionArgumentsEvaluator = <TArguments = ActionParametersDictionary>(argumentsConfiguration: TArguments, evaluationContext: GenericDictionary): Promise<TArguments> => {
-  if (!Boolean(argumentsConfiguration))
-    return Promise.resolve(null);
+export const genericActionArgumentsEvaluator = <TArguments = ActionParametersDictionary>(
+  argumentsConfiguration: TArguments,
+  evaluationContext: GenericDictionary
+): Promise<TArguments> => {
+  if (!Boolean(argumentsConfiguration)) return Promise.resolve(null);
 
-  return new Promise<TArguments>((resolve) => {
+  return new Promise<TArguments>(resolve => {
     const evaluated = evaluateRecursive(argumentsConfiguration, evaluationContext);
     resolve(evaluated as TArguments);
   });
-}
+};
 
 /**
  * Convert action parameters definition to a runtime parameters
  */
-export const getFormActionArguments = (params: ActionParameters, evaluationContext: GenericDictionary): Promise<ActionArguments> => {
-  if (!Boolean(params))
-    return Promise.resolve({});
+export const getFormActionArguments = (
+  params: ActionParameters,
+  evaluationContext: GenericDictionary
+): Promise<ActionArguments> => {
+  if (!Boolean(params)) return Promise.resolve({});
 
-  if (typeof (params) === 'string') {
+  if (typeof params === 'string') {
     try {
       const evaluationKeys = Object.keys(evaluationContext);
       evaluationKeys.push(params);
@@ -1228,7 +1257,7 @@ export const getFormActionArguments = (params: ActionParameters, evaluationConte
     }
   }
 
-  return new Promise<ActionArguments>((resolve) => {
+  return new Promise<ActionArguments>(resolve => {
     const dictionary = params as ActionParametersDictionary;
     const actionArgs = {};
 
@@ -1237,9 +1266,8 @@ export const getFormActionArguments = (params: ActionParameters, evaluationConte
         const parameter = dictionary[parameterIdx];
 
         // todo: add promise support
-        const value = typeof (parameter?.value) === 'string'
-          ? evaluateString(parameter?.value, evaluationContext)
-          : parameter?.value;
+        const value =
+          typeof parameter?.value === 'string' ? evaluateString(parameter?.value, evaluationContext) : parameter?.value;
 
         if (value) {
           actionArgs[parameter?.key] = value;
@@ -1248,4 +1276,40 @@ export const getFormActionArguments = (params: ActionParameters, evaluationConte
     }
     resolve(actionArgs);
   });
-}
+};
+
+export const executeCustomExpression = (expression: string, returnBoolean = false, formData, globalState) => {
+  if (!expression) {
+    if (returnBoolean) {
+      return true;
+    } else {
+      console.error('Expected expression to be defined but it was found to be empty.');
+
+      return false;
+    }
+  }
+
+  /* tslint:disable:function-constructor */
+  const evaluated = new Function('data, globalState', expression)(formData, globalState);
+
+  // tslint:disable-next-line:function-constructor
+  return typeof evaluated === 'boolean' ? evaluated : true;
+};
+
+export const executeCustomExpressionV2 = (expression: string, context: any, returnBoolean = false) => {
+  if (!expression) {
+    if (returnBoolean) {
+      return true;
+    } else {
+      console.error('Expected expression to be defined but it was found to be empty.');
+
+      return false;
+    }
+  }
+
+  /* tslint:disable:function-constructor */
+  const evaluated = new Function(Object.keys(context)?.join(','), expression)(...Object.values(context));
+
+  // tslint:disable-next-line:function-constructor
+  return typeof evaluated === 'boolean' ? evaluated : true;
+};

@@ -1,10 +1,9 @@
 import { createAction } from 'redux-actions';
 import { IConfigurableColumnsBase } from '../datatableColumnsConfigurator/models';
-import { IDataTableUserConfig } from './contexts';
+import { IDataTableStateContext, IDataTableUserConfig } from './contexts';
 import {
   IndexColumnFilterOption,
   ITableFilter,
-  IStoredFilter,
   IGetDataPayloadInternal,
   IColumnSorting,
   DataTableColumnDto,
@@ -33,6 +32,7 @@ export enum DataTableActionEnums {
   ApplyFilter = 'APPLY_FILTER',
   ChangeQuickSearch = 'CHANGE_QUICK_SEARCH',
   ToggleSaveFilterModal = 'TOGGLE_SAVE_FILTER_MODAL',
+  ChangeUserConfigId = 'CHANGE_USER_CONFIG_ID',
   ChangeSelectedRow = 'CHANGE_SELECTED_ROW',
   ChangeActionedRow = 'CHANGE_ACTIONED_ROW',
   ChangeSelectedStoredFilterIds = 'CHANGE_SELECTED_STORED_FILTER_IDS',
@@ -113,6 +113,8 @@ export const changeFilterAction = createAction<IChangeFilterAction, IChangeFilte
 
 export const applyFilterAction = createAction<ITableFilter[], ITableFilter[]>(DataTableActionEnums.ApplyFilter, p => p);
 
+export const changeUserConfigIdAction = createAction<any, any>(DataTableActionEnums.ChangeUserConfigId, p => p);
+
 export const changeSelectedRowAction = createAction<any, any>(DataTableActionEnums.ChangeSelectedRow, p => p);
 
 export const changeActionedRowAction = createAction<any, any>(DataTableActionEnums.ChangeActionedRow, p => p);
@@ -122,10 +124,10 @@ export const changeSelectedStoredFilterIdsAction = createAction<string[], string
   p => p
 );
 
-export const setPredefinedFiltersAction = createAction<IStoredFilter[], IStoredFilter[]>(
-  DataTableActionEnums.SetPredefinedFilters,
-  p => p
-);
+export const setPredefinedFiltersAction = createAction<
+  Pick<IDataTableStateContext, 'predefinedFilters' | 'userConfigId'>,
+  Pick<IDataTableStateContext, 'predefinedFilters' | 'userConfigId'>
+>(DataTableActionEnums.SetPredefinedFilters, p => p);
 
 export const changeSelectedIdsAction = createAction<string[], string[]>(DataTableActionEnums.ChangeSelectedIds, p => p);
 

@@ -34,14 +34,12 @@ export const RoleAppointmentForm = addStory(DesignerTemplate, {
 });
 
 export const TestForm = addStory(DesignerTemplate, {
-  formId: '1385826b-b888-4977-bcee-0d0146a1b5b2',
-  //formId: '7b8562c7-1aed-4818-b830-1dd04c789f20'
-  /*
-  formId: {
-    name: 'test-form',
-    module: 'shesha'
-  }*/
+  formId: 'd53b4917-70b8-4d05-aba3-1cbfc2d30c05',
 });
+export const TestForm2 = addStory(DesignerTemplate, {
+  formId: '87fe8b73-ed32-48a1-b747-7856056129fd',
+});
+
 
 export const AutocompleteSettingsForm = addStory(DesignerTemplate, {
   formId: '7c19404f-7c6f-4cee-9af7-6b82b7be3982',
@@ -112,7 +110,7 @@ export const WizardFormDebug = addStory(DesignerTemplate, {
 });
 
 export const FormsIndex = addStory(DesignerTemplate, {
-  formId: '4E69FF2B-CDC0-417A-BE39-1BF59B74011C',
+  formId: 'daf6f420-d70d-482c-bb0b-ddce60bf447f',
   /*
   formId: {
     name: 'forms',
@@ -205,7 +203,7 @@ export const TestWizard = addStory(DesignerTemplate, {
 });
 
 export const OrganisationEdit = addStory(DesignerTemplate, {
-  formId: { name: '/organisations/edit', version: 1 },
+  formId: { name: '/organisations/edit', version: 2 },
 });
 
 export const PermissionedObjects = addStory(DesignerTemplate, {
@@ -217,7 +215,7 @@ export const ModelConfigurationEdit = addStory(DesignerTemplate, {
 });
 
 export const PermissionEdit = addStory(DesignerTemplate, {
-  formId: { name: 'permission-edit' },
+  formId: { name: 'permission-edit', version: 2 }
 });
 
 export const StyleFixEdit = addStory(DesignerTemplate, {
@@ -236,13 +234,7 @@ export const UselessForm = addStory(DesignerTemplate, {
 export const PersonEdit = addStory(DesignerTemplate, {
   formId: {
     name: '/persons/edit',
-    version: 2,
+    version: 3,
   },
 });
 
-export const ComplexModel = addStory(DesignerTemplate, {
-  formId: {
-    name: 'test-nested',
-    module: 'test'
-  }
-});

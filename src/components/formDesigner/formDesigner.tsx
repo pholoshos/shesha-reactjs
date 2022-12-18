@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Skeleton } from 'antd';
+import { Result, Skeleton } from 'antd';
 import { FormProvider } from '../../providers/form';
 import { FormIdentifier } from '../../providers/form/models';
 import { FormPersisterProvider } from '../../providers/formPersisterProvider';
@@ -9,6 +9,7 @@ import { FormDesignerStateConsumer } from '../../providers/formDesigner/contexts
 import { FormMarkupConverter } from '../../providers/formMarkupConverter';
 import { FormDesignerRenderer } from './formDesignerRenderer';
 import { ConfigurationItemVersionStatus } from '../../utils/configurationFramework/models';
+import { ResultStatusType } from 'antd/lib/result';
 
 export interface IFormDesignerProps {
   formId: FormIdentifier;
@@ -18,33 +19,48 @@ export const FormDesigner: FC<IFormDesignerProps> = ({ formId }) => {
   return (
     <FormPersisterProvider formId={formId}>
       <FormPersisterStateConsumer>
-        {formStore => (formStore.markup
-          ? (
-            <FormMarkupConverter markup={formStore.markup}>
-              {flatComponents => (
-                <FormDesignerProvider 
-                  flatComponents={flatComponents} 
-                  formSettings={formStore.formSettings}
-                  readOnly={formStore.formProps?.versionStatus !== ConfigurationItemVersionStatus.Draft}
-                >
-                  <FormDesignerStateConsumer>
-                    {designerState => (
-                      <FormProvider 
-                        name="Form"
-                        mode="designer" 
-                        flatComponents={{ allComponents: designerState.allComponents, componentRelations: designerState.componentRelations }} 
-                        formSettings={designerState.formSettings}
-                      >
-                        <FormDesignerRenderer />
-                      </FormProvider>
-                    )}
-                  </FormDesignerStateConsumer>
-                </FormDesignerProvider>
-              )}
-            </FormMarkupConverter>
-          )
-          : (<Skeleton></Skeleton>)
-        )}
+        {formStore => {
+          if (formStore.loading)
+            return (<Skeleton loading active />);
+
+          if (formStore.loaded && formStore.markup)
+            return (
+              <FormMarkupConverter markup={formStore.markup}>
+                {flatComponents => (
+                  <FormDesignerProvider
+                    flatComponents={flatComponents}
+                    formSettings={formStore.formSettings}
+                    readOnly={formStore.formProps?.versionStatus !== ConfigurationItemVersionStatus.Draft}
+                  >
+                    <FormDesignerStateConsumer>
+                      {designerState => (
+                        <FormProvider
+                          name="Form"
+                          mode="designer"
+                          flatComponents={{ allComponents: designerState.allComponents, componentRelations: designerState.componentRelations }}
+                          formSettings={designerState.formSettings}
+                          isActionsOwner={false}
+                        >
+                          <FormDesignerRenderer />
+                        </FormProvider>
+                      )}
+                    </FormDesignerStateConsumer>
+                  </FormDesignerProvider>
+                )}
+              </FormMarkupConverter>
+
+            );
+
+          if (formStore.loadError)
+            return (
+              <Result
+                status={formStore.loadError.code as ResultStatusType}
+                title={formStore.loadError.code}
+                subTitle={formStore.loadError.message}
+              />);
+
+          return null;
+        }}
       </FormPersisterStateConsumer>
     </FormPersisterProvider>
   );

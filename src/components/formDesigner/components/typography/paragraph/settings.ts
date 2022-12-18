@@ -1,3 +1,5 @@
+import { FONT_SIZES } from './../utils';
+import { nanoid } from 'nanoid';
 import { DesignerToolbarSettings } from '../../../../../interfaces';
 
 export const settingsFormMarkup = new DesignerToolbarSettings()
@@ -21,7 +23,7 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     id: '6d29cf2c-96fe-40ce-be97-32e9f5d0fe40',
     name: 'contentType',
     parentId: 'root',
-    label: 'Content type',
+    label: 'Color',
     values: [
       {
         label: 'Secondary',
@@ -43,7 +45,27 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
         value: 'danger',
         id: '4b3830fa-6b2a-4493-a049-2a4a5be4b0a4',
       },
+      {
+        label: '(Custom Color)',
+        value: 'custom',
+        id: nanoid(),
+      },
     ],
+    dataSourceType: 'values',
+  })
+  .addColorPicker({
+    id: nanoid(),
+    name: 'color',
+    label: 'Custom Color',
+    title: 'Pick Content Color',
+    customVisibility: "return data.contentType === 'custom'",
+  })
+  .addDropdown({
+    id: nanoid(),
+    name: 'fontSize',
+    parentId: 'root',
+    label: 'Font Size',
+    values: Object.keys(FONT_SIZES).map(key => ({ id: nanoid(), value: key, label: key })),
     dataSourceType: 'values',
   })
   .addCheckbox({
@@ -59,6 +81,12 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     label: 'Italic',
   })
   .addCheckbox({
+    id: '883498f1-1e05-479d-b119-d038cb7d398d',
+    name: 'copyable',
+    parentId: 'root',
+    label: 'Copyable?',
+  })
+  .addCheckbox({
     id: '27cc9d42-1d07-4f70-a17c-50711d03acc5',
     name: 'keyboard',
     parentId: 'root',
@@ -69,12 +97,6 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     name: 'delete',
     parentId: 'root',
     label: 'Delete?',
-  })
-  .addCheckbox({
-    id: '883498f1-1e05-479d-b119-d038cb7d398d',
-    name: 'copyable',
-    parentId: 'root',
-    label: 'Copyable?',
   })
   .addCheckbox({
     id: '3a97e341-7f20-4479-9fa6-d8086e8b9a17',

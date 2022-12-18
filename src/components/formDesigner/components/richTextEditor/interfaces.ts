@@ -1,3 +1,4 @@
+import { JoditProps } from 'jodit-react';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 
 export interface IRichTextEditorProps extends IConfigurableFormComponent {
@@ -39,4 +40,10 @@ export interface IRichTextEditorProps extends IConfigurableFormComponent {
   saveModeInStorage?: boolean;
   askBeforePasteHTML?: boolean;
   askBeforePasteFromWord?: boolean;
+}
+
+export interface IJoditProps extends Partial<JoditProps['config']> {
+  showCharsCounter?: boolean;
+  showWordsCounter?: boolean;
+  showXPathInStatusbar?: boolean;
 }

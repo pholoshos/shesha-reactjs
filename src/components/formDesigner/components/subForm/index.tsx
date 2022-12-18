@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { IStylable, IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { FormOutlined } from '@ant-design/icons';
-import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { executeCustomExpression, getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { useForm, SubFormProvider, SubFormProviderProps, useGlobalState, useFormItem } from '../../../../providers';
 import { alertSettingsForm } from './settings';
 import SubForm from './subForm';
@@ -11,7 +11,7 @@ import { SubFormSettings } from './settingsv2';
 
 export interface ISubFormProps
   extends Omit<SubFormProviderProps, 'labelCol' | 'wrapperCol'>,
-    IConfigurableFormComponent {
+  IConfigurableFormComponent {
   name: string;
   labelCol?: number;
   wrapperCol?: number;
@@ -25,25 +25,7 @@ const SubFormComponent: IToolboxComponent<ISubFormProps> = {
     const { formMode, formData } = useForm();
     const { globalState } = useGlobalState();
 
-    const executeExpression = (expression: string, returnBoolean = false) => {
-      if (!expression) {
-        if (returnBoolean) {
-          return true;
-        } else {
-          console.error('Expected expression to be defined but it was found to be empty.');
-
-          return false;
-        }
-      }
-
-      /* tslint:disable:function-constructor */
-      const evaluated = new Function('data, globalState', expression)(formData, globalState);
-
-      // tslint:disable-next-line:function-constructor
-      return typeof evaluated === 'boolean' ? evaluated : true;
-    };
-
-    const isVisibleByCondition = executeExpression(model?.customVisibility, true);
+    const isVisibleByCondition = executeCustomExpression(model?.customVisibility, true, formData, globalState);
 
     if (!isVisibleByCondition && formMode !== 'designer') return null;
 
@@ -90,7 +72,7 @@ interface ISubFormWrapperProps extends Omit<ISubFormProps, 'id' | 'type' | 'styl
 }
 
 const SubFormWrapper: FC<ISubFormWrapperProps> = ({ style, readOnly, ...props }) => {
-  const actionOwnerName=`Subform (${props.name})`;
+  const actionOwnerName = `Subform (${props.name})`;
   return (
     <SubFormProvider {...props} actionsOwnerId={props.id} actionOwnerName={actionOwnerName}>
       <SubForm style={style} readOnly={readOnly} />

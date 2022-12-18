@@ -1,24 +1,16 @@
 import React, { FC } from 'react';
-import { Modal, Form, ModalProps } from 'antd';
+import { Modal, Form } from 'antd';
 import { useDynamicModals } from '../../providers';
 import { ConfigurableForm } from '../';
-import { FormIdentifier, FormMode } from '../../providers/form/models';
-import { IModalProps } from '../../providers/dynamicModal/models';
+import { IModalWithConfigurableFormProps, IModalWithContentProps } from '../../providers/dynamicModal/models';
 import { evaluateString, useShaRouting } from '../..';
 import _ from 'lodash';
+import { useMedia } from 'react-use';
 
-export interface IDynamicModalProps extends Omit<IModalProps, 'fetchUrl'> {
-  id: string;
-  title?: string;
+export interface IDynamicModalWithFormProps extends Omit<IModalWithConfigurableFormProps, 'fetchUrl'> {
   isVisible: boolean;
-
-  // todo: move to a separate object
-  formId: FormIdentifier;
-  mode: FormMode;
-  onSubmitted?: (response: any) => void;
 }
-
-export const DynamicModal: FC<IDynamicModalProps> = props => {
+export const DynamicModalWithForm: FC<IDynamicModalWithFormProps> = props => {
   const {
     id,
     title,
@@ -54,7 +46,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
       if (showModalFooter) {
         form?.submit();
       } else {
-        hideForm();
+        closeModal();
       }
     }
   };
@@ -70,7 +62,7 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
   };
 
   const onSubmitted = (_: any, response: any) => {
-    console.log('LOG:onSubmitted')
+    console.log('LOG:onSubmitted');
     if (onSuccessRedirectUrl) {
       const computedRedirectUrl = evaluateString(onSuccessRedirectUrl, response);
 
@@ -81,20 +73,21 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
       props.onSubmitted(response);
     }
 
-    hideForm();
+    closeModal();
 
     form.resetFields();
   };
 
   const handleCancel = () => {
-    hideForm();
+    closeModal();
 
     if (onCancel) {
       onCancel();
     }
   };
 
-  const hideForm = () => {
+  const closeModal = () => {
+    console.log('closeModal');
     hide(id);
 
     if (destroyOnClose) {
@@ -102,38 +95,89 @@ export const DynamicModal: FC<IDynamicModalProps> = props => {
     }
   };
 
-  const footerProps: ModalProps = showModalFooter ? {} : { footer: null };
+  return (
+    <DynamicModalWithContent
+      key={id}
+      id={id}
+      title={title}
+      width={width}
+      isVisible={isVisible}
+      onOk={onOk}
+      onCancel={closeModal}
+      footer={showModalFooter ? undefined : null}
+      content={
+        <ConfigurableForm
+          formId={formId}
+          form={form}
+          mode={mode}
+          actions={{
+            close: handleCancel,
+          }}
+          onFinish={onSubmitted}
+          prepareInitialValues={prepareInitialValues}
+          onFinishFailed={onFailed}
+          beforeSubmit={beforeSubmit}
+          httpVerb={submitHttpVerb}
+          initialValues={initialValues}
+          parentFormValues={parentFormValues}
+          skipFetchData={skipFetchData}
+        />
+      }
+    />
+  );
+};
+
+export interface IDynamicModalWithContentProps extends IModalWithContentProps {
+  isVisible: boolean;
+  //content: ReactNode;
+  onCancel?: () => void;
+  onOk?: () => void;
+}
+export const DynamicModalWithContent: FC<IDynamicModalWithContentProps> = props => {
+  const { id, title, isVisible, destroyOnClose, width = 800, onCancel, onOk, content, footer } = props;
+
+  const { hide, removeModal } = useDynamicModals();
+  const isSmall = useMedia('(max-width: 480px)');
+
+  const hideForm = () => {
+    if (Boolean(onCancel)) {
+      onCancel();
+    } else {
+      hide(id);
+
+      if (destroyOnClose) {
+        removeModal(id);
+      }
+    }
+  };
 
   return (
     <Modal
       key={id}
       title={title}
       open={isVisible}
-      onOk={onOk} // not used
-      onCancel={hideForm} // not used
-      {...footerProps}
+      onOk={onOk}
+      onCancel={hideForm}
+      footer={footer}
       destroyOnClose
-      width={width ? width : 800}
+      // width={width ? width : 800}
+      width={isSmall ? '90%' : width}
       maskClosable={false}
     >
-      <ConfigurableForm
-        formId={formId}
-        form={form}
-        mode={mode}
-        actions={{
-          close: handleCancel,
-        }}
-        onFinish={onSubmitted}
-        prepareInitialValues={prepareInitialValues}
-        onFinishFailed={onFailed}
-        beforeSubmit={beforeSubmit}
-        httpVerb={submitHttpVerb}
-        initialValues={initialValues}
-        parentFormValues={parentFormValues}
-        skipFetchData={skipFetchData}
-      />
+      {content}
     </Modal>
   );
+};
+
+type DynamicModalProps = IDynamicModalWithContentProps | IDynamicModalWithFormProps;
+export const DynamicModal: FC<DynamicModalProps> = props => {
+  const withFormProps = props as IDynamicModalWithFormProps;
+  if (withFormProps.formId) {
+    return <DynamicModalWithForm {...withFormProps} />;
+  }
+
+  const withContentProps = props as IDynamicModalWithContentProps;
+  return <DynamicModalWithContent {...withContentProps} />;
 };
 
 export default DynamicModal;

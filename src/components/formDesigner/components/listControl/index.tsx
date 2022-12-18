@@ -12,6 +12,7 @@ import { nanoid } from 'nanoid';
 import ListControl from './listControl';
 import { migrateV0toV1 } from './migrations/migrate-v1';
 import { migrateV1toV2 } from './migrations/migrate-v2';
+import classNames from 'classnames';
 
 const ListComponent: IToolboxComponent<IListComponentProps> = {
   type: 'list',
@@ -29,7 +30,10 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
     return (
       <ConfigurableFormItem
         model={{ ...model }}
-        className="sha-list-component"
+        className={classNames(
+          'sha-list-component',
+          { horizontal: model?.orientation === 'horizontal' } //
+        )}
         labelCol={{ span: model?.hideLabel ? 0 : model?.labelCol }}
         wrapperCol={{ span: model?.hideLabel ? 24 : model?.wrapperCol }}
       >
@@ -49,41 +53,45 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
       />
     );
   },
-  migrator: m => m.add<IListComponentProps>(0, prev => {
-    const uniqueStateId = `FORM_LIST_${nanoid()}`;
+  migrator: m =>
+    m
+      .add<IListComponentProps>(0, prev => {
+        const uniqueStateId = `FORM_LIST_${nanoid()}`;
 
-    const customProps: IListComponentProps = {
-      ...prev,
-      showPagination: prev['showPagination'] ?? true,
-      hideLabel: prev['hideLabel'] ?? true,
-      uniqueStateId: prev['uniqueStateId'] ?? uniqueStateId,
-      labelCol: prev['labelCol'] ?? 5,
-      wrapperCol: prev['wrapperCol'] ?? 13,
-      selectionMode: prev['selectionMode'] ?? 'single',
-      deleteConfirmMessage: prev['deleteConfirmMessage'] ?? 'Are you sure you want to delete this item? Please note this action cannot be reversed',
-      buttons: prev['buttons'] ?? [
-        {
-          id: nanoid(),
-          itemType: 'item',
-          sortOrder: 0,
-          name: 'button1',
-          label: ' ',
-          itemSubType: 'button',
-          uniqueStateId,
-          buttonAction: 'dispatchAnEvent',
-          eventName: 'refreshListItems',
-          chosen: false,
-          selected: false,
-          icon: 'ReloadOutlined',
-          buttonType: 'link',
-        },
-      ],
-      paginationDefaultPageSize: 10,
-    };
-    return customProps;
-  })
-    .add<IListComponentProps>(1, migrateV0toV1)
-    .add<IListComponentProps>(2, migrateV1toV2),
+        const customProps: IListComponentProps = {
+          ...prev,
+          showPagination: prev['showPagination'] ?? true,
+          hideLabel: prev['hideLabel'] ?? true,
+          uniqueStateId: prev['uniqueStateId'] ?? uniqueStateId,
+          labelCol: prev['labelCol'] ?? 5,
+          wrapperCol: prev['wrapperCol'] ?? 13,
+          selectionMode: prev['selectionMode'] ?? 'single',
+          deleteConfirmMessage:
+            prev['deleteConfirmMessage'] ??
+            'Are you sure you want to delete this item? Please note this action cannot be reversed',
+          buttons: prev['buttons'] ?? [
+            {
+              id: nanoid(),
+              itemType: 'item',
+              sortOrder: 0,
+              name: 'button1',
+              label: ' ',
+              itemSubType: 'button',
+              uniqueStateId,
+              buttonAction: 'dispatchAnEvent',
+              eventName: 'refreshListItems',
+              chosen: false,
+              selected: false,
+              icon: 'ReloadOutlined',
+              buttonType: 'link',
+            },
+          ],
+          paginationDefaultPageSize: 10,
+        };
+        return customProps;
+      })
+      .add<IListComponentProps>(1, migrateV0toV1)
+      .add<IListComponentProps>(2, migrateV1toV2),
   validateSettings: model => validateConfigurableComponentSettings(listSettingsForm, model),
 };
 

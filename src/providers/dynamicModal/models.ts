@@ -1,11 +1,32 @@
 import { FormIdentifier, FormMode } from './../form/models';
 import { ValidateErrorEntity } from '../../interfaces';
 import { IKeyValue } from '../../interfaces/keyValue';
+import { ReactNode } from 'react';
 
-/**
- * Dynamic Modal properties
- */
-export interface IModalProps {
+export interface IModalBaseProps {
+  /**
+   * Id of the modal
+   */
+  id: string;
+
+  /**
+   * Title to display on the modal
+   */
+  title?: string;
+
+  /**
+   * Whether the modal is visible
+   */
+  isVisible: boolean;
+
+  destroyOnClose?: boolean;
+
+  width?: number | string;
+
+  onCancel?: () => void;
+}
+
+export interface IModalWithConfigurableFormProps extends IModalBaseProps {
   /**
    * Id of the form to be rendered on the markup
    */
@@ -17,44 +38,9 @@ export interface IModalProps {
   fetchUrl?: string;
 
   /**
-   * Whether the modal footer should be shown. The modal footer shows default buttons Submit and Cancel.
-   *
-   * The url to use will be found in the form settings and the correct verb to use is specified by submitHttpVerb
-   */
-  showModalFooter?: boolean;
-
-  /**
    * What http verb to use when submitting the form. Used in conjunction with `showModalFooter`
    */
   submitHttpVerb?: 'POST' | 'PUT';
-
-  /**
-   * Title to display on the modal
-   */
-  title?: string;
-  // path | id | markup
-
-  /**
-   * Id of the modal to be shown
-   */
-  id: string;
-
-  /**
-   * Whether the modal is visible
-   */
-  isVisible: boolean;
-
-  /**
-   * A callback to execute when the form has been submitted
-   */
-  onSubmitted?: (values?: any) => void;
-
-  onFailed?: (errorInfo: ValidateErrorEntity<any>) => void;
-
-  /**
-   * If passed, the user will be redirected to this url on success
-   */
-  onSuccessRedirectUrl?: string;
 
   /**
    * Mode of the form: "designer" | "edit" | "readonly"
@@ -68,8 +54,6 @@ export interface IModalProps {
 
   parentFormValues?: any;
 
-  destroyOnClose?: boolean;
-
   /**
    * If specified, the form data will not be fetched, even if the GET Url has query parameters that can be used to fetch the data.
    * This is useful in cases whereby one form is used both for create and edit mode
@@ -78,9 +62,14 @@ export interface IModalProps {
 
   submitLocally?: boolean;
 
-  width?: number | string;
-
   modalConfirmDialogMessage?: string;
+
+  /**
+   * Whether the modal footer should be shown. The modal footer shows default buttons Submit and Cancel.
+   *
+   * The url to use will be found in the form settings and the correct verb to use is specified by submitHttpVerb
+   */
+  showModalFooter?: boolean;
 
   /**
    * If passed and the form has `getUrl` defined, you can use this function to prepare `fetchedData` for as `initialValues`
@@ -93,8 +82,28 @@ export interface IModalProps {
    */
   prepareInitialValues?: (fetchedData: any) => any;
 
-  onCancel?: () => void;
+  /**
+   * A callback to execute when the form has been submitted
+   */
+  onSubmitted?: (values?: any) => void;
+
+  onFailed?: (errorInfo: ValidateErrorEntity<any>) => void;
+
+  /**
+   * If passed, the user will be redirected to this url on success
+   */
+  onSuccessRedirectUrl?: string;
 }
+
+export interface IModalWithContentProps extends IModalBaseProps {
+  footer?: ReactNode;
+  content: ReactNode;
+}
+/**
+ * Dynamic Modal properties
+ */
+export type IModalProps = IModalWithConfigurableFormProps;
+export type ICommonModalProps = IModalWithContentProps | IModalWithConfigurableFormProps;
 
 /**
  * Modal dialog instance
@@ -102,7 +111,7 @@ export interface IModalProps {
 export interface IModalInstance {
   id: string;
   isVisible: boolean;
-  props: IModalProps;
+  props: ICommonModalProps;
 }
 
 /**

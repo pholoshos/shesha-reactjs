@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { ConfigurationItemsViewMode } from '../appConfigurator/models';
 import { FormIdentifier, IFormDto } from '../form/models';
 
 export interface IConfigurationItemsLoaderStateContext {
@@ -7,6 +8,8 @@ export interface IConfigurationItemsLoaderStateContext {
 
 export interface IGetFormPayload {
   formId: FormIdentifier;
+  configurationItemMode?: ConfigurationItemsViewMode;
+  skipCache: boolean;
 }
 
 export interface IConfigurationItemsLoaderActionsContext {

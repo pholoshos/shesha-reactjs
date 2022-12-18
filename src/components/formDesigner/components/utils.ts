@@ -122,3 +122,23 @@ export const customInputNumberEventHandler = ({
     return eventFunc(formData, form, formMode, globalState, http, message, moment, value);
   },
 });
+
+export const customRateEventHandler = ({
+  model,
+  form,
+  formData,
+  formMode,
+  globalState,
+  http,
+  message,
+  moment,
+}: ICustomEventHandler) => ({
+  onChange: (value: number) => {
+    const eventFunc = new Function(
+      'data, form, formMode, globalState, http, message, moment, value',
+      model?.onChangeCustom
+    );
+
+    return eventFunc(formData, form, formMode, globalState, http, message, moment, value);
+  },
+});

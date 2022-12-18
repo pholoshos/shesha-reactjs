@@ -15,7 +15,6 @@ import {
   Checkbox,
   ColProps,
   Divider,
-  Empty,
   Form,
   Input,
   message,
@@ -39,7 +38,7 @@ import ConditionalWrap from '../../../conditionalWrapper';
 import moment from 'moment';
 import { useFormConfiguration } from '../../../../providers/form/api';
 import { useConfigurableAction } from '../../../../providers/configurableActionsDispatcher';
-import { useDeepCompareEffect } from 'react-use';
+import { useDeepCompareEffect, useMeasure } from 'react-use';
 
 const ListControl: FC<IListControlProps> = props => {
   const {
@@ -55,6 +54,7 @@ const ListControl: FC<IListControlProps> = props => {
     deleteUrl,
     deleteConfirmMessage,
     buttons,
+    isButtonInline,
     title,
     maxHeight,
     filters,
@@ -73,6 +73,8 @@ const ListControl: FC<IListControlProps> = props => {
     namePrefix,
     customVisibility,
     readOnly,
+    placeholder,
+    orientation,
   } = props;
 
   const { formConfiguration, refetch: refetchFormConfig, error: fetchFormError } = useFormConfiguration({
@@ -180,7 +182,7 @@ const ListControl: FC<IListControlProps> = props => {
     if (dataSource === 'api') {
       debouncedRefresh();
     }
-  }, [isInDesignerMode, dataSource, evaluatedFilters]);
+  }, [isInDesignerMode, dataSource, evaluatedFilters, queryParams]);
 
   useDeepCompareEffect(() => {
     if (uniqueStateId && Array.isArray(value) && value.length) {
@@ -468,6 +470,8 @@ const ListControl: FC<IListControlProps> = props => {
     setState(prev => ({ ...prev, selectedItemIndexes: e?.target?.checked ? value?.map((_, index) => index) : [] }));
   };
 
+  const [ref, measured] = useMeasure();
+
   return (
     <CollapsiblePanel
       header={title}
@@ -490,7 +494,14 @@ const ListControl: FC<IListControlProps> = props => {
               />
             </Show>
 
-            <ButtonGroup items={buttons || []} name={''} type={''} id={containerId} size="small" />
+            <ButtonGroup
+              items={buttons || []}
+              name={''}
+              type={''}
+              id={containerId}
+              size="small"
+              isInline={isButtonInline}
+            />
           </Space>
         </div>
       }
@@ -524,13 +535,21 @@ const ListControl: FC<IListControlProps> = props => {
         <ShaSpin spinning={isSpinning} tip={isFetchingEntities ? 'Fetching data...' : 'Submitting'}>
           <Show when={Array.isArray(value)}>
             <div
-              className={classNames('sha-list-component-body', { loading: isFetchingEntities && value?.length === 0 })}
+              ref={ref}
+              // ref={containerBodyRef}
+              className={classNames('sha-list-component-body', {
+                loading: isFetchingEntities && value?.length === 0,
+                horizontal: orientation === 'horizontal',
+              })}
               style={{ maxHeight: !showPagination ? maxHeight : 'unset' }}
             >
               <Form.List name={namePrefix ? [namePrefix, name]?.join('.')?.split('.') : name} initialValue={[]}>
                 {(fields, { remove }) => {
                   return (
-                    <>
+                    <ConditionalWrap
+                      condition={orientation === 'horizontal'}
+                      wrap={c => <Space size={'middle'}>{c}</Space>}
+                    >
                       {fields?.map((field, index) => (
                         <ConditionalWrap
                           key={index}
@@ -556,6 +575,7 @@ const ListControl: FC<IListControlProps> = props => {
                             onClick={() => {
                               onSelect(index);
                             }}
+                            style={{ width: measured?.width }}
                           >
                             <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
                               <FormItemProvider
@@ -601,13 +621,13 @@ const ListControl: FC<IListControlProps> = props => {
                           </div>
                         </ConditionalWrap>
                       ))}
-                    </>
+                    </ConditionalWrap>
                   );
                 }}
               </Form.List>
 
               <Show when={hasNoData}>
-                <Empty description="There are no items found." />
+                <div style={{ textAlign: 'center' }}>{placeholder ?? 'There are no items found.'}</div>
               </Show>
             </div>
           </Show>

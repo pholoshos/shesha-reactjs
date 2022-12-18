@@ -8,6 +8,7 @@ export type IconType = FilledIconTypes | OutlinedIconTypes | TwoToneIconTypes;
 
 export interface IShaIconProps extends IconBaseProps {
   iconName: IconType;
+  twoToneColor?: string;
 }
 
 const ShaIcon: FC<IShaIconProps> = ({ iconName = 'WarningFilled', ...props }) => {

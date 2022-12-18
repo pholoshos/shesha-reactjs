@@ -28,6 +28,7 @@ export const UrlAutocomplete = <TValue,>(props: IUrlAutocompleteProps<TValue>) =
     readOnlyMultipleMode = 'raw',
     disableSearch,
     subscribedEventNames,
+    allowFreeText = false,
   } = props;
 
   const urlFetcher = useGet<any, AjaxResponseBase, IUrlFetcherQueryParams, void>(
@@ -49,7 +50,7 @@ export const UrlAutocomplete = <TValue,>(props: IUrlAutocompleteProps<TValue>) =
         ? value
         : /*: isStringArray(value)
           ? value*/
-          undefined;
+        undefined;
 
     if (dataSourceUrl) {
       const queryParams = {
@@ -112,8 +113,8 @@ export const UrlAutocomplete = <TValue,>(props: IUrlAutocompleteProps<TValue>) =
     if (mode === 'multiple' || mode === 'tags') {
       return Array.isArray(localValue)
         ? (localValue as TValue[]).map<CustomLabeledValue<TValue>>(o => {
-            return getLabeledValue(o, options);
-          })
+          return getLabeledValue(o, options);
+        })
         : [getLabeledValue(localValue as TValue, options)];
     } else return getLabeledValue(localValue as TValue, options);
   };
@@ -135,11 +136,18 @@ export const UrlAutocomplete = <TValue,>(props: IUrlAutocompleteProps<TValue>) =
     // Note: we shouldn't process full list and make it unique because by this way we'll hide duplicates received from the back-end
     const selectedItems = selectedItem
       ? (Array.isArray(selectedItem) ? selectedItem : [selectedItem]).filter(
-          i => fetchedItems.findIndex(fi => fi.value === i.value) === -1
-        )
+        i => fetchedItems.findIndex(fi => fi.value === i.value) === -1
+      )
       : [];
 
     const result = [...fetchedItems, ...selectedItems];
+
+    if (autocompleteText && allowFreeText && !value) {
+      if (fetchedItems.findIndex(fi => fi.label === autocompleteText) === -1){
+        result.push({ label: autocompleteText, value: autocompleteText, data: autocompleteText });
+      }
+    }
+
     return result;
   }, [value, autocompleteText, urlFetcher]);
 

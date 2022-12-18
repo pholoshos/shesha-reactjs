@@ -1,21 +1,24 @@
 import {
   FORM_PERSISTER_CONTEXT_INITIAL_STATE,
   IFormPersisterStateContext,
-  IFormLoadPayload,
+  ILoadRequestPayload,
 } from './contexts';
 import { FormPersisterActionEnums } from './actions';
 import { handleActions } from 'redux-actions';
 import { IFormSettings } from '../form/models';
 import { IPersistedFormProps } from './models';
+import { IErrorInfo } from '../../interfaces/errorInfo';
 
 const reducer = handleActions<IFormPersisterStateContext, any>(
   {
-    [FormPersisterActionEnums.LoadRequest]: (state: IFormPersisterStateContext, action: ReduxActions.Action<IFormLoadPayload>) => {
+    [FormPersisterActionEnums.LoadRequest]: (state: IFormPersisterStateContext, action: ReduxActions.Action<ILoadRequestPayload>) => {
       const { payload } = action;
 
       return {
         ...state,
         formId: payload.formId,
+        loading: true,
+        loadError: null,
       };
     },
 
@@ -35,7 +38,21 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
           isLastVersion: payload.isLastVersion,
         },
         markup: payload.markup,
-        formSettings: payload.formSettings
+        formSettings: payload.formSettings,
+        loaded: true,
+        loading: false,
+        loadError: null,
+      };
+    },
+
+    [FormPersisterActionEnums.LoadError]: (state: IFormPersisterStateContext, action: ReduxActions.Action<IErrorInfo>) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        loading: false,
+        loaded: false,
+        loadError: payload,
       };
     },
 
@@ -48,6 +65,31 @@ const reducer = handleActions<IFormPersisterStateContext, any>(
       };
     },
 
+    [FormPersisterActionEnums.SaveRequest]: (state: IFormPersisterStateContext, _action: ReduxActions.Action<void>) => {
+      return {
+        ...state,
+        saving: true,
+        saved: false,
+        saveError: null,
+      };
+    },
+    [FormPersisterActionEnums.SaveSuccess]: (state: IFormPersisterStateContext, _action: ReduxActions.Action<void>) => {
+      return {
+        ...state,
+        saving: false,
+        saved: true,
+        saveError: null,
+      };
+    },
+    [FormPersisterActionEnums.SaveError]: (state: IFormPersisterStateContext, action: ReduxActions.Action<IErrorInfo>) => {
+      const { payload } = action;
+
+      return {
+        ...state,
+        saving: false,
+        saveError: payload,
+      };
+    },
   },
 
   FORM_PERSISTER_CONTEXT_INITIAL_STATE

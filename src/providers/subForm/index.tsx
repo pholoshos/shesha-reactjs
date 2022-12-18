@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useContext, useMemo, useRef } from 'react';
+import React, { FC, useReducer, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useGet, useMutate } from 'restful-react';
 import { useForm } from '../form';
 import { SubFormActionsContext, SubFormContext, SUB_FORM_CONTEXT_INITIAL_STATE } from './contexts';
@@ -14,8 +14,10 @@ import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDeepCompareEffect, usePrevious } from 'react-use';
 import { IEntity } from '../../pages/dynamic/interfaces';
-import { useFormConfiguration } from '../form/api';
+import { useFormConfiguration, UseFormConfigurationArgs } from '../form/api';
 import { useConfigurableAction } from '../configurableActionsDispatcher';
+import { entityConfigGetEntityConfigForm } from '../../apis/entityConfig';
+import { useSheshaApplication } from '../..';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
   actionsOwnerId?: string;
@@ -26,6 +28,8 @@ export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'valu
 }
 
 const SubFormProvider: FC<SubFormProviderProps> = ({
+  formSelectionMode,
+  formType,
   children,
   value,
   formId,
@@ -48,8 +52,12 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   onChange,
   defaultValue,
 }) => {
+  const { backendUrl } = useSheshaApplication();
+  const [ state, dispatch ] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
+  const { publish } = usePubSub();
   const { formData = {}, formMode } = useForm();
   const { globalState } = useGlobalState();
+  const [ formConfig, setFormConfig ] = useState<UseFormConfigurationArgs>({ formId: formId, lazy: true })
 
   const getEvaluatedUrl = (url: string): string => {
     if (!url) return '';
@@ -73,15 +81,31 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     return getQueryParamPayload();
   }, [queryParams, formData, globalState]);
 
-  const [state, dispatch] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
-  const { publish } = usePubSub();
-
   const {
     refetch: fetchForm,
     //formConfiguration: fetchFormResponse,
     loading: isFetchingForm,
     error: fetchFormError,
-  } = useFormConfiguration({ formId: formId, lazy: true });
+  } = useFormConfiguration(formConfig);
+
+  useEffect(() => { 
+    setFormConfig({ formId: formId, lazy: true })
+  }, [formId])
+
+  // show form based on the entity type
+  useEffect(() => {
+    if (formData && formSelectionMode == 'dynamic') {
+      const obj = formData[name];
+      if (typeof obj === 'object' && obj['_meta'] && obj['_meta']['className'] && !formConfig?.formId)
+      {
+        entityConfigGetEntityConfigForm({entityConfigName: obj['_meta']['className'], typeName: formType}, { base: backendUrl})
+          .then(response => {
+            if (response.success) 
+              setFormConfig({formId: {name: response.result.name, module: response.result.module}, lazy: true});
+          });
+      }
+    }
+  }, [formData])
 
   const {
     refetch: fetchEntity,
@@ -264,20 +288,20 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
 
   //#region Fetch Form
   useDeepCompareEffect(() => {
-    if (formId && !markup) {
+    if (formConfig.formId && !markup) {
       fetchForm().then(response => {
         dispatch(setMarkupWithSettingsAction({ components: response.components, formSettings: response.formSettings }));
       });
     }
 
-    if (!formId && markup) {
+    if (!formConfig.formId && markup) {
       dispatch(setMarkupWithSettingsAction(markup));
     }
 
-    if (!formId && !markup) {
+    if (!formConfig.formId && !markup){
       dispatch(setMarkupWithSettingsAction({ components: [], formSettings: DEFAULT_FORM_SETTINGS }));
     }
-  }, [formId, markup]); //
+  }, [formConfig.formId, markup]);
 
   useDeepCompareEffect(() => {
     if (markup) {

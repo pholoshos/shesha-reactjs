@@ -75,8 +75,6 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
         const initialValues = evaluateKeyValuesToObject(actionArgs.additionalProperties, formData);
         const parentFormValues = formData;
 
-        console.log('LOGS:: useConfigurableAction initialValues, actionArgs', initialValues, actionArgs);
-
         const { modalWidth, customWidth, widthUnits } = actionArgs;
 
         return new Promise((resolve, _reject) => {

@@ -1,11 +1,11 @@
-import React, { CSSProperties, FC, ReactNode } from 'react';
+import React, { CSSProperties, FC, ReactNode, useMemo } from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
 import { IConfigurableFormComponent } from '../../../../providers/form/models';
 import { HeartOutlined } from '@ant-design/icons';
 import ConfigurableFormItem from '../formItem';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import IconPicker, { ShaIconTypes } from '../../../iconPicker';
-import { useForm } from '../../../..';
+import { executeScriptSync, useForm, useGlobalState } from '../../../..';
 import { iconPickerFormSettings } from './settings';
 import { ColorResult } from 'react-color';
 
@@ -13,6 +13,8 @@ export interface IIconPickerComponentProps extends IConfigurableFormComponent {
   readOnly?: boolean;
   fontSize?: number;
   color?: ColorResult;
+  customIcon?: string;
+  customColor?: string;
 }
 
 const IconPickerComponent: IToolboxComponent<IIconPickerComponentProps> = {
@@ -20,8 +22,6 @@ const IconPickerComponent: IToolboxComponent<IIconPickerComponentProps> = {
   name: 'Icon Picker',
   icon: <HeartOutlined />,
   factory: (model: IIconPickerComponentProps) => {
-    console.log('LOGS::: IconPickerComponent', model);
-
     return (
       <ConfigurableFormItem model={model}>
         <IconPickerWrapper {...model} />
@@ -37,8 +37,30 @@ export interface IIconPickerWrapperProps extends IIconPickerComponentProps {
   onChange?: (value?: string) => void;
 }
 
-export const IconPickerWrapper: FC<IIconPickerWrapperProps> = ({ value, fontSize, color, ...props }) => {
-  const { formMode } = useForm();
+export const IconPickerWrapper: FC<IIconPickerWrapperProps> = ({
+  customColor,
+  customIcon,
+  value,
+  fontSize,
+  color,
+  ...props
+}) => {
+  const { formMode, formData } = useForm();
+  const { globalState } = useGlobalState();
+
+  const expressionArgs = { data: formData, globalState };
+
+  const computedColor = useMemo(() => {
+    if (customColor) return executeScriptSync<string>(customColor, expressionArgs);
+
+    return color?.hex;
+  }, [expressionArgs, customColor]);
+
+  const computedIcon = useMemo(() => {
+    if (customIcon) return executeScriptSync<string>(customIcon, expressionArgs);
+
+    return value;
+  }, [expressionArgs, customIcon]);
 
   const onIconChange = (_icon: ReactNode, iconName: ShaIconTypes) => {
     if (props.onChange) props.onChange(iconName);
@@ -46,16 +68,16 @@ export const IconPickerWrapper: FC<IIconPickerWrapperProps> = ({ value, fontSize
 
   const style: CSSProperties = {
     fontSize: fontSize || 24,
-    color: color?.hex,
+    color: computedColor,
   };
 
   return (
     <IconPicker
-      value={value as ShaIconTypes}
+      value={computedIcon as ShaIconTypes}
       onIconChange={onIconChange}
       readOnly={formMode === 'readonly'}
       style={style}
-      twoToneColor={color?.hex}
+      twoToneColor={computedColor}
     />
   );
 };

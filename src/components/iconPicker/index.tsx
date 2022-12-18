@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useMemo, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 import { IconBaseProps } from '@ant-design/icons/lib/components/Icon';
 import { FilledIconTypes, FILLED_ICON_GROUPS } from './iconNamesFilled';
 import ShaIcon from '../shaIcon';
@@ -70,6 +70,10 @@ const IconPicker: FC<IIconPickerProps> = ({
     mode: 'outlined',
     group: ICON_MODE_GROUPS['outlined'],
   });
+
+  useEffect(() => {
+    setLocalSelectedIcon(value);
+  }, [value]);
 
   const toggleModalVisibility = () => {
     if (!readOnly) setShowModal(visible => !visible);

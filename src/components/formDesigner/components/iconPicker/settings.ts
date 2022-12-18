@@ -55,14 +55,52 @@ export const iconPickerFormSettings = new DesignerToolbarSettings()
     min: 10,
     defaultValue: 24,
   })
+  .addCodeEditor({
+    id: nanoid(),
+    name: 'customIcon',
+    label: 'Custom Icon',
+    labelAlign: 'right',
+    parentId: 'root',
+    hidden: false,
+    customVisibility: null,
+    description: 'Enter custom icon code. The function must return a string representing the name of the icon',
+    validate: {},
+    settingsValidationErrors: [],
+    exposedVariables: [
+      { id: nanoid(), name: 'data', description: 'The form data', type: 'object' },
+      { id: nanoid(), name: 'globalState', description: 'The global state', type: 'object' },
+    ],
+  })
+  .addSectionSeparator({
+    id: nanoid(),
+    name: 'separatorColor',
+    parentId: 'root',
+    label: 'Color',
+  })
   .addColorPicker({
     id: nanoid(),
     name: 'color',
     label: 'Color',
     title: 'Choose Icon color',
   })
+  .addCodeEditor({
+    id: nanoid(),
+    name: 'customColor',
+    label: 'Custom Color',
+    labelAlign: 'right',
+    parentId: 'root',
+    hidden: false,
+    customVisibility: null,
+    description: 'Enter custom color code. The function must return a string representing the color of the icon',
+    validate: {},
+    settingsValidationErrors: [],
+    exposedVariables: [
+      { id: nanoid(), name: 'data', description: 'The form data', type: 'object' },
+      { id: nanoid(), name: 'globalState', description: 'The global state', type: 'object' },
+    ],
+  })
   .addDropdown({
-    id: 'df8a8f35-a50b-42f9-9642-73d390ceddbf',
+    id: nanoid(),
     name: 'visibility',
     parentId: 'root',
     label: 'Visibility',
@@ -89,7 +127,7 @@ export const iconPickerFormSettings = new DesignerToolbarSettings()
     dataSourceType: 'values',
   })
   .addCheckbox({
-    id: 'cfd7d45e-c7e3-4a27-987b-dc525c412448',
+    id: nanoid(),
     name: 'hidden',
     parentId: 'root',
     label: 'Hidden',

@@ -272,11 +272,13 @@ export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormC
  * @returns {string} evaluated string
  */
 export const evaluateString = (template: string = '', data: any) => {
+  const localData: IAnyObject = {};
   // The function throws an exception if the expression passed doesn't have a corresponding curly braces
   try {
     if (data) {
       //adding a function to the data object that will format datetime
-      data.dateFormat = function() {
+
+      localData.dateFormat = function() {
         return function(timestamp, render) {
           return new Date(render(timestamp).trim()).toLocaleDateString('en-us', {
             year: 'numeric',
@@ -286,7 +288,7 @@ export const evaluateString = (template: string = '', data: any) => {
         };
       };
     }
-    return template && typeof template === 'string' ? Mustache.render(template, data ?? {}) : template;
+    return template && typeof template === 'string' ? Mustache.render(template, localData ?? {}) : template;
   } catch (error) {
     console.warn('evaluateString ', error);
     return template;

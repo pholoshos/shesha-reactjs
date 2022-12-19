@@ -69,6 +69,8 @@ const ConfigurableActionDispatcherProvider: FC<PropsWithChildren<IConfigurableAc
   };
 
   const unregisterAction = (payload: IConfigurableActionIdentifier) => {
+    if (!payload.ownerUid)
+      return;
     const ownerActions = actions.current[payload.ownerUid];
     if (!ownerActions)
       return;

@@ -43,7 +43,7 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   
   const [state, dispatch] = useThunkReducer(formReducer, initial);
 
-  const { getForm } = useConfigurationItemsLoader();
+  const { getForm, clearItemCache } = useConfigurationItemsLoader();
   const { configurationItemMode } = useAppConfigurator();
 
   const doFetchFormInfo = (payload: ILoadFormPayload) => {
@@ -102,6 +102,9 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
     await saveFormHttp(dto, {})
       .then(_response => {
+        // clear cache
+        clearItemCache({ formId: state.formId });
+
         dispatch(saveSuccessAction());
         return Promise.resolve();
       })

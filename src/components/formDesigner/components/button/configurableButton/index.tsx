@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { Button, message } from 'antd';
-import { useForm, useGlobalState, useSheshaApplication } from '../../../../../providers';
-import { ISelectionProps } from '../../../../../providers/dataTableSelection/models';
+import { useDataTableSelection, useForm, useGlobalState, useSheshaApplication } from '../../../../../providers';
 import ShaIcon, { IconType } from '../../../../shaIcon';
 import classNames from 'classnames';
 import moment from 'moment';
@@ -12,7 +11,6 @@ import { useConfigurableActionDispatcher } from '../../../../../providers/config
 
 export interface IConfigurableButtonProps extends Omit<IButtonGroupButton, 'style'> {
   formComponentId: string;
-  selectedRow?: ISelectionProps;
   disabled?: boolean;
   hidden?: boolean;
   style?: CSSProperties;
@@ -22,6 +20,7 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
   const { backendUrl } = useSheshaApplication();
   const { form, formData, formMode } = useForm();
   const { globalState } = useGlobalState();
+  const { selectedRow } = useDataTableSelection(false) ?? {}; // todo: move to a generic context provider
 
   const { executeAction } = useConfigurableActionDispatcher();
 
@@ -31,7 +30,7 @@ export const ConfigurableButton: FC<IConfigurableButtonProps> = props => {
     if (props.actionConfiguration) {
       // todo: implement generic context collector
       const evaluationContext = {
-        selectedRow: props.selectedRow,
+        selectedRow: selectedRow,
         data: formData,
         moment: moment,
         form: form,

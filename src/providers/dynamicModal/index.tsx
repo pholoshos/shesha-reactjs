@@ -30,7 +30,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
     ...DYNAMIC_MODAL_CONTEXT_INITIAL_STATE,
   });
 
-  const actionDependencies = [];
+  const actionDependencies = [state];
   useConfigurableAction<IShowConfigrmationArguments>({
     name: 'Show Confirmation Dialog',
     owner: 'Common',
@@ -65,9 +65,10 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
     executer: (actionArgs, context) => {
       const modalId = nanoid();
 
-      const formData = context?.data ?? {};
-      const initialValues = evaluateKeyValuesToObject(actionArgs.additionalProperties, formData);
-      const parentFormValues = formData;
+      const initialValues = evaluateKeyValuesToObject(actionArgs.additionalProperties, context ?? {});
+      const parentFormValues = context?.data ?? {};
+
+      //console.log('modal initial values', initialValues);
 
       return new Promise((resolve, _reject) => {
 

@@ -96,10 +96,14 @@ const FormProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
 
   //#region configurable actions
 
-  const actionDependencies = [];
+  
   const actionsOwnerUid = isActionsOwner
     ?  SheshaActionOwners.Form
     : null;
+  const actionDependencies = [actionsOwnerUid];
+
+  //console.log('isActionsOwner', isActionsOwner);
+
   useConfigurableAction({
     name: 'Start Edit',
     owner: name,

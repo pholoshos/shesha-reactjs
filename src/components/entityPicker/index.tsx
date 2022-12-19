@@ -63,6 +63,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
     title = 'Select Item',
     addNewRecordsProps,
     configurableColumns,
+    width,
   } = props;
 
   const [modalId] = useState(nanoid()); // use generated value because formId was changed. to be reviewed
@@ -104,6 +105,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
     showModalFooter: addNewRecordsProps?.showModalFooter,
     submitHttpVerb: addNewRecordsProps?.submitHttpVerb,
     onSuccessRedirectUrl: addNewRecordsProps?.onSuccessRedirectUrl,
+    width: addNewRecordsProps?.modalWidth,
     onSubmitted: (localValue: any) => {
       if (onDblClick) {
         onDblClick(localValue);
@@ -251,6 +253,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
   }, [selectedItems]);
 
   const canAddNew = Boolean(addNewRecordsProps) && addNewRecordsProps.modalFormId;
+
   const footer = (
     <Fragment>
       {canAddNew && (
@@ -313,7 +316,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
         open={state?.showModal}
         onOk={onModalOk}
         onCancel={handleCancel}
-        width={isSmall ? '90%' : '60%'}
+        width={isSmall ? '90%' : width}
         okText="Select"
         footer={footer}
       >

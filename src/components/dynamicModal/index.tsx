@@ -4,6 +4,7 @@ import { useDynamicModals } from '../../providers';
 import { ConfigurableForm } from '../';
 import { IModalWithConfigurableFormProps, IModalWithContentProps } from '../../providers/dynamicModal/models';
 import { evaluateString, useShaRouting } from '../..';
+import _ from 'lodash';
 import { useMedia } from 'react-use';
 
 export interface IDynamicModalWithFormProps extends Omit<IModalWithConfigurableFormProps, 'fetchUrl'> {
@@ -21,7 +22,7 @@ export const DynamicModalWithForm: FC<IDynamicModalWithFormProps> = props => {
     initialValues,
     destroyOnClose,
     parentFormValues,
-    width = 800,
+    width,
     modalConfirmDialogMessage,
     onFailed,
     prepareInitialValues,
@@ -61,7 +62,7 @@ export const DynamicModalWithForm: FC<IDynamicModalWithFormProps> = props => {
   };
 
   const onSubmitted = (_: any, response: any) => {
-    console.log('LOG:onSubmitted')
+    console.log('LOG:onSubmitted');
     if (onSuccessRedirectUrl) {
       const computedRedirectUrl = evaluateString(onSuccessRedirectUrl, response);
 
@@ -103,8 +104,8 @@ export const DynamicModalWithForm: FC<IDynamicModalWithFormProps> = props => {
       isVisible={isVisible}
       onOk={onOk}
       onCancel={closeModal}
-      footer={ showModalFooter ? undefined : null }
-      content={(
+      footer={showModalFooter ? undefined : null}
+      content={
         <ConfigurableForm
           formId={formId}
           form={form}
@@ -121,7 +122,7 @@ export const DynamicModalWithForm: FC<IDynamicModalWithFormProps> = props => {
           parentFormValues={parentFormValues}
           skipFetchData={skipFetchData}
         />
-      )}
+      }
     />
   );
 };
@@ -133,17 +134,7 @@ export interface IDynamicModalWithContentProps extends IModalWithContentProps {
   onOk?: () => void;
 }
 export const DynamicModalWithContent: FC<IDynamicModalWithContentProps> = props => {
-  const {
-    id,
-    title,
-    isVisible,
-    destroyOnClose,
-    width = 800,
-    onCancel,
-    onOk,
-    content,
-    footer,
-  } = props;
+  const { id, title, isVisible, destroyOnClose, width = 800, onCancel, onOk, content, footer } = props;
 
   const { hide, removeModal } = useDynamicModals();
   const isSmall = useMedia('(max-width: 480px)');
@@ -169,7 +160,8 @@ export const DynamicModalWithContent: FC<IDynamicModalWithContentProps> = props 
       onCancel={hideForm}
       footer={footer}
       destroyOnClose
-      width={isSmall ? width : '60%'}
+      // width={width ? width : 800}
+      width={isSmall ? '90%' : width}
       maskClosable={false}
     >
       {content}
@@ -181,11 +173,11 @@ type DynamicModalProps = IDynamicModalWithContentProps | IDynamicModalWithFormPr
 export const DynamicModal: FC<DynamicModalProps> = props => {
   const withFormProps = props as IDynamicModalWithFormProps;
   if (withFormProps.formId) {
-    return (<DynamicModalWithForm {...withFormProps} />);
+    return <DynamicModalWithForm {...withFormProps} />;
   }
 
   const withContentProps = props as IDynamicModalWithContentProps;
-  return (<DynamicModalWithContent {...withContentProps} />);
-}
+  return <DynamicModalWithContent {...withContentProps} />;
+};
 
 export default DynamicModal;

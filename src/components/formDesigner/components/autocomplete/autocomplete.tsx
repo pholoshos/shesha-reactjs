@@ -42,7 +42,7 @@ export interface IAutocompleteProps extends IConfigurableFormComponent {
   dataSourceType: AutocompleteDataSourceType;
   mode?: 'tags' | 'multiple';
   useRawValues: boolean;
-  queryParams: IQueryParamProp[];
+  queryParams?: IQueryParamProp[];
   keyPropName?: string;
   valuePropName?: string;
   filter?: string;

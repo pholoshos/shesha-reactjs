@@ -42,6 +42,7 @@ export interface IEntityPickerProps extends Omit<IWrappedEntityPickerProps, 'onD
   onSelect?: (data: IAnyObject) => void;
   value?: string | string[];
   displayEntityKey?: string;
+  width?: number | string;
   disabled?: boolean;
   loading?: boolean;
   name?: string;

@@ -129,7 +129,7 @@ export const dialogArgumentsForm = new DesignerToolbarSettings()
     id: nanoid(),
     name: 'customWidth',
     label: 'Enter Custom Width',
-    customVisibility: 'return data.widthUnits',
+    customVisibility: 'return data.modalWidth === "custom" && data.widthUnits',
     min: 0,
   })
   .toJson();

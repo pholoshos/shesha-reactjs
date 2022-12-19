@@ -5,7 +5,7 @@ export type RowDroppedMode = 'executeScript' | 'showDialog';
 
 export interface ITableComponentBaseProps {
   items: IConfigurableColumnsBase[];
-  useMultiselect: boolean;
+  useMultiselect?: boolean;
   allowRowDragAndDrop?: boolean;
   onRowDropped?: string;
   rowDroppedMode?: RowDroppedMode;

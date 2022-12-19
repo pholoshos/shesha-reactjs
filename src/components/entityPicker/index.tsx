@@ -63,6 +63,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
     title = 'Select Item',
     addNewRecordsProps,
     configurableColumns,
+    width,
   } = props;
 
   const [modalId] = useState(nanoid()); // use generated value because formId was changed. to be reviewed
@@ -315,7 +316,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
         open={state?.showModal}
         onOk={onModalOk}
         onCancel={handleCancel}
-        width={isSmall ? '90%' : '60%'}
+        width={isSmall ? '90%' : width}
         okText="Select"
         footer={footer}
       >

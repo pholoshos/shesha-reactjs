@@ -1,9 +1,8 @@
 import React from 'react';
 import { IToolboxComponent } from '../../../../interfaces';
-import { FormIdentifier, FormMarkup, IConfigurableFormComponent } from '../../../../providers/form/models';
+import { FormIdentifier, IConfigurableFormComponent } from '../../../../providers/form/models';
 import { EllipsisOutlined } from '@ant-design/icons';
 import ConfigurableFormItem from '../formItem';
-import settingsFormJson from './settingsForm.json';
 import { validateConfigurableComponentSettings } from '../../../../providers/form/utils';
 import { EntityPicker } from '../../..';
 import { Alert } from 'antd';
@@ -12,6 +11,7 @@ import { DataTypes } from '../../../../interfaces/dataTypes';
 import { IConfigurableColumnsBase } from '../../../../providers/datatableColumnsConfigurator/models';
 import { migrateV0toV1 } from './migrations/migrate-v1';
 import { ITableViewProps } from '../../../../providers/tableViewSelectorConfigurator/models';
+import { entityPickerSettings } from './settingsForm';
 
 export interface IEntityPickerComponentProps extends IConfigurableFormComponent {
   placeholder?: string;
@@ -29,11 +29,10 @@ export interface IEntityPickerComponentProps extends IConfigurableFormComponent 
   showModalFooter?: boolean;
   onSuccessRedirectUrl?: string;
   submitHttpVerb?: 'POST' | 'PUT';
-  modalWidth?: number | string;
+  modalWidth?: number | string | 'custom';
   customWidth?: number;
+  widthUnits?: string;
 }
-
-const settingsForm = settingsFormJson as FormMarkup;
 
 const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
   type: 'entityPicker',
@@ -41,7 +40,7 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
   icon: <EllipsisOutlined />,
   dataTypeSupported: ({ dataType }) => dataType === DataTypes.entityReference,
   factory: (model: IEntityPickerComponentProps) => {
-    const { filters } = model;
+    const { filters, modalWidth, customWidth, widthUnits } = model;
     const { formMode, isComponentDisabled } = useForm();
 
     const isReadOnly = model?.readOnly || formMode === 'readonly';
@@ -71,6 +70,8 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
       },
     ];
 
+    const width = modalWidth === 'custom' && customWidth ? `${customWidth}${widthUnits}` : modalWidth;
+
     return (
       <ConfigurableFormItem model={model} initialValue={model?.defaultValue}>
         <EntityPicker
@@ -84,16 +85,17 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
           addNewRecordsProps={
             model?.allowNewRecord
               ? {
-                modalFormId: model?.modalFormId,
-                modalTitle: model?.modalTitle,
-                showModalFooter: model?.showModalFooter,
-                submitHttpVerb: model?.submitHttpVerb,
-                onSuccessRedirectUrl: model?.onSuccessRedirectUrl,
-                modalWidth: model?.modalWidth == "custom" ? model?.customWidth : model?.modalWidth
-              }
+                  modalFormId: model?.modalFormId,
+                  modalTitle: model?.modalTitle,
+                  showModalFooter: model?.showModalFooter,
+                  submitHttpVerb: model?.submitHttpVerb,
+                  onSuccessRedirectUrl: model?.onSuccessRedirectUrl,
+                  modalWidth: customWidth ? `${customWidth}${widthUnits}` : modalWidth,
+                }
               : undefined
           }
           name={model?.name}
+          width={width}
           configurableColumns={model?.items}
         />
       </ConfigurableFormItem>
@@ -110,8 +112,8 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
         };
       })
       .add<IEntityPickerComponentProps>(1, migrateV0toV1),
-  settingsFormMarkup: settingsForm,
-  validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
+  settingsFormMarkup: entityPickerSettings,
+  validateSettings: model => validateConfigurableComponentSettings(entityPickerSettings, model),
 };
 
 export default EntityPickerComponent;

@@ -12,12 +12,14 @@ import { INumberFieldProps } from '../components/formDesigner/components/numberF
 import { IQueryBuilderProps } from '../components/formDesigner/components/queryBuilder/queryBuilderComponent';
 import { ICodeEditorComponentProps } from '../components/formDesigner/components/codeEditor';
 import { IContainerComponentProps } from '../components/formDesigner/components/container/containerComponent';
-import { IPropertyAutocompleteProps } from '../components/propertyAutocomplete/propertyAutocomplete';
 import { ICustomFilterProps } from '../components/formDesigner/components/dataTable/filter/models';
 import { IFormAutocompleteProps } from '../components/formDesigner/components/formAutocomplete';
 import { IConfigurableActionNamesComponentProps } from '../components/formDesigner/components/configurableActionsConfigurator';
 import { IEditableTagGroupProps } from '../components/formDesigner/components/editableTagGroup';
 import { IColorPickerComponentProps } from '../components/formDesigner/components/colorPicker';
+import { IColumnsEditorComponentProps } from '../components/formDesigner/components/dataTable/table/columnsEditor/columnsEditorComponent';
+import { ICollapsiblePanelProps } from '../components/formDesigner/components/collapsiblePanel/collapsiblePanelComponent';
+import { IPropertyAutocompleteComponentProps } from '../components/formDesigner/components/propertyAutocomplete';
 
 interface ToolbarSettingsProp extends Omit<IConfigurableFormComponent, 'type'> {}
 
@@ -27,7 +29,7 @@ type SectionSeparatorType = ToolbarSettingsProp & Omit<ISectionSeparatorProps, '
 
 type TextFieldType = ToolbarSettingsProp & Omit<ITextFieldProps, 'type'>;
 
-type PropertyAutocompleteType = ToolbarSettingsProp & Omit<IPropertyAutocompleteProps, 'type'>;
+type PropertyAutocompleteType = ToolbarSettingsProp & Omit<IPropertyAutocompleteComponentProps, 'type'>;
 
 type TextAreaType = ToolbarSettingsProp & Omit<ITextAreaProps, 'type'>;
 
@@ -59,6 +61,10 @@ type EditableTagGroupType = ToolbarSettingsProp & Omit<IEditableTagGroupProps, '
 
 type ColorPickerType = ToolbarSettingsProp & Omit<IColorPickerComponentProps, 'type'>;
 
+type EntityPickerColumnsEditorType = ToolbarSettingsProp & Omit<IColumnsEditorComponentProps, 'type'>;
+
+type ICollapsiblePanelPropsEditorType = ToolbarSettingsProp & Omit<ICollapsiblePanelProps, 'type'>;
+
 export class DesignerToolbarSettings<T> {
   protected readonly form: IConfigurableFormComponent[];
   protected readonly data?: T;
@@ -69,156 +75,101 @@ export class DesignerToolbarSettings<T> {
     this.data = model;
     this.form = [];
   }
+
   public addButtons(props: ButtonGroupType | ((data: T) => ButtonGroupType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
+    return this.addProperty(props, 'buttons');
+  }
 
-    this.form.push({ ...obj, type: 'buttons' });
-
-    return this;
+  public addCollapsiblePanel(
+    props: ICollapsiblePanelPropsEditorType | ((data: T) => ICollapsiblePanelPropsEditorType)
+  ) {
+    return this.addProperty(props, 'collapsiblePanel');
   }
 
   public addDropdown(props: DropdownType | ((data: T) => DropdownType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
+    return this.addProperty(props, 'dropdown');
+  }
 
-    this.form.push({ ...obj, type: 'dropdown' });
-
-    return this;
+  public addEntityPickerColumnsEditor(
+    props: EntityPickerColumnsEditorType | ((data: T) => EntityPickerColumnsEditorType)
+  ) {
+    return this.addProperty(props, 'entityPickerColumnsEditorComponent');
   }
 
   public addSectionSeparator(props: SectionSeparatorType | ((data: T) => SectionSeparatorType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'sectionSeparator' });
-
-    return this;
+    return this.addProperty(props, 'sectionSeparator');
   }
 
   public addTextField(props: TextFieldType | ((data: T) => TextFieldType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'textField' });
-
-    return this;
+    return this.addProperty(props, 'textField');
   }
 
   public addPropertyAutocomplete(props: PropertyAutocompleteType | ((data: T) => PropertyAutocompleteType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'propertyAutocomplete' });
-
-    return this;
+    return this.addProperty(props, 'propertyAutocomplete');
   }
 
   public addColorPicker(props: ColorPickerType | ((data: T) => PropertyAutocompleteType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'colorPicker' });
-
-    return this;
+    return this.addProperty(props, 'colorPicker');
   }
 
   public addTextArea(props: TextAreaType | ((data: T) => TextAreaType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'textArea' });
-
-    return this;
+    return this.addProperty(props, 'textArea');
   }
 
   public addIconPicker(props: IconPickerType | ((data: T) => IconPickerType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'iconPicker' });
-
-    return this;
+    return this.addProperty(props, 'iconPicker');
   }
 
   public addAutocomplete(props: AutocompleteType | ((data: T) => AutocompleteType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'autocomplete' });
-
-    return this;
+    return this.addProperty(props, 'autocomplete');
   }
 
   public addFormAutocomplete(props: FormAutocompleteType | ((data: T) => FormAutocompleteType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'formAutocomplete' });
-
-    return this;
+    return this.addProperty(props, 'formAutocomplete');
   }
 
   public addCheckbox(props: CheckboxType | ((data: T) => CheckboxType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'checkbox' });
-
-    return this;
+    return this.addProperty(props, 'checkbox');
   }
 
   public addCodeEditor(props: CodeEditorType | ((data: T) => CodeEditorType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'codeEditor' });
-
-    return this;
+    return this.addProperty(props, 'codeEditor');
   }
 
   public addContainer(props: ContainerType | ((data: T) => ContainerType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'container' });
-
-    return this;
+    return this.addProperty(props, 'container');
   }
 
   public addNumberField(props: NumberFieldType | ((data: T) => NumberFieldType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'numberField' });
-
-    return this;
+    return this.addProperty(props, 'numberField');
   }
 
   public addLabelValueEditor(props: LabelValueEditorType | ((data: T) => LabelValueEditorType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'labelValueEditor' });
-
-    return this;
+    return this.addProperty(props, 'labelValueEditor');
   }
 
   public addQueryBuilder(props: QueryBuilderType | ((data: T) => QueryBuilderType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'queryBuilder' });
-
-    return this;
+    return this.addProperty(props, 'queryBuilder');
   }
 
   public addCustomFilter(props: CustomFilterType | ((data: T) => CustomFilterType)) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'filter' });
-
-    return this;
+    return this.addProperty(props, 'filter');
   }
 
   public addConfigurableActionConfigurator(
     props: ConfigurableActionConfiguratorType | ((data: T) => ConfigurableActionConfiguratorType)
   ) {
-    const obj = typeof props !== 'function' ? props : props(this.data);
-
-    this.form.push({ ...obj, type: 'configurableActionConfigurator' });
-
-    return this;
+    return this.addProperty(props, 'configurableActionConfigurator');
   }
 
   public addEditableTagGroupProps(props: EditableTagGroupType | ((data: T) => EditableTagGroupType)) {
+    return this.addProperty(props, 'editableTagGroup');
+  }
+
+  private addProperty(props: ToolbarSettingsProp | ((data: T) => ToolbarSettingsProp), type: string) {
     const obj = typeof props !== 'function' ? props : props(this.data);
 
-    this.form.push({ ...obj, type: 'editableTagGroup' });
+    this.form.push({ ...obj, type });
 
     return this;
   }

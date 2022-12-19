@@ -82,7 +82,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
             ...actionArgs,
             id: modalId,
             title: actionArgs.modalTitle,
-            width: customWidth ? `${customWidth}${widthUnits}` : modalWidth,
+            width: modalWidth === 'custom' && customWidth ? `${customWidth}${widthUnits}` : modalWidth,
             initialValues: initialValues,
             parentFormValues: parentFormValues,
             isVisible: true,

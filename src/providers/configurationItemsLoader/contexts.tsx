@@ -12,8 +12,13 @@ export interface IGetFormPayload {
   skipCache: boolean;
 }
 
+export interface IClearItemCachePayload {
+  formId: FormIdentifier;
+}
+
 export interface IConfigurationItemsLoaderActionsContext {
   getForm: (payload: IGetFormPayload) => Promise<IFormDto>;
+  clearItemCache: (payload: IClearItemCachePayload) => void;
 }
 
 /** initial state */

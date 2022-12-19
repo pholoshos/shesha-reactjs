@@ -7,14 +7,16 @@ import {
   IConfigurationItemsLoaderStateContext,
   IConfigurationItemsLoaderActionsContext,
   IGetFormPayload,
+  IClearItemCachePayload,
 } from './contexts';
 import useThunkReducer from 'react-hook-thunk-reducer';
 import { IFormsDictionary } from './models';
-import { useSheshaApplication } from '../../providers';
+import { FormIdentifier, useSheshaApplication } from '../../providers';
 import { asFormFullName, asFormRawId } from '../form/utils';
 import { FormMarkupWithSettings, IFormDto } from '../form/models';
 import { FormConfigurationDto, formConfigurationGet, formConfigurationGetByName } from '../../apis/formConfiguration';
 import { getFormNotFoundMessage } from './utils';
+import { ConfigurationItemsViewMode } from '../appConfigurator/models';
 
 export interface IConfigurationItemsLoaderProviderProps { }
 
@@ -97,6 +99,16 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     return result;
   };
 
+  const getCacheKey = (formId: FormIdentifier, configurationItemMode?: ConfigurationItemsViewMode): string => {
+    const rawId = asFormRawId(formId);
+    const fullName = asFormFullName(formId);
+    return fullName
+        ? getCacheKeyByFullName('form', configurationItemMode, fullName.module, fullName.name)
+        : rawId
+          ? getCacheKeyByRawId('form', configurationItemMode, rawId)
+          : null;
+  }
+
   const getForm = (payload: IGetFormPayload) => {
     // create a key
     const key = makeFormLoadingKey(payload);
@@ -114,11 +126,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
       if (!rawId && !fullName)
         reject("Form identifier must be specified");
 
-      const cacheKey = fullName
-        ? getCacheKeyByFullName('form', configurationItemMode, fullName.module, fullName.name)
-        : rawId
-          ? getCacheKeyByRawId('form', configurationItemMode, rawId)
-          : null;
+      const cacheKey = getCacheKey(formId, configurationItemMode);
       const storage = window?.localStorage;
       const cachedDto = cacheKey ? getFromCache<FormConfigurationDto>(cacheKey) : null;
 
@@ -165,8 +173,19 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     return formPromise;
   };
 
+
+  const clearItemCache = (payload: IClearItemCachePayload) => {
+    const modes: ConfigurationItemsViewMode[] = ['live', 'ready', 'latest'];
+    modes.forEach(mode => {
+      const cacheKey = getCacheKey(payload.formId, mode);
+      
+      delete forms.current[cacheKey];
+    });
+  }
+
   const loaderActions: IConfigurationItemsLoaderActionsContext = {
     getForm,
+    clearItemCache,
   };
 
   return (

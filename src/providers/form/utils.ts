@@ -272,10 +272,10 @@ export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormC
  * @returns {string} evaluated string
  */
 export const evaluateString = (template: string = '', data: any) => {
-  const localData: IAnyObject = {};
+  const localData: IAnyObject = data ? {...data} : undefined;
   // The function throws an exception if the expression passed doesn't have a corresponding curly braces
   try {
-    if (data) {
+    if (localData) {
       //adding a function to the data object that will format datetime
 
       localData.dateFormat = function() {

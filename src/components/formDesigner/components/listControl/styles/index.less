@@ -1,7 +1,14 @@
 .sha-list-component {
+  &.horizontal {
+    display: flex;
+    overflow-x: auto;
+    flex-direction: row;
+  }
+
   .sha-responsive-button-group {
     min-width: unset !important;
   }
+
   .ant-collapse-extra {
     margin: unset !important;
   }
@@ -37,6 +44,17 @@
       max-width: 200px;
       margin-left: 12px;
     }
+
+    .sha-responsive-button-group-inline-container {
+      button {
+        padding: 4px 4px 28px 4px;
+        margin-left: 6px;
+
+        &:hover {
+          background-color: #91d5ff;
+        }
+      }
+    }
   }
 
   .sha-list-component-body {
@@ -45,6 +63,11 @@
     }
     overflow-y: auto;
     overflow-x: hidden;
+
+    &.horizontal {
+      display: flex;
+      overflow-x: auto;
+    }
   }
 
   .sha-list-component-add-item-btn {
@@ -65,6 +88,11 @@
       > .sha-list-component-add-item-btn {
         display: block;
       }
+    }
+
+    &.horizontal-child {
+      display: inline-block;
+      white-space: nowrap;
     }
 
     .sha-list-component-divider {

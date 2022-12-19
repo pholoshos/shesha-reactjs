@@ -322,8 +322,45 @@
               "customVisibility":"return data.showModalFooter === true",
               "version":0,
               "textType":"text"
-           }
-        ],
+           },
+           {
+            "id": "7fba61cd-5e40-4141-8263-585d2b14a760",
+            "type": "dropdown",
+            "name": "modalWidth",
+            "parentId": "2a5acbcf-cd52-487e-9cd7-09594a04793a",
+            "label": "Dialog Size",
+            "allowClear": true,
+            "values": [
+              {
+                "label": "Small",
+                "value": 600,
+                "id": "f6364f2d-f449-4119-92d6-0fd3e4411fee"
+              },
+              {
+                "label": "Middle",
+                "value": 800,
+                "id": "db7fbefc-3327-4f9e-85d8-3c3b0f531d75"
+              },
+              {
+                "label": "Large",
+                "value": 1000,
+                "id": "16373e9c-7fe3-4d76-b98e-e873400e8a72"
+              },
+              {
+               "label": "Custom",
+               "value": "custom",
+               "id": "fde460b0-1f84-4b64-9a6a-e02ba862937d"
+             }
+            ]
+          },
+          {
+            "id": "b7e1b9f6-0228-4caa-9d2d-d2469ea83d97",
+            "type": "numberField",
+            "name": "customWidth",
+            "label": "Enter Custom Width",
+            "customVisibility": "return data.modalWidth === 'custom'"
+          }
+      ],
         "dataSourceType":"values",
         "values":[
            {

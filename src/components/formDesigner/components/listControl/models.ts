@@ -24,6 +24,7 @@ export interface IListItemsProps {
   showQuickSearch?: boolean;
   paginationDefaultPageSize: number;
   buttons?: ButtonGroupItemProps[];
+  isButtonInline?: boolean;
   maxHeight?: number;
   labelCol?: number;
   wrapperCol?: number;
@@ -35,6 +36,7 @@ export interface IListItemsProps {
   properties?: string[];
   filters?: object;
   placeholder?: string;
+  orientation?: 'vertical' | 'horizontal';
 }
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {

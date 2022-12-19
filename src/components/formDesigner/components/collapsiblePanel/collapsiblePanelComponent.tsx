@@ -16,7 +16,7 @@ export interface ICollapsiblePanelProps extends IConfigurableFormComponent {
 
 const settingsForm = settingsFormJson as FormMarkup;
 
-const ColapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelProps> = {
+const CollapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelProps> = {
   type: 'collapsiblePanel',
   name: 'Collapsible Panel',
   icon: <GroupOutlined />,
@@ -46,4 +46,4 @@ const ColapsiblePanelComponent: IToolboxComponent<ICollapsiblePanelProps> = {
   },
 };
 
-export default ColapsiblePanelComponent;
+export default CollapsiblePanelComponent;

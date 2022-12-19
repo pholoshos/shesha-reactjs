@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { GroupOutlined } from '@ant-design/icons';
 import ToolbarSettings from './settings';
@@ -62,7 +62,7 @@ type MenuButton = ButtonGroupItemProps & {
   childItems?: MenuButton[];
 };
 
-export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize = 'middle' }) => {
+export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize = 'middle', isInline }) => {
   const { formMode, formData, form } = useForm();
   const { anyOfPermissionsGranted } = useSheshaApplication();
   const { globalState } = useGlobalState();
@@ -139,14 +139,26 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
     );
 
   return (
-    <div className="sha-responsive-button-group-container">
-      <Menu
-        mode="horizontal"
-        items={items?.filter(getIsVisible)?.map(props => renderMenuButton(props))}
-        className={`sha-responsive-button-group space-${spaceSize}`}
-        style={{ minWidth: '50rem' }}
-      />
-    </div>
+    <Fragment>
+      {isInline && (
+        <div className="sha-responsive-button-group-inline-container">
+          {items
+            ?.filter(getIsVisible)
+            ?.map(props => renderButtonItem(props, props?.id, !localexecuteExpression(props.customEnabled)))}
+        </div>
+      )}
+
+      {!isInline && (
+        <div className="sha-responsive-button-group-container">
+          <Menu
+            mode="horizontal"
+            items={items?.filter(getIsVisible)?.map(props => renderMenuButton(props))}
+            className={`sha-responsive-button-group space-${spaceSize}`}
+            style={{ width: '30px' }}
+          />
+        </div>
+      )}
+    </Fragment>
   );
 };
 

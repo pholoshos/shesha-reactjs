@@ -1,22 +1,25 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { Popover } from 'antd';
 import { ColorResult, SketchPicker, SketchPickerProps } from 'react-color';
 import './styles/styles.less';
+import { useDeepCompareEffect } from 'react-use';
+import { Omit } from 'react-beautiful-dnd';
+import classNames from 'classnames';
 
-interface IColorPickerProps extends SketchPickerProps {
+interface IColorPickerProps extends Omit<SketchPickerProps, 'color'> {
   title?: string;
-  color?: string;
+  color?: ColorResult;
 }
 
 interface IColorPickerState {
-  color?: string;
+  color?: ColorResult;
   visible?: boolean;
 }
 
 const ColorPicker: FC<IColorPickerProps> = ({ title, color, onChange, onChangeComplete, ...props }) => {
   const [state, setState] = useState<IColorPickerState>({ color, visible: false });
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     setState(prev => ({ ...prev, color }));
   }, [color]);
 
@@ -25,7 +28,7 @@ const ColorPicker: FC<IColorPickerProps> = ({ title, color, onChange, onChangeCo
   };
 
   const handleColorChange = (localColor: ColorResult, event: React.ChangeEvent<HTMLInputElement>) => {
-    setState(prev => ({ ...prev, color: localColor?.hex }));
+    setState(prev => ({ ...prev, color: localColor }));
 
     if (onChange) {
       onChange(localColor, event);
@@ -33,29 +36,36 @@ const ColorPicker: FC<IColorPickerProps> = ({ title, color, onChange, onChangeCo
   };
 
   const handleChangeComplete = (localColor: ColorResult, event: React.ChangeEvent<HTMLInputElement>) => {
-    setState(prev => ({ ...prev, color: localColor?.hex }));
+    setState(prev => ({ ...prev, color: localColor }));
 
     if (onChange) {
       onChange(localColor, event);
     }
   };
 
+  const backgroundColor = useMemo(() => {
+    return typeof state?.color === 'string' ? state?.color : state?.color?.hex;
+  }, [state?.color]);
+
   return (
     <Popover
-      visible={state?.visible}
+      open={state?.visible}
       title={title || 'Pick color'}
       trigger="click"
-      onVisibleChange={handleVisibleChange}
+      onOpenChange={handleVisibleChange}
       content={
         <SketchPicker
           onChange={handleColorChange}
           onChangeComplete={handleChangeComplete}
           {...props}
-          color={state?.color}
+          color={state?.color?.hex}
         />
       }
     >
-      <span className="color-picker-selector" style={{ background: state?.color }} />
+      <span
+        className={classNames('color-picker-selector', { 'no-color': !state?.color })}
+        style={{ background: backgroundColor }}
+      />
     </Popover>
   );
 };

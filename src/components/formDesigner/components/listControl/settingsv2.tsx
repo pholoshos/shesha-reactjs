@@ -23,7 +23,7 @@ export interface IListControlSettingsProps {
   onValuesChange?: (changedValues: any, values: IListItemsProps) => void;
 }
 
-interface IListSettingsState extends IListItemsProps { }
+interface IListSettingsState extends IListItemsProps {}
 
 export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, onSave, model, onValuesChange }) => {
   const [state, setState] = useState<IListSettingsState>(model);
@@ -92,7 +92,18 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         <ButtonGroupSettingsModal readOnly={readOnly} />
       </FormItem>
 
+      <Form.Item name="isButtonInline" label="Is Button Inline" valuePropName="checked">
+        <Checkbox />
+      </Form.Item>
+
       <SectionSeparator sectionName="Render" />
+
+      <FormItem name="orientation" label="Orientation">
+        <Select disabled={readOnly} defaultValue="vertical">
+          <Option value="vertical">Vertical</Option>
+          <Option value="horizontal">Horizontal</Option>
+        </Select>
+      </FormItem>
 
       <FormItem
         name="renderStrategy"

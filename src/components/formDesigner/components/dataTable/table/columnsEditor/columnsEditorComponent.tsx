@@ -7,7 +7,7 @@ import { ITableComponentBaseProps } from '../models';
 import { ColumnsEditorModal } from './columnsEditorModal';
 import ConfigurableFormItem from '../../../formItem';
 
-interface IColumnsEditorComponentProps extends ITableComponentBaseProps, IConfigurableFormComponent {
+export interface IColumnsEditorComponentProps extends ITableComponentBaseProps, IConfigurableFormComponent {
   items: ColumnsItemProps[];
 }
 
@@ -50,7 +50,13 @@ const ColumnsConfig: FC<IColumnsConfigProps> = ({ value, onChange }) => {
     <Fragment>
       <Button onClick={toggleModalVisibility}>Configure Columns</Button>
 
-      <ColumnsEditorModal visible={modalVisible} hideModal={toggleModalVisibility} value={value} onChange={onChange} readOnly={false}/>
+      <ColumnsEditorModal
+        visible={modalVisible}
+        hideModal={toggleModalVisibility}
+        value={value}
+        onChange={onChange}
+        readOnly={false}
+      />
     </Fragment>
   );
 };

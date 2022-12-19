@@ -45,6 +45,12 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'buttons',
     label: '',
   })
+  .addCheckbox({
+    id: '1ada46a8-58cd-4f67-b32a-318f9ac7494d',
+    name: 'isButtonInline',
+    parentId: 'root',
+    label: 'Is Button Inline',
+  })
   .addSectionSeparator({
     id: '6b995198-8f53-4c9a-8614-926c7f654928',
     name: 'separatorData',

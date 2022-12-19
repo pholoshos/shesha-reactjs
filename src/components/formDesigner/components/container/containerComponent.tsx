@@ -55,7 +55,7 @@ export type JustifyItems =
   | 'unset';
 
 export interface IContainerComponentProps extends IConfigurableFormComponent {
-  direction: ContainerDirection;
+  direction?: ContainerDirection;
   justifyContent?: JustifyContent;
   alignItems?: AlignItems;
   justifyItems?: JustifyItems;

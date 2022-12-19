@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { DesignerToolbarSettings } from '../../../../../interfaces';
 import { FONT_SIZES } from '../utils';
 
@@ -9,6 +9,30 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     parentId: 'root',
     label: 'Display',
     sectionName: '',
+  })
+  .addDropdown({
+    id: nanoid(),
+    name: 'textType',
+    parentId: 'root',
+    label: 'Type',
+    values: [
+      {
+        label: 'Span',
+        value: 'span',
+        id: '32ebcc5b-6775-4b34-b856-d7ed42f33c3b',
+      },
+      {
+        label: 'Paragraph',
+        value: 'paragraph',
+        id: 'f3622f5e-3dc3-452b-aa57-2273f65b9fdc',
+      },
+      {
+        label: 'Title',
+        value: 'title',
+        id: '3e6a5ac8-bf51-48fb-b5c1-33ba455a1246',
+      },
+    ],
+    dataSourceType: 'values',
   })
   .addTextArea({
     id: 'b9857800-eb4d-4303-b1ac-6f9bc7f140ad',
@@ -61,12 +85,67 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     customVisibility: "return data.contentType === 'custom'",
   })
   .addDropdown({
+    id: 'ccea671b-9144-4266-9cd7-64495cbc6910',
+    name: 'level',
+    parentId: 'root',
+    label: 'Font Size',
+    values: [
+      {
+        label: 'H1',
+        value: '1',
+        id: '81f0cd35-45b0-4d3e-8960-b6c9c3f7fb6f',
+      },
+      {
+        label: 'H2',
+        value: '2',
+        id: 'a19ccf4a-27f0-45ae-819a-779668370639',
+      },
+      {
+        label: 'H3',
+        value: '3',
+        id: '6a755f46-09a6-4e5e-b9fe-8617be7ef8e1',
+      },
+      {
+        label: 'H4',
+        value: '4',
+        id: '3f8460ca-f50a-4cba-9b5d-6a2b02be14d2',
+      },
+      {
+        label: 'H5',
+        value: '5',
+        id: '186a71a8-ead4-4bed-8a3b-bc197faac998',
+      },
+      ...Object.keys(FONT_SIZES).map(key => ({ id: nanoid(), value: key, label: key })),
+    ],
+    dataSourceType: 'values',
+    customVisibility: "return data.textType ==='title'",
+  })
+  .addDropdown({
     id: nanoid(),
     name: 'fontSize',
     parentId: 'root',
     label: 'Font Size',
     values: Object.keys(FONT_SIZES).map(key => ({ id: nanoid(), value: key, label: key })),
     dataSourceType: 'values',
+    customVisibility: "return data.textType !=='title'",
+  })
+  .addCheckbox({
+    id: '3cd922a6-22b2-435f-8a46-8cca9fba8bea',
+    name: 'code',
+    parentId: 'root',
+    label: 'Code style?',
+  })
+  .addCheckbox({
+    id: 'aa17f452-0b07-473a-9c7a-986dfc2d37d9',
+    name: 'italic',
+    parentId: 'root',
+    label: 'Italic',
+  })
+  .addCheckbox({
+    id: '883498f1-1e05-479d-b119-d038cb7d398d',
+    name: 'copyable',
+    parentId: 'root',
+    label: 'Copyable?',
   })
   .addCheckbox({
     id: '3cd922a6-22b2-435f-8a46-8cca9fba8bea',
@@ -115,6 +194,7 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     name: 'strong',
     parentId: 'root',
     label: 'Strong?',
+    customVisibility: "return data.textType !=='title'",
   })
   .addCheckbox({
     id: '12b8a36a-3aec-414c-942f-a57e37f00901',
@@ -138,7 +218,7 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     settingsValidationErrors: [],
     description: 'A script that returns the style of the element as an object. This should conform to CSSProperties',
     exposedVariables: [
-      { id: '06ab0599-914d-4d2d-875c-765a495472f7', name: 'data', description: 'Form values', type: 'object' },
+      { id: '06ab0599-914d-4d2d-875c-765a495472f6', name: 'data', description: 'Form values', type: 'object' },
     ],
     mode: 'dialog',
   })

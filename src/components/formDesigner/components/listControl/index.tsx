@@ -19,7 +19,7 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
   name: 'List',
   icon: <OrderedListOutlined />,
   factory: ({ ...model }: IListComponentProps) => {
-    const { isComponentHidden } = useForm();
+    const { isComponentHidden, formMode } = useForm();
 
     const isHidden = isComponentHidden(model);
 
@@ -32,7 +32,7 @@ const ListComponent: IToolboxComponent<IListComponentProps> = {
         model={{ ...model }}
         className={classNames(
           'sha-list-component',
-          { horizontal: model?.orientation === 'horizontal' } //
+          { horizontal: model?.orientation === 'horizontal' && formMode !== 'designer' } //
         )}
         labelCol={{ span: model?.hideLabel ? 0 : model?.labelCol }}
         wrapperCol={{ span: model?.hideLabel ? 24 : model?.wrapperCol }}

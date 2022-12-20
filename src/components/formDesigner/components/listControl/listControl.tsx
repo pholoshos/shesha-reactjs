@@ -548,7 +548,11 @@ const ListControl: FC<IListControlProps> = props => {
                   return (
                     <ConditionalWrap
                       condition={orientation === 'horizontal'}
-                      wrap={c => <Space size={'middle'}>{c}</Space>}
+                      wrap={c => (
+                        <Space size={'middle'} className="sha-list-space-horizontal" direction="horizontal">
+                          {c}
+                        </Space>
+                      )}
                     >
                       {fields?.map((field, index) => (
                         <ConditionalWrap

@@ -75,6 +75,8 @@ const ListControl: FC<IListControlProps> = props => {
     readOnly,
     placeholder,
     orientation,
+    listItemWidth,
+    customListItemWidth,
   } = props;
 
   const { formConfiguration, refetch: refetchFormConfig, error: fetchFormError } = useFormConfiguration({
@@ -472,6 +474,19 @@ const ListControl: FC<IListControlProps> = props => {
 
   const [ref, measured] = useMeasure();
 
+  const itemWidth = useMemo(() => {
+    if (!measured) return 0;
+
+    if (!listItemWidth) return measured?.width;
+
+    if (listItemWidth === 'custom') {
+      if (!customListItemWidth) return measured?.width;
+      else return customListItemWidth;
+    }
+
+    return measured?.width * listItemWidth;
+  }, [measured?.width, listItemWidth, customListItemWidth]);
+
   return (
     <CollapsiblePanel
       header={title}
@@ -579,7 +594,7 @@ const ListControl: FC<IListControlProps> = props => {
                             onClick={() => {
                               onSelect(index);
                             }}
-                            style={{ width: measured?.width }}
+                            style={{ width: itemWidth }}
                           >
                             <Show when={Boolean(containerId) && renderStrategy === 'dragAndDrop'}>
                               <FormItemProvider

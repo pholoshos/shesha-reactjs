@@ -37,6 +37,8 @@ export interface IListItemsProps {
   filters?: object;
   placeholder?: string;
   orientation?: 'vertical' | 'horizontal';
+  listItemWidth?: number | 'custom';
+  customListItemWidth?: number;
 }
 
 export interface IListComponentProps extends IListItemsProps, IConfigurableFormComponent {

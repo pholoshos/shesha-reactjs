@@ -134,7 +134,7 @@ export interface IDynamicModalWithContentProps extends IModalWithContentProps {
   onOk?: () => void;
 }
 export const DynamicModalWithContent: FC<IDynamicModalWithContentProps> = props => {
-  const { id, title, isVisible, destroyOnClose, width = 800, onCancel, onOk, content, footer } = props;
+  const { id, title, isVisible, destroyOnClose, width, onCancel, onOk, content, footer } = props;
 
   const { hide, removeModal } = useDynamicModals();
   const isSmall = useMedia('(max-width: 480px)');
@@ -161,7 +161,7 @@ export const DynamicModalWithContent: FC<IDynamicModalWithContentProps> = props 
       footer={footer}
       destroyOnClose
       // width={width ? width : 800}
-      width={isSmall ? '90%' : width}
+      width={isSmall ? '90%' : width || 900}
       maskClosable={false}
     >
       {content}

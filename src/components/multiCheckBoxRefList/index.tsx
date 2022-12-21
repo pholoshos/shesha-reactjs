@@ -17,7 +17,7 @@ export const MultiCheckBoxRefList: FC<IMultiCheckBoxRefListProps> = ({
   onChange,
   columns = 3,
 }) => {
-  const { data: refList, loading: refListLoading } = useReferenceList(listNamespace, listName);
+  const { data: refList, loading: refListLoading } = useReferenceList({ name: listName, namespace: listNamespace });
 
   return (
     <ShaSpin spinning={refListLoading}>

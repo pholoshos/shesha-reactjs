@@ -8,15 +8,19 @@ import {
   IConfigurationItemsLoaderActionsContext,
   IGetFormPayload,
   IClearItemCachePayload,
+  IGetRefListPayload,
 } from './contexts';
 import useThunkReducer from 'react-hook-thunk-reducer';
-import { IFormsDictionary } from './models';
+import { IFormsDictionary, IReferenceListsDictionary } from './models';
 import { FormIdentifier, useSheshaApplication } from '../../providers';
 import { asFormFullName, asFormRawId } from '../form/utils';
 import { FormMarkupWithSettings, IFormDto } from '../form/models';
 import { FormConfigurationDto, formConfigurationGet, formConfigurationGetByName } from '../../apis/formConfiguration';
-import { getFormNotFoundMessage } from './utils';
+import { getFormNotFoundMessage, getReferenceListNotFoundMessage } from './utils';
 import { ConfigurationItemsViewMode } from '../appConfigurator/models';
+import { IReferenceList } from '../../interfaces/referenceList';
+import { referenceListGetByName } from '../../apis/referenceList';
+import { MakePromiseWithState, PromisedValue } from '../../utils/promises';
 
 export interface IConfigurationItemsLoaderProviderProps { }
 
@@ -26,12 +30,27 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
   };
 
   const forms = useRef<IFormsDictionary>({});
+  const referenceLists = useRef<IReferenceListsDictionary>({});
 
   const [state, _dispatch] = useThunkReducer(metadataReducer, initial);
 
   const { backendUrl, httpHeaders } = useSheshaApplication();
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
+
+  const makeRefListLoadingKey = (payload: IGetRefListPayload): string => {
+    const { refListId, configurationItemMode } = payload;
+    if (!refListId || !refListId.name)
+      return null;
+
+    const addMode = (key: string): string => {
+      return `${key}:${configurationItemMode}`
+    }
+
+    return refListId.namespace
+      ? addMode(`${refListId.module}/${refListId.namespace}.${refListId.name}`)
+      : addMode(`${refListId.module}/${refListId.name}`);
+  }
 
   const makeFormLoadingKey = (payload: IGetFormPayload): string => {
     const { formId, configurationItemMode } = payload;
@@ -109,7 +128,69 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
           : null;
   }
 
-  const getForm = (payload: IGetFormPayload) => {
+  const getRefList = (payload: IGetRefListPayload): PromisedValue<IReferenceList> => {
+    // create a key
+    const key = makeRefListLoadingKey(payload);
+
+    if (!payload.skipCache){
+      const loadedRefList = referenceLists.current[key];
+      if (loadedRefList) return loadedRefList; // todo: check for rejection
+    }
+
+    const { refListId, configurationItemMode } = payload;
+
+    const refListPromise = new Promise<IReferenceList>((resolve, reject) => {
+      if (!refListId)
+        reject("Reference List identifier must be specified");
+
+      const cacheKey = getCacheKey(refListId, configurationItemMode);
+      const storage = window?.localStorage;
+      const cachedDto = cacheKey ? getFromCache<IReferenceList>(cacheKey) : null;
+
+      const promise = referenceListGetByName({ module: refListId.module, namespace: refListId.namespace, name: refListId.name, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ });
+
+      promise.then(response => {
+        console.log('PERF: resolve reference list response');
+        // todo: handle not changed
+        if (response.success) {
+          const responseData = response.result;
+          if (!responseData)
+            throw 'Failed to fetch reference list. Response is empty';
+            
+          const dto: IReferenceList = {
+            name: responseData.name,
+            items: [...responseData.items]
+          };
+          if (storage)
+            storage.setItem(cacheKey, JSON.stringify(responseData));
+
+          resolve(dto);
+        } else {
+          const rawResponse = response as Response;
+          if (rawResponse && rawResponse.status === 304) {
+            // code 304 indicates that the content ws not modified - use cached value
+            resolve(cachedDto);
+          } else {
+            const httpResponse = response as Response;
+
+            const error = response.error ?? { code: httpResponse?.status, message: httpResponse?.status === 404 ? getReferenceListNotFoundMessage(refListId) : httpResponse?.statusText };
+
+            reject(error);
+          }
+        }
+      })
+        .catch(e => {
+          reject(e);
+        });
+    });
+    const promiseWithState = MakePromiseWithState(refListPromise);
+    referenceLists.current[key] = promiseWithState;
+
+    return promiseWithState;
+
+  }
+
+  const getForm = (payload: IGetFormPayload): Promise<IFormDto> => {
     // create a key
     const key = makeFormLoadingKey(payload);
 
@@ -173,6 +254,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     return formPromise;
   };
 
+  
 
   const clearItemCache = (payload: IClearItemCachePayload) => {
     const modes: ConfigurationItemsViewMode[] = ['live', 'ready', 'latest'];
@@ -185,6 +267,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
 
   const loaderActions: IConfigurationItemsLoaderActionsContext = {
     getForm,
+    getRefList,
     clearItemCache,
   };
 

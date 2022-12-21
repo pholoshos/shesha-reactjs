@@ -3,6 +3,7 @@ import { IReadOnly } from './../../interfaces/readOnly';
 import { LabeledValue, SelectProps } from 'antd/lib/select';
 import { Key, CSSProperties } from 'react';
 import { ReferenceListItemDto } from '../../apis/referenceList';
+import { IReferenceListIdentifier } from '../../providers/referenceListDispatcher/models';
 
 export interface IGenericRefListDropDownProps<TValue = any> extends IRefListDropDownProps<TValue> {
   /**
@@ -18,13 +19,9 @@ export interface IGenericRefListDropDownProps<TValue = any> extends IRefListDrop
 
 export interface IRefListDropDownProps<TValue = any> extends Omit<SelectProps<any>, 'onChange'>, IReadOnly {
   /**
-   * Reference list name
+   * Reference List identifier
    */
-  listName: string;
-  /**
-   * Reference list namespace
-   */
-  listNamespace: string;
+  referenceListId: IReferenceListIdentifier;
   /**
    * How large should the button be?
    */

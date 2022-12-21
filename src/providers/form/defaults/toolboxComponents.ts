@@ -74,6 +74,7 @@ import Rate from '../../../components/formDesigner/components/rate';
 import EventNames from '../../../components/formDesigner/components/eventNamesList';
 import ConfigurableActionConfigurator from '../../../components/formDesigner/components/configurableActionsConfigurator';
 import FormAutocompleteComponent from '../../../components/formDesigner/components/formAutocomplete';
+import ReferenceListAutocompleteComponent from '../../../components/formDesigner/components/referenceListAutocomplete';
 import Markdown from '../../../components/formDesigner/components/markdown';
 import Drawer from '../../../components/formDesigner/components/drawer';
 import ColorPickerComponent from '../../../components/formDesigner/components/colorPicker';
@@ -144,6 +145,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       EventNames,
       ConfigurableActionConfigurator,
       FormAutocompleteComponent,
+      ReferenceListAutocompleteComponent,
       Markdown,
     ],
   },

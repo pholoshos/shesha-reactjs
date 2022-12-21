@@ -29,7 +29,7 @@ export const MultiReadCheckBoxRefList: FC<IMultiReadCheckBoxRefListProps> = ({
   value,
   display = 'component',
 }) => {
-  const { data: refList, loading: refListLoading } = useReferenceList(listNamespace, listName);
+  const { data: refList, loading: refListLoading } = useReferenceList({ name: listName, namespace: listNamespace });
 
   const list = binaryToList(value);
 

@@ -48,7 +48,7 @@ const RefListRadioButtons: FC<IRefListRadioButtonsProps> = ({
   onSelectionChange,
   ...rest
 }) => {
-  const { data: refList } = useReferenceList(listNamespace, listName);
+  const { data: refList } = useReferenceList({ name: listName, namespace: listNamespace });
   
   const filter = ({ itemValue }: ReferenceListItemDto) => {
     const localFilter = filters?.includes(itemValue);

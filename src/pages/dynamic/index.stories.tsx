@@ -193,11 +193,28 @@ export const SettingsPage = addStory(Template, {
 });
 export const FormDetails = addStory(Template, {
   formId: {
-    module: 'StarterTemplate',
+    module: 'shesha',
     name: 'form-details',
   },
-  id: '7e0d0011-ed4a-4240-be39-009c68f61291',
+  id: 'a178c26c-2138-4ec9-8f5d-6bb9549f28f0',
+  //shesha/form-details/?id=
   mode: 'edit',
+});
+
+export const ReferenceLists = addStory(Template, {
+  formId: {
+    module: 'shesha',
+    name: 'reference-lists',
+  },
+});
+
+export const ReferenceListDetails = addStory(Template, {
+  formId: {
+    module: 'shesha',
+    name: 'reference-lists-details',
+  },
+  id: '1EBECD6A-D0F1-4427-941B-073C94C2D00B',
+  mode: 'readonly',
 });
 
 Basic.args = DEFAULT_ARGS;

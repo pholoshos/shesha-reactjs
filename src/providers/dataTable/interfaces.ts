@@ -51,6 +51,7 @@ export interface ITableColumn {
   allowShowHide?: boolean;
   //width?: string;
   referenceListName?: string;
+  referenceListModule?: string;
   referenceListNamespace?: string;
   entityReferenceTypeShortAlias?: string;
   allowInherited?: boolean;
@@ -212,6 +213,7 @@ export interface DataTableColumnDto {
   dataType?: string | null;
   dataFormat?: string | null;
   referenceListName?: string | null;
+  referenceListModule?: string | null;
   referenceListNamespace?: string | null;
   entityReferenceTypeShortAlias?: string | null;
   autocompleteUrl?: string | null;

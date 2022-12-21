@@ -17,7 +17,7 @@ export interface IFormDesignerProps {
 
 export const FormDesigner: FC<IFormDesignerProps> = ({ formId }) => {
   return (
-    <FormPersisterProvider formId={formId}>
+    <FormPersisterProvider formId={formId} skipCache={true}>
       <FormPersisterStateConsumer>
         {formStore => {
           if (formStore.loading)

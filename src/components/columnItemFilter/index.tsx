@@ -270,7 +270,7 @@ interface IFilterBaseProps {
   onPressEnter: () => void;
 }
 
-interface ISingleValueFilterProps extends IFilterBaseProps {}
+interface ISingleValueFilterProps extends IFilterBaseProps { }
 
 interface IStringFilterProps extends ISingleValueFilterProps {
   value: string;
@@ -362,8 +362,10 @@ interface IRefListFilterProps extends IFilterBaseProps {
 
 const RefListFilter: FC<IRefListFilterProps> = props => {
   const { data: refListItems, loading: refListLoading } = useReferenceList(
-    props.referenceListNamespace,
-    props.referenceListName
+    {
+      namespace: props.referenceListNamespace,
+      name: props.referenceListName,
+    }
   );
 
   return (

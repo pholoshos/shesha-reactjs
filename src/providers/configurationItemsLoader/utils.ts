@@ -1,6 +1,8 @@
 import { getFormFullName } from "../../utils/form";
 import { FormIdentifier } from "../form/models";
 import { asFormFullName, asFormRawId } from "../form/utils";
+import { IReferenceListIdentifier } from "../referenceListDispatcher/models";
+import { getReferenceListFullName } from "../referenceListDispatcher/utils";
 
 export const getClassNameFromFullName = (name: string): string => {
     const idx = name.lastIndexOf('.');
@@ -19,4 +21,11 @@ export const getFormNotFoundMessage = (formId: FormIdentifier) => {
         return `Form with '${getFormFullName(fullName.module, fullName.name)}' not found`;
 
     return 'Form not found';
+}
+
+export const getReferenceListNotFoundMessage = (refListId: IReferenceListIdentifier) => {
+    if (refListId)
+        return `Reference list '${getReferenceListFullName(refListId)}' not found`;
+
+    return 'Reference list not found';
 }

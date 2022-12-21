@@ -23,3 +23,4 @@ export const GENERIC_ENTITIES_ENDPOINT = "/api/services/app/Entities";
 
 
 export const LEGACY_FORMS_MODULE_NAME = "(legacy forms)";
+export const LEGACY_REFERENCE_LISTS_MODULE_NAME = "(legacy lists)";

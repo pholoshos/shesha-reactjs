@@ -8,8 +8,7 @@ import { useReferenceList } from '../../providers/referenceListDispatcher';
 // tslint:disable-next-line:whitespace
 export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownProps<TValue>) => {
   const {
-    listName,
-    listNamespace,
+    referenceListId,
     showArrow = true,
     value,
     includeFilters = false,
@@ -25,7 +24,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
     style,
     ...rest
   } = props;
-  const { data: refList, loading: refListLoading } = useReferenceList(listNamespace, listName);
+  const { data: refList, loading: refListLoading } = useReferenceList(referenceListId);
 
   const filter = ({ itemValue }: ReferenceListItemDto) => {
     if (!filters?.length) {

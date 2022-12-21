@@ -349,6 +349,7 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
         if (submitUrl) {
           setValidationErrors(null);
 
+          console.log('prepare data');
           const preparedData = prepareDataToSubmit(postData);
 
           const doPost = () =>

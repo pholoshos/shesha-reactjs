@@ -34,12 +34,15 @@ export const RoleAppointmentForm = addStory(DesignerTemplate, {
 });
 
 export const TestForm = addStory(DesignerTemplate, {
-  formId: 'd53b4917-70b8-4d05-aba3-1cbfc2d30c05',
+  formId: '00ff5ffd-0844-4303-8529-5bae9a999e63',
 });
 export const TestForm2 = addStory(DesignerTemplate, {
-  formId: '87fe8b73-ed32-48a1-b747-7856056129fd',
+  formId: '28a2cf97-ae6d-483b-9866-bdfc2e8a03e9',
 });
 
+export const RefListRefactoring = addStory(DesignerTemplate, {
+  formId: 'bb240fbf-c7f7-4183-a14b-42bc27021cef',
+});
 
 export const AutocompleteSettingsForm = addStory(DesignerTemplate, {
   formId: '7c19404f-7c6f-4cee-9af7-6b82b7be3982',

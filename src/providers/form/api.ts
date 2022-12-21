@@ -233,6 +233,7 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
                 const getDataUrl = (removeZeroWidthCharsFromString(form.settings?.getUrl) || '').trim();
 
                 if (Boolean(getDataUrl)) {
+                    console.log('LOG:getDataUrl', getDataUrl);
                     setState(prev => ({ ...prev, loaderHint: 'Fetching metadata...' }));
 
                     // fetch meta before the data
@@ -243,6 +244,8 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
                         getContainerProperties,
                         getMetadata,
                     }).then(gqlFieldsList => {
+                        console.log('LOG:gqlFieldsList', gqlFieldsList);
+
                         if (formRequestRef.current !== requestId)
                             return;
 
@@ -343,7 +346,7 @@ const gqlFieldsToString = (fields: IFieldData[]): string => {
         let s = '';
         items.forEach(item => {
             if (!item.property) return;
-            s += s ? ',' + item.name : item.name;
+                s += s ? ',' + item.name : item.name;
             if (item.child.length > 0) {
                 s += '{' + resf(item.child) + '}';
             }
@@ -402,12 +405,15 @@ const getGqlFields = (payload: GetGqlFieldsPayload): Promise<IFieldData[]> => {
         let fields: IFieldData[] = [];
 
         const fieldNames = getFormFields(payload);
+        console.log('LOG:fieldNames', fieldNames)
 
         // create list of promises
         const promises: Promise<any>[] = [];
 
         fieldNames.forEach(item => {
             if (item) {
+                console.log('process property', item)
+
                 item = item.trim();
                 const pathParts = item.split('.');
 

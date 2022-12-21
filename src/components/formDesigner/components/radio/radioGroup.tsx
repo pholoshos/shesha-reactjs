@@ -10,8 +10,8 @@ import { getDataSourceList, IRadioProps } from './utils';
 const RadioGroup: FC<IRadioProps> = model => {
   const { formMode, formData, isComponentDisabled } = useForm();
   const { globalState } = useGlobalState();
-  const { referenceListName, referenceListNamespace, items = [], value, onChange } = model;
-  const { data: refListItems } = useReferenceList(referenceListNamespace, referenceListName);
+  const { referenceListId, items = [], value, onChange } = model;
+  const { data: refListItems } = useReferenceList(referenceListId);
 
   //#region Data source is url
   const getEvaluatedUrl = (url: string) => {

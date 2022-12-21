@@ -10,3 +10,12 @@ export interface ILoadingState<TData> {
   error?: any;
   loading: boolean;
 }
+
+export interface IReferenceListIdentifier {
+  module?: string;
+  /* 
+  * @deprecated - use module instead, namespace is used for backward compatibility only
+  */
+  namespace?: string;
+  name: string;
+}

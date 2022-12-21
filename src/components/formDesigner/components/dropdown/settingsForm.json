@@ -23,7 +23,9 @@
       "type": "textField",
       "name": "label",
       "parentId": "root",
-      "label": "Label"
+      "label": "Label",
+      "version": 0,
+      "textType": "text"
     },
     {
       "id": "57a40a33-7e08-4ce4-9f08-a34d24a83338",
@@ -56,7 +58,8 @@
       "hidden": false,
       "customVisibility": null,
       "validate": {},
-      "settingsValidationErrors": []
+      "settingsValidationErrors": [],
+      "version": 0
     },
     {
       "id": "vdHXORT_t16LbITksJNtm",
@@ -217,22 +220,24 @@
       "settingsValidationErrors": [],
       "components": [
         {
-          "id": "99bb19ad-1587-4f75-b738-ea6a075672b0",
-          "type": "textField",
-          "name": "referenceListNamespace",
+          "id": "JS9cXXL4J7k7Ncms20CmX",
+          "type": "referenceListAutocomplete",
+          "name": "referenceListId",
+          "label": "Reference List",
+          "labelAlign": "right",
           "parentId": "ELxx5jarWvInJXJF5xHN2",
-          "label": "ReferenceList Namespace",
-          "customVisibility": "",
-          "validate": {},
+          "hidden": false,
+          "visibility": "Yes",
+          "customVisibility": null,
+          "isDynamic": false,
+          "version": 0,
+          "convertToFullId": true,
+          "placeholder": "",
+          "description": "",
+          "validate": {
+            "message": ""
+          },
           "settingsValidationErrors": []
-        },
-        {
-          "id": "bd7a7eaa-021f-4f62-ac33-2aba0299d237",
-          "type": "textField",
-          "name": "referenceListName",
-          "parentId": "ELxx5jarWvInJXJF5xHN2",
-          "label": "ReferenceList Name",
-          "customVisibility": "return data.dataSourceType === 'referenceList'"
         },
         {
           "id": "e1xQrrBshDPQOwaaASyqe",
@@ -279,7 +284,9 @@
       "name": "entityTypeShortAlias",
       "parentId": "root",
       "label": "Entity Type Short Alias",
-      "customVisibility": "return data.dataSourceType === 'entityList'"
+      "customVisibility": "return data.dataSourceType === 'entityList'",
+      "version": 0,
+      "textType": "text"
     },
     {
       "id": "99629618-d725-4690-b744-97a4b0ae3b19",
@@ -287,7 +294,9 @@
       "name": "dataSourceUrl",
       "parentId": "root",
       "label": "Data Source Url",
-      "customVisibility": "return data.dataSourceType === 'url'"
+      "customVisibility": "return data.dataSourceType === 'url'",
+      "version": 0,
+      "textType": "text"
     },
     {
       "id": "757ea243-a811-4110-a492-16fa3fbe702d",

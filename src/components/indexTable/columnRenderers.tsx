@@ -3,7 +3,7 @@ import moment from 'moment';
 import { ITableCustomTypesRender } from './interfaces';
 import { IConfigurableActionColumnsProps } from '../../providers/datatableColumnsConfigurator/models';
 import ShaIcon, { IconType } from '../shaIcon';
-import { useDataTable, useForm, useGlobalState, useSheshaApplication } from '../../providers';
+import { useDataTable, useForm, useGlobalState, useMetadata, useSheshaApplication } from '../../providers';
 import { message } from 'antd';
 import { axiosHttp } from '../../apis/axios';
 import { useReferenceListItem } from '../../providers/referenceListDispatcher';
@@ -25,19 +25,31 @@ export const renderers: ITableCustomTypesRender[] = [
   {
     key: 'date',
     render: props => {
-      return props.value ? moment(props.value).format('DD/MM/YYYY') : null;
+      const { metadata } = useMetadata(false);
+
+      const dataFormat = metadata?.properties?.find(({ path }) => path === props?.column?.id)?.dataFormat;
+
+      return props.value ? moment(props.value).format(dataFormat || 'DD/MM/YYYY') : null;
     },
   },
   {
     key: 'date-time',
     render: props => {
-      return props.value ? moment(props.value).format('DD/MM/YYYY HH:mm') : null;
+      const { metadata } = useMetadata(false);
+
+      const dataFormat = metadata?.properties?.find(({ path }) => path === props?.column?.id)?.dataFormat;
+
+      return props.value ? moment(props.value).format(dataFormat || 'DD/MM/YYYY HH:mm') : null;
     },
   },
   {
     key: 'time',
     render: props => {
-      return props.value ? moment.utc(props.value * 1000).format('HH:mm') : null;
+      const { metadata } = useMetadata(false);
+
+      const dataFormat = metadata?.properties?.find(({ path }) => path === props?.column?.id)?.dataFormat;
+
+      return props.value ? moment.utc(props.value * 1000).format(dataFormat || 'HH:mm') : null;
     },
   },
   {
@@ -56,7 +68,10 @@ export const renderers: ITableCustomTypesRender[] = [
   {
     key: 'reference-list-item',
     render: props => {
-      const { column: { referenceListName, referenceListNamespace }, value: colValue } = props;
+      const {
+        column: { referenceListName, referenceListNamespace },
+        value: colValue,
+      } = props;
       const item = useReferenceListItem(referenceListNamespace, referenceListName, colValue);
       return item?.data?.item;
     },
@@ -64,7 +79,7 @@ export const renderers: ITableCustomTypesRender[] = [
   {
     key: 'entity',
     render: props => {
-      return typeof props?.value === 'object' 
+      return typeof props?.value === 'object'
         ? props?.value?.displayText ?? props?.value?._displayName
         : props?.value ?? null;
     },
@@ -111,10 +126,9 @@ export const renderers: ITableCustomTypesRender[] = [
           };
           executeAction({
             actionConfiguration: actionProps.actionConfiguration,
-            argumentsEvaluationContext: evaluationContext
+            argumentsEvaluationContext: evaluationContext,
           });
-        } else
-          console.error('Action is not configured');
+        } else console.error('Action is not configured');
       };
 
       const aProps = getActionProps(props);

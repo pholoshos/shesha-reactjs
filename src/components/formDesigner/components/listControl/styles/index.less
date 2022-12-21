@@ -1,14 +1,7 @@
 .sha-list-component {
-  &.horizontal {
-    display: flex;
-    overflow-x: auto;
-    flex-direction: row;
-  }
-
   .sha-responsive-button-group {
     min-width: unset !important;
   }
-
   .ant-collapse-extra {
     margin: unset !important;
   }
@@ -61,12 +54,18 @@
     &.loading {
       height: 300px;
     }
+
     overflow-y: auto;
     overflow-x: hidden;
 
     &.horizontal {
       display: flex;
       overflow-x: auto;
+
+      .ant-space.ant-space-horizontal {
+        display: inline-flex;
+        flex-wrap: nowrap;
+      }
     }
   }
 
@@ -88,11 +87,6 @@
       > .sha-list-component-add-item-btn {
         display: block;
       }
-    }
-
-    &.horizontal-child {
-      display: inline-block;
-      white-space: nowrap;
     }
 
     .sha-list-component-divider {

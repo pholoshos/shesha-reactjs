@@ -26,7 +26,7 @@
       "visibility": "Yes",
       "customVisibility": null,
       "isDynamic": false
-    },    
+    },
     {
       "id": "aYeIfcjqrSZpmuKd6Fijn",
       "type": "textField",
@@ -92,7 +92,7 @@
       "visibility": "Yes",
       "customVisibility": null,
       "isDynamic": false
-    },    
+    },
     {
       "id": "F7W3qRl8P_Jdv_R2Q-f3u",
       "type": "dropdown",
@@ -102,9 +102,7 @@
       "parentId": "root",
       "hidden": false,
       "customVisibility": null,
-      "mode": [
-        "single"
-      ],
+      "mode": ["single"],
       "dataSourceType": "values",
       "validate": {
         "required": true
@@ -167,6 +165,14 @@
           "value": "object"
         }
       ]
+    },
+    {
+      "id": "7cYicDJe6G4QZySqcHoIN",
+      "type": "textField",
+      "name": "dataFormat",
+      "label": "Date format",
+      "customVisibility": "return data.dataType == 'date' || data.dataType == 'date-time'",
+      "description": "Enter the format for this property. Also, note that you can use moment display options. See https://momentjscom.readthedocs.io/en/latest/moment/04-displaying/01-format/"
     },
     {
       "id": "7cYicDJe6G4QZySqcHoIM",
@@ -308,7 +314,7 @@
           },
           "settingsValidationErrors": [],
           "textType": "text"
-        }     
+        }
       ]
     },
     {
@@ -333,9 +339,7 @@
           "parentId": "ipxZABhhFbnZBrO1iijxF",
           "hidden": false,
           "customVisibility": null,
-          "mode": [
-            "single"
-          ],
+          "mode": ["single"],
           "dataSourceType": "values",
           "validate": {},
           "settingsValidationErrors": [],
@@ -409,7 +413,7 @@
             "maxValue": ""
           },
           "settingsValidationErrors": []
-        }        
+        }
       ]
     },
     {
@@ -424,9 +428,7 @@
       "direction": "vertical",
       "justifyContent": "left",
       "settingsValidationErrors": [],
-      "mode": [
-        "single"
-      ],
+      "mode": ["single"],
       "dataSourceType": "values",
       "validate": {
         "required": false
@@ -584,7 +586,7 @@
       "visibility": "Yes",
       "customVisibility": null,
       "isDynamic": false
-    },    
+    },
     {
       "id": "-X1emhZPx1rM7w22GOc12",
       "type": "checkbox",

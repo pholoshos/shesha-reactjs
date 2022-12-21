@@ -105,6 +105,24 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         </Select>
       </FormItem>
 
+      <Show when={state?.orientation === 'horizontal'}>
+        <FormItem name="listItemWidth" label="List Item Width">
+          <Select disabled={readOnly} defaultValue={1}>
+            <Option value={1}>100%</Option>
+            <Option value={0.5}>50%</Option>
+            <Option value={0.33}>33%</Option>
+            <Option value={0.25}>25%</Option>
+            <Option value="custom">(Custom)</Option>
+          </Select>
+        </FormItem>
+
+        <Show when={state?.listItemWidth === 'custom'}>
+          <FormItem name="customListItemWidth" label="Custom List Item Width (px)">
+            <InputNumber />
+          </FormItem>
+        </Show>
+      </Show>
+
       <FormItem
         name="renderStrategy"
         label="Render Strategy"

@@ -15,18 +15,17 @@ export function MakePromiseWithState<T>(promise: Promise<T>): PromisedValue<T> {
         promise: null,
         error: null,
     };
-    result.promise = promise.then(
-        function(v) { 
-            result.isPending = false; 
-            result.isResolved = true; 
+    result.promise = promise.then(v => {
+            result.isPending = false;
+            result.isResolved = true;
             result.value = v;
-            return v; 
-        }, 
-        function(e) { 
-            result.isPending = false; 
-            result.isRejected = true; 
+            return v;
+        })
+        .catch(e => {
+            result.isPending = false;
+            result.isRejected = true;
             result.error = e;
-            return null;
+            throw e;
         });
 
     return result;

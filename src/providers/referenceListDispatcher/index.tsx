@@ -9,77 +9,26 @@ import {
   IGetReferenceListPayload,
 } from './contexts';
 import useThunkReducer from 'react-hook-thunk-reducer';
-import { ILoadingState, /*IReferenceListDictionary,*/ IReferenceListIdentifier } from './models';
-//import { useSheshaApplication } from '../../providers';
+import { ILoadingState, IReferenceListIdentifier } from './models';
 import { IReferenceList, IReferenceListItem } from '../../interfaces/referenceList';
-//import { getReferenceListFullName } from './utils';
-//import { referenceListGetItems } from '../../apis/referenceList';
 import { PromisedValue } from '../../utils/promises';
 import { useConfigurationItemsLoader } from '../configurationItemsLoader';
-import { isValidRefListId } from './utils';
+import { useAppConfigurator } from '../appConfigurator';
 
 export interface IReferenceListDispatcherProviderProps { }
-
-// const getReferenceListCacheKey = (refListId: IReferenceListIdentifier): string => {
-
-// }
 
 const ReferenceListDispatcherProvider: FC<PropsWithChildren<IReferenceListDispatcherProviderProps>> = ({ children }) => {
   const initial: IReferenceListDispatcherStateContext = {
     ...REFERENCELIST_DISPATCHER_CONTEXT_INITIAL_STATE,
   };
 
-  //const refLists = useRef<IReferenceListDictionary>({});
-
   const loader = useConfigurationItemsLoader();
+  const { configurationItemMode } = useAppConfigurator();
 
   const [state, _dispatch] = useThunkReducer(metadataReducer, initial);
 
-  //const { backendUrl, httpHeaders } = useSheshaApplication();
-  /* NEW_ACTION_DECLARATION_GOES_HERE */
-
   const getReferenceList = (payload: IGetReferenceListPayload): PromisedValue<IReferenceList> => {
-    return loader.getRefList({ refListId: payload.refListId, skipCache: false });
-    
-    /*
-    const { refListId } = payload;
-
-    if (!refListId.name && (!refListId.module || !refListId.namespace))
-      return MakePromiseWithState(Promise.reject("Reference list name or module not specified"));
-
-    const refListKey = getReferenceListFullName(moduleName, name);
-    const loadedRefList = refLists.current[refListKey];
-    if (loadedRefList) return loadedRefList;
-
-    const refListPromise = new Promise<IReferenceList>((resolve, reject) => {
-      referenceListGetItems({ namespace: moduleName, name: name }, { base: backendUrl, headers: httpHeaders })
-        .then(response => {
-          if (!response.success) {
-            reject(response.error);
-          }
-
-          const refList: IReferenceList = {
-            name: name,
-            items: response.result.map<IReferenceListItem>(i => ({
-              id: i.id,
-              item: i.item,
-              itemValue: i.itemValue,
-              description: i.description,
-              orderIndex: i.orderIndex,
-            })),
-          };
-
-          resolve(refList);
-        })
-        .catch(e => {
-          reject(e);
-        });
-    });
-    const promiseWithState = MakePromiseWithState(refListPromise);
-    refLists.current[refListKey] = promiseWithState;
-
-    return promiseWithState;
-    */
+    return loader.getRefList({ refListId: payload.refListId, skipCache: false, configurationItemMode: configurationItemMode });
   };
 
   const getReferenceListItem = (moduleName: string, name: string, itemValue?: number): Promise<IReferenceListItem> => {
@@ -145,34 +94,35 @@ const useReferenceList = (refListId: IReferenceListIdentifier): ILoadingState<IR
   const { getReferenceList } = useReferenceListDispatcher();
   const refListPromise = getReferenceList({ refListId: refListId });
 
-  const [data, setData] = useState<IReferenceList>(refListPromise.value);
+  const [state, setState] = useState<ILoadingState<IReferenceList>>({
+    data: refListPromise.value,
+    loading: refListPromise.isPending,
+    error: refListPromise.error
+  });
+
+  const updateState = () => {
+    setState({
+      data: refListPromise.value,
+      loading: refListPromise.isPending,
+      error: refListPromise.error
+    });
+  }
+
+  useEffect(() => {
+    updateState();
+  }, [refListPromise]);
 
   useEffect(() => {
     // if the reflist is not loaded on first rendering - use promise to return data
-    if (!refListPromise.isResolved)
-      refListPromise.promise.then(list => {
-        if (data !== refListPromise.value) {
-          setData(list);
-        }
+    if (refListPromise.isPending)
+      refListPromise.promise.then(() => {
+        updateState();
+      }).catch(() => {
+        updateState();
       });
   }, []);
 
-  useEffect(() => {
-    // if the loaded list changed after first loading - return actual value
-    if (data !== refListPromise.value) {
-      setData(refListPromise.value);
-    }
-  }, [refListPromise.value]);
-
-  if (!isValidRefListId(refListId))
-    return { loading: false, data: null };
-
-  const result: ILoadingState<IReferenceList> = {
-    data,
-    loading: refListPromise.isPending,
-    error: refListPromise.error
-  };
-  return result;
+  return state;
 }
 
 const useReferenceListItem = (moduleName: string, namespace: string, listName: string, itemValue?: number): ILoadingState<IReferenceListItem> => {

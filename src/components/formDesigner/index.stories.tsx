@@ -41,7 +41,7 @@ export const TestForm2 = addStory(DesignerTemplate, {
 });
 
 export const RefListRefactoring = addStory(DesignerTemplate, {
-  formId: 'bb240fbf-c7f7-4183-a14b-42bc27021cef',
+  formId: '11aa3c07-f57c-43fa-a7c6-c5750857bc2d',
 });
 
 export const AutocompleteSettingsForm = addStory(DesignerTemplate, {

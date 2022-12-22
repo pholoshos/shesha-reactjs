@@ -140,12 +140,12 @@ export const WardsIndex = addStory(Template, {
   mode: 'readonly',
 });
 
-export const FormDesigner = addStory(Template, {
+export const RefListRefactornig = addStory(Template, {
   formId: {
-    module: 'Boxfusion.His.Clients.Houghton',
-    name: 'wardsTable'
+    module: 'test',
+    name: 'reflist-refactoring'
   },
-  mode: 'readonly',
+  mode: 'edit',
 });
 
 export const Performance = addStory(Template, {

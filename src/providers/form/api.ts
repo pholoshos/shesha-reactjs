@@ -244,7 +244,7 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
                         getContainerProperties,
                         getMetadata,
                     }).then(gqlFieldsList => {
-                        console.log('LOG:gqlFieldsList', gqlFieldsList);
+                        //console.log('LOG:gqlFieldsList', gqlFieldsList);
 
                         if (formRequestRef.current !== requestId)
                             return;
@@ -405,15 +405,12 @@ const getGqlFields = (payload: GetGqlFieldsPayload): Promise<IFieldData[]> => {
         let fields: IFieldData[] = [];
 
         const fieldNames = getFormFields(payload);
-        console.log('LOG:fieldNames', fieldNames)
 
         // create list of promises
         const promises: Promise<any>[] = [];
 
         fieldNames.forEach(item => {
             if (item) {
-                console.log('process property', item)
-
                 item = item.trim();
                 const pathParts = item.split('.');
 

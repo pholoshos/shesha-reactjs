@@ -21,6 +21,7 @@ import { ConfigurationItemsViewMode } from '../appConfigurator/models';
 import { IReferenceList } from '../../interfaces/referenceList';
 import { referenceListGetByName } from '../../apis/referenceList';
 import { MakePromiseWithState, PromisedValue } from '../../utils/promises';
+import { isValidRefListId } from '../referenceListDispatcher/utils';
 
 export interface IConfigurationItemsLoaderProviderProps { }
 
@@ -140,7 +141,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     const { refListId, configurationItemMode } = payload;
 
     const refListPromise = new Promise<IReferenceList>((resolve, reject) => {
-      if (!refListId)
+      if (!isValidRefListId(refListId))
         reject("Reference List identifier must be specified");
 
       const cacheKey = getCacheKey(refListId, configurationItemMode);
@@ -150,7 +151,6 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
       const promise = referenceListGetByName({ module: refListId.module, namespace: refListId.namespace, name: refListId.name, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ });
 
       promise.then(response => {
-        console.log('PERF: resolve reference list response');
         // todo: handle not changed
         if (response.success) {
           const responseData = response.result;

@@ -324,9 +324,12 @@ export const ConfigurableFormRenderer: FC<IConfigurableFormRendererProps> = ({
 
     getDynamicPreparedValues()
       .then(dynamicValues => {
-        const preparedPostData = { ...formData, ...dynamicValues, ...getInitialValuesFromFormSettings() };
+        const initialValues = getInitialValuesFromFormSettings();
+        const nonFormValues = { ...dynamicValues, ...initialValues };
 
-        const postData = excludeFormFieldsInPayload ? preparedPostData : addFormFieldsList(preparedPostData, form);
+        const postData = excludeFormFieldsInPayload 
+          ? { ...formData, ...nonFormValues } 
+          : addFormFieldsList(formData, nonFormValues, form);
 
         if (excludeFormFieldsInPayload) {
           delete postData._formFields;

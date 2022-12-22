@@ -150,7 +150,7 @@
       "parentId": "root",
       "validate": {},
       "settingsValidationErrors": [],
-      "description": "Write a code that returns the URL to be used to fetch Datchea for the Radio.",
+      "description": "Write a code that returns the URL to be used to fetch data for the Radio.",
       "exposedVariables": [
         {
           "name": "data",
@@ -182,6 +182,26 @@
         }
       ],
       "customVisibility": "return data.dataSourceType === 'url'"
+    },
+    {
+      "id": "gWL0lQBLM5toTa53dcEe1",
+      "type": "referenceListAutocomplete",
+      "name": "referenceListId",
+      "label": "Reference List",
+      "labelAlign": "right",
+      "parentId": "root",
+      "hidden": false,
+      "visibility": "Yes",
+      "customVisibility": "return data.dataSourceType === 'referenceList'",
+      "isDynamic": false,
+      "version": 0,
+      "convertToFullId": true,
+      "placeholder": "",
+      "description": "",
+      "validate": {
+        "message": ""
+      },
+      "settingsValidationErrors": []
     },
     {
       "id": "b62d9f2e-a2f8-4cab-b63b-1b0185ad2939",
@@ -231,26 +251,6 @@
       "version": 1,
       "useRawValues": false,
       "referenceListId": null
-    },
-    {
-      "id": "gWL0lQBLM5toTa53dcEe1",
-      "type": "referenceListAutocomplete",
-      "name": "referenceListId",
-      "label": "Reference List",
-      "labelAlign": "right",
-      "parentId": "root",
-      "hidden": false,
-      "visibility": "Yes",
-      "customVisibility": "return data.dataSourceType === 'referenceList'",
-      "isDynamic": false,
-      "version": 0,
-      "convertToFullId": true,
-      "placeholder": "",
-      "description": "",
-      "validate": {
-        "message": ""
-      },
-      "settingsValidationErrors": []
     },
     {
       "id": "99af45e2-b779-401b-9b5b-f2457b52496c",

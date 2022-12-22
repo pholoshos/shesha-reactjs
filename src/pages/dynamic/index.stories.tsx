@@ -213,7 +213,7 @@ export const ReferenceListDetails = addStory(Template, {
     module: 'shesha',
     name: 'reference-lists-details',
   },
-  id: '1EBECD6A-D0F1-4427-941B-073C94C2D00B',
+  id: 'd51c8c48-1a20-4053-977d-a10597a43b13',
   mode: 'readonly',
 });
 

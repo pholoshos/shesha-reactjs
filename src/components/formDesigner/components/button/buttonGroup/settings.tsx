@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Form, Select, Input } from 'antd';
+import { Form, Select, Input, Checkbox } from 'antd';
 import { IButtonGroupProps } from './models';
 import { ButtonGroupSettingsModal } from './buttonGroupSettingsModal';
 import SectionSeparator from '../../../../sectionSeparator';
@@ -42,6 +42,10 @@ const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
           <Option value="middle">Middle</Option>
           <Option value="large">Large</Option>
         </Select>
+      </Form.Item>
+
+      <Form.Item name="isInline" initialValue={props.model.isInline} label="Is Inline" valuePropName="checked">
+        <Checkbox disabled={props.readOnly}/>
       </Form.Item>
 
       <Form.Item

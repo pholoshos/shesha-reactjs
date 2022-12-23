@@ -233,7 +233,7 @@ export const useFormWithData = (args: UseFormWitgDataArgs): FormWithDataResponse
                 const getDataUrl = (removeZeroWidthCharsFromString(form.settings?.getUrl) || '').trim();
 
                 if (Boolean(getDataUrl)) {
-                    console.log('LOG:getDataUrl', getDataUrl);
+                    //console.log('LOG:getDataUrl', getDataUrl);
                     setState(prev => ({ ...prev, loaderHint: 'Fetching metadata...' }));
 
                     // fetch meta before the data

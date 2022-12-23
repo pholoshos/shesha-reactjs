@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useMemo } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { GroupOutlined } from '@ant-design/icons';
 import ToolbarSettings from './settings';
@@ -29,12 +29,6 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
     // TODO: Wrap this component within ConfigurableFormItem so that it will be the one handling the hidden state. Currently, it's failing. Always hide the component
     return <ButtonGroup {...model} />;
   },
-  initModel: (model: IButtonGroupProps) => {
-    return {
-      ...model,
-      items: [],
-    };
-  },
   migrator: m =>
     m
       .add<IButtonGroupProps>(0, prev => {
@@ -44,7 +38,8 @@ const ButtonGroupComponent: IToolboxComponent<IButtonGroupProps> = {
         };
       })
       .add<IButtonGroupProps>(1, migrateV0toV1)
-      .add<IButtonGroupProps>(2, migrateV1toV2),
+      .add<IButtonGroupProps>(2, migrateV1toV2)
+      .add<IButtonGroupProps>(3, prev => ({ ...prev, isInline: prev['isInline'] ?? true } /* default isInline to true if not specified */)),
   settingsFormFactory: ({ readOnly, model, onSave, onCancel, onValuesChange }) => {
     return (
       <ToolbarSettings
@@ -105,12 +100,19 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
 
     const disabled = !localexecuteExpression(props.customEnabled);
 
-    return getButtonGroupMenuItem(
-      renderButtonItem(props, props?.id, disabled),
-      props.id,
-      disabled,
-      hasChildren ? props?.childItems?.filter(getIsVisible)?.map(props => renderMenuButton(props, isChild)) : null
-    );
+    const buttonProps = props.itemType === 'item'
+      ? props as IButtonGroupButton
+      : null;
+    const isDivider = buttonProps && (buttonProps.itemSubType === 'line' || buttonProps.itemSubType === 'separator');
+
+    return isDivider
+      ? { type: 'divider' }
+      : getButtonGroupMenuItem(
+        renderButtonItem(props, props?.id, disabled),
+        props.id,
+        disabled,
+        hasChildren ? props?.childItems?.filter(getIsVisible)?.map(props => renderMenuButton(props, isChild)) : null
+      );
   };
 
   const renderButtonItem = (item: ButtonGroupItemProps, uuid: string, disabled = false, isChild = false) => {
@@ -129,6 +131,10 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
     );
   };
 
+  const filteredItems = useMemo(() => {
+    return items?.filter(getIsVisible);
+  }, [items]);
+
   if (items.length === 0 && isDesignMode)
     return (
       <Alert
@@ -142,9 +148,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
     <Fragment>
       {isInline && (
         <div className="sha-responsive-button-group-inline-container">
-          {items
-            ?.filter(getIsVisible)
-            ?.map(props => renderButtonItem(props, props?.id, !localexecuteExpression(props.customEnabled)))}
+          {filteredItems?.map(props => renderButtonItem(props, props?.id, !localexecuteExpression(props.customEnabled)))}
         </div>
       )}
 
@@ -152,7 +156,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
         <div className="sha-responsive-button-group-container">
           <Menu
             mode="horizontal"
-            items={items?.filter(getIsVisible)?.map(props => renderMenuButton(props))}
+            items={filteredItems?.map(props => renderMenuButton(props))}
             className={`sha-responsive-button-group space-${spaceSize}`}
             style={{ width: '30px' }}
           />

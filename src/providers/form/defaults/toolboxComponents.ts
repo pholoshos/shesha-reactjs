@@ -79,6 +79,7 @@ import Markdown from '../../../components/formDesigner/components/markdown';
 import Drawer from '../../../components/formDesigner/components/drawer';
 import ColorPickerComponent from '../../../components/formDesigner/components/colorPicker';
 import Typography from '../../../components/formDesigner/components/typography/textFull';
+import EndpointsAutocompleteComponent from '../../../components/formDesigner/components/endpointsAutocomplete/endpointsAutocomplete';
 
 export const ToolboxComponents: IToolboxComponentGroup[] = [
   {
@@ -145,6 +146,7 @@ export const ToolboxComponents: IToolboxComponentGroup[] = [
       EventNames,
       ConfigurableActionConfigurator,
       FormAutocompleteComponent,
+      EndpointsAutocompleteComponent,
       ReferenceListAutocompleteComponent,
       Markdown,
     ],

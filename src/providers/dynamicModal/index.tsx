@@ -94,7 +94,7 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
             resolve(values); // todo: return result e.g. we may need to handle created entity id and navigate to edit/details page
           },
         };
-          console.log('modalProps', { modalProps, context });
+          
         createModal({ ...modalProps, isVisible: true });
       });
     },

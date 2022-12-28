@@ -3,15 +3,12 @@ import { IReferenceListIdentifier } from "./models";
 export const getReferenceListFullName = (refListId: IReferenceListIdentifier): string => {
     if (!refListId)
         return null;
-    const fullName = refListId.namespace
-        ? `${refListId.namespace}.${refListId.name}`
-        : refListId.name;
 
     return refListId.module
-        ? `${refListId.module}/${fullName}`
-        : fullName;
+        ? `${refListId.module}/${refListId.name}`
+        : refListId.name;
 }
 
 export const isValidRefListId = (refListId: IReferenceListIdentifier):boolean => {
-    return Boolean(refListId && refListId.name && (refListId.namespace || refListId.module));
+    return Boolean(refListId && refListId.name /*&& refListId.module note: module can be ampty in legacy reference lists*/);
 }

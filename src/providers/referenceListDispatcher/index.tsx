@@ -125,12 +125,12 @@ const useReferenceList = (refListId: IReferenceListIdentifier): ILoadingState<IR
   return state;
 }
 
-const useReferenceListItem = (moduleName: string, namespace: string, listName: string, itemValue?: number): ILoadingState<IReferenceListItem> => {
+const useReferenceListItem = (moduleName: string, listName: string, itemValue?: number): ILoadingState<IReferenceListItem> => {
   if (itemValue === null || itemValue === undefined)
     return null;
 
   const { getReferenceList } = useReferenceListDispatcher();
-  const refListPromise = getReferenceList({ refListId: { module: moduleName, namespace: namespace, name: listName } });
+  const refListPromise = getReferenceList({ refListId: { module: moduleName, name: listName } });
   const loadedItem = refListPromise.isResolved
     ? getRefListItemByValue(refListPromise.value, itemValue)
     : null;

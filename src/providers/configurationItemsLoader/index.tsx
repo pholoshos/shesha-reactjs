@@ -22,6 +22,7 @@ import { IReferenceList } from '../../interfaces/referenceList';
 import { referenceListGetByName } from '../../apis/referenceList';
 import { MakePromiseWithState, PromisedValue } from '../../utils/promises';
 import { isValidRefListId } from '../referenceListDispatcher/utils';
+import { IReferenceListIdentifier } from '../referenceListDispatcher/models';
 
 export interface IConfigurationItemsLoaderProviderProps { }
 
@@ -48,9 +49,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
       return `${key}:${configurationItemMode}`
     }
 
-    return refListId.namespace
-      ? addMode(`${refListId.module}/${refListId.namespace}.${refListId.name}`)
-      : addMode(`${refListId.module}/${refListId.name}`);
+    return addMode(`${refListId.module}/${refListId.name}`);
   }
 
   const makeFormLoadingKey = (payload: IGetFormPayload): string => {
@@ -119,7 +118,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     return result;
   };
 
-  const getCacheKey = (formId: FormIdentifier, configurationItemMode?: ConfigurationItemsViewMode): string => {
+  const getFormCacheKey = (formId: FormIdentifier, configurationItemMode?: ConfigurationItemsViewMode): string => {
     const rawId = asFormRawId(formId);
     const fullName = asFormFullName(formId);
     return fullName
@@ -127,6 +126,10 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
         : rawId
           ? getCacheKeyByRawId('form', configurationItemMode, rawId)
           : null;
+  }
+
+  const getRefListCacheKey = (listId: IReferenceListIdentifier, configurationItemMode?: ConfigurationItemsViewMode): string => {
+    return getCacheKeyByFullName('ref-list', configurationItemMode, listId.module, listId.name);
   }
 
   const getRefList = (payload: IGetRefListPayload): PromisedValue<IReferenceList> => {
@@ -144,11 +147,11 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
       if (!isValidRefListId(refListId))
         reject("Reference List identifier must be specified");
 
-      const cacheKey = getCacheKey(refListId, configurationItemMode);
+      const cacheKey = getRefListCacheKey(refListId, configurationItemMode);
       const storage = window?.localStorage;
       const cachedDto = cacheKey ? getFromCache<IReferenceList>(cacheKey) : null;
 
-      const promise = referenceListGetByName({ module: refListId.module, namespace: refListId.namespace, name: refListId.name, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ });
+      const promise = referenceListGetByName({ module: refListId.module, name: refListId.name, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ });
 
       promise.then(response => {
         // todo: handle not changed
@@ -207,7 +210,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
       if (!rawId && !fullName)
         reject("Form identifier must be specified");
 
-      const cacheKey = getCacheKey(formId, configurationItemMode);
+      const cacheKey = getFormCacheKey(formId, configurationItemMode);
       const storage = window?.localStorage;
       const cachedDto = cacheKey ? getFromCache<FormConfigurationDto>(cacheKey) : null;
 
@@ -259,7 +262,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
   const clearItemCache = (payload: IClearItemCachePayload) => {
     const modes: ConfigurationItemsViewMode[] = ['live', 'ready', 'latest'];
     modes.forEach(mode => {
-      const cacheKey = getCacheKey(payload.formId, mode);
+      const cacheKey = getFormCacheKey(payload.formId, mode);
       
       delete forms.current[cacheKey];
     });

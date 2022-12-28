@@ -5,6 +5,7 @@ import { IToolboxComponent } from '../../../../interfaces';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { FormMarkup } from '../../../../providers/form/models';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { IReferenceListIdentifier } from '../../../../providers/referenceListDispatcher/models';
 import { getLegacyReferenceListIdentifier } from '../../../../utils/referenceList';
 import ConfigurableFormItem from '../formItem';
 import RefListCheckboxGroup from './refListCheckboxGroup';
@@ -53,11 +54,13 @@ const CheckboxGroupComponent: IToolboxComponent<IEnhancedICheckboxGoupProps> = {
     return {...prev, referenceListId: getLegacyReferenceListIdentifier(prev.referenceListNamespace, prev.referenceListName) };
   }),
   linkToModelMetadata: (model, metadata): IEnhancedICheckboxGoupProps => {
+    const refListId: IReferenceListIdentifier = metadata.referenceListName
+      ? { module: metadata.referenceListModule, name: metadata.referenceListName }
+      : null;
     return {
       ...model,
       dataSourceType: metadata.dataType === DataTypes.referenceListItem ? 'referenceList' : 'values',
-      referenceListNamespace: metadata.referenceListNamespace,
-      referenceListName: metadata.referenceListName,
+      referenceListId: refListId,
     };
   },
 };

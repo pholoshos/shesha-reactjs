@@ -233,7 +233,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     }
 
     const advancedFilter = advancedFilter2JsonLogic(internalPayload.advancedFilter, state.columns);
-    //console.log('converted advanced filter', advancedFilter);
 
     if (advancedFilter && advancedFilter.length > 0) allFilters = allFilters.concat(advancedFilter);
 

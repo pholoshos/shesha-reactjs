@@ -45,7 +45,7 @@ const getFilter = (term: string) => {
     return JSON.stringify(filter);
 }
 const REFERENCE_LIST_ENTITY_TYPE = 'Shesha.Framework.ReferenceList';
-const REFERENCE_LIST_PROPERTIES = 'id configuration { name, namespace, module { id name }, label, description, versionNo }';
+const REFERENCE_LIST_PROPERTIES = 'id configuration { name, module { id name }, label, description, versionNo }';
 const getListFetcherQueryParams = (term: string, maxResultCount): IGenericGetAllPayload => {
     return {
         skipCount: 0,
@@ -54,7 +54,7 @@ const getListFetcherQueryParams = (term: string, maxResultCount): IGenericGetAll
         properties: REFERENCE_LIST_PROPERTIES,
         quickSearch: null,
         filter: getFilter(term),
-        sorting: 'configuration.module.name, , configuration.namespace, configuration.name',
+        sorting: 'configuration.module.name, configuration.name',
     };
 };
 const getSelectedValueQueryParams = (value?: IReferenceListIdentifier): IGenericGetAllPayload => {
@@ -65,8 +65,6 @@ const getSelectedValueQueryParams = (value?: IReferenceListIdentifier): IGeneric
         ...baseItemFilter,
         { '==': [{ 'var': 'configuration.name' }, value.name] },
     ];
-    if (value.namespace !== undefined)
-        filters.push({ '==': [{ 'var': 'configuration.namespace' }, value.namespace] });
     if (value.module !== undefined)
         filters.push({ '==': [{ 'var': 'configuration.module.name' }, value.module] });
 
@@ -87,7 +85,6 @@ interface IResponseItem {
     id: string;
     configuration: {
         name: string;
-        namespace?: string;
         label?: string;
         description?: string;
         versionNo?: number;
@@ -100,20 +97,19 @@ interface IResponseItem {
 
 interface IConfigurationItemProps {
     name: string;
-    namespace?: string;
     label?: string;
     description?: string;
     versionNo?: number;
 }
 
-const RefListLabel: FC<IConfigurationItemProps> = ({ name, namespace, description, versionNo, label }) => {
+const RefListLabel: FC<IConfigurationItemProps> = ({ name, description, versionNo, label }) => {
     const displayLabel = label && label !== name
         ? label
         : null;
     return (
         <div>
             <HelpTextPopover content={description}>
-                <span>{namespace ? namespace + "." : null}{name}</span> {false && versionNo && <i>(version {versionNo})</i>}
+                <span>{name}</span> {false && versionNo && <i>(version {versionNo})</i>}
             </HelpTextPopover>
             {displayLabel && (
                 <><br /><Typography.Text type="secondary" ellipsis={true}>{displayLabel}</Typography.Text></>
@@ -125,9 +121,7 @@ const RefListLabel: FC<IConfigurationItemProps> = ({ name, namespace, descriptio
 const getDisplayText = (item: IResponseItem) => {
     if (!item)
         return null;
-    const fullName = item.configuration.namespace
-        ? `${item.configuration.namespace}.${item.configuration.name}`
-        : item.configuration.name;
+    const fullName = item.configuration.name;
 
     return item.configuration.module
         ? `${item.configuration.module.name}:${fullName}`
@@ -195,7 +189,6 @@ export const ReferenceListAutocomplete: FC<IReferenceListAutocompleteRuntimeProp
                     label: (
                         <RefListLabel
                             name={item.configuration.name}
-                            namespace={item.configuration.namespace}
                             label={item.configuration.label}
                             description={item.configuration.description}
                             versionNo={item.configuration.versionNo}
@@ -204,7 +197,6 @@ export const ReferenceListAutocomplete: FC<IReferenceListAutocompleteRuntimeProp
                     value: getDisplayText(item),
                     data: {
                         name: item.configuration.name,
-                        namespace: item.configuration.namespace,
                         module: item.configuration.module?.name,
                     }
                 };

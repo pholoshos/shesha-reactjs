@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { ReferenceListItemDto } from '../../apis/referenceList';
 import classNames from 'classnames';
 import { useReferenceList } from '../../providers/referenceListDispatcher';
+import { getLegacyReferenceListIdentifier } from '../../utils/referenceList';
 
 const RadioButton = Radio.Button;
 
@@ -48,7 +49,7 @@ const RefListRadioButtons: FC<IRefListRadioButtonsProps> = ({
   onSelectionChange,
   ...rest
 }) => {
-  const { data: refList } = useReferenceList({ name: listName, namespace: listNamespace });
+  const { data: refList } = useReferenceList(getLegacyReferenceListIdentifier(listNamespace, listName));
   
   const filter = ({ itemValue }: ReferenceListItemDto) => {
     const localFilter = filters?.includes(itemValue);

@@ -12,11 +12,11 @@ export interface ICheckboxGroupProps extends Omit<IConfigurableFormComponent, 's
   /**
    * @deprecated - use referenceListId instead
    */
-   referenceListNamespace?: string;
+  referenceListNamespace?: string;
   /**
    * @deprecated - use referenceListId instead
    */
-   referenceListName?: string;
+  referenceListName?: string;
   referenceListId?: IReferenceListIdentifier;
   dataSourceType: DataSourceType;
   direction?: SpaceProps['direction'];

@@ -45,15 +45,16 @@ export const ItemsTree: FC<IItemsTreeProps> = ({ treeState, onChangeSelection })
         const loop = (data: ConfigItemDataNode[], onMatched: () => void = () => { }): ConfigItemDataNode[] =>
             data.map((item) => {
                 const strTitle = item.title as string;
-                const index = strTitle.indexOf(term);
+                const index = strTitle.toLocaleLowerCase().indexOf(term.toLowerCase());
                 const beforeStr = strTitle.substring(0, index);
                 const afterStr = strTitle.slice(index + term.length);
+                const termStr = strTitle.slice(index, index + term.length);
                 const matched = index > -1;
                 const title =
                     matched ? (
                         <span>
                             {beforeStr}
-                            <span className="site-tree-search-value">{term}</span>
+                            <span className="site-tree-search-value">{termStr}</span>
                             {afterStr}
                         </span>
                     ) : (

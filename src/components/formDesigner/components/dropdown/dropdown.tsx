@@ -60,8 +60,10 @@ const DropdownComponent: IToolboxComponent<IDropdownProps> = {
     return {
       ...model,
       dataSourceType: metadata.dataType === DataTypes.referenceListItem ? 'referenceList' : 'values',
-      referenceListNamespace: metadata.referenceListNamespace,
-      referenceListName: metadata.referenceListName,
+      referenceListId: {
+        module: metadata.referenceListModule,
+        name: metadata.referenceListName,
+      },
       mode: 'single',
       useRawValues: true,
     };

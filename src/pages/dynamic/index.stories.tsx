@@ -208,6 +208,13 @@ export const ReferenceLists = addStory(Template, {
   },
 });
 
+export const ScheduledJobs = addStory(Template, {
+  formId: {
+    module: null,
+    name: 'scheduled-job',
+  },
+});
+
 export const ReferenceListDetails = addStory(Template, {
   formId: {
     module: 'shesha',

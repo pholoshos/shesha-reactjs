@@ -27,7 +27,7 @@ export interface IColumnEditFieldProps {
   name: string;
   caption?: string;
   referenceListName?: string;
-  referenceListNamespace?: string;
+  referenceListModule?: string;
   entityReferenceTypeShortAlias?: string;
   dataType: IndexColumnDataType;
   value?: any;

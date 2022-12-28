@@ -14,7 +14,7 @@ export interface IPropertyMetadata {
   dataFormat?: string | null;
   entityType?: string | null;
   referenceListName?: string | null;
-  referenceListNamespace?: string | null;
+  referenceListModule?: string | null;
   orderIndex?: number;
   groupName?: string | null;
   /**

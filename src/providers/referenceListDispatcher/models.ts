@@ -13,9 +13,5 @@ export interface ILoadingState<TData> {
 
 export interface IReferenceListIdentifier {
   module?: string;
-  /* 
-  * @deprecated - use module instead, namespace is used for backward compatibility only
-  */
-  namespace?: string;
   name: string;
 }

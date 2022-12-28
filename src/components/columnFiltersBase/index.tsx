@@ -36,7 +36,7 @@ export const ColumnFiltersBase: FC<IColumnFiltersBaseProps> = ({
           dataType,
           isFilterable,
           referenceListName,
-          referenceListNamespace,
+          referenceListModule,
           entityReferenceTypeShortAlias,
         }) => {
           if (isFilterable) {
@@ -65,18 +65,18 @@ export const ColumnFiltersBase: FC<IColumnFiltersBaseProps> = ({
                 onRemoveFilter={onRemoveFilter}
                 onChangeFilterOption={onChangeFilterOption}
                 onChangeFilter={onChangeFilter}
-                {...{
-                  id,
-                  filterName: header,
-                  accessor,
-                  dataType,
-                  filter: existingFilter?.filter,
-                  filterOption: existingFilter?.filterOption,
-                  applyFilters,
-                  referenceListName,
-                  referenceListNamespace,
-                  entityReferenceTypeShortAlias,
-                }}
+                
+                id={id}
+                filterName={header}
+                accessor={accessor}
+                dataType={dataType}
+                filter={existingFilter?.filter}
+                filterOption={existingFilter?.filterOption}
+                applyFilters={applyFilters}
+                referenceListName={referenceListName}
+                referenceListModule={referenceListModule}
+                entityReferenceTypeShortAlias={entityReferenceTypeShortAlias}
+                
                 key={id}
               />
             );

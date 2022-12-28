@@ -112,8 +112,13 @@ export const getLegacyReferenceListIdentifier = (referenceListNamespace?: string
   return !referenceListNamespace && !referenceListName
     ? null
     : {
-      name: referenceListName,
-      namespace: referenceListNamespace,
+      name: getNameWithNamespace(referenceListNamespace, referenceListName),
       module: undefined      
     };
+}
+
+const getNameWithNamespace = (namespace: string, name: string) => {
+  return Boolean(namespace)
+    ? `${namespace}.${name}`
+    : name;
 }

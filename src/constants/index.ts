@@ -21,6 +21,6 @@ export const THEME_CONFIG_KEY = 'THEME_CONFIG_KEY';
 export const THEME_CONFIG_ID = '4D5FC26A-5100-4830-9A3E-532AC652A5E3';
 export const GENERIC_ENTITIES_ENDPOINT = "/api/services/app/Entities";
 
-
+export const LEGACY_ITEMS_MODULE_NAME = "(legacy items)";
 export const LEGACY_FORMS_MODULE_NAME = "(legacy forms)";
 export const LEGACY_REFERENCE_LISTS_MODULE_NAME = "(legacy lists)";

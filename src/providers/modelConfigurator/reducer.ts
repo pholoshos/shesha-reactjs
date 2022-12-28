@@ -17,7 +17,7 @@ const mapPropertyToModelItem = (property: ModelPropertyDto): IModelItem => {
     dataFormat: property.dataFormat,
     entityType: property.entityType,
     referenceListName: property.referenceListName,
-    referenceListNamespace: property.referenceListNamespace,
+    referenceListModule: property.referenceListModule,
     source: property.source,
     properties: property.properties.map<IModelItem>(p => mapPropertyToModelItem(p)),
   }

@@ -52,7 +52,6 @@ export interface ITableColumn {
   //width?: string;
   referenceListName?: string;
   referenceListModule?: string;
-  referenceListNamespace?: string;
   entityReferenceTypeShortAlias?: string;
   allowInherited?: boolean;
 
@@ -214,7 +213,6 @@ export interface DataTableColumnDto {
   dataFormat?: string | null;
   referenceListName?: string | null;
   referenceListModule?: string | null;
-  referenceListNamespace?: string | null;
   entityReferenceTypeShortAlias?: string | null;
   autocompleteUrl?: string | null;
   allowInherited?: boolean;

@@ -18,7 +18,7 @@ export const propertyMetadata2QbProperty = (property: IPropertyMetadata): IPrope
         fieldSettings: {
             typeShortAlias: property.entityType,
             referenceListName: property.referenceListName,
-            referenceListNamespace: property.referenceListNamespace,
+            referenceListModule: property.referenceListModule,
             allowInherited: true,
         },
     };

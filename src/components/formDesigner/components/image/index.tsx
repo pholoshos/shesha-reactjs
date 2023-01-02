@@ -17,7 +17,7 @@ const settingsForm = settingsFormJson as FormMarkup;
 
 const ImageComponent: IToolboxComponent<IImageProps> = {
   type: 'image',
-  name: 'Image Display',
+  name: 'Image',
   icon: <FileImageOutlined />,
 
   factory: (model: IImageProps) => {

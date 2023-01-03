@@ -3,9 +3,9 @@ import { Button, Input, Modal, Select, Skeleton } from 'antd';
 import { DefaultOptionType } from 'antd/lib/select';
 import _, { isEmpty } from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
-import React, { FC, Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useMedia } from 'react-use';
-import { IAnyObject } from '../../interfaces';
+import { IAnyObject, IEntityReferenceDto } from '../../interfaces';
 import { useForm, useGlobalState, useModal } from '../../providers';
 import DataTableProvider, { useDataTable } from '../../providers/dataTable';
 import { evaluateDynamicFilters, hasDynamicFilter } from '../../providers/dataTable/utils';
@@ -20,7 +20,7 @@ import { IEntityPickerProps, IEntityPickerState } from './models';
 
 const UNIQUE_ID = 'HjHi0UVD27o8Ub8zfz6dH';
 
-export const EntityPicker: FC<IEntityPickerProps> = ({ displayEntityKey = '_displayName', ...restProps }) => {
+export const EntityPicker = ({ displayEntityKey = '_displayName', ...restProps }: IEntityPickerProps) => {
   return restProps.readOnly ? (
     <EntityPickerReadOnly {...restProps} displayEntityKey={displayEntityKey} />
   ) : (
@@ -28,13 +28,23 @@ export const EntityPicker: FC<IEntityPickerProps> = ({ displayEntityKey = '_disp
   );
 };
 
-export const EntityPickerReadOnly: FC<IEntityPickerProps> = props => {
+const getIdFromValue  = (value: string | IEntityReferenceDto) => {
+  return (value as IEntityReferenceDto)?.id ?? value as string
+}
+
+const getSelectionFromValue = (value: string | string[] | IEntityReferenceDto | IEntityReferenceDto[]) => {
+  return Array.isArray(value) 
+    ? value.map<string>(item => { return getIdFromValue(item); })
+    : getIdFromValue(value)
+}
+
+export const EntityPickerReadOnly = (props: IEntityPickerProps) => {
   const { entityType, displayEntityKey, value } = props;
 
   const selection = useEntitySelectionData({
     entityType: entityType,
     propertyName: displayEntityKey,
-    selection: value,
+    selection: getSelectionFromValue(value)
   });
   const selectedItems = selection?.rows;
 
@@ -45,7 +55,7 @@ export const EntityPickerReadOnly: FC<IEntityPickerProps> = props => {
   return selection.loading ? <Skeleton paragraph={false} active /> : <ReadOnlyDisplayFormItem value={displayText} />;
 };
 
-export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
+export const EntityPickerEditableInner = (props: IEntityPickerProps) => {
   const {
     entityType,
     displayEntityKey,
@@ -54,6 +64,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
     disabled,
     loading,
     value,
+    useRawValues,
     mode,
     size,
     useButtonPicker,
@@ -93,7 +104,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
   const selection = useEntitySelectionData({
     entityType: entityType,
     propertyName: displayEntityKey,
-    selection: value,
+    selection: getSelectionFromValue(value)
   });
   const selectedItems = selection?.rows;
 
@@ -197,11 +208,20 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
     } else {
       if (isMultiple) {
         const selectedItems = value && Array.isArray(value) ? value : [];
-        if (!selectedItems.includes(row.id)) selectedItems.push(row.id);
+        if (!selectedItems.includes(row.id)) 
+          selectedItems.push(
+            useRawValues
+            ? row.id
+            : { id: row.id, _displayName: row[displayEntityKey], _className: props.entityType }
+          );
 
         onChange(selectedItems, null);
       } else {
-        onChange(row.id, null);
+        onChange(
+          useRawValues
+          ? row.id
+          : { id: row.id, _displayName: row[displayEntityKey], _className: props.entityType }
+          , null);
       }
     }
 
@@ -244,7 +264,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
     if (selection.loading) {
       const items = value ? (Array.isArray(value) ? value : [value]) : [];
 
-      result = items.map(item => ({ label: 'loading...', value: item, key: item }));
+      result = items.map(item => ({ label: 'loading...', value: getIdFromValue(item), key: item }));
     } else {
       result = (selectedItems ?? []).map(ent => ({ label: ent[displayEntityKey], value: ent.id, key: ent.id }));
     }
@@ -282,7 +302,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
                 selectRef.current.blur();
                 showPickerDialog();
               }}
-              value={selection.loading ? undefined : value}
+              value={selection.loading ? undefined : getSelectionFromValue(value)}
               placeholder={selection.loading ? 'Loading...' : undefined}
               notFoundContent={''}
               defaultValue={defaultValue}
@@ -336,7 +356,7 @@ export const EntityPickerEditableInner: FC<IEntityPickerProps> = props => {
   );
 };
 
-export const EntityPickerEditable: FC<IEntityPickerProps> = props => {
+export const EntityPickerEditable = (props: IEntityPickerProps) => {
   const { parentEntityId, entityType, displayEntityKey } = props;
 
   return (

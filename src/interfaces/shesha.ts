@@ -1,5 +1,6 @@
-export interface IGuidNullableEntityWithDisplayNameDto {
-  displayText?: string;
+export interface IEntityReferenceDto {
+  _className?: string;
+  _displayName?: string;
   id?: string;
 }
 
@@ -8,7 +9,7 @@ export interface IReferenceListItemDto {
   itemValue?: number;
   description?: string;
   orderIndex?: number;
-  referenceList?: IGuidNullableEntityWithDisplayNameDto;
+  referenceList?: IEntityReferenceDto;
   id?: string;
 }
 

@@ -18,7 +18,7 @@ const SubFormTestPage: PageWithLayout<ISubFormTestPageProps> = () => {
             //loading={loadingState.loading}
             //loadingText={loadingState.loadingText}
         >
-            <FormProvider mode={'edit'} flatComponents={{ allComponents:{}, componentRelations: {}}} formSettings={{colon: true, labelCol:{}, wrapperCol:{}, layout:'vertical'}}>
+            <FormProvider mode={'edit'} flatComponents={{ allComponents: {}, componentRelations: {} }} formSettings={{ colon: true, labelCol: {}, wrapperCol: {}, layout: 'vertical' }} name={''} isActionsOwner={false}>
                 <Form.Item>
                     <Button onClick={() => {setFormName('/organisations/edit');}}>Organisaiont</Button>
                     <Button onClick={() => {setFormName('/persons/edit');}}>Person</Button>

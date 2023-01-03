@@ -2,6 +2,9 @@ import { IconType } from "../components/shaIcon";
 import { DataTypes } from "../interfaces/dataTypes";
 import { IPropertyMetadata } from "../interfaces/metadata";
 import { camelcaseDotNotation } from "../providers/form/utils";
+import ShaIcon from '../components/shaIcon';
+import GenericOutlined from "../icons/genericOutlined";
+import { JsonOutlined } from "../icons/jsonOutlined";
 
 export const getIconByDataType = (dataType: string): IconType => {
   switch (dataType) {
@@ -20,6 +23,19 @@ export const getIconByDataType = (dataType: string): IconType => {
     default: return null;
   }
 }
+
+export const getIconByPropertyMetadata = (metadata: IPropertyMetadata) => {
+  if (metadata.dataType == DataTypes.entityReference && !metadata.entityType)
+    return GenericOutlined(null);
+
+  if (metadata.dataType == DataTypes.objectReference)
+    return JsonOutlined(null);
+
+  var iconType = getIconByDataType(metadata.dataType);
+  if (iconType) return ShaIcon({iconName:iconType});
+  return null;
+}
+
 
 export const getFullPath = (property: IPropertyMetadata) => {
   const name = camelcaseDotNotation(property.path);

@@ -16,8 +16,7 @@ import { useDeepCompareEffect, usePrevious } from 'react-use';
 import { IEntity } from '../../pages/dynamic/interfaces';
 import { useFormConfiguration, UseFormConfigurationArgs } from '../form/api';
 import { useConfigurableAction } from '../configurableActionsDispatcher';
-import { entityConfigGetEntityConfigForm } from '../../apis/entityConfig';
-import { useSheshaApplication } from '../..';
+import { useConfigurationItemsLoader } from '../configurationItemsLoader';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
   actionsOwnerId?: string;
@@ -52,7 +51,6 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   onChange,
   defaultValue,
 }) => {
-  const { backendUrl } = useSheshaApplication();
   const [ state, dispatch ] = useReducer(uiReducer, SUB_FORM_CONTEXT_INITIAL_STATE);
   const { publish } = usePubSub();
   const { formData = {}, formMode } = useForm();
@@ -88,6 +86,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     error: fetchFormError,
   } = useFormConfiguration(formConfig);
 
+  const { getEntityFormId } = useConfigurationItemsLoader();
+
   useEffect(() => { 
     setFormConfig({ formId: formId, lazy: true })
   }, [formId])
@@ -96,14 +96,8 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   useEffect(() => {
     if (formData && formSelectionMode == 'dynamic') {
       const obj = formData[name];
-      if (typeof obj === 'object' && obj['_meta'] && obj['_meta']['className'] && !formConfig?.formId)
-      {
-        entityConfigGetEntityConfigForm({entityConfigName: obj['_meta']['className'], typeName: formType}, { base: backendUrl})
-          .then(response => {
-            if (response.success) 
-              setFormConfig({formId: {name: response.result.name, module: response.result.module}, lazy: true});
-          });
-      }
+      if (typeof obj === 'object' && obj['_className'] && !formConfig?.formId)
+        getEntityFormId(obj['_className'], formType, (formid) => {setFormConfig({formId: {name: formid.name, module: formid.module}, lazy: true});});
     }
   }, [formData])
 

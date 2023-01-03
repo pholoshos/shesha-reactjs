@@ -137,27 +137,18 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
       return typeof evaluated === 'boolean' ? evaluated : true;
     };
 
-    //#region Get next and previous steps
-    // Factor in the fact that some steps will be hidden by condition
-    const visibleSteps = useMemo(
-      () =>
-        tabs?.map(({ customVisibility, permissions }, index) => {
-          const granted = anyOfPermissionsGranted(permissions || []);
-          const isVisibleByCondition = executeExpression(customVisibility, true);
+    //Remove every tab from the equation that isn't visible either by customVisibility or permissions
+    const visibleSteps = useMemo(() => tabs.filter(({ customVisibility, permissions }) => {
+      const granted = anyOfPermissionsGranted(permissions || []);
+      const isVisibleByCondition = executeExpression(customVisibility, true);
 
-          const hidden = (!granted || !isVisibleByCondition) && formMode !== 'designer';
+      return !((!granted || !isVisibleByCondition) && formMode !== 'designer')
+    }), [tabs]
+    )
 
-          return {
-            index,
-            visible: !hidden,
-          };
-        }),
-      [tabs]
-    );
+    const getNextStep = () => visibleSteps?.findIndex(({ }, index) => index > current);
 
-    const getNextStep = () => visibleSteps?.findIndex(({ index, visible }) => index > current && visible);
-
-    const getPrevStep = () => findLastIndex(visibleSteps, ({ index, visible }) => visible && index < current);
+    const getPrevStep = () => findLastIndex(visibleSteps, ({ }, index) => index < current);
     //#endregion
 
     if (isComponentHidden(model)) return null;
@@ -174,7 +165,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
 
     /// NAVIGATION
     const executeActionIfConfigured = (accessor: (IWizardStepProps) => IConfigurableActionConfiguration) => {
-      const actionConfiguration = accessor(tabs[current]);
+      const actionConfiguration = accessor(visibleSteps[current]);
       if (!actionConfiguration) {
         console.warn(`Action not configured: tab '${current}', accessor: '${accessor.toString()}'`);
         return;
@@ -196,7 +187,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
         setCurrent(nextStep);
       }
 
-      setComponents(tabs[current]?.components);
+      setComponents(visibleSteps[current]?.components);
     };
 
     const back = () => {
@@ -210,7 +201,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
         setCurrent(prevStep);
       }
 
-      setComponents(tabs[current]?.components);
+      setComponents(visibleSteps[current]?.components);
     };
 
     const cancel = () => {
@@ -221,15 +212,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
       executeActionIfConfigured(tab => tab.doneButtonActionConfiguration);
     };
 
-    const steps = tabs
-      ?.filter(({ customVisibility, permissions }) => {
-        const granted = anyOfPermissionsGranted(permissions || []);
-        const isVisibleByCondition = executeExpression(customVisibility, true);
-
-        const hidden = (!granted || !isVisibleByCondition) && formMode !== 'designer';
-
-        return !hidden;
-      })
+    const steps = visibleSteps
       ?.map<IStepProps>(({ id, title, subTitle, description, icon, customEnabled }) => {
         const isDisabledByCondition = !executeExpression(customEnabled, true) && formMode !== 'designer';
 
@@ -290,18 +273,18 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
                 <Button
                   style={{ margin: '0 8px' }}
                   onClick={() => back()}
-                  disabled={!executeExpression(tabs[current]?.backButtonCustomEnabled, true)}
+                  disabled={!executeExpression(visibleSteps[current]?.backButtonCustomEnabled, true)}
                 >
-                  {tabs[current].backButtonText ? tabs[current].backButtonText : 'Back'}
+                  {visibleSteps[current].backButtonText ? visibleSteps[current].backButtonText : 'Back'}
                 </Button>
               )}
 
-              {tabs[current].allowCancel === true && (
+              {visibleSteps[current].allowCancel === true && (
                 <Button
                   onClick={() => cancel()}
-                  disabled={!executeExpression(tabs[current]?.cancelButtonCustomEnabled, true)}
+                  disabled={!executeExpression(visibleSteps[current]?.cancelButtonCustomEnabled, true)}
                 >
-                  {tabs[current].cancelButtonText ? tabs[current].cancelButtonText : 'Cancel'}
+                  {visibleSteps[current].cancelButtonText ? visibleSteps[current].cancelButtonText : 'Cancel'}
                 </Button>
               )}
             </ConditionalWrap>
@@ -314,23 +297,23 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
                 </Space>
               )}
             >
-              {current < tabs.length - 1 && (
+              {current < visibleSteps.length - 1 && (
                 <Button
                   type="primary"
                   onClick={() => next()}
-                  disabled={!executeExpression(tabs[current]?.nextButtonCustomEnabled, true)}
+                  disabled={!executeExpression(visibleSteps[current]?.nextButtonCustomEnabled, true)}
                 >
-                  {tabs[current].nextButtonText ? tabs[current].nextButtonText : 'Next'}
+                  {visibleSteps[current].nextButtonText ? visibleSteps[current].nextButtonText : 'Next'}
                 </Button>
               )}
 
-              {current === tabs.length - 1 && (
+              {current === visibleSteps.length - 1 && (
                 <Button
                   type="primary"
                   onClick={() => done()}
-                  disabled={!executeExpression(tabs[current]?.doneButtonCustomEnabled, true)}
+                  disabled={!executeExpression(visibleSteps[current]?.doneButtonCustomEnabled, true)}
                 >
-                  {tabs[current].doneButtonText ? tabs[current].doneButtonText : 'Done'}
+                  {visibleSteps[current].doneButtonText ? visibleSteps[current].doneButtonText : 'Done'}
                 </Button>
               )}
             </ConditionalWrap>
@@ -345,7 +328,7 @@ const TabsComponent: IToolboxComponent<Omit<IWizardComponentProps, 'size'>> = {
         const model: IWizardComponentPropsV0 = {
           ...prev,
           name: prev.name ?? 'custom Name',
-          tabs: prev['tabs'] ?? [
+          tabs: prev['filteredTabs'] ?? [
             {
               id: nanoid(),
               name: 'step1',

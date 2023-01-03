@@ -47,8 +47,8 @@ export const EntityDtoAutocomplete = (props: IAutocompleteProps<IDtoType>) => {
 };
 
 
-// RawAutocomplete updated to use with input data in the IGuidNullableEntityWithDisplayNameDto format.
-// Necessary for JsonEntity because it stores EntityReference in the IGuidNullableEntityWithDisplayNameDto format
+// RawAutocomplete updated to use with input data in the IEntityReferenceDto format.
+// Necessary for JsonEntity because it stores EntityReference in the IEntityReferenceDto format
 // and form designer migth not know which exactly format should be used
 // It still returns data in the raw format
 export type IRawAutocompleteType = string | IEntityReferenceDto;

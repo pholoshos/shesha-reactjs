@@ -100,7 +100,7 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
         }
 
         throw new Error(
-          `Invalid data type passed. Expected IGuidNullableEntityWithDisplayNameDto but found ${typeof value}`
+          `Invalid data type passed. Expected IGuidNullableEntityReferenceDto but found ${typeof value}`
         );
 
       case 'dropdownMultiple': {
@@ -113,7 +113,7 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
         }
 
         throw new Error(
-          `Invalid data type passed. Expected IGuidNullableEntityWithDisplayNameDto[] but found ${typeof value}`
+          `Invalid data type passed. Expected IGuidNullableEntityReferenceDto[] but found ${typeof value}`
         );
       }
       case 'time':

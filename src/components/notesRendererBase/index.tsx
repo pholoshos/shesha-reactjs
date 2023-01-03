@@ -99,7 +99,7 @@ export const NotesRendererBase: FC<INotesRendererBaseProps> = ({
             style={{ ...commentListStyles }}
             itemLayout="horizontal"
             dataSource={_.orderBy(notes, ['creationTime'], ['desc']).map(({ noteText, author, creationTime, id }) => ({
-              postedBy: (author && author.displayText) || 'Unknown',
+              postedBy: (author && author._displayName) || 'Unknown',
               content: (
                 <div>
                   <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}>{noteText}</Paragraph>

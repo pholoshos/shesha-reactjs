@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import { ConfigurationItemsViewMode } from '../appConfigurator/models';
-import { FormIdentifier, IFormDto } from '../form/models';
+import { FormFullName, FormIdentifier, IFormDto } from '../form/models';
 
 export interface IConfigurationItemsLoaderStateContext {
   activeProvider?: string;
@@ -19,6 +19,7 @@ export interface IClearItemCachePayload {
 export interface IConfigurationItemsLoaderActionsContext {
   getForm: (payload: IGetFormPayload) => Promise<IFormDto>;
   clearItemCache: (payload: IClearItemCachePayload) => void;
+  getEntityFormId: (className: string, formType: string, action: (formId: FormFullName) => void) => void;
 }
 
 /** initial state */

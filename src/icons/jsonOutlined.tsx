@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { FC }  from 'react';
 import Icon, { CustomIconComponentProps } from "@ant-design/icons/lib/components/Icon";
 
 const JsonOutlinedSvg = () => (
@@ -7,6 +7,6 @@ const JsonOutlinedSvg = () => (
     </svg>
 );
 
-export const JsonOutlined = (props: Partial<CustomIconComponentProps>) => (
+export const JsonOutlined: FC<Partial<CustomIconComponentProps>> = (props) => (
     <Icon component={JsonOutlinedSvg} {...props} />
 );

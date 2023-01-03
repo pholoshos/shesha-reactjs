@@ -139,6 +139,20 @@ export const entityPickerSettings = new DesignerToolbarSettings()
     parentId: 'root',
     label: '',
   })
+  .addCheckbox({
+    id: '11148a94-a16a-4e89-a514-7713348b560e',
+    name: 'useRawValues',
+    label: 'Use Raw Values',
+    parentId: 'root',
+    hidden: false,
+    validate: {},
+  })
+  .addSectionSeparator({
+    id: '253ee0fd-9916-4728-9f93-16ecc1ca3bb9',
+    name: 'sectionFilters',
+    parentId: 'root',
+    label: '',
+  })
   .addEntityPickerColumnsEditor({
     id: '2a6ee3b0-15f1-4521-cc6e-6a1c9d192ce2',
     name: 'items',

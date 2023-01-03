@@ -18,6 +18,7 @@ export interface IEntityPickerComponentProps extends IConfigurableFormComponent 
   items?: IConfigurableColumnsBase[];
   hideBorder?: boolean;
   disabled?: boolean;
+  useRawValues?: boolean;
   mode?: 'single' | 'multiple' | 'tags';
   entityType: string;
   filters?: object;
@@ -81,6 +82,7 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
           displayEntityKey={model?.displayEntityKey}
           entityType={model?.entityType}
           filters={entityPickerFilter}
+          useRawValues={model?.useRawValues}
           mode={model?.mode}
           addNewRecordsProps={
             model?.allowNewRecord
@@ -111,7 +113,8 @@ const EntityPickerComponent: IToolboxComponent<IEntityPickerComponentProps> = {
           entityType: prev['entityType'],
         };
       })
-      .add<IEntityPickerComponentProps>(1, migrateV0toV1),
+      .add<IEntityPickerComponentProps>(1, migrateV0toV1)
+      .add<IEntityPickerComponentProps>(2, prev => { return { ...prev, useRawValues: true }; }),
   settingsFormMarkup: entityPickerSettings,
   validateSettings: model => validateConfigurableComponentSettings(entityPickerSettings, model),
 };

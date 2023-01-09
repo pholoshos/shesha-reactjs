@@ -194,11 +194,10 @@ export const Playground = addStory(DesignerTemplate, {
 });
 
 export const TestWizard = addStory(DesignerTemplate, {
-  formId: 'a1dbe3d1-b560-431d-aa3f-dc39738e7200',
-  // formId: {
-  //   name: 'test-wizard-form',
-  //   module: 'Shesha',
-  // },
+  //formId: 'a1dbe3d1-b560-431d-aa3f-dc39738e7200',
+  formId: {
+    name: 'testing-unknown-bug-dropdown',
+  },
   // mode: 'readonly',
 });
 

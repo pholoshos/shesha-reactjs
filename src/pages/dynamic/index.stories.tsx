@@ -51,6 +51,11 @@ export const PersonDetailsPage = addStory(Template, {
   id: '98273D2D-F59E-42A3-9D8A-0218874548A9',
   mode: 'edit',
 });
+export const DropDownPage = addStory(Template, {
+  formId: { name: 'testing-unknown-bug-dropdown', module: 'Boxfusion.His.Clients.Houghton' },
+  id: '98E5FD0526E3F91A8294F3F10EAB878E',
+
+});
 
 export const SubFormPage = addStory(Template, {
   formId: { name: 'sub-form' },

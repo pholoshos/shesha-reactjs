@@ -7,7 +7,7 @@ import { MenuTheme } from 'antd/lib/menu/MenuContext';
 import { useSidebarMenuDefaults } from '../../providers/sidebarMenu';
 import ConfigurableSidebarMenu from '../configurableSidebarMenu';
 import { Show, useLocalStorage, useTheme } from '../..';
-import { SIDEBAR_MENU_ID } from '../../constants';
+import { SIDEBAR_MENU_NAME } from '../../constants';
 import { useMediaQuery } from 'react-responsive';
 import { TABLET_MD_SIZE_QUERY } from '../../constants/media-queries';
 
@@ -48,7 +48,7 @@ export const DefaultLayout: FC<PropsWithChildren<IDefaultLayoutProps>> = ({ chil
 
   return (
     <Layout>
-     
+
       <Sider
         collapsible
         collapsed={collapsed}
@@ -63,7 +63,12 @@ export const DefaultLayout: FC<PropsWithChildren<IDefaultLayoutProps>> = ({ chil
         }}
         theme={theme?.sidebar}
       >
-        <ConfigurableSidebarMenu theme={theme?.sidebar} id={SIDEBAR_MENU_ID} defaultSettings={sidebarDefaults} />
+        <ConfigurableSidebarMenu
+          theme={theme?.sidebar} 
+          name={SIDEBAR_MENU_NAME}
+          isApplicationSpecific={true}
+          defaultSettings={sidebarDefaults}
+        />
       </Sider>
       <Layout className="site-layout">
         <Header className="site-layout-background">
@@ -74,7 +79,7 @@ export const DefaultLayout: FC<PropsWithChildren<IDefaultLayoutProps>> = ({ chil
 
         <Content className={classNames({ collapsed })}>{children}</Content>
       </Layout>
-    
+
     </Layout>
   );
 };

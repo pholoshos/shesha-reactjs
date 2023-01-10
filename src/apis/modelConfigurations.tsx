@@ -119,7 +119,7 @@ export interface ModelPropertyDto {
   /**
    * Reference list module
    */
-   referenceListModule?: string | null;  
+  referenceListModule?: string | null;
   source?: MetadataSourceType;
   /**
    * Default sort order

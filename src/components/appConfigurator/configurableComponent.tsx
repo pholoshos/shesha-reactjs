@@ -94,4 +94,3 @@ export const ConfigurableComponent = <TSettings extends any>({
 };
 
 export default ConfigurableComponent;
-// export default memo(ConfigurableComponent);

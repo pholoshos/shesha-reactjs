@@ -5,7 +5,7 @@ import ConfigurableSidebarMenu from './';
 import { AppEditModeToggler } from '../..';
 import SidebarConfigurator from './configurator';
 import { SidebarMenuConfiguratorProvider } from '../../providers/sidebarMenuConfigurator';
-import { SIDEBAR_MENU_ID } from '../../constants';
+import { SIDEBAR_MENU_NAME } from '../../constants';
 import StoryApp from '../storyBookApp';
 
 export default {
@@ -22,7 +22,8 @@ const Template: Story<IConfigurableSidebarMenuProps> = () => (
   <StoryApp>
     <AppEditModeToggler />
     <ConfigurableSidebarMenu
-      id={SIDEBAR_MENU_ID}
+      name={SIDEBAR_MENU_NAME}
+      isApplicationSpecific={true}
       defaultSettings={{
         items: [
           {

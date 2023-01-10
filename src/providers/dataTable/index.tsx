@@ -151,7 +151,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const { setState: setGlobalState } = useGlobalState();
   const { backendUrl } = useSheshaApplication();
   const tableIsReady = useRef(false);
-  const { headers } = useSheshaApplication();
+  const { httpHeaders: headers } = useSheshaApplication();
 
   const fetchDataTableDataInternal = (getDataPayload: IGetDataPayload) => {
     const getDataUrl = `${backendUrl}${getDataPath || `${GENERIC_ENTITIES_ENDPOINT}/GetAll`}?${qs.stringify(

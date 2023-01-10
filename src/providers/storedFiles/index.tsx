@@ -68,7 +68,7 @@ const StoredFilesProvider: FC<PropsWithChildren<IStoredFilesProviderProps>> = ({
   });
 
   const { connection } = useSignalR(false) ?? {};
-  const { headers } = useSheshaApplication();
+  const { httpHeaders: headers } = useSheshaApplication();
 
   const { config } = useApplicationConfiguration();
 

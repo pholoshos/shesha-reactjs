@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { IReferenceList } from '../../interfaces/referenceList';
 import { PromisedValue } from '../../utils/promises';
-import { ConfigurationItemsViewMode } from '../appConfigurator/models';
+import { ConfigurationItemsViewMode, IComponentSettings } from '../appConfigurator/models';
 import { FormIdentifier, IFormDto } from '../form/models';
 import { IReferenceListIdentifier } from '../referenceListDispatcher/models';
 
@@ -21,14 +21,29 @@ export interface IGetRefListPayload {
   skipCache: boolean;
 }
 
-export interface IClearItemCachePayload {
+export interface IGetComponentPayload {
+  name: string;
+  isApplicationSpecific: boolean;
+  skipCache: boolean;
+}
+export interface IUpdateComponentPayload {
+  name: string;
+  module?: string;
+  isApplicationSpecific: boolean;
+  settings: object;
+}
+
+export interface IClearFormCachePayload {
   formId: FormIdentifier;
 }
 
 export interface IConfigurationItemsLoaderActionsContext {
   getForm: (payload: IGetFormPayload) => Promise<IFormDto>;
   getRefList: (payload: IGetRefListPayload) => PromisedValue<IReferenceList>;
-  clearItemCache: (payload: IClearItemCachePayload) => void;
+  getComponent: (payload: IGetComponentPayload) => PromisedValue<IComponentSettings>;
+  updateComponent: (payload: IUpdateComponentPayload) => Promise<void>;
+
+  clearFormCache: (payload: IClearFormCachePayload) => void;
 }
 
 /** initial state */

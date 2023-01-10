@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useMemo } from 'react';
+import React, { FC, Fragment } from 'react';
 import { IToolboxComponent } from '../../../../../interfaces';
 import { GroupOutlined } from '@ant-design/icons';
 import ToolbarSettings from './settings';
@@ -131,9 +131,7 @@ export const ButtonGroup: FC<IButtonGroupProps> = ({ items, id, size, spaceSize 
     );
   };
 
-  const filteredItems = useMemo(() => {
-    return items?.filter(getIsVisible);
-  }, [items]);
+  const filteredItems = items?.filter(getIsVisible);
 
   if (items.length === 0 && isDesignMode)
     return (

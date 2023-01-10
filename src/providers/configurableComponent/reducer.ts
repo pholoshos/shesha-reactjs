@@ -17,13 +17,11 @@ const reducerFactory = <TSettings extends any>(
     {
       [ConfigurableComponentActionEnums.LoadRequest]: (
         state: IConfigurableComponentStateContext<TSettings>,
-        action: ReduxActions.Action<IComponentLoadPayload>
+        _action: ReduxActions.Action<IComponentLoadPayload>
       ) => {
-        const { payload } = action;
 
         return {
           ...state,
-          id: payload.id,
           isInProgress: { ...state.isInProgress, loading: true },
         };
       },
@@ -63,8 +61,6 @@ const reducerFactory = <TSettings extends any>(
         state: IConfigurableComponentStateContext<TSettings>,
         _action: ReduxActions.Action<IComponentSavePayload>
       ) => {
-        //const { payload } = action;
-
         return {
           ...state,
           isInProgress: { ...state.isInProgress, save: true },
@@ -78,8 +74,8 @@ const reducerFactory = <TSettings extends any>(
       ) => {
         const { payload } = action;
 
-        const settings = payload.settings ? (JSON.parse(payload.settings) as TSettings) : null;
-
+        const settings = payload.settings as TSettings;
+        
         return {
           ...state,
           settings,

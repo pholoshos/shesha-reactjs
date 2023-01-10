@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { createConfigurableComponent } from '../../providers';
 import { ConfigurableComponentRenderer } from '../configurableComponentRenderer';
 
@@ -35,7 +35,8 @@ export interface IConfigurableComponentProps<TSettings = any> {
   onStartEdit?: () => void;
   defaultSettings: TSettings;
   settingsEditor?: ISettingsEditor<TSettings>,
-  id?: string;
+  name: string;
+  isApplicationSpecific: boolean;
 }
 
 export interface IBlockOverlayProps {
@@ -48,13 +49,18 @@ export const ConfigurableComponent = <TSettings extends any>({
   canConfigure = true,
   defaultSettings,
   settingsEditor,
-  id,
+  name,
+  isApplicationSpecific
 }: IConfigurableComponentProps<TSettings>) => {
-  const { ConfigurableComponentProvider, useConfigurableComponent } = createConfigurableComponent<TSettings>(defaultSettings);
+  const component = useMemo(() => {
+    return createConfigurableComponent<TSettings>(defaultSettings);
+  }, [defaultSettings]);
+  const { ConfigurableComponentProvider, useConfigurableComponent } = component;
 
   return (
     <ConfigurableComponentProvider
-      id={id}  
+      name={name}
+      isApplicationSpecific={isApplicationSpecific}
     >
       <ConfigurableComponentRenderer
         canConfigure={canConfigure}

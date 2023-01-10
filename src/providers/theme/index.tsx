@@ -1,14 +1,13 @@
-import React, { FC, useReducer, useContext, PropsWithChildren, useEffect, useMemo } from 'react';
+import React, { FC, useReducer, useContext, PropsWithChildren, useEffect } from 'react';
 import { uiReducer } from './reducer';
 import {
   setThemeAction,
-  /* NEW_ACTION_IMPORT_GOES_HERE */
 } from './actions';
 import { UiActionsContext, UiStateContext, THEME_CONTEXT_INITIAL_STATE, IApplicationTheme } from './contexts';
 import { ConfigProvider } from 'antd';
-import { THEME_CONFIG_ID } from '../../constants';
-import { useConfigurableComponentGet, useConfigurableComponentUpdateSettings } from '../../apis/configurableComponent';
+import { THEME_CONFIG_NAME } from '../../constants';
 import { useDebouncedCallback } from 'use-debounce';
+import { useConfigurationItemsLoader } from '../configurationItemsLoader';
 
 export interface ThemeProviderProps {
   prefixCls?: string;
@@ -25,36 +24,24 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
 }) => {
   const [state, dispatch] = useReducer(uiReducer, THEME_CONTEXT_INITIAL_STATE);
 
-  const { data: loadedThemeResponse, refetch } = useConfigurableComponentGet({ id: THEME_CONFIG_ID, lazy: true });
-  const { mutate: saveTheme } = useConfigurableComponentUpdateSettings({ id: THEME_CONFIG_ID });
+  const { getComponent, updateComponent } = useConfigurationItemsLoader();
+
+  // fetch theme
+  useEffect(() => {
+    const promisedTheme = getComponent({ name: THEME_CONFIG_NAME, isApplicationSpecific: true, skipCache: false });
+    promisedTheme.promise.then(data => {
+      const theme = data?.settings as IApplicationTheme;
+      if (theme)
+        dispatch(setThemeAction(theme));
+    });
+  }, []);
 
   const debouncedSave = useDebouncedCallback(themeToSave => {
-    saveTheme({ id: THEME_CONFIG_ID, settings: JSON.stringify(themeToSave) });
+    updateComponent({ name: THEME_CONFIG_NAME, isApplicationSpecific: true, settings: themeToSave });
   }, 300);
 
   useEffect(() => {
-    refetch;
-  }, []);
-
-  const loadedTheme = useMemo(() => {
-    if (!loadedThemeResponse) return THEME_CONTEXT_INITIAL_STATE.theme;
-    const themeJson = JSON.parse(loadedThemeResponse.result.settings) as IApplicationTheme;
-
-    return themeJson;
-  }, [loadedThemeResponse]);
-
-  useEffect(() => {
-    refetch();
-  }, []);
-
-  useEffect(() => {
-    changeTheme(loadedTheme);
-  }, [loadedTheme]);
-
-  // Persist the theme
-  useEffect(() => {
-    // if (state && !isEqual(state?.theme, loadedTheme)) debouncedSave(state?.theme);
-
+    // apply theme
     ConfigProvider.config({
       prefixCls,
       theme: state?.theme?.application,
@@ -62,10 +49,11 @@ const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
     });
   }, [state?.theme]);
 
-  // Make an API Call to fetch the theme
   const changeTheme = (theme: IApplicationTheme) => {
+    // save theme to the state
     dispatch(setThemeAction(theme));
 
+    // persist theme
     debouncedSave(theme);
   };
 

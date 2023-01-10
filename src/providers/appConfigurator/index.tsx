@@ -1,11 +1,9 @@
-import React, { FC, useReducer, useContext, PropsWithChildren, useEffect, useRef } from 'react';
+import React, { FC, useReducer, useContext, PropsWithChildren, useEffect } from 'react';
 import appConfiguratorReducer from './reducer';
 import { AppConfiguratorActionsContext, AppConfiguratorStateContext, APP_CONTEXT_INITIAL_STATE } from './contexts';
 import {
   ApplicationMode,
   ConfigurationItemsViewMode,
-  IComponentSettings,
-  IComponentSettingsDictionary,
 } from './models';
 import {
   switchApplicationModeAction,
@@ -13,9 +11,7 @@ import {
   toggleEditModeConfirmationAction,
   toggleCloseEditModeConfirmationAction,
   switchConfigurationItemModeAction,
-  /* NEW_ACTION_IMPORT_GOES_HERE */
 } from './actions';
-import { configurableComponentGet } from '../../apis/configurableComponent';
 import { useSheshaApplication } from '../sheshaApplication';
 import { useConfigurableAction } from '../configurableActionsDispatcher';
 import { SheshaActionOwners } from '../configurableActionsDispatcher/models';
@@ -41,8 +37,6 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
     ...APP_CONTEXT_INITIAL_STATE,
     formInfoBlockVisible: storageFormInfoVisible,
   });
-
-  const settingsDictionary = useRef<IComponentSettingsDictionary>({});
 
   const { backendUrl, httpHeaders, setRequestHeaders, anyOfPermissionsGranted } = useSheshaApplication();
 
@@ -191,47 +185,6 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
     dispatch(toggleCloseEditModeConfirmationAction(visible));
   };
 
-  const normalizeId = (id: string) => id?.toLowerCase();
-
-  const getSettings = (id: string) => {
-    const loadedSettings = settingsDictionary.current[normalizeId(id)];
-    return loadedSettings;
-  };
-
-  const fetchSettings = (id: string) => {
-    const loadedSettings = getSettings(id);
-    if (loadedSettings) return Promise.resolve(loadedSettings);
-
-    const result = new Promise<IComponentSettings>((resolve, reject) => {
-      configurableComponentGet({ id, base: backendUrl, headers: httpHeaders })
-        .then(response => {
-          if (!response.success) {
-            reject(response.error);
-          }
-
-          const settings: IComponentSettings = {
-            id: response.result.id,
-            name: response.result.name,
-            description: response.result.description,
-            settings: response.result.settings ? JSON.parse(response.result.settings) : null,
-          };
-
-          settingsDictionary.current[normalizeId(id)] = settings;
-          resolve(settings);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-
-    return result;
-  };
-
-  const invalidateSettings = (id: string) => {
-    const normalizedId = normalizeId(id);
-    delete settingsDictionary.current[normalizedId];
-  };
-
   return (
     <AppConfiguratorStateContext.Provider value={state}>
       <AppConfiguratorActionsContext.Provider
@@ -240,9 +193,9 @@ const AppConfiguratorProvider: FC<PropsWithChildren<IAppConfiguratorProviderProp
           toggleEditModeConfirmation,
           toggleCloseEditModeConfirmation,
           switchConfigurationItemMode,
-          fetchSettings,
-          getSettings,
-          invalidateSettings,
+          // fetchSettings,
+          // getSettings,
+          // invalidateSettings,
           toggleShowInfoBlock,
           /* NEW_ACTION_GOES_HERE */
         }}

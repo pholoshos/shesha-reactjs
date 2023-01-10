@@ -15,9 +15,11 @@ export const CONFIG_KEY = '__APP_CONFIG__';
 export const PERM_PAGES_APP_SETTINGS = 'pages:applicationSettings';
 export const PERM_APP_CONFIGURATOR = 'app:Configurator';
 export const SIDEBAR_MENU_ID = '9362F11A-EA9C-4152-9855-9516123467F7';
+export const SIDEBAR_MENU_NAME = 'sidebar-menu';
 //#region
 
 export const THEME_CONFIG_KEY = 'THEME_CONFIG_KEY';
+export const THEME_CONFIG_NAME = 'theme-configuration';
 export const THEME_CONFIG_ID = '4D5FC26A-5100-4830-9A3E-532AC652A5E3';
 export const GENERIC_ENTITIES_ENDPOINT = "/api/services/app/Entities";
 

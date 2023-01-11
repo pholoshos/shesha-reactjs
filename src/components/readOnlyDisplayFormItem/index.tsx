@@ -8,7 +8,7 @@ import { Switch, Tag } from 'antd';
 import { getMoment } from '../../utils/date';
 import moment from 'moment';
 import classNames from 'classnames';
-import QuickView from '../quickView';
+import QuickView, { GenericQuickView } from '../quickView';
 import { FormIdentifier } from '../../providers/form/models';
 
 type AutocompleteType = ISelectOption<IDtoType>;
@@ -69,6 +69,8 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
     }
 
     const entityId = value?.id ?? value?.data?.id ?? value?.data;
+    const className = value?._className ?? value?.data?._className;
+    const displayName = value?._displayName ?? value?.data?._displayName;
 
     switch (type) {
       case 'dropdown':
@@ -76,10 +78,18 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
           const displayLabel = (value as AutocompleteType)?.label;
           if (quickviewEnabled && quickviewFormPath) {
             return (
-              <QuickView
+              quickviewFormPath && quickviewGetEntityUrl
+              ? <QuickView
                 entityId={entityId}
                 formIdentifier={quickviewFormPath}
                 getEntityUrl={quickviewGetEntityUrl}
+                displayProperty={quickviewDisplayPropertyName}
+                width={quickviewWidth}
+              />
+              : <GenericQuickView
+                entityId={entityId}
+                className={className}
+                displayName={displayName}
                 displayProperty={quickviewDisplayPropertyName}
                 width={quickviewWidth}
               />
@@ -90,7 +100,7 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
         }
 
         throw new Error(
-          `Invalid data type passed. Expected IGuidNullableEntityWithDisplayNameDto but found ${typeof value}`
+          `Invalid data type passed. Expected IGuidNullableEntityReferenceDto but found ${typeof value}`
         );
 
       case 'dropdownMultiple': {
@@ -103,7 +113,7 @@ export const ReadOnlyDisplayFormItem: FC<IReadOnlyDisplayFormItemProps> = ({
         }
 
         throw new Error(
-          `Invalid data type passed. Expected IGuidNullableEntityWithDisplayNameDto[] but found ${typeof value}`
+          `Invalid data type passed. Expected IGuidNullableEntityReferenceDto[] but found ${typeof value}`
         );
       }
       case 'time':

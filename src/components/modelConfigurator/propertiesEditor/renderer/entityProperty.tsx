@@ -4,14 +4,17 @@ import { QuestionCircleOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import { usePropertiesEditor } from '../provider';
 import DragHandle from './dragHandle';
 import { IModelItem } from '../../../../interfaces/modelConfigurator';
-import { JsonOutlined } from '../../../../icons/jsonOutlined';
+import { getIconByDataType } from '../../../../utils/metadata';
+import ShaIcon from '../../../shaIcon';
 
 export interface IProps extends IModelItem {
   index: number[];
 }
 
-export const JsonProperty: FC<IProps> = props => {
+export const EntityProperty: FC<IProps> = props => {
   const { selectedItemId, selectedItemRef } = usePropertiesEditor();
+
+  const icon = getIconByDataType(props.dataType);
 
   const classes = ['sha-sidebar-item'];
   if (selectedItemId === props.id) {
@@ -23,19 +26,19 @@ export const JsonProperty: FC<IProps> = props => {
       <div className="sha-sidebar-item-header">
         <DragHandle id={props.id} />
         {props.suppress && <span><EyeInvisibleOutlined /> </span>}
-        <JsonOutlined />
-        <span className="sha-sidebar-item-name">{props.name} : <i>{props.entityType ?? 'udefined' }</i></span>
+        {icon && <ShaIcon iconName={icon} />}
+        <span className="sha-sidebar-item-name">{props.name} {props.label && <>({props.label})</>}: <i>{props.entityType ?? 'udefined' }</i></span>
         {props.description && (
           <Tooltip title={props.description}>
             <QuestionCircleOutlined className="sha-help-icon" />
           </Tooltip>
         )}
         <div className="sha-sidebar-item-controls">
-          <Tag>Json</Tag>
+          <Tag>App</Tag>
         </div>
       </div>
     </div>
   );
 };
 
-export default JsonProperty;
+export default EntityProperty;

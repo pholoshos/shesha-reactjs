@@ -1,7 +1,7 @@
 import { ButtonProps } from 'antd';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { CSSProperties, ReactNode } from 'react';
-import { IAnyObject } from '../../interfaces';
+import { IAnyObject, IEntityReferenceDto } from '../../interfaces';
 import { IConfigurableColumnsBase } from '../../providers/datatableColumnsConfigurator/models';
 import { FormIdentifier } from '../../providers/form/models';
 import { ITableViewProps } from '../../providers/tableViewSelectorConfigurator/models';
@@ -38,14 +38,16 @@ export interface IEntityPickerState {
 
 export interface IEntityPickerProps extends Omit<IWrappedEntityPickerProps, 'onDblClick'> {
   formId?: FormIdentifier;
-  onChange?: (value: string | string[], data: IAnyObject) => void;
+
+  onChange?: (value: string | string[] | IEntityReferenceDto | IEntityReferenceDto[], data: IAnyObject) => void;
   onSelect?: (data: IAnyObject) => void;
-  value?: string | string[];
+  value?: string | string[] | IEntityReferenceDto | IEntityReferenceDto[];
   displayEntityKey?: string;
   width?: number | string;
   disabled?: boolean;
   loading?: boolean;
   name?: string;
+  useRawValues?: boolean;
   mode?: 'single' | 'multiple' | 'tags';
   size?: SizeType;
   title?: string;

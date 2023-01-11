@@ -6,8 +6,7 @@ import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { camelCase } from 'lodash';
 import { IPropertyMetadata } from '../../interfaces/metadata';
 import camelcase from 'camelcase';
-import { getIconByDataType } from '../../utils/metadata';
-import ShaIcon from '../shaIcon';
+import { getIconByPropertyMetadata } from '../../utils/metadata';
 
 export interface IPropertyAutocompleteProps {
   id?: string;
@@ -40,9 +39,9 @@ const getFullPath = (path: string, prefix: string) => {
 const properties2options = (properties: IPropertyMetadata[], prefix: string): IOption[] => {
   return properties.map(p => {
     const value = getFullPath(p.path, prefix);
-    const icon = getIconByDataType(p.dataType);
+    const icon = getIconByPropertyMetadata(p);
     const label = (
-      <div>{icon && <ShaIcon iconName={icon} />} {value}</div>
+      <div>{icon} {value}</div>
     );
     return {
       value: value,

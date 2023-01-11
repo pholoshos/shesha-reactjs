@@ -2,7 +2,7 @@ import { createContext } from 'react';
 import { IReferenceList } from '../../interfaces/referenceList';
 import { PromisedValue } from '../../utils/promises';
 import { ConfigurationItemsViewMode, IComponentSettings } from '../appConfigurator/models';
-import { FormIdentifier, IFormDto } from '../form/models';
+import { FormFullName, FormIdentifier, IFormDto } from '../form/models';
 import { IReferenceListIdentifier } from '../referenceListDispatcher/models';
 
 export interface IConfigurationItemsLoaderStateContext {
@@ -44,6 +44,7 @@ export interface IConfigurationItemsLoaderActionsContext {
   updateComponent: (payload: IUpdateComponentPayload) => Promise<void>;
 
   clearFormCache: (payload: IClearFormCachePayload) => void;
+  getEntityFormId: (className: string, formType: string, action: (formId: FormFullName) => void) => void;
 }
 
 /** initial state */

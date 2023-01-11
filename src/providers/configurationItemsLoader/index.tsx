@@ -16,7 +16,7 @@ import useThunkReducer from 'react-hook-thunk-reducer';
 import { IComponentsDictionary, IFormsDictionary, IReferenceListsDictionary } from './models';
 import { FormIdentifier, useSheshaApplication } from '../../providers';
 import { asFormFullName, asFormRawId } from '../form/utils';
-import { FormMarkupWithSettings, IFormDto } from '../form/models';
+import { FormMarkupWithSettings, IFormDto, FormFullName } from '../form/models';
 import { FormConfigurationDto, formConfigurationGet, formConfigurationGetByName } from '../../apis/formConfiguration';
 import { getFormNotFoundMessage, getReferenceListNotFoundMessage } from './utils';
 import { ConfigurationItemsViewMode, IComponentSettings } from '../appConfigurator/models';
@@ -26,6 +26,7 @@ import { configurableComponentGetByName, useConfigurableComponentUpdateSettings 
 import { MakePromiseWithState, PromisedValue } from '../../utils/promises';
 import { isValidRefListId } from '../referenceListDispatcher/utils';
 import { IReferenceListIdentifier } from '../referenceListDispatcher/models';
+import { entityConfigGetEntityConfigForm } from '../../apis/entityConfig';
 
 export interface IConfigurationItemsLoaderProviderProps { }
 
@@ -218,7 +219,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
       const cachedDto = cacheKey ? getFromCache<FormConfigurationDto>(cacheKey) : null;
 
       const promise = Boolean(fullName)
-        ? formConfigurationGetByName({ name: fullName.name, module: fullName.module, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ })
+        ? formConfigurationGetByName({ name: fullName.name, module: fullName.module, version: fullName.version, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ })
         : Boolean(rawId)
           ? formConfigurationGet({ id: rawId, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ })
           : Promise.reject("Form identifier must be specified");
@@ -356,12 +357,22 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     });
   }
 
+  const getEntityFormId = (className: string, formType: string, action: (formId: FormFullName) => void ) =>
+  {
+    entityConfigGetEntityConfigForm({entityConfigName: className, typeName: formType}, { base: backendUrl})
+    .then(response => {
+      if (response.success) 
+        action({name: response.result.name, module: response.result.module});
+    });
+  }
+
   const loaderActions: IConfigurationItemsLoaderActionsContext = {
     getForm,
     getRefList,
     getComponent,
     updateComponent,
     clearFormCache,
+    getEntityFormId
   };
 
   return (

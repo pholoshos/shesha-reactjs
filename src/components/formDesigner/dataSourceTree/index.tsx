@@ -4,8 +4,7 @@ import React, { FC, useMemo, useState, useEffect } from 'react';
 import { ReactSortable } from 'react-sortablejs';
 import { IPropertyMetadata } from '../../../interfaces/metadata';
 import { TOOLBOX_DATA_ITEM_DROPPABLE_KEY } from '../../../providers/form/models';
-import { getIconByDataType } from '../../../utils/metadata';
-import ShaIcon from '../../shaIcon';
+import { getIconByPropertyMetadata } from '../../../utils/metadata';
 
 export interface IProps {
   items: IPropertyMetadata[];
@@ -76,7 +75,7 @@ const DataSourceTree: FC<IProps> = ({ items, defaultExpandAll, searchText }) => 
   };
 
   const renderTitle = (node: DataNodeWithMeta): React.ReactNode => {
-    const icon = getIconByDataType(node.meta.dataType);
+    const icon = getIconByPropertyMetadata(node.meta);
 
     const sortableItem = {
       id: node.meta.path,
@@ -101,7 +100,7 @@ const DataSourceTree: FC<IProps> = ({ items, defaultExpandAll, searchText }) => 
         ghostClass="sha-component-ghost"
       >
         <div className="sha-toolbox-component">
-          {icon && <ShaIcon iconName={icon} />}
+          {icon}
           <span className="sha-component-title">{getTitle(node.meta)}</span>
         </div>
       </ReactSortable>

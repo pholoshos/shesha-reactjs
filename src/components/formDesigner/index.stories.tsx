@@ -212,7 +212,8 @@ export const TestWizard = addStory(DesignerTemplate, {
 });
 
 export const OrganisationEdit = addStory(DesignerTemplate, {
-  formId: { name: '/organisations/edit', version: 2 },
+  formId: '1254D5C1-AA4D-4A67-B8D0-29E6E01212BA'
+  //formId: { name: '/organisations/edit', version: 2 },
 });
 
 export const PermissionedObjects = addStory(DesignerTemplate, {

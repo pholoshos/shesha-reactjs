@@ -134,7 +134,8 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
         ? item[value]
         : {
             id: item[value],
-            displayText: item[displayText],
+            _displayName: item[displayText],
+            _className: model.entityTypeShortAlias
           };
 
     const getOptionFromFetchedItem = (item: object): ISelectOption => {

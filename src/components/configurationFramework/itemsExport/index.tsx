@@ -1,7 +1,7 @@
 import React, { useState, useEffect, MutableRefObject } from 'react';
 import { FC } from 'react';
 import { IAbpWrappedGetEntityListResponse, IGenericGetAllPayload } from '../../../interfaces/gql';
-import { GENERIC_ENTITIES_ENDPOINT, LEGACY_FORMS_MODULE_NAME } from '../../../constants';
+import { GENERIC_ENTITIES_ENDPOINT, LEGACY_ITEMS_MODULE_NAME } from '../../../constants';
 import { Form, Select, Skeleton, Spin } from 'antd';
 import axios from 'axios';
 import { useSheshaApplication } from '../../..';
@@ -88,7 +88,7 @@ export const ConfigurationItemsExport: FC<IConfigurationItemsExportProps> = (pro
 
         const modules: ModulesDictionary = {};
         allItems.forEach(item => {
-            const itemModule = item.module ?? { id: null, name: LEGACY_FORMS_MODULE_NAME };
+            const itemModule = item.module ?? { id: null, name: LEGACY_ITEMS_MODULE_NAME };
             let module: IModule = modules[itemModule.id];
             if (!module) {
                 module = { id: itemModule.id, name: itemModule.name, description: itemModule.description, itemTypes: {} };

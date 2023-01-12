@@ -40,7 +40,7 @@ const NotesProvider: FC<PropsWithChildren<INoteSettings>> = ({
   const [state, dispatch] = useReducer(notesReducer, COMMENTS_CONTEXT_INITIAL_STATE);
 
   const { connection } = useSignalR(false) ?? {};
-  const { headers } = useSheshaApplication();
+  const { httpHeaders: headers } = useSheshaApplication();
 
   //#region Register signal r events
   useEffect(() => {

@@ -17,10 +17,12 @@ const EmptySidebarProps: ISideBarMenuProps = {
 export interface IConfigurableSidebarMenuProps {
   theme?: MenuTheme;
   defaultSettings?: ISideBarMenuProps;
-  id: string;
+  name: string;
+  isApplicationSpecific: boolean;
 }
 
 export const ConfigurableSidebarMenu: FC<IConfigurableSidebarMenuProps> = props => {
+  
   const editor = (editorProps: ISettingsEditorProps<ISideBarMenuProps>) => {
     return (
       <ComponentSettingsModal
@@ -39,7 +41,8 @@ export const ConfigurableSidebarMenu: FC<IConfigurableSidebarMenuProps> = props 
         settingsEditor={{
           render: editor,
         }}
-        id={props.id}
+        name={props.name}
+        isApplicationSpecific={props.isApplicationSpecific}
       >
         {(componentState, BlockOverlay) => (
           <div className={`sidebar ${componentState.wrapperClassName}`}>

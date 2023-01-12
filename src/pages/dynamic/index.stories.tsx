@@ -140,12 +140,12 @@ export const WardsIndex = addStory(Template, {
   mode: 'readonly',
 });
 
-export const FormDesigner = addStory(Template, {
+export const RefListRefactornig = addStory(Template, {
   formId: {
-    module: 'Boxfusion.His.Clients.Houghton',
-    name: 'wardsTable'
+    module: 'test',
+    name: 'reflist-refactoring'
   },
-  mode: 'readonly',
+  mode: 'edit',
 });
 
 export const Performance = addStory(Template, {
@@ -193,11 +193,35 @@ export const SettingsPage = addStory(Template, {
 });
 export const FormDetails = addStory(Template, {
   formId: {
-    module: 'StarterTemplate',
+    module: 'shesha',
     name: 'form-details',
   },
-  id: '7e0d0011-ed4a-4240-be39-009c68f61291',
+  id: 'a178c26c-2138-4ec9-8f5d-6bb9549f28f0',
+  //shesha/form-details/?id=
   mode: 'edit',
+});
+
+export const ReferenceLists = addStory(Template, {
+  formId: {
+    module: 'shesha',
+    name: 'reference-lists',
+  },
+});
+
+export const ScheduledJobs = addStory(Template, {
+  formId: {
+    module: null,
+    name: 'scheduled-job',
+  },
+});
+
+export const ReferenceListDetails = addStory(Template, {
+  formId: {
+    module: 'shesha',
+    name: 'reference-lists-details',
+  },
+  id: 'd51c8c48-1a20-4053-977d-a10597a43b13',
+  mode: 'readonly',
 });
 
 Basic.args = DEFAULT_ARGS;

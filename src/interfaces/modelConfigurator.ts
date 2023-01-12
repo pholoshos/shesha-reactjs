@@ -31,9 +31,9 @@ export interface IModelItem {
      */
     referenceListName?: string | null;
     /**
-     * Reference list namespace
+     * Reference list module
      */
-    referenceListNamespace?: string | null;
+    referenceListModule?: string | null;
 
     source?: MetadataSourceType;
 

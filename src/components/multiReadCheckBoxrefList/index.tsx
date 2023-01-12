@@ -2,6 +2,7 @@ import { CheckCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { DisplayFormItem, ShaSpin } from '../../';
 import React, { FC } from 'react';
 import { useReferenceList } from '../../providers/referenceListDispatcher';
+import { getLegacyReferenceListIdentifier } from '../../utils/referenceList';
 
 export interface IMultiReadCheckBoxRefListProps {
   readonly listName: string;
@@ -29,7 +30,7 @@ export const MultiReadCheckBoxRefList: FC<IMultiReadCheckBoxRefListProps> = ({
   value,
   display = 'component',
 }) => {
-  const { data: refList, loading: refListLoading } = useReferenceList(listNamespace, listName);
+  const { data: refList, loading: refListLoading } = useReferenceList(getLegacyReferenceListIdentifier(listNamespace, listName));
 
   const list = binaryToList(value);
 

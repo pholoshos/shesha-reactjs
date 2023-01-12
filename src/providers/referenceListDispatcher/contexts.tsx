@@ -1,14 +1,14 @@
 import { createContext } from 'react';
 import { IReferenceList, IReferenceListItem } from '../../interfaces/referenceList';
 import { PromisedValue } from '../../utils/promises';
+import { IReferenceListIdentifier } from './models';
 
 export interface IReferenceListDispatcherStateContext {
   activeProvider?: string;
 }
 
 export interface IGetReferenceListPayload {
-  moduleName: string;
-  name: string;
+  refListId: IReferenceListIdentifier;
 }
 
 export interface IReferenceListDispatcherActionsContext {

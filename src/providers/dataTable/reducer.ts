@@ -241,7 +241,7 @@ const reducer = handleActions<IDataTableStateContext, any>(
                 isFilterable: srvColumn?.isFilterable,
                 entityReferenceTypeShortAlias: srvColumn?.entityReferenceTypeShortAlias,
                 referenceListName: srvColumn?.referenceListName,
-                referenceListNamespace: srvColumn?.referenceListNamespace,
+                referenceListModule: srvColumn?.referenceListModule,
                 autocompleteUrl: srvColumn?.autocompleteUrl,
                 allowInherited: srvColumn?.allowInherited,
 

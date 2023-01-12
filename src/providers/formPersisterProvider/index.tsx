@@ -30,20 +30,23 @@ import { useAppConfigurator } from '../..';
 
 export interface IFormProviderProps {
   formId: FormIdentifier;
+  skipCache?: boolean;
 }
 
 const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   children,
   formId,
+  skipCache = false,
 }) => {
   const initial: IFormPersisterStateContext = {
     ...FORM_PERSISTER_CONTEXT_INITIAL_STATE,
     formId: formId,
+    skipCache: skipCache,
   };
   
   const [state, dispatch] = useThunkReducer(formReducer, initial);
 
-  const { getForm, clearItemCache } = useConfigurationItemsLoader();
+  const { getForm, clearFormCache } = useConfigurationItemsLoader();
   const { configurationItemMode } = useAppConfigurator();
 
   const doFetchFormInfo = (payload: ILoadFormPayload) => {
@@ -78,7 +81,7 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
   useEffect(() => {
     if (!formId) return;
 
-    doFetchFormInfo({ skipCache: false });
+    doFetchFormInfo({ skipCache: state.skipCache });
   }, [formId]);
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
@@ -103,7 +106,7 @@ const FormPersisterProvider: FC<PropsWithChildren<IFormProviderProps>> = ({
     await saveFormHttp(dto, {})
       .then(_response => {
         // clear cache
-        clearItemCache({ formId: state.formId });
+        clearFormCache({ formId: state.formId });
 
         dispatch(saveSuccessAction());
         return Promise.resolve();

@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
-import { Select } from 'antd';
+import { Empty, Select, Spin } from 'antd';
 import { ReferenceListItemDto } from '../../apis/referenceList';
 import { CustomLabeledValue, IGenericRefListDropDownProps, ISelectOption } from './models';
 import ReadOnlyDisplayFormItem from '../readOnlyDisplayFormItem';
 import { useReferenceList } from '../../providers/referenceListDispatcher';
+import { ValidationErrors } from '../..';
 
 // tslint:disable-next-line:whitespace
 export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownProps<TValue>) => {
   const {
-    listName,
-    listNamespace,
+    referenceListId,
     showArrow = true,
     value,
     includeFilters = false,
@@ -25,7 +25,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
     style,
     ...rest
   } = props;
-  const { data: refList, loading: refListLoading } = useReferenceList(listNamespace, listName);
+  const { data: refList, loading: refListLoading, error: refListError } = useReferenceList(referenceListId);
 
   const filter = ({ itemValue }: ReferenceListItemDto) => {
     if (!filters?.length) {
@@ -102,7 +102,7 @@ export const GenericRefListDropDown = <TValue,>(props: IGenericRefListDropDownPr
       labelInValue={true}
       defaultActiveFirstOption={false}
       showArrow={showArrow}
-      notFoundContent={null}
+      notFoundContent={refListLoading ? <Spin /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={ refListError ? <ValidationErrors renderMode='raw' error={refListError} /> : "No matches" } /> }
       allowClear={true}
       loading={refListLoading}
       disabled={disabled}

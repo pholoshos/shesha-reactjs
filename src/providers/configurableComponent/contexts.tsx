@@ -18,7 +18,7 @@ export interface IConfigurableComponentStateContext<TSettings extends any>
 }
 
 export interface IComponentLoadPayload {
-  id: string;
+  //id: string;
 }
 
 export interface IComponentLoadErrorPayload {
@@ -32,7 +32,7 @@ export interface IComponentSaveErrorPayload {
 }
 
 export interface IComponentSaveSuccessPayload {
-  settings: string;
+  settings: object;
 }
 
 export interface IComponentLoadSuccessPayload {

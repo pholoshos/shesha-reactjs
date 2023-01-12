@@ -13,11 +13,12 @@ export default handleActions<ISheshaApplicationStateContext, any>(
       const { httpHeaders } = state;
 
       const newHeaders = { ...httpHeaders, ...payload };
+      if (state.applicationKey)
+        newHeaders['sha-frontend-application'] = state.applicationKey;
 
       return {
         ...state,
         httpHeaders: newHeaders,
-        headers: newHeaders,
       };
     },
 

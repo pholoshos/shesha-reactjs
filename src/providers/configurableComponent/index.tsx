@@ -1,4 +1,4 @@
-import React, { useContext, PropsWithChildren, useEffect, Context, useReducer } from 'react';
+import React, { useContext, PropsWithChildren, useEffect, Context, useReducer, useMemo } from 'react';
 import reducerFactory from './reducer';
 import {
   getConfigurableComponentActionsContext,
@@ -15,19 +15,17 @@ import {
   saveRequestAction,
   saveSuccessAction,
   saveErrorAction,
-  /* NEW_ACTION_IMPORT_GOES_HERE */
 } from './actions';
-import {
-  /*useConfigurableComponentUpdate,*/ useConfigurableComponentUpdateSettings,
-  ConfigurableComponentUpdateSettingsInput,
-} from '../../apis/configurableComponent';
-import { useAppConfigurator } from '../appConfigurator';
+import { useConfigurationItemsLoader } from '../configurationItemsLoader';
+import { PromisedValue } from '../../utils/promises';
+import { IComponentSettings } from '../appConfigurator/models';
 
 export interface IGenericConfigurableComponentProviderProps<TSettings extends any> {
   initialState: IConfigurableComponentStateContext<TSettings>;
   stateContext: Context<IConfigurableComponentStateContext<TSettings>>;
   actionContext: Context<IConfigurableComponentActionsContext<TSettings>>;
-  id?: string;
+  name: string;
+  isApplicationSpecific: boolean;
 }
 
 const GenericConfigurableComponentProvider = <TSettings extends any>({
@@ -35,68 +33,65 @@ const GenericConfigurableComponentProvider = <TSettings extends any>({
   initialState,
   stateContext,
   actionContext,
-  id,
+  name,
+  isApplicationSpecific,
 }: PropsWithChildren<IGenericConfigurableComponentProviderProps<TSettings>>) => {
-  const reducer = reducerFactory(initialState);
-  const { fetchSettings, getSettings, invalidateSettings } = useAppConfigurator();
+  const reducer = useMemo(() => (reducerFactory(initialState)), []);
 
-  const initialSettings = getSettings(id)?.settings as TSettings;
+  const { getComponent, updateComponent } = useConfigurationItemsLoader();
+
+  const settingsPromise = useMemo(() => {
+    return getComponent({ name, isApplicationSpecific, skipCache: false });
+  }, [name, isApplicationSpecific]);
+
+  const initialSettings = settingsPromise?.value?.settings as TSettings;
 
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
-    id,
+    name,
     settings: initialSettings,
   });
 
   useEffect(() => {
-    if (!Boolean(id) || Boolean(state.settings)) return;
-    
-    doFetch();
-  }, [id]);
+    if (!Boolean(name) || Boolean(state.settings))
+      return;
 
-  const doFetch = () => {
-    dispatch(loadRequestAction({ id }));
-    fetchSettings(id)
-      .then((settings) => {
-        dispatch(
-          loadSuccessAction({...settings})
-        );
-      })
-      .catch((error) => {
-        dispatch(loadErrorAction({ error: error?.['message'] || 'Failed to load component' }))
-      });
+    fetchInternal(getComponent({ name, isApplicationSpecific, skipCache: false }));
+  }, []);
+
+  const fetchInternal = (loader: PromisedValue<IComponentSettings>) => {
+    dispatch(loadRequestAction({ name, isApplicationSpecific }));
+    loader.promise.then(settings => {
+      dispatch(loadSuccessAction({ ...settings }));
+    }).catch((error) => {
+      dispatch(loadErrorAction({ error: error?.['message'] || 'Failed to load component' }))
+    });
   };
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   const loadComponent = () => {
-    doFetch();
+    var loader = getComponent({ name, isApplicationSpecific, skipCache: true });
+    fetchInternal(loader);
   };
 
-  // todo: review usage of useFormUpdateMarkup after
-  const {
-    mutate: saveFormHttp /*, loading: saveFormInProgress, error: saveFormError*/,
-  } = useConfigurableComponentUpdateSettings({
-    id,
-  });
-
   const saveComponent = (settings: TSettings): Promise<void> => {
-    if (!state.id) {
-      console.warn('ConfigurableComponent: save of component without `id` called');
+    if (!state.name) {
+      console.error('ConfigurableComponent: save of component without `name` called');
       return Promise.resolve();
     }
 
     dispatch(saveRequestAction({}));
 
-    const dto: ConfigurableComponentUpdateSettingsInput = {
-      id: state.id,
-      settings: settings ? JSON.stringify(settings) : null,
+    const payload = {
+      module: null,
+      name: state.name,
+      isApplicationSpecific: isApplicationSpecific,
+      settings: settings as object
     };
-
-    return saveFormHttp(dto, {})
+    return updateComponent(payload)
       .then(_response => {
-        invalidateSettings(state.id);
-        dispatch(saveSuccessAction({ settings: dto.settings }));
+        dispatch(saveSuccessAction({ settings: payload.settings }));
       })
       .catch(_error => {
         dispatch(saveErrorAction({ error: '' }));
@@ -118,7 +113,8 @@ const GenericConfigurableComponentProvider = <TSettings extends any>({
 };
 
 export interface IConfigurableComponentProviderProps {
-  id?: string;
+  name: string;
+  isApplicationSpecific: boolean;
 }
 
 export const createConfigurableComponent = <TSettings extends any>(defaultSettings: TSettings) => {
@@ -145,7 +141,8 @@ export const createConfigurableComponent = <TSettings extends any>(defaultSettin
         initialState={initialState}
         stateContext={StateContext}
         actionContext={ActionContext}
-        id={props.id}
+        name={props.name}
+        isApplicationSpecific={props.isApplicationSpecific}
       >
         {props.children}
       </GenericConfigurableComponentProvider>

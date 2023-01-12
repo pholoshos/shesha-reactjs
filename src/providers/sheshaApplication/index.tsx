@@ -38,6 +38,10 @@ export interface IShaApplicationProviderProps {
   themeProps?: ThemeProviderProps;
   routes?: ISheshaRutes;
   noAuth?: boolean;
+  /**
+   * Unique identifier (key) of the front-end application, is used to separate some settings and application parts when use multiple front-ends
+   */
+  applicationKey?: string;
 }
 
 const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>> = props => {
@@ -45,6 +49,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     children,
     backendUrl,
     applicationName,
+    applicationKey,
     accessTokenName,
     router,
     toolboxComponentGroups = [],
@@ -59,6 +64,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     backendUrl,
     applicationName,
     toolboxComponentGroups,
+    applicationKey,
   });
 
   const authRef = useRef<IAuthProviderRefProps>();
@@ -96,23 +102,23 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
         >
           <ConfigurableActionDispatcherProvider>
             <UiProvider>
-              <ThemeProvider {...(themeProps || {})}>
-                <ShaRoutingProvider router={router}>
-                  <ConditionalWrap
-                    condition={!props?.noAuth}
-                    wrap={authChildren => (
-                      <AuthProvider
-                        tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
-                        onSetRequestHeaders={setRequestHeaders}
-                        unauthorizedRedirectUrl={unauthorizedRedirectUrl}
-                        whitelistUrls={whitelistUrls}
-                        authRef={authRef}
-                      >
-                        <AuthorizationSettingsProvider>{authChildren}</AuthorizationSettingsProvider>
-                      </AuthProvider>
-                    )}
-                  >
-                    <ConfigurationItemsLoaderProvider>
+              <ShaRoutingProvider router={router}>
+                <ConditionalWrap
+                  condition={!props?.noAuth}
+                  wrap={authChildren => (
+                    <AuthProvider
+                      tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
+                      onSetRequestHeaders={setRequestHeaders}
+                      unauthorizedRedirectUrl={unauthorizedRedirectUrl}
+                      whitelistUrls={whitelistUrls}
+                      authRef={authRef}
+                    >
+                      <AuthorizationSettingsProvider>{authChildren}</AuthorizationSettingsProvider>
+                    </AuthProvider>
+                  )}
+                >
+                  <ConfigurationItemsLoaderProvider>
+                    <ThemeProvider {...(themeProps || {})}>
                       <AppConfiguratorProvider>
                         <ReferenceListDispatcherProvider>
                           <MetadataDispatcherProvider>
@@ -124,10 +130,10 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
                           </MetadataDispatcherProvider>
                         </ReferenceListDispatcherProvider>
                       </AppConfiguratorProvider>
-                    </ConfigurationItemsLoaderProvider>
-                  </ConditionalWrap>
-                </ShaRoutingProvider>
-              </ThemeProvider>
+                    </ThemeProvider>
+                  </ConfigurationItemsLoaderProvider>
+                </ConditionalWrap>
+              </ShaRoutingProvider>
             </UiProvider>
           </ConfigurableActionDispatcherProvider>
         </RestfulProvider>

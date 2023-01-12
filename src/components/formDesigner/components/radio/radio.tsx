@@ -5,6 +5,7 @@ import { IToolboxComponent } from '../../../../interfaces';
 import { DataTypes } from '../../../../interfaces/dataTypes';
 import { FormMarkup } from '../../../../providers/form/models';
 import { getStyle, validateConfigurableComponentSettings } from '../../../../providers/form/utils';
+import { getLegacyReferenceListIdentifier } from '../../../../utils/referenceList';
 import ConfigurableFormItem from '../formItem';
 import RadioGroup from './radioGroup';
 import settingsFormJson from './settingsForm.json';
@@ -33,14 +34,15 @@ const Radio: IToolboxComponent<IEnhancedRadioProps> = {
 
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
-  initModel: model => {
-    const customModel: IEnhancedRadioProps = {
-      ...model,
-      dataSourceType: 'values',
-      direction: 'horizontal',
-    };
-    return customModel;
-  },
+  migrator: m => m.add<IEnhancedRadioProps>(0, prev => (
+    {
+      ...prev,
+      dataSourceType: prev['dataSourceType'] ?? 'values',
+      direction: prev['direction'] ?? 'horizontal'
+    }
+  )).add<IEnhancedRadioProps>(1, prev => {
+    return {...prev, referenceListId: getLegacyReferenceListIdentifier(prev.referenceListNamespace, prev.referenceListName) };
+  }),
 };
 
 export default Radio;

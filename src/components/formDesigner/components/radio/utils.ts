@@ -4,11 +4,19 @@ import { RadioChangeEvent, SpaceProps } from 'antd';
 import { ReferenceListItemDto } from '../../../../apis/referenceList';
 import { IConfigurableFormComponent } from '../../../../interfaces';
 import { DataSourceType, ILabelValue } from '../dropdown/models';
+import { IReferenceListIdentifier } from '../../../../providers/referenceListDispatcher/models';
 
 export interface IRadioProps extends Omit<IConfigurableFormComponent, 'style'> {
   items?: ILabelValue[];
+  /**
+  * @deprecated - use referenceListId instead
+  */
   referenceListNamespace?: string;
+  /**
+   * @deprecated - use referenceListId instead
+   */
   referenceListName?: string;
+  referenceListId?: IReferenceListIdentifier;
   dataSourceType: DataSourceType;
   direction?: SpaceProps['direction'];
   value?: any;

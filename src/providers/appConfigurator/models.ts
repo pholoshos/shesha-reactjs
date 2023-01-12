@@ -10,4 +10,8 @@ export interface IComponentSettings {
     name?: string;
     description?: string;
     settings: object;
+    /**
+     * Cache MD5, is used for client-side caching
+     */
+    cacheMd5?: string | null;
 }

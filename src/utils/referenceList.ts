@@ -1,4 +1,5 @@
 import { ReferenceListItemDto } from "../apis/referenceList";
+import { IReferenceListIdentifier } from "../providers/referenceListDispatcher/models";
 
 export const CACHED_REF_LIST_ITEMS = 'CACHED_REF_LIST_ITEMS';
 
@@ -106,3 +107,18 @@ const getListItemsFromStorage = () => {
 
   return cachedListItems ? (JSON.parse(cachedListItems) as ICachedRefListItems[]) : null;
 };
+
+export const getLegacyReferenceListIdentifier = (referenceListNamespace?: string, referenceListName?: string): IReferenceListIdentifier => {
+  return !referenceListNamespace && !referenceListName
+    ? null
+    : {
+      name: getNameWithNamespace(referenceListNamespace, referenceListName),
+      module: undefined      
+    };
+}
+
+const getNameWithNamespace = (namespace: string, name: string) => {
+  return Boolean(namespace)
+    ? `${namespace}.${name}`
+    : name;
+}

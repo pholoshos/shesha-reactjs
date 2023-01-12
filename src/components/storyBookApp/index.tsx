@@ -36,6 +36,7 @@ export const StoryApp: FC<PropsWithChildren<{ layout?: boolean }>> = ({ children
   return (
     <GlobalStateProvider>
       <ShaApplicationProvider
+        //applicationKey='admin-portal'
         backendUrl={process.env.STORYBOOK_BASE_URL}
         router={DEFAULT_ROUTER as any}
       >

@@ -18,8 +18,7 @@ const RefListDropdownWidget: RefListDropdownWidgetType = {
 
     return (
       <RefListDropDown.Raw
-        listName={customSettings.referenceListName}
-        listNamespace={customSettings.referenceListNamespace}
+        referenceListId={{ module: customSettings.referenceListModule, name: customSettings.referenceListName }}
         value={value}
         onChange={onChange}
         style={{ minWidth: '150px' }}

@@ -1,6 +1,9 @@
 import { createContext } from 'react';
-import { ConfigurationItemsViewMode } from '../appConfigurator/models';
+import { IReferenceList } from '../../interfaces/referenceList';
+import { PromisedValue } from '../../utils/promises';
+import { ConfigurationItemsViewMode, IComponentSettings } from '../appConfigurator/models';
 import { FormFullName, FormIdentifier, IFormDto } from '../form/models';
+import { IReferenceListIdentifier } from '../referenceListDispatcher/models';
 
 export interface IConfigurationItemsLoaderStateContext {
   activeProvider?: string;
@@ -12,13 +15,35 @@ export interface IGetFormPayload {
   skipCache: boolean;
 }
 
-export interface IClearItemCachePayload {
+export interface IGetRefListPayload {
+  refListId: IReferenceListIdentifier;
+  configurationItemMode?: ConfigurationItemsViewMode;
+  skipCache: boolean;
+}
+
+export interface IGetComponentPayload {
+  name: string;
+  isApplicationSpecific: boolean;
+  skipCache: boolean;
+}
+export interface IUpdateComponentPayload {
+  name: string;
+  module?: string;
+  isApplicationSpecific: boolean;
+  settings: object;
+}
+
+export interface IClearFormCachePayload {
   formId: FormIdentifier;
 }
 
 export interface IConfigurationItemsLoaderActionsContext {
   getForm: (payload: IGetFormPayload) => Promise<IFormDto>;
-  clearItemCache: (payload: IClearItemCachePayload) => void;
+  getRefList: (payload: IGetRefListPayload) => PromisedValue<IReferenceList>;
+  getComponent: (payload: IGetComponentPayload) => PromisedValue<IComponentSettings>;
+  updateComponent: (payload: IUpdateComponentPayload) => Promise<void>;
+
+  clearFormCache: (payload: IClearFormCachePayload) => void;
   getEntityFormId: (className: string, formType: string, action: (formId: FormFullName) => void) => void;
 }
 

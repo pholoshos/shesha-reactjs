@@ -37,11 +37,12 @@ export const apiCallArgumentsForm = new DesignerToolbarSettings()
     values: HttpVerbs.map(v => ({ id: v, label: v, value: v })),
     defaultValue: 'post',
   })
-  .addTextField({
+  .addEndpointsAutocomplete({
     id: nanoid(),
     name: 'url',
     label: 'URL',
     description: 'Relative or absolute URL of the API endpoint. Relative ones will be send to the current back-end. Absolute URLs can be used for external applications.',
+    httpVerb: "{data.verb}",    
   })
   .addLabelValueEditor({
     id: nanoid(),

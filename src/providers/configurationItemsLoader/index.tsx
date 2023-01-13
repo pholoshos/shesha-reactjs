@@ -41,7 +41,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
 
   const [state, _dispatch] = useThunkReducer(metadataReducer, initial);
 
-  const { backendUrl, httpHeaders } = useSheshaApplication();
+  const { backendUrl, httpHeaders, applicationKey } = useSheshaApplication();
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
@@ -260,8 +260,17 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     return formPromise;
   };
 
-  const getComponentCacheKey = (name: string): string => {
-    return name ? `component:${name.toLowerCase()}` : null;
+  const prefixWithAppKey = (cacheKey: string): string => {
+    return cacheKey && applicationKey
+      ? applicationKey + '/' + cacheKey
+      : cacheKey;
+  }
+
+  const getComponentCacheKey = (name: string, isApplicationSpecific: boolean): string => {
+    const key = name ? `component:${name.toLowerCase()}` : null;
+    return isApplicationSpecific
+      ? prefixWithAppKey(key)
+      : key;
   }
 
   const clearComponentCache = (name: string) => {
@@ -269,7 +278,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
   }
 
   const getComponent = (payload: IGetComponentPayload) => {
-    
+
     if (!payload.name)
       MakePromiseWithState(Promise.reject("Name must be specified"));
 
@@ -284,7 +293,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     const { name, isApplicationSpecific } = payload;
 
     const componentPromise = new Promise<IComponentSettings>((resolve, reject) => {
-      const cacheKey = getComponentCacheKey(payload.name);
+      const cacheKey = getComponentCacheKey(payload.name, payload.isApplicationSpecific);
       const storage = window?.localStorage;
       const cachedDto = cacheKey ? getFromCache<IComponentSettings>(cacheKey) : null;
 
@@ -357,13 +366,12 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     });
   }
 
-  const getEntityFormId = (className: string, formType: string, action: (formId: FormFullName) => void ) =>
-  {
-    entityConfigGetEntityConfigForm({entityConfigName: className, typeName: formType}, { base: backendUrl})
-    .then(response => {
-      if (response.success) 
-        action({name: response.result.name, module: response.result.module});
-    });
+  const getEntityFormId = (className: string, formType: string, action: (formId: FormFullName) => void) => {
+    entityConfigGetEntityConfigForm({ entityConfigName: className, typeName: formType }, { base: backendUrl })
+      .then(response => {
+        if (response.success)
+          action({ name: response.result.name, module: response.result.module });
+      });
   }
 
   const loaderActions: IConfigurationItemsLoaderActionsContext = {

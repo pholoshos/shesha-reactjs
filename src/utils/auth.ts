@@ -2,6 +2,11 @@ import jseu from 'js-encoding-utils';
 import { getLocalizationOrDefault } from './localization';
 import { getLocalStorage } from './storage';
 
+/**
+ * Standard Authorization header name
+ */
+ export const AUTHORIZATION_HEADER_NAME = 'Authorization';
+
 // Fields to remove from the AuthContext
 interface IAccessToken {
   accessToken?: string | null;
@@ -66,7 +71,7 @@ export const hasTokenExpired = (date: string): boolean => {
 export const getHttpHeaders = (token: string | null) => {
   const headers = {};
   if (token)
-    headers['Authorization'] = `Bearer ${token}`;
+    headers[AUTHORIZATION_HEADER_NAME] = `Bearer ${token}`;
 
   headers['.AspNetCore.Culture'] = getLocalizationOrDefault();
     

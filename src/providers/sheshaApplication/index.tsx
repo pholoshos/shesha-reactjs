@@ -26,6 +26,7 @@ import ConditionalWrap from '../../components/conditionalWrapper';
 import { ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
 import { ApplicationActionsProcessor } from './configurable-actions/applicationActionsProcessor';
 import { ConfigurationItemsLoaderProvider } from '../configurationItemsLoader';
+import { FRONT_END_APP_HEADER_NAME } from './models';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -58,6 +59,9 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     themeProps,
     routes,
   } = props;
+  const initialHeaders = {
+    [FRONT_END_APP_HEADER_NAME]: applicationKey,
+  };
   const [state, dispatch] = useReducer(appConfiguratorReducer, {
     ...SHESHA_APPLICATION_CONTEXT_INITIAL_STATE,
     routes: routes ?? DEFAULT_SHESHA_ROUTES,
@@ -65,6 +69,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     applicationName,
     toolboxComponentGroups,
     applicationKey,
+    httpHeaders: initialHeaders,
   });
 
   const authRef = useRef<IAuthProviderRefProps>();

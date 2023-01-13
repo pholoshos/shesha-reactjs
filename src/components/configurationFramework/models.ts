@@ -5,10 +5,16 @@ export interface ModuleDto {
     name: string;
     description?: string;
 }
+export interface ApplicationDto {
+    id: string;
+    appKey: string;
+    name: string;
+}
 export interface ConfigurationItemDto {
     id?: string;
     name: string;
     module?: ModuleDto;
+    application?: ApplicationDto;
     itemType: string;
 
     label?: string;
@@ -25,6 +31,12 @@ export interface IModule {
     itemTypes: ItemTypeDictionary;
 }
 export interface IItemType {
+    name: string;
+    items: IConfigurationItem[];
+    applications: IDictionary<IApplication>;
+}
+export interface IApplication {
+    appKey: string;
     name: string;
     items: IConfigurationItem[];
 }

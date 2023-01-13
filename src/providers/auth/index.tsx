@@ -33,6 +33,7 @@ import {
   saveUserToken as saveUserTokenToStorage,
   getAccessToken as getAccessTokenFromStorage,
   getHttpHeaders as getHttpHeadersFromToken,
+  AUTHORIZATION_HEADER_NAME,
 } from '../../utils/auth';
 import {
   useTokenAuthAuthenticate,
@@ -105,14 +106,20 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
   authRef,
 }) => {
   const { router } = useShaRouting();
-  const { backendUrl } = useSheshaApplication();
+  const { backendUrl, httpHeaders } = useSheshaApplication();
 
   const storedToken = getAccessTokenFromStorage(tokenName);
+  
+  const {[AUTHORIZATION_HEADER_NAME]: _auth = null, ...headersWithoutAuth} = {...(httpHeaders ?? {})};
+  
+  const initialHeaders = { ...headersWithoutAuth, ...getHttpHeadersFromToken(storedToken?.accessToken) };
+
   const [state, dispatch] = useThunkReducer(authReducer, {
     ...AUTH_CONTEXT_INITIAL_STATE,
     token: storedToken?.accessToken,
-    headers: getHttpHeadersFromToken(storedToken?.accessToken),
+    headers: initialHeaders,
   });
+
   const setters = getFlagSetters(dispatch);
 
   //#region Fetch user login info`1
@@ -181,7 +188,7 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
   //#endregion
 
   const getHttpHeadersFromState = (providedState: IAuthStateContext): IHttpHeaders => {
-    const headers: IHttpHeaders = {};
+    const headers: IHttpHeaders = { ...httpHeaders };
 
     if (providedState.token) headers['Authorization'] = `Bearer ${providedState.token}`;
 

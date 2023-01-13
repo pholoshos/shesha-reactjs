@@ -61,7 +61,7 @@ export const ConfigurationItemsExport: FC<IConfigurationItemsExportProps> = (pro
             skipCount: 0,
             maxResultCount: -1,
             entityType: 'Shesha.Domain.ConfigurationItems.ConfigurationItem',
-            properties: 'id name module { id name description } itemType label description',
+            properties: 'id name module { id name description } application { id appKey name } itemType label description',
             filter: JSON.stringify(finalFilter),
             versionSelectionMode: versionsMode,
             sorting: 'module.name, name',
@@ -96,16 +96,32 @@ export const ConfigurationItemsExport: FC<IConfigurationItemsExportProps> = (pro
             }
             let itemType = module.itemTypes[item.itemType];
             if (!itemType) {
-                itemType = { name: item.itemType, items: [] };
+                itemType = { name: item.itemType, items: [], applications: {} };
                 module.itemTypes[itemType.name] = itemType;
             }
+            
             const configurationItem: IConfigurationItem = {
                 id: item.id,
                 name: item.name,
                 label: item.label,
                 description: item.description,
             };
-            itemType.items.push(configurationItem);
+
+            if (item.application && item.application.appKey){
+                let applicationNode = itemType.applications[item.application.appKey];
+                if (!applicationNode){
+                    applicationNode = {
+                        appKey: item.application.appKey,
+                        name: item.application.name,
+                        items: [],
+                        //id: item.application.id,
+                    };
+                    itemType.applications[item.application.appKey] = applicationNode;
+                }
+                applicationNode.items.push(configurationItem);
+            } else {                
+                itemType.items.push(configurationItem);
+            }
         });
 
         let treeNodes: ConfigItemDataNode[] = [];
@@ -131,7 +147,20 @@ export const ConfigurationItemsExport: FC<IConfigurationItemsExportProps> = (pro
                     };
                     moduleNode.children.push(itemTypeNode);
 
-                    itemTypeNode.children = itemType.items.map<ConfigItemDataNode>(item => ({ key: item.id, title: item.name, isLeaf: true, itemId: item.id }));
+                    for (const appKey in itemType.applications) {
+                        const application = itemType.applications[appKey];
+                        
+                        const appNode: ConfigItemDataNode = {
+                            key: `${module.id}/${itemType.name}/${application.appKey}`,
+                            title: application.appKey,
+                            isLeaf: false,
+                            children: application.items.map<ConfigItemDataNode>(item => ({ key: item.id, title: item.name, isLeaf: true, itemId: item.id })),
+                        };
+                        itemTypeNode.children.push(appNode);
+                    }
+                    const nonAppItems = itemType.items.map<ConfigItemDataNode>(item => ({ key: item.id, title: item.name, isLeaf: true, itemId: item.id }));
+                    itemTypeNode.children.push(...nonAppItems);
+                    //itemTypeNode.children = itemType.items.map<ConfigItemDataNode>(item => ({ key: item.id, title: item.name, isLeaf: true, itemId: item.id }));
                 }
             }
             moduleNode.children = moduleNode.children.sort((a, b) => a.title < b.title ? -1 : a.title == b.title ? 0 : 1);

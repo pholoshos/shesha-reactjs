@@ -182,7 +182,7 @@ const IconPicker: FC<IIconPickerProps> = ({
             <div className="sha-icon-picker-icon-list-group" key={groupKey}>
               {memoizedActiveGroup[groupKey]?.length ? (
                 <div className="sha-icon-picker-icon-list-group-header">
-                  <SectionSeparator sectionName={humanizeString(groupKey)} />
+                  <SectionSeparator title={humanizeString(groupKey)} />
                 </div>
               ) : null}
 

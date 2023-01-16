@@ -52,7 +52,7 @@ export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({
       }}
       initialValues={initialValues}
     >
-      <SectionSeparator sectionName={'Display'} />
+      <SectionSeparator title={'Display'} />
 
       <Form.Item
         name="title"
@@ -72,13 +72,13 @@ export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({
         <Checkbox />
       </Form.Item>
 
-      <SectionSeparator sectionName="Toolbar" />
+      <SectionSeparator title="Toolbar" />
 
       <Form.Item name="toolbarItems" initialValue={model.toolbarItems}>
         <ButtonGroupSettingsModal readOnly={readOnly} />
       </Form.Item>
 
-      <SectionSeparator sectionName="Filter" />
+      <SectionSeparator title="Filter" />
 
       <Form.Item name="filters" initialValue={model.filters}>
         <CustomFilter target="table" readOnly={readOnly} />

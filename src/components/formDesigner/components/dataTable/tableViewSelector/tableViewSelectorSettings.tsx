@@ -23,9 +23,9 @@ function TableViewSelectorSettings(props: ITableViewSelectorSettingsProps) {
 
   return (
     <Form form={form} onFinish={props.onSave} onValuesChange={handleValuesChange} initialValues={props.model}>
-      <SectionSeparator sectionName="Filters" />
+      <SectionSeparator title="Filters" />
       <Form.Item name="filters">
-        <TableViewSelectorSettingsModal readOnly={props.readOnly}/>
+        <TableViewSelectorSettingsModal readOnly={props.readOnly} />
       </Form.Item>
     </Form>
   );

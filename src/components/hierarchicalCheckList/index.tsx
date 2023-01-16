@@ -578,7 +578,7 @@ const Checklist: ForwardRefRenderFunction<HierarchicalCheckListHandle, IHierarch
         </Fragment>
       ) : (
         <Fragment>
-          <SectionSeparator sectionName={checkListTreeResponse?.result?.name} />
+          <SectionSeparator title={checkListTreeResponse?.result?.name} />
 
           {!readOnly && hint && (
             <Alert message={hint} type="info" className="sha-hierarchical-checklist-alert" showIcon closable />

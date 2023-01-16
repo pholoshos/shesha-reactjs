@@ -27,7 +27,7 @@ const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
 
   return (
     <Form form={form} onFinish={props.onSave} onValuesChange={onValuesChange} labelCol={{ span: 24 }}>
-      <SectionSeparator sectionName="UX" />
+      <SectionSeparator title="UX" />
       <Form.Item name="name" initialValue={props.model.name} label="Name" rules={[{ required: true }]}>
         <Input readOnly={props.readOnly} />
       </Form.Item>
@@ -62,13 +62,13 @@ const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
         <Checkbox />
       </Form.Item>
 
-      <SectionSeparator sectionName="Customization" />
+      <SectionSeparator title="Customization" />
 
       <Form.Item name="items" initialValue={props.model.items}>
         <ButtonGroupSettingsModal readOnly={props.readOnly} />
       </Form.Item>
 
-      <SectionSeparator sectionName="Security" />
+      <SectionSeparator title="Security" />
 
       <Form.Item
         label="Custom Visibility"

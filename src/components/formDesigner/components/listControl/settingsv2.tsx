@@ -52,7 +52,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         properties: typeof model?.properties === 'string' ? model?.properties : model?.properties?.join(' '),
       }}
     >
-      <SectionSeparator sectionName="Display" />
+      <SectionSeparator title="Display" />
 
       <FormItem name="name" label="Name" rules={[{ required: true }]}>
         <PropertyAutocomplete id="fb71cb51-884f-4f34-aa77-820c12276c95" readOnly={readOnly} />
@@ -86,7 +86,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         <Input readOnly={readOnly} />
       </FormItem>
 
-      <SectionSeparator sectionName="Buttons" />
+      <SectionSeparator title="Buttons" />
 
       <FormItem name="buttons" label="Buttons">
         <ButtonGroupSettingsModal readOnly={readOnly} />
@@ -96,7 +96,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         <Checkbox />
       </Form.Item>
 
-      <SectionSeparator sectionName="Render" />
+      <SectionSeparator title="Render" />
 
       <FormItem name="orientation" label="Orientation">
         <Select disabled={readOnly} defaultValue="vertical">
@@ -140,7 +140,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         </FormItem>
       </Show>
 
-      <SectionSeparator sectionName="Data" />
+      <SectionSeparator title="Data" />
 
       <FormItem
         name="dataSource"
@@ -178,7 +178,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
             {/* <Properties modelType={state?.entityType} mode="multiple" value={state?.properties} /> */}
           </FormItem>
 
-          <SectionSeparator sectionName="Query builder" />
+          <SectionSeparator title="Query builder" />
 
           <FormItem name="useExpression" label="Use Expression" valuePropName="checked">
             <Checkbox disabled={readOnly} />
@@ -197,7 +197,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         </Show>
       </Show>
 
-      <SectionSeparator sectionName="Selection" />
+      <SectionSeparator title="Selection" />
 
       <FormItem
         name="selectionMode"
@@ -212,7 +212,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         </Select>
       </FormItem>
 
-      <SectionSeparator sectionName="Delete/Remove Items" />
+      <SectionSeparator title="Delete/Remove Items" />
 
       <FormItem name="allowDeleteItems" label="Allow Delete Items" valuePropName="checked">
         <Checkbox disabled={readOnly} />
@@ -305,7 +305,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         </Show>
       </Show>
 
-      <SectionSeparator sectionName="Submit" />
+      <SectionSeparator title="Submit" />
 
       <FormItem
         label="On Submit"
@@ -427,7 +427,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         </Select>
       </FormItem>
 
-      <SectionSeparator sectionName="Layout" />
+      <SectionSeparator title="Layout" />
 
       <FormItem name="labelCol" label="Label Col">
         <InputNumber min={0} max={24} defaultValue={5} step={1} readOnly={readOnly} />
@@ -437,13 +437,13 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         <InputNumber min={0} max={24} defaultValue={13} step={1} readOnly={readOnly} />
       </FormItem>
 
-      <SectionSeparator sectionName="Search" />
+      <SectionSeparator title="Search" />
 
       <FormItem name="showQuickSearch" label="Show Quick Search" valuePropName="checked">
         <Checkbox disabled={readOnly} />
       </FormItem>
 
-      <SectionSeparator sectionName="Pagination" />
+      <SectionSeparator title="Pagination" />
 
       <FormItem name="showPagination" label="Show pagination" valuePropName="checked">
         <Checkbox disabled={readOnly} />
@@ -461,7 +461,7 @@ export const ListControlSettings: FC<IListControlSettingsProps> = ({ readOnly, o
         </FormItem>
       </Show>
 
-      <SectionSeparator sectionName="Visibility" />
+      <SectionSeparator title="Visibility" />
 
       <FormItem
         label="Custom Visibility"

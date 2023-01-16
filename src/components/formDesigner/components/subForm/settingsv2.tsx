@@ -27,7 +27,11 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
   const [form] = Form.useForm();
   const formTypes = ['Table', 'Create', 'Edit', 'Details', 'Quickview', 'ListItem', 'Picker'];
 
-  const [formTypesOptions, setFormTypesOptions] = useState<{ value: string }[]>(formTypes.map(i => {return {value: i};}));
+  const [formTypesOptions, setFormTypesOptions] = useState<{ value: string }[]>(
+    formTypes.map(i => {
+      return { value: i };
+    })
+  );
 
   return (
     <Form
@@ -51,7 +55,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
       }}
       // initialValues={initialValues}
     >
-      <SectionSeparator sectionName="Display" />
+      <SectionSeparator title="Display" />
 
       <FormItem name="name" label="Name">
         <PropertyAutocomplete id="fb71cb51-884f-4f34-aa77-820c12276c95" readOnly={readOnly} />
@@ -73,237 +77,243 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
         <Input readOnly={readOnly} />
       </FormItem>
 
-      <FormItem
-        name="formSelectionMode"
-        initialValue={'name'}
-        label="Form selection mode"
-      >
+      <FormItem name="formSelectionMode" initialValue={'name'} label="Form selection mode">
         <Select disabled={readOnly}>
           <Option value="name">Name</Option>
           <Option value="dynamic">Dynamic</Option>
         </Select>
       </FormItem>
 
-      {state?.formSelectionMode == 'dynamic' && <>
-      <FormItem
-        name="formType"
-        label="Form type"
-      >
-        <AutoComplete 
-          disabled={readOnly} 
-          options={formTypesOptions} 
-          onSearch={t => setFormTypesOptions(
-            (t ? formTypes.filter(f => { return f.toLowerCase().includes(t.toLowerCase()); }) : formTypes).map(i => {return {value: i};})
-          )}/>
-      </FormItem>
-      </>}
-
-      {(!state?.formSelectionMode || state?.formSelectionMode == 'name') && <>
-      <FormItem name="formId" label="Form">
-        <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
-      </FormItem>
-
-      <SectionSeparator sectionName="Data" />
-
-      <FormItem
-        name="dataSource"
-        initialValue={'form'}
-        label="Data source"
-        tooltip="The list data to be used can be the data that comes with the form of can be fetched from the API"
-      >
-        <Select disabled={readOnly}>
-          <Option value="form">form</Option>
-          <Option value="api">api</Option>
-        </Select>
-      </FormItem>
-
-      <Show when={state?.dataSource === 'api'}>
-        <FormItem name="entityType" label="Entity type">
-          <AutocompleteRaw
-            dataSourceType="url"
-            dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete"
-            readOnly={readOnly}
-          />
-        </FormItem>
-
-        <Show when={Boolean(state?.entityType)}>
-          <FormItem name="properties" label="Properties">
-            <CodeEditor
-              readOnly={readOnly}
-              mode="inline"
-              setOptions={{ minLines: 15, maxLines: 500, fixedWidthGutter: true }}
-              name="getUrl"
-              type={''}
-              id={''}
-              language="graphqlschema"
-              label="Query Params"
-              description="Properties in GraphQL-like syntax"
+      {state?.formSelectionMode == 'dynamic' && (
+        <>
+          <FormItem name="formType" label="Form type">
+            <AutoComplete
+              disabled={readOnly}
+              options={formTypesOptions}
+              onSearch={t =>
+                setFormTypesOptions(
+                  (t
+                    ? formTypes.filter(f => {
+                        return f.toLowerCase().includes(t.toLowerCase());
+                      })
+                    : formTypes
+                  ).map(i => {
+                    return { value: i };
+                  })
+                )
+              }
             />
           </FormItem>
-        </Show>
+        </>
+      )}
 
-        <FormItem
-          label="Query Params"
-          name="queryParams"
-          tooltip="The code that returns the query parameters to be used to fetch the data. Ideally this should be a function that returns an object with the entity id"
-        >
-          <CodeEditor
-            readOnly={readOnly}
-            mode="dialog"
-            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-            name="getUrl"
-            type={''}
-            id={''}
-            label="Query Params"
-            description="The code that returns the query parameters to be used to fetch the data. Ideally this should be a function that returns an object with the entity id"
-            exposedVariables={[
-              {
-                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-                name: 'data',
-                description: 'Form data',
-                type: 'object',
-              },
-              {
-                id: '65b71112-d412-401f-af15-1d3080f85319',
-                name: 'globalState',
-                description: 'The global state',
-                type: 'object',
-              },
-              {
-                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-                name: 'queryParams',
-                description: 'Query parameters',
-                type: 'object',
-              },
-              {
-                id: 'bb3f8b7a-fada-43ab-bb83-acf557b77013',
-                name: 'value',
-                description: 'The form value',
-                type: 'object',
-              },
-            ]}
-          />
-        </FormItem>
+      {(!state?.formSelectionMode || state?.formSelectionMode == 'name') && (
+        <>
+          <FormItem name="formId" label="Form">
+            <FormAutocomplete readOnly={readOnly} convertToFullId={true} />
+          </FormItem>
 
-        <SectionSeparator
-          sectionName="URLs"
-          tooltip="These settings are not mandatory except if you do not want to use the default URL, which is dependent on the Entity"
-        />
+          <SectionSeparator title="Data" />
 
-        <FormItem
-          label="GET Url"
-          name="getUrl"
-          tooltip="The API url that will be used to fetch the data. Write the code that returns the string"
-        >
-          <CodeEditor
-            readOnly={readOnly}
-            mode="dialog"
-            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-            name="getUrl"
-            type={''}
-            id={''}
-            label="GET Url"
-            description="The API url that will be used to fetch the data. Write the code that returns the string"
-            exposedVariables={[
-              {
-                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-                name: 'data',
-                description: 'Form data',
-                type: 'object',
-              },
-              {
-                id: '65b71112-d412-401f-af15-1d3080f85319',
-                name: 'globalState',
-                description: 'The global state',
-                type: 'object',
-              },
-              {
-                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-                name: 'queryParams',
-                description: 'Query parameters',
-                type: 'object',
-              },
-            ]}
-          />
-        </FormItem>
+          <FormItem
+            name="dataSource"
+            initialValue={'form'}
+            label="Data source"
+            tooltip="The list data to be used can be the data that comes with the form of can be fetched from the API"
+          >
+            <Select disabled={readOnly}>
+              <Option value="form">form</Option>
+              <Option value="api">api</Option>
+            </Select>
+          </FormItem>
 
-        <FormItem
-          label="POST Url"
-          name="postUrl"
-          tooltip="The API url that will be used to update data. Write the code that returns the string"
-        >
-          <CodeEditor
-            readOnly={readOnly}
-            mode="dialog"
-            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-            name="postUrl"
-            label="POST Url"
-            type={''}
-            id={''}
-            description="he API url that will be used to update data. Write the code that returns the string"
-            exposedVariables={[
-              {
-                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-                name: 'data',
-                description: 'Form data',
-                type: 'object',
-              },
-              {
-                id: '65b71112-d412-401f-af15-1d3080f85319',
-                name: 'globalState',
-                description: 'The global state',
-                type: 'object',
-              },
-              {
-                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-                name: 'queryParams',
-                description: 'Query parameters',
-                type: 'object',
-              },
-            ]}
-          />
-        </FormItem>
+          <Show when={state?.dataSource === 'api'}>
+            <FormItem name="entityType" label="Entity type">
+              <AutocompleteRaw
+                dataSourceType="url"
+                dataSourceUrl="/api/services/app/Metadata/TypeAutocomplete"
+                readOnly={readOnly}
+              />
+            </FormItem>
 
-        <FormItem
-          label="PUT Url"
-          name="putUrl"
-          tooltip="The API url that will be used to update data. Write the code that returns the string"
-        >
-          <CodeEditor
-            readOnly={readOnly}
-            mode="dialog"
-            setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
-            name="putUrl"
-            label="PUT Url"
-            type={''}
-            id={''}
-            description="The API url that will be used to update data. Write the code that returns the string"
-            exposedVariables={[
-              {
-                id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
-                name: 'data',
-                description: 'Form data',
-                type: 'object',
-              },
-              {
-                id: '65b71112-d412-401f-af15-1d3080f85319',
-                name: 'globalState',
-                description: 'The global state',
-                type: 'object',
-              },
-              {
-                id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
-                name: 'queryParams',
-                description: 'Query parameters',
-                type: 'object',
-              },
-            ]}
-          />
-        </FormItem>
-      </Show>
+            <Show when={Boolean(state?.entityType)}>
+              <FormItem name="properties" label="Properties">
+                <CodeEditor
+                  readOnly={readOnly}
+                  mode="inline"
+                  setOptions={{ minLines: 15, maxLines: 500, fixedWidthGutter: true }}
+                  name="getUrl"
+                  type={''}
+                  id={''}
+                  language="graphqlschema"
+                  label="Query Params"
+                  description="Properties in GraphQL-like syntax"
+                />
+              </FormItem>
+            </Show>
 
-      </>}
-      <SectionSeparator sectionName="Actions" />
+            <FormItem
+              label="Query Params"
+              name="queryParams"
+              tooltip="The code that returns the query parameters to be used to fetch the data. Ideally this should be a function that returns an object with the entity id"
+            >
+              <CodeEditor
+                readOnly={readOnly}
+                mode="dialog"
+                setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+                name="getUrl"
+                type={''}
+                id={''}
+                label="Query Params"
+                description="The code that returns the query parameters to be used to fetch the data. Ideally this should be a function that returns an object with the entity id"
+                exposedVariables={[
+                  {
+                    id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                    name: 'data',
+                    description: 'Form data',
+                    type: 'object',
+                  },
+                  {
+                    id: '65b71112-d412-401f-af15-1d3080f85319',
+                    name: 'globalState',
+                    description: 'The global state',
+                    type: 'object',
+                  },
+                  {
+                    id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+                    name: 'queryParams',
+                    description: 'Query parameters',
+                    type: 'object',
+                  },
+                  {
+                    id: 'bb3f8b7a-fada-43ab-bb83-acf557b77013',
+                    name: 'value',
+                    description: 'The form value',
+                    type: 'object',
+                  },
+                ]}
+              />
+            </FormItem>
+
+            <SectionSeparator
+              title="URLs"
+              tooltip="These settings are not mandatory except if you do not want to use the default URL, which is dependent on the Entity"
+            />
+
+            <FormItem
+              label="GET Url"
+              name="getUrl"
+              tooltip="The API url that will be used to fetch the data. Write the code that returns the string"
+            >
+              <CodeEditor
+                readOnly={readOnly}
+                mode="dialog"
+                setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+                name="getUrl"
+                type={''}
+                id={''}
+                label="GET Url"
+                description="The API url that will be used to fetch the data. Write the code that returns the string"
+                exposedVariables={[
+                  {
+                    id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                    name: 'data',
+                    description: 'Form data',
+                    type: 'object',
+                  },
+                  {
+                    id: '65b71112-d412-401f-af15-1d3080f85319',
+                    name: 'globalState',
+                    description: 'The global state',
+                    type: 'object',
+                  },
+                  {
+                    id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+                    name: 'queryParams',
+                    description: 'Query parameters',
+                    type: 'object',
+                  },
+                ]}
+              />
+            </FormItem>
+
+            <FormItem
+              label="POST Url"
+              name="postUrl"
+              tooltip="The API url that will be used to update data. Write the code that returns the string"
+            >
+              <CodeEditor
+                readOnly={readOnly}
+                mode="dialog"
+                setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+                name="postUrl"
+                label="POST Url"
+                type={''}
+                id={''}
+                description="he API url that will be used to update data. Write the code that returns the string"
+                exposedVariables={[
+                  {
+                    id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                    name: 'data',
+                    description: 'Form data',
+                    type: 'object',
+                  },
+                  {
+                    id: '65b71112-d412-401f-af15-1d3080f85319',
+                    name: 'globalState',
+                    description: 'The global state',
+                    type: 'object',
+                  },
+                  {
+                    id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+                    name: 'queryParams',
+                    description: 'Query parameters',
+                    type: 'object',
+                  },
+                ]}
+              />
+            </FormItem>
+
+            <FormItem
+              label="PUT Url"
+              name="putUrl"
+              tooltip="The API url that will be used to update data. Write the code that returns the string"
+            >
+              <CodeEditor
+                readOnly={readOnly}
+                mode="dialog"
+                setOptions={{ minLines: 20, maxLines: 500, fixedWidthGutter: true }}
+                name="putUrl"
+                label="PUT Url"
+                type={''}
+                id={''}
+                description="The API url that will be used to update data. Write the code that returns the string"
+                exposedVariables={[
+                  {
+                    id: '788673a5-5eb9-4a9a-a34b-d8cea9cacb3c',
+                    name: 'data',
+                    description: 'Form data',
+                    type: 'object',
+                  },
+                  {
+                    id: '65b71112-d412-401f-af15-1d3080f85319',
+                    name: 'globalState',
+                    description: 'The global state',
+                    type: 'object',
+                  },
+                  {
+                    id: '3633b881-43f4-4779-9f8c-da3de9ecf9b8',
+                    name: 'queryParams',
+                    description: 'Query parameters',
+                    type: 'object',
+                  },
+                ]}
+              />
+            </FormItem>
+          </Show>
+        </>
+      )}
+      <SectionSeparator title="Actions" />
 
       <FormItem
         label="On Submit"
@@ -447,7 +457,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
         />
       </FormItem>
 
-      <SectionSeparator sectionName="Layout" />
+      <SectionSeparator title="Layout" />
 
       <FormItem name="labelCol" label="Label Col">
         <InputNumber min={0} max={24} defaultValue={5} step={1} readOnly={readOnly} />
@@ -478,7 +488,7 @@ export const SubFormSettings: FC<ISubFormSettingsProps> = ({ readOnly, onSave, m
         />
       </FormItem>
 
-      <SectionSeparator sectionName="Visibility" />
+      <SectionSeparator title="Visibility" />
 
       <FormItem
         label="Custom Visibility"

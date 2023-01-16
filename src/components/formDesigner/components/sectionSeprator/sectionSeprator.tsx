@@ -25,7 +25,7 @@ const SectionSeparatorComponent: IToolboxComponent<ISectionSeparatorProps> = {
 
     return (
       <SectionSeparator
-        sectionName={model.label}
+        title={model.label}
         containerStyle={getStyle(model?.containerStyle, formData)}
         titleStyle={getStyle(model?.titleStyle, formData)}
       />

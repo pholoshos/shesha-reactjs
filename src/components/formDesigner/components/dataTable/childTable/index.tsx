@@ -146,7 +146,13 @@ const ChildTableComponent: IToolboxComponent<IChildTableComponentProps> = {
 
                   <TablePager />
 
-                  <ButtonGroup items={model?.toolbarItems || []} name={''} type={''} id={model.id} />
+                  <ButtonGroup
+                    items={model?.toolbarItems || []}
+                    name={''}
+                    type={''}
+                    id={model.id}
+                    isInline={model?.isInline}
+                  />
                 </Space>
               </div>
             }

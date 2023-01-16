@@ -5,6 +5,7 @@ export interface IChildTableSettingsProps {
   title?: string;
   parentEntityId?: string;
   allowQuickSearch?: boolean;
+  isInline?: boolean;
   toolbarItems?: ButtonGroupItemProps[];
   filters?: ITableViewProps[];
   defaultSelectedFilterId: string;

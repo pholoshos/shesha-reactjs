@@ -53,7 +53,7 @@ const ConfigurableThemePage: FC<IConfigurableThemePageProps> = () => {
       <Row gutter={16} wrap={false}>
         <Col flex="auto">
           <CollapsiblePanel collapsible="disabled" header="Configurations">
-            <SectionSeparator sectionName="Theme Colors" />
+            <SectionSeparator title="Theme Colors" />
 
             <Alert message="Select the the colors below and see the changes on the next section" showIcon />
 
@@ -98,7 +98,7 @@ const ConfigurableThemePage: FC<IConfigurableThemePageProps> = () => {
 
             <Divider />
 
-            <SectionSeparator sectionName="Results" />
+            <SectionSeparator title="Results" />
 
             <Alert message="Below are the changes to based on the theme colors you selected" showIcon type="warning" />
 

@@ -67,7 +67,7 @@ const WizardSettings: FC<ITabSettingsProps> = props => {
       labelCol={{ span: 24 }}
       disabled={props.readOnly}
     >
-      <SectionSeparator sectionName="Display" />
+      <SectionSeparator title="Display" />
       <Form.Item name="name" initialValue={props.model.name} label="Name" rules={[{ required: true }]}>
         <Input />
       </Form.Item>
@@ -156,7 +156,7 @@ const WizardSettings: FC<ITabSettingsProps> = props => {
         </Select>
       </Form.Item>
 
-      <SectionSeparator sectionName="Configure Wizard Steps" />
+      <SectionSeparator title="Configure Wizard Steps" />
 
       <Form.Item name="steps" initialValue={steps}>
         <ItemListSettingsModal
@@ -170,7 +170,7 @@ const WizardSettings: FC<ITabSettingsProps> = props => {
         />
       </Form.Item>
 
-      <SectionSeparator sectionName="Security" />
+      <SectionSeparator title="Security" />
 
       <Form.Item
         label="Custom Visibility"

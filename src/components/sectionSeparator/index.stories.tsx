@@ -10,7 +10,7 @@ export default {
 } as Meta;
 
 const sectionSeparatorProps: ISectionSeparatorProps = {
-  sectionName: 'Personal details',
+  title: 'Personal details',
 };
 
 // Create a master template for mapping args to render the Button component
@@ -30,7 +30,7 @@ const Template: Story<ISectionSeparatorProps> = args => {
         },
       }}
     >
-      <SectionSeparator sectionName="Personal details" {...args} />
+      <SectionSeparator title="Personal details" {...args} />
 
       <Form.Item label="First name">
         <Input />

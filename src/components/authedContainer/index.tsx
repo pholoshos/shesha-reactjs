@@ -60,7 +60,7 @@ const AuthContainer: FC<IAuthContainerProps> = ({ children, layout = false }) =>
                 )}
               </div>
 
-              <SectionSeparator sectionName="" />
+              <SectionSeparator title="" />
             </Fragment>
           ))}
 

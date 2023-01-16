@@ -59,9 +59,9 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     themeProps,
     routes,
   } = props;
-  const initialHeaders = {
-    [FRONT_END_APP_HEADER_NAME]: applicationKey,
-  };
+  const initialHeaders = applicationKey 
+    ? {[FRONT_END_APP_HEADER_NAME]: applicationKey} 
+    : {};
   const [state, dispatch] = useReducer(appConfiguratorReducer, {
     ...SHESHA_APPLICATION_CONTEXT_INITIAL_STATE,
     routes: routes ?? DEFAULT_SHESHA_ROUTES,

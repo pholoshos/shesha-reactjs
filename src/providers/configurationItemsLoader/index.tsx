@@ -102,6 +102,23 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     }
   }
 
+  const addToCache = (cacheKey: string, data: any) => {
+    const storage = window?.localStorage;
+    if (!storage || !cacheKey)
+      return;
+
+    if (data) {
+      try {
+        storage.setItem(cacheKey, JSON.stringify(data));
+      } catch (err) {
+        // Handle the case where localStorage is full.
+        console.warn(`Failed to cache configuration item with key '${cacheKey}'`, err);
+      }
+    }
+    else
+      storage.removeItem(cacheKey);
+  }
+
   const convertFormConfigurationDto2FormDto = (dto: FormConfigurationDto): IFormDto => {
     const markupWithSettings = getMarkupFromResponse(dto);
 
@@ -153,7 +170,6 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
         reject("Reference List identifier must be specified");
 
       const cacheKey = getRefListCacheKey(refListId, configurationItemMode);
-      const storage = window?.localStorage;
       const cachedDto = cacheKey ? getFromCache<IReferenceList>(cacheKey) : null;
 
       const promise = referenceListGetByName({ module: refListId.module, name: refListId.name, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ });
@@ -169,8 +185,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
             name: responseData.name,
             items: [...responseData.items]
           };
-          if (storage)
-            storage.setItem(cacheKey, JSON.stringify(responseData));
+          addToCache(cacheKey, responseData)
 
           resolve(dto);
         } else {
@@ -215,7 +230,6 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
         reject("Form identifier must be specified");
 
       const cacheKey = getFormCacheKey(formId, configurationItemMode);
-      const storage = window?.localStorage;
       const cachedDto = cacheKey ? getFromCache<FormConfigurationDto>(cacheKey) : null;
 
       const promise = Boolean(fullName)
@@ -232,8 +246,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
             throw 'Failed to fetch form. Response is empty';
 
           const dto = convertFormConfigurationDto2FormDto(responseData);
-          if (storage)
-            storage.setItem(cacheKey, JSON.stringify(responseData));
+          addToCache(cacheKey, responseData);
 
           resolve(dto);
         } else {
@@ -294,7 +307,6 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
 
     const componentPromise = new Promise<IComponentSettings>((resolve, reject) => {
       const cacheKey = getComponentCacheKey(payload.name, payload.isApplicationSpecific);
-      const storage = window?.localStorage;
       const cachedDto = cacheKey ? getFromCache<IComponentSettings>(cacheKey) : null;
 
       const promise = configurableComponentGetByName({ name: name, md5: cachedDto?.cacheMd5, isApplicationSpecific }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ });
@@ -313,8 +325,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
             ...responseData,
             settings: settings,
           };
-          if (storage)
-            storage.setItem(cacheKey, JSON.stringify(dto));
+          addToCache(cacheKey, dto);
 
           resolve(dto);
         } else {

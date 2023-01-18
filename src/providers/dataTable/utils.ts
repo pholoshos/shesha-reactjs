@@ -132,6 +132,7 @@ export const advancedFilter2JsonLogic = (advancedFilter: ITableFilter[], columns
       if (!filterOption) {
         if (column.dataType === 'reference-list-item') filterOption = 'contains';
         if (column.dataType === 'entity') filterOption = 'equals';
+        if (column.dataType === 'boolean') filterOption = 'equals';
       }
 
       switch (filterOption) {

@@ -7,6 +7,7 @@ import { IConfigurableFormComponent } from '.';
 import { ISectionSeparatorProps } from '../components/sectionSeparator';
 import { IIconPickerComponentProps } from '../components/formDesigner/components/iconPicker';
 import { IAutocompleteProps } from '../components/formDesigner/components/autocomplete/autocomplete';
+import { IEndpointsAutocompleteComponentProps } from '../components/formDesigner/components/endpointsAutocomplete/endpointsAutocomplete';
 import { ICheckboxProps } from '../components/formDesigner/components/checkbox/checkbox';
 import { INumberFieldProps } from '../components/formDesigner/components/numberField/models';
 import { IQueryBuilderProps } from '../components/formDesigner/components/queryBuilder/queryBuilderComponent';
@@ -36,6 +37,8 @@ type TextAreaType = ToolbarSettingsProp & Omit<ITextAreaProps, 'type'>;
 type IconPickerType = ToolbarSettingsProp & Omit<IIconPickerComponentProps, 'type'>;
 
 type AutocompleteType = ToolbarSettingsProp & Omit<IAutocompleteProps, 'type'>;
+
+type EndpointsAutocompleteType = ToolbarSettingsProp & Omit<IEndpointsAutocompleteComponentProps, 'type'>;
 
 type FormAutocompleteType = ToolbarSettingsProp & Omit<IFormAutocompleteProps, 'type'>;
 
@@ -122,6 +125,10 @@ export class DesignerToolbarSettings<T> {
 
   public addAutocomplete(props: AutocompleteType | ((data: T) => AutocompleteType)) {
     return this.addProperty(props, 'autocomplete');
+  }
+
+  public addEndpointsAutocomplete(props: EndpointsAutocompleteType | ((data: T) => EndpointsAutocompleteType)) {
+    return this.addProperty(props, 'endpointsAutocomplete');
   }
 
   public addFormAutocomplete(props: FormAutocompleteType | ((data: T) => FormAutocompleteType)) {

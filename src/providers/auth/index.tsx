@@ -7,6 +7,7 @@ import {
   AUTH_CONTEXT_INITIAL_STATE,
   ILoginForm,
   IAuthStateContext,
+  HOME_CACHE_URL,
 } from './contexts';
 import {
   loginUserAction,
@@ -33,6 +34,7 @@ import {
   saveUserToken as saveUserTokenToStorage,
   getAccessToken as getAccessTokenFromStorage,
   getHttpHeaders as getHttpHeadersFromToken,
+  AUTHORIZATION_HEADER_NAME,
 } from '../../utils/auth';
 import {
   useTokenAuthAuthenticate,
@@ -105,14 +107,20 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
   authRef,
 }) => {
   const { router } = useShaRouting();
-  const { backendUrl } = useSheshaApplication();
+  const { backendUrl, httpHeaders } = useSheshaApplication();
 
   const storedToken = getAccessTokenFromStorage(tokenName);
+
+  const { [AUTHORIZATION_HEADER_NAME]: _auth = null, ...headersWithoutAuth } = { ...(httpHeaders ?? {}) };
+
+  const initialHeaders = { ...headersWithoutAuth, ...getHttpHeadersFromToken(storedToken?.accessToken) };
+
   const [state, dispatch] = useThunkReducer(authReducer, {
     ...AUTH_CONTEXT_INITIAL_STATE,
     token: storedToken?.accessToken,
-    headers: getHttpHeadersFromToken(storedToken?.accessToken),
+    headers: initialHeaders,
   });
+
   const setters = getFlagSetters(dispatch);
 
   //#region Fetch user login info`1
@@ -136,6 +144,9 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
             // if we are on the login page - redirect to the returnUrl or home page
             if (isSameUrls(currentUrl, unauthorizedRedirectUrl)) {
               const returnUrl = getQueryParam('returnUrl')?.toString();
+
+              cacheHomeUrl(response.result?.user?.homeUrl);
+
               redirect(returnUrl ?? response.result?.user?.homeUrl ?? homePageUrl ?? DEFAULT_HOME_PAGE);
             }
           }
@@ -152,6 +163,10 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
         dispatch(fetchUserDataActionErrorAction({ message: 'Oops, something went wrong' }));
         redirectToUnauthorized();
       });
+  };
+
+  const cacheHomeUrl = (url: string) => {
+    localStorage.setItem(HOME_CACHE_URL, url);
   };
 
   const redirect = (url: string) => {
@@ -181,7 +196,7 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
   //#endregion
 
   const getHttpHeadersFromState = (providedState: IAuthStateContext): IHttpHeaders => {
-    const headers: IHttpHeaders = {};
+    const headers: IHttpHeaders = { ...httpHeaders };
 
     if (providedState.token) headers['Authorization'] = `Bearer ${providedState.token}`;
 

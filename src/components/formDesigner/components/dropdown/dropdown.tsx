@@ -14,6 +14,7 @@ import ReadOnlyDisplayFormItem from '../../../readOnlyDisplayFormItem';
 import { customDropDownEventHandler } from '../utils';
 import { axiosHttp } from '../../../../apis/axios';
 import moment from 'moment';
+import { getLegacyReferenceListIdentifier } from '../../../../utils/referenceList';
 
 const settingsForm = settingsFormJson as FormMarkup;
 
@@ -46,20 +47,23 @@ const DropdownComponent: IToolboxComponent<IDropdownProps> = {
   },
   settingsFormMarkup: settingsForm,
   validateSettings: model => validateConfigurableComponentSettings(settingsForm, model),
-  initModel: model => {
-    const customProps: IDropdownProps = {
-      ...model,
-      dataSourceType: 'values',
-      useRawValues: false,
-    };
-    return customProps;
-  },
+  migrator: m => m.add<IDropdownProps>(0, prev => (
+    {
+      ...prev,
+      dataSourceType: prev['dataSourceType'] ?? 'values',
+      useRawValues: prev['useRawValues'] ?? false
+    }
+  )).add<IDropdownProps>(1, prev => {
+    return {...prev, referenceListId: getLegacyReferenceListIdentifier(prev.referenceListNamespace, prev.referenceListName) };
+  }),
   linkToModelMetadata: (model, metadata): IDropdownProps => {
     return {
       ...model,
       dataSourceType: metadata.dataType === DataTypes.referenceListItem ? 'referenceList' : 'values',
-      referenceListNamespace: metadata.referenceListNamespace,
-      referenceListName: metadata.referenceListName,
+      referenceListId: {
+        module: metadata.referenceListModule,
+        name: metadata.referenceListName,
+      },
       mode: 'single',
       useRawValues: true,
     };
@@ -74,8 +78,7 @@ export const Dropdown: FC<IDropdownProps> = ({
   value: val,
   hideBorder,
   disabled,
-  referenceListNamespace,
-  referenceListName,
+  referenceListId,
   mode,
   defaultValue: defaultVal,
   ignoredValues = [],
@@ -110,8 +113,7 @@ export const Dropdown: FC<IDropdownProps> = ({
     return useRawValues ? (
       <RefListDropDown.Raw
         onChange={onChange}
-        listName={referenceListName}
-        listNamespace={referenceListNamespace}
+        referenceListId={referenceListId}
         disabled={isDisabled}
         value={value}
         bordered={!hideBorder}
@@ -127,8 +129,7 @@ export const Dropdown: FC<IDropdownProps> = ({
     ) : (
       <RefListDropDown.Dto
         onChange={onChange}
-        listName={referenceListName}
-        listNamespace={referenceListNamespace}
+        referenceListId={referenceListId}
         disabled={isDisabled}
         value={value}
         bordered={!hideBorder}

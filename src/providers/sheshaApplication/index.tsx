@@ -26,6 +26,7 @@ import ConditionalWrap from '../../components/conditionalWrapper';
 import { ConfigurableActionDispatcherProvider } from '../configurableActionsDispatcher';
 import { ApplicationActionsProcessor } from './configurable-actions/applicationActionsProcessor';
 import { ConfigurationItemsLoaderProvider } from '../configurationItemsLoader';
+import { FRONT_END_APP_HEADER_NAME } from './models';
 
 export interface IShaApplicationProviderProps {
   backendUrl: string;
@@ -38,6 +39,10 @@ export interface IShaApplicationProviderProps {
   themeProps?: ThemeProviderProps;
   routes?: ISheshaRutes;
   noAuth?: boolean;
+  /**
+   * Unique identifier (key) of the front-end application, is used to separate some settings and application parts when use multiple front-ends
+   */
+  applicationKey?: string;
 }
 
 const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>> = props => {
@@ -45,6 +50,7 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     children,
     backendUrl,
     applicationName,
+    applicationKey,
     accessTokenName,
     router,
     toolboxComponentGroups = [],
@@ -53,12 +59,17 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
     themeProps,
     routes,
   } = props;
+  const initialHeaders = applicationKey 
+    ? {[FRONT_END_APP_HEADER_NAME]: applicationKey} 
+    : {};
   const [state, dispatch] = useReducer(appConfiguratorReducer, {
     ...SHESHA_APPLICATION_CONTEXT_INITIAL_STATE,
     routes: routes ?? DEFAULT_SHESHA_ROUTES,
     backendUrl,
     applicationName,
     toolboxComponentGroups,
+    applicationKey,
+    httpHeaders: initialHeaders,
   });
 
   const authRef = useRef<IAuthProviderRefProps>();
@@ -96,23 +107,23 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
         >
           <ConfigurableActionDispatcherProvider>
             <UiProvider>
-              <ThemeProvider {...(themeProps || {})}>
-                <ShaRoutingProvider router={router}>
-                  <ConditionalWrap
-                    condition={!props?.noAuth}
-                    wrap={authChildren => (
-                      <AuthProvider
-                        tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
-                        onSetRequestHeaders={setRequestHeaders}
-                        unauthorizedRedirectUrl={unauthorizedRedirectUrl}
-                        whitelistUrls={whitelistUrls}
-                        authRef={authRef}
-                      >
-                        <AuthorizationSettingsProvider>{authChildren}</AuthorizationSettingsProvider>
-                      </AuthProvider>
-                    )}
-                  >
-                    <ConfigurationItemsLoaderProvider>
+              <ShaRoutingProvider router={router}>
+                <ConditionalWrap
+                  condition={!props?.noAuth}
+                  wrap={authChildren => (
+                    <AuthProvider
+                      tokenName={accessTokenName || DEFAULT_ACCESS_TOKEN_NAME}
+                      onSetRequestHeaders={setRequestHeaders}
+                      unauthorizedRedirectUrl={unauthorizedRedirectUrl}
+                      whitelistUrls={whitelistUrls}
+                      authRef={authRef}
+                    >
+                      <AuthorizationSettingsProvider>{authChildren}</AuthorizationSettingsProvider>
+                    </AuthProvider>
+                  )}
+                >
+                  <ConfigurationItemsLoaderProvider>
+                    <ThemeProvider {...(themeProps || {})}>
                       <AppConfiguratorProvider>
                         <ReferenceListDispatcherProvider>
                           <MetadataDispatcherProvider>
@@ -124,10 +135,10 @@ const ShaApplicationProvider: FC<PropsWithChildren<IShaApplicationProviderProps>
                           </MetadataDispatcherProvider>
                         </ReferenceListDispatcherProvider>
                       </AppConfiguratorProvider>
-                    </ConfigurationItemsLoaderProvider>
-                  </ConditionalWrap>
-                </ShaRoutingProvider>
-              </ThemeProvider>
+                    </ThemeProvider>
+                  </ConfigurationItemsLoaderProvider>
+                </ConditionalWrap>
+              </ShaRoutingProvider>
             </UiProvider>
           </ConfigurableActionDispatcherProvider>
         </RestfulProvider>

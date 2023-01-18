@@ -6,7 +6,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'separator1',
     parentId: 'root',
     label: 'Display',
-    sectionName: '',
+    title: '',
   })
   .addPropertyAutocomplete({
     id: '5c813b1a-04c5-4658-ac0f-cbcbae6b3bd4',
@@ -38,7 +38,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'separatorData',
     parentId: 'root',
     label: 'Buttons',
-    sectionName: 'Buttons',
+    title: 'Buttons',
   })
   .addButtons({
     id: 'f0eac108-728c-4861-922f-e22d4ff47df8',
@@ -56,7 +56,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'separatorData',
     parentId: 'root',
     label: '',
-    sectionName: '',
+    title: '',
   })
   .addCheckbox({
     id: '49b76c8f-c26f-48f9-8122-aa94dfe53b98',
@@ -69,7 +69,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'separatorData',
     parentId: 'root',
     label: 'Data',
-    sectionName: '',
+    title: '',
   })
   .addCheckbox({
     name: 'allowAddAndRemove',
@@ -125,7 +125,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'separatorRenderStrategy',
     parentId: 'root',
     label: 'Render',
-    sectionName: '',
+    title: '',
   })
   .addDropdown({
     id: 'c1ce809e-14f0-4a31-b914-6971d62ec532',
@@ -163,7 +163,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'separatorData',
     parentId: 'root',
     label: 'Submit',
-    sectionName: '',
+    title: '',
   })
   .addCheckbox({
     id: '6a528a62-537a-4a89-a2f1-fc2ea6f5caf7',
@@ -260,7 +260,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'separatorFilters',
     parentId: 'root',
     label: 'Customize filters',
-    sectionName: '',
+    title: '',
   })
   .addQueryBuilder({
     id: '564a68ae-1ec6-47ee-a2e1-90ca0346bf6d',
@@ -272,7 +272,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'separatorLayout',
     parentId: 'root',
     label: 'Layout',
-    sectionName: '',
+    title: '',
   })
   .addNumberField({
     id: '74e583ef-5c01-4353-ab6e-fff13b2cfbbc',
@@ -295,7 +295,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'separatorPagination',
     parentId: 'root',
     label: 'Pagination',
-    sectionName: '',
+    title: '',
   })
   .addCheckbox({
     id: 'c94b5f19-094d-479d-991b-f24c7768bdf5',
@@ -327,7 +327,7 @@ export const listSettingsForm = new DesignerToolbarSettings()
     name: 'separatorVisibility',
     parentId: 'root',
     label: 'Visibility',
-    sectionName: 'Visibility',
+    title: 'Visibility',
   })
   .addCodeEditor({
     id: '03959ffd-cadb-496c-bf6d-b742f7f6edc6',

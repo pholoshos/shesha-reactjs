@@ -8,7 +8,7 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     name: 'separator1',
     parentId: 'root',
     label: 'Display',
-    sectionName: '',
+    title: '',
   })
   .addTextArea({
     id: 'b9857800-eb4d-4303-b1ac-6f9bc7f140ad',
@@ -143,7 +143,7 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     name: 'sectionStyle',
     parentId: 'root',
     label: 'Style',
-    sectionName: '',
+    title: '',
   })
   .addCodeEditor({
     id: '06ab0599-914d-4d2d-875c-765a495472f8',

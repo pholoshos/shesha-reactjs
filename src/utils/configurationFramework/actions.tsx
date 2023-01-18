@@ -36,7 +36,7 @@ interface UpdateItemStatusArgs extends IHasHttpSettings {
     onSuccess?: () => void;
 }
 export const updateItemStatus = (props: UpdateItemStatusArgs) => {
-    const url = `${props.backendUrl}/api/services/Shesha/FormConfiguration/UpdateStatus`;
+    const url = `${props.backendUrl}/api/services/app/ConfigurationItem/UpdateStatus`;
     const httpPayload = {
         filter: getEntityFilterByIds([props.id]),
         status: props.status
@@ -80,7 +80,7 @@ export const publishItem = (payload: IPublishItemPayload): Promise<IPublishItemR
         Modal.confirm({
             title: 'Publish Item',
             icon: <ExclamationCircleOutlined />,
-            content: 'Are you sure you want to publish this form?',
+            content: 'Are you sure you want to publish this item?',
             okText: 'Yes',
             //okType: 'danger',
             cancelText: 'No',
@@ -140,7 +140,7 @@ export const deleteItem = (payload: IDeleteItemPayload): Promise<IDeleteItemResp
     if (!payload.id)
         throw 'Id must not be null';
     return new Promise<IDeleteItemResponse>((resolve) => {
-        const url = `${payload.backendUrl}/api/services/Shesha/FormConfiguration/Delete?id=${payload.id}`;
+        const url = `${payload.backendUrl}/api/services/app/ConfigurationItem/Delete?id=${payload.id}`;
         return axios.delete<any, AxiosResponse<IAbpWrappedResponse<string>>>(url, { headers: payload.httpHeaders })
             .then(response => {
                 resolve({ id: response.data.result });
@@ -159,7 +159,7 @@ export interface ICreateNewItemVersionResponse {
 }
 
 export const createNewVersionRequest = (payload: ICreateNewItemVersionPayload): Promise<AxiosResponse<IAbpWrappedGetEntityResponse<FormConfigurationDto>>> => {
-    const url = `${payload.backendUrl}/api/services/Shesha/FormConfiguration/CreateNewVersion`;
+    const url = `${payload.backendUrl}/api/services/app/ConfigurationItem/CreateNewVersion`;
     const httpPayload = {
         id: payload.id
     };
@@ -185,7 +185,7 @@ export const createNewVersion = (payload: ICreateNewItemVersionPayload): Promise
         Modal.confirm({
             title: 'Create New Version',
             icon: <ExclamationCircleOutlined />,
-            content: 'Are you sure you want to create new version of the form?',
+            content: 'Are you sure you want to create new version of the item?',
             okText: 'Yes',
             //okType: 'danger',
             cancelText: 'No',
@@ -206,7 +206,7 @@ export interface ICancelItemVersionResponse {
 export const itemCancelVersion = (payload: ICancelItemVersionPayload): Promise<ICancelItemVersionResponse> => {
     return new Promise((resolve) => {
         const onOk = () => {
-            const url = `${payload.backendUrl}/api/services/Shesha/FormConfiguration/CancelVersion`;
+            const url = `${payload.backendUrl}/api/services/app/ConfigurationItem/CancelVersion`;
             const httpPayload = {
                 id: payload.id
             };
@@ -224,7 +224,7 @@ export const itemCancelVersion = (payload: ICancelItemVersionPayload): Promise<I
         Modal.confirm({
             title: 'Cancel form version',
             icon: <ExclamationCircleOutlined />,
-            content: 'Are you sure you want to cancel current version of the form?',
+            content: 'Are you sure you want to cancel current version?',
             okText: 'Yes',
             //okType: 'danger',
             cancelText: 'No',

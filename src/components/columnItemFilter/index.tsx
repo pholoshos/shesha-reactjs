@@ -35,7 +35,7 @@ export interface IColumnItemFilterProps {
   filterName: string;
   accessor: string;
   referenceListName: string;
-  referenceListNamespace: string;
+  referenceListModule: string;
   entityReferenceTypeShortAlias: string;
   autocompleteUrl?: string;
   dataType: IndexColumnDataType;
@@ -58,7 +58,7 @@ export const ColumnItemFilter: FC<IColumnItemFilterProps> = ({
   filter,
   applyFilters,
   referenceListName,
-  referenceListNamespace,
+  referenceListModule,
   entityReferenceTypeShortAlias,
   autocompleteUrl,
 }) => {
@@ -256,8 +256,8 @@ export const ColumnItemFilter: FC<IColumnItemFilterProps> = ({
             onPressEnter={handlePressEnter}
             placeholder={`Filter ${filterName}`}
             value={(filter as number[]) || []}
-            referenceListNamespace={referenceListNamespace}
             referenceListName={referenceListName}
+            referenceListModule={referenceListModule}
           />
         )}
       </div>
@@ -270,7 +270,7 @@ interface IFilterBaseProps {
   onPressEnter: () => void;
 }
 
-interface ISingleValueFilterProps extends IFilterBaseProps {}
+interface ISingleValueFilterProps extends IFilterBaseProps { }
 
 interface IStringFilterProps extends ISingleValueFilterProps {
   value: string;
@@ -354,16 +354,18 @@ const NumberRangeFilter: FC<INumberRangeFilterProps> = props => {
 };
 
 interface IRefListFilterProps extends IFilterBaseProps {
-  referenceListNamespace: string;
   referenceListName: string;
+  referenceListModule: string;
   value?: number[];
   onChange: (changeValue: number[] | undefined) => void;
 }
 
 const RefListFilter: FC<IRefListFilterProps> = props => {
   const { data: refListItems, loading: refListLoading } = useReferenceList(
-    props.referenceListNamespace,
-    props.referenceListName
+    {
+      name: props.referenceListName,
+      module: props.referenceListModule,
+    }
   );
 
   return (

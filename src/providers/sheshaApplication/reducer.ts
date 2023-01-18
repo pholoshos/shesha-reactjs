@@ -2,6 +2,7 @@ import { SHESHA_APPLICATION_CONTEXT_INITIAL_STATE, ISheshaApplicationStateContex
 import { handleActions } from 'redux-actions';
 import { SheshaApplicationActionEnums } from './actions';
 import IRequestHeaders from '../../interfaces/requestHeaders';
+import { FRONT_END_APP_HEADER_NAME } from './models';
 
 export default handleActions<ISheshaApplicationStateContext, any>(
   {
@@ -13,11 +14,12 @@ export default handleActions<ISheshaApplicationStateContext, any>(
       const { httpHeaders } = state;
 
       const newHeaders = { ...httpHeaders, ...payload };
+      if (state.applicationKey)
+        newHeaders[FRONT_END_APP_HEADER_NAME] = state.applicationKey;
 
       return {
         ...state,
         httpHeaders: newHeaders,
-        headers: newHeaders,
       };
     },
 

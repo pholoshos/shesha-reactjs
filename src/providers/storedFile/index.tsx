@@ -79,7 +79,7 @@ const StoredFileProvider: FC<PropsWithChildren<IStoredFileProviderProps>> = prop
     fileId,
   });
 
-  const { headers } = useSheshaApplication();
+  const { httpHeaders: headers } = useSheshaApplication();
 
   const fileFetcher = useStoredFileGet({
     lazy: true,

@@ -36,27 +36,27 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
   const actionDependencies = [state];
   useConfigurableAction<IShowConfigrmationArguments>(
     {
-    name: 'Show Confirmation Dialog',
-    owner: 'Common',
-    ownerUid: SheshaActionOwners.Common,
-    hasArguments: true,
-    executer: (actionArgs, _context) => {
-      return new Promise((resolve, _reject) => {
-        Modal.confirm({
-          title: actionArgs.title,
-          content: actionArgs.content,
-          okText: actionArgs.okText ?? 'Yes',
-          cancelText: actionArgs.cancelText ?? 'No',
-          okButtonProps: {
-            type: 'primary',
-            danger: true,
-          },
-          onOk: () => {
-            resolve(true);
-          },
+      name: 'Show Confirmation Dialog',
+      owner: 'Common',
+      ownerUid: SheshaActionOwners.Common,
+      hasArguments: true,
+      executer: (actionArgs, _context) => {
+        return new Promise((resolve, _reject) => {
+          Modal.confirm({
+            title: actionArgs.title,
+            content: actionArgs.content,
+            okText: actionArgs.okText ?? 'Yes',
+            cancelText: actionArgs.cancelText ?? 'No',
+            okButtonProps: {
+              type: 'primary',
+              danger: true,
+            },
+            onOk: () => {
+              resolve(true);
+            },
+          });
         });
-      });
-    },
+      },
       argumentsFormMarkup: showConfirmationArgumentsForm,
     },
     actionDependencies
@@ -64,40 +64,40 @@ const DynamicModalProvider: FC<PropsWithChildren<IDynamicModalProviderProps>> = 
 
   useConfigurableAction<IShowModalActionArguments>(
     {
-    name: 'Show Dialog',
-    owner: 'Common',
-    ownerUid: SheshaActionOwners.Common,
-    hasArguments: true,
-    executer: (actionArgs, context) => {
-      const modalId = nanoid();
+      name: 'Show Dialog',
+      owner: 'Common',
+      ownerUid: SheshaActionOwners.Common,
+      hasArguments: true,
+      executer: (actionArgs, context) => {
+        const modalId = nanoid();
 
-      const initialValues = evaluateKeyValuesToObject(actionArgs.additionalProperties, context ?? {});
-      const parentFormValues = context?.data ?? {};
+        const initialValues = evaluateKeyValuesToObject(actionArgs.additionalProperties, context ?? {});
+        const parentFormValues = context?.data ?? {};
 
         const { modalWidth, customWidth, widthUnits } = actionArgs;
 
-      //console.log('modal initial values', initialValues);
+        //console.log('modal initial values', initialValues);
 
-      return new Promise((resolve, _reject) => {
-        const modalProps: IModalProps = {
-          ...actionArgs,
-          id: modalId,
-          title: actionArgs.modalTitle,
+        return new Promise((resolve, _reject) => {
+          const modalProps: IModalProps = {
+            ...actionArgs,
+            id: modalId,
+            title: actionArgs.modalTitle,
             width: modalWidth === 'custom' && customWidth ? `${customWidth}${widthUnits}` : modalWidth,
-          initialValues: initialValues,
-          parentFormValues: parentFormValues,
-          isVisible: true,
+            initialValues: initialValues,
+            parentFormValues: parentFormValues,
+            isVisible: true,
             onSubmitted: values => {
-            removeModal(modalId);
+              removeModal(modalId);
 
-            console.log('dialog success:', { values });
-            resolve(values); // todo: return result e.g. we may need to handle created entity id and navigate to edit/details page
-          },
-        };
-          console.log('modalProps', { modalProps, context });
-        createModal({ ...modalProps, isVisible: true });
-      });
-    },
+              console.log('dialog success:', { values });
+              resolve(values); // todo: return result e.g. we may need to handle created entity id and navigate to edit/details page
+            },
+          };
+
+          createModal({ ...modalProps, isVisible: true });
+        });
+      },
       argumentsFormMarkup: dialogArgumentsForm,
     },
     actionDependencies

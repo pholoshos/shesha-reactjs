@@ -20,7 +20,12 @@ interface IChildDataTableSettingsState {
   data?: IChildTableSettingsProps;
 }
 
-export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ readOnly, onSave, model, onValuesChange }) => {
+export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({
+  readOnly,
+  onSave,
+  model,
+  onValuesChange,
+}) => {
   const [state, setState] = useState<IChildDataTableSettingsState>({ data: model });
   const [form] = Form.useForm();
 
@@ -28,6 +33,7 @@ export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ readO
     title: model?.title,
     parentEntityId: model?.parentEntityId,
     allowQuickSearch: model?.allowQuickSearch,
+    isInline: model?.isInline,
     toolbarItems: model?.toolbarItems,
     filters: model?.filters,
     defaultSelectedFilterId: model?.defaultSelectedFilterId,
@@ -46,7 +52,7 @@ export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ readO
       }}
       initialValues={initialValues}
     >
-      <SectionSeparator sectionName={'Display'} />
+      <SectionSeparator title={'Display'} />
 
       <Form.Item
         name="title"
@@ -55,23 +61,27 @@ export const ChildDataTableSettings: FC<IChildDataTableSettingsProps> = ({ readO
         initialValue={model.title}
         tooltip="This can be a literal string like below 'Details for {{data.companyName}}'"
       >
-        <Input placeholder="Details for {{data.companyName}}" readOnly={readOnly}/>
+        <Input placeholder="Details for {{data.companyName}}" readOnly={readOnly} />
       </Form.Item>
 
       <Form.Item name="allowQuickSearch" label="Allow Quick Search" valuePropName="checked">
-        <Checkbox checked={model?.allowQuickSearch} disabled={readOnly}/>
+        <Checkbox checked={model?.allowQuickSearch} disabled={readOnly} />
       </Form.Item>
 
-      <SectionSeparator sectionName="Toolbar" />
+      <Form.Item name="isInline" label="Is Button Inline" valuePropName="checked">
+        <Checkbox />
+      </Form.Item>
+
+      <SectionSeparator title="Toolbar" />
 
       <Form.Item name="toolbarItems" initialValue={model.toolbarItems}>
-        <ButtonGroupSettingsModal readOnly={readOnly}/>
+        <ButtonGroupSettingsModal readOnly={readOnly} />
       </Form.Item>
 
-      <SectionSeparator sectionName="Filter" />
+      <SectionSeparator title="Filter" />
 
       <Form.Item name="filters" initialValue={model.filters}>
-        <CustomFilter target="table" readOnly={readOnly}/>
+        <CustomFilter target="table" readOnly={readOnly} />
       </Form.Item>
 
       <Form.Item name="defaultSelectedFilterId" label="Selected filter" required>

@@ -5,7 +5,7 @@ import { FieldSettings } from 'react-awesome-query-builder';
 export interface CustomFieldSettings {
   typeShortAlias?: string;
   referenceListName?: string;
-  referenceListNamespace?: string;
+  referenceListModule?: string;
   allowInherited?: boolean;
 }
 

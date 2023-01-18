@@ -34,10 +34,19 @@ export const RoleAppointmentForm = addStory(DesignerTemplate, {
 });
 
 export const TestForm = addStory(DesignerTemplate, {
-  formId: 'd53b4917-70b8-4d05-aba3-1cbfc2d30c05',
+  formId: '00ff5ffd-0844-4303-8529-5bae9a999e63',
 });
 export const TestForm2 = addStory(DesignerTemplate, {
-  formId: '87fe8b73-ed32-48a1-b747-7856056129fd',
+  //formId: '28a2cf97-ae6d-483b-9866-bdfc2e8a03e9',
+  formId: '1da2ae38-b81b-44b6-b4d1-5d7785dd9add',
+  
+});
+
+export const RefListRefactoring = addStory(DesignerTemplate, {
+  formId: '11aa3c07-f57c-43fa-a7c6-c5750857bc2d',
+});
+export const RefLists = addStory(DesignerTemplate, {
+  formId: '2a8d45e2-0a2b-4e18-b274-2d593fe07a94',
 });
 
 

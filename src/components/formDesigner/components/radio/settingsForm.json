@@ -22,7 +22,9 @@
       "type": "textField",
       "name": "label",
       "parentId": "root",
-      "label": "Label"
+      "label": "Label",
+      "version": 0,
+      "textType": "text"
     },
     {
       "id": "57a40a33-7e08-4ce4-9f08-a34d24a83338",
@@ -42,7 +44,10 @@
           "id": "b920ef96-ae27-4a01-bfad-b5b7d07218da"
         }
       ],
-      "dataSourceType": "values"
+      "dataSourceType": "values",
+      "version": 1,
+      "useRawValues": false,
+      "referenceListId": null
     },
     {
       "id": "2d32fe70-99a0-4825-ae6c-8b933004e119",
@@ -76,7 +81,10 @@
           "id": "3b6282ee-2eee-47ec-bab9-4cba52b970a0"
         }
       ],
-      "dataSourceType": "values"
+      "dataSourceType": "values",
+      "version": 1,
+      "useRawValues": false,
+      "referenceListId": null
     },
     {
       "id": "cfd7d45e-c7e3-4a27-987b-dc525c412448",
@@ -129,7 +137,10 @@
           "value": "url",
           "id": "02501feb-f369-4306-a0fd-50f8c96410f8"
         }
-      ]
+      ],
+      "version": 1,
+      "useRawValues": false,
+      "referenceListId": null
     },
     {
       "id": "366f360b-a37b-4803-a2c2-8637208caa9d",
@@ -141,8 +152,16 @@
       "settingsValidationErrors": [],
       "description": "Write a code that returns the URL to be used to fetch Data for the Radio.",
       "exposedVariables": [
-        { "name": "data", "description": "Form values", "type": "object" },
-        { "name": "globalState", "description": "The global state", "type": "object" }
+        {
+          "name": "data",
+          "description": "Form values",
+          "type": "object"
+        },
+        {
+          "name": "globalState",
+          "description": "The global state",
+          "type": "object"
+        }
       ],
       "customVisibility": "return data.dataSourceType === 'url'"
     },
@@ -156,25 +175,33 @@
       "settingsValidationErrors": [],
       "description": "A reducer function for the data returned from the server. The function is responsible for value and label props. The function should return an array of object of this format: { value, label }",
       "exposedVariables": [
-        { "name": "data", "description": "Data returned from the server. This should is an array", "type": "array" }
+        {
+          "name": "data",
+          "description": "Data returned from the server. This should is an array",
+          "type": "array"
+        }
       ],
       "customVisibility": "return data.dataSourceType === 'url'"
     },
     {
-      "id": "8c45d055-8cae-499c-a129-aa34facef0d0",
-      "type": "textField",
-      "name": "referenceListNamespace",
+      "id": "OBr7mbe9PFn54MX0wjb9L",
+      "type": "referenceListAutocomplete",
+      "name": "referenceListId",
+      "label": "Reference List",
+      "labelAlign": "right",
       "parentId": "root",
-      "label": "ReferenceList Namespace",
-      "customVisibility": "return data.dataSourceType === 'referenceList'"
-    },
-    {
-      "id": "2a62f901-aa2e-48f1-87ef-ad0fca3f1286",
-      "type": "textField",
-      "name": "referenceListName",
-      "parentId": "root",
-      "label": "ReferenceList Name",
-      "customVisibility": "return data.dataSourceType === 'referenceList'"
+      "hidden": false,
+      "visibility": "Yes",
+      "customVisibility": "return data.dataSourceType === 'referenceList'",
+      "isDynamic": false,
+      "version": 0,
+      "convertToFullId": true,
+      "placeholder": "",
+      "description": "",
+      "validate": {
+        "message": ""
+      },
+      "settingsValidationErrors": []
     },
     {
       "id": "58f715b9-624b-4189-812c-6144cafb7405",
@@ -206,7 +233,10 @@
           "label": "Horizontal",
           "value": "horizontal"
         }
-      ]
+      ],
+      "version": 1,
+      "useRawValues": false,
+      "referenceListId": null
     },
     {
       "id": "d675bfe4-ee69-431e-931b-b0e0b9ceee6f",
@@ -238,7 +268,13 @@
       "validate": {},
       "settingsValidationErrors": [],
       "description": "A script that returns the style of the element as an object. This should conform to CSSProperties",
-      "exposedVariables": [{ "name": "data", "description": "Form values", "type": "object" }]
+      "exposedVariables": [
+        {
+          "name": "data",
+          "description": "Form values",
+          "type": "object"
+        }
+      ]
     },
     {
       "id": "fd96c8e3-9e41-48c5-9351-2a29abea27cf",
@@ -260,8 +296,16 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
-        { "name": "value", "description": "Component current value", "type": "string | any" },
-        { "name": "data", "description": "Selected form values", "type": "object" }
+        {
+          "name": "value",
+          "description": "Component current value",
+          "type": "string | any"
+        },
+        {
+          "name": "data",
+          "description": "Selected form values",
+          "type": "object"
+        }
       ]
     },
     {
@@ -277,8 +321,16 @@
       "validate": {},
       "settingsValidationErrors": [],
       "exposedVariables": [
-        { "name": "value", "description": "Component current value", "type": "string | any" },
-        { "name": "data", "description": "Selected form values", "type": "object" }
+        {
+          "name": "value",
+          "description": "Component current value",
+          "type": "string | any"
+        },
+        {
+          "name": "data",
+          "description": "Selected form values",
+          "type": "object"
+        }
       ]
     }
   ],

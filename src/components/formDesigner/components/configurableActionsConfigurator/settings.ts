@@ -24,7 +24,7 @@ export const configurableActionsConfiguratorSettingsForm = new DesignerToolbarSe
     name: 'separatorVisibility',
     parentId: 'root',
     label: 'Visibility',
-    sectionName: 'Visibility',
+    title: 'Visibility',
   })
   .addTextArea({
     id: '03959ffd-cadb-496c-bf6d-b742f7f6edc6',

@@ -15,8 +15,8 @@
       "useRawValues": true
     },
     {
-      "id": "8sYGirE7gl_aEDrRe5TKL",
-      "type": "autocomplete",
+      "id": "y3d0ny6_gznxiEEHFa1ZG",
+      "type": "endpointsAutocomplete",
       "name": "postUrl",
       "label": "POST Url",
       "labelAlign": "right",
@@ -25,31 +25,22 @@
       "visibility": "Yes",
       "customVisibility": null,
       "isDynamic": false,
-      "dataSourceType": "url",
-      "useRawValues": true,
       "placeholder": "",
       "description": "Check the 'URL variables' tab for the exposed variables",
-      "validate": {},
-      "quickviewFormPath": "",
-      "quickviewGetEntityUrl": "",
-      "quickviewDisplayPropertyName": "",
+      "validate": {
+        "minLength": "",
+        "maxLength": "",
+        "message": ""
+      },
       "quickviewWidth": "",
-      "settingsValidationErrors": [],
-      "dataSourceUrl": "/api/services/app/Api/Endpoints",
-      "keyPropName": "",
-      "valuePropName": "",
-      "queryParams": [
-        {
-          "id": "c_96VJT3DU0ESkenzihZI",
-          "param": "verb",
-          "value": "post"
-        }
-      ],
-      "allowFreeText": true
+      "prefix": "",
+      "suffix": "",
+      "initialValue": "",
+      "settingsValidationErrors": []
     },
     {
-      "id": "Rvpx3mbz8hov2Absldvu3",
-      "type": "autocomplete",
+      "id": "pooSZYaENGyIjZFy6gH9G",
+      "type": "endpointsAutocomplete",
       "name": "putUrl",
       "label": "PUT Url",
       "labelAlign": "right",
@@ -58,31 +49,22 @@
       "visibility": "Yes",
       "customVisibility": null,
       "isDynamic": false,
-      "dataSourceType": "url",
-      "useRawValues": true,
       "placeholder": "",
       "description": "Check the 'URL variables' tab for the exposed variables",
-      "validate": {},
-      "quickviewFormPath": "",
-      "quickviewGetEntityUrl": "",
-      "quickviewDisplayPropertyName": "",
+      "validate": {
+        "minLength": "",
+        "maxLength": "",
+        "message": ""
+      },
       "quickviewWidth": "",
-      "settingsValidationErrors": [],
-      "dataSourceUrl": "/api/services/app/Api/Endpoints",
-      "keyPropName": "",
-      "valuePropName": "",
-      "queryParams": [
-        {
-          "id": "c_96VJT3DU0ESkenzihZI",
-          "param": "verb",
-          "value": "put"
-        }
-      ],
-      "allowFreeText": true
+      "prefix": "",
+      "suffix": "",
+      "initialValue": "",
+      "settingsValidationErrors": []
     },
     {
-      "id": "3I1RgIulc4Ka6jlmlLdTR",
-      "type": "autocomplete",
+      "id": "Qlyg6-hRbU8Q287-P_Fr7",
+      "type": "endpointsAutocomplete",
       "name": "deleteUrl",
       "label": "DELETE Url",
       "labelAlign": "right",
@@ -91,31 +73,22 @@
       "visibility": "Yes",
       "customVisibility": null,
       "isDynamic": false,
-      "dataSourceType": "url",
-      "useRawValues": true,
       "placeholder": "",
       "description": "Check the 'URL variables' tab for the exposed variables",
-      "validate": {},
-      "quickviewFormPath": "",
-      "quickviewGetEntityUrl": "",
-      "quickviewDisplayPropertyName": "",
+      "validate": {
+        "minLength": "",
+        "maxLength": "",
+        "message": ""
+      },
       "quickviewWidth": "",
-      "settingsValidationErrors": [],
-      "dataSourceUrl": "/api/services/app/Api/Endpoints",
-      "keyPropName": "",
-      "valuePropName": "",
-      "queryParams": [
-        {
-          "id": "c_96VJT3DU0ESkenzihZI",
-          "param": "verb",
-          "value": "delete"
-        }
-      ],
-      "allowFreeText": true
+      "prefix": "",
+      "suffix": "",
+      "initialValue": "",
+      "settingsValidationErrors": []
     },
     {
-      "id": "yphyQfmUiThgONUUt7Z2r",
-      "type": "autocomplete",
+      "id": "oamRBlEs6O2Jlc2FGL_gY",
+      "type": "endpointsAutocomplete",
       "name": "getUrl",
       "label": "GET Url",
       "labelAlign": "right",
@@ -124,27 +97,18 @@
       "visibility": "Yes",
       "customVisibility": null,
       "isDynamic": false,
-      "dataSourceType": "url",
-      "useRawValues": true,
       "placeholder": "",
       "description": "Check the 'URL variables' tab for the exposed variables",
-      "validate": {},
-      "quickviewFormPath": "",
-      "quickviewGetEntityUrl": "",
-      "quickviewDisplayPropertyName": "",
+      "validate": {
+        "minLength": "",
+        "maxLength": "",
+        "message": ""
+      },
       "quickviewWidth": "",
-      "settingsValidationErrors": [],
-      "dataSourceUrl": "/api/services/app/Api/Endpoints",
-      "keyPropName": "",
-      "valuePropName": "",
-      "queryParams": [
-        {
-          "id": "c_96VJT3DU0ESkenzihZI",
-          "param": "verb",
-          "value": "get"
-        }
-      ],
-      "allowFreeText": true
+      "prefix": "",
+      "suffix": "",
+      "initialValue": "",
+      "settingsValidationErrors": []
     },
     {
       "id": "077f5a0d-d59e-44b8-bc5b-a06e18438f4d",
@@ -170,7 +134,10 @@
           "label": "vertical",
           "value": "vertical"
         }
-      ]
+      ],
+      "version": 1,
+      "useRawValues": false,
+      "referenceListId": null
     },
     {
       "id": "8615d12f-6ea0-4b11-a1a1-6088c7160fd9",
@@ -196,7 +163,10 @@
           "id": "f01e54aa-a1a4-4bd6-ba73-c395e48af8ce"
         }
       ],
-      "dataSourceType": "values"
+      "dataSourceType": "values",
+      "version": 1,
+      "useRawValues": false,
+      "referenceListId": null
     },
     {
       "id": "b6bdf196-769f-4bce-b488-9ca50ad16176",

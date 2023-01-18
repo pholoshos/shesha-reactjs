@@ -109,7 +109,7 @@ export const getSettings = (_data?: IWizardStepProps) =>
       name: 'nextButtonSeparatorVisibility',
       parentId: 'root',
       label: 'Next Button',
-      sectionName: '',
+      title: '',
     })
     .addTextField({
       id: '737ae9b8-61d2-4ecd-9891-feaaec244a3a',
@@ -126,8 +126,18 @@ export const getSettings = (_data?: IWizardStepProps) =>
       labelAlign: 'right',
       parentId: 'root',
       exposedVariables: [
-        { id: "7651de1d-d1eb-490b-9349-46c55bca8322", name: "globalState", description: "The Global state", type: "object" },
-        { id: "65b0260e-a9a5-4c31-a0a1-beb76c2633c4", name: "data", description: "Selected form values", type: "object" }
+        {
+          id: '7651de1d-d1eb-490b-9349-46c55bca8322',
+          name: 'globalState',
+          description: 'The Global state',
+          type: 'object',
+        },
+        {
+          id: '65b0260e-a9a5-4c31-a0a1-beb76c2633c4',
+          name: 'data',
+          description: 'Selected form values',
+          type: 'object',
+        },
       ],
     })
     .addConfigurableActionConfigurator({
@@ -144,7 +154,7 @@ export const getSettings = (_data?: IWizardStepProps) =>
       name: 'backButtonSeparatorVisibility',
       parentId: 'root',
       label: 'Back Button',
-      sectionName: '',
+      title: '',
     })
 
     .addTextField({
@@ -163,8 +173,18 @@ export const getSettings = (_data?: IWizardStepProps) =>
       labelAlign: 'right',
       parentId: 'root',
       exposedVariables: [
-        { id: "31e69153-4b96-4532-89e9-2ace8d400f37", name: "globalState", description: "The Global state", type: "object" },
-        { id: "fa3e68a4-3f35-46e4-bfe1-2c77c7918fd5", name: "data", description: "Selected form values", type: "object" }
+        {
+          id: '31e69153-4b96-4532-89e9-2ace8d400f37',
+          name: 'globalState',
+          description: 'The Global state',
+          type: 'object',
+        },
+        {
+          id: 'fa3e68a4-3f35-46e4-bfe1-2c77c7918fd5',
+          name: 'data',
+          description: 'Selected form values',
+          type: 'object',
+        },
       ],
     })
     .addConfigurableActionConfigurator({
@@ -181,7 +201,7 @@ export const getSettings = (_data?: IWizardStepProps) =>
       name: 'doneButtonSeparatorVisibility',
       parentId: 'root',
       label: 'Done Button',
-      sectionName: '',
+      title: '',
     })
     .addTextField({
       id: '20ea7d88-2e09-4d2e-9e4a-caa23b1e3502',
@@ -198,8 +218,18 @@ export const getSettings = (_data?: IWizardStepProps) =>
       labelAlign: 'right',
       parentId: 'root',
       exposedVariables: [
-        { id: "f30ac175-9d29-4e15-931e-4a9680f18881", name: "globalState", description: "The Global state", type: "object" },
-        { id: "0d293f96-b668-4d4a-a76f-03596b569d53", name: "data", description: "Selected form values", type: "object" }
+        {
+          id: 'f30ac175-9d29-4e15-931e-4a9680f18881',
+          name: 'globalState',
+          description: 'The Global state',
+          type: 'object',
+        },
+        {
+          id: '0d293f96-b668-4d4a-a76f-03596b569d53',
+          name: 'data',
+          description: 'Selected form values',
+          type: 'object',
+        },
       ],
     })
     .addConfigurableActionConfigurator({
@@ -232,8 +262,18 @@ export const getSettings = (_data?: IWizardStepProps) =>
       labelAlign: 'right',
       parentId: 'root',
       exposedVariables: [
-        { id: "d9898e43-1945-4aea-85c3-4c8829cdadea", name: "globalState", description: "The Global state", type: "object" },
-        { id: "bbb57dd2-4c07-46e6-84c6-ab559c681837", name: "data", description: "Selected form values", type: "object" }
+        {
+          id: 'd9898e43-1945-4aea-85c3-4c8829cdadea',
+          name: 'globalState',
+          description: 'The Global state',
+          type: 'object',
+        },
+        {
+          id: 'bbb57dd2-4c07-46e6-84c6-ab559c681837',
+          name: 'data',
+          description: 'Selected form values',
+          type: 'object',
+        },
       ],
     })
     .addConfigurableActionConfigurator({

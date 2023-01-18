@@ -42,7 +42,7 @@ const ScheduledJobExecutionProvider: FC<PropsWithChildren<IScheduledJobExecution
     id,
   });
   const { backendUrl } = useSheshaApplication();
-  const { headers } = useSheshaApplication();
+  const { httpHeaders: headers } = useSheshaApplication();
 
   const {
     loading: isFetchingExecutionLog,

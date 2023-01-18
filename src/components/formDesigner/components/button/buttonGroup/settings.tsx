@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Form, Select, Input } from 'antd';
+import { Form, Select, Input, Checkbox } from 'antd';
 import { IButtonGroupProps } from './models';
 import { ButtonGroupSettingsModal } from './buttonGroupSettingsModal';
 import SectionSeparator from '../../../../sectionSeparator';
@@ -20,15 +20,16 @@ const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
   const [form] = Form.useForm();
 
   const onValuesChange = (changedValues, values) => {
-    if (props.onValuesChange && !props.readOnly) 
+    if (props.onValuesChange && !props.readOnly) {
       props.onValuesChange(changedValues, values);
+    }
   };
 
   return (
     <Form form={form} onFinish={props.onSave} onValuesChange={onValuesChange} labelCol={{ span: 24 }}>
-      <SectionSeparator sectionName="UX" />
+      <SectionSeparator title="UX" />
       <Form.Item name="name" initialValue={props.model.name} label="Name" rules={[{ required: true }]}>
-        <Input readOnly={props.readOnly}/>
+        <Input readOnly={props.readOnly} />
       </Form.Item>
 
       <Form.Item
@@ -57,13 +58,17 @@ const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
         </Select>
       </Form.Item>
 
-      <SectionSeparator sectionName="Customization" />
-
-      <Form.Item name="items" initialValue={props.model.items}>
-        <ButtonGroupSettingsModal readOnly={props.readOnly}/>
+      <Form.Item name="isInline" label="Is Button Inline" valuePropName="checked">
+        <Checkbox />
       </Form.Item>
 
-      <SectionSeparator sectionName="Security" />
+      <SectionSeparator title="Customization" />
+
+      <Form.Item name="items" initialValue={props.model.items}>
+        <ButtonGroupSettingsModal readOnly={props.readOnly} />
+      </Form.Item>
+
+      <SectionSeparator title="Security" />
 
       <Form.Item
         label="Custom Visibility"
@@ -88,7 +93,7 @@ const ButtonGroupSettings: FC<IButtonGroupSettingsProps> = props => {
         initialValue={props.model.permissions}
         tooltip="Enter a list of permissions that should be associated with this component"
       >
-        <EditableTagGroup readOnly={props.readOnly}/>
+        <EditableTagGroup readOnly={props.readOnly} />
       </Form.Item>
     </Form>
   );

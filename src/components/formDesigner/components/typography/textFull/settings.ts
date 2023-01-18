@@ -8,7 +8,7 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     name: 'separator1',
     parentId: 'root',
     label: 'Display',
-    sectionName: '',
+    title: '',
   })
   .addDropdown({
     id: nanoid(),
@@ -207,7 +207,7 @@ export const settingsFormMarkup = new DesignerToolbarSettings()
     name: 'sectionStyle',
     parentId: 'root',
     label: 'Style',
-    sectionName: '',
+    title: '',
   })
   .addCodeEditor({
     id: '06ab0599-914d-4d2d-875c-765a495472f8',

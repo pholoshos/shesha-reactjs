@@ -5,7 +5,7 @@ interface IDataWithFields {
   [key: string]: any;
 }
 
-export function addFormFieldsList<TData = any>(data: TData, form: FormInstance): IDataWithFields {
+export function addFormFieldsList<TData = any>(formData: TData, nonFormData: object, form: FormInstance): IDataWithFields {
   const formFields = [];
 
   // call getFieldsValue to get a fileds list
@@ -15,7 +15,32 @@ export function addFormFieldsList<TData = any>(data: TData, form: FormInstance):
     return false;
   });
 
-  return { _formFields: formFields, ...data };
+  const nonFormFields = getFieldNames(nonFormData);
+  
+  const allFields = [...new Set(formFields.concat(nonFormFields))];
+
+  return { _formFields: allFields, ...formData, ...nonFormData };
+}
+
+export const getFieldNames = (data: object): string[] => {
+  
+  const processContainer = (container: any, containerName: string, fieldsList: string[]) => {
+    if (!container)
+      return;
+    if (containerName)
+      fieldsList.push(containerName);
+
+    if (container && typeof container === 'object' && !(container instanceof Date) && !(container instanceof File)) {
+      Object.keys(container).forEach(key => {
+        if (container.hasOwnProperty(key))
+          processContainer(container[key], containerName ? `${containerName}.${key}` : key, fieldsList);
+      });
+    }
+  }
+
+  const result: string[] = [];
+  processContainer(data, null, result);
+  return result;
 }
 
 export const getFormFullName = (moduleName: string, name: string) => {

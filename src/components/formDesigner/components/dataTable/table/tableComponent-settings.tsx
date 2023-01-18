@@ -58,14 +58,18 @@ function TableSettings(props: IProps) {
       <Button onClick={toggleColumnsModal}>{props.readOnly ? 'View Columns' : 'Customize Columns'}</Button>
 
       <Form.Item name="items">
-        <ColumnsEditorModal visible={state?.showColumnsModal} hideModal={toggleColumnsModal} readOnly={props.readOnly} />
+        <ColumnsEditorModal
+          visible={state?.showColumnsModal}
+          hideModal={toggleColumnsModal}
+          readOnly={props.readOnly}
+        />
       </Form.Item>
 
       <Form.Item name="useMultiselect" label="Use Multi-select" valuePropName="checked">
         <Checkbox disabled={props.readOnly} />
       </Form.Item>
 
-      <SectionSeparator sectionName="Row drag and drop" />
+      <SectionSeparator title="Row drag and drop" />
 
       <Form.Item
         name="allowRowDragAndDrop"
@@ -85,7 +89,7 @@ function TableSettings(props: IProps) {
         </Form.Item>
 
         <Show when={state.rowDroppedMode === 'showDialog'}>
-          <SectionSeparator sectionName="Dialog settings" />
+          <SectionSeparator title="Dialog settings" />
 
           <Form.Item name="dialogTitle" label="Title" tooltip="The title that will be displayed on the modal">
             <Input readOnly={props.readOnly} />
@@ -96,7 +100,11 @@ function TableSettings(props: IProps) {
             label="Modal form"
             tooltip="The form that will be rendered within the dialog. Please make sure the form has been been created"
           >
-            <Autocomplete.Raw typeShortAlias="Shesha.Framework.Form" dataSourceType="entitiesList" readOnly={props.readOnly} />
+            <Autocomplete.Raw
+              typeShortAlias="Shesha.Framework.Form"
+              dataSourceType="entitiesList"
+              readOnly={props.readOnly}
+            />
           </Form.Item>
 
           <Form.Item
@@ -296,7 +304,7 @@ function TableSettings(props: IProps) {
         </Show>
       </Show>
 
-      <SectionSeparator sectionName="Layout" />
+      <SectionSeparator title="Layout" />
 
       <Form.Item name="containerStyle" label="Table container style">
         <CodeEditor

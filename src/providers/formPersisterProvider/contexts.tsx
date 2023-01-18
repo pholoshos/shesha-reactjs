@@ -11,6 +11,7 @@ import { IPersistedFormProps } from './models';
 
 export interface IFormPersisterStateContext {
   formId: FormIdentifier;
+  skipCache: boolean;
   formProps: IPersistedFormProps;
   formSettings: IFormSettings;
   markup: FormRawMarkup;
@@ -39,6 +40,7 @@ export interface IFormPersisterActionsContext {
 /** Form initial state */
 export const FORM_PERSISTER_CONTEXT_INITIAL_STATE: IFormPersisterStateContext = {
   formId: null,
+  skipCache: false,
   markup: null,
   formSettings: DEFAULT_FORM_SETTINGS,
   formProps: null,

@@ -529,7 +529,7 @@ const ListControl: FC<IListControlProps> = props => {
         >
           Select All
         </Checkbox>
-        <SectionSeparator sectionName="" />
+        <SectionSeparator title="" />
       </Show>
 
       <Show when={isInDesignerMode && renderStrategy === 'dragAndDrop'}>

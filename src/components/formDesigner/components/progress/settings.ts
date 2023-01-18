@@ -6,7 +6,7 @@ export const alertSettingsForm = new DesignerToolbarSettings()
     name: 'separator1',
     parentId: 'root',
     label: 'Display',
-    sectionName: '',
+    title: '',
   })
   .addPropertyAutocomplete({
     id: '5c813b1a-04c5-4658-ac0f-cbcbae6b3bd4',
@@ -219,14 +219,14 @@ export const alertSettingsForm = new DesignerToolbarSettings()
     name: 'separatorStyle',
     parentId: 'root',
     label: 'Style',
-    sectionName: '',
+    title: '',
   })
   .addSectionSeparator({
     id: 'bc67960e-77e3-40f2-89cc-f18f94678cce',
     name: 'separatorVisibility',
     parentId: 'root',
     label: 'Visibility',
-    sectionName: 'Visibility',
+    title: 'Visibility',
   })
   .addTextArea({
     id: '03959ffd-cadb-496c-bf6d-b742f7f6edc6',

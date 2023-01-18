@@ -9,9 +9,9 @@ import { getSpan, ICheckboxGroupProps } from './utils';
 const MultiCheckbox: FC<ICheckboxGroupProps> = model => {
   const { formMode, formData } = useForm();
   const { globalState } = useGlobalState();
-  const { items, referenceListName, referenceListNamespace, direction, value, onChange } = model;
+  const { items, referenceListId, direction, value, onChange } = model;
 
-  const { data: refList } = useReferenceList(referenceListNamespace, referenceListName);
+  const { data: refList } = useReferenceList(referenceListId);
 
   //#region Data source is url
   const getEvaluatedUrl = (url: string) => {

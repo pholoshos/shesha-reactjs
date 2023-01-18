@@ -104,13 +104,13 @@ const ConfigurableActionDispatcherProvider: FC<PropsWithChildren<IConfigurableAc
 
     const argumentsEvaluator = action.evaluateArguments ?? genericActionArgumentsEvaluator;
 
-    console.log('evaluate action arguments', { actionArguments, argumentsEvaluationContext })
+    //console.log('evaluate action arguments', { actionArguments, argumentsEvaluationContext })
     return argumentsEvaluator(actionArguments, argumentsEvaluationContext) //getFormActionArguments(actionArguments, argumentsEvaluationContext)
       .then(preparedActionArguments => {
-        console.log('preparedActionArguments', preparedActionArguments);
+        //console.log('preparedActionArguments', preparedActionArguments);
         return action.executer(preparedActionArguments, argumentsEvaluationContext)
           .then(actionResponse => {
-            console.log(`Action '${actionOwner}:${actionName}' executed successfully, response:`, actionResponse);
+            //console.log(`Action '${actionOwner}:${actionName}' executed successfully, response:`, actionResponse);
             if (handleSuccess) {
               if (onSuccess) {
                 const onSuccessContext = { ...argumentsEvaluationContext, actionResponse: actionResponse };

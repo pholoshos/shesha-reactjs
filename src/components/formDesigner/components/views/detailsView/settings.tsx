@@ -19,7 +19,7 @@ function DetailsViewSettings({ readOnly, onSave, model, onValuesChange }: IDetai
 
   return (
     <Form form={form} onFinish={onSave} layout="vertical" onValuesChange={onValuesChange} disabled={readOnly}>
-      <SectionSeparator sectionName={'Display'} />
+      <SectionSeparator title={'Display'} />
 
       <Form.Item
         name="title"
@@ -39,7 +39,7 @@ function DetailsViewSettings({ readOnly, onSave, model, onValuesChange }: IDetai
         <Input />
       </Form.Item>
 
-      <SectionSeparator sectionName="Status" />
+      <SectionSeparator title="Status" />
 
       <Form.Item name="statusValue" label="Status value" initialValue={model?.statusValue}>
         <Input />
@@ -69,7 +69,7 @@ function DetailsViewSettings({ readOnly, onSave, model, onValuesChange }: IDetai
         />
       </Form.Item>
 
-      <SectionSeparator sectionName="Toolbar" />
+      <SectionSeparator title="Toolbar" />
 
       <Button onClick={() => setToolbarModalVisible(true)}>Configure Toolbar</Button>
 

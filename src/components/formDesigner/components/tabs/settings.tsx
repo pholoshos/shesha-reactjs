@@ -43,8 +43,14 @@ const TabSettings: FC<ITabSettingsProps> = props => {
   const tabs = props.model.tabs?.map(item => ({ ...item, label: item?.title }));
 
   return (
-    <Form form={form} onFinish={props.onSave} onValuesChange={onValuesChange} labelCol={{ span: 24 }} disabled={props.readOnly}>
-      <SectionSeparator sectionName="Display" />
+    <Form
+      form={form}
+      onFinish={props.onSave}
+      onValuesChange={onValuesChange}
+      labelCol={{ span: 24 }}
+      disabled={props.readOnly}
+    >
+      <SectionSeparator title="Display" />
       <Form.Item name="name" initialValue={props.model.name} label="Name" rules={[{ required: true }]}>
         <Input />
       </Form.Item>
@@ -105,7 +111,7 @@ const TabSettings: FC<ITabSettingsProps> = props => {
         </Select>
       </Form.Item>
 
-      <SectionSeparator sectionName="Configure Tab Panes" />
+      <SectionSeparator title="Configure Tab Panes" />
 
       <Form.Item name="tabs" initialValue={tabs}>
         <ItemListSettingsModal
@@ -118,7 +124,7 @@ const TabSettings: FC<ITabSettingsProps> = props => {
         />
       </Form.Item>
 
-      <SectionSeparator sectionName="Security" />
+      <SectionSeparator title="Security" />
 
       <Form.Item
         label="Custom Visibility"

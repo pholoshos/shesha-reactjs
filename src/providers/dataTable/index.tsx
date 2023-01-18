@@ -151,7 +151,7 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
   const { setState: setGlobalState } = useGlobalState();
   const { backendUrl } = useSheshaApplication();
   const tableIsReady = useRef(false);
-  const { headers } = useSheshaApplication();
+  const { httpHeaders: headers } = useSheshaApplication();
 
   const fetchDataTableDataInternal = (getDataPayload: IGetDataPayload) => {
     const getDataUrl = `${backendUrl}${getDataPath || `${GENERIC_ENTITIES_ENDPOINT}/GetAll`}?${qs.stringify(
@@ -233,7 +233,6 @@ const DataTableProvider: FC<PropsWithChildren<IDataTableProviderProps>> = ({
     }
 
     const advancedFilter = advancedFilter2JsonLogic(internalPayload.advancedFilter, state.columns);
-    //console.log('converted advanced filter', advancedFilter);
 
     if (advancedFilter && advancedFilter.length > 0) allFilters = allFilters.concat(advancedFilter);
 

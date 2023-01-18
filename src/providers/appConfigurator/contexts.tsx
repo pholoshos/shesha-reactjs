@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { ApplicationMode, ConfigurationItemsViewMode, IComponentSettings } from './models';
+import { ApplicationMode, ConfigurationItemsViewMode } from './models';
 
 export interface IAppStateContext {
   editModeConfirmationVisible: boolean;
@@ -14,9 +14,9 @@ export interface IAppActionsContext {
   switchConfigurationItemMode: (mode: ConfigurationItemsViewMode) => void;
   toggleEditModeConfirmation: (visible: boolean) => void;
   toggleCloseEditModeConfirmation: (visible: boolean) => void;
-  fetchSettings: (id: string) => Promise<IComponentSettings>;
-  getSettings: (id: string) => IComponentSettings | null;
-  invalidateSettings: (id: string) => void;
+  // fetchSettings: (id: string) => Promise<IComponentSettings>;
+  // getSettings: (id: string) => IComponentSettings | null;
+  // invalidateSettings: (id: string) => void;
   toggleShowInfoBlock: (visible: boolean) => void;
 
   /* NEW_ACTION_ACTION_DECLARATIO_GOES_HERE */

@@ -2,7 +2,7 @@ import React, { MutableRefObject, useState } from 'react';
 import { FC } from 'react';
 import { Form, Spin, Upload } from 'antd';
 import { useSheshaApplication } from '../../..';
-import { ConfigItemDataNode, ITreeState } from '../models';
+import { ConfigItemDataNode, IDictionary, ITreeState } from '../models';
 import { RcFile } from 'antd/lib/upload/interface';
 import { DeleteOutlined, FileZipTwoTone, InboxOutlined, LoadingOutlined } from '@ant-design/icons';
 import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
@@ -29,6 +29,7 @@ interface IItemInfo {
     name: string;
     label?: string;
     description?: string;
+    frontEndApplication?: string;
 }
 interface IItemTypeInfo {
     name: string;
@@ -48,18 +49,48 @@ const packageInfo2TreeState = (pack: IPackageInfo): ITreeState => {
     pack.modules.forEach(module => {
         const itemTypeNodes = module.itemTypes.map<ConfigItemDataNode>(itemType => {
             itemsCount += itemType.items.length;
-            const itemNodes = itemType.items.map<ConfigItemDataNode>(item => ({
-                key: item.id,
-                title: item.name,
-                isLeaf: true,
-                itemId: item.id
-            }));
+
+            const itemNodes: ConfigItemDataNode[] = [];
+            const applications: IDictionary<ConfigItemDataNode> = {};
+            
+            itemType.items.forEach(item => {
+                const node = {
+                    key: item.id,
+                    title: item.name,
+                    isLeaf: true,
+                    itemId: item.id
+                };
+                if (item.frontEndApplication) {
+                    let appNode = applications[item.frontEndApplication];
+                    if (!appNode){
+                        appNode = {
+                            key: `${module.name}/${itemType.name}/${item.frontEndApplication}`,
+                            title: item.frontEndApplication,
+                            isLeaf: false,
+                            children: [],
+                        };
+                        applications[item.frontEndApplication] = appNode;
+                        itemNodes.push(appNode);
+                    }
+                    appNode.children.push(node);
+                } else {
+                    itemNodes.push(node);
+                }
+            });
             return {
                 key: `${module.name}/${itemType.name}`,
                 title: itemType.name,
                 children: itemNodes,
                 isLeaf: false,
             };
+            /*
+            const itemNodes = itemType.items.map<ConfigItemDataNode>(item => ({
+                key: item.id,
+                title: item.name,
+                isLeaf: true,
+                itemId: item.id
+            }));
+            */
         });
 
         const moduleNode: ConfigItemDataNode = {
@@ -172,7 +203,7 @@ export const ConfigurationItemsImport: FC<IConfigurationItemsImportProps> = (pro
 
         const formData = new FormData();
         formData.append('file', uploadFile.originFileObj);
-        appendFormData(formData, 'itemsToImport', checkedIds);        
+        appendFormData(formData, 'itemsToImport', checkedIds);
 
         return axios
             .post(`${backendUrl}/api/services/app/ConfigurationItem/ImportPackage`,

@@ -14,9 +14,10 @@ import { EntitiesGetQueryParams, useEntitiesGet } from '../../apis/entities';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDeepCompareEffect, usePrevious } from 'react-use';
 import { IEntity } from '../../pages/dynamic/interfaces';
-import { useFormConfiguration, UseFormConfigurationArgs } from '../form/api';
+import { UseFormConfigurationArgs } from '../form/api';
 import { useConfigurableAction } from '../configurableActionsDispatcher';
 import { useConfigurationItemsLoader } from '../configurationItemsLoader';
+import { useAppConfigurator } from '../..';
 
 export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'value'> {
   actionsOwnerId?: string;
@@ -24,6 +25,11 @@ export interface SubFormProviderProps extends Omit<ISubFormProps, 'name' | 'valu
   name?: string;
   markup?: FormMarkupWithSettings;
   value?: string | { id: string; [key: string]: any };
+}
+
+interface IFormLoadingState {
+  isLoading: boolean;
+  error: any;
 }
 
 const SubFormProvider: FC<SubFormProviderProps> = ({
@@ -79,12 +85,10 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
     return getQueryParamPayload();
   }, [queryParams, formData, globalState]);
 
-  const {
-    refetch: fetchForm,
-    //formConfiguration: fetchFormResponse,
-    loading: isFetchingForm,
-    error: fetchFormError,
-  } = useFormConfiguration(formConfig);
+  const [formLoadingState, setFormLoadingState] = useState<IFormLoadingState>({ isLoading: false, error: null });
+
+  const { getForm } = useConfigurationItemsLoader();
+  const { configurationItemMode } = useAppConfigurator();
 
   const { getEntityFormId } = useConfigurationItemsLoader();
 
@@ -283,8 +287,13 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
   //#region Fetch Form
   useDeepCompareEffect(() => {
     if (formConfig.formId && !markup) {
-      fetchForm().then(response => {
-        dispatch(setMarkupWithSettingsAction({ components: response.components, formSettings: response.formSettings }));
+      setFormLoadingState({ isLoading: true, error: null })
+
+      getForm({ formId: formConfig.formId, skipCache: false, configurationItemMode: configurationItemMode }).then(response => {
+        setFormLoadingState({ isLoading: false, error: null })
+        dispatch(setMarkupWithSettingsAction({ components: response.markup, formSettings: response.settings }));
+      }).catch(e => {
+        setFormLoadingState({ isLoading: false, error: e })
       });
     }
 
@@ -360,13 +369,13 @@ const SubFormProvider: FC<SubFormProviderProps> = ({
       value={{
         initialValues: value,
         errors: {
-          getForm: fetchFormError,
+          getForm: formLoadingState.error,
           postData: postError,
           getData: fetchEntityError || errorFetchingData,
           putData: updateError,
         },
         loading: {
-          getForm: isFetchingForm,
+          getForm: formLoadingState.isLoading,
           postData: isPosting,
           getData: isFetchingEntity || isFetchingDataByUrl,
           putData: isUpdating,

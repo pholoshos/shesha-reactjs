@@ -124,6 +124,12 @@ export const upgradeComponents = (toolboxComponents: IToolboxComponents, flatStr
   }
 };
 
+export const upgradeComponentsTree = (toolboxComponents: IToolboxComponents, components: IConfigurableFormComponent[]): IConfigurableFormComponent[] => {
+  const flatStructure = componentsTreeToFlatStructure(toolboxComponents, components);
+  upgradeComponents(toolboxComponents, flatStructure);
+  return componentsFlatStructureToTree(toolboxComponents, flatStructure);
+}
+
 export const upgradeComponent = (
   componentModel: IConfigurableFormComponent,
   definition: IToolboxComponent,

@@ -27,6 +27,17 @@ import { MakePromiseWithState, PromisedValue } from '../../utils/promises';
 import { isValidRefListId } from '../referenceListDispatcher/utils';
 import { IReferenceListIdentifier } from '../referenceListDispatcher/models';
 import { entityConfigGetEntityConfigForm } from '../../apis/entityConfig';
+import localForage from 'localforage';
+import { IDictionary } from '../../components/configurationFramework/models';
+
+type LocalForage = ReturnType<typeof localForage.createInstance>;
+type StoragesDictionary = IDictionary<LocalForage>;
+
+enum ItemTypes {
+  ReferenceList = 'ref-lists',
+  Form = 'forms',
+  Component = 'components',
+}
 
 export interface IConfigurationItemsLoaderProviderProps { }
 
@@ -34,6 +45,15 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
   const initial: IConfigurationItemsLoaderStateContext = {
     ...CONFIGURATION_ITEMS_LOADER_CONTEXT_INITIAL_STATE,
   };
+
+  const storages = useRef<StoragesDictionary>({});
+  const getStorage = (name: string): LocalForage => {
+    if (!storages.current[name]) {
+      storages.current[name] = localForage.createInstance({ name: name });
+    }
+
+    return storages.current[name];
+  }
 
   const forms = useRef<IFormsDictionary>({});
   const referenceLists = useRef<IReferenceListsDictionary>({});
@@ -83,40 +103,35 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
       : null;
   }
 
-  const getCacheKeyByFullName = (itemType: string, mode: string, module: string, name: string): string => {
-    return `${itemType}:${mode}:${module}:${name}`;
+  const getCacheKeyByFullName = (mode: string, module: string, name: string): string => {
+    return `${mode}:${module}:${name}`;
   }
-  const getCacheKeyByRawId = (itemType: string, mode: string, rawId: string): string => {
-    return `${itemType}:${mode}:${rawId}`;
-  }
-
-  const getFromCache = <TDto extends any>(key: string): TDto => {
-    const cachedJson = window?.localStorage?.getItem(key);
-    try {
-      const dto = cachedJson
-        ? JSON.parse(cachedJson)
-        : null;
-      return dto as TDto
-    } catch (error) {
-      return null;
-    }
+  const getCacheKeyByRawId = (mode: string, rawId: string): string => {
+    return `${mode}:${rawId}`;
   }
 
-  const addToCache = (cacheKey: string, data: any) => {
-    const storage = window?.localStorage;
-    if (!storage || !cacheKey)
+  const getFromCache = <TDto extends any>(itemType: ItemTypes, key: string): Promise<TDto> => {
+    const cacheStorage = getStorage(itemType);
+    return key
+      ? cacheStorage.getItem<TDto>(key).catch(e => {
+        console.warn(`Failed to get from cache, key=${key}`, e);
+        return null;
+      })
+      : Promise.resolve(null);
+  }
+
+  const addToCache = (itemType: ItemTypes, cacheKey: string, data: any) => {
+    if (!cacheKey)
       return;
 
+    const cacheStorage = getStorage(itemType);
     if (data) {
-      try {
-        storage.setItem(cacheKey, JSON.stringify(data));
-      } catch (err) {
-        // Handle the case where localStorage is full.
-        console.warn(`Failed to cache configuration item with key '${cacheKey}'`, err);
-      }
+      cacheStorage.setItem(cacheKey, data).catch(e => {
+        console.warn(`Failed to cache configuration item with key '${cacheKey}'`, e);
+      });
     }
     else
-      storage.removeItem(cacheKey);
+      cacheStorage.removeItem(cacheKey);
   }
 
   const convertFormConfigurationDto2FormDto = (dto: FormConfigurationDto): IFormDto => {
@@ -140,18 +155,22 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
     return result;
   };
 
+  const configModeOrDefault = (mode?: ConfigurationItemsViewMode): ConfigurationItemsViewMode => {
+    return mode ?? 'live';
+  }
+
   const getFormCacheKey = (formId: FormIdentifier, configurationItemMode?: ConfigurationItemsViewMode): string => {
     const rawId = asFormRawId(formId);
     const fullName = asFormFullName(formId);
     return fullName
-      ? getCacheKeyByFullName('form', configurationItemMode, fullName.module, fullName.name)
+      ? getCacheKeyByFullName(configModeOrDefault(configurationItemMode), fullName.module, fullName.name)
       : rawId
-        ? getCacheKeyByRawId('form', configurationItemMode, rawId)
+        ? getCacheKeyByRawId(configModeOrDefault(configurationItemMode), rawId)
         : null;
   }
 
   const getRefListCacheKey = (listId: IReferenceListIdentifier, configurationItemMode?: ConfigurationItemsViewMode): string => {
-    return getCacheKeyByFullName('ref-list', configurationItemMode, listId.module, listId.name);
+    return getCacheKeyByFullName(configModeOrDefault(configurationItemMode), listId.module, listId.name);
   }
 
   const getRefList = (payload: IGetRefListPayload): PromisedValue<IReferenceList> => {
@@ -170,42 +189,46 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
         reject("Reference List identifier must be specified");
 
       const cacheKey = getRefListCacheKey(refListId, configurationItemMode);
-      const cachedDto = cacheKey ? getFromCache<IReferenceList>(cacheKey) : null;
 
-      const promise = referenceListGetByName({ module: refListId.module, name: refListId.name, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ });
+      getFromCache<IReferenceList>(ItemTypes.ReferenceList, cacheKey).then(cachedDto => {
+        const promise = referenceListGetByName({ module: refListId.module, name: refListId.name, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ });
 
-      promise.then(response => {
-        // todo: handle not changed
-        if (response.success) {
-          const responseData = response.result;
-          if (!responseData)
-            throw 'Failed to fetch reference list. Response is empty';
+        promise.then(response => {
+          // todo: handle not changed
+          if (response.success) {
+            const responseData = response.result;
+            if (!responseData)
+              throw 'Failed to fetch reference list. Response is empty';
 
-          const dto: IReferenceList = {
-            name: responseData.name,
-            items: [...responseData.items]
-          };
-          addToCache(cacheKey, responseData)
+            const dto: IReferenceList = {
+              name: responseData.name,
+              items: [...responseData.items]
+            };
+            addToCache(ItemTypes.ReferenceList, cacheKey, responseData)
 
-          resolve(dto);
-        } else {
-          const rawResponse = response as Response;
-          if (rawResponse && rawResponse.status === 304) {
-            // code 304 indicates that the content ws not modified - use cached value
-            resolve(cachedDto);
+            resolve(dto);
           } else {
-            const httpResponse = response as Response;
+            const rawResponse = response as Response;
+            if (rawResponse && rawResponse.status === 304) {
+              // code 304 indicates that the content ws not modified - use cached value
+              resolve(cachedDto);
+            } else {
+              const httpResponse = response as Response;
 
-            const error = response.error ?? { code: httpResponse?.status, message: httpResponse?.status === 404 ? getReferenceListNotFoundMessage(refListId) : httpResponse?.statusText };
+              const error = response.error ?? { code: httpResponse?.status, message: httpResponse?.status === 404 ? getReferenceListNotFoundMessage(refListId) : httpResponse?.statusText };
 
-            reject(error);
+              reject(error);
+            }
           }
-        }
-      })
-        .catch(e => {
-          reject(e);
-        });
+        })
+          .catch(e => {
+            reject(e);
+          });
+
+        return promise;
+      });
     });
+
     const promiseWithState = MakePromiseWithState(refListPromise);
     referenceLists.current[key] = promiseWithState;
 
@@ -230,43 +253,44 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
         reject("Form identifier must be specified");
 
       const cacheKey = getFormCacheKey(formId, configurationItemMode);
-      const cachedDto = cacheKey ? getFromCache<FormConfigurationDto>(cacheKey) : null;
 
-      const promise = Boolean(fullName)
-        ? formConfigurationGetByName({ name: fullName.name, module: fullName.module, version: fullName.version, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ })
-        : Boolean(rawId)
-          ? formConfigurationGet({ id: rawId, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ })
-          : Promise.reject("Form identifier must be specified");
+      getFromCache<FormConfigurationDto>(ItemTypes.Form, cacheKey).then(cachedDto => {
+        const promise = Boolean(fullName)
+          ? formConfigurationGetByName({ name: fullName.name, module: fullName.module, version: fullName.version, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ })
+          : Boolean(rawId)
+            ? formConfigurationGet({ id: rawId, md5: cachedDto?.cacheMd5 }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ })
+            : Promise.reject("Form identifier must be specified");
 
-      promise.then(response => {
-        // todo: handle not changed
-        if (response.success) {
-          const responseData = response.result;
-          if (!responseData)
-            throw 'Failed to fetch form. Response is empty';
+        promise.then(response => {
+          // todo: handle not changed
+          if (response.success) {
+            const responseData = response.result;
+            if (!responseData)
+              throw 'Failed to fetch form. Response is empty';
 
-          const dto = convertFormConfigurationDto2FormDto(responseData);
-          addToCache(cacheKey, responseData);
+            const dto = convertFormConfigurationDto2FormDto(responseData);
+            addToCache(ItemTypes.Form, cacheKey, responseData);
 
-          resolve(dto);
-        } else {
-          const rawResponse = response as Response;
-          if (rawResponse && rawResponse.status === 304) {
-            // code 304 indicates that the content ws not modified - use cached value
-            const dto = convertFormConfigurationDto2FormDto(cachedDto);
             resolve(dto);
           } else {
-            const httpResponse = response as Response;
+            const rawResponse = response as Response;
+            if (rawResponse && rawResponse.status === 304) {
+              // code 304 indicates that the content ws not modified - use cached value
+              const dto = convertFormConfigurationDto2FormDto(cachedDto);
+              resolve(dto);
+            } else {
+              const httpResponse = response as Response;
 
-            const error = response.error ?? { code: httpResponse?.status, message: httpResponse?.status === 404 ? getFormNotFoundMessage(formId) : httpResponse?.statusText };
+              const error = response.error ?? { code: httpResponse?.status, message: httpResponse?.status === 404 ? getFormNotFoundMessage(formId) : httpResponse?.statusText };
 
-            reject(error);
+              reject(error);
+            }
           }
-        }
-      })
-        .catch(e => {
-          reject(e);
-        });
+        })
+          .catch(e => {
+            reject(e);
+          });
+      });
     });
     forms.current[key] = formPromise;
 
@@ -280,7 +304,7 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
   }
 
   const getComponentCacheKey = (name: string, isApplicationSpecific: boolean): string => {
-    const key = name ? `component:${name.toLowerCase()}` : null;
+    const key = name ? `${name.toLowerCase()}` : null;
     return isApplicationSpecific
       ? prefixWithAppKey(key)
       : key;
@@ -307,44 +331,44 @@ const ConfigurationItemsLoaderProvider: FC<PropsWithChildren<IConfigurationItems
 
     const componentPromise = new Promise<IComponentSettings>((resolve, reject) => {
       const cacheKey = getComponentCacheKey(payload.name, payload.isApplicationSpecific);
-      const cachedDto = cacheKey ? getFromCache<IComponentSettings>(cacheKey) : null;
+      getFromCache<IComponentSettings>(ItemTypes.Component, cacheKey).then(cachedDto => {
+        const promise = configurableComponentGetByName({ name: name, md5: cachedDto?.cacheMd5, isApplicationSpecific }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ });
 
-      const promise = configurableComponentGetByName({ name: name, md5: cachedDto?.cacheMd5, isApplicationSpecific }, { base: backendUrl, headers: httpHeaders/*, responseConverter*/ });
+        promise.then(response => {
+          // todo: handle not changed
+          if (response.success) {
+            const responseData = response.result;
+            if (!responseData)
+              throw 'Failed to fetch component. Response is empty';
 
-      promise.then(response => {
-        // todo: handle not changed
-        if (response.success) {
-          const responseData = response.result;
-          if (!responseData)
-            throw 'Failed to fetch component. Response is empty';
+            const settings = responseData.settings
+              ? JSON.parse(responseData.settings)
+              : null;
+            const dto: IComponentSettings = {
+              ...responseData,
+              settings: settings,
+            };
+            addToCache(ItemTypes.Component, cacheKey, dto);
 
-          const settings = responseData.settings
-            ? JSON.parse(responseData.settings)
-            : null;
-          const dto: IComponentSettings = {
-            ...responseData,
-            settings: settings,
-          };
-          addToCache(cacheKey, dto);
-
-          resolve(dto);
-        } else {
-          const rawResponse = response as Response;
-          if (rawResponse && rawResponse.status === 304) {
-            // code 304 indicates that the content ws not modified - use cached value
-            resolve(cachedDto);
+            resolve(dto);
           } else {
-            const httpResponse = response as Response;
+            const rawResponse = response as Response;
+            if (rawResponse && rawResponse.status === 304) {
+              // code 304 indicates that the content ws not modified - use cached value
+              resolve(cachedDto);
+            } else {
+              const httpResponse = response as Response;
 
-            const error = response.error ?? { code: httpResponse?.status, message: httpResponse?.status === 404 ? `Component ${name} not found` : httpResponse?.statusText };
+              const error = response.error ?? { code: httpResponse?.status, message: httpResponse?.status === 404 ? `Component ${name} not found` : httpResponse?.statusText };
 
-            reject(error);
+              reject(error);
+            }
           }
-        }
-      })
-        .catch(e => {
-          reject(e);
-        });
+        })
+          .catch(e => {
+            reject(e);
+          });
+      });
     });
     const promiseWithState = MakePromiseWithState(componentPromise);
     components.current[key] = promiseWithState;

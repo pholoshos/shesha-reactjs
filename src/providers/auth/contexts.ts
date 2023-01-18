@@ -13,6 +13,8 @@ import IRequestHeaders from '../../interfaces/requestHeaders';
 import { IFlagsSetters, IFlagsState } from '../../interfaces';
 import { EMPTY_FLAGS_STATE } from '../../interfaces/flagsState';
 
+export const HOME_CACHE_URL = 'HXUL';
+
 export type IFlagProgressFlags =
   | 'isIdle'
   | 'isVerifyOtpModalVisible'

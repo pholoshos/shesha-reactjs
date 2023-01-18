@@ -8,6 +8,7 @@ import { message } from 'antd';
 import { axiosHttp } from '../../apis/axios';
 import { useReferenceListItem } from '../../providers/referenceListDispatcher';
 import { useConfigurableActionDispatcher } from '../../providers/configurableActionsDispatcher';
+import { toCamelCase } from '../../utils/string';
 
 export const renderers: ITableCustomTypesRender[] = [
   {
@@ -27,7 +28,7 @@ export const renderers: ITableCustomTypesRender[] = [
     render: props => {
       const { metadata } = useMetadata(false);
 
-      const dataFormat = metadata?.properties?.find(({ path }) => path === props?.column?.id)?.dataFormat;
+      const dataFormat = metadata?.properties?.find(({ path }) => toCamelCase(path) === props?.column?.id)?.dataFormat;
 
       return props.value ? moment(props.value).format(dataFormat || 'DD/MM/YYYY') : null;
     },
@@ -37,7 +38,7 @@ export const renderers: ITableCustomTypesRender[] = [
     render: props => {
       const { metadata } = useMetadata(false);
 
-      const dataFormat = metadata?.properties?.find(({ path }) => path === props?.column?.id)?.dataFormat;
+      const dataFormat = metadata?.properties?.find(({ path }) => toCamelCase(path) === props?.column?.id)?.dataFormat;
 
       return props.value ? moment(props.value).format(dataFormat || 'DD/MM/YYYY HH:mm') : null;
     },
@@ -47,7 +48,7 @@ export const renderers: ITableCustomTypesRender[] = [
     render: props => {
       const { metadata } = useMetadata(false);
 
-      const dataFormat = metadata?.properties?.find(({ path }) => path === props?.column?.id)?.dataFormat;
+      const dataFormat = metadata?.properties?.find(({ path }) => toCamelCase(path) === props?.column?.id)?.dataFormat;
 
       return props.value ? moment.utc(props.value * 1000).format(dataFormat || 'HH:mm') : null;
     },
@@ -68,7 +69,10 @@ export const renderers: ITableCustomTypesRender[] = [
   {
     key: 'reference-list-item',
     render: props => {
-      const { column: { referenceListName, referenceListModule }, value: colValue } = props;
+      const {
+        column: { referenceListName, referenceListModule },
+        value: colValue,
+      } = props;
       //console.log('reference-list-item', referenceListModule, referenceListName);
       const item = useReferenceListItem(referenceListModule, referenceListName, colValue);
       return item?.data?.item;
@@ -77,7 +81,7 @@ export const renderers: ITableCustomTypesRender[] = [
   {
     key: 'entity',
     render: props => {
-      return typeof props?.value === 'object' 
+      return typeof props?.value === 'object'
         ? props?.value?.displayText ?? props?.value?._displayName
         : props?.value ?? null;
     },

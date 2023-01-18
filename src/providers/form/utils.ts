@@ -278,14 +278,14 @@ export const getCustomEnabledFunc = ({ customEnabled, name }: IConfigurableFormC
  * @returns {string} evaluated string
  */
 export const evaluateString = (template: string = '', data: any) => {
-  const localData: IAnyObject = data ? {...data} : undefined;
+  const localData: IAnyObject = data ? { ...data } : undefined;
   // The function throws an exception if the expression passed doesn't have a corresponding curly braces
   try {
     if (localData) {
       //adding a function to the data object that will format datetime
 
-      localData.dateFormat = function() {
-        return function(timestamp, render) {
+      localData.dateFormat = function () {
+        return function (timestamp, render) {
           return new Date(render(timestamp).trim()).toLocaleDateString('en-us', {
             year: 'numeric',
             month: 'short',
@@ -405,6 +405,8 @@ interface IEvaluateComplexStringResult {
  * @param data - data to use to evaluate the string
  * @returns {string} evaluated string
  */
+
+//newer versions
 export const evaluateComplexStringWithResult = (
   expression: string,
   mappings: IMatchData[]
@@ -417,6 +419,10 @@ export const evaluateComplexStringWithResult = (
 
   const unevaluatedExpressions = [];
 
+  let sterilizedResult: string;
+
+  let filterHolder;
+
   Array.from(matches).forEach(template => {
     mappings.forEach(({ match, data }) => {
       if (template.includes(`{{${match}`)) {
@@ -424,21 +430,50 @@ export const evaluateComplexStringWithResult = (
         // This is useful for backward compatibility
         // Initially expression would simply be {{expression}} and they wou be evaluated against formData
         // But dynamic expression now can use formData and globalState, so as a result the expressions need to use dot notation
-        const evaluatedValue = evaluateString(template, match ? { [match]: data } : {data});
+
+        const evaluatedValue = evaluateString(template, match ? { [match]: data } : { data });
 
         if (!evaluatedValue?.trim()) {
           success = false;
           unevaluatedExpressions?.push(template);
         } else {
+          let ruleJoin = typeof result === 'string' ? Object.keys(JSON.parse(result))[0] : Object.keys(result)[0];
+          sterilizedResult = typeof result === 'string' ? JSON.parse(result) : result;
+
+          filterHolder = sterilizedResult[ruleJoin]?.map(flt => {
+            let operator = Object.keys(flt)[0];
+            let mutated = flt[operator]?.map((vr, index) => {
+              if (index) {
+                let isolatedValue = `${vr}`.replaceAll('{', '').replaceAll('}', '');
+
+                const filtered = executeDynamicExpression(`return ${isolatedValue}`, data, match);
+
+                return isNaN(filtered) ? filtered.replace(/("|')/g, '') : parseInt(filtered);
+              } else {
+                return vr;
+              }
+            });
+            return {
+              [operator]: mutated,
+            };
+          });
+
+          sterilizedResult = !!filterHolder ? JSON.stringify({ [ruleJoin]: filterHolder }) : '';
+
           result = result.replaceAll(template, evaluatedValue);
         }
       }
     });
   });
-
-  return { result, success, unevaluatedExpressions: Array.from(new Set(unevaluatedExpressions)) };
+  return {
+    result: sterilizedResult || result,
+    success,
+    unevaluatedExpressions: Array.from(new Set(unevaluatedExpressions)),
+  };
 };
-
+const executeDynamicExpression = (expression: string, data: any, match = 'data') => {
+  return new Function(`${match}`, expression)(data);
+};
 export const getVisibilityFunc2 = (expression, name) => {
   if (expression) {
     try {

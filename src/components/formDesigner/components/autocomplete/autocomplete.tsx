@@ -94,6 +94,10 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
             match: 'globalState',
             data: globalState,
           },
+          {
+            match: '', // For backward compatibility. It's also important that the empty one is the last one as it's a fallback
+            data: localFormData,
+          },
         ]
       );
       //@ts-ignore everything is in place here

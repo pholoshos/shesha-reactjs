@@ -21,29 +21,32 @@ export const evaluateDynamicFilters = (filters: IStoredFilter[], mappings: IMatc
         unevaluatedExpressions,
       };
     }
- //Evaluates the straight values
-let filterHolder;
-let sterilizedResult=filter.expression;
-let ruleJoin=typeof filter.expression ==='string'?Object.keys(JSON.parse(filter.expression))[0]:Object.keys(filter.expression)[0];
-if(ruleJoin){
-    filterHolder=sterilizedResult[ruleJoin]?.map(flt=>{
-      let operator=Object.keys(flt)[0];
-     let mutated=flt[operator]?.map((vr,index)=>{
-      if(index){ 
-        return isNaN(vr)?vr.replace(/("|')/g, ""):parseInt(vr)
-      }else{
-        return vr
-      }
-    });
-    return {
-      [operator]:mutated
+    //Evaluates the straight values
+    let filterHolder;
+    let sterilizedResult = filter.expression;
+    let ruleJoin =
+      typeof filter.expression === 'string'
+        ? Object.keys(JSON.parse(filter.expression))[0]
+        : Object.keys(filter.expression)[0];
+    if (ruleJoin) {
+      filterHolder = sterilizedResult[ruleJoin]?.map(flt => {
+        let operator = Object.keys(flt)[0];
+        let mutated = flt[operator]?.map((vr, index) => {
+          if (index) {
+            return isNaN(vr) ? vr.replace(/("|')/g, '') : parseInt(vr);
+          } else {
+            return vr;
+          }
+        });
+        return {
+          [operator]: mutated,
+        };
+      });
     }
- })
-} 
 
-filterHolder=!!filterHolder?{[ruleJoin]: filterHolder}:null;
+    filterHolder = !!filterHolder ? { [ruleJoin]: filterHolder } : null;
 
-    return {...filter,expression:filterHolder};
+    return { ...filter, expression: filterHolder };
   });
 };
 

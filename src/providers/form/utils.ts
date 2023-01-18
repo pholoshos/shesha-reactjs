@@ -278,8 +278,8 @@ export const evaluateString = (template: string = '', data: any) => {
     if (localData) {
       //adding a function to the data object that will format datetime
 
-      localData.dateFormat = function() {
-        return function(timestamp, render) {
+      localData.dateFormat = function () {
+        return function (timestamp, render) {
           return new Date(render(timestamp).trim()).toLocaleDateString('en-us', {
             year: 'numeric',
             month: 'short',
@@ -412,7 +412,9 @@ export const evaluateComplexStringWithResult = (
   let success = true;
 
   const unevaluatedExpressions = [];
+
   let sterilizedResult: string;
+
   let filterHolder;
 
   Array.from(matches).forEach(template => {
@@ -446,7 +448,7 @@ export const evaluateComplexStringWithResult = (
               }
             });
             return {
-              [operator]: mutated,   
+              [operator]: mutated,
             };
           });
 

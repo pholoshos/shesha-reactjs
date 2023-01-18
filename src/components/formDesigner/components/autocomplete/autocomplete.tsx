@@ -96,7 +96,7 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
           },
         ]
       );
-
+      //@ts-ignore everything is in place here
       if (_response.find(f => f?.unevaluatedExpressions?.length)) return '';
 
       return JSON.stringify(_response[0]?.expression) || '';
@@ -133,10 +133,10 @@ const AutocompleteComponent: IToolboxComponent<IAutocompleteProps> = {
       useRawValues
         ? item[value]
         : {
-            id: item[value],
-            _displayName: item[displayText],
-            _className: model.entityTypeShortAlias
-          };
+          id: item[value],
+          _displayName: item[displayText],
+          _className: model.entityTypeShortAlias
+        };
 
     const getOptionFromFetchedItem = (item: object): ISelectOption => {
       const { dataSourceType, keyPropName, useRawValues, valuePropName } = model;

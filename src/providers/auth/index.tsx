@@ -7,6 +7,7 @@ import {
   AUTH_CONTEXT_INITIAL_STATE,
   ILoginForm,
   IAuthStateContext,
+  HOME_CACHE_URL,
 } from './contexts';
 import {
   loginUserAction,
@@ -109,9 +110,9 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
   const { backendUrl, httpHeaders } = useSheshaApplication();
 
   const storedToken = getAccessTokenFromStorage(tokenName);
-  
-  const {[AUTHORIZATION_HEADER_NAME]: _auth = null, ...headersWithoutAuth} = {...(httpHeaders ?? {})};
-  
+
+  const { [AUTHORIZATION_HEADER_NAME]: _auth = null, ...headersWithoutAuth } = { ...(httpHeaders ?? {}) };
+
   const initialHeaders = { ...headersWithoutAuth, ...getHttpHeadersFromToken(storedToken?.accessToken) };
 
   const [state, dispatch] = useThunkReducer(authReducer, {
@@ -143,6 +144,9 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
             // if we are on the login page - redirect to the returnUrl or home page
             if (isSameUrls(currentUrl, unauthorizedRedirectUrl)) {
               const returnUrl = getQueryParam('returnUrl')?.toString();
+
+              cacheHomeUrl(response.result?.user?.homeUrl);
+
               redirect(returnUrl ?? response.result?.user?.homeUrl ?? homePageUrl ?? DEFAULT_HOME_PAGE);
             }
           }
@@ -159,6 +163,10 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
         dispatch(fetchUserDataActionErrorAction({ message: 'Oops, something went wrong' }));
         redirectToUnauthorized();
       });
+  };
+
+  const cacheHomeUrl = (url: string) => {
+    localStorage.setItem(HOME_CACHE_URL, url);
   };
 
   const redirect = (url: string) => {

@@ -62,9 +62,9 @@ export const QueryBuilder: FC<IQueryBuilderProps> = props => {
   const allFields = useMemo(() => {
     return useExpression
       ? fields?.map(({ dataType, ...field }) => ({
-          ...field,
-          dataType: ['date-time', 'date', 'time'].includes(dataType) ? 'dateTimeDynamic' : 'text',
-        }))
+        ...field,
+        dataType: ['date-time', 'date', 'time'].includes(dataType) ? 'dateTimeDynamic' : 'text',
+      }))
       : fields;
   }, [useExpression, fields, fields?.length]);
 
@@ -155,7 +155,7 @@ export const QueryBuilder: FC<IQueryBuilderProps> = props => {
       settings: qbSettings,
       fields: convertFields(allFields),
     };
-    if (props.readOnly){
+    if (props.readOnly) {
       conf.settings.immutableGroupsMode = true;
       conf.settings.immutableFieldsMode = true;
       conf.settings.immutableOpsMode = true;
@@ -203,7 +203,7 @@ const QueryBuilderContent: FC<IQueryBuilderContentProps> = ({
     return (
       <div className="query-builder-container">
         <div className={classNames('query-builder', { 'qb-lite': showActionBtnOnHover })}>
-          <Builder {...props}/>
+          <Builder {...props} />
         </div>
       </div>
     );
@@ -217,7 +217,7 @@ const QueryBuilderContent: FC<IQueryBuilderContentProps> = ({
 
   return (
     <div className="sha-query-builder">
-      {tree && qbConfig && <Query {...qbConfig} value={tree} onChange={handleChange} renderBuilder={renderBuilder}/>}
+      {tree && qbConfig && <Query {...qbConfig} value={tree} onChange={handleChange} renderBuilder={renderBuilder} />}
     </div>
   );
 };

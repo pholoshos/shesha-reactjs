@@ -138,6 +138,10 @@ const ListControl: FC<IListControlProps> = props => {
           match: 'globalState',
           data: globalState,
         },
+        {
+          match: '', // For backward compatibility. It's also important that the empty one is the last one as it's a fallback
+          data: localFormData,
+        },
       ]
     );
 

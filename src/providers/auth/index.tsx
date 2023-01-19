@@ -7,7 +7,6 @@ import {
   AUTH_CONTEXT_INITIAL_STATE,
   ILoginForm,
   IAuthStateContext,
-  HOME_CACHE_URL,
 } from './contexts';
 import {
   loginUserAction,
@@ -23,7 +22,7 @@ import {
   loginUserSuccessAction,
   /* NEW_ACTION_IMPORT_GOES_HERE */
 } from './actions';
-import { URL_LOGIN_PAGE, URL_HOME_PAGE, URL_CHANGE_PASSWORD } from '../../constants';
+import { URL_LOGIN_PAGE, URL_HOME_PAGE, URL_CHANGE_PASSWORD, HOME_CACHE_URL } from '../../constants';
 import IdleTimer from 'react-idle-timer';
 import { IAccessToken } from '../../interfaces';
 import { OverlayLoader } from '../../components/overlayLoader';
@@ -145,7 +144,7 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
             if (isSameUrls(currentUrl, unauthorizedRedirectUrl)) {
               const returnUrl = getQueryParam('returnUrl')?.toString();
 
-              cacheHomeUrl(response.result?.user?.homeUrl);
+              cacheHomeUrl(response.result?.user?.homeUrl || homePageUrl);
 
               redirect(returnUrl ?? response.result?.user?.homeUrl ?? homePageUrl ?? DEFAULT_HOME_PAGE);
             }
@@ -166,7 +165,7 @@ const AuthProvider: FC<PropsWithChildren<IAuthProviderProps>> = ({
   };
 
   const cacheHomeUrl = (url: string) => {
-    localStorage.setItem(HOME_CACHE_URL, url);
+    if (url) localStorage.setItem(HOME_CACHE_URL, url);
   };
 
   const redirect = (url: string) => {
